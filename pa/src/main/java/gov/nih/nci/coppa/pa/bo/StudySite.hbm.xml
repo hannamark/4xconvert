@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="gov.nih.nci.ctom.domain">
+  <class name="StudySite" table="STUDY_SITE" lazy="true" polymorphism="explicit">
+    <cache usage="read-write" />
+    <id name="id" type="java.lang.Long" column="ID">
+        <generator class="sequence">
+          	<param name="sequence">STUDY_SITE_SEQ</param>
+        </generator>
+    </id>
+    <property name="roleCode" type="java.lang.String" column="ROLE_CODE" />
+    <property name="statusCode" type="java.lang.String" column="STATUS_CODE" />
+    <property name="targetAccrualNumber" type="java.lang.String" column="TARGET_ACCRUAL_NUMBER" />
+    <property name="startDate" type="java.util.Date" column="START_DATE" />
+    <property name="stopDate" type="java.util.Date" column="STOP_DATE" />
+    <property name="irbApprovalDate" type="java.util.Date" column="IRB_APPROVAL_DATE" />
+    <property name="localProtocolIdentifier" type="java.lang.String" column="LOCAL_PROTOCOL_IDENTIFIER" />
+    <many-to-one name="healthCareSite" class="gov.nih.nci.ctom.domain.HealthcareSite" column="HEALTHCARE_SITE_ID" lazy="proxy" />
+    <set name="studyParticipantCollection" lazy="true" inverse="true">
+      <cache usage="read-write" />
+      <key column="STUDY_SITE_ID" />
+      <one-to-many class="gov.nih.nci.ctom.domain.StudyParticipantAssignment" />
+    </set>
+    <many-to-one name="protocol" class="gov.nih.nci.ctom.domain.Protocol" column="PROTOCOL_ID" lazy="proxy" />
+    <filter name="security_key_filter" condition="SECURITY_KEY IN (:keys_array)"/>
+  </class>
+</hibernate-mapping>
+
