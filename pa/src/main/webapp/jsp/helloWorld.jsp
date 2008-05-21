@@ -11,6 +11,10 @@
 </head>
 <body>
 	Hello <s:property value="name"/>, today is <s:property value="dateNow" /><br/>
+	
+	<ul>
+			<li><a href="searchProtocol.action">Search Protocol</a></li>
+	</ul>	
 
 </body>
 </html>
