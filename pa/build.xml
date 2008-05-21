@@ -164,7 +164,7 @@
         	classpath="${coppa.pa.lib.test.dir}/pmd-4.2.2.jar"
         	classname="net.sourceforge.pmd.ant.PMDTask"/>
     	
-    	<pmd shortFilenames="true" failOnRuleViolation="true">
+    	<pmd shortFilenames="true" failOnRuleViolation="false">
     	    <ruleset>src/test/resources/paPmd.xml</ruleset>
     		<formatter type="text" toConsole="true"/>
     	    <formatter type="text" toFile="${coppa.pa.build.dir}/pmd.txt"/>
