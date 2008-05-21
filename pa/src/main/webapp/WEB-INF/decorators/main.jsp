@@ -11,6 +11,7 @@
 <head>
 	<title><decorator:title default="Struts Starter"/></title>   
      <link href="<s:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+     <link href="<s:url value='/styles/layout.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <link href="<s:url value='/struts/niftycorners/niftyCorners.css'/>" rel="stylesheet" type="text/css"/>
     <link href="<s:url value='/struts/niftycorners/niftyPrint.css'/>" rel="stylesheet" type="text/css" media="print"/>
     <script language="JavaScript" type="text/javascript" src="<s:url value='/struts/niftycorners/nifty.js'/>"></script>
@@ -26,7 +27,7 @@
     </script>
     <decorator:head/>
 </head>
-<body id="page-home"> 
+<body> 
     	<jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
     	<jsp:include page="/WEB-INF/jsp/common/paheader.jsp"/>
 	     
@@ -44,13 +45,12 @@
 			  <!--/Quicklinks Menu-->
 				
 			<!-- submenu ends -->
-			</div>          
-       </div>     			
+			</div>                  		
        
 		
             
             	<decorator:body/>
-        
+        </div> 
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
 </body>
 </html>
