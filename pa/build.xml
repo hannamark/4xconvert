@@ -5,8 +5,6 @@
 <!-- ====================================================================== -->
 
 <project name="pa" default="war" basedir=".">
-	<taskdef resource="checkstyletask.properties" classpath="lib/checkstyle-all-4.4.jar"/>
-
 	<property file="build.properties"/>
 
 	<property name="coppa.pa.build.finalName" value="pa"/>
@@ -26,13 +24,13 @@
 	<!-- ====================================================================== -->
 
 	<path id="build.classpath">
-		<fileset dir="${basedir}/lib">
-			<include name="*/**"/>
+		<fileset dir="${basedir}/lib/main">
+			<include name="**/*"/>
 		</fileset>
 	</path>
 	<path id="build.test.classpath">
 		<fileset dir="${basedir}/lib">
-			<include name="*/**"/>
+			<include name="**/*"/>
 		</fileset>
 	</path>
 
@@ -139,16 +137,19 @@
 		<echo>===============================================================================</echo>
 	</target>
 
-	<!-- ====================================================================== -->
-	<!-- Run checkstyle                                                         -->
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
+    <!-- Run checkstyle                                                         -->
+    <!-- ====================================================================== -->
 
-	<target name="test-checkstyle" description="Run checkstyle">
-		<checkstyle config="lib/sun_checks.xml" failOnViolation="false">
-			<fileset dir="src/main" includes="**/*.java" />
-			<formatter type="plain" />
-		</checkstyle>
-	</target>
+    <target name="test-checkstyle" description="Run checkstyle">
+        <taskdef resource="checkstyletask.properties" classpath="lib/test/checkstyle-all-4.4.jar"/>
+
+        <checkstyle config="lib/test/sun_checks.xml" failOnViolation="false">
+            <fileset dir="src/main" includes="**/*.java" />
+        	<formatter type="plain"/>
+            <formatter type="plain" toFile="${coppa.pa.build.dir}/checkstyle.txt"/>
+        </checkstyle>
+    </target>
 
 	<!-- ====================================================================== -->
 	<!-- Run all tests                                                          -->
@@ -190,7 +191,7 @@
 	<target name="package" depends="compile,test-all" description="Package the application">
 		<mkdir dir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib"/>
 		<copy todir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib">
-			<fileset dir="${basedir}/lib" includes="*.jar" excludes="*junit*,*checkstyle*"/>
+			<fileset dir="${basedir}/lib/main" includes="**/*"/>
 		</copy>
 
 		<war destfile="${coppa.pa.build.dir}/${coppa.pa.war}" 
