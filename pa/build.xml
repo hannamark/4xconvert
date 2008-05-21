@@ -18,18 +18,21 @@
 	<property name="coppa.pa.test.reports" value="${coppa.pa.build.dir}/test-reports"/>
 	<property name="coppa.pa.reporting.outputDirectory" value="${coppa.pa.build.dir}/site"/>
 	<property name="coppa.pa.war" value="${coppa.pa.build.finalName}.war"/>
+    <property name="coppa.pa.lib.dir" value="${basedir}/lib"/>
+    <property name="coppa.pa.lib.test.dir" value="${coppa.pa.lib.dir}/test"/>
+    <property name="coppa.pa.lib.main.dir" value="${coppa.pa.lib.dir}/main"/>
 
 	<!-- ====================================================================== -->
 	<!-- Defining classpaths                                                    -->
 	<!-- ====================================================================== -->
 
 	<path id="build.classpath">
-		<fileset dir="${basedir}/lib/main">
+		<fileset dir="${coppa.pa.lib.main.dir}">
 			<include name="**/*"/>
 		</fileset>
 	</path>
 	<path id="build.test.classpath">
-		<fileset dir="${basedir}/lib">
+		<fileset dir="${coppa.pa.lib.dir}">
 			<include name="**/*"/>
 		</fileset>
 	</path>
@@ -142,20 +145,42 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle" description="Run checkstyle">
-        <taskdef resource="checkstyletask.properties" classpath="lib/test/checkstyle-all-4.4.jar"/>
+        <taskdef resource="checkstyletask.properties" 
+        	     classpath="${coppa.pa.lib.test.dir}/checkstyle-all-4.4.jar"/>
 
-        <checkstyle config="lib/test/sun_checks.xml" failOnViolation="false">
+        <checkstyle config="${coppa.pa.lib.test.dir}/sun_checks.xml" failOnViolation="false">
             <fileset dir="src/main" includes="**/*.java" />
         	<formatter type="plain"/>
             <formatter type="plain" toFile="${coppa.pa.build.dir}/checkstyle.txt"/>
         </checkstyle>
     </target>
 
+    <!-- ====================================================================== -->
+    <!-- Run PMD                                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-pmd" description="Run PMD checks">
+        <taskdef name="pmd" 
+        	classpath="${coppa.pa.lib.test.dir}/pmd-4.2.2.jar"
+        	classname="net.sourceforge.pmd.ant.PMDTask"/>
+    	
+    	<pmd shortFilenames="true" failOnRuleViolation="true">
+    	    <ruleset>src/test/resources/paPmd.xml</ruleset>
+    		<formatter type="text" toConsole="true"/>
+    	    <formatter type="text" toFile="${coppa.pa.build.dir}/pmd.txt"/>
+    	    <fileset dir="src/main">
+    	        <include name="**/*.java"/>
+    	    </fileset>
+    	 </pmd>
+    </target>
+
 	<!-- ====================================================================== -->
 	<!-- Run all tests                                                          -->
 	<!-- ====================================================================== -->
 
-	<target name="test-all" depends="test-junit,test-checkstyle" description="Run all tests"/>
+	<target name="test-all" 
+		    depends="test-junit,test-checkstyle,test-pmd" 
+		    description="Run all tests"/>
 
 	<!-- ====================================================================== -->
 	<!-- Javadoc target                                                         -->
@@ -191,7 +216,7 @@
 	<target name="package" depends="compile,test-all" description="Package the application">
 		<mkdir dir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib"/>
 		<copy todir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib">
-			<fileset dir="${basedir}/lib/main" includes="**/*"/>
+			<fileset dir="${coppa.pa.lib.main.dir}" includes="**/*"/>
 		</copy>
 
 		<war destfile="${coppa.pa.build.dir}/${coppa.pa.war}" 
