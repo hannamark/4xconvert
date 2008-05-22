@@ -21,30 +21,44 @@ import org.apache.struts2.util.StrutsTypeConverter;
 
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Date;
 import com.opensymphony.xwork2.util.TypeConversionException;
 
 /**
- * 
+ * Class used to convert dates.
  */
 public class DateConverter extends StrutsTypeConverter {
-    public Object convertFromString(Map context, String[] values, Class toClass) {
-        if (values != null && values.length > 0 && values[0] != null && values[0].length() > 0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    /**
+     * @param context context
+     * @param values  values
+     * @param toClass class to convert to
+     * @return Object date object
+     */
+    public final Object convertFromString(final Map context
+                         , final String[] values, final Class toClass) {
+        if (values != null && values.length > 0
+                           && values[0] != null && values[0].length() > 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
             try {
                 return sdf.parse(values[0]);
-            }
-            catch(ParseException e) {
+            } catch (ParseException e) {
                 throw new TypeConversionException(e);
             }
         }
         return null;
     }
-    public String convertToString(Map context, Object o) {
+
+    /**
+     * @param context context
+     * @param o object
+     * @return String date string
+     */
+    public final String convertToString(final Map context, final Object o) {
         if (o instanceof Date) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-            return sdf.format((Date)o);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
+            return sdf.format((Date) o);
         }
         return "";
     }

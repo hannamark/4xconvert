@@ -9,7 +9,10 @@ import gov.nih.nci.coppa.pa.service.IProtocolService;
 
 public class ProtocolServiceImpl implements IProtocolService {
 
-	public void getProtocol() {
-		// TODO Auto-generated method stub		
-	}
+    /**
+     * @see gov.nih.nci.coppa.pa.service.IProtocolService#getProtocol()
+     */
+    public void getProtocol() {
+        // TODO Auto-generated method stub
+    }
 }

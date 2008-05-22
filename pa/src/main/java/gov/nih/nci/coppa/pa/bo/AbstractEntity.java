@@ -1,15 +1,14 @@
 package gov.nih.nci.coppa.pa.bo;
 
-import gov.nih.nci.coppa.pa.bo.Auditable;
-
 import java.io.Serializable;
 
 /**
  * Simple JavaBean domain object with an id property. Used as a base class for objects needing this property.
  */
-public abstract class Entity implements Serializable, Auditable {
+public abstract class AbstractEntity implements Serializable, Auditable {
     private Long id;
 
+    @SuppressWarnings("unused")    
     private void setId(Long id) {
         this.id = id;
     }

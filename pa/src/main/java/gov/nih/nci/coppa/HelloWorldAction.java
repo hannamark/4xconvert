@@ -25,23 +25,56 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
 
+/**
+ * @author Hugh
+ *
+ */
+/**
+ * @author Hugh
+ *
+ */
+/**
+ * @author Hugh
+ *
+ */
 @Validation()
 @Conversion()
 public class HelloWorldAction extends ActionSupport {
+
+    static final long serialVersionUID = 12341342L;
     
     private Date now;
     private String name;
-    
+
+    /**
+     * @param nowx now
+     */
     @TypeConversion(converter = "gov.nih.nci.coppa.DateConverter")
     @RequiredFieldValidator(message = "Please enter the date")
-    public void setDateNow(Date now) { this.now = now; }
+    public void setDateNow(Date nowx) { this.now = nowx; }
+    
+    
+    /**
+     * @return date
+     */
     public Date getDateNow() { return now; }
-   
+
+    /**
+     * @param name name
+     */
     @RequiredStringValidator(message = "Please enter a name", trim = true)
     public void setName(String name) { this.name = name; }
-    public String getName() { return this.name; }
     
-    public String execute() throws Exception {
+    /**
+     * @return name
+     */
+    public String getName() { return this.name; }
+
+    /**
+     * @see com.opensymphony.xwork2.ActionSupport#execute()
+     * @return action result
+     */
+    public String execute() {
         return SUCCESS;
     }
 }

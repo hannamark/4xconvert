@@ -30,10 +30,17 @@ public class IndexAction extends ActionSupport {
     
     private Date now = new Date(System.currentTimeMillis());
     
+    /**
+     * @return now
+     */
     @TypeConversion(converter = "com.fdar.apress.s2.DateConverter")
     public Date getDateNow() { return now; }
     
-    public String execute() throws Exception {
+    /**
+     * @see com.opensymphony.xwork2.ActionSupport#execute()
+     * @return action result
+     */
+    public String execute() {
         now = new Date(System.currentTimeMillis());
         return SUCCESS;
     }

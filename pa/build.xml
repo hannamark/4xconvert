@@ -181,9 +181,8 @@
     		              srcdir="${coppa.pa.build.srcDir.0}" />
     	
     	<cobertura-check datafile="${coppa.pa.build.dir}/cobertura.ser"
-    		             branchrate="20" 
-    		             totalbranchrate="40" 
-    		             totallinerate="40"
+    		             totalbranchrate="10" 
+    		             totallinerate="10"
     	                 haltonfailure="false"/>
      </target>
 
@@ -192,7 +191,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle" description="Run checkstyle">
-        <checkstyle config="${coppa.pa.lib.test.dir}/sun_checks.xml" failOnViolation="false">
+        <checkstyle config="src/test/resources/paCheckstyle.xml" failOnViolation="true">
             <fileset dir="src/main" includes="**/*.java" />
         	<formatter type="plain"/>
             <formatter type="plain" toFile="${coppa.pa.build.dir}/checkstyle.txt"/>
@@ -204,7 +203,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd" description="Run PMD checks">
-    	<pmd shortFilenames="true" failOnRuleViolation="false">
+    	<pmd shortFilenames="true" failOnRuleViolation="true">
     	    <ruleset>src/test/resources/paPmd.xml</ruleset>
     		<formatter type="text" toConsole="true"/>
     	    <formatter type="text" toFile="${coppa.pa.build.dir}/pmd.txt"/>

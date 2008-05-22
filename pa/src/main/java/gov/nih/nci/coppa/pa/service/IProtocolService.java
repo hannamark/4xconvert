@@ -5,5 +5,8 @@ package gov.nih.nci.coppa.pa.service;
  *
  */
 public interface IProtocolService {
-    public void getProtocol();
+    /**
+     * 
+     */
+    void getProtocol();
 }
