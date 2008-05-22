@@ -12,6 +12,9 @@
 		<action name="helloWorld" class="helloWorldAction"> 
 			<result name="input">/jsp/index.jsp</result>
 			<result>/jsp/helloWorld.jsp</result>
+		</action>		
+		<action name="searchProtocol">
+			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>
 	</package>
 </struts>
