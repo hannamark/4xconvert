@@ -2,12 +2,13 @@
 	"-//W3C//DTD XHTML 1.1 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>	
 <%@taglib prefix="s" uri="/struts-tags" %>
 <s:set name="menuPage" value="%{'QueryProtocol'}"/>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title>Protocol Search Criteria</title>
+	<title><fmt:message key="protocol.search.title"/></title>
 	<s:head />
 </head>
 <body>
@@ -20,9 +21,7 @@
 
     <!--ADD CONTENT HERE-->
 
-
-    <h1>Search Protocols</h1>
-
+	<h1><fmt:message key="protocol.search.header"/></h1>
 
     <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
@@ -34,39 +33,38 @@
             <table cellspacing="8">	
             	<tr>
                     <td align=right>
-                    	<b>NCI accession number:</b>
+                    	<b><fmt:message key="protocol.search.label.nciNumber"/></b>
                     </td>
                     <td align=left>
-                    	<s:textfield label="NCI accession number" name="nci" size="15" maxlength="10" theme="simple"/>
+                    	<s:textfield name="nci" size="15" maxlength="10" theme="simple"/>
                     </td>
                     <td align=right>
-                    	<b>Official Title:</b> 
+                    	<b><fmt:message key="protocol.search.label.officialTitle"/></b> 
                     </td>
                     <td align=left>                                             
-                    	<s:textfield label="Official Title" name="title"  size="15" maxlength="10" theme="simple"/>
+                    	<s:textfield name="title"  size="15" maxlength="10" theme="simple"/>
                     </td>
                  </tr>                                               
 				 <tr>
                     <td align=right>
-                     	<b>Lead Organization:</b>
+                     	<b><fmt:message key="protocol.search.label.leadOrganization"/></b> 
                     </td>
                     <td align=left>
-                     	<s:textfield label="" name="leadOrg" size="15" maxlength="10" theme="simple"/>                                             
+                     	<s:textfield name="leadOrg" size="15" maxlength="10" theme="simple"/>                                             
                     </td>
                     <td align=right>
-                    	<b>Lead Organization Protocol ID:</b>
+                    	<b><fmt:message key="protocol.search.label.leadOrganizationProtocolID"/></b> 
                     </td>
                     <td align=left>
-                    	<s:textfield label="Lead Organization Protocol ID" name="leadOrgPID" size="15" maxlength="10" theme="simple"/>                                                 
+                    	<s:textfield name="leadOrgPID" size="15" maxlength="10" theme="simple"/>                                                 
                     </td>                    
                 </tr>      
                 <tr>
                     <td align=right>
-                    	<b>Study Phase:</b>                    	
+                    	<b><fmt:message key="protocol.search.label.studyPhase"/></b>                     	
                     </td>
                     <td align=left>
-						<s:select label="Study Phase"
-						          name="sphase"
+						<s:select name="sphase"
 						          theme="simple"
 						          headerKey="0"
 						          headerValue="-- Please Select --"
@@ -74,7 +72,7 @@
 						</s:select>
                   	</td>                  	
                   	<td align=right>
-                    	<b>Study Phase:</b>
+                  		<b><fmt:message key="protocol.search.label.studyStatus"/></b>                      
                     </td>
 					<td align=left>
 						<s:select label="Study Status:"
@@ -84,11 +82,10 @@
 						          headerValue="-- Please Select --"
 						          list="%{#{'o':'Open','c':'Closed','s':'Suspended'}}"/>						          						
                   	</td>                  
-                </tr>         
-                               
+                </tr>                                        
                 <tr>
                 <td align=right>
-                    	<b>Abstraction Status:</b>
+                    	<b><fmt:message key="protocol.search.label.abstractionStatus"/></b>    
                     </td>
 					<td >
 						<s:select label="Abstraction Status:"
