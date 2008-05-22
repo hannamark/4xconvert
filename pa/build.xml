@@ -16,11 +16,14 @@
 	<property name="coppa.pa.build.testDir.0" value="src/test/java"/>
 	<property name="coppa.pa.build.testResourceDir.0" value="src/main/resources"/>
 	<property name="coppa.pa.test.reports" value="${coppa.pa.build.dir}/test-reports"/>
+	<property name="coppa.pa.coverage.reports" value="${coppa.pa.build.dir}/coverage-reports"/>
 	<property name="coppa.pa.reporting.outputDirectory" value="${coppa.pa.build.dir}/site"/>
 	<property name="coppa.pa.war" value="${coppa.pa.build.finalName}.war"/>
     <property name="coppa.pa.lib.dir" value="${basedir}/lib"/>
     <property name="coppa.pa.lib.test.dir" value="${coppa.pa.lib.dir}/test"/>
     <property name="coppa.pa.lib.main.dir" value="${coppa.pa.lib.dir}/main"/>
+	<property name="cobertura.lib.dir" value="${coppa.pa.lib.test.dir}/cobertura"/>
+    <property name="coppa.pa.build.coberturaOutputDir" value="${coppa.pa.build.dir}/generated-classes"/>
 
 	<!-- ====================================================================== -->
 	<!-- Defining classpaths                                                    -->
@@ -32,11 +35,31 @@
 		</fileset>
 	</path>
 	<path id="build.test.classpath">
-		<fileset dir="${coppa.pa.lib.dir}">
-			<include name="**/*"/>
-		</fileset>
+		<fileset dir="${coppa.pa.lib.test.dir}"/>
+        <fileset dir="${coppa.pa.lib.main.dir}">
+            <include name="**/*"/>
+        </fileset>
 	</path>
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.lib.dir}">
+            <include name="cobertura.jar" />
+            <include name="*.jar" />
+        </fileset>
+    </path>
 
+    <!-- ====================================================================== -->
+    <!-- Task definitions                                                       -->
+    <!-- ====================================================================== -->
+
+    <taskdef resource="checkstyletask.properties" 
+             classpath="${coppa.pa.lib.test.dir}/checkstyle-all-4.4.jar"/>
+    <taskdef name="pmd" 
+             classpath="${coppa.pa.lib.test.dir}/pmd-4.2.2.jar"
+             classname="net.sourceforge.pmd.ant.PMDTask"/>
+    <taskdef resource="simiantask.properties" 
+    	     classpath="${coppa.pa.lib.test.dir}/simian-2.2.24.jar"/>
+	<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+	
 	<!-- ====================================================================== -->
 	<!-- Cleaning up target                                                     -->
 	<!-- ====================================================================== -->
@@ -102,31 +125,8 @@
 	</target>
 
 	<!-- ====================================================================== -->
-	<!-- Run junit tests                                                         -->
+	<!-- JUnit internal targets                                                        -->
 	<!-- ====================================================================== -->
-
-	<target name="test-junit" 
-	  depends="junit-present, compile-tests" 
-	  if="junit.present" 
-	  description="Run the unit tests">
-		<mkdir dir="${coppa.pa.test.reports}"/>
-		<junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
-			<sysproperty key="basedir" value="."/>
-			<formatter type="xml"/>
-			<formatter type="plain" usefile="false"/>
-			<classpath>
-				<path refid="build.test.classpath"/>
-				<pathelement location="${coppa.pa.build.outputDir}"/>
-				<pathelement location="${coppa.pa.build.testOutputDir}"/>
-			</classpath>
-			<batchtest todir="${coppa.pa.test.reports}">
-				<fileset dir="${coppa.pa.build.testDir.0}">
-					<include name="**/*Test.java"/>
-					<exclude name="**/*Abstract*Test.java"/>
-				</fileset>
-			</batchtest>
-		</junit>
-	</target>
 
 	<target name="test-junit-present">
 		<available classname="junit.framework.Test" property="junit.present"/>
@@ -141,13 +141,57 @@
 	</target>
 
     <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-cobertura" depends="junit-present, compile-tests" 
+            if="junit.present" description="Run JUnit and Cobertura tests">
+    	
+    	<delete file="${coppa.pa.build.dir}/cobertura.ser" />
+
+    	<cobertura-instrument datafile="${coppa.pa.build.dir}/cobertura.ser"
+    		                  toDir="${coppa.pa.build.coberturaOutputDir}">
+    	    <fileset dir="${coppa.pa.build.outputDir}">
+    	        <include name="**/*.class" />
+    	    </fileset>
+    	</cobertura-instrument>   
+    	
+        <mkdir dir="${coppa.pa.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <sysproperty key="basedir" value="."/>
+        	<sysproperty key="net.sourceforge.cobertura.datafile"
+        	        file="${coppa.pa.build.dir}/cobertura.ser" />
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${coppa.pa.build.coberturaOutputDir}"/>
+        	<classpath location="${coppa.pa.build.outputDir}"/>
+        	<classpath location="${coppa.pa.build.testOutputDir}"/>
+            <classpath refid="cobertura.classpath"/>
+            <classpath refid="build.test.classpath"/>
+            <batchtest todir="${coppa.pa.test.reports}">
+                <fileset dir="${coppa.pa.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    	
+    	<cobertura-report datafile="${coppa.pa.build.dir}/cobertura.ser"
+    		              destdir="${coppa.pa.coverage.reports}" 
+    		              srcdir="${coppa.pa.build.srcDir.0}" />
+    	
+    	<cobertura-check datafile="${coppa.pa.build.dir}/cobertura.ser"
+    		             branchrate="20" 
+    		             totalbranchrate="40" 
+    		             totallinerate="40"
+    	                 haltonfailure="false"/>
+     </target>
+
+    <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle" description="Run checkstyle">
-        <taskdef resource="checkstyletask.properties" 
-        	     classpath="${coppa.pa.lib.test.dir}/checkstyle-all-4.4.jar"/>
-
         <checkstyle config="${coppa.pa.lib.test.dir}/sun_checks.xml" failOnViolation="false">
             <fileset dir="src/main" includes="**/*.java" />
         	<formatter type="plain"/>
@@ -160,10 +204,6 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd" description="Run PMD checks">
-        <taskdef name="pmd" 
-        	classpath="${coppa.pa.lib.test.dir}/pmd-4.2.2.jar"
-        	classname="net.sourceforge.pmd.ant.PMDTask"/>
-    	
     	<pmd shortFilenames="true" failOnRuleViolation="false">
     	    <ruleset>src/test/resources/paPmd.xml</ruleset>
     		<formatter type="text" toConsole="true"/>
@@ -174,12 +214,24 @@
     	 </pmd>
     </target>
 
+    <!-- ====================================================================== -->
+    <!-- Run Simian                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-simian" description="Run Simian similarity analyzer checks">
+        <simian>
+            <fileset dir="src/main" includes="**/*.java"/>
+            <formatter type="plain" toFile="${coppa.pa.build.dir}/simian.txt"/>
+            <formatter type="plain"/>
+        </simian>
+    </target>
+
 	<!-- ====================================================================== -->
 	<!-- Run all tests                                                          -->
 	<!-- ====================================================================== -->
 
 	<target name="test-all" 
-		    depends="test-junit,test-checkstyle,test-pmd" 
+		    depends="test-cobertura,test-checkstyle,test-pmd,test-simian" 
 		    description="Run all tests"/>
 
 	<!-- ====================================================================== -->

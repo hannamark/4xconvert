@@ -12,10 +12,8 @@
 	<classpathentry kind="lib" path="lib/main/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/main/dwr-1.1-beta-3.jar"/>
 	<classpathentry kind="lib" path="lib/main/freemarker-2.3.8.jar"/>
-	<classpathentry kind="lib" path="lib/main/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/main/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="lib/main/sitemesh-2.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/main/spring-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/main/struts2-api-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/main/struts2-core-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/main/struts2-sitemesh-plugin-2.0.5.jar"/>
@@ -23,5 +21,10 @@
 	<classpathentry kind="lib" path="lib/main/xwork-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/test/checkstyle-all-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib/test/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/test/jaxen-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/test/pmd-4.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/test/simian-2.2.24.jar"/>
+	<classpathentry kind="lib" path="lib/main/spring-2.0.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
