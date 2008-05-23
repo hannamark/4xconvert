@@ -2,12 +2,16 @@ package gov.nih.nci.coppa.pa.bo;
 
 import java.io.Serializable;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 /**
  * Simple JavaBean domain object with an id property. Used as a base class for objects needing this property.
  */
+@MappedSuperclass
 public abstract class AbstractEntity implements Serializable, Auditable {
-    private static final long serialVersionUID = 1L;
-
     /**
      * Standard max length for text columns.
      */
@@ -24,6 +28,8 @@ public abstract class AbstractEntity implements Serializable, Auditable {
      *
      * @return the id
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return this.id;
     }
