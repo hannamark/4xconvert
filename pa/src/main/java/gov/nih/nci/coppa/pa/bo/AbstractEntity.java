@@ -6,6 +6,12 @@ import java.io.Serializable;
  * Simple JavaBean domain object with an id property. Used as a base class for objects needing this property.
  */
 public abstract class AbstractEntity implements Serializable, Auditable {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Standard max length for text columns.
+     */
+    public static final int LONG_TEXT_LENGTH = 200;
     private Long id;
 
     @SuppressWarnings("unused")    

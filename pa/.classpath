@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib/test/pmd-4.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/test/simian-2.2.24.jar"/>
 	<classpathentry kind="lib" path="lib/main/spring-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/main/persistence-api-1.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

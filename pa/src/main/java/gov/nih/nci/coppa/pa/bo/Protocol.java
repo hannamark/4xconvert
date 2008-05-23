@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Protocol bean for managing protocol
+ * Protocol bean for managing protocol.
  * @author Naveen Amiruddin
  * @since 05/22/2007
  
@@ -18,22 +18,22 @@ import javax.persistence.Table;
 
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
-@Table(name="protocol")
-public class Protocol extends EntityIdentifier {
-	
-	private static final long serialVersionUID = 1234567890L;
-	
+@Table(name = "protocol")
+public class Protocol extends AbstractEntity {
+    
+    private static final long serialVersionUID = 1234567890L;
+    
     private Long id;
-    private String nciIdentifier = null ;
-    private String longTitleText = null ;
-    private String shortTitleText = null ;
-    private String intentCode  = null ;
-    private String monitorCode = null ;
-    private String phaseCode = null ;
+    private String nciIdentifier = null;
+    private String longTitleText = null;
+    private String shortTitleText = null;
+    private String intentCode  = null;
+    private String monitorCode = null;
+    private String phaseCode = null;
     
     /**
-     * set id 	
-     * @param id
+     * set id.
+     * @param id id
      */
     public void setId(Long id) {
         this.id = id;
@@ -45,63 +45,99 @@ public class Protocol extends EntityIdentifier {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)    
-    @Column(name="ID")
+    @Column(name = "ID")
     public Long getId() {
         return this.id;
     }
 
-    @Column(name="NCI_IDENTIFIER",length=200 )
+    /**
+     * @return nci id
+     */
+    @Column(name = "NCI_IDENTIFIER", length = LONG_TEXT_LENGTH)
     public String getNciIdentifier() {
-		return nciIdentifier;
-	}
+        return nciIdentifier;
+    }
 
-	public void setNciIdentifier(String nciIdentifier) {
-		this.nciIdentifier = nciIdentifier;
-	}
+    /**
+     * @param nciIdentifier nci id
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
+    }
 
-	@Column(name="LONG_TITLE_TEXT ",length=200 )
-	public String getLongTitleText() {
-		return longTitleText;
-	}
+    /**
+     * @return long title
+     */
+    @Column(name = "LONG_TITLE_TEXT ", length = LONG_TEXT_LENGTH)
+    public String getLongTitleText() {
+        return longTitleText;
+    }
 
-	public void setLongTitleText(String longTitleText) {
-		this.longTitleText = longTitleText;
-	}
+    /**
+     * @param longTitleText long title
+     */
+    public void setLongTitleText(String longTitleText) {
+        this.longTitleText = longTitleText;
+    }
 
-	@Column(name="SHORT_TITLE_TEXT",length=200 )
-	public String getShortTitleText() {
-		return shortTitleText;
-	}
+    /**
+     * @return short title
+     */
+    @Column(name = "SHORT_TITLE_TEXT", length = LONG_TEXT_LENGTH)
+    public String getShortTitleText() {
+        return shortTitleText;
+    }
 
-	public void setShortTitleText(String shortTitleText) {
-		this.shortTitleText = shortTitleText;
-	}
+    /**
+     * @param shortTitleText short title
+     */
+    public void setShortTitleText(String shortTitleText) {
+        this.shortTitleText = shortTitleText;
+    }
 
-	@Column(name="INTENT_CODE")
-	public String getIntentCode() {
-		return intentCode;
-	}
+    /**
+     * @return intent code
+     */
+    @Column(name = "INTENT_CODE")
+    public String getIntentCode() {
+        return intentCode;
+    }
 
-	public void setIntentCode(String intentCode) {
-		this.intentCode = intentCode;
-	}
+    /**
+     * @param intentCode intent
+     */
+    public void setIntentCode(String intentCode) {
+        this.intentCode = intentCode;
+    }
 
-	@Column(name="MONITOR_CODE")
-	public String getMonitorCode() {
-		return monitorCode;
-	}
+    /**
+     * @return monitor code
+     */
+    @Column(name = "MONITOR_CODE")
+    public String getMonitorCode() {
+        return monitorCode;
+    }
 
-	public void setMonitorCode(String monitorCode) {
-		this.monitorCode = monitorCode;
-	}
+    /**
+     * @param monitorCode monitor code
+     */
+    public void setMonitorCode(String monitorCode) {
+        this.monitorCode = monitorCode;
+    }
 
-	@Column(name="PHASE_CODE")
-	public String getPhaseCode() {
-		return phaseCode;
-	}
+    /**
+     * @return phase code
+     */
+    @Column(name = "PHASE_CODE")
+    public String getPhaseCode() {
+        return phaseCode;
+    }
 
-	public void setPhaseCode(String phaseCode) {
-		this.phaseCode = phaseCode;
-	}
+    /**
+     * @param phaseCode phase code
+     */
+    public void setPhaseCode(String phaseCode) {
+        this.phaseCode = phaseCode;
+    }
 
 }

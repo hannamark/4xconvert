@@ -4,6 +4,6 @@
         <additional-data name="protect-config-file" value="false"/>
     </local-check-config>
     <fileset name="main source" enabled="true" check-config-name="paCheckstyle" local="true">
-        <file-match-pattern match-pattern="src/main/java" include-pattern="true"/>
+        <file-match-pattern match-pattern="src\\main\\*" include-pattern="true"/>
     </fileset>
 </fileset-config>
