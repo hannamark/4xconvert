@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gov.nih.nci.coppa;
+package gov.nih.nci;
 
-import gov.nih.nci.HelloWorldAction;
+import gov.nih.nci.IndexAction;
 import junit.framework.TestCase;
 
 import com.opensymphony.xwork2.Action;
@@ -25,12 +25,11 @@ import com.opensymphony.xwork2.Action;
 /**
  * 
  */
-public class HelloWorldActionTest extends TestCase {
+public class IndexActionTest extends TestCase {
     
-    public void testHelloWorldAction() throws Exception {
-        HelloWorldAction action = new HelloWorldAction();
+    public void testIndexAction() throws Exception {
+        IndexAction action = new IndexAction();
         String result = action.execute();
         assertEquals(Action.SUCCESS, result);
     }
 }
-
