@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="src" path="pa-web/src/test/resources"/>
+	<classpathentry kind="src" path="pa-ejb/src/main/java"/>
+	<classpathentry kind="src" path="pa-ejb/src/main/resources"/>
+	<classpathentry kind="src" path="pa-ejb/src/test/resources"/>
+	<classpathentry kind="src" path="pa-ejb/src/test/java"/>
+	<classpathentry kind="src" path="pa-web/src/test/java"/>
+	<classpathentry kind="src" path="pa-web/src/main/resources"/>
+	<classpathentry kind="src" path="pa-web/src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/main/aopalliance-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/main/commons-fileupload-1.1.1.jar"/>
@@ -33,5 +37,9 @@
 	<classpathentry kind="lib" path="lib/main/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/main/security-4.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/main/hibernate-validator-3.0.0.ga.jar"/>
+	<classpathentry kind="lib" path="lib/main/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/main/cglib-2.1_3.jar"/>
+	<classpathentry kind="lib" path="lib/main/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/main/jta-1.0.1B.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
