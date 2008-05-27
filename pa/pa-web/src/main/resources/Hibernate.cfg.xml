@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration
+PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory name="java:/hibernate/SessionFactory" >
+        <property name="hibernate.connection.datasource">java:/pa-ds</property>
+        <property name="hibernate.current_session_context_class">managed</property>
+        <property name="hibernate.transaction.factory_class">org.hibernate.transaction.CMTTransactionFactory</property>
+        <property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.jdbc.batch_size">25</property>
+        <property name="hibernate.jdbc.batch_versioned_data">true</property>
+        <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+        <property name="hibernate.cache.use_query_cache">true</property>
+
+		<-- mapping classes -->
+        <mapping class="gov.nih.nci.pa.bo.Protocol"/>
+        <mapping class="gov.nih.nci.pa.bo.ProtocolStatus" />
+        <mapping class="gov.nih.nci.pa.bo.HealthcareSite"/>
+
+    </session-factory>
+</hibernate-configuration>

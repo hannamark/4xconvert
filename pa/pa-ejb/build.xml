@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="pa-web" default="war" basedir=".">
+    <property file="${basedir}/../build.properties"/>
+    <property name="pa.pmd" value="${basedir}/../resources/paPmd.xml"/>
+    <property name="pa.checkstyle" value="${basedir}/../resources/paCheckstyle.xml"/>
+
+    <property name="pa-web.build.finalName" value="pa"/>
+    <property name="pa-web.build.dir" value="${basedir}/target"/>
+    <property name="pa-web.build.outputDir" value="${pa-web.build.dir}/classes"/>
+    <property name="pa-web.build.srcDir.0" value="${basedir}/src/main/java"/>
+    <property name="pa-web.build.resourceDir.0" value="${basedir}/src/main/resources"/>
+    <property name="pa-web.build.testOutputDir" value="${pa-web.build.dir}/test-classes"/>
+    <property name="pa-web.build.testDir.0" value="${basedir}/src/test/java"/>
+    <property name="pa-web.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+    <property name="pa-web.test.reports" value="${pa-web.build.dir}/test-reports"/>
+    <property name="pa-web.coverage.reports" value="${pa-web.build.dir}/coverage-reports"/>
+    <property name="pa-web.reporting.outputDirectory" value="${pa-web.build.dir}/site"/>
+    <property name="pa-web.war" value="${pa-web.build.finalName}.war"/>
+    <property name="pa-web.lib.dir" value="${basedir}/../lib"/>
+    <property name="pa-web.lib.test.dir" value="${pa-web.lib.dir}/test"/>
+    <property name="pa-web.lib.main.dir" value="${pa-web.lib.dir}/main"/>
+    <property name="cobertura.lib.dir" value="${pa-web.lib.test.dir}/cobertura"/>
+    <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
+
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
+
+    <path id="build.classpath">
+        <fileset dir="${pa-web.lib.main.dir}">
+            <include name="**/*"/>
+        </fileset>
+    </path>
+    <path id="build.test.classpath">
+        <fileset dir="${pa-web.lib.test.dir}"/>
+        <fileset dir="${pa-web.lib.main.dir}">
+            <include name="**/*"/>
+        </fileset>
+    </path>
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.lib.dir}">
+            <include name="cobertura.jar" />
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <!-- ====================================================================== -->
+    <!-- Task definitions                                                       -->
+    <!-- ====================================================================== -->
+
+    <taskdef resource="checkstyletask.properties" 
+             classpath="${pa-web.lib.test.dir}/checkstyle-all-4.4.jar"/>
+    <taskdef name="pmd" 
+             classpath="${pa-web.lib.test.dir}/pmd-4.2.2.jar"
+             classname="net.sourceforge.pmd.ant.PMDTask"/>
+    <taskdef resource="simiantask.properties" 
+             classpath="${pa-web.lib.test.dir}/simian-2.2.24.jar"/>
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+    
+    <!-- ====================================================================== -->
+    <!-- Cleaning up target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="clean" description="Clean the output directory">
+        <delete dir="${pa-web.build.dir}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Compilation target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="compile" description="Compile the code">
+        <mkdir dir="${pa-web.build.outputDir}"/>
+        <javac destdir="${pa-web.build.outputDir}" 
+       nowarn="false" 
+       debug="true" 
+       optimize="false" 
+       deprecation="true" 
+       target="1.5" 
+       verbose="false" 
+       fork="false" 
+       source="1.5">
+            <src>
+                <pathelement location="${pa-web.build.srcDir.0}"/>
+            </src>
+            <classpath refid="build.classpath"/>
+        </javac>
+        <copy todir="${pa-web.build.outputDir}">
+            <fileset dir="${pa-web.build.resourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests" 
+      depends="junit-present, compile" 
+      description="Compile the test code" 
+      if="junit.present">
+        <mkdir dir="${pa-web.build.testOutputDir}"/>
+        <javac destdir="${pa-web.build.testOutputDir}" 
+       nowarn="false" 
+       debug="true" 
+       optimize="false" 
+       deprecation="true" 
+       target="1.5" 
+       verbose="false" 
+       fork="false" 
+       source="1.5">
+            <src>
+                <pathelement location="${pa-web.build.testDir.0}"/>
+            </src>
+            <classpath>
+                <path refid="build.test.classpath"/>
+                <pathelement location="${pa-web.build.outputDir}"/>
+            </classpath>
+        </javac>
+        <copy todir="${pa-web.build.testOutputDir}">
+            <fileset dir="${pa-web.build.testResourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- JUnit internal targets                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="test-junit-present">
+        <available classname="junit.framework.Test" property="junit.present"/>
+    </target>
+
+    <target name="junit-present" 
+      depends="test-junit-present" 
+      unless="junit.present">
+        <echo>=================================== WARNING ===================================</echo>
+        <echo> Junit isn&apos;t available. Tests not executed. </echo>
+        <echo>===============================================================================</echo>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-cobertura" depends="junit-present, compile-tests" 
+            if="junit.present" description="Run JUnit and Cobertura tests">
+        
+        <delete file="${pa-web.build.dir}/cobertura.ser" />
+
+        <cobertura-instrument datafile="${pa-web.build.dir}/cobertura.ser"
+                              toDir="${pa-web.build.coberturaOutputDir}">
+            <fileset dir="${pa-web.build.outputDir}">
+                <include name="**/*.class" />
+            </fileset>
+        </cobertura-instrument>   
+        
+        <mkdir dir="${pa-web.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <sysproperty key="basedir" value="."/>
+            <sysproperty key="net.sourceforge.cobertura.datafile"
+                    file="${pa-web.build.dir}/cobertura.ser" />
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${pa-web.build.coberturaOutputDir}"/>
+            <classpath location="${pa-web.build.outputDir}"/>
+            <classpath location="${pa-web.build.testOutputDir}"/>
+            <classpath refid="cobertura.classpath"/>
+            <classpath refid="build.test.classpath"/>
+            <batchtest todir="${pa-web.test.reports}">
+                <fileset dir="${pa-web.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
+                          destdir="${pa-web.coverage.reports}" 
+                          srcdir="${pa-web.build.srcDir.0}" />
+        
+        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
+                         totalbranchrate="10" 
+                         totallinerate="10"
+                         haltonfailure="false"/>
+     </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run checkstyle                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="test-checkstyle" description="Run checkstyle">
+        <checkstyle config="${pa.checkstyle}" failOnViolation="true">
+            <fileset dir="src/main" includes="**/*.java" />
+            <formatter type="plain"/>
+            <formatter type="plain" toFile="${pa-web.build.dir}/checkstyle.txt"/>
+        </checkstyle>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run PMD                                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-pmd" description="Run PMD checks">
+        <pmd shortFilenames="true" failOnRuleViolation="true" 
+        	                       rulesetfiles="${pa.pmd}">
+            <formatter type="text" toConsole="true"/>
+            <formatter type="text" toFile="${pa-web.build.dir}/pmd.txt"/>
+            <fileset dir="src/main">
+                <include name="**/*.java"/>
+            </fileset>
+         </pmd>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run Simian                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-simian" description="Run Simian similarity analyzer checks">
+        <simian>
+            <fileset dir="src/main" includes="**/*.java"/>
+            <formatter type="plain" toFile="${pa-web.build.dir}/simian.txt"/>
+            <formatter type="plain"/>
+        </simian>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run all tests                                                          -->
+    <!-- ====================================================================== -->
+
+    <target name="test-all" 
+            depends="test-cobertura,test-checkstyle,test-pmd,test-simian" 
+            description="Run all tests"/>
+
+    <!-- ====================================================================== -->
+    <!-- Package target                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="package" depends="compile,test-all" description="Package the application">
+        <mkdir dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
+        <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
+            <fileset dir="${pa-web.lib.main.dir}" includes="**/*" excludes="log4j.jar"/>
+        </copy>
+
+        <war destfile="${pa-web.build.dir}/${pa-web.war}" 
+             compress="false" 
+             webxml="${basedir}/src/main/webapp/WEB-INF/web.xml">
+            
+            <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
+            <classes dir="${pa-web.build.outputDir}"/>
+            <webinf dir="${basedir}/src/main/webapp/WEB-INF" excludes="web.xml"/>
+            <fileset dir="${basedir}/src/main/webapp"/>
+        </war>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Deploy locally                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="deploy" description="Deploys the war for the application">
+        <available file="${pa-web.build.dir}/${pa-web.war}" property="pa-web.war.present"/>
+        <fail unless="pa-web.war.present" message="War file not found."/>
+
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+
+        <copy todir="${jboss.deploy.directory}" file="${pa-web.build.dir}/${pa-web.war}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- A target to build and deploy the package                               -->
+    <!-- ====================================================================== -->
+
+    <target name="war" depends="package,deploy" description="Builds and deploys the war for the application"/>
+
+    <!-- ====================================================================== -->
+    <!-- Help target                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="help">
+        <echo message="Please run: $ant -projecthelp"/>
+    </target>
+</project>

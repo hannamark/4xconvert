@@ -4,68 +4,14 @@
 <!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
 <!-- ====================================================================== -->
 
-<project name="pa" default="war" basedir=".">
-	<property file="build.properties"/>
-
-	<property name="coppa.pa.build.finalName" value="pa"/>
-	<property name="coppa.pa.build.dir" value="target"/>
-	<property name="coppa.pa.build.outputDir" value="${coppa.pa.build.dir}/classes"/>
-	<property name="coppa.pa.build.srcDir.0" value="src/main/java"/>
-	<property name="coppa.pa.build.resourceDir.0" value="src/main/resources"/>
-	<property name="coppa.pa.build.testOutputDir" value="${coppa.pa.build.dir}/test-classes"/>
-	<property name="coppa.pa.build.testDir.0" value="src/test/java"/>
-	<property name="coppa.pa.build.testResourceDir.0" value="src/main/resources"/>
-	<property name="coppa.pa.test.reports" value="${coppa.pa.build.dir}/test-reports"/>
-	<property name="coppa.pa.coverage.reports" value="${coppa.pa.build.dir}/coverage-reports"/>
-	<property name="coppa.pa.reporting.outputDirectory" value="${coppa.pa.build.dir}/site"/>
-	<property name="coppa.pa.war" value="${coppa.pa.build.finalName}.war"/>
-    <property name="coppa.pa.lib.dir" value="${basedir}/lib"/>
-    <property name="coppa.pa.lib.test.dir" value="${coppa.pa.lib.dir}/test"/>
-    <property name="coppa.pa.lib.main.dir" value="${coppa.pa.lib.dir}/main"/>
-	<property name="cobertura.lib.dir" value="${coppa.pa.lib.test.dir}/cobertura"/>
-    <property name="coppa.pa.build.coberturaOutputDir" value="${coppa.pa.build.dir}/generated-classes"/>
-
-	<!-- ====================================================================== -->
-	<!-- Defining classpaths                                                    -->
-	<!-- ====================================================================== -->
-
-	<path id="build.classpath">
-		<fileset dir="${coppa.pa.lib.main.dir}">
-			<include name="**/*"/>
-		</fileset>
-	</path>
-	<path id="build.test.classpath">
-		<fileset dir="${coppa.pa.lib.test.dir}"/>
-        <fileset dir="${coppa.pa.lib.main.dir}">
-            <include name="**/*"/>
-        </fileset>
-	</path>
-    <path id="cobertura.classpath">
-        <fileset dir="${cobertura.lib.dir}">
-            <include name="cobertura.jar" />
-            <include name="*.jar" />
-        </fileset>
-    </path>
-
-    <!-- ====================================================================== -->
-    <!-- Task definitions                                                       -->
-    <!-- ====================================================================== -->
-
-    <taskdef resource="checkstyletask.properties" 
-             classpath="${coppa.pa.lib.test.dir}/checkstyle-all-4.4.jar"/>
-    <taskdef name="pmd" 
-             classpath="${coppa.pa.lib.test.dir}/pmd-4.2.2.jar"
-             classname="net.sourceforge.pmd.ant.PMDTask"/>
-    <taskdef resource="simiantask.properties" 
-    	     classpath="${coppa.pa.lib.test.dir}/simian-2.2.24.jar"/>
-	<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
-	
+<project name="pa" default="package" basedir=".">
 	<!-- ====================================================================== -->
 	<!-- Cleaning up target                                                     -->
 	<!-- ====================================================================== -->
 
 	<target name="clean" description="Clean the output directory">
-		<delete dir="${coppa.pa.build.dir}"/>
+        <ant target="clean" dir="pa-ejb"/>
+        <ant target="clean" dir="pa-web"/>
 	</target>
 
 	<!-- ====================================================================== -->
@@ -73,234 +19,37 @@
 	<!-- ====================================================================== -->
 
 	<target name="compile" description="Compile the code">
-		<mkdir dir="${coppa.pa.build.outputDir}"/>
-		<javac destdir="${coppa.pa.build.outputDir}" 
-	   nowarn="false" 
-	   debug="true" 
-	   optimize="false" 
-	   deprecation="true" 
-	   target="1.5" 
-	   verbose="false" 
-	   fork="false" 
-	   source="1.5">
-			<src>
-				<pathelement location="${coppa.pa.build.srcDir.0}"/>
-			</src>
-			<classpath refid="build.classpath"/>
-		</javac>
-		<copy todir="${coppa.pa.build.outputDir}">
-			<fileset dir="${coppa.pa.build.resourceDir.0}"/>
-		</copy>
+        <ant target="compile" dir="pa-ejb"/>
+        <ant target="compile" dir="pa-web"/>
+        <ant target="compile-tests" dir="pa-ejb"/>
+        <ant target="compile-tests" dir="pa-web"/>
 	</target>
-
-	<!-- ====================================================================== -->
-	<!-- Test-compilation target                                                -->
-	<!-- ====================================================================== -->
-
-	<target name="compile-tests" 
-	  depends="junit-present, compile" 
-	  description="Compile the test code" 
-	  if="junit.present">
-		<mkdir dir="${coppa.pa.build.testOutputDir}"/>
-		<javac destdir="${coppa.pa.build.testOutputDir}" 
-	   nowarn="false" 
-	   debug="true" 
-	   optimize="false" 
-	   deprecation="true" 
-	   target="1.5" 
-	   verbose="false" 
-	   fork="false" 
-	   source="1.5">
-			<src>
-				<pathelement location="${coppa.pa.build.testDir.0}"/>
-			</src>
-			<classpath>
-				<path refid="build.test.classpath"/>
-				<pathelement location="${coppa.pa.build.outputDir}"/>
-			</classpath>
-		</javac>
-		<copy todir="${coppa.pa.build.testOutputDir}">
-			<fileset dir="${coppa.pa.build.testResourceDir.0}"/>
-		</copy>
-	</target>
-
-	<!-- ====================================================================== -->
-	<!-- JUnit internal targets                                                        -->
-	<!-- ====================================================================== -->
-
-	<target name="test-junit-present">
-		<available classname="junit.framework.Test" property="junit.present"/>
-	</target>
-
-	<target name="junit-present" 
-	  depends="test-junit-present" 
-	  unless="junit.present">
-		<echo>=================================== WARNING ===================================</echo>
-		<echo> Junit isn&apos;t available. Tests not executed. </echo>
-		<echo>===============================================================================</echo>
-	</target>
-
-    <!-- ====================================================================== -->
-    <!-- Run Cobertura and JUnit                                                -->
-    <!-- ====================================================================== -->
-
-    <target name="test-cobertura" depends="junit-present, compile-tests" 
-            if="junit.present" description="Run JUnit and Cobertura tests">
-    	
-    	<delete file="${coppa.pa.build.dir}/cobertura.ser" />
-
-    	<cobertura-instrument datafile="${coppa.pa.build.dir}/cobertura.ser"
-    		                  toDir="${coppa.pa.build.coberturaOutputDir}">
-    	    <fileset dir="${coppa.pa.build.outputDir}">
-    	        <include name="**/*.class" />
-    	    </fileset>
-    	</cobertura-instrument>   
-    	
-        <mkdir dir="${coppa.pa.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
-            <sysproperty key="basedir" value="."/>
-        	<sysproperty key="net.sourceforge.cobertura.datafile"
-        	        file="${coppa.pa.build.dir}/cobertura.ser" />
-            <formatter type="xml"/>
-            <formatter type="plain" usefile="false"/>
-            <classpath location="${coppa.pa.build.coberturaOutputDir}"/>
-        	<classpath location="${coppa.pa.build.outputDir}"/>
-        	<classpath location="${coppa.pa.build.testOutputDir}"/>
-            <classpath refid="cobertura.classpath"/>
-            <classpath refid="build.test.classpath"/>
-            <batchtest todir="${coppa.pa.test.reports}">
-                <fileset dir="${coppa.pa.build.testDir.0}">
-                    <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-    	
-    	<cobertura-report datafile="${coppa.pa.build.dir}/cobertura.ser"
-    		              destdir="${coppa.pa.coverage.reports}" 
-    		              srcdir="${coppa.pa.build.srcDir.0}" />
-    	
-    	<cobertura-check datafile="${coppa.pa.build.dir}/cobertura.ser"
-    		             totalbranchrate="10" 
-    		             totallinerate="10"
-    	                 haltonfailure="false"/>
-     </target>
-
-    <!-- ====================================================================== -->
-    <!-- Run checkstyle                                                         -->
-    <!-- ====================================================================== -->
-
-    <target name="test-checkstyle" description="Run checkstyle">
-        <checkstyle config="src/test/resources/paCheckstyle.xml" failOnViolation="true">
-            <fileset dir="src/main" includes="**/*.java" />
-        	<formatter type="plain"/>
-            <formatter type="plain" toFile="${coppa.pa.build.dir}/checkstyle.txt"/>
-        </checkstyle>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- Run PMD                                                                -->
-    <!-- ====================================================================== -->
-
-    <target name="test-pmd" description="Run PMD checks">
-    	<pmd shortFilenames="true" failOnRuleViolation="true">
-    	    <ruleset>src/test/resources/paPmd.xml</ruleset>
-    		<formatter type="text" toConsole="true"/>
-    	    <formatter type="text" toFile="${coppa.pa.build.dir}/pmd.txt"/>
-    	    <fileset dir="src/main">
-    	        <include name="**/*.java"/>
-    	    </fileset>
-    	 </pmd>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- Run Simian                                                             -->
-    <!-- ====================================================================== -->
-
-    <target name="test-simian" description="Run Simian similarity analyzer checks">
-        <simian>
-            <fileset dir="src/main" includes="**/*.java"/>
-            <formatter type="plain" toFile="${coppa.pa.build.dir}/simian.txt"/>
-            <formatter type="plain"/>
-        </simian>
-    </target>
 
 	<!-- ====================================================================== -->
 	<!-- Run all tests                                                          -->
 	<!-- ====================================================================== -->
 
-	<target name="test-all" 
-		    depends="test-cobertura,test-checkstyle,test-pmd,test-simian" 
-		    description="Run all tests"/>
-
-	<!-- ====================================================================== -->
-	<!-- Javadoc target                                                         -->
-	<!-- ====================================================================== -->
-
-	<target name="javadoc" description="Generates the Javadoc of the application">
-		<javadoc sourcepath="${coppa.pa.build.srcDir.0}" 
-	     packagenames="*" 
-	     destdir="${coppa.pa.reporting.outputDirectory}/apidocs" 
-	     access="protected" 
-	     old="false" 
-	     verbose="false" 
-	     version="true" 
-	     use="true" 
-	     author="true" 
-	     splitindex="false" 
-	     nodeprecated="false" 
-	     nodeprecatedlist="false" 
-	     notree="false" 
-	     noindex="false" 
-	     nohelp="false" 
-	     nonavbar="false" 
-	     serialwarn="false" 
-	     charset="ISO-8859-1" 
-	     linksource="false" 
-	     breakiterator="false"/>
-	</target>
+	<target name="test" description="Run all tests">
+        <ant target="test-all" dir="pa-ejb"/>
+        <ant target="test-all" dir="pa-web"/>
+        </target>
 
 	<!-- ====================================================================== -->
 	<!-- Package target                                                         -->
 	<!-- ====================================================================== -->
 
-	<target name="package" depends="compile,test-all" description="Package the application">
-		<mkdir dir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib"/>
-		<copy todir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib">
-			<fileset dir="${coppa.pa.lib.main.dir}" includes="**/*" excludes="log4j.jar"/>
-		</copy>
-
-		<war destfile="${coppa.pa.build.dir}/${coppa.pa.war}" 
-             compress="false" 
-	         webxml="${basedir}/src/main/webapp/WEB-INF/web.xml">
-			
-			<lib dir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib"/>
-			<classes dir="${coppa.pa.build.outputDir}"/>
-			<webinf dir="${basedir}/src/main/webapp/WEB-INF" excludes="web.xml"/>
-			<fileset dir="${basedir}/src/main/webapp"/>
-		</war>
+	<target name="package" description="Package the application">
+        <ant target="package" dir="pa-ejb"/>
+        <ant target="package" dir="pa-web"/>
 	</target>
 
 	<!-- ====================================================================== -->
 	<!-- Deploy locally                                                         -->
 	<!-- ====================================================================== -->
 
-	<target name="deploy" description="Deploys the war for the application">
-		<available file="${coppa.pa.build.dir}/${coppa.pa.war}" property="coppa.pa.war.present"/>
-		<fail unless="coppa.pa.war.present" message="War file not found."/>
-
-		<fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
-		<available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
-		<fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-
-		<copy todir="${jboss.deploy.directory}" file="${coppa.pa.build.dir}/${coppa.pa.war}"/>
+	<target name="deploy" description="Deploys the application">
+        <ant target="war" dir="pa-web"/>
 	</target>
-
-	<!-- ====================================================================== -->
-	<!-- A target to build and deploy the package                               -->
-	<!-- ====================================================================== -->
-
-	<target name="war" depends="package,deploy" description="Builds and deploys the war for the application"/>
 
 	<!-- ====================================================================== -->
 	<!-- Help target                                                            -->
