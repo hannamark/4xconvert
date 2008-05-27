@@ -17,6 +17,7 @@
  */
 package gov.nih.nci.coppa;
 
+import gov.nih.nci.HelloWorldAction;
 import junit.framework.TestCase;
 
 import com.opensymphony.xwork2.Action;

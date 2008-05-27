@@ -1,4 +1,4 @@
-package gov.nih.nci.coppa.pa.service;
+package gov.nih.nci.pa.service;
 
 /**
  * @author Hugh

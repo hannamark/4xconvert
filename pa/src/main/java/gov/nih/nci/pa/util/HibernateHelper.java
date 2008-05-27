@@ -1,4 +1,4 @@
-package gov.nih.nci.coppa.pa.util;
+package gov.nih.nci.pa.util;
 
 
 import gov.nih.nci.security.AuthorizationManager;

@@ -1,4 +1,4 @@
-package gov.nih.nci.coppa.pa.bo;
+package gov.nih.nci.pa.bo;
 
 import java.io.Serializable;
 

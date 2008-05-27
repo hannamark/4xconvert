@@ -1,6 +1,6 @@
-package gov.nih.nci.coppa.pa.dao.hibernate;
+package gov.nih.nci.pa.dao.hibernate;
 
-import gov.nih.nci.coppa.pa.service.IProtocolService;
+import gov.nih.nci.pa.service.IProtocolService;
 
 
 /**
@@ -10,7 +10,7 @@ import gov.nih.nci.coppa.pa.service.IProtocolService;
 public class ProtocolServiceImpl implements IProtocolService {
 
     /**
-     * @see gov.nih.nci.coppa.pa.service.IProtocolService#getProtocol()
+     * @see gov.nih.nci.pa.service.IProtocolService#getProtocol()
      */
     public void getProtocol() {
         // TODO Auto-generated method stub

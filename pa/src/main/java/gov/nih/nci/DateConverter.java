@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gov.nih.nci.coppa;
+package gov.nih.nci;
 
 import org.apache.struts2.util.StrutsTypeConverter;
 
