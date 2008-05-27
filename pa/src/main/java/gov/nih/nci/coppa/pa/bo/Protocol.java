@@ -1,11 +1,17 @@
 package gov.nih.nci.coppa.pa.bo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Sort;
 
 /**
  * Protocol bean for managing protocol.
@@ -30,6 +36,8 @@ public class Protocol extends AbstractEntity {
     private String intentCode  = null;
     private String monitorCode = null;
     private String phaseCode = null;
+    private List<ProtocolStatus> protocolStatus = new ArrayList<ProtocolStatus>();
+    
     
     /**
      * set id.
@@ -139,5 +147,20 @@ public class Protocol extends AbstractEntity {
     public void setPhaseCode(String phaseCode) {
         this.phaseCode = phaseCode;
     }
+
+    /*
+     * return protocol status
+     */
+    @OneToMany(mappedBy = "protocol")
+    public List<ProtocolStatus> getProtocolStatus() {
+		return protocolStatus;
+	}
+
+	public void setProtocolStatus(List<ProtocolStatus> protocolStatus) {
+		this.protocolStatus = protocolStatus;
+	}
+    
+    
+    
 
 }
