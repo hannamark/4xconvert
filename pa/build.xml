@@ -267,7 +267,7 @@
 	<target name="package" depends="compile,test-all" description="Package the application">
 		<mkdir dir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib"/>
 		<copy todir="${coppa.pa.build.dir}/${coppa.pa.build.finalName}/WEB-INF/lib">
-			<fileset dir="${coppa.pa.lib.main.dir}" includes="**/*"/>
+			<fileset dir="${coppa.pa.lib.main.dir}" includes="**/*" excludes="log4j.jar"/>
 		</copy>
 
 		<war destfile="${coppa.pa.build.dir}/${coppa.pa.war}" 
