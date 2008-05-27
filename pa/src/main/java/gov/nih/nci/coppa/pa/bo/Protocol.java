@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Sort;
-
 /**
  * Protocol bean for managing protocol.
  * @author Naveen Amiruddin
@@ -148,17 +146,20 @@ public class Protocol extends AbstractEntity {
         this.phaseCode = phaseCode;
     }
 
-    /*
-     * return protocol status
+    /**
+     * @return protocol status
      */
     @OneToMany(mappedBy = "protocol")
     public List<ProtocolStatus> getProtocolStatus() {
-		return protocolStatus;
-	}
+        return protocolStatus;
+    }
 
-	public void setProtocolStatus(List<ProtocolStatus> protocolStatus) {
-		this.protocolStatus = protocolStatus;
-	}
+    /**
+     * @param protocolStatus protocol status
+     */
+    public void setProtocolStatus(List<ProtocolStatus> protocolStatus) {
+        this.protocolStatus = protocolStatus;
+    }
     
     
     
