@@ -14,6 +14,7 @@
 	<target name="clean" description="Clean the output directory">
         <ant target="clean" dir="pa-ejb"/>
         <ant target="clean" dir="pa-web"/>
+        <ant target="clean" dir="pa-ear"/>
 	</target>
 
 	<!-- ====================================================================== -->
@@ -45,18 +46,26 @@
         <ant target="package" dir="pa-web"/>
 	</target>
 
-	<!-- ====================================================================== -->
-	<!-- Deploy locally                                                         -->
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
+    <!-- Deploy locally                                                         -->
+    <!-- ====================================================================== -->
 
-	<target name="deploy" description="Deploys the application">
+    <target name="deploy" description="Deploys the application">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
         <ant target="jar" dir="pa-ejb"/>
         <ant target="war" dir="pa-web"/>
-	</target>
+    </target>
+
+	<!-- ====================================================================== -->
+    <!-- Run integration tests                                                  -->
+    <!-- ====================================================================== -->
+
+    <target name="test-integration" description="Tests the deployed application">
+        <ant target="test-all" dir="pa-ear"/>
+     </target>
 
 	<!-- ====================================================================== -->
 	<!-- Help target                                                            -->

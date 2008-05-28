@@ -1,7 +1,5 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.bo.HealthcareSite;
-
 /**
  * @author Harsha
  *
@@ -9,7 +7,7 @@ import gov.nih.nci.pa.bo.HealthcareSite;
 public interface IProtocolService {
     /**
      * @param id object id
-     * @return HS object
+     * @return Long title of protocol
      */
-    HealthcareSite getHealthcareSite(long id);
+    String getProtocolLongTitleText(long id);
 }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="pa-ear" default="test-all" basedir=".">
+	
+    <property name="pa-ear.lib.dir" value="${basedir}/../lib"/>
+    <property name="pa-ear.lib.test.dir" value="${pa-ear.lib.dir}/test"/>
+    <property name="pa-ear.lib.main.dir" value="${pa-ear.lib.dir}/main"/>
+    <property name="pa-ear.build.dir" value="${basedir}/target"/>
+    <property name="pa-ear.build.testOutputDir" value="${pa-ear.build.dir}/test-classes"/>
+    <property name="pa-ear.test.reports" value="${pa-ear.build.dir}/test-reports"/>
+    <property name="pa-ear.build.testDir.0" value="${basedir}/src/test/java"/>
+    <property name="pa-ear.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+	<property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
+	
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
+
+    <path id="build.classpath">
+        <fileset dir="${pa-ear.lib.main.dir}">
+            <include name="**/*"/>
+        </fileset>
+    </path>
+    <path id="build.test.classpath">
+        <fileset dir="${pa-ear.lib.test.dir}"/>
+        <fileset dir="${pa-ear.lib.main.dir}">
+            <include name="**/*"/>
+        </fileset>
+        <fileset dir="${pa-ejb.output.dir}">
+            <include name="pa-ejb.jar"/>
+        </fileset>
+    </path>
+	
+    <!-- ====================================================================== -->
+    <!-- Cleaning up target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="clean" description="Clean the output directory">
+        <delete dir="${pa-ear.build.dir}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests" depends="junit-present" 
+    	    description="Compile the test code" if="junit.present">
+        <mkdir dir="${pa-ear.build.testOutputDir}"/>
+        <javac destdir="${pa-ear.build.testOutputDir}" 
+            nowarn="false" 
+            debug="true" 
+            optimize="false" 
+            deprecation="true" 
+            target="1.5" 
+            verbose="false" 
+            fork="false" 
+            source="1.5">
+            <src>
+                <pathelement location="${pa-ear.build.testDir.0}"/>
+            </src>
+            <classpath>
+                <path refid="build.test.classpath"/>
+            </classpath>
+        </javac>
+        <copy todir="${pa-ear.build.testOutputDir}">
+            <fileset dir="${pa-ear.build.testResourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- JUnit internal targets                                                        -->
+    <!-- ====================================================================== -->
+
+    <target name="test-junit-present">
+        <available classname="junit.framework.Test" property="junit.present"/>
+    </target>
+
+    <target name="junit-present" 
+      depends="test-junit-present" 
+      unless="junit.present">
+        <echo>=================================== WARNING ===================================</echo>
+        <echo> Junit isn&apos;t available. Tests not executed. </echo>
+        <echo>===============================================================================</echo>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run JUnit Integration Tests                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="test-all" depends="junit-present, compile-tests" 
+            if="junit.present" description="Run JUnit integration tests">
+        
+        <mkdir dir="${pa-ear.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${pa-ear.build.testOutputDir}"/>
+            <classpath refid="build.test.classpath"/>
+            <batchtest todir="${pa-ear.test.reports}">
+                <fileset dir="${pa-ear.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+     </target>
+
+	
+</project>
