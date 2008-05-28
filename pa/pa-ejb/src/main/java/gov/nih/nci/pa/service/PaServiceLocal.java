@@ -14,8 +14,9 @@ import javax.ejb.Local;
 @Local
 public interface PaServiceLocal {
     /**
+     * @param id object id
      * @return HS object
      */
-    HealthcareSite getHealthcareSite();
+    HealthcareSite getHealthcareSite(long id);
 
 }

@@ -1,20 +1,24 @@
 package gov.nih.nci.pa.service;
 
+import javax.ejb.Stateless;
+
 import gov.nih.nci.pa.bo.HealthcareSite;
 
 /**
  * @author Hugh Reinhart
  *
  */
+@Stateless
 public class PaServiceBean implements PaServiceLocal {
 
     /**
-     * @see gov.nih.nci.pa.service.PaServiceLocal#getHealthcareSite()
+     * @param id object id
      * @return a HS object
      */
-    public HealthcareSite getHealthcareSite() {
-        // TODO Auto-generated method stub
-        return null;
+    public HealthcareSite getHealthcareSite(long id) {
+        HealthcareSite xxx = new HealthcareSite();
+        xxx.setName("test name");
+        return xxx;
     }
 
 }
