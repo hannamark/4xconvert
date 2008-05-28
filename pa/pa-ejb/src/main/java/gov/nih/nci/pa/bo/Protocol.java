@@ -1,47 +1,51 @@
 package gov.nih.nci.pa.bo;
 
+import gov.nih.nci.pa.enums.TrialPhaseCode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
+
 
 /**
  * Protocol bean for managing protocol.
  * @author Naveen Amiruddin
  * @since 05/22/2007
- 
  * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the copyright holder, NCI.
+ * This code may not be used without the express written permission of the
+ * copyright holder, NCI.
  */
 
 @Entity
-@SuppressWarnings("PMD.UselessOverridingMethod")
-@Table(name = "protocol")
+
 public class Protocol extends AbstractEntity {
-    
+
     private static final long serialVersionUID = 1234567890L;
-    
+
     private Long id;
     private String nciIdentifier = null;
     private String longTitleText = null;
     private String shortTitleText = null;
     private String intentCode  = null;
     private String monitorCode = null;
-    private String phaseCode = null;
-    private List<ProtocolStatus> protocolStatus = new ArrayList<ProtocolStatus>();
-    
+    private TrialPhaseCode phaseCode = null;
+    private List<ProtocolStatus> protocolStatuses = new ArrayList<ProtocolStatus>();
+    private List<StudySite> studySites = new ArrayList<StudySite>();
+    private List<StudyInvestigator> studyInvestigators = new ArrayList<StudyInvestigator>();
     
     /**
      * set id.
      * @param id id
      */
-    public void setId(Long id) {
+     public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,6 +53,7 @@ public class Protocol extends AbstractEntity {
      * Get the id of the object.
      * @return the id
      */
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)    
     @Column(name = "ID")
@@ -56,6 +61,7 @@ public class Protocol extends AbstractEntity {
         return this.id;
     }
 
+    
     /**
      * @return nci id
      */
@@ -79,11 +85,13 @@ public class Protocol extends AbstractEntity {
         return longTitleText;
     }
 
+    
     /**
      * @param longTitleText long title
      */
     public void setLongTitleText(String longTitleText) {
         this.longTitleText = longTitleText;
+        
     }
 
     /**
@@ -135,33 +143,63 @@ public class Protocol extends AbstractEntity {
      * @return phase code
      */
     @Column(name = "PHASE_CODE")
-    public String getPhaseCode() {
+    @Enumerated(EnumType.STRING)
+    public TrialPhaseCode getPhaseCode() {
         return phaseCode;
     }
 
     /**
      * @param phaseCode phase code
      */
-    public void setPhaseCode(String phaseCode) {
+    public void setPhaseCode(TrialPhaseCode phaseCode) {
         this.phaseCode = phaseCode;
     }
 
     /**
-     * @return protocol status
+     * 
+     * @return protocol statuses
      */
     @OneToMany(mappedBy = "protocol")
-    public List<ProtocolStatus> getProtocolStatus() {
-        return protocolStatus;
+    public List<ProtocolStatus> getProtocolStatuses() {
+         return protocolStatuses;
     }
 
     /**
-     * @param protocolStatus protocol status
+     * @param protocolStatuses protocol statues 
      */
-    public void setProtocolStatus(List<ProtocolStatus> protocolStatus) {
-        this.protocolStatus = protocolStatus;
+    public void setProtocolStatuses(List<ProtocolStatus> protocolStatuses) {
+        this.protocolStatuses = protocolStatuses;
+    }
+
+    /**
+     * @return studySites
+     */
+    @OneToMany(mappedBy = "protocol")
+    public List<StudySite> getStudySites() {
+        return studySites;
+    }
+
+    /**
+     * 
+     * @param studySites Study Sites
+     */
+    public void setStudySites(List<StudySite> studySites) {
+        this.studySites = studySites;
+    }
+
+    /**
+     * @return studyInvestigators
+     */
+    @OneToMany(mappedBy = "protocol")
+    public List<StudyInvestigator> getStudyInvestigators() {
+        return studyInvestigators;
+    }
+
+    /**
+     * @param studyInvestigators studyInvestigators
+     */
+    public void setStudyInvestigators(List<StudyInvestigator> studyInvestigators) {
+        this.studyInvestigators = studyInvestigators;
     }
     
-    
-    
-
 }

@@ -2,46 +2,27 @@ package gov.nih.nci.pa.bo;
 
 import java.io.Serializable;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-
 /**
- * Simple JavaBean domain object with an id property. Used as a base class for objects needing this property.
+ * Protocol bean for managing protocol.
+ * @author Naveen Amiruddin
+ * @since 05/22/2007
+ 
+ * copyright NCI 2007.  All rights reserved.
+ * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-@MappedSuperclass
 public abstract class AbstractEntity implements Serializable, Auditable {
     /**
      * Standard max length for text columns.
      */
     public static final int LONG_TEXT_LENGTH = 200;
-    private Long id;
-
-    @SuppressWarnings("unused")    
-    private void setId(Long id) {
-        this.id = id;
-    }
-
+    
     /**
-     * Get the id of the object.
-     *
-     * @return the id
+     * @return Long long
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return this.id;
-    }
+    public abstract Long getId();
 
-    /**
-     * determines if the object is new (has not been saved and assigned an id).
-     *
-     * @return whether the object is transient
-     */
-    public boolean isNew() {
-        return (this.id == null);
-    }
+
+
 
     
  

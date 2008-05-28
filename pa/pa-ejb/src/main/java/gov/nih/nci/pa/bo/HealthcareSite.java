@@ -5,14 +5,12 @@ package gov.nih.nci.pa.bo;
 
 
 import java.io.Serializable;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Entity;
-import org.hibernate.annotations.Table;
+import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -23,13 +21,14 @@ import org.hibernate.validator.NotNull;
  *
  */
 @Entity
-@Table (appliesTo = "HEALTHCARE_SITE")
+@Table(name =  "HEALTHCARE_SITE")
 public class HealthcareSite implements Serializable {
     private static final long serialVersionUID = 1234567890L;
     
     private Long id;
     private String name;
-
+    private String nciInstituteCode;
+    
     @SuppressWarnings("unused")    
     private void setId(Long id) {
         this.id = id;
@@ -46,22 +45,13 @@ public class HealthcareSite implements Serializable {
         return this.id;
     }
 
-    /**
-     * determines if the object is new (has not been saved and assigned an id).
-     *
-     * @return whether the object is transient
-     */
-    @Transient
-    public boolean isNew() {
-        return (this.id == null);
-    }
-
     
     /**
      * @return the name
      */
     @NotNull
     @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Column(name = "NAME")
     public String getName() {
         return name;
     }
@@ -72,8 +62,22 @@ public class HealthcareSite implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
 
+    /**
+     * 
+     * @return nciInstituteCode Nci Institute Code
+     */
+    @Column(name = "NCI_INSTITUTE_CODE")
+    public String getNciInstituteCode() {
+        return nciInstituteCode;
+    }
 
+    /**
+     * 
+     * @param nciInstituteCode nciInstituteCode
+     */
+    public void setNciInstituteCode(String nciInstituteCode) {
+       this.nciInstituteCode = nciInstituteCode;
+    }
+    
 }
