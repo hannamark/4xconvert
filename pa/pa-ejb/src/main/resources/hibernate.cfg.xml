@@ -15,7 +15,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
         <property name="hibernate.cache.use_query_cache">true</property>
 
-		<-- mapping classes -->
+		<!-- mapping classes -->
         <mapping class="gov.nih.nci.pa.bo.Protocol"/>
         <mapping class="gov.nih.nci.pa.bo.ProtocolStatus" />
         <mapping class="gov.nih.nci.pa.bo.HealthcareSite"/>

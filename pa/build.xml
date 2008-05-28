@@ -5,6 +5,8 @@
 <!-- ====================================================================== -->
 
 <project name="pa" default="package" basedir=".">
+    <property file="${basedir}/build.properties"/>
+
 	<!-- ====================================================================== -->
 	<!-- Cleaning up target                                                     -->
 	<!-- ====================================================================== -->
@@ -48,6 +50,11 @@
 	<!-- ====================================================================== -->
 
 	<target name="deploy" description="Deploys the application">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+
+        <ant target="jar" dir="pa-ejb"/>
         <ant target="war" dir="pa-web"/>
 	</target>
 

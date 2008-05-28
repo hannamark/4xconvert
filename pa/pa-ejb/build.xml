@@ -4,12 +4,12 @@
 <!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
 <!-- ====================================================================== -->
 
-<project name="pa-ejb" default="war" basedir=".">
+<project name="pa-ejb" default="jar" basedir=".">
     <property file="${basedir}/../build.properties"/>
     <property name="pa.pmd" value="${basedir}/../resources/paPmd.xml"/>
     <property name="pa.checkstyle" value="${basedir}/../resources/paCheckstyle.xml"/>
 
-    <property name="pa-ejb.build.finalName" value="pa"/>
+    <property name="pa-ejb.build.finalName" value="pa-ejb"/>
     <property name="pa-ejb.build.dir" value="${basedir}/target"/>
     <property name="pa-ejb.build.outputDir" value="${pa-ejb.build.dir}/classes"/>
     <property name="pa-ejb.build.srcDir.0" value="${basedir}/src/main/java"/>
@@ -20,7 +20,7 @@
     <property name="pa-ejb.test.reports" value="${pa-ejb.build.dir}/test-reports"/>
     <property name="pa-ejb.coverage.reports" value="${pa-ejb.build.dir}/coverage-reports"/>
     <property name="pa-ejb.reporting.outputDirectory" value="${pa-ejb.build.dir}/site"/>
-    <property name="pa-ejb.war" value="${pa-ejb.build.finalName}.war"/>
+    <property name="pa-ejb.jar" value="${pa-ejb.build.finalName}.jar"/>
     <property name="pa-ejb.lib.dir" value="${basedir}/../lib"/>
     <property name="pa-ejb.lib.test.dir" value="${pa-ejb.lib.dir}/test"/>
     <property name="pa-ejb.lib.main.dir" value="${pa-ejb.lib.dir}/main"/>
@@ -240,7 +240,10 @@
     <!-- ====================================================================== -->
 
     <target name="package" depends="compile,test-all" description="Package the application">
-        <echo>Script for packaging pa-ejb is still under development.</echo>
+        <jar jarfile="${pa-ejb.build.dir}/${pa-ejb.jar}" 
+             compress="true" 
+             index="false" 
+             basedir="${pa-ejb.build.outputDir}"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -248,21 +251,16 @@
     <!-- ====================================================================== -->
 
     <target name="deploy" description="Deploys the war for the application">
-        <available file="${pa-ejb.build.dir}/${pa-ejb.war}" property="pa-ejb.war.present"/>
-        <fail unless="pa-ejb.war.present" message="War file not found."/>
-
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
-        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
-        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-
-        <copy todir="${jboss.deploy.directory}" file="${pa-ejb.build.dir}/${pa-ejb.war}"/>
+        <available file="${pa-ejb.build.dir}/${pa-ejb.jar}" property="pa-ejb.jar.present"/>
+        <fail unless="pa-ejb.jar.present" message="Jar file not found."/>
+        <copy todir="${jboss.deploy.directory}" file="${pa-ejb.build.dir}/${pa-ejb.jar}"/>
     </target>
 
     <!-- ====================================================================== -->
     <!-- A target to build and deploy the package                               -->
     <!-- ====================================================================== -->
 
-    <target name="war" depends="package,deploy" description="Builds and deploys the war for the application"/>
+    <target name="jar" depends="package,deploy" description="Builds and deploys the jar for the application"/>
 
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->

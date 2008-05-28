@@ -263,11 +263,6 @@
     <target name="deploy" description="Deploys the war for the application">
         <available file="${pa-web.build.dir}/${pa-web.war}" property="pa-web.war.present"/>
         <fail unless="pa-web.war.present" message="War file not found."/>
-
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
-        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
-        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-
         <copy todir="${jboss.deploy.directory}" file="${pa-web.build.dir}/${pa-web.war}"/>
     </target>
 
