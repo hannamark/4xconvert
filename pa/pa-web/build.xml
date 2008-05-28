@@ -242,7 +242,7 @@
     <target name="package" depends="compile,test-all" description="Package the application">
         <mkdir dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
-            <fileset dir="${pa-web.lib.main.dir}" includes="**/*" excludes="log4j.jar"/>
+            <fileset dir="${pa-web.lib.main.dir}"/>
         </copy>
 
         <war destfile="${pa-web.build.dir}/${pa-web.war}" 
