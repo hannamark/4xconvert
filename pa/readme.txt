@@ -31,3 +31,9 @@ Installation
 
 
 
+Eclipse setting
+a) Select Windows > General > Editor > Text Editor > 
+	Displayed tab width = 4
+	check insert spaces for tab
+	check show print margin
+	set print margin column as 80
