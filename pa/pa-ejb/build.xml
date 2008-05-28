@@ -4,41 +4,41 @@
 <!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
 <!-- ====================================================================== -->
 
-<project name="pa-web" default="war" basedir=".">
+<project name="pa-ejb" default="war" basedir=".">
     <property file="${basedir}/../build.properties"/>
     <property name="pa.pmd" value="${basedir}/../resources/paPmd.xml"/>
     <property name="pa.checkstyle" value="${basedir}/../resources/paCheckstyle.xml"/>
 
-    <property name="pa-web.build.finalName" value="pa"/>
-    <property name="pa-web.build.dir" value="${basedir}/target"/>
-    <property name="pa-web.build.outputDir" value="${pa-web.build.dir}/classes"/>
-    <property name="pa-web.build.srcDir.0" value="${basedir}/src/main/java"/>
-    <property name="pa-web.build.resourceDir.0" value="${basedir}/src/main/resources"/>
-    <property name="pa-web.build.testOutputDir" value="${pa-web.build.dir}/test-classes"/>
-    <property name="pa-web.build.testDir.0" value="${basedir}/src/test/java"/>
-    <property name="pa-web.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
-    <property name="pa-web.test.reports" value="${pa-web.build.dir}/test-reports"/>
-    <property name="pa-web.coverage.reports" value="${pa-web.build.dir}/coverage-reports"/>
-    <property name="pa-web.reporting.outputDirectory" value="${pa-web.build.dir}/site"/>
-    <property name="pa-web.war" value="${pa-web.build.finalName}.war"/>
-    <property name="pa-web.lib.dir" value="${basedir}/../lib"/>
-    <property name="pa-web.lib.test.dir" value="${pa-web.lib.dir}/test"/>
-    <property name="pa-web.lib.main.dir" value="${pa-web.lib.dir}/main"/>
-    <property name="cobertura.lib.dir" value="${pa-web.lib.test.dir}/cobertura"/>
-    <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
+    <property name="pa-ejb.build.finalName" value="pa"/>
+    <property name="pa-ejb.build.dir" value="${basedir}/target"/>
+    <property name="pa-ejb.build.outputDir" value="${pa-ejb.build.dir}/classes"/>
+    <property name="pa-ejb.build.srcDir.0" value="${basedir}/src/main/java"/>
+    <property name="pa-ejb.build.resourceDir.0" value="${basedir}/src/main/resources"/>
+    <property name="pa-ejb.build.testOutputDir" value="${pa-ejb.build.dir}/test-classes"/>
+    <property name="pa-ejb.build.testDir.0" value="${basedir}/src/test/java"/>
+    <property name="pa-ejb.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+    <property name="pa-ejb.test.reports" value="${pa-ejb.build.dir}/test-reports"/>
+    <property name="pa-ejb.coverage.reports" value="${pa-ejb.build.dir}/coverage-reports"/>
+    <property name="pa-ejb.reporting.outputDirectory" value="${pa-ejb.build.dir}/site"/>
+    <property name="pa-ejb.war" value="${pa-ejb.build.finalName}.war"/>
+    <property name="pa-ejb.lib.dir" value="${basedir}/../lib"/>
+    <property name="pa-ejb.lib.test.dir" value="${pa-ejb.lib.dir}/test"/>
+    <property name="pa-ejb.lib.main.dir" value="${pa-ejb.lib.dir}/main"/>
+    <property name="cobertura.lib.dir" value="${pa-ejb.lib.test.dir}/cobertura"/>
+    <property name="pa-ejb.build.coberturaOutputDir" value="${pa-ejb.build.dir}/generated-classes"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
     <path id="build.classpath">
-        <fileset dir="${pa-web.lib.main.dir}">
+        <fileset dir="${pa-ejb.lib.main.dir}">
             <include name="**/*"/>
         </fileset>
     </path>
     <path id="build.test.classpath">
-        <fileset dir="${pa-web.lib.test.dir}"/>
-        <fileset dir="${pa-web.lib.main.dir}">
+        <fileset dir="${pa-ejb.lib.test.dir}"/>
+        <fileset dir="${pa-ejb.lib.main.dir}">
             <include name="**/*"/>
         </fileset>
     </path>
@@ -54,12 +54,12 @@
     <!-- ====================================================================== -->
 
     <taskdef resource="checkstyletask.properties" 
-             classpath="${pa-web.lib.test.dir}/checkstyle-all-4.4.jar"/>
+             classpath="${pa-ejb.lib.test.dir}/checkstyle-all-4.4.jar"/>
     <taskdef name="pmd" 
-             classpath="${pa-web.lib.test.dir}/pmd-4.2.2.jar"
+             classpath="${pa-ejb.lib.test.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
     <taskdef resource="simiantask.properties" 
-             classpath="${pa-web.lib.test.dir}/simian-2.2.24.jar"/>
+             classpath="${pa-ejb.lib.test.dir}/simian-2.2.24.jar"/>
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
     
     <!-- ====================================================================== -->
@@ -67,7 +67,7 @@
     <!-- ====================================================================== -->
 
     <target name="clean" description="Clean the output directory">
-        <delete dir="${pa-web.build.dir}"/>
+        <delete dir="${pa-ejb.build.dir}"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -75,8 +75,8 @@
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
-        <mkdir dir="${pa-web.build.outputDir}"/>
-        <javac destdir="${pa-web.build.outputDir}" 
+        <mkdir dir="${pa-ejb.build.outputDir}"/>
+        <javac destdir="${pa-ejb.build.outputDir}" 
        nowarn="false" 
        debug="true" 
        optimize="false" 
@@ -86,12 +86,12 @@
        fork="false" 
        source="1.5">
             <src>
-                <pathelement location="${pa-web.build.srcDir.0}"/>
+                <pathelement location="${pa-ejb.build.srcDir.0}"/>
             </src>
             <classpath refid="build.classpath"/>
         </javac>
-        <copy todir="${pa-web.build.outputDir}">
-            <fileset dir="${pa-web.build.resourceDir.0}"/>
+        <copy todir="${pa-ejb.build.outputDir}">
+            <fileset dir="${pa-ejb.build.resourceDir.0}"/>
         </copy>
     </target>
 
@@ -103,8 +103,8 @@
       depends="junit-present, compile" 
       description="Compile the test code" 
       if="junit.present">
-        <mkdir dir="${pa-web.build.testOutputDir}"/>
-        <javac destdir="${pa-web.build.testOutputDir}" 
+        <mkdir dir="${pa-ejb.build.testOutputDir}"/>
+        <javac destdir="${pa-ejb.build.testOutputDir}" 
        nowarn="false" 
        debug="true" 
        optimize="false" 
@@ -114,15 +114,15 @@
        fork="false" 
        source="1.5">
             <src>
-                <pathelement location="${pa-web.build.testDir.0}"/>
+                <pathelement location="${pa-ejb.build.testDir.0}"/>
             </src>
             <classpath>
                 <path refid="build.test.classpath"/>
-                <pathelement location="${pa-web.build.outputDir}"/>
+                <pathelement location="${pa-ejb.build.outputDir}"/>
             </classpath>
         </javac>
-        <copy todir="${pa-web.build.testOutputDir}">
-            <fileset dir="${pa-web.build.testResourceDir.0}"/>
+        <copy todir="${pa-ejb.build.testOutputDir}">
+            <fileset dir="${pa-ejb.build.testResourceDir.0}"/>
         </copy>
     </target>
 
@@ -149,40 +149,40 @@
     <target name="test-cobertura" depends="junit-present, compile-tests" 
             if="junit.present" description="Run JUnit and Cobertura tests">
         
-        <delete file="${pa-web.build.dir}/cobertura.ser" />
+        <delete file="${pa-ejb.build.dir}/cobertura.ser" />
 
-        <cobertura-instrument datafile="${pa-web.build.dir}/cobertura.ser"
-                              toDir="${pa-web.build.coberturaOutputDir}">
-            <fileset dir="${pa-web.build.outputDir}">
+        <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser"
+                              toDir="${pa-ejb.build.coberturaOutputDir}">
+            <fileset dir="${pa-ejb.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
         </cobertura-instrument>   
         
-        <mkdir dir="${pa-web.test.reports}"/>
+        <mkdir dir="${pa-ejb.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${pa-web.build.dir}/cobertura.ser" />
+                    file="${pa-ejb.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
-            <classpath location="${pa-web.build.coberturaOutputDir}"/>
-            <classpath location="${pa-web.build.outputDir}"/>
-            <classpath location="${pa-web.build.testOutputDir}"/>
+            <classpath location="${pa-ejb.build.coberturaOutputDir}"/>
+            <classpath location="${pa-ejb.build.outputDir}"/>
+            <classpath location="${pa-ejb.build.testOutputDir}"/>
             <classpath refid="cobertura.classpath"/>
             <classpath refid="build.test.classpath"/>
-            <batchtest todir="${pa-web.test.reports}">
-                <fileset dir="${pa-web.build.testDir.0}">
+            <batchtest todir="${pa-ejb.test.reports}">
+                <fileset dir="${pa-ejb.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
         
-        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          destdir="${pa-web.coverage.reports}" 
-                          srcdir="${pa-web.build.srcDir.0}" />
+        <cobertura-report datafile="${pa-ejb.build.dir}/cobertura.ser"
+                          destdir="${pa-ejb.coverage.reports}" 
+                          srcdir="${pa-ejb.build.srcDir.0}" />
         
-        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
+        <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
                          totalbranchrate="10" 
                          totallinerate="10"
                          haltonfailure="false"/>
@@ -196,7 +196,7 @@
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <fileset dir="src/main" includes="**/*.java" />
             <formatter type="plain"/>
-            <formatter type="plain" toFile="${pa-web.build.dir}/checkstyle.txt"/>
+            <formatter type="plain" toFile="${pa-ejb.build.dir}/checkstyle.txt"/>
         </checkstyle>
     </target>
 
@@ -208,7 +208,7 @@
         <pmd shortFilenames="true" failOnRuleViolation="true" 
         	                       rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
-            <formatter type="text" toFile="${pa-web.build.dir}/pmd.txt"/>
+            <formatter type="text" toFile="${pa-ejb.build.dir}/pmd.txt"/>
             <fileset dir="src/main">
                 <include name="**/*.java"/>
             </fileset>
@@ -222,7 +222,7 @@
     <target name="test-simian" description="Run Simian similarity analyzer checks">
         <simian>
             <fileset dir="src/main" includes="**/*.java"/>
-            <formatter type="plain" toFile="${pa-web.build.dir}/simian.txt"/>
+            <formatter type="plain" toFile="${pa-ejb.build.dir}/simian.txt"/>
             <formatter type="plain"/>
         </simian>
     </target>
@@ -240,20 +240,7 @@
     <!-- ====================================================================== -->
 
     <target name="package" depends="compile,test-all" description="Package the application">
-        <mkdir dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
-        <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
-            <fileset dir="${pa-web.lib.main.dir}" includes="**/*" excludes="log4j.jar"/>
-        </copy>
-
-        <war destfile="${pa-web.build.dir}/${pa-web.war}" 
-             compress="false" 
-             webxml="${basedir}/src/main/webapp/WEB-INF/web.xml">
-            
-            <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
-            <classes dir="${pa-web.build.outputDir}"/>
-            <webinf dir="${basedir}/src/main/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${basedir}/src/main/webapp"/>
-        </war>
+        <echo>Script for packaging pa-ejb is still under development.</echo>
     </target>
 
     <!-- ====================================================================== -->
@@ -261,14 +248,14 @@
     <!-- ====================================================================== -->
 
     <target name="deploy" description="Deploys the war for the application">
-        <available file="${pa-web.build.dir}/${pa-web.war}" property="pa-web.war.present"/>
-        <fail unless="pa-web.war.present" message="War file not found."/>
+        <available file="${pa-ejb.build.dir}/${pa-ejb.war}" property="pa-ejb.war.present"/>
+        <fail unless="pa-ejb.war.present" message="War file not found."/>
 
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
-        <copy todir="${jboss.deploy.directory}" file="${pa-web.build.dir}/${pa-web.war}"/>
+        <copy todir="${jboss.deploy.directory}" file="${pa-ejb.build.dir}/${pa-ejb.war}"/>
     </target>
 
     <!-- ====================================================================== -->
