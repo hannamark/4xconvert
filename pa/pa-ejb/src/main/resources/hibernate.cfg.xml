@@ -16,12 +16,12 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_query_cache">true</property>
 
 	<!-- mapping classes -->
-	 <mapping class="gov.nih.nci.pa.bo.Protocol" />
-	 <mapping class="gov.nih.nci.pa.bo.ProtocolStatus" />
-	 <mapping class="gov.nih.nci.pa.bo.HealthcareSite" />
-	 <mapping class="gov.nih.nci.pa.bo.StudySite" />
-	 <mapping class="gov.nih.nci.pa.bo.Investigator" />
-	 <mapping class="gov.nih.nci.pa.bo.StudyInvestigator" />
+	 <mapping class="gov.nih.nci.pa.domain.Protocol" />
+	 <mapping class="gov.nih.nci.pa.domain.ProtocolStatus" />
+	 <mapping class="gov.nih.nci.pa.domain.HealthcareSite" />
+	 <mapping class="gov.nih.nci.pa.domain.StudySite" />
+	 <mapping class="gov.nih.nci.pa.domain.Investigator" />
+	 <mapping class="gov.nih.nci.pa.domain.StudyInvestigator" />
 
     </session-factory>
 </hibernate-configuration>
