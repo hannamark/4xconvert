@@ -14,7 +14,7 @@ import javax.naming.NamingException;
  */
 public class RemoteServiceHelper {
 
-    static final String PROTOCOL_SERVICE_BEAN_REMOTE = "ProtocolServiceBean/remote";
+    static final String PROTOCOL_SERVICE_BEAN_REMOTE = "pa/ProtocolServiceBean/remote";
 
     static InitialContext ctx;
     

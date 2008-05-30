@@ -5,16 +5,24 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ear" default="test-all" basedir=".">
+    <property file="${basedir}/../build.properties"/>
 	
     <property name="pa-ear.lib.dir" value="${basedir}/../lib"/>
     <property name="pa-ear.lib.test.dir" value="${pa-ear.lib.dir}/test"/>
     <property name="pa-ear.lib.main.dir" value="${pa-ear.lib.dir}/main"/>
     <property name="pa-ear.build.dir" value="${basedir}/target"/>
+    <property name="pa-ear.build.outputDir" value="${pa-ear.build.dir}/classes"/>	
     <property name="pa-ear.build.testOutputDir" value="${pa-ear.build.dir}/test-classes"/>
+    <property name="pa-ear.build.resourceDir.0" value="${basedir}/src/main/resources"/>	
     <property name="pa-ear.test.reports" value="${pa-ear.build.dir}/test-reports"/>
     <property name="pa-ear.build.testDir.0" value="${basedir}/src/test/java"/>
     <property name="pa-ear.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+	<property name="pa-ear.build.finalName" value="pa"/>
+	<property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
 	<property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
+	<property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
+	<property name="pa-web.output.dir" value="${basedir}/../pa-web/target"/>
+    <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>
 	
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -44,6 +52,17 @@
     </target>
 
     <!-- ====================================================================== -->
+    <!-- Compilation target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="compile" description="Compile the code">
+        <mkdir dir="${pa-ear.build.outputDir}"/>
+      	<copy todir="${pa-ear.build.outputDir}">
+      		<fileset dir="${pa-ear.build.resourceDir.0}"/>
+      	</copy>
+	</target>
+
+	<!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
@@ -108,6 +127,42 @@
             </batchtest>
         </junit>
      </target>
+
+	  <!-- ====================================================================== -->
+	  <!-- Package target                                                         -->
+	  <!-- ====================================================================== -->
+
+	  <target name="package" depends="compile" description="Package the application">
+        <available file="${pa-ejb.package}" property="pa-ejb.present"/>
+        <fail unless="pa-ejb.present" message="EJB jar file not found."/>
+        <available file="${pa-web.package}" property="pa-web.present"/>
+        <fail unless="pa-web.present" message="War file not found."/>
+	    <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+	    <copy file="${pa-ejb.package}" 
+	          todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+	    <copy file="${pa-web.package}" 
+	          todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+	    <ear destfile="${pa-ear.build.dir}/${pa-ear.build.finalName}.ear" 
+	         basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
+	         compress="true" 
+	         appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
+	  </target>
+
+    <!-- ====================================================================== -->
+    <!-- Deploy locally                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="deploy" description="Deploys the ear for the application">
+        <available file="${pa-ear.build.dir}/${pa-ear.ear}" property="pa-ear.ear.present"/>
+        <fail unless="pa-ear.ear.present" message="Ear file not found."/>
+        <copy todir="${jboss.deploy.directory}" file="${pa-ear.build.dir}/${pa-ear.ear}"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- A target to build and deploy the package                               -->
+    <!-- ====================================================================== -->
+
+    <target name="ear" depends="package,deploy" description="Builds and deploys the ear"/>
 
 	
 </project>

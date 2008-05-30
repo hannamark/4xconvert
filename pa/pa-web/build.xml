@@ -9,7 +9,7 @@
     <property name="pa.pmd" value="${basedir}/../resources/paPmd.xml"/>
     <property name="pa.checkstyle" value="${basedir}/../resources/paCheckstyle.xml"/>
 
-    <property name="pa-web.build.finalName" value="pa"/>
+    <property name="pa-web.build.finalName" value="pa-web"/>
     <property name="pa-web.build.dir" value="${basedir}/target"/>
     <property name="pa-web.build.outputDir" value="${pa-web.build.dir}/classes"/>
     <property name="pa-web.build.srcDir.0" value="${basedir}/src/main/java"/>
