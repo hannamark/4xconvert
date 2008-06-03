@@ -3,7 +3,7 @@
 	<s:if test="%{#menuPage=='other'}">             
 		<ul class="cactusmenu">
 			<li class="liheader">NCI Protocol Abstraction Portal</li>
-				<li><a href="Protocol_Query.html" >Query Protocols</a></li>
+				<li><a href="searchProtocol.action" >Query Protocols</a></li>
 		    	<li><a href="Protocol_Details_Edit.html" >Protocol Detail</a></li>
 		    	<li><a href="Protocol_Grant.html"  class="selected">Protocol Grants</a></li>
 		    	<li><a href="Administrative_Data.html"  >Administrative Data</a></li>
@@ -25,7 +25,7 @@
 	</s:if>
 	<s:elseif test="%{#menuPage=='QueryProtocol'}">
        <ul class="cactusmenu">			
-			<li><a href="Protocol_Query.html" class="selected">Query Protocols</a></li>
+			<li><a href="searchProtocol.action" class="selected">Query Protocols</a></li>
 			<li>Maintenance</li>
 		    <li><a href="#" onclick="Help.popHelpMain('');return false;">Help</a></li>
 		    <li><a href="login.html" > Logout</a></li>
