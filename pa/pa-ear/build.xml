@@ -139,12 +139,19 @@
         <fail unless="pa-web.present" message="War file not found."/>
 	    <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
 	    <copy file="${pa-ejb.package}" 
-	          todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
 	    <copy file="${pa-web.package}" 
-	          todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+	  	<!--copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
+	  		 <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*"/>
+	    </copy-->
+	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
+            <fileset dir="${pa-ear.lib.main.dir}" includes="*.jar"/>
+            <fileset dir="${pa-ear.lib.main.dir}/jboss-client" includes="*.jar"/>
+	    </copy>
 	    <ear destfile="${pa-ear.build.dir}/${pa-ear.build.finalName}.ear" 
 	         basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
-	         compress="true" 
+	         compress="false" 
 	         appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
 	  </target>
 
