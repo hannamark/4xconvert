@@ -1,6 +1,8 @@
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.TrialPhaseCode;
+import gov.nih.nci.pa.enums.SponsorMonitorCode;
+import gov.nih.nci.pa.enums.StudyPhaseCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,15 @@ import javax.persistence.OneToMany;
 
 
 /**
- * Protocol bean for managing protocol.
+ * A systematic evaluation of an observation or an intervention (for example, treatment, 
+ * drug, device, procedure or system) in one or more subjects. Frequently this is a 
+ * test of a particular hypothesis about the treatment, drug, device, 
+ * procedure or system. [CDAM]  A study can be either primary or correlative. 
+ * A study is considered a primary study if it has one or more correlative studies. 
+ * A correlative study extends the objectives or observations of a primary study, 
+ * enrolling the same, or a subset of the same, subjects as the primary study. 
+ * A Clinical Trial is a Study with type= "intervention" with subjects of type human
+ * 
  * @author Naveen Amiruddin
  * @since 05/22/2007
  * copyright NCI 2007.  All rights reserved.
@@ -34,9 +44,9 @@ public class Protocol extends AbstractEntity {
     private String nciIdentifier = null;
     private String longTitleText = null;
     private String shortTitleText = null;
-    private String intentCode  = null;
-    private String monitorCode = null;
-    private TrialPhaseCode phaseCode = null;
+    private StudyTypeCode studyTypeCode  = null;
+    private SponsorMonitorCode sponsorMonitorCode = null;
+    private StudyPhaseCode studyPhaseCode = null;
     private List<ProtocolStatus> protocolStatuses = new ArrayList<ProtocolStatus>();
     private List<StudySite> studySites = new ArrayList<StudySite>();
     private List<StudyInvestigator> studyInvestigators = new ArrayList<StudyInvestigator>();
@@ -112,31 +122,33 @@ public class Protocol extends AbstractEntity {
     /**
      * @return intent code
      */
-    @Column(name = "INTENT_CODE")
-    public String getIntentCode() {
-        return intentCode;
-    }
-
-    /**
-     * @param intentCode intent
-     */
-    public void setIntentCode(String intentCode) {
-        this.intentCode = intentCode;
-    }
-
-    /**
-     * @return monitor code
-     */
     @Column(name = "MONITOR_CODE")
-    public String getMonitorCode() {
-        return monitorCode;
+    @Enumerated(EnumType.STRING)
+    public SponsorMonitorCode getSponsorMonitorCode() {
+        return sponsorMonitorCode;
     }
 
     /**
-     * @param monitorCode monitor code
+     * @param sponsorMonitorCode sponsorMonitorCode
      */
-    public void setMonitorCode(String monitorCode) {
-        this.monitorCode = monitorCode;
+    public void setSponsorMonitorCode(SponsorMonitorCode sponsorMonitorCode) {
+        this.sponsorMonitorCode = sponsorMonitorCode;
+    }
+
+    /**
+     * @return studyTypeCode study type code
+     */
+    @Column(name = "INTENT_CODE")
+    @Enumerated(EnumType.STRING)
+    public StudyTypeCode getStudyTypeCode() {
+        return studyTypeCode;
+    }
+
+    /**
+     * @param studyTypeCode studyTypeCode
+     */
+    public void setStudyTypeCode(StudyTypeCode studyTypeCode) {
+        this.studyTypeCode = studyTypeCode;
     }
 
     /**
@@ -144,15 +156,15 @@ public class Protocol extends AbstractEntity {
      */
     @Column(name = "PHASE_CODE")
     @Enumerated(EnumType.STRING)
-    public TrialPhaseCode getPhaseCode() {
-        return phaseCode;
+    public StudyPhaseCode getStudyPhaseCode() {
+        return studyPhaseCode;
     }
 
     /**
-     * @param phaseCode phase code
+     * @param studyPhaseCode StudyPhaseCode
      */
-    public void setPhaseCode(TrialPhaseCode phaseCode) {
-        this.phaseCode = phaseCode;
+    public void setStudyPhaseCode(StudyPhaseCode studyPhaseCode) {
+        this.studyPhaseCode = studyPhaseCode;
     }
 
     /**

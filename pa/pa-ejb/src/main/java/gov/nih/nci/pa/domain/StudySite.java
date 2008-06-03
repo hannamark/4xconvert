@@ -24,7 +24,7 @@ import javax.persistence.Table;
 public class StudySite extends AbstractEntity {
 
     private Long id;
-    private String localProtocolIdentifier;
+    private String leadOrganizationProtocolId;
     private Protocol protocol;
     private HealthcareSite healtcareSite;
 
@@ -53,16 +53,16 @@ public class StudySite extends AbstractEntity {
      * @return localProtocolIdentifer Local Protocol Identifier
      */
     @Column(name = "LOCAL_PROTOCOL_IDENTIFIER", length = LONG_TEXT_LENGTH)
-    public String getLocalProtocolIdentifier() {
-        return localProtocolIdentifier;
+    public String getLeadOrganizationProtocolId() {
+        return leadOrganizationProtocolId;
     }
 
     /**
-     * set protocolIdentifier.
-     * @param localProtocolIdentifier localProtocolIdentifier
+     * set leadOrganizationProtocolId.
+     * @param leadOrganizationProtocolId leadOrganizationProtocolId
      */
-    public void setLocalProtocolIdentifier(String localProtocolIdentifier) {
-        this.localProtocolIdentifier = localProtocolIdentifier;
+    public void setLeadOrganizationProtocolId(String leadOrganizationProtocolId) {
+        this.leadOrganizationProtocolId = leadOrganizationProtocolId;
     }
 
     /**
