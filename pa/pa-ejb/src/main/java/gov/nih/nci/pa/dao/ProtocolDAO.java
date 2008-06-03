@@ -20,23 +20,26 @@ import org.apache.log4j.Logger;
 
 /**
  * Protocol DAO for accessing DAO.
- * 
+ *
  * @author Naveen Amiruddin
  * @since 05/22/2007 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
 public class ProtocolDAO {
-    
-    private static Logger log = Logger.getLogger(ProtocolDAO.class);
+
+    private static Logger log = Logger.getLogger(ProtocolDAO.class);    
+    private static final int THREE = 3;
+    private static final int FOUR = 4;
+    private static final int FIVE = 5;
 
 
     /**
-     * 
+     *
      * @param protocolSearchCriteria
      *            protocolSearchCriteria
      * @return List queryList
-     * @throws PAException PAException
+     * @throws PAException paException
      */
     public List<ProtocolDTO> queryProtocol(ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
         log.debug("Entering queryProtocol ");
@@ -61,10 +64,10 @@ public class ProtocolDAO {
     }
 
     /**
-     * 
+     *
      * @param protocolQueryResult
      * @return List ProtocolDTO
-     * @throws PAException PAException
+     * @throws PAException paException
      */
     private List<ProtocolDTO> convertProtocolQueryResultsToProtocolDTO(
             List protocolQueryResult) throws PAException {
@@ -95,13 +98,13 @@ public class ProtocolDAO {
                 // get the StudySite
                 studySite = (StudySite) searchResult[2];
                 // get the HealthcareSite
-                healthcareSite = (HealthcareSite) searchResult[3];
+                healthcareSite = (HealthcareSite) searchResult[THREE];
                 // get the study investigator
-                studyInvestigator = (StudyInvestigator) searchResult[4];
+                studyInvestigator = (StudyInvestigator) searchResult[FOUR];
                 // get the Investigator
-                investigator = (Investigator) searchResult[5];
-                
-                // transfer protocol to protocolDto 
+                investigator = (Investigator) searchResult[FIVE];
+
+                // transfer protocol to protocolDto
                 protocolDto.setProtocolId(protocol.getId());
                 protocolDto.setLongTitleText(protocol.getLongTitleText());
                 protocolDto.setStudyTypeCode(protocol.getStudyTypeCode());
@@ -115,7 +118,7 @@ public class ProtocolDAO {
                 // transfer from healthcareSite to protocolDto
                 protocolDto.setLeadOrganizationName(healthcareSite.getName());
                 protocolDto.setLeadOrganizationId(healthcareSite.getId());
-                // add to the list 
+                // add to the list
                 protocolDtos.add(protocolDto);
             }
         } catch (Exception e) {
@@ -129,11 +132,11 @@ public class ProtocolDAO {
 
     /**
      * generate HQL query for search protocol.
-     * 
+     *
      * @param protocolSearchCriteria
      *            protocolSearchCriteria
      * @return hql
-     * @throws PAException PAException
+     * @throws PAException paException
      */
     private String generateProtocolQuery(
             ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
@@ -153,17 +156,17 @@ public class ProtocolDAO {
             throw new PAException("General error in while converting to DTO", e);
         } finally {
             log.debug("Leaving generateProtocolQuery ");
-        }            
+        }
         return hql.toString();
 
     }
 
     /**
      * generate a where clause for a given protocol search criteria.
-     * 
+     *
      * @param protocolSearchCriteria
      * @return String String
-     * @throws PAException PAException
+     * @throws PAException paException
      */
     private String generateWhereClause(
             ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
@@ -209,7 +212,7 @@ public class ProtocolDAO {
             throw new PAException("General error in while create where cluase", e);
         } finally {
             log.debug("Leaving generateWhereClause ");
-        }      
+        }
         /* todo : to add protocol status column in protocol table
          * if
          * (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria.getStudyStatusCode())) {
