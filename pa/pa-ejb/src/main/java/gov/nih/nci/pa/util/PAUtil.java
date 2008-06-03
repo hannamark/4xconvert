@@ -9,12 +9,12 @@ package gov.nih.nci.pa.util;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-
+@SuppressWarnings("PMD")
 public class PAUtil {
     /**
      * utility method to determine if the object is not null. 
      * it returns true, if the object is not null , and does not contain any white space
-     * @param obj obj
+     * @param obj obj1
      * @return boolean 
      */
     public static boolean isNotNullOrNotEmpty(Object obj) {
