@@ -10,13 +10,16 @@ import org.apache.log4j.Logger;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
+@SuppressWarnings("PMD")
 public class PAException extends Exception {
 
     private static Logger log = Logger.getLogger(PAException.class);
+
     /**
      * no argument constructor.
      */
     public PAException() {
+        super();
     }
 
     /**
