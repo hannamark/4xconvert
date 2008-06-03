@@ -194,7 +194,11 @@
 
     <target name="test-checkstyle" description="Run checkstyle">
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
-            <fileset dir="src/main" includes="**/*.java" />
+            <classpath>
+                <path refid="build.test.classpath"/>
+                <pathelement location="${pa-ejb.build.outputDir}"/>
+            </classpath>
+        	<fileset dir="src/main" includes="**/*.java" />
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa-ejb.build.dir}/checkstyle.txt"/>
         </checkstyle>
