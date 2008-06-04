@@ -29,7 +29,7 @@
     <!--Search Box-->
 
     <div id="searchbox">
-		<s:form action="protocolSearchCriteria">
+		<s:form action="queryProtocol">
             <table cellspacing="8">	
             	<tr>
                     <td align=right>
@@ -96,12 +96,11 @@
 						          list="%{#{'sub':'Submitted','inp':'In Progress','acc':'Accepted','onh':'On Hold'}}"/>						          						
                   	</td>    
                     <td colspan="2">                    	
-                    	<INPUT TYPE="button" NAME="submit"  class="button" value="Search" onClick="submitValues()"/>          
+                    	<INPUT TYPE="submit" NAME="submit"  value="Search"/>          
                         <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                     </td>
                 </tr>
             </table>
-
        </s:form>
 
     </div>
