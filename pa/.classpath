@@ -23,7 +23,7 @@
 	<classpathentry kind="lib" path="lib/main/dwr-1.1-beta-3.jar"/>
 	<classpathentry kind="lib" path="lib/main/ejb-api-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/main/freemarker-2.3.8.jar"/>
-	<classpathentry kind="lib" path="lib/main/hibernate-3.2.5.ga.jar"/>
+	<classpathentry kind="lib" path="lib/main/hibernate-3.2.5.ga.jar" sourcepath="C:/Documents and Settings/Hugh/.m2/repository/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga.jar"/>
 	<classpathentry kind="lib" path="lib/main/hibernate-annotations-3.3.0.ga.jar"/>
 	<classpathentry kind="lib" path="lib/main/hibernate-commons-annotations-3.3.0.ga.jar"/>
 	<classpathentry kind="lib" path="lib/main/hibernate-validator-3.0.0.ga.jar"/>

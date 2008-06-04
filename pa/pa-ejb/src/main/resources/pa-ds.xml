@@ -2,11 +2,11 @@
 <datasources>
   <local-tx-datasource>
     <jndi-name>pa-ds</jndi-name>
-    <user-name>pa</user-name>
-    <password>pa</password>
+    <user-name>ctods</user-name>
+    <password>ctods</password>
 
     <driver-class>org.postgresql.Driver</driver-class>
-    <connection-url>jdbc:postgresql://localhost:5432/po</connection-url>
+    <connection-url>jdbc:postgresql://localhost:5432/ctods</connection-url>
     <new-connection-sql>select 1</new-connection-sql>
     <check-valid-connection-sql>select 1</check-valid-connection-sql>
     <min-pool-size>5</min-pool-size>

@@ -22,7 +22,11 @@ public enum StudyPhaseCode implements CodedEnum<String> {
     /**
      * Added this java doc because of check style bug.
      */
-    PHASE2("Phase 2"), PHASE2_PHASE3("Phase 2/Phase 3"), PHASE3("Phase 3"), PHASE4("Phase 4");
+    PHASE2("Phase 2"), PHASE2_PHASE3("Phase 2/Phase 3"), PHASE3("Phase 3"), PHASE4("Phase 4"),
+    /**
+    * added these to synch with sample data.
+    */
+    I("I"), I_II("I/II"), II("II"), III("III");
 
     private String code;
     /**

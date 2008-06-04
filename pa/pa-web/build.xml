@@ -8,6 +8,7 @@
     <property file="${basedir}/../build.properties"/>
     <property name="pa.pmd" value="${basedir}/../resources/paPmd.xml"/>
     <property name="pa.checkstyle" value="${basedir}/../resources/paCheckstyle.xml"/>
+    <property name="pa-ejb.build.dir" value="${basedir}/../pa-ejb/target"/>
 
     <property name="pa-web.build.finalName" value="pa-web"/>
     <property name="pa-web.build.dir" value="${basedir}/target"/>
@@ -35,6 +36,9 @@
         <fileset dir="${pa-web.lib.main.dir}">
             <include name="**/*"/>
         </fileset>
+    	<fileset dir="${pa-ejb.build.dir}">
+    		<include name="pa-ejb.jar"/>
+    	</fileset>
     </path>
     <path id="build.test.classpath">
         <fileset dir="${pa-web.lib.test.dir}"/>

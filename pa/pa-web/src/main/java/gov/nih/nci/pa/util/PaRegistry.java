@@ -5,6 +5,7 @@ package gov.nih.nci.pa.util;
  * @author Harsha
  *
  */
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class PaRegistry {
     
     /**

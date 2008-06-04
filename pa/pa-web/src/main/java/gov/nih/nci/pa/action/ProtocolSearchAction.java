@@ -9,6 +9,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author hjayanna
  * 
  */
+@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField" })
 public class ProtocolSearchAction extends ActionSupport {
     
     private ProtocolSearchCriteria srchCri = new ProtocolSearchCriteria();

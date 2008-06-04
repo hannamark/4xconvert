@@ -2,6 +2,7 @@ package gov.nih.nci.pa.test.integration;
 
 
 import gov.nih.nci.pa.service.ProtocolServiceRemote;
+import gov.nih.nci.pa.service.SessionManagerRemote;
 
 import java.util.Properties;
 
@@ -9,12 +10,16 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
+ * Original written by Scott Miller.  Modified for PA.
  * @author Hugh Reinhart
  *
  */
 public class RemoteServiceHelper {
 
     static final String PROTOCOL_SERVICE_BEAN_REMOTE = "pa/ProtocolServiceBean/remote";
+    static final String SESSIONMANAGER_BEAN_REMOTE = "pa/SessionManagerBean/remote";
+    public static String username = "ejbclient";
+    public static String password = "pass";
 
     static InitialContext ctx;
     
@@ -45,4 +50,12 @@ public class RemoteServiceHelper {
         return (ProtocolServiceRemote) lookup(PROTOCOL_SERVICE_BEAN_REMOTE);
     }
 
+    /**
+     * Get the SessionManagerRemote service.
+     * @return the service.
+     * @throws NamingException on error.
+     */
+    public static SessionManagerRemote getSessionManagerService() throws NamingException {
+        return (SessionManagerRemote) lookup(SESSIONMANAGER_BEAN_REMOTE);
+    }
 }
