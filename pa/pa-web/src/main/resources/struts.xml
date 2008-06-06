@@ -14,10 +14,16 @@
 			<result>/jsp/helloWorld.jsp</result>
 		</action>		
 		<action name="searchProtocol">
-			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
+			<result>/jsp/pajsp/trailSearch.jsp</result>
 		</action>
 		<action name="queryProtocol" class="gov.nih.nci.pa.action.ProtocolSearchAction" method="query">
-			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
+			<result>/jsp/pajsp/trailSearch.jsp</result>
+		</action>
+		<action name="trailDetailEdit">
+			<result>/jsp/pajsp/trailDetailEdit.jsp</result>
+		</action>		
+		<action name="login">
+			<result>/jsp/pajsp/login.jsp</result>
 		</action>
 	</package>
 </struts>
