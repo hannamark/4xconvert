@@ -16,6 +16,12 @@
 	<ul>
 			<li><a href="searchProtocol.action">Search Protocol</a></li>
 	</ul>	
+	<ul>
+			<li><a href="trailDetailEdit.action">Trail Detail Edit</a></li>
+	</ul>	
 
+	<ul>
+			<li><a href="login.action">Login</a></li>
+	</ul>	
 </body>
 </html>
