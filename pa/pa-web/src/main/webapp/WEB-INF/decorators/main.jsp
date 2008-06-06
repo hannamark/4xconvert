@@ -9,12 +9,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title><decorator:title default="Struts Starter"/></title>   
+	<title><decorator:title default="Struts Starter"/></title>  	  
      <link href="<s:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
      <link href="<s:url value='/styles/layout.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <link href="<s:url value='/struts/niftycorners/niftyCorners.css'/>" rel="stylesheet" type="text/css"/>
     <link href="<s:url value='/struts/niftycorners/niftyPrint.css'/>" rel="stylesheet" type="text/css" media="print"/>
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags.js"/>"></script>
+	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_controls.js"/>"></script>
+	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
     <script language="JavaScript" type="text/javascript" src="<s:url value='/struts/niftycorners/nifty.js'/>"></script>
+	<script type="text/javascript" src="/scripts/js/calendarpopup.js"></script>	  	
 	<script language="JavaScript" type="text/javascript">
         window.onload = function(){
             if(!NiftyCheck()) {
@@ -25,6 +29,7 @@
             // Rounded("blockquote","tr bl","#ECF1F9","#CDFFAA","smooth border #88D84F");
         }
     </script>
+    
     <decorator:head/>
 </head>
 <body> 
