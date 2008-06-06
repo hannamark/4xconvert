@@ -6,7 +6,7 @@
 <s:set name="menuPage" value="%{'login'}"/>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title><fmt:message key="protocol.login.title"/></title>
+	<title><fmt:message key="trail.login.title"/></title>
 	<s:head />
 </head>
 

@@ -17,21 +17,18 @@
 <!--Content-->
 
 <div id="contentwide">
-
-    <!--Search Box-->
-   <div id="searchbox">
+      
    
-	<h1><fmt:message key="protocol.search.header"/></h1>
-
+	<h1><fmt:message key="protocol.search.header"/></h1>      
+                
     <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
 
-
 		<s:form action="protocolSearchCriteria">
-           	<s:textfield key="protocol.search.label.nciNumber" name="nciNumber" /><br>
+           	<s:textfield key="protocol.search.label.nciNumber" name="nciNumber" />
 			<s:textfield key="protocol.search.label.officialTitle" name="officialTitle" /><br>                    	                                                             
             
-            <s:textfield key="protocol.search.label.leadOrganization" name="leadOrganization" /><br>
+            <s:textfield key="protocol.search.label.leadOrganization" name="leadOrganization" />
             <s:textfield key="protocol.search.label.leadOrganizationProtocolID" name="leadOrganizationProtocolID" /><br>
            <s:set name="sPhase" value="@gov.nih.nci.pa.enums.StudyPhaseCode@values()" />
          	<s:select key="protocol.search.label.studyPhase" name="reportDataSet" multiple="false"
@@ -52,13 +49,13 @@
 	         <s:set name="abStatus" value="@gov.nih.nci.pa.enums.AbstractionStatus@values()" />
 	         <s:select key="protocol.search.label.abstractionStatus" name="reportDataSet" multiple="false"
 	              list="#abStatus" listKey="name()" listValue="name()"
-	               value="abstractionStatus" />       
-	                   
+	               value="abstractionStatus" />  <br>     
+	         
+      
             <s:submit value="Search" align="center"/>  
             <s:submit value="Reset" align="center"/>                                        
        </s:form>
-    </div>
-    <!--/Search Box-->
+
 </div>
 <!--/Content-->
 
