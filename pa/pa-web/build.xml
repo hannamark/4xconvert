@@ -104,7 +104,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="junit-present, compile" 
+      depends="compile" 
       description="Compile the test code" 
       if="junit.present">
         <mkdir dir="${pa-web.build.testOutputDir}"/>
@@ -131,26 +131,10 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- JUnit internal targets                                                        -->
-    <!-- ====================================================================== -->
-
-    <target name="test-junit-present">
-        <available classname="junit.framework.Test" property="junit.present"/>
-    </target>
-
-    <target name="junit-present" 
-      depends="test-junit-present" 
-      unless="junit.present">
-        <echo>=================================== WARNING ===================================</echo>
-        <echo> Junit isn&apos;t available. Tests not executed. </echo>
-        <echo>===============================================================================</echo>
-    </target>
-
-    <!-- ====================================================================== -->
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
-    <target name="test-cobertura" depends="junit-present, compile-tests" 
+    <target name="test-cobertura" depends="compile-tests" 
             if="junit.present" description="Run JUnit and Cobertura tests">
         
         <delete file="${pa-web.build.dir}/cobertura.ser" />
