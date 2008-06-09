@@ -107,8 +107,7 @@
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>             
-        	<classpath refid="jboss.classpath"/>
-        	<classpath refid="jboss.classpath"/>
+        	<classpath location="${pa-ear.build.testOutputDir}"/>      
             <classpath refid="build.test.classpath"/>
             <batchtest todir="${pa-ear.test.reports}">
                 <fileset dir="${pa-ear.build.testDir.0}">
