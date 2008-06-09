@@ -25,7 +25,9 @@ public class ProtocolServiceImpl implements IProtocolService {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String getProtocolLongTitleText(long id) {
       Session s = HibernateUtil.getCurrentSession();
-      Protocol p = (Protocol) s.get(Protocol.class, id);
+      Protocol p = new Protocol();
+       s.load(p, Long.valueOf(id));
+      
       return p.getLongTitleText();
     }
     
