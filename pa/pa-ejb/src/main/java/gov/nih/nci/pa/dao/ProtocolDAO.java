@@ -16,8 +16,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * Protocol DAO for accessing DAO.
@@ -27,10 +26,10 @@ import org.apache.commons.logging.LogFactory;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.UnusedLocalVariable" })
 public class ProtocolDAO {
 
-    private static Log log = LogFactory.getLog(ProtocolDAO.class);    
+    private static final Logger LOG  = Logger.getLogger(ProtocolDAO.class);    
     private static final int THREE = 3;
     private static final int FOUR = 4;
     private static final int FIVE = 5;
@@ -44,7 +43,7 @@ public class ProtocolDAO {
      * @throws PAException paException
      */
     public List<ProtocolDTO> queryProtocol(ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
-        log.debug("Entering queryProtocol ");
+        LOG.debug("Entering queryProtocol ");
         List<Object> queryList = new ArrayList<Object>();
         Session session = null;
         try {
@@ -52,16 +51,16 @@ public class ProtocolDAO {
         Query query = null;
         // step 1: form the hql
         String hql = generateProtocolQuery(protocolSearchCriteria);
-        log.info(" query protocol = " + hql);
+        LOG.info(" query protocol = " + hql);
         // step 2: construct query object
         query = session.createQuery(hql);
         // step 3: query the result
         queryList = query.list();
         } catch (HibernateException hbe) {
-            log.error(" Hibernate exception in query protocol ", hbe);
+            LOG.error(" Hibernate exception in query protocol ", hbe);
             throw new PAException(" Hibernate exception in query protocol ", hbe);
         }
-        log.debug("Leaving queryProtocol ");
+        LOG.debug("Leaving queryProtocol ");
         return convertToProtocolDTO(queryList);
     }
 
@@ -71,9 +70,10 @@ public class ProtocolDAO {
      * @return List ProtocolDTO
      * @throws PAException paException
      */
+
     private List<ProtocolDTO> convertToProtocolDTO(
             List protocolQueryResult) throws PAException {
-        log.debug("Entering convertProtocolQueryResultsToProtocolDTO ");
+        LOG.debug("Entering convertProtocolQueryResultsToProtocolDTO ");
         List<ProtocolDTO> protocolDtos = new ArrayList<ProtocolDTO>();
         ProtocolDTO protocolDto = null;
         Protocol protocol = null;
@@ -121,12 +121,14 @@ public class ProtocolDAO {
                 // add to the list
                 protocolDtos.add(protocolDto);
                 
+                
+                
             }
         } catch (Exception e) {
-            log.error("General error in while converting to DTO", e);
+            LOG.error("General error in while converting to DTO", e);
             throw new PAException("General error in while converting to DTO2", e);
         } finally {
-            log.debug("Leaving convertProtocolQueryResultsToProtocolDTO ");
+            LOG.debug("Leaving convertProtocolQueryResultsToProtocolDTO ");
         }
         return protocolDtos;
     }
@@ -141,7 +143,7 @@ public class ProtocolDAO {
      */
     private String generateProtocolQuery(
             ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
-        log.debug("Entering generateProtocolQuery ");
+        LOG.debug("Entering generateProtocolQuery ");
         StringBuffer hql = new StringBuffer();
         try {
             hql.append(" select pro , ps ,ss , hc , si , inv  from Protocol as pro  " 
@@ -150,10 +152,10 @@ public class ProtocolDAO {
                     + "left join pro.studyInvestigators  as si left join si.investigator as inv  ")
             .append(generateWhereClause(protocolSearchCriteria));
         } catch (Exception e) {
-            log.error("General error in while converting to DTO3", e);
+            LOG.error("General error in while converting to DTO3", e);
             throw new PAException("General error in while converting to DTO4", e);
         } finally {
-            log.debug("Leaving generateProtocolQuery ");
+            LOG.debug("Leaving generateProtocolQuery ");
         }
         return hql.toString();
 
@@ -166,9 +168,10 @@ public class ProtocolDAO {
      * @return String String
      * @throws PAException paException
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private String generateWhereClause(
             ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
-        log.debug("Entering generateWhereClause ");
+        LOG.debug("Entering generateWhereClause ");
         StringBuffer where = new StringBuffer();
         try {
             where.append("where 1 = 1 ");
@@ -205,10 +208,10 @@ public class ProtocolDAO {
                         + protocolSearchCriteria.getLeadOrganizationId() + "'");
             }
         } catch (Exception e) {
-            log.error("General error in while create where cluase", e);
+            LOG.error("General error in while create where cluase", e);
             throw new PAException("General error in while create where cluase", e);
         } finally {
-            log.debug("Leaving generateWhereClause ");
+            LOG.debug("Leaving generateWhereClause ");
         }
         /* todo : to add protocol status column in protocol table
          * if
