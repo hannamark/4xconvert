@@ -24,7 +24,7 @@
     <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
 
-		<s:form action="protocolSearchCriteria">
+		<s:form action="trailSearchAction">
            	<s:textfield key="protocol.search.label.nciNumber" name="nciNumber" />
 			<s:textfield key="protocol.search.label.officialTitle" name="officialTitle" /><br>                    	                                                             
             
@@ -46,7 +46,7 @@
 	              list="#sStatus" listKey="name()" listValue="name()"
 	               value="studyStatus" />   
 	         
-	         <s:set name="abStatus" value="@gov.nih.nci.pa.enums.AbstractionStatus@values()" />
+	         <s:set name="abStatus" value="@gov.nih.nci.pa.enums.AbstractionStatusCode@values()" />
 	         <s:select key="protocol.search.label.abstractionStatus" name="reportDataSet" multiple="false"
 	              list="#abStatus" listKey="name()" listValue="name()"
 	               value="abstractionStatus" />  <br>     

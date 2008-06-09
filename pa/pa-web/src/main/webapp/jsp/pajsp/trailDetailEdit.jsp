@@ -15,78 +15,68 @@
   <script type="text/javascript" src="/scripts/js/calendarpopup.js"></script>
 
 
-  <script type="text/javascript">
-      var cal = new CalendarPopup();
-  </script>
-  <div id="contentwide">
 	<h1><fmt:message key="trail.detail.title"/></h1>
 
     <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>  
 		<jsp:include page="/WEB-INF/jsp/common/trailDetailSummary.jsp"/>  
 
-
-			<div class="dotted_line"></div>	
-	   		<strong><fmt:message key="trail.detail.title"/></strong><br>
+			<s:form action="trailDetailAction">				
+	   		<strong><fmt:message key="trail.detail.title"/></strong>
 		     
-		   		  
-		   		  
 		   		<s:textfield key="trail.detail.lead.org.id" name="leadTrailIdentifier" />
-				<s:textfield key="trail.detail.brief.title" name="breifTitle" /><br>
+				<s:textfield key="trail.detail.brief.title" name="breifTitle" />
 				<s:textfield key="trail.detail.acronym" name="acronym" />
-				<s:textfield key="trail.detail.keywords" name="keywords" /><br>
+				<s:textfield key="trail.detail.keywords" name="keywords" />
 				<s:textfield key="trail.detail.brief.summary" name="briefSummary" />
-				<s:textfield key="trail.detail.detailed.description" name="detailedDesc" /><br>			
+				<s:textfield key="trail.detail.detailed.description" name="detailedDesc" />		
 							
 				<s:textfield key="trail.detail.anatomic.site" name="anatomicSite" />
 			
 			
-				 <s:set name="RepDataSet" value="@gov.nih.nci.pa.enums.ReportDataSetMethod@values()" />
+				 <s:set name="RepDataSet" value="@gov.nih.nci.pa.enums.ReportDataSetMethodCode@values()" />
                  <s:select key="trail.detail.reporting.data.set.method" name="reportDataSet" multiple="false"
                         list="#RepDataSet" listKey="name()" listValue="name()"
-                        value="repDataSet" /><br>
+                        value="repDataSet" />
 				
 				
-				<s:set name="PartType" value="@gov.nih.nci.pa.enums.ParticipationType@values()" />
-                <s:select key="trail.detail.participationType" name="PartType" multiple="false"
-                        list="#PartType" listKey="name()" listValue="name()"
-                        value="PartType" />
+				<s:set name="ParticipationType" value="@gov.nih.nci.pa.enums.ParticipationTypeCode@values()" />
+                <s:select key="trail.detail.participationType" name="ParticipationType" multiple="false"
+                        list="#ParticipationType" listKey="name()" listValue="name()"
+                        value="ParticipationType" />
 				
-				<s:set name="INDTrail" value="@gov.nih.nci.pa.enums.IndIdeTrailInd@values()" />
-                <s:select key="trail.detail.participationType" name="INDTrail" multiple="false"
-                        list="#INDTrail" listKey="name()" listValue="name()"
-                        value="INDTrail" /><br>
+				<s:set name="INDTrailIndicator" value="@gov.nih.nci.pa.enums.INDTrailIndicatorCode@values()" />
+                <s:select key="trail.detail.indTrail" name="INDTrailIndicator" multiple="false"
+                        list="#INDTrailIndicator" listKey="name()" listValue="name()"
+                        value="INDTrailIndicator" />
                         
-                <s:set name="IDETrail" value="@gov.nih.nci.pa.enums.IndIdeTrailInd@values()" />
-                <s:select key="trail.detail.ideTrail" name="IDETrail" multiple="false"
-                        list="#IDETrail" listKey="name()" listValue="name()"
-                        value="INETrail" />
+                <s:set name="IDETrailIndicator" value="@gov.nih.nci.pa.enums.IDETrailIndicatorCode@values()" />
+                <s:select key="trail.detail.ideTrail" name="IDETrailIndicator" multiple="false"
+                        list="#IDETrailIndicator" listKey="name()" listValue="name()"
+                        value="IDETrailIndicator" />
 				
 				
 	            
 	            <s:set name="accrualStatus" value="@gov.nih.nci.pa.enums.AccrualStatus@values()" />
 	            <s:select key="trail.detail.accrualStatus" name="accrualStatus" multiple="false"
 	               list="#accrualStatus" listKey="name()" listValue="name()"
-	               value="accrualStatus" /><br>
+	               value="accrualStatus" />
 	               
 	            <s:textfield key="trail.detail.accrualStatusDate" name="accrualStatusDate" />
-	            <a href="javascript:;" onclick="cal.select(document.forms[0].accrualStatusDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton"><img src="images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
-	            	  
 	            
-	            <s:set name="ExpandExcessInd" value="@gov.nih.nci.pa.enums.Indicator@values()" />
-	            <s:select key="trail.detail.expanded.excess.ind" name="ExpandExcessInd" multiple="false"
-	               list="#ExpandExcessInd" listKey="name()" listValue="name()"
-	               value="ExpandExcessInd" /><br>
+	            <s:set name="ExpandedAccessIndicator" value="@gov.nih.nci.pa.enums.ExpandedAccessIndicatorCode@values()" />
+	            <s:select key="trail.detail.expanded.access.ind" name="ExpandedAccessIndicator" multiple="false"
+	               list="#ExpandedAccessIndicator" listKey="name()" listValue="name()"
+	               value="ExpandedAccessIndicator" />
 	            
-	            <s:set name="ExpandExcessStatus" value="@gov.nih.nci.pa.enums.ExpandExcessStatus@values()" />
-	            <s:select key="trail.detail.expanded.excess.status" name="ExpandExcessStatus" multiple="false"
-	               list="#ExpandExcessStatus" listKey="name()" listValue="name()"
-	               value="ExpandExcessStatus" />  <br>
+	            <s:set name="ExpandedAccessStatus" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@values()" />
+	            <s:select key="trail.detail.expanded.access.status" name="ExpandedAccessStatus" multiple="false"
+	               list="#ExpandedAccessStatus" listKey="name()" listValue="name()"
+	               value="ExpandedAccessStatus" />  
 	               
 	             <s:submit value="Save" align="center"/>
+		 </s:form>
 
-
-  </div>
 <!--/Content-->
 
 </body>
