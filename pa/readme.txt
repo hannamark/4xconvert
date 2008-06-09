@@ -36,6 +36,8 @@ App Server - JBoss 4.0.5 w/ ejb3:
     1. Download the JBoss 4.0.5 JEMS Installer (1.2.0)
         http://sourceforge.net/project/downloading.php?group_id=22866&filename=jems-installer-1.2.0.GA.jar&70038359
     2. Run jems-installer-1.2.0.GA.jar as an executable Java JAR.
+    2.1 Double click the jar file, it will open an excutable window, if it doesn't popup a window execute this command in 
+    	the directory of the jems-installer-1.2.0.jar (java -jar jems-installer-1.2.0.GA.jar)
     3. Specify C:/dev/app_servers/jboss-4.0.5.GA as the installation location.
     4. Choose "ejb3" as the installation profile type, click Next.
     5. Leave the "default packs" selected, click Next.
