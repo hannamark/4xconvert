@@ -76,6 +76,11 @@ Build and deploy applications:
     5.  Point browser at http://localhost:8080/pa to test web application
     
     
+Setting up the Eclipse IDE
+--------------------------
+
+The .classpath file needs to be edited and the %JBOSS_HOME% to the folder on you file system
+    
         
         
         
