@@ -5,7 +5,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Trial Status codes.
+ * Enumeration  for Recruitment Status codes.
  *
  * @author Gil Naveh
  * @since 06/04/2008
@@ -13,16 +13,28 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum AccrualStatus implements CodedEnum<String> {
+public enum RecruitmentStatusCode implements CodedEnum<String> {
 
      /**
-     * Open.
+     * Not Yet Recruiting.
      */
-     OPEN("Open"), 
+     NOT_YET_RECRUITING("Not Yet Recruiting"), 
      /**
-      * Closed.
+      *Recruiting.
       */
-     CLOSED("Closed"),
+      RECRUITING("Recruiting"),      
+     /**
+      * Enrolling by invitation.
+      */
+     ENROLLING_BY_INVITATION("Enrolling by Invitation"),
+     /**
+      * Active, not recruiting.
+      */
+     ACTIVE_NOT_RECRUITING("Active, not recruiting"),
+     /**
+      * Completed.
+      */
+     COMPLETED("Completed"),
      /**
       * Suspended.
       */
@@ -30,16 +42,20 @@ public enum AccrualStatus implements CodedEnum<String> {
      /**
       * Terminated.
       */
-     TERMINATED("Terminated");
-     
-          
+     TERMINATED("Terminated"),
+     /**
+      * Withdrawn.
+      */
+     WITHDRAWN("Withdrawn");
+ 
+               
      private String code;
 
      /**
-      * Constructor for TrialStatusCode.
+      * Constructor for RecruitmentStatusCode.
       * @param code
       */
-     private AccrualStatus(String code) {
+     private RecruitmentStatusCode(String code) {
          this.code = code;
          register(this);
      }
@@ -71,7 +87,7 @@ public enum AccrualStatus implements CodedEnum<String> {
       * @param code code
       * @return TrialStatusCode 
       */
-     public static AccrualStatus getByCode(String code) {
-         return getByClassAndCode(AccrualStatus.class, code);
+     public static RecruitmentStatusCode getByCode(String code) {
+         return getByClassAndCode(RecruitmentStatusCode.class, code);
      }
 }

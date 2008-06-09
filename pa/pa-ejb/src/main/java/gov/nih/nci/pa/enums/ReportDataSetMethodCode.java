@@ -5,7 +5,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Trial Status codes.
+ * Enumeration  for Report Data Set Method codes.
  *
  * @author Gil Naveh
  * @since 06/04/2008
@@ -13,34 +13,28 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum ExpandExcessStatus implements CodedEnum<String> {
+public enum ReportDataSetMethodCode implements CodedEnum<String> {
 
      /**
-      *Available.
-      */
-      AVAILABLE("Available"),      
+     * Abbreviated.
+     */
+     ABBREVIATED("Abbreviated"), 
      /**
-      * No longer available.
+      * Completed.
       */
-     NO_LONGER_AVAILABLE("No longer available"),
+     COMPLETED("Completed"),
      /**
-      * Temporarily not available.
+      * AE.
       */
-     TEMPORARY_NOT_AVAILABLE("Temporarily not available"),
-     /**
-      * Approved for marketing.
-      */
-     APPROVED_FOR_MARKETING("Approved for marketing");
+     AE("AE");
      
- 
-               
      private String code;
 
      /**
-      * Constructor for TrialStatusCode.
+      * Constructor for ReportDataSetMethodCode.
       * @param code
       */
-     private ExpandExcessStatus(String code) {
+     private ReportDataSetMethodCode(String code) {
          this.code = code;
          register(this);
      }
@@ -70,9 +64,9 @@ public enum ExpandExcessStatus implements CodedEnum<String> {
 
      /**
       * @param code code
-      * @return TrialStatusCode 
+      * @return ReportDataSetMethodCode 
       */
-     public static ExpandExcessStatus getByCode(String code) {
-         return getByClassAndCode(ExpandExcessStatus.class, code);
+     public static ReportDataSetMethodCode getByCode(String code) {
+         return getByClassAndCode(ReportDataSetMethodCode.class, code);
      }
 }

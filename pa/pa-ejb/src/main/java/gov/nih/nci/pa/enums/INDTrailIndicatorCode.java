@@ -5,7 +5,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Trial Status codes.
+ * Enumeration  for IND Trail Indicator codes.
  *
  * @author Gil Naveh
  * @since 06/04/2008
@@ -13,28 +13,24 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum ReportDataSetMethod implements CodedEnum<String> {
+public enum INDTrailIndicatorCode implements CodedEnum<String> {
 
      /**
-     * Abbreviated.
+     * Yes.
      */
-     ABBREVIATED("Abbreviated"), 
+     YES("Yes"), 
      /**
-      * Completed.
+      * No.
       */
-     COMPLETED("Completed"),
-     /**
-      * AE.
-      */
-     AE("AE");
+     NO("No");
      
      private String code;
 
      /**
-      * Constructor for TrialStatusCode.
+      * Constructor for INDTrailIndicatorCode.
       * @param code
       */
-     private ReportDataSetMethod(String code) {
+     private INDTrailIndicatorCode(String code) {
          this.code = code;
          register(this);
      }
@@ -64,9 +60,9 @@ public enum ReportDataSetMethod implements CodedEnum<String> {
 
      /**
       * @param code code
-      * @return TrialStatusCode 
+      * @return INDTrailIndicatorCode 
       */
-     public static ReportDataSetMethod getByCode(String code) {
-         return getByClassAndCode(ReportDataSetMethod.class, code);
+     public static INDTrailIndicatorCode getByCode(String code) {
+         return getByClassAndCode(INDTrailIndicatorCode.class, code);
      }
 }

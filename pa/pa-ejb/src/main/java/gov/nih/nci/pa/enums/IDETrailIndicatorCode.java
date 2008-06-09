@@ -5,7 +5,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Trial Status codes.
+ * Enumeration  for IDE Trail Indicator codes.
  *
  * @author Gil Naveh
  * @since 06/04/2008
@@ -13,45 +13,24 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum AbstractionStatus implements CodedEnum<String> {
+public enum IDETrailIndicatorCode implements CodedEnum<String> {
 
      /**
-     * submitted.
+     * Yes.
      */
-     SUBMITTED("Submitted"), 
+     YES("Yes"), 
      /**
-      * On Hold.
+      * No.
       */
-     ON_HOLD("On Hold"),
-     /**
-      * Rejected.
-      */
-     REJECTED("Rejected"),
-     /**
-      * Accepted.
-      */
-     ACCEPTED("Accepted"),
-     /**
-      * Abstracted.
-      */
-     ABSTRACTED("Abstracted"),
-     /**
-      * Abstracted Verified.
-      */
-     ABSTRACTED_VERIFIED("Abstracted Verified"),
-     /**
-      * Abstracted Not Verified.
-      */
-     ABSTRACTED_NOT_VERIFIED("Abstracted Not Verified");
+     NO("No");
      
-          
      private String code;
 
      /**
-      * Constructor for TrialStatusCode.
+      * Constructor for IDETrailIndicatorCode.
       * @param code
       */
-     private AbstractionStatus(String code) {
+     private IDETrailIndicatorCode(String code) {
          this.code = code;
          register(this);
      }
@@ -81,9 +60,9 @@ public enum AbstractionStatus implements CodedEnum<String> {
 
      /**
       * @param code code
-      * @return TrialStatusCode 
+      * @return IDETrailIndicatorCode 
       */
-     public static AbstractionStatus getByCode(String code) {
-         return getByClassAndCode(AbstractionStatus.class, code);
+     public static IDETrailIndicatorCode getByCode(String code) {
+         return getByClassAndCode(IDETrailIndicatorCode.class, code);
      }
 }

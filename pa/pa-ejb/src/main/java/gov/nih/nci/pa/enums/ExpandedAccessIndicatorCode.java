@@ -5,7 +5,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Trial Status codes.
+ * Enumeration  for Expanded Access Indicator codes.
  *
  * @author Gil Naveh
  * @since 06/04/2008
@@ -13,24 +13,24 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum CompDateStateEnum implements CodedEnum<String> {
+public enum ExpandedAccessIndicatorCode implements CodedEnum<String> {
 
      /**
-     * anticipated.
+     * Yes.
      */
-     ANTICIPATED("Anticipated"), 
+     YES("Yes"), 
      /**
-      * actual.
+      * No.
       */
-     ACTUAL("Actual");
+     NO("No");
      
      private String code;
 
      /**
-      * Constructor for TrialStatusCode.
+      * Constructor for ExpandedAccessIndicatorCode.
       * @param code
       */
-     private CompDateStateEnum(String code) {
+     private ExpandedAccessIndicatorCode(String code) {
          this.code = code;
          register(this);
      }
@@ -60,9 +60,9 @@ public enum CompDateStateEnum implements CodedEnum<String> {
 
      /**
       * @param code code
-      * @return TrialStatusCode 
+      * @return ExpandedAccessIndicatorCode 
       */
-     public static CompDateStateEnum getByCode(String code) {
-         return getByClassAndCode(CompDateStateEnum.class, code);
+     public static ExpandedAccessIndicatorCode getByCode(String code) {
+         return getByClassAndCode(ExpandedAccessIndicatorCode.class, code);
      }
 }

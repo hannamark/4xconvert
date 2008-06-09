@@ -5,7 +5,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Trial Status codes.
+ * Enumeration  for Expanded Access Status codes.
  *
  * @author Gil Naveh
  * @since 06/04/2008
@@ -13,24 +13,34 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum IndIdeTrailInd implements CodedEnum<String> {
+public enum ExpandedAccessStatusCode implements CodedEnum<String> {
 
      /**
-     * Yes.
-     */
-     YES("Yes"), 
-     /**
-      * No.
+      *Available.
       */
-     NO("No");
+      AVAILABLE("Available"),      
+     /**
+      * No longer available.
+      */
+     NO_LONGER_AVAILABLE("No longer available"),
+     /**
+      * Temporarily not available.
+      */
+     TEMPORARY_NOT_AVAILABLE("Temporarily not available"),
+     /**
+      * Approved for marketing.
+      */
+     APPROVED_FOR_MARKETING("Approved for marketing");
      
+ 
+               
      private String code;
 
      /**
-      * Constructor for TrialStatusCode.
+      * Constructor for ExpandedAccessStatusCode.
       * @param code
       */
-     private IndIdeTrailInd(String code) {
+     private ExpandedAccessStatusCode(String code) {
          this.code = code;
          register(this);
      }
@@ -60,9 +70,9 @@ public enum IndIdeTrailInd implements CodedEnum<String> {
 
      /**
       * @param code code
-      * @return TrialStatusCode 
+      * @return ExpandedAccessStatusCode 
       */
-     public static IndIdeTrailInd getByCode(String code) {
-         return getByClassAndCode(IndIdeTrailInd.class, code);
+     public static ExpandedAccessStatusCode getByCode(String code) {
+         return getByClassAndCode(ExpandedAccessStatusCode.class, code);
      }
 }
