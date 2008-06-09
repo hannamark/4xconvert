@@ -107,12 +107,13 @@
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>             
-        	<classpath location="${pa-ear.build.testOutputDir}"/>      
+        	<classpath location="${pa-ear.build.testOutputDir}"/>   
+        	<classpath refid="jboss.classpath"/>  
             <classpath refid="build.test.classpath"/>
             <batchtest todir="${pa-ear.test.reports}">
                 <fileset dir="${pa-ear.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/> 
                 </fileset>
             </batchtest>
         </junit>
@@ -136,10 +137,9 @@
 	  		 <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*"/>
 	    </copy-->	  	
 	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
-            <fileset dir="${pa-ear.lib.main.dir}" includes="*.jar"/>
-            <fileset dir="${pa-ear.lib.main.dir}/jboss-client" includes="*.jar"/>
-	  		<fileset dir="${pa-ear.lib.main.dir}" includes="postgresql-8.2-507.jdbc3.jar"/>
-            
+            <fileset dir="${pa-ear.lib.main.dir}" includes="ehcache-1.2.3.jar"/>
+            <fileset dir="${pa-ear.lib.main.dir}" includes="security-4.0.1.jar"/>
+	  		<fileset dir="${pa-ear.lib.main.dir}" includes="postgresql-8.2-507.jdbc3.jar"/>            
 	    </copy>
 	    <ear destfile="${pa-ear.build.dir}/${pa-ear.build.finalName}.ear" 
 	         basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
