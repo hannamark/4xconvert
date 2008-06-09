@@ -62,6 +62,8 @@ Build/Deployment Steps
 ----------------------
 
 Setup database:
+    Download
+    1. download & install from http://wwwmaster.postgresql.org/download/mirrors-ftp?file=%2Fbinary%2Fv8.3.0%2Fwin32%2Fpostgresql-8.3.0-1.zip
     1.  Create "ctods" database
     2.  Create "ctods" login as a superuser with the password "ctods"
     3.  Run the following scripts
