@@ -1,9 +1,17 @@
 package gov.nih.nci.pa.action;
 
+
+import java.util.Hashtable;
+
+import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 
 import gov.nih.nci.pa.service.IProtocolService;
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
+import gov.nih.nci.pa.service.SessionManagerRemote;
+import gov.nih.nci.pa.util.JNDIUtil;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -16,7 +24,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ProtocolSearchAction extends ActionSupport {
     
     private ProtocolSearchCriteria srchCri = new ProtocolSearchCriteria();
-    private static final long TEST = 234234; 
+    private static final long TEST = 4;
   
     /**
      * @return action result
@@ -29,9 +37,25 @@ public class ProtocolSearchAction extends ActionSupport {
      * 
      * @return res
      */
+    @SuppressWarnings({ "PMD.ReplaceHashtableWithMap" })
     public String query() {
-        IProtocolService pServ = (IProtocolService) getEJB("pa/ProtocolServiceBean/local");
-        pServ.getProtocolLongTitleText(TEST);
+        SessionManagerRemote sessionManager;
+        InitialContext ctx;
+        //IProtocolService pServ = (IProtocolService) getEJB("pa/ProtocolServiceBean/remote");
+        Hashtable<String, Object> env = new Hashtable<String, Object>();
+        env.put(Context.SECURITY_PRINCIPAL, "ejbclient");
+        env.put(Context.SECURITY_CREDENTIALS, "pass");
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
+        try {
+            ctx = new InitialContext(env);
+        } catch (NamingException e) {
+                return ERROR;
+        }
+        sessionManager = (SessionManagerRemote) JNDIUtil.lookup(ctx, "pa/SessionManagerBean/remote");
+        String retURL = "http://www.google.com/";
+        sessionManager.startSession("username", retURL);
+        IProtocolService pServ = (IProtocolService) getEJB("pa/ProtocolServiceBean/remote");
+        pServ.getProtocolLongTitleText(Long.valueOf(TEST));
         return SUCCESS;
     }
     
