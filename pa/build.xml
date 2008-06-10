@@ -55,9 +55,6 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
-        <!--ant target="deploy" dir="pa-ejb"/>
-        <ant target="deploy" dir="pa-web"/-->
-
         <ant target="package" dir="pa-ejb"/>
         <ant target="package" dir="pa-web"/>
         <ant target="ear" dir="pa-ear"/>

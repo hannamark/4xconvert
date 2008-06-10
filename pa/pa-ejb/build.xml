@@ -83,14 +83,14 @@
     <target name="compile" description="Compile the code">
         <mkdir dir="${pa-ejb.build.outputDir}"/>
         <javac destdir="${pa-ejb.build.outputDir}" 
-       nowarn="false" 
-       debug="true" 
-       optimize="false" 
-       deprecation="true" 
-       target="1.5" 
-       verbose="false" 
-       fork="false" 
-       source="1.5">
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
             <src>
                 <pathelement location="${pa-ejb.build.srcDir.0}"/>
             </src>
@@ -107,18 +107,17 @@
 
     <target name="compile-tests" 
       depends="compile" 
-      description="Compile the test code" 
-      if="junit.present">
+      description="Compile the test code"> 
         <mkdir dir="${pa-ejb.build.testOutputDir}"/>
         <javac destdir="${pa-ejb.build.testOutputDir}" 
-       nowarn="false" 
-       debug="true" 
-       optimize="false" 
-       deprecation="true" 
-       target="1.5" 
-       verbose="false" 
-       fork="false" 
-       source="1.5">
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
             <src>
                 <pathelement location="${pa-ejb.build.testDir.0}"/>
             </src>
@@ -137,10 +136,10 @@
     <!-- ====================================================================== -->
 
     <target name="test-cobertura" depends="compile-tests" 
-            if="junit.present" description="Run JUnit and Cobertura tests">
+            description="Run JUnit and Cobertura tests">
         
         <delete file="${pa-ejb.build.dir}/cobertura.ser" />
-
+    	
         <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser"
                               toDir="${pa-ejb.build.coberturaOutputDir}">
             <fileset dir="${pa-ejb.build.outputDir}">

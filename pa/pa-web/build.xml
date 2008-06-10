@@ -105,8 +105,7 @@
 
     <target name="compile-tests" 
       depends="compile" 
-      description="Compile the test code" 
-      if="junit.present">
+      description="Compile the test code"> 
         <mkdir dir="${pa-web.build.testOutputDir}"/>
         <javac destdir="${pa-web.build.testOutputDir}" 
        nowarn="false" 
@@ -135,7 +134,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-cobertura" depends="compile-tests" 
-            if="junit.present" description="Run JUnit and Cobertura tests">
+            description="Run JUnit and Cobertura tests">
         
         <delete file="${pa-web.build.dir}/cobertura.ser" />
 

@@ -134,7 +134,8 @@
 	    <copy file="${pa-web.package}" 
 	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
 	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
-	  		 <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*"/>
+	  		 <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*" 
+	  		          excludes="**/application.xml"/>
 	    </copy>	  	
 	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
             <fileset dir="${pa-ear.lib.main.dir}" includes="ehcache-1.2.3.jar"/>
