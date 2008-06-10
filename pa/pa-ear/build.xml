@@ -133,9 +133,9 @@
 	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
 	    <copy file="${pa-web.package}" 
 	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
-	  	<!--copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
+	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
 	  		 <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*"/>
-	    </copy-->	  	
+	    </copy>	  	
 	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
             <fileset dir="${pa-ear.lib.main.dir}" includes="ehcache-1.2.3.jar"/>
             <fileset dir="${pa-ear.lib.main.dir}" includes="security-4.0.1.jar"/>

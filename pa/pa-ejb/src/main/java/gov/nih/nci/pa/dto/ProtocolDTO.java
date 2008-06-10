@@ -1,5 +1,8 @@
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
+import gov.nih.nci.pa.domain.Protocol;
 import gov.nih.nci.pa.enums.SponsorMonitorCode;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -15,7 +18,8 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
  */
 
 
-public class ProtocolDTO {
+public class ProtocolDTO implements Serializable {
+    static final long serialVersionUID = 283476876L;
     
     private Long protocolId;
     private String longTitleText;
@@ -31,6 +35,28 @@ public class ProtocolDTO {
     private Long leadOrganizationId;
     private String principalInvestigatorFullName;
 
+    
+    /**
+     * Default constructor.
+     */
+    public ProtocolDTO() {
+        // empty constructor
+    }
+
+    /**
+     * Constructor for creating a dto from a domain object.
+     * @param bo domain object
+     */
+    public ProtocolDTO(Protocol bo) {
+        this.protocolId = bo.getId();
+        this.longTitleText = bo.getLongTitleText();
+        this.studyTypeCode = bo.getStudyTypeCode();
+        this.sponsorMonitorCode = bo.getSponsorMonitorCode();
+        this.studyPhaseCode = bo.getStudyPhaseCode();
+        this.nciIdentifier = bo.getNciIdentifier();
+        this.sponsorMonitorcode = bo.getSponsorMonitorCode();
+    }
+    
     /**
      * 
      * @return protocolId

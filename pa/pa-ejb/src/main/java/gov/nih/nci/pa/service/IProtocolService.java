@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.dto.ProtocolDTO;
+
 /**
  * @author Harsha
  *
@@ -7,7 +9,7 @@ package gov.nih.nci.pa.service;
 public interface IProtocolService {
     /**
      * @param id object id
-     * @return Long title of protocol
+     * @return protocol dto
      */
-    String getProtocolLongTitleText(long id);
+    ProtocolDTO getProtocol(long id);
 }

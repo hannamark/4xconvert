@@ -48,6 +48,6 @@ public class ProtocolServiceTest {
     public void serviceAvailableTest() throws Exception
     {
         IProtocolService bean = RemoteServiceHelper.getProtocolService();
-        assertEquals(bean.getProtocolLongTitleText(1), "A Phase I study of Taxol in refractory leukemia in children");
+        assertEquals(bean.getProtocol(1).getLongTitleText(), "A Phase I study of Taxol in refractory leukemia in children");
     }
 }

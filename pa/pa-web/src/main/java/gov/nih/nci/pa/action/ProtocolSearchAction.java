@@ -55,7 +55,7 @@ public class ProtocolSearchAction extends ActionSupport {
         String retURL = "http://www.google.com/";
         sessionManager.startSession("username", retURL);
         IProtocolService pServ = (IProtocolService) getEJB("pa/ProtocolServiceBean/remote");
-        pServ.getProtocolLongTitleText(Long.valueOf(TEST));
+        pServ.getProtocol(Long.valueOf(TEST));
         return SUCCESS;
     }
     

@@ -9,6 +9,8 @@ import org.hibernate.Session;
 
 //import gov.nih.nci.pa.bo.Protocol;
 import gov.nih.nci.pa.domain.Protocol;
+import gov.nih.nci.pa.dto.ProtocolDTO;
+import gov.nih.nci.pa.persistence.BO2DTO;
 import gov.nih.nci.pa.service.IProtocolService;
 import gov.nih.nci.pa.util.HibernateUtil;
 //import gov.nih.nci.pa.util.HibernateUtil;
@@ -20,15 +22,14 @@ public class ProtocolServiceImpl implements IProtocolService {
 
     /**
      * @param id object id
-     * @return long title
+     * @return protocol transfer object
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public String getProtocolLongTitleText(long id) {
+    public ProtocolDTO getProtocol(long id) {
       Session s = HibernateUtil.getCurrentSession();
       Protocol p = new Protocol();
-       s.load(p, Long.valueOf(id));
-      
-      return p.getLongTitleText();
+      s.load(p, Long.valueOf(id));      
+      return BO2DTO.convert(p);
     }
     
 }
