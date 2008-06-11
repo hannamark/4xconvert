@@ -28,10 +28,12 @@ public class ProtocolServiceImpl implements IProtocolService {
     public ProtocolDTO getProtocol(long id) {
       Session s = HibernateUtil.getCurrentSession();
       Protocol p = new Protocol();
-      s.load(p, Long.valueOf(id)); 
+      p = (Protocol) s.get(Protocol.class, id);
+      if (p == null) {
+        s.load(p, Long.valueOf(id));
+      }
       ProtocolDTO rslt = new ProtocolDTO();
       rslt = BO2DTO.convert(p);
-      s.evict(p);
       return rslt;
     }
     
