@@ -21,14 +21,9 @@
 <div id="box">
 
 <s:form action="authenticate">
-	<table>
-      <tr>
-	   <td colspan="2">
-	         <s:actionerror />
-	         <s:fielderror />
-	   </td>
-	  </tr>
-     </table>
+
+  <s:actionerror />
+
   <s:textfield key="trail.login.username" name="username" />
   <s:password key="trail.login.password" name="password" />
  <s:submit value="Login" align="center"/>
