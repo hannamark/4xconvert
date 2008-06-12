@@ -52,6 +52,16 @@
             <include name="*.jar" />
         </fileset>
     </path>
+    <path id="jboss.classpath">       
+    	<fileset dir="${jboss.deploy.directory}/../lib">
+    	    <include name="*.jar"/>
+    	</fileset>
+    </path>
+    <path id="jboss.classpath.client">       
+    	<fileset dir="${jboss.deploy.directory}/../../../client">
+    	    <include name="*.jar"/>
+    	</fileset>
+    </path>
 
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
@@ -92,7 +102,12 @@
             <src>
                 <pathelement location="${pa-web.build.srcDir.0}"/>
             </src>
-            <classpath refid="build.classpath"/>
+            <classpath>
+            	<path refid="build.classpath"/> 
+                 <path refid="build.test.classpath"/>                
+             	<path refid="jboss.classpath"/>  
+            	<path refid="jboss.classpath.client"/>
+             </classpath>
         </javac>
         <copy todir="${pa-web.build.outputDir}">
             <fileset dir="${pa-web.build.resourceDir.0}"/>
@@ -121,7 +136,8 @@
             </src>
             <classpath>
                 <path refid="build.test.classpath"/>
-                <pathelement location="${pa-web.build.outputDir}"/>
+                <pathelement location="${pa-web.build.outputDir}"/> 
+            	<path refid="jboss.classpath"/>            	    
             </classpath>
         </javac>
         <copy todir="${pa-web.build.testOutputDir}">
@@ -181,6 +197,10 @@
 
     <target name="test-checkstyle" description="Run checkstyle">
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
+        	<classpath>
+        		<path refid="jboss.classpath"/>  
+        		<path refid="jboss.classpath.client"/>
+        	</classpath>
             <fileset dir="src/main" includes="**/*.java" />
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa-web.build.dir}/checkstyle.txt"/>
