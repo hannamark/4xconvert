@@ -4,7 +4,16 @@
 	
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>	
 <%@taglib prefix="s" uri="/struts-tags" %>
+
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="/struts-tags" prefix="s" %>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
+<%@ taglib uri="http://ajaxtags.org/tags/ajax" prefix="ajax" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <s:set name="menuPage" value="%{'QueryProtocol'}"/>
+<jsp:useBean id="protocol" class="gov.nih.nci.pa.domain.Protocol" />
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -98,7 +107,7 @@
                     <td colspan="2">                    	
                     	<INPUT TYPE="submit" NAME="submit"  value="Search"/>          
                         <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                    </td>
+                    </td> 
                 </tr>
             </table>
        </s:form>
@@ -107,8 +116,9 @@
     <!--/Search Box-->
 
 </div>
-
-<!--/Content-->
-
-</body>
+<div class="boxouter">
+    <jsp:include page="/jsp/pajsp/listresults.jsp">
+        <jsp:param name="listName" value="records" />        
+    </jsp:include>
+</div></body>
 </html>

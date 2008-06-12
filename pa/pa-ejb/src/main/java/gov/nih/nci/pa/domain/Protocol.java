@@ -68,7 +68,7 @@ public class Protocol extends AbstractEntity {
         this.nciIdentifier = dto.getNciIdentifier();
         this.longTitleText = dto.getLongTitleText();
         this.studyTypeCode = dto.getStudyTypeCode();
-        this.sponsorMonitorCode = dto.getSponsorMonitorcode();
+        this.sponsorMonitorCode = dto.getSponsorMonitorCode();
         this.studyPhaseCode = dto.getStudyPhaseCode();
     }
 

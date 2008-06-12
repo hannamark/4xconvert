@@ -28,8 +28,7 @@ public class ProtocolDTO implements Serializable {
     private StudyPhaseCode studyPhaseCode;
     private StudyStatusCode studyStatusCode;
     private String leadOrganizationProtocolId;
-    private String nciIdentifier;
-    private SponsorMonitorCode sponsorMonitorcode;
+    private String nciIdentifier;    
     private String statusDate;
     private String leadOrganizationName;
     private Long leadOrganizationId;
@@ -54,7 +53,7 @@ public class ProtocolDTO implements Serializable {
         this.sponsorMonitorCode = bo.getSponsorMonitorCode();
         this.studyPhaseCode = bo.getStudyPhaseCode();
         this.nciIdentifier = bo.getNciIdentifier();
-        this.sponsorMonitorcode = bo.getSponsorMonitorCode();
+       
     }
     
     /**
@@ -169,20 +168,7 @@ public class ProtocolDTO implements Serializable {
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
     }
-    /**
-     * 
-     * @return sponsorMonitorcode
-     */
-    public SponsorMonitorCode getSponsorMonitorcode() {
-        return sponsorMonitorcode;
-    }
-    /**
-     * 
-     * @param sponsorMonitorcode sponsorMonitorcode
-     */
-    public void setSponsorMonitorcode(SponsorMonitorCode sponsorMonitorcode) {
-        this.sponsorMonitorcode = sponsorMonitorcode;
-    }
+  
     /**
      * 
      * @return statusDate

@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.service;
 
+import java.util.List;
+
 import gov.nih.nci.pa.dto.ProtocolDTO;
 
 /**
@@ -12,4 +14,11 @@ public interface IProtocolService {
      * @return protocol dto
      */
     ProtocolDTO getProtocol(long id);
+    
+    /**
+     * 
+     * @param pSc ProtocolSearchCriteria
+     * @return list protocolDto    
+     */
+    List<ProtocolDTO> getProtocol(ProtocolSearchCriteria pSc);
 }

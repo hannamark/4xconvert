@@ -6,6 +6,9 @@
 
 <struts>
 	<package name="myPackage" extends="struts-default">
+		<interceptors>
+		     <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />		
+		</interceptors>
 		<action name="index" class="gov.nih.nci.IndexAction">
 			<result>/jsp/index.jsp</result>
 		</action>
@@ -17,6 +20,7 @@
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>
 		<action name="queryProtocol" class="gov.nih.nci.pa.action.ProtocolSearchAction" method="query">
+			<interceptor-ref name="nci-commonsParams" />
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>
 		<action name="trailDetailEdit">

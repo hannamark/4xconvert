@@ -26,7 +26,7 @@ public enum StudyPhaseCode implements CodedEnum<String> {
     /**
     * added these to synch with sample data.
     */
-    I("I"), I_II("I/II"), II("II"), III("III");
+    I("I"), II("II"), III("III");
 
     private String code;
     /**
