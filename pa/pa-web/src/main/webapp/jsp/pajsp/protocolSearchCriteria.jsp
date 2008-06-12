@@ -45,13 +45,13 @@
                     	<b><fmt:message key="protocol.search.label.nciNumber"/></b>
                     </td>
                     <td align=left>
-                    	<s:textfield name="nci" size="15" maxlength="10" theme="simple"/>
+                    	<s:textfield name="criteria.nciIdentifier" size="15" maxlength="10" theme="simple"/>
                     </td>
                     <td align=right>
                     	<b><fmt:message key="protocol.search.label.officialTitle"/></b> 
                     </td>
                     <td align=left>                                             
-                    	<s:textfield name="title"  size="15" maxlength="10" theme="simple"/>
+                    	<s:textfield name="criteria.longTitleText"  size="15" maxlength="10" theme="simple"/>
                     </td>
                  </tr>                                               
 				 <tr>
@@ -59,13 +59,13 @@
                      	<b><fmt:message key="protocol.search.label.leadOrganization"/></b> 
                     </td>
                     <td align=left>
-                     	<s:textfield name="leadOrg" size="15" maxlength="10" theme="simple"/>                                             
+                     	<s:textfield name="criteria.leadOrganizationId" size="15" maxlength="10" theme="simple"/>                                             
                     </td>
                     <td align=right>
                     	<b><fmt:message key="protocol.search.label.leadOrganizationProtocolID"/></b> 
                     </td>
                     <td align=left>
-                    	<s:textfield name="leadOrgPID" size="15" maxlength="10" theme="simple"/>                                                 
+                    	<s:textfield name="criteria.leadOrganizationProtocolId" size="15" maxlength="10" theme="simple"/>                                                 
                     </td>                    
                 </tr>      
                 <tr>
@@ -73,7 +73,7 @@
                     	<b><fmt:message key="protocol.search.label.studyPhase"/></b>                     	
                     </td>
                     <td align=left>
-						<s:select name="sphase"
+						<s:select name="criteria.studyPhaseCode"
 						          theme="simple"
 						          headerKey="0"
 						          headerValue="-- Please Select --"
@@ -85,7 +85,7 @@
                     </td>
 					<td align=left>
 						<s:select label="Study Status:"
-						          name="sStatus"
+						          name="criteria.studyStatusCode"
 						          theme="simple"
 						          headerKey="1"
 						          headerValue="-- Please Select --"
@@ -98,7 +98,7 @@
                     </td>
 					<td >
 						<s:select label="Abstraction Status:"
-						          name="aStatus"
+						          name="criteria.studyTypeCode"
 						          theme="simple"
 						          headerKey="1"
 						          headerValue="-- Please Select --"
@@ -111,14 +111,14 @@
                 </tr>
             </table>
        </s:form>
-
+<div >
+    <jsp:include page="/jsp/pajsp/listresults.jsp">
+        <jsp:param name="listName" value="records" />        
+    </jsp:include>
+</div>
     </div>
     <!--/Search Box-->
 
 </div>
-<div class="boxouter">
-    <jsp:include page="/jsp/pajsp/listresults.jsp">
-        <jsp:param name="listName" value="records" />        
-    </jsp:include>
-</div></body>
+</body>
 </html>

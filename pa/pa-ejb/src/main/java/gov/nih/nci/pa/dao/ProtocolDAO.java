@@ -172,7 +172,7 @@ public class ProtocolDAO {
      * @return String String
      * @throws PAException paException
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.InefficientStringBuffering" })
     private String generateWhereClause(
             ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
         LOG.debug("Entering generateWhereClause ");
@@ -185,7 +185,7 @@ public class ProtocolDAO {
             }
             if (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria
                     .getNciIdentifier())) {
-                where.append(" and pro.nciIdentifier = ").append(protocolSearchCriteria.getNciIdentifier());
+                where.append(" and pro.nciIdentifier = '").append(protocolSearchCriteria.getNciIdentifier() + "'");
             }
             if (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria
                     .getLongTitleText())) {

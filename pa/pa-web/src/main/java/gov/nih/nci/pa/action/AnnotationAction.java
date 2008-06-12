@@ -67,7 +67,7 @@ public class AnnotationAction extends ActionSupport {
     public String execute() throws java.lang.Exception {
    //need to replace with a method login(getUsername(),getPassword()) 
    //that checks with CSM if user exists and has Permission
-      if (!getUsername().equals("Admin") || !getPassword().equals("Admin")) {
+      if (!getUsername().equals("admin") || !getPassword().equals("admin")) {
             addActionError("Invalid user name or password! Please try again!");
            
         return ERROR;
