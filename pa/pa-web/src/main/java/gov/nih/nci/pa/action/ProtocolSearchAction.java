@@ -1,15 +1,19 @@
 package gov.nih.nci.pa.action;
 
-import java.util.Hashtable;
-import javax.naming.Context;
+
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
+
 import org.displaytag.properties.SortOrderEnum;
 import gov.nih.nci.pa.dto.ProtocolDTO;
-import gov.nih.nci.pa.service.IProtocolService;
+
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
-import gov.nih.nci.pa.service.SessionManagerRemote;
-import gov.nih.nci.pa.util.JNDIUtil;
+
+
+
+
+import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -41,23 +45,9 @@ public class ProtocolSearchAction extends ActionSupport {
     @SuppressWarnings({ "PMD.ReplaceHashtableWithMap", "PMD.SystemPrintln" })  
     
     public String query() {
-        SessionManagerRemote sessionManager;
-        InitialContext ctx;
-        Hashtable<String, Object> env = new Hashtable<String, Object>();
-        env.put(Context.SECURITY_PRINCIPAL, "ejbclient");
-        env.put(Context.SECURITY_CREDENTIALS, "pass");
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-        try {
-            ctx = new InitialContext(env);
-        } catch (NamingException e) {
-                return ERROR;
-        }
-        sessionManager = (SessionManagerRemote) JNDIUtil.lookup(ctx, "pa/SessionManagerBean/remote");
-        String retURL = "http://";
-        sessionManager.startSession("username", retURL);
-        IProtocolService pServ = (IProtocolService) getEJB("pa/ProtocolServiceBean/local");
-        java.util.List<ProtocolDTO> p = pServ.getProtocol(criteria);
-        records.setList(p);
+        HibernateUtil.getHibernateHelper().openAndBindSession();
+        java.util.List<ProtocolDTO> protocols = PaRegistry.getProtocolService().getProtocol(criteria);
+        records.setList(protocols);
         return SUCCESS;
     }
     
