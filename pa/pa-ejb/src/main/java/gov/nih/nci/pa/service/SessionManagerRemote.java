@@ -14,26 +14,26 @@ import javax.ejb.Remote;
 public interface SessionManagerRemote {
     
     /**
-     * Parameter name used to identify the session created by startSession() when redirecting to PO.
+     * Parameter name used to identify the session created by startSession() when redirecting to PA.
      * <code>
      * ...
-     * long poSessionCode = sessionManager.startSession(...);
+     * long paSessionCode = sessionManager.startSession(...);
      * String baseURL = "http://server.org/po/pub/person/create.action?";
      * response.sendRedirect(baseURL + SessionManagerRemote.PARAM_CODE + "=" + poSessionCode);
      * </code>
      */
-    String PARAM_CODE = "po.code";
+    String PARAM_CODE = "pa.code";
     
     /**
      * the return URL will be appended with this parameter in case of error.
      */
-    String PARAM_ERROR = "po.error";
+    String PARAM_ERROR = "pa.error";
     
     /**
      * The return URL will be appended with this parameter when a new record is created.
      * the value is the id
      */
-    String PARAM_ID = "po.id";
+    String PARAM_ID = "pa.id";
 
     /**
      * request a new session for a user on a client app.

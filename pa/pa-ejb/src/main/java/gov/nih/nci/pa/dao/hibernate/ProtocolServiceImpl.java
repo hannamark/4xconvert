@@ -5,15 +5,11 @@ import javax.ejb.TransactionAttributeType;
 
 import org.hibernate.Session;
 
-//import org.hibernate.Session;
-
-//import gov.nih.nci.pa.bo.Protocol;
 import gov.nih.nci.pa.domain.Protocol;
 import gov.nih.nci.pa.dto.ProtocolDTO;
 import gov.nih.nci.pa.persistence.BO2DTO;
 import gov.nih.nci.pa.service.IProtocolService;
 import gov.nih.nci.pa.util.HibernateUtil;
-//import gov.nih.nci.pa.util.HibernateUtil;
 
 /**
  * @author Harsha
