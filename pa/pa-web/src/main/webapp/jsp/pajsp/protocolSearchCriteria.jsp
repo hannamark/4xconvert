@@ -3,41 +3,20 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>	
-<%@taglib prefix="s" uri="/struts-tags" %>
-
-
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
-<%@ taglib uri="http://ajaxtags.org/tags/ajax" prefix="ajax" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
-<s:set name="menuPage" value="%{'QueryProtocol'}"/>
-<jsp:useBean id="protocol" class="gov.nih.nci.pa.domain.Protocol" />
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title><fmt:message key="protocol.search.title"/></title>
-	<s:head />
+	<title><fmt:message key="protocol.search.title"/></title>	
+	<s:head/>
 </head>
 <body>
-	<!-- main content begins-->
-
+<!-- main content begins-->
 <!--Content-->
-
-<div id="contentwide">
-
-
     <!--ADD CONTENT HERE-->
-
 	<h1><fmt:message key="protocol.search.header"/></h1>
-
     <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
-
     <!--Search Box-->
-
-    <div id="searchbox">
+    <div id="contentwide">
 		<s:form action="queryProtocol">
             <table cellspacing="8">	
             	<tr>
@@ -105,20 +84,15 @@
 						          list="%{#{'sub':'Submitted','inp':'In Progress','acc':'Accepted','onh':'On Hold'}}"/>						          						
                   	</td>    
                     <td colspan="2">                    	
-                    	<INPUT TYPE="submit" NAME="submit"  value="Search"/>          
+                    	<INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
                         <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                     </td> 
                 </tr>
             </table>
        </s:form>
-<div >
-    <jsp:include page="/jsp/pajsp/listresults.jsp">
-        <jsp:param name="listName" value="records" />        
-    </jsp:include>
-</div>
-    </div>
-    <!--/Search Box-->
-
-</div>
+       <jsp:include page="/jsp/pajsp/listresults.jsp">
+       <jsp:param name="listName" value="records" />        
+ 		 </jsp:include>
+     </div>
 </body>
 </html>
