@@ -9,7 +9,7 @@ delete  from healthcare_site_prtcpnt;
 
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source)Values(1,'2410','23','A Phase I study of Taxol in refractory leukemia in children','Leukemia in Children','I', 'NCICB CTMS(EN)');
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source)Values(2,'355','33','Phase III Study of Zoladex Adjuvant to Radiotherapy','Zoladex Adjuvant to Radiotherapy','III', 'NCICB CTMS(EN)');
-insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source)Values(3,'3421','213','Randomized double-blind trial of G-CSF versus','Randomized double-blind trial of G-CSF versus','I/II', 'NCICB CTMS(EN)');
+insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source)Values(3,'3421','213','Randomized double-blind trial of G-CSF versus','Randomized double-blind trial of G-CSF versus','II', 'NCICB CTMS(EN)');
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source)Values(4,'4433','3','A Controlled Phase III Evaluation of 5FU Combined','Evaluation of 5FU Combined','III', 'NCICB CTMS(EN)');
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source)Values(5,'345554','7','Phase II trial of Lysominal B','Phase II trial of Lysominal B','II', 'NCICB CTMS(EN)');
 
