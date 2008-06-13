@@ -13,7 +13,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return protocol service
      */
     public ProtocolServiceLocal getProtocolService() {
-        return null;
+        return (ProtocolServiceLocal) JNDIUtil.lookup("pa/ProtocolServiceBean/local");
     }
 
 }
