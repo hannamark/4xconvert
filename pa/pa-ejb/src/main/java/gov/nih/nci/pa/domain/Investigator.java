@@ -216,13 +216,13 @@ public class Investigator extends AbstractEntity {
     public String getFullName() {
        StringBuffer fullName = new StringBuffer();
        if (this.lastName != null) {
-           fullName.append(lastName).append(" , ");
+           fullName.append(lastName).append(", ");
        }
        if (this.middleName != null) {
-           fullName.append(middleName).append(" , ");
+           fullName.append(middleName).append(", ");
        }
        if (this.firstName != null) {
-           fullName.append(fullName).append(firstName);
+           fullName.append(firstName);
        }
        fullName.trimToSize();
        int lastIndex = fullName.lastIndexOf(","); 

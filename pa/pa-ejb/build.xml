@@ -35,16 +35,22 @@
         <fileset dir="${pa-ejb.lib.main.dir}">
             <include name="**/*"/>
         </fileset>
-	<fileset dir="${jboss.deploy.directory}/../lib">
-		<include name="**/*"/>
-	</fileset>
-	<fileset dir="${jboss.deploy.directory}/../../../client">
+	    <fileset dir="${jboss.deploy.directory}/../lib">
+		    <include name="**/*"/>
+	    </fileset>
+	    <fileset dir="${jboss.deploy.directory}/../../../client">
 			<include name="**/*"/>
-	</fileset>
+	    </fileset>
     </path>
     <path id="build.test.classpath">
         <fileset dir="${pa-ejb.lib.test.dir}"/>
         <fileset dir="${pa-ejb.lib.main.dir}">
+            <include name="**/*"/>
+        </fileset>
+        <fileset dir="${jboss.deploy.directory}/../lib">
+            <include name="**/*"/>
+        </fileset>
+        <fileset dir="${jboss.deploy.directory}/../../../client">
             <include name="**/*"/>
         </fileset>
     </path>
@@ -174,7 +180,7 @@
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
                          totalbranchrate="10" 
                          totallinerate="10"
-                         haltonfailure="false"/>
+                         haltonfailure="true"/>
      </target>
 
     <!-- ====================================================================== -->
