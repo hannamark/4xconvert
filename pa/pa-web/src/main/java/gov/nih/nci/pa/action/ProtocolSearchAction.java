@@ -14,6 +14,8 @@ import gov.nih.nci.pa.service.ProtocolSearchCriteria;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+
+
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -44,7 +46,7 @@ public class ProtocolSearchAction extends ActionSupport {
      */
     @SuppressWarnings({ "PMD.ReplaceHashtableWithMap", "PMD.SystemPrintln" })  
     
-    public String query() {
+    public String query() {        
         HibernateUtil.getHibernateHelper().openAndBindSession();
         java.util.List<ProtocolDTO> protocols = PaRegistry.getProtocolService().getProtocol(criteria);
         records.setList(protocols);
