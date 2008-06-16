@@ -73,7 +73,8 @@ Setup database:
         - dbscripts/PGctodsInsert.sql
 
 Build and deploy applications:
-    1.  Create build.properties using build.properties.example as a template.
+    1.  copy build.properties using build.properties.example as a template.
+    	1.1 right click the file/TortoiseSVN/Add to ignore list, this will make we are not adding our local property file by mistake
     2.  Run command "ant deploy" to build and deploy applications
     3.  Start JBoss
     4.  Run command "ant test-integration" to test that ejb's are running
