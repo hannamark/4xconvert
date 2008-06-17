@@ -1,0 +1,37 @@
+<ivysettings>
+	<property name="nci.ivy.repo" value="http://gforge.nci.nih.gov/svnroot/commonlibrary/trunk/ivy-repo"/>
+  	<property name="copa.basedir"  value="${ivy.settings.dir}/.."/>
+	
+  	<settings defaultCache="${user.home}/.ivy2-${project.name}" defaultResolver="nci-chain" />
+	
+	<caches useOrigin="true"/>
+	
+	<resolvers>
+		<ibiblio name="ibiblio" m2compatible="true"/>
+
+		<chain name="nci-chain">
+			<url name="ncicb-ivy-repo" m2compatible="false">
+				<ivy pattern="${nci.ivy.repo}/[organisation]/[module]/[revision]/ivy.xml" />
+				<artifact pattern="${nci.ivy.repo}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</url>  
+
+
+		<!-- begin copa specific stuff 
+		To resolve and download any dependencies in the local file system when not found in repository in the above url
+		-->
+			<filesystem name="copa-lib-resolver" local="true">
+				<artifact pattern="${copa.basedir}/[module]/[artifact]-[revision].[ext]" />
+				<ivy pattern="${copa.basedir}/[module]/ivy.xml" />
+			</filesystem>   
+		</chain>    
+	</resolvers>
+   
+
+	<modules>
+	     <module organisation="ncicb" 
+		     name="copa-local-lib"  
+		     resolver="copa-lib-resolver"/>
+	</modules>  
+
+   
+</ivysettings>

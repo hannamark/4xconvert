@@ -4,14 +4,15 @@
 <!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
 <!-- ====================================================================== -->
 
-<project name="pa" default="package" basedir=".">
-    <property file="${basedir}/build.properties"/>
-
+<project name="pa" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    	<property file="${basedir}/build.properties"/>
+   	<property name="global.ivy.settings.file" location="${basedir}/lib/ivysettings.xml" />
+   	
 	<!-- ====================================================================== -->
 	<!-- Cleaning up target                                                     -->
 	<!-- ====================================================================== -->
 
-	<target name="clean" description="Clean the output directory">
+	<target name="clean" depends="ivy-get-dependencies" description="Clean the output directory">
         <ant target="clean" dir="pa-ejb"/>
         <ant target="clean" dir="pa-web"/>
         <ant target="clean" dir="pa-ear"/>
@@ -21,7 +22,7 @@
 	<!-- Compilation target                                                     -->
 	<!-- ====================================================================== -->
 
-	<target name="compile" description="Compile the code">
+	<target name="compile" depends="ivy-get-dependencies" description="Compile the code">
         <ant target="compile" dir="pa-ejb"/>
         <ant target="compile" dir="pa-web"/>
         <ant target="compile-tests" dir="pa-ejb"/>
@@ -32,7 +33,7 @@
 	<!-- Run all tests                                                          -->
 	<!-- ====================================================================== -->
 
-	<target name="test" description="Run all tests">
+	<target name="test" depends="ivy-get-dependencies" description="Run all tests">
         <ant target="test-all" dir="pa-ejb"/>
         <ant target="test-all" dir="pa-web"/>
         </target>
@@ -41,16 +42,17 @@
 	<!-- Package target                                                         -->
 	<!-- ====================================================================== -->
 
-	<target name="package" description="Package the application">
+	<target name="package" depends="ivy-get-dependencies" description="Package the application">
         <ant target="package" dir="pa-ejb"/>
         <ant target="package" dir="pa-web"/>
+        <ant target="ear" dir="pa-ear"/>
 	</target>
 
     <!-- ====================================================================== -->
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="deploy" description="Deploys the application">
+    <target name="deploy" depends="ivy-get-dependencies" description="Deploys the application">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
@@ -60,19 +62,54 @@
         <ant target="ear" dir="pa-ear"/>
     </target>
 
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
     <!-- Run integration tests                                                  -->
     <!-- ====================================================================== -->
 
-    <target name="test-integration" description="Tests the deployed application">
+    <target name="test-integration" depends="ivy-get-dependencies" description="Tests the deployed application">
         <ant target="test-all" dir="pa-ear"/>
-     </target>
+    </target>
 
-	<!-- ====================================================================== -->
-	<!-- Help target                                                            -->
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
+    <!-- Help target                                                            -->
+    <!-- ====================================================================== -->
 
-	<target name="help">
-		<echo message="Please run: $ant -projecthelp"/>
-	</target>
+    <target name="help">
+        <echo message="Please run: $ant -projecthelp"/>
+    </target>
+
+
+
+    <!-- ====================================================================== --> 
+    <!-- Ivy                                                                    -->
+    <!-- ====================================================================== -->
+
+    <property name="global.ivy.settings.file" location="${basedir}/ivysettings.xml" />
+    <property name="lib.dir" location="${basedir}/lib" />
+
+    <!-- Paths -->
+    <path id="common.classpath">
+    	<fileset dir="${basedir}/lib">
+    		<include name="ivy-core-2.0.0-beta2.jar" />
+    		<include name="ivy-2.0.0-beta2.jar" />
+    	</fileset>
+    </path>
+
+    <!-- Task definitions -->
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="common.classpath" />
+
+
+
+    <target name="ivy-settings" unless="ivy.settings.loaded">
+    	<ivy:settings file="${global.ivy.settings.file}" />
+        <property name="ivy.settings.loaded" value="true"/>
+    </target>
+    
+    <target name="ivy-get-dependencies" depends="ivy-settings" description="Updates the local ivy repository"
+            unless="ivy.dependencies.retrieved" >
+    	<ivy:resolve file="lib/ivy-copa-lib.xml" refresh="true" conf="test" />
+    	<ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test" />
+    	<property name="ivy.dependencies.retrieved" value="true"/>
+    </target>
+    
 </project>
