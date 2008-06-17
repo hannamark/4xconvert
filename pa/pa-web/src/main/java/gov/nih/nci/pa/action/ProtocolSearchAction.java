@@ -1,20 +1,12 @@
 package gov.nih.nci.pa.action;
 
 
-import javax.naming.InitialContext;
-
-import org.displaytag.properties.SortOrderEnum;
 import gov.nih.nci.pa.dto.ProtocolDTO;
-
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
-
-
-
-
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
-
+import org.displaytag.properties.SortOrderEnum;
 
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;
@@ -61,21 +53,6 @@ public class ProtocolSearchAction extends ActionSupport {
         return records;
     }
     
-    /**
-     * 
-     * @param jndiName String
-     * @return object
-     */
-    public static Object getEJB(String jndiName) {
-        Object object = null;
-        try {
-            InitialContext ctx = new InitialContext();
-            object = ctx.lookup(jndiName);
-        } catch (Exception e) {
-            object = null;
-        }
-        return object;
-    }
 
     /**
      * @return form bean
