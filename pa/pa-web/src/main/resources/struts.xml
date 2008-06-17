@@ -14,7 +14,7 @@
 		</action>
 		<action name="helloWorld" class="helloWorldAction"> 
 			<result name="input">/jsp/index.jsp</result>
-			<result>/jsp/pajsp/login.jsp</result>
+			<result>/jsp/helloWorld.jsp</result>
 		</action>		
 		<action name="searchProtocol">
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
@@ -29,7 +29,7 @@
 		<action name="login">
 			<result>/jsp/pajsp/login.jsp</result>
 		</action>
-		<action name="authenticate" class="gov.nih.nci.pa.action.AnnotationAction">
+		<action name="authenticate" class="gov.nih.nci.pa.action.LoginAction">
 			<result name="input">/jsp/pajsp/login.jsp</result>
 			<result name="error">/jsp/pajsp/login.jsp</result>
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
