@@ -20,7 +20,7 @@
 				<li>Maintenance</li>
 		
 		    <li><a href="#" onclick="Help.popHelpMain('');return false;">Help</a></li>
-		    <li><a href="login.html" > Logout</a></li>
+		    <li><a href="login.action" > Logout</a></li>
 		</ul>
 	</s:if>
 	<s:elseif test="%{#menuPage=='QueryProtocol'}">
@@ -28,7 +28,7 @@
 			<li><a href="searchProtocol.action" class="selected">Query Protocols</a></li>
 			<li>Maintenance</li>
 		    <li><a href="#" onclick="Help.popHelpMain('');return false;">Help</a></li>
-		    <li><a href="login.html" > Logout</a></li>
+		    <li><a href="login.action" > Logout</a></li>
 		</ul>
     </s:elseif>
       
