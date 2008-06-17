@@ -9,11 +9,6 @@ import gov.nih.nci.pa.dto.ProtocolDTO;
  *
  */
 public interface IProtocolService {
-    /**
-     * @param id object id
-     * @return protocol dto
-     */
-    ProtocolDTO getProtocol(long id);
     
     /**
      * 
