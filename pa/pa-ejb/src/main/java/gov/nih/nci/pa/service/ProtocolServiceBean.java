@@ -1,13 +1,16 @@
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
-import gov.nih.nci.pa.dao.ProtocolDAO;
 import gov.nih.nci.pa.dto.ProtocolDTO;
+import gov.nih.nci.pa.service.impl.ProtocolServiceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
@@ -15,20 +18,21 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 public class ProtocolServiceBean  implements ProtocolServiceLocal, ProtocolServiceRemote {
+
+    private static final Logger LOG  = Logger.getLogger(ProtocolServiceBean.class);
     
     /**
-     * @param sc ProtocolSearchCriteria
+     * @param psc ProtocolSearchCriteria
      * @return List ProtocolDTO    
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria sc) {
-       try {
-        ProtocolDAO dao = new ProtocolDAO();
-        return dao.queryProtocol(sc);
-        } catch (PAException e) {
-            //@todo : throw exception 
-            return null;
-        }
+    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria psc) {
+        LOG.debug("Entering getProtocol ");
+        ProtocolServiceImpl pImpl = new ProtocolServiceImpl();
+        List<ProtocolDTO> pdtos = new ArrayList<ProtocolDTO>();
+        pdtos = pImpl.getProtocol(psc);
+        LOG.debug("Leaving getProtocol ");
+        return pdtos;
     }
     
 
