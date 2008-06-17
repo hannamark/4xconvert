@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.dto.ProtocolDTO;
 import gov.nih.nci.pa.enums.SponsorMonitorCode;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -58,18 +57,6 @@ public class Protocol extends AbstractEntity {
      */
     public Protocol() {
         // empty constructor
-    }
-
-    /**
-     * Construct new domain object from dto.
-     * @param dto transfer object
-     */
-    public Protocol(ProtocolDTO dto) {
-        this.nciIdentifier = dto.getNciIdentifier();
-        this.longTitleText = dto.getLongTitleText();
-        this.studyTypeCode = dto.getStudyTypeCode();
-        this.sponsorMonitorCode = dto.getSponsorMonitorCode();
-        this.studyPhaseCode = dto.getStudyPhaseCode();
     }
 
     /**
