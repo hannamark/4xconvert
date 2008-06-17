@@ -42,7 +42,7 @@ public class ProtocolDAO {
      * @return List queryList
      * @throws PAException paException
      */
-    public List<ProtocolDTO> queryProtocol(ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
+    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria protocolSearchCriteria) throws PAException {
         LOG.debug("Entering queryProtocol ");
         List<Object> queryList = new ArrayList<Object>();
         Session session = null;
