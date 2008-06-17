@@ -24,7 +24,7 @@
 
   <s:actionerror />
 
-  <s:textfield key="trail.login.username" name="username" />
+  <s:textfield key="trail.login.username" name="userName" />
   <s:password key="trail.login.password" name="password" />
  <s:submit value="Login" align="center"/>
 </s:form>
