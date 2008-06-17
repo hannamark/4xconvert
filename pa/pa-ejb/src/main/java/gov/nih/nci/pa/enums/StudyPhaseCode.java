@@ -48,9 +48,18 @@ public enum StudyPhaseCode implements CodedEnum<String> {
      */
     PHASE4("Phase 4"),
     /**
+     * I.
+     */
+    I("I"),
+    /**
      * II.
      */
-    II("II");
+    II("II"),
+    /**
+     * III.
+     */
+    III("III");
+    
     private String code;
     /**
      * 

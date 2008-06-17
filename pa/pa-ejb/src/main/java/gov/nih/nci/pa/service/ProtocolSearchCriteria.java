@@ -1,14 +1,22 @@
 package gov.nih.nci.pa.service;
 
+import java.io.Serializable;
+
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 
 /**
- * @author Hugh
- *
+ * Class used to hold criteria used in searching protocols.
+ * 
+ * @author Hugh Reinhart
+ * @since 05/27/2008 copyright NCI 2007. All rights reserved. This code may not
+ *        be used without the express written permission of the copyright
+ *        holder, NCI.
  */
-public class ProtocolSearchCriteria {    
+public class ProtocolSearchCriteria implements Serializable {    
+    static final long serialVersionUID = 252345L;
+    
     private Long protocolId;
     private String nciIdentifier;
     private String longTitleText;
