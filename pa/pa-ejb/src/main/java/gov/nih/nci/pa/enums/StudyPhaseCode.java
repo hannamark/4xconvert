@@ -16,18 +16,41 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 public enum StudyPhaseCode implements CodedEnum<String> {
     
     /**
-    * list of Enumerated phases.
+    * NA.
     */
-    N_A("N/A"), PHASEO("Phase 0"), PHASEI("Phase I"), PHASEI_PHASE2("Phase 1/Phase 2"), 
+    N_A("N/A"), 
     /**
-     * Added this java doc because of check style bug.
+     * Phase 0.
      */
-    PHASE2("Phase 2"), PHASE2_PHASE3("Phase 2/Phase 3"), PHASE3("Phase 3"), PHASE4("Phase 4"),
+    PHASEO("Phase 0"), 
     /**
-    * added these to synch with sample data.
-    */
-    I("I"), II("II"), III("III");
-
+     * Phase I.
+     */
+    PHASEI("Phase I"), 
+    /**
+     * Phase 1/2.
+     */
+    PHASEI_PHASE2("Phase 1/Phase 2"), 
+    /**
+     * Phase 2.
+     */
+    PHASE2("Phase 2"), 
+    /**
+     * Phase 2/3.
+     */
+    PHASE2_PHASE3("Phase 2/Phase 3"), 
+    /**
+     * Phase 3.
+     */
+    PHASE3("Phase 3"), 
+    /**
+     * Phase 4.
+     */
+    PHASE4("Phase 4"),
+    /**
+     * II.
+     */
+    II("II");
     private String code;
     /**
      * 
