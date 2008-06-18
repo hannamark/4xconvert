@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>gov.nih.nci.po</groupId>
+        <artifactId>po</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>gov.nih.nci.po</groupId>
+    <artifactId>services</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>po</name>
+    <inceptionYear>2008</inceptionYear>
+
+    <properties>
+        <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>
+        <database.name>po</database.name>
+        <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
+        <jdbc.username>po</jdbc.username>
+        <jdbc.password>po</jdbc.password>
+        <jdbc.groupId>postgresql</jdbc.groupId>
+        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
+        <jdbc.artifactId>postgresql</jdbc.artifactId>
+        <jdbc.version>8.2-507.jdbc3</jdbc.version>
+        <!-- PO-43: add LDAP params here (params is security-config.xml) -->
+        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <hibernate.version>3.2.5.ga</hibernate.version>
+        <hibernate.annotations.version>3.3.0.ga</hibernate.annotations.version>
+        <hibernate.commons.annotations.version>3.3.0.ga</hibernate.commons.annotations.version>
+        <hibernate.validator.version>3.0.0.ga</hibernate.validator.version>
+        <hibernate.search.version>3.0.0.GA</hibernate.search.version>
+        <schema.file>schema.sql</schema.file>
+        <jboss.home>C:/dev/app_servers/jboss-4.2.2.GA</jboss.home>
+        <jboss.hostname>localhost</jboss.hostname>
+        <jboss.port>8080</jboss.port>
+        <jboss.naming.port>1099</jboss.naming.port>
+        <jboss.configuration>messaging</jboss.configuration>
+        <log.level.nci-commons>DEBUG</log.level.nci-commons>
+        <log.level.po>DEBUG</log.level.po>
+        <nci-commons.version>1.0.7</nci-commons.version>
+        <compileSource>1.5</compileSource>
+        <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
+        <test.jdbc.username>sa</test.jdbc.username>
+        <test.jdbc.password></test.jdbc.password>
+        <test.jdbc.driverClassName>org.hsqldb.jdbcDriver</test.jdbc.driverClassName>
+        <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
+        <test.selenium.server.port>60001</test.selenium.server.port>
+        <test.selenium.server.debug>true</test.selenium.server.debug>
+        <admin.db.username>postgres</admin.db.username>
+        <admin.db.password>postgres</admin.db.password>
+
+        <showErrorStackTraces>true</showErrorStackTraces>
+        <defaultPageSize>20</defaultPageSize>
+    </properties>
+
+   
+
+  
+
+    <ciManagement>
+        <system>CruiseControl</system>
+        <url>http://2115-millers-d1.nci.nih.gov:8001/</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <address>team-po@5amsolutions.com</address>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Po Dev Team List</name>
+            <post>team-po@5amsolutions.com</post>
+        </mailingList>
+    </mailingLists>
+
+    
+
+    <modules>
+        <module>common</module>
+        <module>organization</module>
+        <module>person</module>        
+        <module>po-correlation</module>
+        <module>grid</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestDb.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>${jdbc.groupId}</groupId>
+                            <artifactId>${jdbc.artifactId}</artifactId>
+                            <version>${jdbc.version}</version>
+                        </dependency>
+                    </dependencies>
+
+                    <configuration>
+                        <driver>${jdbc.driverClassName}</driver>
+                        <url>${jdbc.url}</url>
+                        <username>${jdbc.username}</username>
+                        <password>${jdbc.password}</password>
+                        <autocommit>true</autocommit>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <configuration>
+                        <container>
+                            <containerId>jboss4x</containerId>
+                            <type>installed</type>
+                            <home>${jboss.home}</home>
+                        </container>
+                        <configuration>
+                            <type>existing</type>
+                            <home>${jboss.home}/server/${jboss.configuration}</home>
+                            <properties>
+                                <cargo.jboss.configuration>${jboss.configuration}</cargo.jboss.configuration>
+                                <cargo.hostname>${jboss.hostname}</cargo.hostname>
+                                <cargo.servlet.port>${jboss.port}</cargo.servlet.port>
+                            </properties>
+                        </configuration>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>nightly</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                 <database.name>ponightly</database.name>
+                 <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
+                 <jdbc.username>ponightly</jdbc.username>
+                 <jdbc.password>ponightly</jdbc.password>
+                 <jboss.port>8180</jboss.port>
+                 <jboss.naming.port>1199</jboss.naming.port>
+                 <jboss.configuration>messaging-01</jboss.configuration>
+
+                 <test.jdbc.url>${database.url.prefix}${database.name}</test.jdbc.url>
+                 <test.jdbc.username>ponightly</test.jdbc.username>
+                 <test.jdbc.password>ponightly</test.jdbc.password>
+                 <test.jdbc.driverClassName>org.postgresql.Driver</test.jdbc.driverClassName>
+                 <test.hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</test.hibernate.dialect>
+            </properties>
+        </profile>
+    </profiles>
+    <repositories>
+        <repository>
+            <id>5AM-Releases</id>
+            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>5AM-Snapshots</id>
+            <url>http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>maven</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>maven-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven 1</name>
+            <url>http://download.java.net/maven/1/</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven 2</name>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>5AM-Releases</id>
+            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <!-- JBoss provided jars -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-annotations-ejb3</artifactId>
+            <version>4.2.1.GA</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jbossws-spi</artifactId>
+            <version>1.0.0.GA</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Testing only jars -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jta</artifactId>
+            <groupId>javax.transaction</groupId>
+            <version>1.0.1B</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

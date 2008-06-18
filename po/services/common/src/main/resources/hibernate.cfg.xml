@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration
+PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory name="java:/hibernate/SessionFactory" >
+        <property name="hibernate.connection.datasource">java:/po-ds</property>
+        <property name="hibernate.current_session_context_class">managed</property>
+        <property name="hibernate.transaction.factory_class">org.hibernate.transaction.CMTTransactionFactory</property>
+        <property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</property>
+        <property name="hibernate.dialect">${hibernate.dialect}</property>
+        <property name="hibernate.jdbc.batch_size">25</property>
+        <property name="hibernate.jdbc.batch_versioned_data">true</property>
+        <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+        <property name="hibernate.cache.use_query_cache">true</property>
+
+        <mapping class="gov.nih.nci.po.data.bo.Address"/>
+        <mapping class="gov.nih.nci.po.data.bo.Certificate"/>
+        <mapping class="gov.nih.nci.po.data.bo.License"/>
+        <mapping class="gov.nih.nci.po.data.bo.Degree"/>
+        <mapping class="gov.nih.nci.po.data.bo.Speciality"/>
+        <mapping class="gov.nih.nci.po.data.bo.Person"/>
+        <mapping class="gov.nih.nci.po.data.bo.ContactInfo"/>
+        <mapping class="gov.nih.nci.po.data.bo.Organization"/>
+        <mapping class="gov.nih.nci.po.data.bo.Email"/>
+        <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
+        <mapping class="gov.nih.nci.po.data.bo.URL"/>
+
+        <mapping class="gov.nih.nci.po.data.bo.alternate.AlternateProvider" />
+        <mapping class="gov.nih.nci.po.data.bo.alternate.ProviderPerson" />
+        <mapping class="gov.nih.nci.po.data.bo.alternate.ProviderOrganization" />
+
+        <mapping class="gov.nih.nci.po.data.common.Country" />
+        <mapping class="gov.nih.nci.po.data.common.DegreeType" />
+        <mapping class="gov.nih.nci.po.data.common.PersonType"/>
+        <mapping class="gov.nih.nci.po.data.common.OrganizationType"/>
+        <mapping class="gov.nih.nci.po.data.common.State"/>
+
+        <mapping class="gov.nih.nci.po.service.SessionEntry" />
+
+        <mapping class="gov.nih.nci.po.data.cr.AddressCR" />
+        <mapping class="gov.nih.nci.po.data.cr.PersonCR" />
+        <mapping class="gov.nih.nci.po.data.cr.DegreeCR" />
+        <mapping class="gov.nih.nci.po.data.cr.SpecialityCR" />
+        <mapping class="gov.nih.nci.po.data.cr.CertificateCR" />
+        <mapping class="gov.nih.nci.po.data.cr.LicenseCR" />
+        <mapping class="gov.nih.nci.po.data.cr.EmailCR" />
+        <mapping class="gov.nih.nci.po.data.cr.PhoneNumberCR" />
+        <mapping class="gov.nih.nci.po.data.cr.URLCR" />
+        <mapping class="gov.nih.nci.po.data.cr.OrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.cr.ContactInfoCR" />
+
+        <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
+        <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
+    </session-factory>
+</hibernate-configuration>

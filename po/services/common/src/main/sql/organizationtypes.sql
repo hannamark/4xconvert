@@ -1,0 +1,17 @@
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Contract Research Organization', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'PEAR', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Drug Company', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Clinical Center', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'CCOP', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Consortium', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Institution', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Network', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Ordering Group', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Repository', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Research Base', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'NCP (NCI/CTEP)', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Other Organization', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Institutional Review Board', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Laboratory', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Cancer Center', true);
+INSERT INTO organizationtype ( ID, NAME, BASICTYPE) VALUES (nextval('hibernate_sequence'), 'Cooperative Group', true);
