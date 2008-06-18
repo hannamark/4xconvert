@@ -205,7 +205,8 @@
                                     <exec os="Windows_NT, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
                                            <env key="NOPAUSE" value="true" />
                                            <arg line="/c run.bat" />                                    	   
-                                    </exec>                                   
+                                    </exec>
+                                    <sleep seconds="15" />
                               </else>
                          </if>
               	<ant target="waitfor-jboss"/>
@@ -237,6 +238,7 @@
     <!-- ====================================================================== -->
     
 	<target name="waitfor-jboss">
+		<echo>JBOSS startup please wait..............................</echo>
         <waitfor maxwait="120" maxwaitunit="second" checkevery="20" checkeveryunit="second">
             <http url="http://localhost:${jboss.port}/pa"/>
         </waitfor>

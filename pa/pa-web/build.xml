@@ -149,7 +149,7 @@
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
-    <target name="test-selenium" depends="compile-tests" 
+    <target name="test-selenium-class" depends="compile-tests" 
             description="Run JUnit and Cobertura tests">
         
         <delete file="${pa-web.build.dir}/cobertura.ser" />
@@ -286,49 +286,6 @@
     <target name="help">
         <echo message="Please run: $ant -projecthelp"/>
     </target>
-	
-    <target name="test-selenium-class" 
-            description="Run JUnit and Cobertura tests">
-        
-        <delete file="${pa-web.build.dir}/cobertura.ser" />
-
-        <cobertura-instrument datafile="${pa-web.build.dir}/cobertura.ser"
-                              toDir="${pa-web.build.coberturaOutputDir}">
-            <fileset dir="${pa-web.build.outputDir}">
-                <include name="**/*.class" />
-            </fileset>
-        </cobertura-instrument>   
-        
-        <mkdir dir="${pa-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
-            <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${pa-web.build.dir}/cobertura.ser" />
-            <formatter type="xml"/>
-            <formatter type="plain" usefile="false"/>
-            <classpath location="${pa-web.build.coberturaOutputDir}"/>
-            <classpath location="${pa-web.build.outputDir}"/>
-            <classpath location="${pa-web.build.testOutputDir}"/>
-            <classpath refid="cobertura.classpath"/>
-            <classpath refid="build.test.classpath"/>
-            <batchtest todir="${pa-web.test.reports}">
-                <fileset dir="${pa-web.build.testDir.0}">
-                    <exclude name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>
-                	<include name="**/*Selenium*Test.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        
-        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          destdir="${pa-web.coverage.reports}" 
-                          srcdir="${pa-web.build.srcDir.0}" />
-        
-        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
-                         totallinerate="10"
-                         haltonfailure="false"/>
-     </target>
 	
 
     <target name="test-cobertura" depends="compile-tests" 
