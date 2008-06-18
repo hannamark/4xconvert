@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ====================================================================== -->
-<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- pa-ejb ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
 <project name="pa-ejb" default="jar" basedir=".">
@@ -102,7 +102,13 @@
             </src>
             <classpath refid="build.classpath"/>
         </javac>
-        <copy todir="${pa-ejb.build.outputDir}">
+        
+        <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+        <filter token="db.username" value="${db.username}"/>
+        <filter token="db.password" value="${db.password}"/>
+        <filter token="jdbc.driver" value="${jdbc.driver}"/>
+        <filter token="jdbc.url" value="${jdbc.url}"/>
+        <copy todir="${pa-ejb.build.outputDir}" filtering="true">
             <fileset dir="${pa-ejb.build.resourceDir.0}"/>
         </copy>
     </target>

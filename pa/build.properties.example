@@ -1,2 +1,7 @@
 jboss.deploy.directory=D:/jboss-4.0.5.GAJEMS/server/default/deploy
 jboss.port=8280
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+db.username=ctods
+db.password=ctods
+jdbc.driver=org.postgresql.Driver
+jdbc.url=jdbc:postgresql://localhost:5432/ctods

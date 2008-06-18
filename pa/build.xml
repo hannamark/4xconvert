@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ====================================================================== -->
-<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- Main ant script for COPPA PA                                           -->
 <!-- ====================================================================== -->
 
 <project name="pa" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     	<property file="${basedir}/build.properties"/>
    	<property name="global.ivy.settings.file" location="${basedir}/lib/ivysettings.xml" />
-   	
+	
 	<!-- ====================================================================== -->
 	<!-- Cleaning up target                                                     -->
 	<!-- ====================================================================== -->
 
 	<target name="clean" depends="ivy-get-dependencies" description="Clean the output directory">
         <ant target="clean" dir="pa-ejb"/>
-        <ant target="clean" dir="pa-web"/>
         <ant target="clean" dir="pa-ear"/>
+        <ant target="clean" dir="pa-web"/>
 	</target>
-
+  
 	<!-- ====================================================================== -->
 	<!-- Compilation target                                                     -->
 	<!-- ====================================================================== -->
@@ -101,27 +101,25 @@
 
     <!-- Paths -->
     <path id="common.classpath">
-    	<fileset dir="${basedir}/lib">
-    		<include name="ivy-core-2.0.0-beta2.jar" />
-    		<include name="ivy-2.0.0-beta2.jar" />
-    	</fileset>
+        <fileset dir="${basedir}/lib">
+            <include name="ivy-core-2.0.0-beta2.jar" />
+            <include name="ivy-2.0.0-beta2.jar" />
+        </fileset>
     </path>
 
     <!-- Task definitions -->
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="common.classpath" />
 
-
-
     <target name="ivy-settings" unless="ivy.settings.loaded">
-    	<ivy:settings file="${global.ivy.settings.file}" />
+        <ivy:settings file="${global.ivy.settings.file}" />
         <property name="ivy.settings.loaded" value="true"/>
     </target>
     
-    <target name="ivy-get-dependencies" depends="ivy-settings" description="Updates the local ivy repository"
+    <target name="ivy-get-dependencies" depends="ivy-settings" description="Updates the dependencies."
             unless="ivy.dependencies.retrieved" >
-    	<ivy:resolve file="lib/ivy-copa-lib.xml" refresh="true" conf="test" />
-    	<ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test" />
-    	<property name="ivy.dependencies.retrieved" value="true"/>
+        <ivy:resolve file="lib/ivy-copa-lib.xml" refresh="true" conf="test" />
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test" />
+        <property name="ivy.dependencies.retrieved" value="true"/>
     </target>
-    
+	
 </project>

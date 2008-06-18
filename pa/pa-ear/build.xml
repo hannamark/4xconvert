@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ====================================================================== -->
-<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- pa-ear ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
 <project name="pa-ear" default="test-all" basedir=".">
@@ -153,7 +153,7 @@
 	         compress="false" 
 	         appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
 	  </target>
-
+	
     <!-- ====================================================================== -->
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
