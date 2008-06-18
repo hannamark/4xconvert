@@ -94,7 +94,7 @@ public enum StudyPhaseCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return StudyPhaseCode 
      */
     public static StudyPhaseCode getByCode(String code) {
         return getByClassAndCode(StudyPhaseCode.class, code);
