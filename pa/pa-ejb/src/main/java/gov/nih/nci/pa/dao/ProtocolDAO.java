@@ -115,8 +115,16 @@ public class ProtocolDAO {
                 if (studySite != null && studySite.getLeadOrganizationProtocolId() != null) {
                     protocolDto.setLeadOrganizationProtocolId(studySite.getLeadOrganizationProtocolId());
                 }
+                // transfer from protocol status to dto
+                if (protocolStatus != null) {
+                    protocolDto.setStudyStatusCode(protocolStatus.getStudyStatusCode());
+                    protocolDto.setStudyStatusDate(protocolStatus.getStudyStatusDate());
+                }
+                
                 // transfer from investigator to protocolDto
-                //protocolDto.setPrincipalInvestigatorFullName(investigator.getFullName());
+                if (investigator != null) {
+                    protocolDto.setPrincipalInvestigatorFullName(investigator.getFullName());
+                }
                 // transfer from healthcareSite to protocolDto
                 if (healthcareSite != null) {
                     protocolDto.setLeadOrganizationName(healthcareSite.getName());
