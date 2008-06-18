@@ -205,13 +205,12 @@
                                     <exec os="Windows_NT, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
                                            <env key="NOPAUSE" value="true" />
                                            <arg line="/c run.bat" />                                    	   
-                                    </exec>
-                                    <sleep seconds="15" />
+                                    </exec>                                   
                               </else>
                          </if>
               	<ant target="waitfor-jboss"/>
               	<ant target="start-selenium-server"/>
-              	<ant target="test-coberturar" dir="../pa-web"/>
+              	<ant target="test-selenium-class" dir="../pa-web"/>
               	<ant target="stop-jboss"/>
                 </sequential>
     </macrodef>
