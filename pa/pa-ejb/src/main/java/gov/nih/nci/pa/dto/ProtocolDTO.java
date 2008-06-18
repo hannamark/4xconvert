@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import gov.nih.nci.pa.domain.Protocol;
 import gov.nih.nci.pa.enums.SponsorMonitorCode;
@@ -26,10 +27,10 @@ public class ProtocolDTO implements Serializable {
     private StudyTypeCode studyTypeCode;
     private SponsorMonitorCode sponsorMonitorCode;
     private StudyPhaseCode studyPhaseCode;
-    private StudyStatusCode studyStatusCode;
     private String leadOrganizationProtocolId;
     private String nciIdentifier;    
-    private String statusDate;
+    private StudyStatusCode studyStatusCode;
+    private Date studyStatusDate;
     private String leadOrganizationName;
     private Long leadOrganizationId;
     private String principalInvestigatorFullName;
@@ -173,15 +174,15 @@ public class ProtocolDTO implements Serializable {
      * 
      * @return statusDate
      */
-    public String getStatusDate() {
-        return statusDate;
+    public Date getStudyStatusDate() {
+        return studyStatusDate;
     }
     /**
      * 
-     * @param statusDate statusDate
+     * @param studyStatusDate current status date
      */
-    public void setStatusDate(String statusDate) {
-        this.statusDate = statusDate;
+    public void setStudyStatusDate(Date studyStatusDate) {
+        this.studyStatusDate = studyStatusDate;
     }
     /**
      * 
