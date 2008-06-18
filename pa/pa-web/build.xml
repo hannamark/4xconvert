@@ -149,7 +149,7 @@
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
-    <target name="test-coberturar" depends="compile-tests" 
+    <target name="test-selenium" depends="compile-tests" 
             description="Run JUnit and Cobertura tests">
         
         <delete file="${pa-web.build.dir}/cobertura.ser" />
@@ -287,7 +287,7 @@
         <echo message="Please run: $ant -projecthelp"/>
     </target>
 	
-    <target name="test-selenium" 
+    <target name="test-selenium-class" 
             description="Run JUnit and Cobertura tests">
         
         <delete file="${pa-web.build.dir}/cobertura.ser" />
