@@ -22,12 +22,18 @@
 	<property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
 	<property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
 	<property name="pa-web.output.dir" value="${basedir}/../pa-web/target"/>
-    <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>
+    <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>	
+	<property name="serverName" value="default"/>
 	
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
-
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	  <classpath>
+	    <pathelement location="${pa-ear.lib.dir}/test/ant-contrib.jar"/>
+	  </classpath>
+	</taskdef>
+	
     <path id="build.classpath">
         <fileset dir="${pa-ear.lib.main.dir}">
             <include name="**/*"/>
@@ -151,7 +157,7 @@
     <!-- ====================================================================== -->
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
-
+	
     <target name="deploy" description="Deploys the ear for the application">
         <available file="${pa-ear.build.dir}/${pa-ear.ear}" property="pa-ear.ear.present"/>
         <fail unless="pa-ear.ear.present" message="Ear file not found."/>
@@ -159,10 +165,93 @@
     </target>
 
     <!-- ====================================================================== -->
+    <!-- called only for selenium tests                                         -->
+    <!-- ====================================================================== -->
+
+	<target name="start_jboss" depends="package, deploy" description="starts the jboss to run selenium test">
+		<jboss-start-jboss jboss.home="${jboss.deploy.directory}/../../../" jboss.server.name="${serverName}"/>
+	</target>
+	
+    <!-- 
+    jboss-start-jboss macro will start the jboss instance
+    usage: <jboss-start-jboss jboss.home="${jboss.home}"/>
+                jboss.home is the location where Jboss is installed                       
+    -->
+    <macrodef name="jboss-start-jboss" description="Starts a local JBoss instance">    	
+         <attribute name="jboss.home" default="${jboss.home}" />
+         <attribute name="jboss.server.name" default="${jboss.server.name}" />
+              <sequential>
+                     <available file="@{jboss.home}/bin" property="jboss.bin.exists"/>              			
+                         <if>
+                             <isset property="jboss.bin.exists"/>
+                                <then>
+                                    <echo message="Starting JBoss instance at @{jboss.home} and @{jboss.server.name} with start_jboss" />
+                                    <exec os="Windows XP, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
+                                           <env key="NOPAUSE" value="true" />
+                                           <arg line="/c run.bat" />                                    	   
+                                    </exec>
+                                </then>
+                              <else>
+                                    <echo message="Starting JBoss instance at @{jboss.home} with run.sh" />
+                                    <exec os="Linux" executable="chmod" spawn="true">
+                                           <arg value="+x" />
+                                           <arg file="@{jboss.home}/bin/run.sh" />
+                                           <arg file="@{jboss.home}/bin/shutdown.sh" />
+                                    </exec>                
+                                    <exec executable="sh" os="Linux" dir="@{jboss.home}/bin" spawn="true">
+                                           <env key="NOPAUSE" value="true" />
+                                           <arg line="run.sh" />
+                                    </exec>
+                                    <exec os="Windows_NT, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
+                                           <env key="NOPAUSE" value="true" />
+                                           <arg line="/c run.bat" />                                    	   
+                                    </exec>
+                                    <sleep seconds="15" />
+                              </else>
+                         </if>
+              	<ant target="waitfor-jboss"/>
+              	<ant target="start-selenium-server"/>
+              	<ant target="test-coberturar" dir="../pa-web"/>
+              	<ant target="stop-jboss"/>
+                </sequential>
+    </macrodef>
+    <!-- ====================================================================== -->
     <!-- A target to build and deploy the package                               -->
     <!-- ====================================================================== -->
 
     <target name="ear" depends="package,deploy" description="Builds and deploys the ear"/>
 
+	<!-- ====================================================================== -->
+    <!-- Start the selenium server                                              -->
+    <!-- ====================================================================== -->
+  
+	<target name="start-selenium-server">
+        <java jar="${pa-ear.lib.dir}/main/selenium-server-1.0-beta-1-standalone.jar" fork="true" spawn="true">
+            <arg line="-timeout 30"/>
+            <jvmarg value="-Dhttp.proxyHost=proxy.corporate.com"/>
+            <jvmarg value="-Dhttp.proxyPort=3128"/>
+        </java>
+    </target>
+
+	<!-- ====================================================================== -->
+    <!-- Wait for jboss to start                                                -->
+    <!-- ====================================================================== -->
+    
+	<target name="waitfor-jboss">
+        <waitfor maxwait="120" maxwaitunit="second" checkevery="20" checkeveryunit="second">
+            <http url="http://localhost:${jboss.port}/pa"/>
+        </waitfor>
+    </target>
+	
+	<!-- ====================================================================== -->
+    <!-- Stop the jboss server                                                  -->
+    <!-- ====================================================================== -->
+	
+    <target name="stop-jboss" description="Stop the JBoss server">       
+        <exec dir="${jboss.deploy.directory}/../../../bin" executable="cmd.exe" os="Windows XP, Windows_NT">
+            <arg line="/c shutdown.bat -S"/>
+            <env key="NOPAUSE" value="true"/>
+        </exec>
+    </target>
 	
 </project>

@@ -45,22 +45,36 @@
 	<target name="package" depends="ivy-get-dependencies" description="Package the application">
         <ant target="package" dir="pa-ejb"/>
         <ant target="package" dir="pa-web"/>
-        <ant target="ear" dir="pa-ear"/>
+        <ant target="start_jboss" dir="pa-ear"/>
 	</target>
 
     <!-- ====================================================================== -->
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="deploy" depends="ivy-get-dependencies" description="Deploys the application">
+    <target name="deploy" depends="clean,ivy-get-dependencies" description="Deploys the application">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
         <ant target="package" dir="pa-ejb"/>
         <ant target="package" dir="pa-web"/>
-        <ant target="ear" dir="pa-ear"/>
+    	<ant target="ear" dir="pa-ear"/>
     </target>
+	
+    <!-- ====================================================================== -->
+    <!-- Deploy locally                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="run-selenium" depends="clean, ivy-get-dependencies" description="Deploys the application">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+
+        <ant target="package" dir="pa-ejb"/>
+        <ant target="package" dir="pa-web"/>
+    	<ant target="start_jboss" dir="pa-ear"/>
+    </target>	
 
     <!-- ====================================================================== -->
     <!-- Run integration tests                                                  -->
@@ -77,8 +91,6 @@
     <target name="help">
         <echo message="Please run: $ant -projecthelp"/>
     </target>
-
-
 
     <!-- ====================================================================== --> 
     <!-- Ivy                                                                    -->
