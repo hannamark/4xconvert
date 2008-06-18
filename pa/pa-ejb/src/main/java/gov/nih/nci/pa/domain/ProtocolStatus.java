@@ -1,9 +1,13 @@
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.StudyStatusCode;
+
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,8 +32,8 @@ import org.hibernate.validator.NotNull;
 public class ProtocolStatus extends AbstractEntity {
 
     private Long id;
-    private String statusCode;
-    private Date statusDate;
+    private StudyStatusCode studyStatusCode;
+    private Date studyStatusDate;
     private Protocol protocol;
     
     /**
@@ -55,15 +59,16 @@ public class ProtocolStatus extends AbstractEntity {
      * @return statusCode
      */
     @Column(name = "STATUS_CODE")
-    public String getStatusCode() {
-        return statusCode;
+    @Enumerated(EnumType.STRING)
+    public StudyStatusCode getStudyStatusCode() {
+        return studyStatusCode;
     }
     /**
      * 
-     * @param statusCode status code
+     * @param studyStatusCode status code
      */
-    public void setStatusCode(String statusCode) {
-       this.statusCode = statusCode;
+    public void setStudyStatusCode(StudyStatusCode studyStatusCode) {
+       this.studyStatusCode = studyStatusCode;
     }
 
     /**
@@ -71,16 +76,16 @@ public class ProtocolStatus extends AbstractEntity {
      * @return statusDate
      */
     @Column(name = "STATUS_DATE")
-    public Date getStatusDate() {
-        return statusDate;
+    public Date getStudyStatusDate() {
+        return studyStatusDate;
     }
     
     /**
      * 
-     * @param statusDate status Date
+     * @param studyStatusDate status Date
      */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
+    public void setStudyStatusDate(Date studyStatusDate) {
+        this.studyStatusDate = studyStatusDate;
     }
 
     /**
