@@ -70,15 +70,16 @@ public class LoginAction extends ActionSupport {
     public String execute() throws java.lang.Exception {  
    //need to replace with a method login(getUserName(),getPassword()) 
    //that checks with CSM if user exists and has Permission
-      if (!getUserName().equals("admin") || !getPassword().equals("admin")) {
+/*
+    if (!getUserName().equals("admin") || !getPassword().equals("admin")) {
             addActionError("Invalid user name or password! Please try again!");           
         return ERROR;    
       } else {
         return SUCCESS;
       }
     }
- 
-    /*
+*/ 
+
      if (login(getUserName(), getPassword())) {
        return SUCCESS;
      } else {
@@ -86,14 +87,14 @@ public class LoginAction extends ActionSupport {
        return ERROR;
      }     
     }
-    */
-    
+
     /**
      * 
      * @param checkUserName tag
      * @param checkPassword tag
      * @return tag
      */
+
     public Boolean login(String checkUserName, String checkPassword) {
     
         try {
@@ -101,10 +102,9 @@ public class LoginAction extends ActionSupport {
             return authenticationManager.login(checkUserName, checkPassword);          
           } catch (Exception cse) {
              //LOG.info("CSException is: " + cse);
-             addActionError("CSException is: " + cse);
+             ///addActionError("CSException is: " + cse);
              return false;
           }
     }
-    
- 
+
 } 
