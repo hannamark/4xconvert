@@ -85,6 +85,17 @@ Setting up the Eclipse IDE
 --------------------------
 
 The .classpath file needs to be edited and the %JBOSS_HOME% to the folder on you file system
+
+To run selenium tests:
+----------------------
+Change the jboss port number in the build.properties
+Install Selenium IDE in Firefox as addon.
+Execute a workflow
+Save it as a java file with 'MANDATORY' name  xxxxSeleniumxxx.java
+use ant clean run-selenium 
+	- The jboss will start
+	- Selenium server will start
+	- Browser window(s) open (Wait for the tests to execute)
     
         
         

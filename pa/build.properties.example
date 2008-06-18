@@ -1,1 +1,2 @@
-jboss.deploy.directory=C:/jboss/jboss-4.0.5.GA/server/default/deploy
+jboss.deploy.directory=D:/jboss-4.0.5.GAJEMS/server/default/deploy
+jboss.port=8280
