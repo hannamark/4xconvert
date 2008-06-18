@@ -46,7 +46,7 @@
                     <td align=left>
                     	<s:textfield name="criteria.leadOrganizationProtocolId" size="15" maxlength="10" theme="simple"/>                                                 
                     </td>                    
-                </tr>      
+                </tr>           
                 <tr>
                     <td align=right>
                     	<b><fmt:message key="protocol.search.label.studyPhase"/></b>                     	
@@ -90,9 +90,9 @@
                 </tr>
             </table>
        </s:form>
-       <jsp:include page="/jsp/pajsp/listresults.jsp">
-       <jsp:param name="listName" value="records" />        
- 		 </jsp:include>
+       <jsp:include page="/jsp/pajsp/protocolSearchResults.jsp">
+            <jsp:param name="listName" value="records" />        
+ 	   </jsp:include>
      </div>
 </body>
 </html>
