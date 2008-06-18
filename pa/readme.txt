@@ -99,4 +99,44 @@ use ant clean run-selenium
     
         
         
+Setting the CSM to enable Login:
+---------------------------------
+Add the following entries to your login-config.xml:
+    <!-- The configuration for PA -->
+    <application-policy name = "pa">
+      <authentication>
+        <login-module code = "gov.nih.nci.security.authentication.loginmodules.RDBMSLoginModule" flag = "required" >
+         <module-option name="driver">org.postgresql.Driver</module-option>
+         <module-option name="url">jdbc:postgresql://localhost:5432/ctods</module-option>
+         <module-option name="user">ctods</module-option>
+         <module-option name="passwd">ctods</module-option>         
+         <module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
+         <module-option name="encryption-enabled">YES</module-option>
+        </login-module>
+      </authentication>
+    </application-policy>
+    
+     
+        
+ In order to deploy csm-upt:
+ ----------------------------
+ 1) Add the following entries to your login-config.xml:
+ 
+  <!-- The configuration for CSMUPT -->
+        <application-policy name = "csmupt">
+         <authentication>
+       		<login-module code = "gov.nih.nci.security.authentication.loginmodules.RDBMSLoginModule" flag = "sufficient">
+       			<module-option name="driver">org.postgresql.Driver</module-option>
+       			<module-option name="url">jdbc:postgresql://localhost:5432/ctods</module-option>
+       			<module-option name="user">ctods</module-option>
+       			<module-option name="passwd">ctods</module-option>
+       			<module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
+       			<module-option name="encryption-enabled">YES</module-option>
+       		</login-module>
+         </authentication>
+    </application-policy>
+  
+  2)The default dialect in upt.war is set to MYSQL so in order to make in work on PostgreSQL database 
+    change the file: csmupt.csm.new.hibernate.cfg.xml (in upt.war)  With the following line: 
+    <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         
