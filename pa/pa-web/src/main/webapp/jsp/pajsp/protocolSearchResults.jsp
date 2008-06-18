@@ -11,7 +11,7 @@
                 pagesize="10" uid="row" name="${param.listName}" requestURI="${sortUrl}">
 
 
-        <display:column title=" NCI Accession Number" property="nciIdentifier" sortable="true" headerClass="sortable" />
+        <display:column title="NCI Accession Number" property="nciIdentifier" sortable="true" headerClass="sortable" />
         <display:column title="Title" property="longTitleText" sortable="true" headerClass="sortable" />
         <display:column title="Study Phase Code" property="studyPhaseCode.name" sortable="true" headerClass="sortable" />
         <display:column title="Trial Status" property="studyStatusCode.name" sortable="true" headerClass="sortable" />

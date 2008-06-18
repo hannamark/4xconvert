@@ -24,13 +24,13 @@
                     	<b><fmt:message key="protocol.search.label.nciNumber"/></b>
                     </td>
                     <td align=left>
-                    	<s:textfield name="criteria.nciIdentifier" size="15" maxlength="10" theme="simple"/>
+                    	<s:textfield name="criteria.nciIdentifier" size="15" maxlength="20" theme="simple"/>
                     </td>
                     <td align=right>
                     	<b><fmt:message key="protocol.search.label.officialTitle"/></b> 
                     </td>
                     <td align=left>                                             
-                    	<s:textfield name="criteria.longTitleText"  size="15" maxlength="10" theme="simple"/>
+                    	<s:textfield name="criteria.longTitleText"  size="15" maxlength="50" theme="simple"/>
                     </td>
                  </tr>                                               
 				 <tr>
@@ -58,17 +58,19 @@
 						          headerValue="-- Please Select --"
 						          list="%{#{'1':'I','1/2':'I/II','2':'II','2/3':'II/III', '3':'III','3/4':'III,IV','4':'IV'}}">						          
 						</s:select>
+						
                   	</td>                  	
                   	<td align=right>
                   		<b><fmt:message key="protocol.search.label.studyStatus"/></b>                      
                     </td>
+                   
 					<td align=left>
 						<s:select label="Study Status:"
 						          name="criteria.studyStatusCode"
 						          theme="simple"
 						          headerKey="1"
 						          headerValue="-- Please Select --"
-						          list="%{#{'o':'Open','c':'Closed','s':'Suspended'}}"/>						          						
+						          list="%{#{'IN_REVIEW':'IN_REVIEW','APPROVED':'APPROVED','ACTIVE':'ACTIVE'}}"/>						          						
                   	</td>                  
                 </tr>                                        
                 <tr>
