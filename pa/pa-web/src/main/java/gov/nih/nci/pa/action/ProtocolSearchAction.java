@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ProtocolSearchAction extends ActionSupport {
     
     private final PaginatedList<ProtocolDTO> records =
-        new PaginatedList<ProtocolDTO>(0, new java.util.ArrayList<ProtocolDTO>(), 20, 1,
+        new PaginatedList<ProtocolDTO>(0, new java.util.ArrayList<ProtocolDTO>(), 8, 1,
                 null, null, SortOrderEnum.DESCENDING);
 
     private ProtocolSearchCriteria criteria = new ProtocolSearchCriteria();
