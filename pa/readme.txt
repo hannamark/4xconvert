@@ -101,7 +101,10 @@ use ant clean run-selenium
         
 Setting the CSM to enable Login:
 ---------------------------------
-Add the following entries to your login-config.xml:
+ 1) Download CSM from:  
+    https://gforge.nci.nih.gov/frs/?group_id=12
+    Package: CSM_API_4_0_Source.zip
+ 2) Add the following entries to your login-config.xml:
     <!-- The configuration for PA -->
     <application-policy name = "pa">
       <authentication>
@@ -120,7 +123,12 @@ Add the following entries to your login-config.xml:
         
  In order to deploy csm-upt:
  ----------------------------
- 1) Add the following entries to your login-config.xml:
+ 1) Download UPT package from: 
+ 	https://gforge.nci.nih.gov/frs/?group_id=12
+ 	Package: CSM_UPT_4_0_Source.zip
+ 	
+ 
+ 2) Add the following entries to your login-config.xml:
  
   <!-- The configuration for CSMUPT -->
         <application-policy name = "csmupt">
@@ -136,7 +144,7 @@ Add the following entries to your login-config.xml:
          </authentication>
     </application-policy>
   
-  2)The default dialect in upt.war is set to MYSQL so in order to make in work on PostgreSQL database 
+ 3) The default dialect in upt.war is set to MYSQL so in order to make in work on PostgreSQL database 
     change the file: csmupt.csm.new.hibernate.cfg.xml (in upt.war)  With the following line: 
     <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         
