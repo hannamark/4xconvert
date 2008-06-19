@@ -21,16 +21,6 @@
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.0.7</nci-commons.version>
         <compileSource>1.5</compileSource>
-
-        <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>
-        <database.name>po</database.name>
-        <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
-        <jdbc.username>po</jdbc.username>
-        <jdbc.password>po</jdbc.password>
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>8.2-507.jdbc3</jdbc.version>
     </properties>
 
     <scm>
@@ -195,26 +185,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sql-maven-plugin</artifactId>
-
-                    <dependencies>
-                        <dependency>
-                            <groupId>${jdbc.groupId}</groupId>
-                            <artifactId>${jdbc.artifactId}</artifactId>
-                            <version>${jdbc.version}</version>
-                        </dependency>
-                    </dependencies>
-
-                    <configuration>
-                        <driver>${jdbc.driverClassName}</driver>
-                        <url>${jdbc.url}</url>
-                        <username>${jdbc.username}</username>
-                        <password>${jdbc.password}</password>
-                        <autocommit>true</autocommit>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <configuration>
@@ -278,8 +248,8 @@
                 <configuration>
                     <check>
                         <haltOnFailure>true</haltOnFailure>
-                        <totalBranchRate>80</totalBranchRate>
-                        <totalLineRate>80</totalLineRate>
+                        <totalBranchRate>55</totalBranchRate>
+                        <totalLineRate>55</totalLineRate>
                     </check>
                 </configuration>
             </plugin>
@@ -342,14 +312,6 @@
     </pluginRepositories>
 
     <dependencies>
-        <!-- JBoss provided jars -->
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.0.4</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>

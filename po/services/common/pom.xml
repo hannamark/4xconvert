@@ -13,9 +13,43 @@
     <name>common</name>
     <url>../../../../common/target/site</url>
 
+    <properties>
+        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <hibernate.version>3.2.5.ga</hibernate.version>
+        <hibernate.annotations.version>3.3.0.ga</hibernate.annotations.version>
+        <hibernate.commons.annotations.version>3.3.0.ga</hibernate.commons.annotations.version>
+        <hibernate.validator.version>3.0.0.ga</hibernate.validator.version>
+        <hibernate.search.version>3.0.0.GA</hibernate.search.version>
+        <schema.file>schema.sql</schema.file>
+
+        <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>
+        <database.name>po</database.name>
+        <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
+        <jdbc.username>po</jdbc.username>
+        <jdbc.password>po</jdbc.password>
+        <jdbc.groupId>postgresql</jdbc.groupId>
+        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
+        <jdbc.artifactId>postgresql</jdbc.artifactId>
+        <jdbc.version>8.2-507.jdbc3</jdbc.version>
+
+        <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
+        <test.jdbc.username>sa</test.jdbc.username>
+        <test.jdbc.password></test.jdbc.password>
+        <test.jdbc.driverClassName>org.hsqldb.jdbcDriver</test.jdbc.driverClassName>
+        <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
+        <admin.db.username>postgres</admin.db.username>
+        <admin.db.password>postgres</admin.db.password>
+    </properties>
+
 
     <dependencies>
         <!-- JBoss Provided Libs -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax.ejb</groupId>
             <artifactId>ejb-api</artifactId>
@@ -26,6 +60,12 @@
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+                <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-annotations-ejb3</artifactId>
+            <version>4.2.1.GA</version>
             <scope>provided</scope>
         </dependency>
 
@@ -61,14 +101,14 @@
             <version>1.2.3</version>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
             <scope>compile</scope>
         </dependency>
-        
+
         <!--
             JBoss provieds log4j, but we package here as well.  See:
             http://wiki.jboss.org/wiki/Wiki.jsp?page=ClassLoaderScopingProperties
@@ -142,6 +182,20 @@
                     <artifactId>hibernate</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Testing only jars -->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jta</artifactId>
+            <groupId>javax.transaction</groupId>
+            <version>1.0.1B</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -221,6 +275,26 @@
                         <version>${jdbc.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbc.groupId}</groupId>
+                        <artifactId>${jdbc.artifactId}</artifactId>
+                        <version>${jdbc.version}</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <driver>${jdbc.driverClassName}</driver>
+                    <url>${jdbc.url}</url>
+                    <username>${jdbc.username}</username>
+                    <password>${jdbc.password}</password>
+                    <autocommit>true</autocommit>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
