@@ -12,24 +12,32 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <jboss.home>C:/dev/app_servers/jboss-4.2.2.GA</jboss.home>
+        <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
         <jboss.port>8080</jboss.port>
         <jboss.naming.port>1099</jboss.naming.port>
-        <jboss.configuration>messaging</jboss.configuration>
+        <jboss.configuration>default</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.0.7</nci-commons.version>
         <compileSource>1.5</compileSource>
-        <showErrorStackTraces>true</showErrorStackTraces>
-        <defaultPageSize>20</defaultPageSize>
+
+        <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>
+        <database.name>po</database.name>
+        <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
+        <jdbc.username>po</jdbc.username>
+        <jdbc.password>po</jdbc.password>
+        <jdbc.groupId>postgresql</jdbc.groupId>
+        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
+        <jdbc.artifactId>postgresql</jdbc.artifactId>
+        <jdbc.version>8.2-507.jdbc3</jdbc.version>
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/</developerConnection>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/code/po</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/code/po</developerConnection>
         <tag>HEAD</tag>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/</url>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/code/po</url>
     </scm>
 
     <issueManagement>
@@ -76,11 +84,15 @@
             <id>smatyas</id>
             <name>Stephen Matyas</name>
         </developer>
+        <developer>
+            <email>lpower@5amsolutions.com</email>
+            <id>lpower</id>
+            <name>Leslie Power</name>
+        </developer>
     </developers>
 
     <modules>
-        <module>service</module>
-        <module>application</module>
+        <module>services</module>
     </modules>
 
     <distributionManagement>
@@ -239,8 +251,6 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <configLocation>5amCheckstyle.xml</configLocation>
-                    <!-- Filters have custom exceptions, which trigger checkstyle internal error -->
-                    <excludes>**/gov/nih/nci/po/web/session/*Filter.java</excludes>
                </configuration>
             </plugin>
             <plugin>
@@ -276,32 +286,9 @@
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
-        
-         <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>findbugs-maven-plugin</artifactId>
-      <!--version>1.2.1</version-->
-      <configuration>
-        <xmlOutput>true</xmlOutput>
-        <!--xmlOutputDirectory>directory location of findbugs xdoc xml report</xmlOutputDirectory-->
-        <!--threshold>High|Normal|Low|Exp|Ignore</threshold-->
-        <!--effort>Min|Default|Max</effort-->
-        <!--excludeFilterFile>findbugs-exclude.xml</excludeFilterFile-->
-        <!--includeFilterFile>findbugs-include.xml</includeFilterFile-->
-        <!--visitors>FindDeadLocalStores,UnreadFields</visitors-->
-        <!--omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors-->
-        <!--onlyAnalyze>org.codehaus.mojo.findbugs.*</onlyAnalyze-->
-        <!--pluginList>/libs/fb-contrib/fb-contrib-2.8.0.jar</pluginList-->
-        <debug>true</debug>
-        <!--relaxed>true|false</relaxed-->
-        <findbugsXmlOutput>true</findbugsXmlOutput>
-        <!--findbugsXmlOutputDirectory>directory location of findbugs legact xml format report</findbugsXmlOutputDirectory-->
-      </configuration>
-    </plugin>
-    
         </plugins>
     </reporting>
-    
+
     <repositories>
         <repository>
             <id>5AM-Releases</id>
@@ -362,42 +349,12 @@
             <version>1.0.4</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-annotations-ejb3</artifactId>
-            <version>4.2.1.GA</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jbossws-spi</artifactId>
-            <version>1.0.0.GA</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.7</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <artifactId>jta</artifactId>
-            <groupId>javax.transaction</groupId>
-            <version>1.0.1B</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
