@@ -39,8 +39,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.common.OrganizationType"/>
         <mapping class="gov.nih.nci.po.data.common.State" />
 
-        <mapping class="gov.nih.nci.po.service.SessionEntry" />
-
         <mapping class="gov.nih.nci.po.data.cr.AddressCR" />
         <mapping class="gov.nih.nci.po.data.cr.PersonCR" />
         <mapping class="gov.nih.nci.po.data.cr.DegreeCR" />

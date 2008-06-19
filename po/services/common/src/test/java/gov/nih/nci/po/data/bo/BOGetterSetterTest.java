@@ -4,7 +4,6 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.common.Country;
 import gov.nih.nci.po.data.common.DegreeType;
 import gov.nih.nci.po.data.common.State;
-import gov.nih.nci.po.data.dto.DegreeDTO;
 
 import java.util.Date;
 
@@ -81,7 +80,7 @@ public class BOGetterSetterTest {
         PhoneNumber phone = new PhoneNumber();
         assertSame(phone.equals(phone),true);
         assertSame(phone.equals(null),false);
-        assertSame(phone.equals(new DegreeDTO()),false);
+        assertSame(phone.equals(new Object()),false);
 
         PhoneNumber phone2 = new PhoneNumber();
         assertSame(phone.equals(phone2),false);

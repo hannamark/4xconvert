@@ -49,14 +49,26 @@
             <version>2.3</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>1.2.3</version>
             <scope>compile</scope>
         </dependency>
-
+        
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <!--
             JBoss provieds log4j, but we package here as well.  See:
             http://wiki.jboss.org/wiki/Wiki.jsp?page=ClassLoaderScopingProperties

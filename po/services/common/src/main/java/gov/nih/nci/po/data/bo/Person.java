@@ -84,11 +84,12 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.bo.alternate.ProviderPerson;
+import gov.nih.nci.po.data.common.AbstractPerson;
 import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.data.common.PersonType;
+import gov.nih.nci.po.data.cr.PersonCR;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -124,17 +125,8 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public class Person implements Auditable, Curatable<Person> {
+public class Person extends AbstractPerson implements Auditable, Curatable<Person>, CuratableCR<PersonCR> {
     private static final long serialVersionUID = 7515315163406642400L;
-    private static final int SHORT_COL_LENGTH = 10;
-    private static final int LONG_COL_LENGTH = 50;
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String middleName;
-    private String suffix;
-    private String prefix;
-    private Date dateOfBirth;
     private ContactInfo preferredContactInfo;
     private List<ContactInfo> contactInfos = new ArrayList<ContactInfo>(1);
     private List<Degree> degrees = new ArrayList<Degree>();
@@ -146,7 +138,9 @@ public class Person implements Auditable, Curatable<Person> {
     private CurationStatus priorCurationStatus;
     private Person duplicateOf;
     private Set<PersonType> types = new HashSet<PersonType>();
-    
+    private Set<PersonCR> allChangeRequests = new HashSet<PersonCR>();
+    private Set<PersonCR> unprocessedChangeRequests = new HashSet<PersonCR>();
+
 
     /**
      * @param preferredContactInfo primary contact information
@@ -163,114 +157,14 @@ public class Person implements Auditable, Curatable<Person> {
         this(new ContactInfo());
     }
 
-   /**
-     * @return database id
+    /**
+     * Copy constructor.
+     * @param p the person.
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
+    public Person(AbstractPerson p) {
+        super(p);
     }
 
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return date of birth
-     */
-    @Temporal(value = TemporalType.TIMESTAMP)
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    /**
-     * @return first (given) name
-     */
-    @Transient
-    @Length(max = LONG_COL_LENGTH)
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * @return last (family) name
-     */
-    @Transient
-    @Length(max = LONG_COL_LENGTH)
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * @return middle initial
-     */
-    @Length(max = LONG_COL_LENGTH)
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    /**
-     * @return name prefix
-     */
-    @Length(max = SHORT_COL_LENGTH)
-    public String getPrefix() {
-        return prefix;
-    }
-
-    /**
-     * @return name suffix
-     */
-    @Length(max = SHORT_COL_LENGTH)
-    public String getSuffix() {
-        return suffix;
-    }
-
-    /**
-     * @param dateOfBirth date of birth
-     */
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    /**
-     * @param firstName first name
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * @param lastName last name
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * @param middleName middle initial
-     */
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    /**
-     * @param prefix prefix
-     */
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    /**
-     * @param suffix suffix
-     */
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-    
     /**
      * @return certificates
      */

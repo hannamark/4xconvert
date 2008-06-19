@@ -80,40 +80,107 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.audit;
+package gov.nih.nci.po.data.cr;
 
-import gov.nih.nci.po.service.SortCriterion;
+import gov.nih.nci.po.data.bo.Speciality;
+import gov.nih.nci.po.data.common.AbstractSpeciality;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.ForeignKey;
 
 /**
- * Criteria for audit log records.
+ * Speciality change request.
  */
-public enum AuditLogRecordSortCriterion implements SortCriterion<AuditLogRecord> {
+@Entity
+@SuppressWarnings("PMD.UselessOverridingMethod")
+public class SpecialityCR extends AbstractSpeciality {
 
-    /** Sorty by record id. */
-    AUDIT_ID("id"),
-    /** Sort by audit type. */
-    AUDIT_TYPE("type"),
-    /** Sort by entity name (class). */
-    ENTITY_NAME("entityName"),
-    /** Sort by record's entity id. */
-    ENTITY_ID("entityId"),
-    /** Sort by username. */
-    USERNAME("username"),
-    /** Sort by created date. */
-    CREATED_DATE("createdDate"),
-    /** Sort by transaction id. */
-    TRANSACTION_ID("transactionId");
-
-    private AuditLogRecordSortCriterion(String orderField) {
-        this.orderField = orderField;
-    }
-
-    private final String orderField;
+    private static final long serialVersionUID = -498215048470747102L;
+    private Speciality speciality;
 
     /**
-     * {@inheritDoc}
+     * @return the speciality
      */
-    public String getOrderField() {
-        return this.orderField;
+    @ManyToOne
+    @ForeignKey(name = "SPECIALITYCR_SPECIALITY_FK")
+    private Speciality getSpeciality() {
+        return speciality;
+    }
+
+    /**
+     * @param speciality the speciality to set
+     */
+    private void setSpeciality(Speciality speciality) {
+        this.speciality = speciality;
+    }
+
+    /**
+     * Get the associated Speciality id.
+     * @return the id
+     */
+    @Transient
+    public Long getSpecialityId() {
+        return (getSpeciality() == null) ?  null : getSpeciality().getId();
+    }
+
+    /**
+     * Set the associated Speciality id.
+     * @param id the Speciality id.
+     */
+    public void setSpecialityId(Long id) {
+        if (getSpeciality() == null) {
+            setSpeciality(new Speciality());
+        }
+        getSpeciality().setId(id);
+    }
+
+    /**
+     * @return board certified
+     */
+    @Override
+    public Boolean isBoardCertified() {
+        return super.isBoardCertified();
+    }
+
+    /**
+     * @return board eligible
+     */
+    @Override
+    public Boolean isBoardEligible() {
+        return super.isBoardEligible();
+    }
+
+    /**
+     * @return name
+     */
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+    
+    private boolean clearExpiration;
+
+    /**
+     * @return true when expiration is meant to become null
+     */
+    public boolean isClearExpiration() {
+        return clearExpiration;
+    }
+
+    private void setClearExpiration(boolean clearExpiration) {
+        this.clearExpiration = clearExpiration;
+    }
+
+    /**
+     * Use to set the value of expiration to null since, setExpiration(null) implies there is no
+     * change to expiration.
+     */
+    @Transient
+    public void clearPropertyExpiration() {
+        this.setClearExpiration(true);
+        setExpiration(null);
     }
 }

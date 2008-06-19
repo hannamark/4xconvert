@@ -80,103 +80,142 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.audit;
+package gov.nih.nci.po.data.cr;
 
-import gov.nih.nci.po.service.AbstractSearchCriteria;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.util.Set;
+import java.util.Date;
 
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 /**
- * Class used to store search criteria for finding audit records.
+ * Change request lifecycle information.
  */
-public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria implements SearchCriteria<AuditLogRecord> {
+@Embeddable
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+public class StatusInfo {
 
-    private final Long id;
-    private final Set<Long> transactionId;
+    private static final int NAME_LENGTH = 254;
+
+    //
+    // DEVELOPER NOTE: we don't link directly to the CSM classes using ManyToOne
+    // because we don't have the CSM classes available during db initialization.
+    //
+
+    private User remoteApp;
+    private String remoteUser;
+    private Date createDate;
+    private User processedBy;
+    private Date processedDate;
 
     /**
-     * @param id id of object to find audit log records for (may be null)
-     * @param transactionId transaction id to find audit log records for (may be null)
+     * @return the remoteApp
      */
-    public AuditLogRecordSearchCriteria(Long id, Set<Long> transactionId) {
-        this.id = id;
-        this.transactionId = transactionId;
+    @Transient
+    public User getRemoteApp() {
+        return remoteApp;
     }
 
     /**
-     * {@inheritDoc}
+     * @param remoteApp the remoteApp to set
      */
-    @Override
-    public boolean hasOneCriterionSpecified() {
-        return id != null || transactionId != null;
+    public void setRemoteApp(User remoteApp) {
+        this.remoteApp = remoteApp;
     }
 
     /**
-     * @return the id
+     * @return the remoteUser
      */
-    public long getId() {
-        return id;
+    @NotNull
+    @Length(max = NAME_LENGTH)
+    public String getRemoteUser() {
+        return remoteUser;
     }
 
     /**
-     * @return the transaction id
+     * @param remoteUser the remoteUser to set
      */
-    public Set<Long> getTransactionId() {
-        return transactionId;
+    public void setRemoteUser(String remoteUser) {
+        this.remoteUser = remoteUser;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the createDate
      */
-    @Override
-    public boolean isValid() {
-        return hasOneCriterionSpecified();
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @NotNull
+    public Date getCreateDate() {
+        return createDate;
     }
 
     /**
-     * {@inheritDoc}
+     * @param createDate the createDate to set
      */
-    public Criteria getCriteria() {
-        throw new UnsupportedOperationException();
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the curatedBy
      */
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends") // Can't satisify this AND line length at the same time
-    public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        Session session = PoHibernateUtil.getCurrentSession();
-        StringBuffer query = new StringBuffer("SELECT " + (isCountOnly ? "COUNT(distinct alr) " : "distinct alr")
-                                               + " FROM "
-                                               + AuditLogRecord.class.getName() + " alr,"
-                                               + AuditLogDetail.class.getName() + " ald WHERE ");
+    @Transient
+    public User getProcessedBy() {
+        return processedBy;
+    }
 
-        if (id != null) {
-            query.append(" alr.entityId = :entityId OR ");
-            query.append("  (ald in elements(alr.details) ");
-            query.append("    AND (ald.oldValue = :entityIdStr OR ald.newValue = :entityIdStr) ");
-            query.append("    AND ald.foreignKey = :foreignKey)");
-        } else {
-            query.append(" alr.transactionId in (:transactionIds) ");
+    /**
+     * @param processedBy the processedBy to set
+     */
+    public void setProcessedBy(User processedBy) {
+        this.processedBy = processedBy;
+    }
+
+    /**
+     * @return the processedDate
+     */
+    @Temporal(value = TemporalType.TIMESTAMP)
+    public Date getProcessedDate() {
+        return processedDate;
+    }
+
+    /**
+     * @param processedDate the processedDate to set
+     */
+    public void setProcessedDate(Date processedDate) {
+        this.processedDate = processedDate;
+    }
+
+    @SuppressWarnings("unused")
+    private long getRemoteAppId() {
+        return remoteApp.getUserId();
+    }
+
+    @SuppressWarnings("unused")
+    private void setRemoteAppId(long id) {
+        remoteApp = (User) PoHibernateUtil.getCurrentSession().load(User.class, id);
+    }
+
+    @SuppressWarnings("unused")
+    private Long getProcessedById() {
+        if (processedBy == null) {
+            return null;
         }
+        return processedBy.getUserId();
+    }
 
-        query.append(orderByProperty);
-        Query q = session.createQuery(query.toString());
-
-        if (id != null) {
-            q.setLong("entityId", getId());
-            q.setString("entityIdStr", Long.valueOf(getId()).toString());
-            q.setBoolean("foreignKey", true);
+    @SuppressWarnings("unused")
+    private void setProcessedById(Long id) {
+        if (id == null) {
+            processedBy = null;
         } else {
-            q.setParameterList("transactionIds", getTransactionId());
+            processedBy = (User) PoHibernateUtil.getCurrentSession().load(User.class, id);
         }
-
-        return q;
     }
 }
