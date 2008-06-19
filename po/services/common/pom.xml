@@ -11,7 +11,7 @@
     <artifactId>common</artifactId>
     <packaging>jar</packaging>
     <name>common</name>
-    <url>../../../../common/target/site</url>
+    <url>../../services/common/target/site</url>
 
     <properties>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
@@ -21,16 +21,6 @@
         <hibernate.validator.version>3.0.0.ga</hibernate.validator.version>
         <hibernate.search.version>3.0.0.GA</hibernate.search.version>
         <schema.file>schema.sql</schema.file>
-
-        <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>
-        <database.name>po</database.name>
-        <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
-        <jdbc.username>po</jdbc.username>
-        <jdbc.password>po</jdbc.password>
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>8.2-507.jdbc3</jdbc.version>
 
         <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
         <test.jdbc.username>sa</test.jdbc.username>
@@ -275,26 +265,6 @@
                         <version>${jdbc.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sql-maven-plugin</artifactId>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>${jdbc.groupId}</groupId>
-                        <artifactId>${jdbc.artifactId}</artifactId>
-                        <version>${jdbc.version}</version>
-                    </dependency>
-                </dependencies>
-
-                <configuration>
-                    <driver>${jdbc.driverClassName}</driver>
-                    <url>${jdbc.url}</url>
-                    <username>${jdbc.username}</username>
-                    <password>${jdbc.password}</password>
-                    <autocommit>true</autocommit>
-                </configuration>
             </plugin>
         </plugins>
         <resources>

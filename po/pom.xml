@@ -21,13 +21,23 @@
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.0.7</nci-commons.version>
         <compileSource>1.5</compileSource>
+
+        <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>
+        <database.name>po</database.name>
+        <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
+        <jdbc.username>po</jdbc.username>
+        <jdbc.password>po</jdbc.password>
+        <jdbc.groupId>postgresql</jdbc.groupId>
+        <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
+        <jdbc.artifactId>postgresql</jdbc.artifactId>
+        <jdbc.version>8.2-507.jdbc3</jdbc.version>
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/code/po</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/code/po</developerConnection>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/po</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/po</developerConnection>
         <tag>HEAD</tag>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/code/po</url>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/po</url>
     </scm>
 
     <issueManagement>
@@ -184,6 +194,26 @@
         </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>${jdbc.groupId}</groupId>
+                            <artifactId>${jdbc.artifactId}</artifactId>
+                            <version>${jdbc.version}</version>
+                        </dependency>
+                    </dependencies>
+
+                    <configuration>
+                        <driver>${jdbc.driverClassName}</driver>
+                        <url>${jdbc.url}</url>
+                        <username>${jdbc.username}</username>
+                        <password>${jdbc.password}</password>
+                        <autocommit>true</autocommit>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
