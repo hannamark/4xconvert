@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.cr;
 
-import gov.nih.nci.po.data.common.AbstractPersistentPhoneNumber;
+import gov.nih.nci.po.data.common.AbstractPhoneNumber;
 
 import javax.persistence.Entity;
 
@@ -99,7 +99,7 @@ import org.hibernate.validator.Length;
  * This is by design - all references are based upon the value property.
  */
 @Entity
-public class PhoneNumberCR extends AbstractPersistentPhoneNumber implements ContactCR {
+public class PhoneNumberCR extends AbstractPhoneNumber implements ContactCR {
 
     private static final long serialVersionUID = -1053567079345757384L;
     private String priorValue;
@@ -109,7 +109,7 @@ public class PhoneNumberCR extends AbstractPersistentPhoneNumber implements Cont
     public PhoneNumberCR() {
         super(null);
     }
-    
+
     /**
      * @param priorValue value to modify or delete
      * @param value new value
@@ -118,7 +118,7 @@ public class PhoneNumberCR extends AbstractPersistentPhoneNumber implements Cont
         super(value);
         this.priorValue = priorValue;
     }
-    
+
     /**
      * If not null, sets the position within the phone list to position
      * this change request by identifing the previous phone value.  If this

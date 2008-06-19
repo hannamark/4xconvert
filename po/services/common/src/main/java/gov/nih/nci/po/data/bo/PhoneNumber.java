@@ -83,16 +83,16 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractPersistentPhoneNumber;
-
+import gov.nih.nci.po.data.common.AbstractPhoneNumber;
 import gov.nih.nci.po.data.common.Contact;
+
 import javax.persistence.Entity;
 
 /**
  * Stores phone number information.
  */
 @Entity
-public class PhoneNumber extends AbstractPersistentPhoneNumber implements Auditable, Contact {
+public class PhoneNumber extends AbstractPhoneNumber implements Auditable, Contact {
 
     private static final long serialVersionUID = 2014014061416557238L;
 

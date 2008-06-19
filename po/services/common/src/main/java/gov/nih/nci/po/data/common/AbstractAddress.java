@@ -85,6 +85,9 @@ package gov.nih.nci.po.data.common;
 
 import java.io.Serializable;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -102,6 +105,7 @@ public abstract class AbstractAddress implements Serializable {
     private static final int STATE_LENGTH = 50;
     private static final int POSTAL_LENGTH = 20;
 
+    private Long id;
     private String streetAddressLine;
     private String deliveryAddressLine;
     private String cityOrMunicipality;
@@ -128,6 +132,23 @@ public abstract class AbstractAddress implements Serializable {
         this.stateOrProvince = address.getStateOrProvince();
         this.streetAddressLine = address.getStreetAddressLine();
         this.country = address.country;
+    }
+
+    /**
+     * @return database identifier
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * The setter for the id.
+     * @param id the id.
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**

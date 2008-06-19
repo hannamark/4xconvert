@@ -84,6 +84,9 @@ package gov.nih.nci.po.data.common;
 
 import java.io.Serializable;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.Length;
@@ -98,6 +101,7 @@ public abstract class AbstractPhoneNumber implements Serializable {
      * Length for the value field.
      */
     protected static final int PHONE_LENGTH = 30;
+    private Long id;
     private String value;
 
     /**
@@ -112,6 +116,20 @@ public abstract class AbstractPhoneNumber implements Serializable {
      */
     public AbstractPhoneNumber(String value) {
         this.value = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    private void setId(Long id) {
+        this.id = id;
     }
 
     /**

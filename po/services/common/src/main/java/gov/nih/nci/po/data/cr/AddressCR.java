@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.cr;
 
-import gov.nih.nci.po.data.common.AbstractPersistentAddress;
+import gov.nih.nci.po.data.common.AbstractAddress;
 import gov.nih.nci.po.data.common.Country;
 
 import javax.persistence.Entity;
@@ -98,7 +98,7 @@ import org.hibernate.annotations.ForeignKey;
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
-public class AddressCR extends AbstractPersistentAddress {
+public class AddressCR extends AbstractAddress {
     private static final long serialVersionUID = 427615260969804453L;
 
     /**

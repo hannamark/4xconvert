@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.cr;
 
-import gov.nih.nci.po.data.common.AbstractPersistentEmail;
+import gov.nih.nci.po.data.common.AbstractEmail;
 
 import javax.persistence.Entity;
 
@@ -100,7 +100,7 @@ import org.hibernate.validator.Length;
  * This is by design - all references are based upon the value property.
  */
 @Entity
-public class EmailCR extends AbstractPersistentEmail implements ContactCR {
+public class EmailCR extends AbstractEmail implements ContactCR {
     private static final long serialVersionUID = 8409747747905756405L;
     private String priorValue;
 
@@ -110,7 +110,7 @@ public class EmailCR extends AbstractPersistentEmail implements ContactCR {
     public EmailCR() {
         super(null);
     }
-    
+
     /**
      * @param priorValue value to modify or delete
      * @param value new value
@@ -119,7 +119,7 @@ public class EmailCR extends AbstractPersistentEmail implements ContactCR {
         super(value);
         this.priorValue = priorValue;
     }
-    
+
     /**
      * If not null, sets the position within the email list to position
      * this change request by identifing the previous email value.  If this

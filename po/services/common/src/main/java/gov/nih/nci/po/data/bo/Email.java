@@ -83,16 +83,16 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractPersistentEmail;
-
+import gov.nih.nci.po.data.common.AbstractEmail;
 import gov.nih.nci.po.data.common.Contact;
+
 import javax.persistence.Entity;
 
 /**
  * Represents an email address.
  */
 @Entity
-public class Email extends AbstractPersistentEmail implements Auditable, Contact {
+public class Email extends AbstractEmail implements Auditable, Contact {
     private static final long serialVersionUID = 7991318155036413255L;
 
     /**

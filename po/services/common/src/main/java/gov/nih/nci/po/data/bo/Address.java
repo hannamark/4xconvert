@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.common.AbstractAddress;
-import gov.nih.nci.po.data.common.AbstractPersistentAddress;
 import gov.nih.nci.po.data.common.Country;
 
 import javax.persistence.Entity;
@@ -101,7 +100,7 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
-public class Address extends AbstractPersistentAddress implements Auditable {
+public class Address extends AbstractAddress implements Auditable {
     private static final long serialVersionUID = 1L;
 
     /**
