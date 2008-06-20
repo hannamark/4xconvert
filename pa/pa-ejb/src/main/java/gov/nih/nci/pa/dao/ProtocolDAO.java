@@ -7,6 +7,7 @@ import gov.nih.nci.pa.domain.Protocol;
 import gov.nih.nci.pa.domain.ProtocolStatus;
 import gov.nih.nci.pa.domain.StudyInvestigator;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -201,10 +202,14 @@ public class ProtocolDAO {
                         + protocolSearchCriteria.getLongTitleText().toUpperCase()
                                 .trim().replaceAll("'", "''") + "%'");
             }
+            if (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria.getStudyPhaseCode())) {
+                where.append("and pro.studyPhaseCode  = '" 
+                        + StudyPhaseCode.getByCode(protocolSearchCriteria.getStudyPhaseCode())
+                        + "'");
+            }
             if (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria
                     .getStudyTypeCode())) {
-                where
-                        .append(" and pro.intentCode  = '"
+                where.append(" and pro.intentCode  = '"
                                 + protocolSearchCriteria.getStudyTypeCode()
                                         .getCode() + "'");
             }
