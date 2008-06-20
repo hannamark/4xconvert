@@ -3,12 +3,18 @@ package gov.nih.nci.pa.service;
 import java.io.Serializable;
 
 import gov.nih.nci.pa.enums.StudyTypeCode;
-import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 
 /**
  * Class used to hold criteria used in searching protocols.
  * 
+ *  Attr.                    Corresponding bo attribute
+ * =====                    ==========================
+ * protocolId                 domain.Protocol.id
+ * nciIdentifier              domain.Protocol.nciIdentifier
+ * leadOrganizationId         domain.HealthcareSite.id
+ * leadOrganizationProtocolId domain.StudySite.id
+ * studyPhaseCode             domain.Protocol.StudyPhaseCode
  * @author Hugh Reinhart
  * @since 05/27/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
@@ -22,7 +28,7 @@ public class ProtocolSearchCriteria implements Serializable {
     private String longTitleText;
     private String leadOrganizationId;
     private String leadOrganizationProtocolId;
-    private StudyPhaseCode studyPhaseCode;
+    private String studyPhaseCode;
     private StudyStatusCode studyStatusCode;
     private StudyTypeCode studyTypeCode;
  
@@ -102,14 +108,14 @@ public class ProtocolSearchCriteria implements Serializable {
      * 
      * @return StudyPhaseCode
      */
-    public StudyPhaseCode getStudyPhaseCode() {
+    public String getStudyPhaseCode() {
         return studyPhaseCode;
     }
 
     /**
      * @param studyPhaseCode studyPhaseCode
      */
-    public void setStudyPhaseCode(StudyPhaseCode studyPhaseCode) {
+    public void setStudyPhaseCode(String studyPhaseCode) {
         this.studyPhaseCode = studyPhaseCode;
     }
 
