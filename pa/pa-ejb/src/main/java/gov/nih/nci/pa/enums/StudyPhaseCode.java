@@ -99,4 +99,18 @@ public enum StudyPhaseCode implements CodedEnum<String> {
     public static StudyPhaseCode getByCode(String code) {
         return getByClassAndCode(StudyPhaseCode.class, code);
     }
+
+    /**
+     * construct a array of display names for StudyPhase Enum.
+     * @return String[] display names for StudyPhase
+     */
+    public static String[]  getCodedNames() {
+        StudyPhaseCode[] phaseCodes = StudyPhaseCode.values();
+        String[] codedNames = new String[phaseCodes.length];
+        for (int i = 0; i < phaseCodes.length; i++) {
+            codedNames[i] = phaseCodes[i].getCode();
+        }
+        return codedNames;
+    }
+    
 }
