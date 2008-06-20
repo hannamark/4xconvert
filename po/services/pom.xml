@@ -18,4 +18,8 @@
     <modules>
         <module>common</module>
     </modules>
+
+    <properties>
+        <jboss.home>target/jbossDeploy</jboss.home>
+    </properties>
 </project>
