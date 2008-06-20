@@ -80,48 +80,103 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.audit;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
+import gov.nih.nci.po.service.AbstractSearchCriteria;
+import gov.nih.nci.po.service.SearchCriteria;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.io.Serializable;
+import java.util.Set;
 
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * Class used to store search criteria for finding audit records.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
+public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria implements SearchCriteria<AuditLogRecord> {
 
-    private static final long serialVersionUID = 1L;
+    private final Long id;
+    private final Set<Long> transactionId;
+
+    /**
+     * @param id id of object to find audit log records for (may be null)
+     * @param transactionId transaction id to find audit log records for (may be null)
+     */
+    public AuditLogRecordSearchCriteria(Long id, Set<Long> transactionId) {
+        this.id = id;
+        this.transactionId = transactionId;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
+    public boolean hasOneCriterionSpecified() {
+        return id != null || transactionId != null;
+    }
 
-                }
-            }
+    /**
+     * @return the id
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * @return the transaction id
+     */
+    public Set<Long> getTransactionId() {
+        return transactionId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValid() {
+        return hasOneCriterionSpecified();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Criteria getCriteria() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends") // Can't satisify this AND line length at the same time
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        Session session = PoHibernateUtil.getCurrentSession();
+        StringBuffer query = new StringBuffer("SELECT " + (isCountOnly ? "COUNT(distinct alr) " : "distinct alr")
+                                               + " FROM "
+                                               + AuditLogRecord.class.getName() + " alr,"
+                                               + AuditLogDetail.class.getName() + " ald WHERE ");
+
+        if (id != null) {
+            query.append(" alr.entityId = :entityId OR ");
+            query.append("  (ald in elements(alr.details) ");
+            query.append("    AND (ald.oldValue = :entityIdStr OR ald.newValue = :entityIdStr) ");
+            query.append("    AND ald.foreignKey = :foreignKey)");
+        } else {
+            query.append(" alr.transactionId in (:transactionIds) ");
         }
-        return false;
+
+        query.append(orderByProperty);
+        Query q = session.createQuery(query.toString());
+
+        if (id != null) {
+            q.setLong("entityId", getId());
+            q.setString("entityIdStr", Long.valueOf(getId()).toString());
+            q.setBoolean("foreignKey", true);
+        } else {
+            q.setParameterList("transactionIds", getTransactionId());
+        }
+
+        return q;
     }
 }

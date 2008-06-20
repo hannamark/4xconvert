@@ -82,46 +82,78 @@
  */
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.Serializable;
-
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import org.hibernate.Interceptor;
+import org.junit.Test;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * Tests the composite interceptor.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
+public class CompositeInterceptorTest {
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
-
-                }
-            }
+    @Test
+    public void testSingle() throws Exception {
+        try {
+            new CompositeInterceptor();
+            fail();
+        } catch (Exception e) {
+            // expected
         }
-        return false;
+
+        CountingInterceptior counter = new CountingInterceptior();
+        CompositeInterceptor i = new CompositeInterceptor(counter);
+
+        helper(i, false);
+        assertEquals(18, counter.getCount());
+
+        counter.resetCount();
+        CountingInterceptior counter2 = new CountingInterceptior();
+        i = new CompositeInterceptor(counter, counter2);
+
+        helper(i, false);
+        assertEquals(18, counter.getCount());
+        assertEquals(16, counter2.getCount()); // 2 methods don't cascade!
+
+        counter.resetCount();
+        counter2.resetCount();
+
+        i = new CompositeInterceptor(counter, new ModifyingInterceptor(), counter2);
+        helper(i, true);
+        assertEquals(18, counter.getCount());
+        assertEquals(13, counter2.getCount()); // 3 more get stopped
     }
+
+    private void helper(Interceptor i, boolean expectChanges) {
+        i.afterTransactionBegin(null);
+        i.afterTransactionCompletion(null);
+        i.beforeTransactionCompletion(null);
+        assertNull(i.getEntity(null, null));
+        assertNull(i.getEntityName(null));
+        if (expectChanges) {
+            assertNotNull(i.findDirty(null, null, null, null, null, null));
+            assertNotNull(i.instantiate(null, null, null));
+            assertNotNull(i.isTransient(null));
+            assertTrue(!"foo".equals(i.onPrepareStatement("foo")));
+        } else {
+            assertNull(i.findDirty(null, null, null, null, null, null));
+            assertNull(i.instantiate(null, null, null));
+            assertNull(i.isTransient(null));
+            assertEquals("foo", i.onPrepareStatement("foo"));
+        }
+        i.onCollectionRecreate(null, null);
+        i.onCollectionRemove(null, null);
+        i.onCollectionUpdate(null, null);
+        i.onDelete(null, null, null, null, null);
+        assertEquals(expectChanges, i.onFlushDirty(null, null, null, null, null, null));
+        assertEquals(expectChanges, i.onLoad(null, null, null, null, null));
+        assertEquals(expectChanges, i.onSave(null, null, null, null, null));
+        i.postFlush(null);
+        i.preFlush(null);
+    }
+
 }

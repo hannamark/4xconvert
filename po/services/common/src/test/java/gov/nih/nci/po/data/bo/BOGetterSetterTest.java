@@ -128,11 +128,9 @@ public class BOGetterSetterTest {
     /**
      * Test Person getter and setters
      */
-    /*
     @Test
     public void testPersonGetterSetters() {
         Person person = new Person();
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person);
     }
-    */
 }

@@ -1,12 +1,13 @@
+
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The caarray-app
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This caarray-app Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +18,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the caarray-app Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the caarray-app Software; (ii) distribute and
+ * have distributed to and by third parties the caarray-app Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,48 +81,135 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
+import java.util.List;
 
-import java.io.Serializable;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * @author smatyas
+ * @param <T>
+ *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class BaseServiceBean<T extends PersistentObject> {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * @param sc criteria object to validate
+     */
+    protected void validateSearchCriteria(SearchCriteria<T> sc) {
+        if (sc == null) {
+            throw new OneCriterionRequiredException();
+        }
+        sc.isValid();
+    }
+
+    /**
+     * @param c Hibernate criteria to set pagination options
+     * @param pageSortParams bean containing the options
+     */
+    @SuppressWarnings("unchecked")
+    protected void setPagination(Criteria c, PageSortParams pageSortParams) {
+        if (pageSortParams != null) {
+            if (pageSortParams.getPageSize() > 0) {
+                c.setMaxResults(pageSortParams.getPageSize());
+            }
+            if (pageSortParams.getIndex() > 0) {
+                c.setFirstResult(pageSortParams.getIndex());
+            }
+        }
+    }
+
+    /**
+     * @param c Hibernate criteria to set order by clause
+     * @param pageSortParams bean containing the options
+     */
+    @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
+    protected void addOrderBy(Criteria c, PageSortParams<T> pageSortParams) {
+        if (pageSortParams != null && pageSortParams.getSortCriterion() != null) {
+
+            StringBuffer orderBy = new StringBuffer("");
+            if (pageSortParams != null && CollectionUtils.isNotEmpty(pageSortParams.getSortCriterion())) {
+                orderBy.append(" ORDER BY ");
+                boolean first = true;
+                for (SortCriterion<T> sc : pageSortParams.getSortCriterion()) {
+                    if (!first) {
+                        orderBy.append(", ");
+                    }
+                    orderBy.append(sc.getOrderField());
+                    orderBy.append((pageSortParams.isDesc() ? " DESC" : " ASC"));
+                    first = false;
+                }
+            }
+
+            String orderByField = orderBy.toString();
+            if (pageSortParams.isDesc()) {
+                c.addOrder(Order.desc(orderByField));
+            } else {
+                c.addOrder(Order.asc(orderByField));
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<T> genericSearch(SearchCriteria<T> criteria) {
+        return genericSearch(criteria, null);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<T> genericSearch(SearchCriteria<T> criteria,
+            PageSortParams<T> pageSortParams) {
+        validateSearchCriteria(criteria);
+        StringBuffer orderBy = new StringBuffer("");
+        if (pageSortParams != null && CollectionUtils.isNotEmpty(pageSortParams.getSortCriterion())) {
+
+            orderBy.append(" ORDER BY ");
+            boolean first = true;
+            for (SortCriterion<T> sc : pageSortParams.getSortCriterion()) {
+                if (!first) {
+                    orderBy.append(", ");
                 }
+                orderBy.append(sc.getOrderField());
+                orderBy.append((pageSortParams.isDesc() ? " DESC" : " ASC"));
+
+                first = false;
             }
         }
-        return false;
+        Query q = criteria.getQuery(orderBy.toString(), false);
+
+        if (pageSortParams != null) {
+            q.setMaxResults(pageSortParams.getPageSize());
+            if (pageSortParams.getIndex() > 0) {
+                q.setFirstResult(pageSortParams.getIndex());
+            }
+        }
+
+        return q.list();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public int genericCount(SearchCriteria<T> criteria) {
+        validateSearchCriteria(criteria);
+        Query q = criteria.getQuery("", true);
+        return ((Number) q.uniqueResult()).intValue();
     }
 }

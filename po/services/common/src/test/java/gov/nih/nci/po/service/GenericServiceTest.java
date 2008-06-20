@@ -80,48 +80,44 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Curatable;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.ContactInfo;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.common.Country;
 import gov.nih.nci.po.data.common.CurationStatus;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.io.Serializable;
-
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import org.junit.Test;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * @author Scott Miller
+ *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
-
-    private static final long serialVersionUID = 1L;
+public class GenericServiceTest extends AbstractHibernateTestCase {
 
     /**
-     * {@inheritDoc}
+     * Test creating a Org with invalid input.
      */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
+    @Test
+    public void testGenericRetrieval() {
+        Country country = new Country("test", "997", "II", "III");
+        PoHibernateUtil.getCurrentSession().save(country);
 
-                }
-            }
-        }
-        return false;
+        GenericServiceBean genericService = EjbTestHelper.getGenericServiceBean();
+
+        ContactInfo contactInfo = new ContactInfo(new Address("test", "test", "test", "test", country));
+        Organization org = new Organization(contactInfo);
+        org.setName("testOrg");
+        org.setAbbreviationName("abbr");
+        org.getPrimaryContactInfo().setOrganization(org);
+        org.setCurationStatus(CurationStatus.NEW);
+
+        long orgId = (Long) PoHibernateUtil.getCurrentSession().save(org);
+        Organization retrievedOrg = genericService.getPersistentObject(Organization.class, orgId);
+        assertEquals(org, retrievedOrg);
+        assertEquals(CurationStatus.NEW, retrievedOrg.getCurationStatus());
     }
 }

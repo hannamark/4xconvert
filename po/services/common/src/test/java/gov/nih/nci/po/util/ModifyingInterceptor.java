@@ -82,46 +82,58 @@
  */
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
-
 import java.io.Serializable;
 
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.EntityMode;
 import org.hibernate.type.Type;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * Interceptor that acts as a backstop for the interception chain.  IE, should
+ * stop processing for all methods in composite interceptor that stop after
+ * some condition based upon the return value of the method.  It also says
+ * things are modified for methods that return boolean args.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
+public class ModifyingInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
+    public int[] findDirty(Object arg0, Serializable arg1, Object[] arg2, Object[] arg3, String[] arg4, Type[] arg5) {
+        return new int[] {1, 2};
+    }
 
-                }
-            }
-        }
-        return false;
+    @Override
+    public Object instantiate(String arg0, EntityMode arg1, Serializable arg2) throws CallbackException {
+        return new Object();
+    }
+
+    @Override
+    public Boolean isTransient(Object arg0) {
+        return true;
+    }
+
+    @Override
+    public boolean onFlushDirty(Object arg0, Serializable arg1, Object[] arg2, Object[] arg3, String[] arg4, Type[] arg5)
+            throws CallbackException {
+        return true;
+    }
+
+    @Override
+    public boolean onLoad(Object arg0, Serializable arg1, Object[] arg2, String[] arg3, Type[] arg4)
+            throws CallbackException {
+        return true;
+    }
+
+    @Override
+    public String onPrepareStatement(String arg0) {
+        return arg0 + "MODIFIED";
+    }
+
+    @Override
+    public boolean onSave(Object arg0, Serializable arg1, Object[] arg2, String[] arg3, Type[] arg4)
+            throws CallbackException {
+        return true;
     }
 }

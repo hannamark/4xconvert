@@ -80,48 +80,29 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.io.Serializable;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * @author Scott Miller
+ *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
-
-    private static final long serialVersionUID = 1L;
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class GenericServiceBean implements GenericServiceLocal {
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
-
-                }
-            }
-        }
-        return false;
+    @SuppressWarnings("unchecked")
+    public <T extends PersistentObject> T getPersistentObject(Class<T> toClass, Long id) {
+        return (T) PoHibernateUtil.getCurrentSession().get(toClass, id);
     }
 }

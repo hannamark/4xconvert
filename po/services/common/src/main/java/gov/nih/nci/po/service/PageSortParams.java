@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The caarray-common-jar
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This caarray-common-jar Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the caarray-common-jar Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the caarray-common-jar Software; (ii) distribute and
+ * have distributed to and by third parties the caarray-common-jar Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,48 +80,102 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
+import java.util.Collections;
+import java.util.List;
 
-import java.io.Serializable;
-
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * A simple bean for specifying the page and sorting parameters for paged / sorted lists.
+ *
+ * @author Winston Cheng
+ * @param <T> the type of persistent class for which this defines page and sorting parameters
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
-
-    private static final long serialVersionUID = 1L;
+public class PageSortParams<T> {
+    private int pageSize;
+    private int index;
+    private List<? extends SortCriterion<T>> sortCriterion;
+    private boolean desc;
 
     /**
-     * {@inheritDoc}
+     * Constructor.
+     * @param pageSize page size
+     * @param index start index
+     * @param sortCriterion sort criterion
+     * @param desc true for descending sort
      */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
+    public PageSortParams(int pageSize, int index, SortCriterion<T> sortCriterion, boolean desc) {
+        this(pageSize, index, (sortCriterion == null)? null : Collections.singletonList(sortCriterion) , desc);
+    }
 
-                }
-            }
-        }
-        return false;
+    /**
+     * Constructor.
+     * @param pageSize page size
+     * @param index start index
+     * @param sortCriteria sort criterion
+     * @param desc true for descending sort
+     */
+    public PageSortParams(int pageSize, int index, List<? extends SortCriterion<T>> sortCriteria, boolean desc) {
+        this.pageSize = pageSize;
+        this.index = index;
+        this.sortCriterion = sortCriteria;
+        this.desc = desc;
+    }
+
+    /**
+     * @return the pageSize
+     */
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * @param pageSize the pageSize to set
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
+     * @return the sortCriterion
+     */
+    public List<? extends SortCriterion<T>> getSortCriterion() {
+        return sortCriterion;
+    }
+
+    /**
+     * @param sortCriterion the sortCriterion to set
+     */
+    public void setSortCriterion(List<SortCriterion<T>> sortCriterion) {
+        this.sortCriterion = sortCriterion;
+    }
+
+    /**
+     * @return true to sort in descending order
+     */
+    public boolean isDesc() {
+        return desc;
+    }
+
+    /**
+     * @param desc true to sort in descending order
+     */
+    public void setDesc(boolean desc) {
+        this.desc = desc;
     }
 }

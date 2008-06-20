@@ -278,8 +278,8 @@
                 <configuration>
                     <check>
                         <haltOnFailure>true</haltOnFailure>
-                        <totalBranchRate>55</totalBranchRate>
-                        <totalLineRate>55</totalLineRate>
+                        <totalBranchRate>71</totalBranchRate>
+                        <totalLineRate>67</totalLineRate>
                     </check>
                 </configuration>
             </plugin>

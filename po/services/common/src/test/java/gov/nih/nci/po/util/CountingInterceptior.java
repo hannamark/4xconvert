@@ -82,46 +82,134 @@
  */
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
-
 import java.io.Serializable;
+import java.util.Iterator;
 
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.EntityMode;
+import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * Testing interceptor that keeps count of the number of times methods have been called.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
+public class CountingInterceptior extends EmptyInterceptor {
 
     private static final long serialVersionUID = 1L;
+    private int count = 0;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
-
-                }
-            }
-        }
-        return false;
+    public int getCount() {
+        return count;
     }
+
+    public void resetCount() {
+        count = 0;
+    }
+
+    @Override
+    public void afterTransactionBegin(Transaction arg0) {
+        ++count;
+    }
+
+    @Override
+    public void afterTransactionCompletion(Transaction arg0) {
+        ++count;
+    }
+
+    @Override
+    public void beforeTransactionCompletion(Transaction arg0) {
+        ++count;
+    }
+
+    @Override
+    public int[] findDirty(Object arg0, Serializable arg1, Object[] arg2, Object[] arg3, String[] arg4, Type[] arg5) {
+        ++count;
+        return super.findDirty(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    @Override
+    public Object getEntity(String arg0, Serializable arg1) throws CallbackException {
+        ++count;
+        return super.getEntity(arg0, arg1);
+    }
+
+    @Override
+    public String getEntityName(Object arg0) throws CallbackException {
+        ++count;
+        return super.getEntityName(arg0);
+    }
+
+    @Override
+    public Object instantiate(String arg0, EntityMode arg1, Serializable arg2) throws CallbackException {
+        ++count;
+        return super.instantiate(arg0, arg1, arg2);
+    }
+
+    @Override
+    public Boolean isTransient(Object arg0) {
+        ++count;
+        return super.isTransient(arg0);
+    }
+
+    @Override
+    public void onCollectionRecreate(Object arg0, Serializable arg1) throws CallbackException {
+        ++count;
+    }
+
+    @Override
+    public void onCollectionRemove(Object arg0, Serializable arg1) throws CallbackException {
+        ++count;
+    }
+
+    @Override
+    public void onCollectionUpdate(Object arg0, Serializable arg1) throws CallbackException {
+        ++count;
+    }
+
+    @Override
+    public void onDelete(Object arg0, Serializable arg1, Object[] arg2, String[] arg3, Type[] arg4)
+            throws CallbackException {
+        ++count;
+    }
+
+    @Override
+    public boolean onFlushDirty(Object arg0, Serializable arg1, Object[] arg2, Object[] arg3, String[] arg4, Type[] arg5)
+            throws CallbackException {
+        ++count;
+        return super.onFlushDirty(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    @Override
+    public boolean onLoad(Object arg0, Serializable arg1, Object[] arg2, String[] arg3, Type[] arg4)
+            throws CallbackException {
+        ++count;
+        return super.onLoad(arg0, arg1, arg2, arg3, arg4);
+    }
+
+    @Override
+    public String onPrepareStatement(String arg0) {
+        ++count;
+        return super.onPrepareStatement(arg0);
+    }
+
+    @Override
+    public boolean onSave(Object arg0, Serializable arg1, Object[] arg2, String[] arg3, Type[] arg4)
+            throws CallbackException {
+        ++count;
+        return super.onSave(arg0, arg1, arg2, arg3, arg4);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void postFlush(Iterator arg0) throws CallbackException {
+        ++count;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void preFlush(Iterator arg0) throws CallbackException {
+        ++count;
+    }
+
 }

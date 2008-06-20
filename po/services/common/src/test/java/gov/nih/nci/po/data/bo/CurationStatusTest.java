@@ -1,11 +1,13 @@
 package gov.nih.nci.po.data.bo;
 
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.common.CurationStatus;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 
 public class CurationStatusTest {
@@ -22,6 +24,8 @@ public class CurationStatusTest {
         assertFalse(cs.canTransitionTo(CurationStatus.REJECTED));
         assertTrue(cs.canTransitionTo(CurationStatus.DEPRECATED));
     }
+
+    // STM:  Add test to actually test valid transistion statuses
 
    /**
      * Test Curation status
@@ -50,7 +54,7 @@ public class CurationStatusTest {
             fail();
         } catch (CurationException e) {
             // expected
-            
+
         }
 
         try {

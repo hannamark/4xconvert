@@ -1,6 +1,8 @@
 package gov.nih.nci.po.data.bo;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.common.Country;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
@@ -20,9 +22,9 @@ public class AddressTest extends AbstractHibernateTestCase {
     public void init() {
         Country country = new Country("USA", "840", "US", "USA");
         Serializable cid = PoHibernateUtil.getCurrentSession().save(country);
-
         validCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, cid);
         assertNotNull(validCountry);
+        assertEquals(country, validCountry);
     }
 
     @Test
@@ -32,6 +34,7 @@ public class AddressTest extends AbstractHibernateTestCase {
         assertNotNull(id);
         Address saved = (Address) PoHibernateUtil.getCurrentSession().get(Address.class, id);
         assertNotNull(saved);
+        assertEquals(address, saved);
     }
 
     private void saveExpectedException(Address address, String propertyName) {
@@ -40,9 +43,9 @@ public class AddressTest extends AbstractHibernateTestCase {
             PoHibernateUtil.getCurrentSession().flush();
             fail("expected to not-null constraint violation on param1");
         } catch (org.hibernate.PropertyValueException e) {
-            e.getMessage().endsWith(Address.class.getName() + "." + propertyName);
+            assertTrue(e.getMessage().endsWith(Address.class.getName() + "." + propertyName));
         } catch (InvalidStateException e) {
-            e.getMessage().endsWith("validation failed for: " + address.getClass().getName());
+            assertTrue(e.getMessage().endsWith("validation failed for: " + address.getClass().getName()));
         }
     }
 
@@ -98,5 +101,4 @@ public class AddressTest extends AbstractHibernateTestCase {
         Address address = new Address("a", "b", "c", "", validCountry);
         saveExpectedException(address, "postalCode");
     }
-
 }

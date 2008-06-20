@@ -80,48 +80,40 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.audit;
 
-import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
-
-import java.io.Serializable;
-
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.type.Type;
+import gov.nih.nci.po.service.SortCriterion;
 
 /**
- * Interceptor that verifies that curatable entities' curation status only
- * goes through permissable transitions.
+ * Criteria for audit log records.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.AvoidDeeplyNestedIfStmts" })
-public class CurationStatusInterceptor extends EmptyInterceptor {
+public enum AuditLogRecordSortCriterion implements SortCriterion<AuditLogRecord> {
 
-    private static final long serialVersionUID = 1L;
+    /** Sorty by record id. */
+    AUDIT_ID("id"),
+    /** Sort by audit type. */
+    AUDIT_TYPE("type"),
+    /** Sort by entity name (class). */
+    ENTITY_NAME("entityName"),
+    /** Sort by record's entity id. */
+    ENTITY_ID("entityId"),
+    /** Sort by username. */
+    USERNAME("username"),
+    /** Sort by created date. */
+    CREATED_DATE("createdDate"),
+    /** Sort by transaction id. */
+    TRANSACTION_ID("transactionId");
+
+    private AuditLogRecordSortCriterion(String orderField) {
+        this.orderField = orderField;
+    }
+
+    private final String orderField;
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
-                    if (oldStatus == null) {
-                        return false;
-                    }
-                    if (!oldStatus.canTransitionTo(newStatus)) {
-                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
-                                                                  oldStatus.name(), newStatus.name()));
-                    }
-
-                }
-            }
-        }
-        return false;
+    public String getOrderField() {
+        return this.orderField;
     }
 }
