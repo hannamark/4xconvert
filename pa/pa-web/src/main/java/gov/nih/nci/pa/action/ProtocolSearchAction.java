@@ -32,14 +32,16 @@ public class ProtocolSearchAction extends ActionSupport {
     
     /**  
      * @return res
-     * @throws Exception exception
-     */
-    @SuppressWarnings({ "PMD.ReplaceHashtableWithMap", "PMD.SystemPrintln", "PMD.SignatureDeclareThrowsException", 
-        "PMD.ExcessiveParameterList" }) 
-    public String query() throws Exception {
-        HibernateUtil.getHibernateHelper().openAndBindSession();
-        records = PaRegistry.getProtocolService().getProtocol(criteria);       
-        return SUCCESS;
+     */     
+    public String query()  {
+        try {
+            HibernateUtil.getHibernateHelper().openAndBindSession();
+            records = PaRegistry.getProtocolService().getProtocol(criteria);       
+            return SUCCESS;
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
+        }
     }
     /**
      * 
