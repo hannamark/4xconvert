@@ -1,15 +1,14 @@
 package gov.nih.nci.pa.action;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import gov.nih.nci.pa.dto.ProtocolDTO;
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-
-import org.displaytag.properties.SortOrderEnum;
-
-import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * 
@@ -17,55 +16,37 @@ import com.opensymphony.xwork2.ActionSupport;
  * 
  */
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
-public class ProtocolSearchAction extends ActionSupport {
+@Validation
+public class ProtocolSearchAction extends ActionSupport {    
     
-    private final PaginatedList<ProtocolDTO> records =
-        new PaginatedList<ProtocolDTO>(0, new java.util.ArrayList<ProtocolDTO>(), 8, 1,
-                null, null, SortOrderEnum.DESCENDING);
-
+    private List<ProtocolDTO> records = new ArrayList<ProtocolDTO>();
+    
     private ProtocolSearchCriteria criteria = new ProtocolSearchCriteria();
-  
-    /**
-     * @return action result
+
+    /**  
+     * @return res
      */ 
     public String execute() {
         return SUCCESS;
     }
     
-    /**
-     * 
+    /**  
      * @return res
+     * @throws Exception exception
      */
-    @SuppressWarnings({ "PMD.ReplaceHashtableWithMap", "PMD.SystemPrintln" })  
-    
-    public String query() {        
+    @SuppressWarnings({ "PMD.ReplaceHashtableWithMap", "PMD.SystemPrintln", "PMD.SignatureDeclareThrowsException", 
+        "PMD.ExcessiveParameterList" }) 
+    public String query() throws Exception {
         HibernateUtil.getHibernateHelper().openAndBindSession();
-        java.util.List<ProtocolDTO> protocols = PaRegistry.getProtocolService().getProtocol(criteria);
-        records.setList(protocols);
+        records = PaRegistry.getProtocolService().getProtocol(criteria);       
         return SUCCESS;
     }
-    
     /**
      * 
      * @return prot
      */
-    public PaginatedList<ProtocolDTO>  getRecords() {
+    public List<ProtocolDTO>  getRecords() {
         return records;
     }
     
-
-    /**
-     * @return form bean
-     */
-    public ProtocolSearchCriteria getCriteria() {
-        return criteria;
-    }
-
-    /**
-     * @param criteria form bean
-     */
-    public void setCriteria(ProtocolSearchCriteria criteria) {
-        this.criteria = criteria;
-    }
-
 }

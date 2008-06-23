@@ -18,6 +18,7 @@
     <!--Search Box-->
     <div id="contentwide">
 		<s:form action="queryProtocol">
+		  <s:actionerror />
             <table cellspacing="8">	
             	<tr>
                     <td align=right>
@@ -51,11 +52,15 @@
                     <td align=right>
                     	<b><fmt:message key="protocol.search.label.studyPhase"/></b>                     	
                     </td>
-                    <s:set name="studyPhaseCodeValues" value="@gov.nih.nci.pa.enums.StudyPhaseCode@getCodedNames()" />
                     <td align=left>
-                        <s:select name="criteria.studyPhaseCode" list="#studyPhaseCodeValues"  value="criteria.studyPhaseCode" />
-                    </td>      
-                    
+						<s:select name="criteria.studyPhaseCode"
+						          theme="simple"
+						          headerKey="0"
+						          headerValue="-- Please Select --"
+						          list="%{#{'1':'I','1/2':'I/II','2':'II','2/3':'II/III', '3':'III','3/4':'III,IV','4':'IV'}}">						          
+						</s:select>
+						
+                  	</td>                  	
                   	<td align=right>
                   		<b><fmt:message key="protocol.search.label.studyStatus"/></b>                      
                     </td>
@@ -82,7 +87,7 @@
 						          list="%{#{'sub':'Submitted','inp':'In Progress','acc':'Accepted','onh':'On Hold'}}"/>						          						
                   	</td>    
                     <td colspan="2">                    	
-                    	<INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
+                    	<INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>
                         <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                     </td> 
                 </tr>
