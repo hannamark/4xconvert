@@ -12,7 +12,7 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
+        <jboss.home>target/jbossDeploy</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
         <jboss.port>8080</jboss.port>
         <jboss.naming.port>1099</jboss.naming.port>
@@ -93,6 +93,7 @@
 
     <modules>
         <module>services</module>
+        <module>applications</module>
     </modules>
 
     <distributionManagement>
@@ -187,8 +188,6 @@
                 <version>${nci-commons.version}</version>
                 <configuration>
                     <deployDirectory>${jboss.home}/server/${jboss.configuration}/tmp/deploy</deployDirectory>
-                    <deployDirectoryPattern>tmp*po.ear-contents</deployDirectoryPattern>
-                    <deploySubDirectory>po-web-exp.war</deploySubDirectory>
                 </configuration>
             </plugin>
         </plugins>

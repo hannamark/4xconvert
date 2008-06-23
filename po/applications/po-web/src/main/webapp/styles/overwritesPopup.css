@@ -1,0 +1,29 @@
+.po_wrapper {
+    max-width: 650px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+    background: none;
+    padding-right: 0px;
+    padding-bottom: 0px;
+}
+
+.po_inner {
+    border: 0px;
+}
+
+#main {
+    min-width: 600px;
+}
+
+.po_wrapper H1 {
+    background: none;
+    padding: 0px 0px 0px 0px;
+    color: black;
+    font-size: 14px;
+    margin: 0;
+    border-top: none;
+    border-left: none;
+    border-bottom: none;
+    display: none;
+}

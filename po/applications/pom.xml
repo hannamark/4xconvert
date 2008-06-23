@@ -10,12 +10,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>services</artifactId>
+    <artifactId>applications</artifactId>
     <packaging>pom</packaging>
-    <name>services</name>
-    <url>../../services/target/site</url>
+    <name>applications</name>
+    <url>../../applications/target/site</url>
 
     <modules>
-        <module>common</module>
+        <module>po-web</module>
     </modules>
 </project>

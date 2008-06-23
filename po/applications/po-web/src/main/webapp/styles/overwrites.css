@@ -1,0 +1,113 @@
+/*
+ * Overwritten styles.
+ */
+DIV.wwgrp {
+    clear: both;
+    line-height: 1em;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+div.curvebox {
+    padding-top: 8px;
+}
+
+div.curvebox div.wwgrp {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+DIV.wwlbl {
+    display: block;
+    padding: 0px 3px 0 0;
+    margin: 0 0 0px 0;
+}
+
+DIV.inlineLabel label {
+    display: inline !important;
+}
+
+DIV.wwctrl {
+    display: block;
+    margin: -6px 3px 0 0;
+}
+
+INPUT.required {
+    background: #fffbdf url("../images/bg_formfield_required.gif") repeat-x
+}
+
+SELECT.required {
+    background: #fffbdf url("../images/bg_formfield_required.gif") repeat-x
+}
+
+DIV.errorMessage {
+    color: red;
+    font-weight: bolder;
+    margin-bottom: 0px;
+    margin-top: 5px;
+    padding-bottom: 0px;
+}
+
+.label {
+    text-align: left;
+}
+
+table.inputRow td label.label {
+    white-space: nowrap;
+}
+
+table.inputRow {
+
+}
+
+table.inputRow  DIV.wwgrp {
+    line-height: 1em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+table.inputRow td {
+    vertical-align: bottom;
+}
+
+a.formElementButton {
+    padding-left: 5px;
+}
+
+#enableEnterSubmit {
+    border: none;
+    height: 0px;
+    position: absolute;
+    width: 0px;
+    padding: 0px;
+}
+
+.preferred {
+    background: url("../images/ico_star.gif") no-repeat;
+    background-position: top left;
+    padding-left: 20px;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.curate .difference_found {
+    color: #c00;
+    line-height: 1.4em;
+}
+
+.curate .difference_found .drop {
+    text-decoration: line-through;
+    background: url("../images/ico_reject.gif") no-repeat center right;
+    padding-right: 20px
+}
+
+.curate .difference_found .add {
+    background: url("../images/ico_add.gif") no-repeat center;
+    padding-right: 20px
+}
+
+.curate .difference_found .modify {
+    text-decoration: line-through;
+    background: url("../images/ico_next.gif") no-repeat center right;
+    padding-right: 20px
+}
