@@ -93,4 +93,10 @@
 	<classpathentry kind="lib" path="%JBOSS_HOME%/client/trove.jar"/>
 	<classpathentry kind="lib" path="%JBOSS_HOME%/client/wsdl4j.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="lib" path="lib/main/selenium-core-1.0-beta-1.jar"/>
+	<classpathentry kind="lib" path="lib/main/selenium-java-client-driver-1.0-beta-1.jar"/>
+	<classpathentry kind="lib" path="lib/main/selenium-server-1.0-beta-1-standalone.jar"/>
+	<classpathentry kind="lib" path="lib/main/selenium-server-coreless-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/test/cargo-ant-0.8.jar"/>
+	<classpathentry kind="lib" path="lib/test/cargo-core-uberjar-0.8.jar"/>
 </classpath>
