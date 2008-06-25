@@ -121,6 +121,9 @@
             </plugin>
             <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <excludes>**/dto/**</excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -138,6 +141,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/dto/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -181,6 +189,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <instrumentation>
+                        <excludes>
+                            <exclude>**/dto/**</exclude>
+                        </excludes>
+                    </instrumentation>
+                    
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.fiveamsolutions</groupId>
@@ -279,6 +295,13 @@
                         <haltOnFailure>true</haltOnFailure>
                         <totalBranchRate>71</totalBranchRate>
                         <totalLineRate>67</totalLineRate>
+                        <regexes>
+                            <regex>
+                                <pattern>gov.nih.nci.po.dto.*</pattern>
+                                <branchRate>0</branchRate>
+                                <lineRate>0</lineRate>
+                            </regex>
+                        </regexes>
                     </check>
                 </configuration>
             </plugin>

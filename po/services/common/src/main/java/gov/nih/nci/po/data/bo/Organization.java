@@ -115,6 +115,12 @@ import org.hibernate.validator.Valid;
 
 /**
  * Organizations.
+ *
+ * @xsnapshot.snapshot-class \
+ *  name="general" \
+ *  class="gov.nih.nci.po.dto.general.OrganizationDTO" \
+ *  extends="gov.nih.nci.po.dto.general.AbstractOrganizationDTO" \
+ *  model-extends="gov.nih.nci.po.data.common.AbstractOrganization"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
@@ -155,6 +161,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
 
     /**
      * {@inheritDoc}
+     * @xsnapshot.property match="default"
      */
     @Override
     @NotEmpty

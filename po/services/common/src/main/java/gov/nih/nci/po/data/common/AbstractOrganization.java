@@ -96,6 +96,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * @author Todd Parnell
  *
+ * @xsnapshot.snapshot-class name="general" class="gov.nih.nci.po.dto.general.AbstractOrganizationDTO"
  */
 @MappedSuperclass
 public abstract class AbstractOrganization implements PersistentObject {
@@ -142,6 +143,7 @@ public abstract class AbstractOrganization implements PersistentObject {
 
     /**
      * @return abbreviation name
+     * @xsnapshot.property match="default"
      */
     @Length(max = LONG_COL_LENGTH)
     public String getAbbreviationName() {
@@ -150,6 +152,8 @@ public abstract class AbstractOrganization implements PersistentObject {
 
     /**
      * @return name
+     * 
+     * @xsnapshot.property match="default"
      */
     @Transient
     @Length(max = LONG_COL_LENGTH)
