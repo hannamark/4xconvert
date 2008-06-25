@@ -6,6 +6,9 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.AuthenticationManager;
+import gov.nih.nci.security.exceptions.CSConfigurationException;
+import gov.nih.nci.security.exceptions.CSException;
+import gov.nih.nci.pa.util.Constants;
 
 /**
  * 
@@ -23,15 +26,17 @@ public class LoginAction extends ActionSupport {
     */
     private static final long serialVersionUID = 1L;
 
+   // private static final Logger LOG = Logger.getLogger(LoginAction.class);
+     
     private String userName = null;
 
     private String password = null;
-
+   
 /**
  * 
  * @return tag if user name was not submitted
  */
-    @RequiredStringValidator(message = "User Name is required field")
+    @RequiredStringValidator(message = Constants.USERNAME_REQ_ERROR)
     public String getUserName() {
         return userName;
     }
@@ -48,7 +53,7 @@ public class LoginAction extends ActionSupport {
      * 
      * @return tag
      */
-    @RequiredStringValidator(message = "Password is required field")
+    @RequiredStringValidator(message = Constants.PASSWORD_REQ_ERROR)
 
     public String getPassword() {
         return password;
@@ -70,17 +75,8 @@ public class LoginAction extends ActionSupport {
     public String execute() throws java.lang.Exception {  
    //need to replace with a method login(getUserName(),getPassword()) 
    //that checks with CSM if user exists and has Permission
-/*
-    if (!getUserName().equals("admin") || !getPassword().equals("admin")) {
-            addActionError("Invalid user name or password! Please try again!");           
-        return ERROR;    
-      } else {
-        return SUCCESS;
-      }
-    }
-*/ 
 
-     if (login(getUserName(), getPassword())) {
+     if (performAuthentication(getUserName(), getPassword())) {
        return SUCCESS;
      } else {
        addActionError("Invalid user name or password! Please try again!");
@@ -90,21 +86,45 @@ public class LoginAction extends ActionSupport {
 
     /**
      * 
-     * @param checkUserName tag
-     * @param checkPassword tag
-     * @return tag
+     * @param checkUserName login user name
+     * @param checkPassword password
+     * @param checkApplicationContextName name of the application pa used for unit test
+     * @return boolean
      */
 
-    public Boolean login(String checkUserName, String checkPassword) {
-    
-        try {
-            AuthenticationManager authenticationManager = SecurityServiceProvider.getAuthenticationManager("pa");
+    public boolean login(String checkUserName, String checkPassword, String checkApplicationContextName) {
+        try {                    
+            AuthenticationManager authenticationManager = 
+               SecurityServiceProvider.getAuthenticationManager(checkApplicationContextName);
             return authenticationManager.login(checkUserName, checkPassword);          
           } catch (Exception cse) {
-             //LOG.info("CSException is: " + cse);
-             ///addActionError("CSException is: " + cse);
+             addActionError("CSException is: " + cse);
              return false;
           }
     }
+   
+/**
+ * 
+ * @param checkUserName userName
+ * @param checkPassword password
+ * @param checkApplicationContextName application name (PA)
+ * @return
+ */
+  private boolean performAuthentication(String checkUserName, String checkPassword) {
+  
+
+   boolean isUserAuthenticated = false;
+   try {
+       final AuthenticationManager authenticationManager = SecurityServiceProvider.getAuthenticationManager("pa");
+       isUserAuthenticated = authenticationManager.login(checkUserName, checkPassword);
+ 
+       return isUserAuthenticated;
+   } catch (CSConfigurationException e) {
+       addActionError("\tUser is not authenticated. \n Reason: " + e.getMessage());      
+   } catch (CSException e) {
+       addActionError("\tUser is not authenticated. \n Reason: " + e.getMessage()); 
+   }
+   return false;
+ }
 
 } 
