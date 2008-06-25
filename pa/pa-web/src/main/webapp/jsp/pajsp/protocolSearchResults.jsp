@@ -1,12 +1,11 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-    <display:table class="its" sort="list" pagesize="10" id="row"
-    	name="${param.listName}" requestURI="/queryProtocol.action" export="false">    
-        <display:column title="NCI Accession Number" property="nciIdentifier" sortable="true" headerClass="sortable"/>
-        <display:column title="Title" property="longTitleText"   />
-        <display:column title="Study Phase Code" property="studyPhaseCode.name"  />
-        <display:column title="Trial Status" property="studyStatusCode.name"  />
-        <display:column title="Trial Status Date" property="studyStatusDate"   />
-        <display:column title="Lead Organization" property="leadOrganizationName"   />
-        <display:column title="Principal Investigator " property="principalInvestigatorFullName"   />       
-    </display:table>
-
+<display:table class="its" excludedParams="*" sort="list" pagesize="10" id="row"
+    name="${param.listName}" requestURI="/queryProtocol.action" export="false">    
+    <display:column titleKey="protocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
+    <display:column titleKey="protocol.officialTitle" property="longTitleText"    sortable="true" headerClass="sortable"/>
+    <display:column titleKey="protocol.studyPhase" property="studyPhaseCode.name"   sortable="true" headerClass="sortable"/>
+    <display:column titleKey="protocol.studyStatus" property="studyStatusCode.name"   sortable="true" headerClass="sortable"/>
+    <display:column titleKey="protocol.studyStatusDate" property="studyStatusDate"    sortable="true" headerClass="sortable"/>
+    <display:column titleKey="protocol.leadOrganization" property="leadOrganizationName"    sortable="true" headerClass="sortable"/>
+    <display:column titleKey="protocol.principalInvestigator" property="principalInvestigatorFullName"    sortable="true" headerClass="sortable"/>       
+</display:table>
