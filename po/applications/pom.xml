@@ -16,6 +16,6 @@
     <url>../../applications/target/site</url>
 
     <modules>
-        <module>po-web</module>
+        <module>web</module>
     </modules>
 </project>

@@ -8,10 +8,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>po-web</artifactId>
+    <artifactId>web</artifactId>
     <packaging>war</packaging>
-    <name>po-web</name>
-    <url>../../applications/po-web/target/site</url>
+    <name>web</name>
+    <url>../../applications/web/target/site</url>
 
     <properties>
         <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
