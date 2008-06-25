@@ -23,10 +23,11 @@ public class ProtocolServiceBean  implements ProtocolServiceLocal, ProtocolServi
     
     /**
      * @param psc ProtocolSearchCriteria
-     * @return List ProtocolDTO    
+     * @return List ProtocolDTO
+     * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria psc) {
+    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria psc) throws PAException {
         LOG.debug("Entering getProtocol ");
         ProtocolServiceImpl pImpl = new ProtocolServiceImpl();
         List<ProtocolDTO> pdtos = new ArrayList<ProtocolDTO>();

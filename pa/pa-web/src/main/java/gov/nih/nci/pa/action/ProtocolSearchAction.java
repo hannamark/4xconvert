@@ -5,7 +5,6 @@ import java.util.List;
 
 import gov.nih.nci.pa.dto.ProtocolDTO;
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -32,10 +31,9 @@ public class ProtocolSearchAction extends ActionSupport {
     
     /**  
      * @return res
-     */     
+     */
     public String query()  {
-        try {
-            HibernateUtil.getHibernateHelper().openAndBindSession();
+        try {            
             records = PaRegistry.getProtocolService().getProtocol(criteria);       
             return SUCCESS;
         } catch (Exception e) {

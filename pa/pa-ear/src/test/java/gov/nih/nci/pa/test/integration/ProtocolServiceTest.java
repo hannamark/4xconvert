@@ -52,7 +52,7 @@ public class ProtocolServiceTest {
     {
         IProtocolService bean = RemoteServiceHelper.getProtocolService();
         ProtocolSearchCriteria sc = new ProtocolSearchCriteria();
-        sc.setNciIdentifier("2410");
+        sc.setNciIdentifier("NCI-2008-0006");
         List<ProtocolDTO> p = bean.getProtocol(sc);
         assertEquals(p.get(0).getLongTitleText(), "A Phase I study of Taxol in refractory leukemia in children");
     }

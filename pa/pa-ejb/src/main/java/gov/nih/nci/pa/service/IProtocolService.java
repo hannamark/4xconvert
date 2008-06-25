@@ -13,7 +13,8 @@ public interface IProtocolService {
     /**
      * 
      * @param pSc ProtocolSearchCriteria
-     * @return list protocolDto    
+     * @return list protocolDto   
+     * @throws PAException on error 
      */
-    List<ProtocolDTO> getProtocol(ProtocolSearchCriteria pSc);
+    List<ProtocolDTO> getProtocol(ProtocolSearchCriteria pSc) throws PAException;
 }

@@ -17,7 +17,7 @@
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
     <!--Search Box-->
     <div id="contentwide">
-		<s:form action="queryProtocol">
+		<s:form action="queryProtocol"><s:actionerror/>
             <table cellspacing="8">	
             	<tr>
                     <td align=right>

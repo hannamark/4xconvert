@@ -20,19 +20,12 @@ public class ProtocolServiceImpl implements IProtocolService {
     private static final Logger LOG  = Logger.getLogger(ProtocolServiceImpl.class);
     /**
      * @param sc ProtocolSearchCriteria
-     * @return List ProtocolDTO    
+     * @return List ProtocolDTO   
+     * @throws PAException on error 
      */
-    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria sc) {
-       try {
-           LOG.debug("Entering getProtocol ");
-           ProtocolDAO dao = new ProtocolDAO();
-           return dao.getProtocol(sc);
-       } catch (PAException e) {
-           return null;
-           // @todo : implement exception
-       } finally {
-           LOG.debug("Leaving getProtocol ");
-       }
+    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria sc) throws PAException {      
+       LOG.debug("Entering getProtocol ");       
+       return new ProtocolDAO().getProtocol(sc);      
     }
    
 

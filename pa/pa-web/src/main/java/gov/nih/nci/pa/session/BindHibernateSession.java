@@ -22,20 +22,18 @@ public class BindHibernateSession implements Filter {
      * {@inheritDoc}
      */   
     public void destroy() {
-     // no-op
+        HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
     }
 
-    /**
+    /** 
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.SystemPrintln") 
     public void doFilter(ServletRequest arg0, ServletResponse arg1,
-            FilterChain arg2) throws IOException, ServletException {
-        try {
-            HibernateUtil.getHibernateHelper().openAndBindSession();
-            arg2.doFilter(arg0, arg1);
-        } finally {
-            HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
-        }
+            FilterChain arg2) throws IOException, ServletException {        
+        HibernateUtil.getHibernateHelper().openAndBindSession();
+        arg2.doFilter(arg0, arg1);
+        
     }
 
     /**
