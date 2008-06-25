@@ -3,19 +3,17 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>gov.nih.nci.po</groupId>
-        <artifactId>applications</artifactId>
+        <groupId>gov.nih.nci.coppa.po</groupId>
+        <artifactId>po-applications</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>web</artifactId>
+    <artifactId>po-web</artifactId>
     <packaging>war</packaging>
-    <name>web</name>
+    <name>po-web</name>
     <url>../../applications/web/target/site</url>
 
     <properties>
-        <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
-        <deployedArtifact>${jboss.home}/server/${jboss.configuration}/deploy/po.war</deployedArtifact>
         <showErrorStackTraces>true</showErrorStackTraces>
         <defaultPageSize>20</defaultPageSize>
     </properties>
@@ -92,7 +90,6 @@
     </dependencies>
 
     <build>
-        <finalName>po</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -112,19 +109,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.fiveamsolutions</groupId>
-                <artifactId>nci-commons-maven-plugin</artifactId>
-                <version>${nci-commons.version}</version>
-                <configuration>
-                    <srcDirectories>
-                        <param>${basedir}/src/main/webapp</param>
-                    </srcDirectories>
-                    <deployedArtifact>${deployedArtifact}</deployedArtifact>
-                    <deployDirectory>${jboss.home}/server/${jboss.configuration}/tmp/deploy</deployDirectory>
-                    <deployDirectoryPattern>tmp*po-exp.war</deployDirectoryPattern>
-                </configuration>
             </plugin>
         </plugins>
         <resources>

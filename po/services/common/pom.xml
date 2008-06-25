@@ -3,14 +3,14 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>gov.nih.nci.po</groupId>
-        <artifactId>services</artifactId>
+        <groupId>gov.nih.nci.coppa.po</groupId>
+        <artifactId>po-services</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>common</artifactId>
+    <artifactId>po-services-common</artifactId>
     <packaging>jar</packaging>
-    <name>common</name>
+    <name>po-services-common</name>
     <url>../../services/common/target/site</url>
 
     <properties>
@@ -170,7 +170,6 @@
     </dependencies>
 
     <build>
-        <finalName>${pom.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

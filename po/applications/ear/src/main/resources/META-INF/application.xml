@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC
+  "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+  "http://java.sun.com/dtd/application_1_3.dtd">
+<application>
+    <display-name>po-web-ear</display-name>
+    <module>
+        <java>jboss-service.xml</java>
+    </module>
+    <module>
+        <java>po-ds.xml</java>
+    </module>
+    <module>
+        <web>
+            <web-uri>po-web.war</web-uri>
+            <context-root>/po-web</context-root>
+        </web>
+    </module>
+    <module>
+        <java>security.jar</java>
+    </module>
+    <module>
+        <java>log4j.jar</java>
+    </module>
+    <security-role>
+        <role-name>client</role-name>
+    </security-role>
+    <security-role>
+        <role-name>Curator</role-name>
+    </security-role>
+</application>
