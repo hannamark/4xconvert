@@ -84,7 +84,10 @@ Build and deploy applications:
 Setting up the Eclipse IDE
 --------------------------
 
-The .classpath file needs to be edited and the %JBOSS_HOME% to the folder on you file system
+-Set up a variable in the Eclipse.Go to Preferences->Java->Build Path->Classpath Variables
+-Click New
+-Enter the name as JBOSS_HOME
+-Enter the path for the JBOSS_HOME directory
 
 To run selenium tests:
 ----------------------
