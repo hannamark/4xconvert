@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<display:table class="its" excludedParams="*" sort="list" pagesize="10" id="row"
+<display:table class="its" sort="list" pagesize="10" id="row"
     name="${param.listName}" requestURI="/queryProtocol.action" export="false">    
     <display:column titleKey="protocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
     <display:column titleKey="protocol.officialTitle" property="longTitleText"    sortable="true" headerClass="sortable"/>
