@@ -43,12 +43,21 @@ public class ProtocolSearchAction extends ActionSupport {
             return ERROR;
         }
     }
+
     /**
      * 
-     * @return prot
+     * @return ProtocolSearchCriteria psc
      */
-    public List<ProtocolDTO>  getRecords() {
-        return records;
+    public ProtocolSearchCriteria getCriteria() {
+        return criteria;
     }
     
+    /**
+     * 
+     * @param criteria ProtocolSearchCriteria
+     */
+    public void setCriteria(ProtocolSearchCriteria criteria) {
+        this.criteria = criteria;
+    }
+
 }
