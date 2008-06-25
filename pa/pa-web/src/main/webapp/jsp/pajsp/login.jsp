@@ -23,6 +23,7 @@
 <s:form action="authenticate">
 
   <s:actionerror />
+  <s:fielderror />
 
   <s:textfield key="trail.login.username" name="userName" />
   <s:password key="trail.login.password" name="password" />
