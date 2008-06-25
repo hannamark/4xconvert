@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
-<%@ taglib uri="/WEB-INF/displaytag-11.tld" prefix="display"%> 
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%> 
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page" %>
 <%@ taglib uri="http://ajaxtags.org/tags/ajax" prefix="ajax" %>
