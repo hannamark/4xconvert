@@ -1,0 +1,17 @@
+package gov.nih.nci.pa.util;
+
+/**
+ * 
+ * @author gnaveh
+ */
+public class Constants {
+
+/**
+ * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
+*/
+    public static final String USERNAME_REQ_ERROR = "User Name is required field";
+   /**
+    *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
+    */
+    public static final String PASSWORD_REQ_ERROR = "Password is required field";
+}
