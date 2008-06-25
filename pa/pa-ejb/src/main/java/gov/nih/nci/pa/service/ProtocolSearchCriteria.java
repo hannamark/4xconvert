@@ -3,7 +3,7 @@ package gov.nih.nci.pa.service;
 import java.io.Serializable;
 
 import gov.nih.nci.pa.enums.StudyTypeCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
+
 
 /**
  * Class used to hold criteria used in searching protocols.
@@ -29,7 +29,8 @@ public class ProtocolSearchCriteria implements Serializable {
     private String leadOrganizationId;
     private String leadOrganizationProtocolId;
     private String studyPhaseCode;
-    private StudyStatusCode studyStatusCode;
+    private String studyStatusCode;
+    private String abstractionStatusCode;
     private StudyTypeCode studyTypeCode;
  
     /**
@@ -122,7 +123,7 @@ public class ProtocolSearchCriteria implements Serializable {
     /**
      * @return studyStatusCode
      */
-    public StudyStatusCode getStudyStatusCode() {
+    public String getStudyStatusCode() {
         return studyStatusCode;
     }
 
@@ -130,7 +131,7 @@ public class ProtocolSearchCriteria implements Serializable {
      * 
      * @param studyStatusCode studyStatusCode
      */
-    public void setStudyStatusCode(StudyStatusCode studyStatusCode) {
+    public void setStudyStatusCode(String studyStatusCode) {
         this.studyStatusCode = studyStatusCode;
     }
 
@@ -146,6 +147,22 @@ public class ProtocolSearchCriteria implements Serializable {
      */
     public void setStudyTypeCode(StudyTypeCode studyTypeCode) {
         this.studyTypeCode = studyTypeCode;
+    }
+
+    /**
+     * 
+     * @return abstractionStatusCode abstractionStatusCode
+     */
+    public String getAbstractionStatusCode() {
+        return abstractionStatusCode;
+    }
+
+    /**
+     * 
+     * @param abstractionStatusCode abstractionStatusCode
+     */
+    public void setAbstractionStatusCode(String abstractionStatusCode) {
+        this.abstractionStatusCode = abstractionStatusCode;
     }
     
     
