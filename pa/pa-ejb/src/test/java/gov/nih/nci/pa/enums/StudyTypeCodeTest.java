@@ -9,28 +9,28 @@ public class StudyTypeCodeTest {
 
     @Before
     public void setUp() {
-        xxx = StudyTypeCode.ANCILLARY;
+        xxx = StudyTypeCode.OTHER;
     }
     
     @Test
     public void getCodeTest() {
-        assertEquals("Ancillary", xxx.getCode());
+        assertEquals("Other", xxx.getCode());
     }
     
     @Test
     public void getDisplayNameTest() {
-        assertEquals("Ancillary", xxx.getDisplayName());
+        assertEquals("Other", xxx.getDisplayName());
     }
 
     @Test
     public void getNameTest() {
-        assertEquals("ANCILLARY", xxx.getName());
+        assertEquals("OTHER", xxx.getName());
     }
 
     @Test
     public void getByCodeTest() {
-        assertEquals(StudyTypeCode.ANCILLARY
-                , StudyTypeCode.getByCode("Ancillary"));
+        assertEquals(StudyTypeCode.OTHER
+                , StudyTypeCode.getByCode("Other"));
     }
 
 
