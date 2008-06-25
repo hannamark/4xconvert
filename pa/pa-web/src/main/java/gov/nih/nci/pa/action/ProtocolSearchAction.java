@@ -43,6 +43,13 @@ public class ProtocolSearchAction extends ActionSupport {
             return ERROR;
         }
     }
+    /**
+     * 
+     * @return prot
+     */
+    public List<ProtocolDTO>  getRecords() {
+        return records;
+    }
 
     /**
      * 
