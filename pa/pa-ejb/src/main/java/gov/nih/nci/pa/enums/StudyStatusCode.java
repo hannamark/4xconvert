@@ -102,4 +102,17 @@ public enum StudyStatusCode implements CodedEnum<String> {
      public static StudyStatusCode getByCode(String code) {
          return getByClassAndCode(StudyStatusCode.class, code);
      }
+
+     /**
+      * construct a array of display names for Study Status coded Enum.
+      * @return String[] display names for StudyStatusCode
+      */
+     public static String[]  getCodedNames() {
+         StudyStatusCode[] studyStatusCodes = StudyStatusCode.values();
+         String[] codedNames = new String[studyStatusCodes.length];
+         for (int i = 0; i < studyStatusCodes.length; i++) {
+             codedNames[i] = studyStatusCodes[i].getCode();
+         }
+         return codedNames;
+     }        
 }

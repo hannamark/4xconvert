@@ -16,50 +16,38 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum StudyTypeCode implements CodedEnum<String> {
 
     /**
-     * Ancillary.
+     * Treatment.
      */
-     ANCILLARY("Ancillary"), 
+    TREATMENT("Treatment"),
+    /**
+     * Prevention.
+     */
+    PREVENTION("Prevention") ,
+    /**
+     * Diagnostic.
+     */
+    DIAGNOSTIC("Diagnostic") , 
+    /**
+     * Supportive Care.
+     */
+    SUPPORTIVE_CARE("Supportive Care") , 
+    /**
+     * Screening.
+     */
+    SCREENING("Screening") , 
+    /**
+     * Health Services Research.
+     */
+    HEALTH_SERVICES_RESEARCH("Health Services Research") , 
+    /** 
+     * Basic Science.
+     */
+    BASIC_SCIENCE("Basic Science"), 
      /**
-      * Correlative.
+      * Other.
       */
-     CORRELATIVE("Correlative") , 
-     /**
-      * Early Detection.
-      */
-     EARLY_DETECTION("Early Detection") ,
-     /**
-      * Diagnostic.
-      */
-     DIAGNOSTIC("Diagnostic") , 
-     /**
-      * Epidemiologic.
-      */
-     EPIDEMIOLOGIC("Epidemiologic") ,
-     /**
-      * Observational.
-      */
-     OBSERVATIONAL("Observational") ,
-     /**
-      * Outcome.
-      */
-     OUTCOME("Outcome") ,
-     /**
-      * Prevention.
-      */
-     PREVENTION("Prevention") ,
-     /**
-      * Screening.
-      */
-     SCREENING("Screening") , 
-     /**
-      * Supportive Care.
-      */
-     SUPPORTIVE_CARE("Supportive Care") , 
-     /**
-      * Therapeutic.
-      */
-     THERAPEUTIC("Therapeutic"); 
-
+     OTHER("Other"); 
+     
      private String code;
 
      /**
@@ -102,5 +90,18 @@ public enum StudyTypeCode implements CodedEnum<String> {
      public static StudyTypeCode getByCode(String code) {
          return getByClassAndCode(StudyTypeCode.class, code);
      }
+
+     /**
+      * construct a array of display names for Study Type coded Enum.
+      * @return String[] display names for StudyTypeCode
+      */
+     public static String[]  getCodedNames() {
+         StudyTypeCode[] studyTypeCodes = StudyTypeCode.values();
+         String[] codedNames = new String[studyTypeCodes.length];
+         for (int i = 0; i < studyTypeCodes.length; i++) {
+             codedNames[i] = studyTypeCodes[i].getCode();
+         }
+         return codedNames;
+     }     
 }
 

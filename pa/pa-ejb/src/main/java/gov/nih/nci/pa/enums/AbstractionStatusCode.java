@@ -86,4 +86,17 @@ public enum AbstractionStatusCode implements CodedEnum<String> {
      public static AbstractionStatusCode getByCode(String code) {
          return getByClassAndCode(AbstractionStatusCode.class, code);
      }
+     
+     /**
+      * construct a array of display names for Abstracted Status coded Enum.
+      * @return String[] display names for Abstracted Status Code
+      */
+     public static String[]  getCodedNames() {
+         AbstractionStatusCode[] absStatusCodes = AbstractionStatusCode.values();
+         String[] codedNames = new String[absStatusCodes.length];
+         for (int i = 0; i < absStatusCodes.length; i++) {
+             codedNames[i] = absStatusCodes[i].getCode();
+         }
+         return codedNames;
+     }        
 }
