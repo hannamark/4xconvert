@@ -8,13 +8,20 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 /**
  * Class used to hold criteria used in searching protocols.
  * 
- *  Attr.                    Corresponding bo attribute
- * =====                    ==========================
- * protocolId                 domain.Protocol.id
- * nciIdentifier              domain.Protocol.nciIdentifier
- * leadOrganizationId         domain.HealthcareSite.id
- * leadOrganizationProtocolId domain.StudySite.id
- * studyPhaseCode             domain.Protocol.StudyPhaseCode
+ * <pre>
+ * Attr.                         Corresponding bo attribute
+ * =====                         ==========================
+ * protocolId                    domain.Protocol.id
+ * nciIdentifier                 domain.Protocol.nciIdentifier
+ * longTitleText                 domain.Protocol.longTitleText
+ * leadOrganizationId            domain.HealthcareSite.id
+ * leadOrganizationProtocolId    domain.StudySite.leadOrganizationProtocolId
+ * studyPhaseCode                domain.Protocol.studyPhaseCode
+ * studyStatusCode               not yet implemented
+ * abstractionStatusCode         not yet implemented
+ * studyTypeCode                 domain.Protocol.studyTypeCode
+ * </pre>
+ * 
  * @author Hugh Reinhart
  * @since 05/27/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright

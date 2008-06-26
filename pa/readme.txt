@@ -78,7 +78,7 @@ Build and deploy applications:
     2.  Run command "ant deploy" to build and deploy applications
     3.  Start JBoss
     4.  Run command "ant test-integration" to test that ejb's are running
-    5.  Point browser at http://localhost:8080/pa to test web application
+    5.  Point browser at http://localhost:8080/pa to test web application (userid/password = curator/pass)
     
     
 Setting up the Eclipse IDE

@@ -43,6 +43,7 @@ public class HibernateHelper {
 
     private Configuration configuration;
     private SessionFactory sessionFactory;
+    private Session testSession;
 
     /**
      * Default constructor.
@@ -82,9 +83,9 @@ public class HibernateHelper {
             }
             sessionFactory = configuration.buildSessionFactory();
         } catch (HibernateException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ExceptionInInitializerError(e);
-        }
+            LOG.warn("Failed to initialize HibernateHelper using hibernate.cfg.xml.  "
+                     + "This is expected behavior during unit testing.");
+         }
     }
 
     private void initializeConfig(NamingStrategy namingStrategy, Interceptor interceptor) {
@@ -107,6 +108,13 @@ public class HibernateHelper {
     }
 
     /**
+     * @param configuration the configuration to set
+     */
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
      * @return the sessionFactory
      */
     public SessionFactory getSessionFactory() {
@@ -114,10 +122,20 @@ public class HibernateHelper {
     }
 
     /**
+     * @param sessionFactory the sessionFactory to set
+     */
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    /**
      * Get the session that is bound to the current context.
      * @return the current session
      */
     public Session getCurrentSession() {
+        if (testSession != null) {
+            return testSession;
+        }
         return getSessionFactory().getCurrentSession();
     }
 
@@ -168,5 +186,12 @@ public class HibernateHelper {
     public void unbindAndCleanupSession() {
         org.hibernate.classic.Session currentSession = ManagedSessionContext.unbind(getSessionFactory());
         currentSession.close();
+    }
+
+    /**
+     * Open an HQLDB session for use during unit testing.
+     */
+    public void openTestSession() {
+        this.testSession = this.sessionFactory.openSession();
     }
 }

@@ -128,7 +128,7 @@ public class Protocol extends AbstractEntity {
     }
 
     /**
-     * @return intent code
+     * @return sponsor monitor code
      */
     @Column(name = "MONITOR_CODE")
     @Enumerated(EnumType.STRING)

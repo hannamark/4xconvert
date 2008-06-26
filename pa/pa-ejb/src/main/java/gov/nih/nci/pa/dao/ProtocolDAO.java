@@ -209,13 +209,13 @@ public class ProtocolDAO {
             }
             if (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria
                     .getStudyTypeCode())) {
-                where.append(" and pro.intentCode  = '"
+                where.append(" and pro.studyTypeCode  = '"
                                 + protocolSearchCriteria.getStudyTypeCode()
-                                        .getCode() + "'");
+                                        .getName() + "'");
             }
             if (PAUtil.isNotNullOrNotEmpty(protocolSearchCriteria
                     .getLeadOrganizationProtocolId())) {
-                where.append(" and upper(ss.localProtocolIdentifier)  like '%"
+                where.append(" and upper(ss.leadOrganizationProtocolId)  like '%"
                         + protocolSearchCriteria.getLeadOrganizationProtocolId()
                                 .toUpperCase().trim().replaceAll("'", "''") + "%'");
             }
