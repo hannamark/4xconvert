@@ -11,7 +11,6 @@
 <head>
 	<title><decorator:title default="Struts Starter"/></title>  	  
     <link href="<s:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
-    <link href="<s:url value='/styles/layout.css'/>" rel="stylesheet" type="text/css" media="all"/>    
     <link href="<s:url value='/styles/displayStyles.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <link href="<s:url value='/struts/niftycorners/niftyCorners.css'/>" rel="stylesheet" type="text/css"/>
     <link href="<s:url value='/struts/niftycorners/niftyPrint.css'/>" rel="stylesheet" type="text/css" media="print"/>
