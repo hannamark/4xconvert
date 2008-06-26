@@ -22,7 +22,7 @@ public class BindHibernateSession implements Filter {
      * {@inheritDoc}
      */   
     public void destroy() {
-        HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+        //HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
     }
 
     /** 
