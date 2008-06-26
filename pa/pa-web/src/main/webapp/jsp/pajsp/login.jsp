@@ -1,7 +1,4 @@
-<%@ taglib prefix="s" uri="/struts-tags" %>
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>	
-<%@taglib prefix="s" uri="/struts-tags" %>
 
 <s:set name="menuPage" value="%{'login'}"/>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -21,13 +18,32 @@
 <div id="box">
 
 <s:form action="authenticate">
-
-  <s:actionerror />
-  <s:fielderror />
-
-  <s:textfield key="trail.login.username" name="userName" />
-  <s:password key="trail.login.password" name="password" />
- <s:submit value="Login" align="center"/>
+  <span class="formErrorMsg"> <s:actionerror /> </span>
+     <table cellspacing="2" >    
+            <tr>
+                <td align=right>
+                     <label for="nciIdentifier"> <fmt:message key="trail.login.username"/></label>
+                </td>
+                <td align=left>
+                    <s:textfield name="userName" size="15" maxlength="20" />
+                    <span class="formErrorMsg"> <s:fielderror><s:param>userName</s:param></s:fielderror> </span>
+                </td>              
+             </tr>    
+			<tr>
+                <td align=right>
+                     <label for="nciIdentifier"> <fmt:message key="trail.login.password"/></label>
+                </td>
+                <td align=left>
+                    <s:textfield name="password" size="15" maxlength="20" />
+                     <span class="formErrorMsg"><s:fielderror> <s:param>password</s:param></s:fielderror></span>
+                </td>              
+             </tr>   
+			 <tr>
+                <td align=right>
+                     <s:submit value="Login" align="center"/>
+                </td>                            
+             </tr>                
+		</table>
 </s:form>
 
 </div>
