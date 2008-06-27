@@ -1,6 +1,9 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>	
-
-<s:set name="menuPage" value="%{'login'}"/>
+<!DOCTYPE html PUBLIC 
+    "-//W3C//DTD XHTML 1.1 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+<s:set name="menuPage" value="%{'login'}"/>  
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title><fmt:message key="trail.login.title"/></title>
@@ -8,6 +11,7 @@
 </head>
 
 <body onload="setFocusToFirstControl();">
+<div id="contentwide">
  <h1><fmt:message key="trail.login.title" /></h1>
 
 <!--Help Content-->
@@ -46,6 +50,7 @@
 		</table>
 </s:form>
 
+</div>
 </div>
 
 </body>
