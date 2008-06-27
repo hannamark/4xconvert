@@ -49,14 +49,18 @@ function resetValues () {
                 <td align=right>
                     <b><fmt:message key="studySite.localProtocolIdentifer"/></b> 
                 </td>
+                <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getrotocolOrganizationService().getOrganizationsAssociatedWithProtocol()" />
+
                 <td align=left>
-                    <s:textfield name="criteria.leadOrganizationProtocolId" size="15" maxlength="10" />                                                 
+                    <s:textfield name="criteria.leadOrganizationProtocolId" size="15" maxlength="10" />
+                                                                                         
                 </td>                    
                 <td align=right>
                     <b><fmt:message key="protocol.leadOrganization"/></b> 
+                    
                 </td>
                 <td align=left>
-                    <s:textfield name="criteria.leadOrganizationId" size="50" maxlength="10" />                                             
+                    <s:select  name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
                 </td>
 
             </tr>           
