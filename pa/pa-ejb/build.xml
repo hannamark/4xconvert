@@ -186,7 +186,7 @@
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
                          totalbranchrate="10" 
                          totallinerate="9"
-                         haltonfailure="true"/>
+                         haltonfailure="false"/>
      </target>
 
     <!-- ====================================================================== -->
