@@ -120,11 +120,12 @@ public class LoginAction extends ActionSupport {
  
        return isUserAuthenticated;
    } catch (CSConfigurationException e) {
-       addActionError("\tUser is not authenticated. \n Reason: " + e.getMessage());      
+       //addActionError("\tUser is not authenticated. \n Reason: " + e.getMessage());
+     return false;
    } catch (CSException e) {
-       addActionError("\tUser is not authenticated. \n Reason: " + e.getMessage()); 
+       //addActionError("\tUser is not authenticated. \n Reason: " + e.getMessage());
+      return false;
    }
-   return false;
  }
 
 } 
