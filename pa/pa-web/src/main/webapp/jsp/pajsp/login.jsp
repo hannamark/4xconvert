@@ -22,7 +22,7 @@
      <table cellspacing="2" >    
             <tr>
                 <td align=right>
-                     <label for="nciIdentifier"> <fmt:message key="trail.login.username"/></label>
+                     <label for="userName"> <fmt:message key="trail.login.username"/></label>
                 </td>
                 <td align=left>
                     <s:textfield name="userName" size="15" maxlength="20" />
@@ -31,16 +31,16 @@
              </tr>    
 			<tr>
                 <td align=right>
-                     <label for="nciIdentifier"> <fmt:message key="trail.login.password"/></label>
+                     <label for="Password"> <fmt:message key="trail.login.password"/></label>
                 </td>
                 <td align=left>
-                    <s:textfield name="password" size="15" maxlength="20" />
+                    <s:password name="password" size="15" maxlength="20" />
                      <span class="formErrorMsg"><s:fielderror> <s:param>password</s:param></s:fielderror></span>
                 </td>              
              </tr>   
 			 <tr>
                 <td align=right>
-                     <s:submit value="Login" align="center"/>
+                     <INPUT TYPE="submit" NAME="submit"  value="Login" class="button"/>  
                 </td>                            
              </tr>                
 		</table>
