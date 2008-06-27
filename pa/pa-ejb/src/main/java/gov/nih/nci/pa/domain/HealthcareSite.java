@@ -29,8 +29,11 @@ public class HealthcareSite implements Serializable {
     private String name;
     private String nciInstituteCode;
     
-    @SuppressWarnings("unused")    
-    private void setId(Long id) {
+    /**
+     * 
+     * @param id unique id
+     */ 
+    public void setId(Long id) {
         this.id = id;
     }
 
