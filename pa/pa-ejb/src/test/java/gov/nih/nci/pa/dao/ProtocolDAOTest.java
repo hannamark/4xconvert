@@ -1,21 +1,19 @@
 package gov.nih.nci.pa.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
-import java.util.List;
-
 import gov.nih.nci.pa.domain.Protocol;
 import gov.nih.nci.pa.dto.ProtocolDTO;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ProtocolSearchCriteria;
-import gov.nih.nci.pa.service.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
 import gov.nih.nci.pa.util.HibernateUtil;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
