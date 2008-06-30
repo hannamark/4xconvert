@@ -3,7 +3,7 @@
 1.1	Source Tree Structure
 
   * services /
-    Sub-project that packages all PO services for deployement
+    Sub-project that packages all PO services for deployment
   * services / common
     Common services, including PO data model, persistence, generated DTO
   * services / grid
