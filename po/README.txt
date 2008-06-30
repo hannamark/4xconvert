@@ -6,14 +6,10 @@
     Sub-project that packages all PO services for deployement
   * services / common
     Common services, including PO data model, persistence, generated DTO
-  * services / person
-    Person service API, based on common
-  * services / organization
-    Organization service API, based on common
-  * services / po-correlation
-    Person and organization correlation service API, to provide person-and-organization information
   * services / grid
     caGrid analytic service
+  * services / ear
+    deployment archive for the services
 
   * applications /
     Sub-project for packaging relevant applications for deployment
