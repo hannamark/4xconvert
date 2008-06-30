@@ -5,3 +5,4 @@ db.username=ctods
 db.password=ctods
 jdbc.driver=org.postgresql.Driver
 jdbc.url=jdbc:postgresql://localhost:5432/ctods
+test.schema.showsql=false

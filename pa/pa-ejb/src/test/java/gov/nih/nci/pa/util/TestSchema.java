@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.HealthcareSite;
 import gov.nih.nci.pa.domain.Investigator;
@@ -10,6 +10,7 @@ import gov.nih.nci.pa.enums.SponsorMonitorCode;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.service.SessionEntry;
 import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.sql.Connection;
@@ -46,7 +47,7 @@ public class TestSchema {
                 setProperty("hibernate.connection.autocommit", "true").
                 setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
                 setProperty("hibernate.hbm2ddl.auto", "create-drop").
-                setProperty("hibernate.show_sql", "false");
+                setProperty("hibernate.show_sql", TestProperties.getShowSQL());
 
             HibernateUtil.getHibernateHelper().setConfiguration(config);
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
