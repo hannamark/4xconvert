@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.domain.HealthcareSite;
 import gov.nih.nci.pa.domain.Investigator;

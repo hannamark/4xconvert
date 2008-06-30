@@ -133,7 +133,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile" 
+      depends="compile, configure.tests" 
       description="Compile the test code"> 
         <mkdir dir="${pa-ejb.build.testOutputDir}"/>
         <javac destdir="${pa-ejb.build.testOutputDir}" 

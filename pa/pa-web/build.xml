@@ -6,8 +6,9 @@
 
 <project name="pa-web" default="war" basedir=".">
     <property file="${basedir}/../build.properties"/>
-    <property name="pa.pmd" value="${basedir}/../resources/paPmd.xml"/>
-    <property name="pa.checkstyle" value="${basedir}/../resources/paCheckstyle.xml"/>
+    <property name="pa.resourceDir" value="${basedir}/../resources"/>
+    <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
+    <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
     <property name="pa-ejb.build.dir" value="${basedir}/../pa-ejb/target"/>
 
     <property name="pa-web.build.finalName" value="pa-web"/>
@@ -115,11 +116,25 @@
     </target>
 
     <!-- ====================================================================== -->
+    <!-- Configure tests target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="configure.tests">
+        <copy file="${pa.resourceDir}/test.properties.pa-web" 
+              tofile="${pa-web.build.testResourceDir.0}/test.properties"
+              overwrite="true">
+            <filterset>
+                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+            </filterset>
+        </copy>
+    </target>
+    
+    <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile" 
+      depends="compile, configure.tests" 
       description="Compile the test code"> 
         <mkdir dir="${pa-web.build.testOutputDir}"/>
         <javac destdir="${pa-web.build.testOutputDir}" 

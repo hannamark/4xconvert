@@ -6,6 +6,7 @@
 
 <project name="pa-ear" default="test-all" basedir=".">
     <property file="${basedir}/../build.properties"/>
+    <property name="pa.resourceDir" value="${basedir}/../resources"/>
 	
     <property name="pa-ear.lib.dir" value="${basedir}/../lib"/>
     <property name="pa-ear.lib.test.dir" value="${pa-ear.lib.dir}/test"/>
@@ -73,12 +74,26 @@
       	</copy>
 	</target>
 
+    <!-- ====================================================================== -->
+    <!-- Configure tests target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="configure.tests">
+        <copy file="${pa.resourceDir}/test.properties.pa-ear" 
+              tofile="${pa-ear.build.testResourceDir.0}/test.properties"
+              overwrite="true">
+            <filterset>
+                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+            </filterset>
+        </copy>
+    </target>
+    
 	<!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-
     <target name="compile-tests" 
+            depends="compile, configure.tests" 
     	    description="Compile the test code" >
         <mkdir dir="${pa-ear.build.testOutputDir}"/>
         <javac destdir="${pa-ear.build.testOutputDir}" 

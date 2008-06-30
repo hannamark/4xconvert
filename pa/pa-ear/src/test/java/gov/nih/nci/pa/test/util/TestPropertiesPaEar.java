@@ -1,15 +1,12 @@
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.test.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-
-/**
- * Environment properties passed in to tests.
- */
-public class TestProperties {
-    public static final String TEST_SCHEMA_SHOWSQL = "test.schema.showsql";
+public class TestPropertiesPaEar {
+    public static final String JAVA_NAMING_PROVIDER_URL 
+         = "java.naming.provider.url";
 
     private static Properties properties = new Properties();
     static {
@@ -21,7 +18,8 @@ public class TestProperties {
         }
     }
     
-    public static String getShowSQL() {
-        return properties.getProperty(TEST_SCHEMA_SHOWSQL, "false");
+    public static String getJavaNamingProvider() {
+        return properties.getProperty(JAVA_NAMING_PROVIDER_URL, "localhost");
     }
+
 }

@@ -1,7 +1,8 @@
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.test.util;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import gov.nih.nci.pa.util.PAUtil;
 
 import org.junit.Test;
 
