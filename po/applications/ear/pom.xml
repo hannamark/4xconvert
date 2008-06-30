@@ -13,7 +13,10 @@
     <url>../../applications/ear/target/site</url>
 
     <properties>
+        <!-- specify real path so cargo:deploy deploys for real -->
         <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
+        <test.selenium.server.port>60001</test.selenium.server.port>
+        <test.selenium.server.debug>true</test.selenium.server.debug>        
         <deployedArtifact>${jboss.home}/server/${jboss.configuration}/deploy/po-web.ear</deployedArtifact>
     </properties>
 
@@ -25,7 +28,7 @@
             <type>war</type>
         </dependency>
         <!--
-            JBoss provieds log4j, but we package here as well.  See:
+            JBoss provides log4j, but we package here as well.  See:
             http://wiki.jboss.org/wiki/Wiki.jsp?page=ClassLoaderScopingProperties
         -->
         <dependency>
@@ -40,8 +43,49 @@
             <version>4.0.1</version>
             <scope>compile</scope>
         </dependency>
+        
+        <!-- Selenium -->
+        <dependency>
+            <groupId>org.openqa.selenium.client-drivers</groupId>
+            <artifactId>selenium-java-client-driver</artifactId>
+            <version>1.0-beta-1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- the newer Jetty conflicts with selenium.
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>6.1.9</version>
+            -->
+            <groupId>jetty</groupId>
+            <artifactId>org.mortbay.jetty</artifactId>
+            <version>5.1.10</version>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
-
+    <repositories>
+        <repository>
+            <id>openqa</id>
+            <name>OpenQA Repository</name>
+            <url>http://archiva.openqa.org/repository/releases/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+            </releases>
+        </repository>
+        <repository>
+            <id>codehaus snapshots</id>
+            <name>Codehaus Snapshots Repository</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+            <snapshots>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
     <build>
         <finalName>po-web</finalName>
         <plugins>
@@ -110,4 +154,299 @@
             </resource>
         </resources>
     </build>
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <activation>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-integration-tests</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>filter-integration-test-resources</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>testResources</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>undeploy-ear-before-start</id>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <tasks>
+                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po-web.ear"></property>
+                                        <delete file="${deployed.po.ear}" verbose="true"></delete>
+                                        <echo>${deployed.po.ear}</echo>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>undeploy-ear</id>
+                                <phase>post-integration-test</phase>
+                                <configuration>
+                                    <tasks>
+                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po-web.ear"></property>
+                                        <delete file="${deployed.po.ear}" verbose="true"></delete>
+                                        <echo>${deployed.po.ear}</echo>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <configuration>
+                            <wait>false</wait>
+                            <deployer>
+                                <deployables>
+                                    <deployable>
+                                        <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
+                                        <location>${pom.basedir}/target/po-web.ear</location>
+                                    </deployable>
+                                </deployables>
+                            </deployer>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-container</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <configuration></configuration>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <version>1.0-beta-2</version>
+                        <executions>
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start-server</goal>
+                                </goals>
+                                <configuration>
+                                    <background>true</background>
+                                    <port>${test.selenium.server.port}</port>
+                                    <debug>${test.selenium.server.debug}</debug>
+                                    <!-- verifyBrowser>${test.selenium.server.verifyBrowser}</verifyBrowser-->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- Skip the normal tests, we'll run them in the integration-test phase -->
+                            <skip>true</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop-server</goal>
+                                </goals>
+                                <configuration>
+                                    <background>true</background>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+        <profile>
+            <id>ci-nostart</id>
+            <activation>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-integration-tests</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>filter-integration-test-resources</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>testResources</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <configuration>
+                            <wait>false</wait>
+                            <deployer>
+                                <deployables>
+                                    <deployable>
+                                        <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
+                                        <location>${pom.basedir}/target/po.ear</location>
+                                    </deployable>
+                                </deployables>
+                            </deployer>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <version>1.0-beta-2</version>
+                        <executions>
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start-server</goal>
+                                </goals>
+                                <configuration>
+                                    <background>true</background>
+                                    <port>${test.selenium.server.port}</port>
+                                    <debug>${test.selenium.server.debug}</debug>
+                                    <!-- verifyBrowser>${test.selenium.server.verifyBrowser}</verifyBrowser-->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- Skip the normal tests, we'll run them in the integration-test phase -->
+                            <skip>true</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop-server</goal>
+                                </goals>
+                                <configuration>
+                                    <background>true</background>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+    </profiles>    
 </project>
