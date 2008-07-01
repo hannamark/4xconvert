@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class TestPropertiesPaEar {
-    public static final String JAVA_NAMING_PROVIDER_URL 
-         = "test.java.naming.provider";
+public class TestPropertiesPaWeb {
+    public static final String TEST_LOGIN_CONFIG = "test.java.security.login.config";
 
     private static Properties properties = new Properties();
     static {
@@ -18,8 +17,9 @@ public class TestPropertiesPaEar {
         }
     }
     
-    public static String getJavaNamingProvider() {
-        return properties.getProperty(JAVA_NAMING_PROVIDER_URL, "localhost");
+    public static String getLoginConfig() {
+        return properties.getProperty(TEST_LOGIN_CONFIG
+            , "Error:  test.java.security.login.config not set in build.properties.");
     }
 
 }

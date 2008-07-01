@@ -83,7 +83,8 @@
               tofile="${pa-ear.build.testResourceDir.0}/test.properties"
               overwrite="true">
             <filterset>
-                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+                <filter token="test.java.naming.provider" 
+                	    value="${test.java.naming.provider}"/>
             </filterset>
         </copy>
     </target>
@@ -183,7 +184,8 @@
     <!-- called only for selenium tests                                         -->
     <!-- ====================================================================== -->
 
-	<target name="start_jboss" depends="package, deploy" description="starts the jboss to run selenium test">
+	<target name="start_jboss" depends="package, deploy, configure.tests" 
+		    description="starts the jboss to run selenium test">
 		<jboss-start-jboss jboss.home="${jboss.deploy.directory}/../../../" jboss.server.name="${serverName}"/>
 	</target>
 	

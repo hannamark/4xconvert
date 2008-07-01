@@ -124,7 +124,8 @@
               tofile="${pa-web.build.testResourceDir.0}/test.properties"
               overwrite="true">
             <filterset>
-                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+                <filter token="test.java.security.login.config" 
+                	    value="${test.java.security.login.config}"/>
             </filterset>
         </copy>
     </target>

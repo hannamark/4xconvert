@@ -1,0 +1,4 @@
+#
+# Properties for test cases.
+#
+test.java.security.login.config=@test.java.security.login.config@

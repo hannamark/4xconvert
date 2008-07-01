@@ -3,6 +3,7 @@ package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.service.ProtocolServiceRemote;
 import gov.nih.nci.pa.service.SessionManagerRemote;
+import gov.nih.nci.pa.test.util.TestPropertiesPaEar;
 
 import java.util.Properties;
 
@@ -28,7 +29,7 @@ public class RemoteServiceHelper {
             Properties env = new Properties();
             env.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
             env.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
-            env.setProperty("java.naming.provider.url", "localhost");
+            env.setProperty("java.naming.provider.url", TestPropertiesPaEar.getJavaNamingProvider());
             ctx = new InitialContext(env);
         }
         return ctx.lookup(resource);
