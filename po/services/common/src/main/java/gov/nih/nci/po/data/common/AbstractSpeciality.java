@@ -122,8 +122,8 @@ public abstract class AbstractSpeciality implements PersistentObject {
     public AbstractSpeciality(AbstractSpeciality s) {
         this.id = s.getId();
         this.name = s.getName();
-        this.boardCertified = s.isBoardCertified();
-        this.boardEligible = s.isBoardEligible();
+        this.boardCertified = s.getBoardCertified();
+        this.boardEligible = s.getBoardEligible();
         this.expiration = s.getExpiration();
     }
 
@@ -175,7 +175,7 @@ public abstract class AbstractSpeciality implements PersistentObject {
      * @return board certified
      */
     @Transient
-    public Boolean isBoardCertified() {
+    public Boolean getBoardCertified() {
         return boardCertified;
     }
 
@@ -183,7 +183,7 @@ public abstract class AbstractSpeciality implements PersistentObject {
      * @return board eligible
      */
     @Transient
-    public Boolean isBoardEligible() {
+    public Boolean getBoardEligible() {
         return boardEligible;
     }
 

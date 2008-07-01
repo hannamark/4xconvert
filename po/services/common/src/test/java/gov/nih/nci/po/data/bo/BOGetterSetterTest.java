@@ -2,6 +2,7 @@ package gov.nih.nci.po.data.bo;
 
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.common.Country;
+import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.data.common.DegreeType;
 import gov.nih.nci.po.data.common.State;
 

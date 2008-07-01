@@ -137,35 +137,19 @@ public class Speciality extends AbstractSpeciality implements Auditable {
      */
     @Override
     @NotNull
-    public Boolean isBoardCertified() {
-        return super.isBoardCertified();
+    public Boolean getBoardCertified() {
+        return super.getBoardCertified();
     }
     
-    /**
-     * @return board certified
-     */
-    @Transient
-    public Boolean getBoardCertified() {
-        return super.isBoardCertified();
-    }
-
     /**
      * @return board eligible
      */
     @Override
     @NotNull
-    public Boolean isBoardEligible() {
-        return super.isBoardEligible();
+    public Boolean getBoardEligible() {
+        return super.getBoardEligible();
     }
     
-    /**
-     * @return board eligible
-     */
-    @Transient
-    public Boolean getBoardEligible() {
-        return super.isBoardEligible();
-    }
-
     /**
      * @return name
      */

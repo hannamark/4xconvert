@@ -141,16 +141,16 @@ public class SpecialityCR extends AbstractSpeciality {
      * @return board certified
      */
     @Override
-    public Boolean isBoardCertified() {
-        return super.isBoardCertified();
+    public Boolean getBoardCertified() {
+        return super.getBoardCertified();
     }
 
     /**
      * @return board eligible
      */
     @Override
-    public Boolean isBoardEligible() {
-        return super.isBoardEligible();
+    public Boolean getBoardEligible() {
+        return super.getBoardEligible();
     }
 
     /**

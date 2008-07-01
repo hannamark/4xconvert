@@ -90,6 +90,7 @@ import gov.nih.nci.po.data.cr.DegreeCR;
 import gov.nih.nci.po.data.cr.OrganizationCR;
 import gov.nih.nci.po.data.cr.PersonCR;
 
+import java.beans.BeanDescriptor;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -173,7 +174,7 @@ public class GetterSetterTesterUtil {
         DEFAULT_ARGUMENTS.add(true);
 
         DEFAULT_TYPES.add(CurationStatus.class);
-        CurationStatus cs = CurationStatus.CURATED;
+        CurationStatus cs = CurationStatus.REJECTED;
         DEFAULT_ARGUMENTS.add(cs);
 
         DEFAULT_TYPES.add(OrganizationCR.class);
@@ -190,6 +191,9 @@ public class GetterSetterTesterUtil {
 
         DEFAULT_TYPES.add(ContactInfoCR.class);
         DEFAULT_ARGUMENTS.add(new ContactInfoCR());
+        
+        DEFAULT_TYPES.add(Person.class);
+        DEFAULT_ARGUMENTS.add(new Person());
 
     }
 
@@ -204,13 +208,28 @@ public class GetterSetterTesterUtil {
             String property) {
         try {
 
-            log.debug("Testing property: " + property);
             PropertyDescriptor descriptor = new PropertyDescriptor(property,
                     target.getClass());
+            assertBasicGetterSetterBehavior(target, descriptor);
+        } catch (IntrospectionException e) {
+            String msg = "Error creating PropertyDescriptor for property ["
+                    + property + "]. Do you have a getter and a setter?";
+            log.error(msg, e);
+            fail(msg);
+        }
+    }
+    
+    private static void assertBasicGetterSetterBehavior(Object target,
+            PropertyDescriptor descriptor) {
+        String property = descriptor.getDisplayName();
+        try {
+
+            log.debug("Testing property: " + descriptor.getDisplayName());
 
             Object arg = new Object();
 
             Class<?> type = descriptor.getPropertyType();
+            log.debug("Testing property: " + descriptor.getDisplayName() + "; type=" + type.getName());
 
             if (DEFAULT_TYPES.contains(type)) {
                 arg = DEFAULT_ARGUMENTS.get(DEFAULT_TYPES.indexOf(type));
@@ -219,26 +238,23 @@ public class GetterSetterTesterUtil {
 
                     arg = type.newInstance();
                 } catch (InstantiationException e) {
-                    String msg = "Error instantiating property [" + property
+                    String msg = "Error instantiating property [" + property 
                             + "].Is this a property of a custom type?";
                     log.error(msg, e);
                     fail(msg);
                 }
             }
 
-            Method writeMethod = descriptor.getWriteMethod();
+            log.debug("Attempting to perform get/set for property:" + descriptor.getDisplayName());
             Method readMethod = descriptor.getReadMethod();
-
+            Method writeMethod = descriptor.getWriteMethod();
             writeMethod.invoke(target, arg);
             Object propertyValue = readMethod.invoke(target);
             assertEquals(property + " getter/setter failed test", arg,
                     propertyValue);
+            log.debug("Completed attempt to perform get/set for property:" + descriptor.getDisplayName());
+            log.debug("\n");
 
-        } catch (IntrospectionException e) {
-            String msg = "Error creating PropertyDescriptor for property ["
-                    + property + "]. Do you have a getter and a setter?";
-            log.error(msg, e);
-            fail(msg);
         } catch (IllegalAccessException e) {
             String msg = "Error accessing property. Are the getter and setter both accessible?";
             log.error(msg, e);
@@ -248,9 +264,9 @@ public class GetterSetterTesterUtil {
             fail(msg);
             log.error(msg, e);
         }
-
+        
     }
-
+    
     /**
      * See {@link #assertBasicGetterSetterBehavior(Object,String)} method. Big difference here is that we try to
      * automatically introspect the target object, finding read/write properties, and automatically testing the getter
@@ -262,7 +278,6 @@ public class GetterSetterTesterUtil {
      * @param target the object on which to invoke the getter and setter
      */
     public static void assertBasicGetterSetterBehavior(Object target) {
-
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(target.getClass());
             PropertyDescriptor[] descriptors = beanInfo
@@ -274,8 +289,7 @@ public class GetterSetterTesterUtil {
                 if (descriptor.getPropertyType().isArray()) {
                     continue;
                 }
-                assertBasicGetterSetterBehavior(target, descriptor
-                        .getDisplayName());
+                assertBasicGetterSetterBehavior(target, descriptor);
             }
         } catch (IntrospectionException e) {
             fail("Failed while introspecting target " + target.getClass());
