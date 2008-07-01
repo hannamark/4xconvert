@@ -43,12 +43,12 @@
 
     <issueManagement>
         <system>Jira</system>
-        <url>http://jira.5amsolutions.com/browse/PO</url>
+        <url>https://jira.5amsolutions.com/browse/PO</url>
     </issueManagement>
 
     <ciManagement>
-        <system>CruiseControl</system>
-        <url>http://2115-millers-d1.nci.nih.gov:8001/</url>
+        <system>Hudson</system>
+        <url>http://nci-millersc-1.nci.nih.gov:8090/</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
