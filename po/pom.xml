@@ -32,6 +32,7 @@
         <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.2-507.jdbc3</jdbc.version>
+        <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
     </properties>
 
     <scm>
@@ -292,7 +293,7 @@
                 <version>2.2</version>
                 <configuration>
                     <check>
-                        <haltOnFailure>true</haltOnFailure>
+                        <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
                         <totalBranchRate>70</totalBranchRate>
                         <totalLineRate>66</totalLineRate>
                         <regexes>
@@ -365,4 +366,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
+    <profiles>
+        <profile>
+            <id>hudson</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <cobertura.check.haltOnFailure>false</cobertura.check.haltOnFailure>
+            </properties>
+        </profile>
+    </profiles>
 </project>
