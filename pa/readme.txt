@@ -150,4 +150,8 @@ Setting the CSM to enable Login:
  3) The default dialect in upt.war is set to MYSQL so in order to make in work on PostgreSQL database 
     change the file: csmupt.csm.new.hibernate.cfg.xml (in upt.war)  With the following line: 
     <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+ 4) In order to execute the JUnit test for login we need to:
+ 	Set the build.property file with the following entry:
+ 	test.java.security.login.config=/location of top resource folder/login.config
+ 	
         
