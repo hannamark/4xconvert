@@ -1,3 +1,5 @@
+delete  from study_conditions ;
+delete  from conditions ;
 delete  from protocol;
 delete  from investigator;
 delete  from protocol_status;
@@ -7,6 +9,7 @@ delete  from study_investigator;
 delete  from healthcare_site_investigator;
 delete  from healthcare_site_prtcpnt;
 
+-- protocol
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source) Values (1,'NCI-2008-0001','23','A Phase I study of Taxol in refractory leukemia in children','Leukemia in Children','I', 'NCICB CTMS(EN)');
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source) Values (2,'NCI-2008-0002','33','Phase III Study of Zoladex Adjuvant to Radiotherapy','Zoladex Adjuvant to Radiotherapy','III', 'NCICB CTMS(EN)');
 insert into protocol(id,nci_identifier,amendment_identifier,long_title_text,short_title_text,phase_code, source) Values (3,'NCI-2008-0003','213','Randomized double-blind trial of G-CSF versus','Randomized double-blind trial of G-CSF versus','II', 'NCICB CTMS(EN)');
@@ -68,6 +71,13 @@ insert into healthcare_site_investigator(id,investigator_id,healthcare_site_id,c
 insert into healthcare_site_investigator(id,investigator_id,healthcare_site_id,ctom_insert_date,ctom_update_date) Values (3,2,2,'01-02-2007','01-02-2007');
 insert into healthcare_site_investigator(id,investigator_id,healthcare_site_id,ctom_insert_date,ctom_update_date) Values (4,1,3,'01-20-2000','01-20-2000');
 
+-- conditions
+insert into conditions (id,code,name,parent_code ) Values (1,'A','Cancer',null );
+insert into conditions (id,code,name,parent_code ) Values (2,'B','Breast Cancer','A' );
+
+-- Study Condtions 
+insert into study_conditions(id,lead_indicator,conditions_id,protocol_id) values (1,'YES',1,1);
+insert into study_conditions(id,lead_indicator,conditions_id,protocol_id) values (2,'NO',2,1);
 
 insert into healthcare_site_prtcpnt(id,healthcare_site_id,participant_id,ctom_insert_date,ctom_update_date) Values (1,1,1,'01-22-2005','01-22-2005');
 insert into healthcare_site_prtcpnt(id,healthcare_site_id,participant_id,ctom_insert_date,ctom_update_date) Values (2,3,1,'01-22-2006','01-22-2006');
