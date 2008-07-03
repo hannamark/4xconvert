@@ -14,4 +14,7 @@ public class Constants {
     *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
     */
     public static final String PASSWORD_REQ_ERROR = "Password is required field";
+    
+    /** logged user name is stored in session using loggerUserName variable . */
+    public static final String LOGGED_USER_NAME = "loggedUserName";
 }
