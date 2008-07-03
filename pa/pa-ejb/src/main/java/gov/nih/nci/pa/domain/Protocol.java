@@ -50,6 +50,7 @@ public class Protocol extends AbstractEntity {
     private List<ProtocolStatus> protocolStatuses = new ArrayList<ProtocolStatus>();
     private List<StudySite> studySites = new ArrayList<StudySite>();
     private List<StudyInvestigator> studyInvestigators = new ArrayList<StudyInvestigator>();
+    private List<StudyCondition> studyConditions = new ArrayList<StudyCondition>();
     
     
     /**
@@ -179,7 +180,7 @@ public class Protocol extends AbstractEntity {
      * 
      * @return protocol statuses
      */
-    @OneToMany(mappedBy = "protocol")
+   // @OneToMany(mappedBy = "protocol")
     public List<ProtocolStatus> getProtocolStatuses() {
          return protocolStatuses;
     }
@@ -220,6 +221,23 @@ public class Protocol extends AbstractEntity {
      */
     public void setStudyInvestigators(List<StudyInvestigator> studyInvestigators) {
         this.studyInvestigators = studyInvestigators;
+    }
+
+    /**
+     * 
+     * @return studyConditions
+     */
+    @OneToMany(mappedBy = "protocol")
+    public List<StudyCondition> getStudyConditions() {
+        return studyConditions;
+    }
+
+    /**
+     * 
+     * @param studyConditions studyConditions
+     */
+    public void setStudyConditions(List<StudyCondition> studyConditions) {
+        this.studyConditions = studyConditions;
     }
     
 }
