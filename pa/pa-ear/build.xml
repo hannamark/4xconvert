@@ -35,11 +35,6 @@
 	  </classpath>
 	</taskdef>
 	
-    <path id="build.classpath">
-        <fileset dir="${pa-ear.lib.main.dir}">
-            <include name="**/*"/>
-        </fileset>
-    </path>
     <path id="build.test.classpath">
         <fileset dir="${pa-ear.lib.test.dir}"/>
         <fileset dir="${pa-ear.lib.main.dir}">
@@ -94,7 +89,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-            depends="compile, configure.tests" 
+            depends="configure.tests" 
     	    description="Compile the test code" >
         <mkdir dir="${pa-ear.build.testOutputDir}"/>
         <javac destdir="${pa-ear.build.testOutputDir}" 

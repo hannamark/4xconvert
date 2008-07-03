@@ -52,7 +52,17 @@
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="deploy" depends="clean,ivy-get-dependencies" description="Deploys the application">
+    <target name="deploy-notest" depends="clean,ivy-get-dependencies">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+
+        <ant target="package-notest" dir="pa-ejb"/>
+        <ant target="package-notest" dir="pa-web"/>
+        <ant target="ear" dir="pa-ear"/>
+    </target>
+
+	<target name="deploy" depends="clean,ivy-get-dependencies" description="Deploys the application">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>

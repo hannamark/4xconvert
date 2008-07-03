@@ -199,8 +199,8 @@
                           srcdir="${pa-ejb.build.srcDir.0}" />
         
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
-                         totallinerate="9"
+                         totalbranchrate="50" 
+                         totallinerate="50"
                          haltonfailure="false"/>
      </target>
 
@@ -258,30 +258,19 @@
     <!-- ====================================================================== -->
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
-
-    <target name="package" depends="compile,test-all" description="Package the application">
+ 
+	<target name="jar">
         <jar jarfile="${pa-ejb.build.dir}/${pa-ejb.jar}" 
              compress="true" 
              index="false" 
              basedir="${pa-ejb.build.outputDir}"/>
     </target>
 
-    <!-- ====================================================================== -->
-    <!-- Deploy locally                                                         -->
-    <!-- ====================================================================== -->
+    <target name="package-notest" depends="compile, jar"/>
 
-    <target name="deploy" description="Deploys the war for the application">
-        <available file="${pa-ejb.build.dir}/${pa-ejb.jar}" property="pa-ejb.jar.present"/>
-        <fail unless="pa-ejb.jar.present" message="Jar file not found."/>
-        <copy todir="${jboss.deploy.directory}" file="${pa-ejb.build.dir}/${pa-ejb.jar}"/>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- A target to build and deploy the package                               -->
-    <!-- ====================================================================== -->
-
-    <target name="jar" depends="package,deploy" description="Builds and deploys the jar for the application"/>
-
+    <target name="package" depends="compile,test-all, jar" 
+    	    description="Package the application"/>
+	
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
     <!-- ====================================================================== -->

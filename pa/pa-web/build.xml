@@ -262,7 +262,7 @@
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="package" depends="compile,test-all" description="Package the application">
+	<target name="war">
         <mkdir dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${pa-web.lib.main.dir}"/>
@@ -277,23 +277,12 @@
             <webinf dir="${basedir}/src/main/webapp/WEB-INF" excludes="web.xml"/>
             <fileset dir="${basedir}/src/main/webapp"/>
         </war>
-    </target>
+	</target>
 
-    <!-- ====================================================================== -->
-    <!-- Deploy locally                                                         -->
-    <!-- ====================================================================== -->
-
-    <target name="deploy" description="Deploys the war for the application">
-        <available file="${pa-web.build.dir}/${pa-web.war}" property="pa-web.war.present"/>
-        <fail unless="pa-web.war.present" message="War file not found."/>
-        <copy todir="${jboss.deploy.directory}" file="${pa-web.build.dir}/${pa-web.war}"/>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- A target to build and deploy the package                               -->
-    <!-- ====================================================================== -->
-
-    <target name="war" depends="package,deploy" description="Builds and deploys the war for the application"/>
+	<target name="package-notest" depends="compile, war"/>
+	
+	<target name="package" depends="compile,test-all, war" 
+		    description="Package the application"/>
 
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
