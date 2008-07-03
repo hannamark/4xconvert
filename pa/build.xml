@@ -52,7 +52,7 @@
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="deploy-notest" depends="clean,ivy-get-dependencies">
+    <target name="deploy-notest" depends="clean,ivy-get-dependencies" description="Quick shortcut">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
