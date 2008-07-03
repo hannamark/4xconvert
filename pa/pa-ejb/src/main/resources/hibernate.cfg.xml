@@ -23,6 +23,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
 		<mapping class="gov.nih.nci.pa.domain.StudySite" />
 		<mapping class="gov.nih.nci.pa.domain.Investigator" />
 		<mapping class="gov.nih.nci.pa.domain.StudyInvestigator" />
+	    <mapping class="gov.nih.nci.pa.domain.Condition" />
+        <mapping class="gov.nih.nci.pa.domain.StudyCondition" />
 	
 	    <mapping class="gov.nih.nci.pa.service.SessionEntry" />
     </session-factory>
