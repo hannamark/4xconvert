@@ -366,16 +366,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
-    <profiles>
-        <profile>
-            <id>hudson</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <cobertura.check.haltOnFailure>false</cobertura.check.haltOnFailure>
-            </properties>
-        </profile>
-    </profiles>
 </project>
