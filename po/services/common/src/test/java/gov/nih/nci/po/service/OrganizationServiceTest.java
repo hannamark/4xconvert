@@ -263,5 +263,4 @@ public class OrganizationServiceTest extends AbstractHibernateTestCase {
         org.getAltIds().add(providerOrg);
     }
 
-    
 }

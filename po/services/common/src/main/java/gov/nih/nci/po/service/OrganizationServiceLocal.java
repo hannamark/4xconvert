@@ -92,7 +92,7 @@ import javax.ejb.Local;
  * @author gax
  */
 @Local
-public interface OrganizationServiceLocal extends GenericSearchService<Organization, SearchCriteria<Organization>> {
+public interface OrganizationServiceLocal {
 
     /**
      * @param org new organization
