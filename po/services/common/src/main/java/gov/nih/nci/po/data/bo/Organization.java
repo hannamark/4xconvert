@@ -160,7 +160,6 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="default"
      */
     @Override
     @NotEmpty

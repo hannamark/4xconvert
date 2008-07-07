@@ -167,6 +167,18 @@
             <version>1.0.1B</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-annotations-ejb3</artifactId>
+            <version>RC9.Patch-1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.1</version>
+            <scope>compile</scope>
+        </dependency>
         
         <!-- Dependencies for the ant build script for xsnapshot generation -->
         <dependency>
@@ -289,7 +301,6 @@
                         <configuration>
                             <tasks>
                                 <property name="output.dir" value="target/generated-sources/xsnapshot/java" />
-                                <property name="src.dir" value="src/main/java" />
                                 <path id="xsnapshot.classpath">
                                     <pathelement location="src/main/xsnapshotResources" />
                                     <fileset dir="${settings.localRepository}">
@@ -306,18 +317,18 @@
                                 </path>
                                 <taskdef name="xsnapshotdoclet" classname="net.sf.xsnapshot.ant.XSnapshotDocletTask" classpathref="xsnapshot.classpath" />
                                 <mkdir dir="${output.dir}" />
+                                <fileset dir="${project.build.sourceDirectory}" id="model">
+                                    <include name="gov/nih/nci/po/data/common/*.java"/>
+                                    <include name="gov/nih/nci/po/data/bo/*.java"/>
+                                </fileset>
                                 <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">
-                                    <fileset dir="${src.dir}">
-                                        <include name="gov/nih/nci/po/data/**/*.java" />
-                                    </fileset>
+                                    <fileset refid="model"/>
                                     <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
                                     <snapshot />
                                     <helper />
                                 </xsnapshotdoclet>
-                                <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">
-                                    <fileset dir="${src.dir}">
-                                        <include name="gov/nih/nci/po/data/**/*.java" />
-                                    </fileset>
+                                <xsnapshotdoclet destdir="${project.build.outputDirectory}" verbose="true" mergedir="${output.dir}">
+                                    <fileset refid="model"/>
                                     <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
                                     <properties />
                                 </xsnapshotdoclet>

@@ -127,6 +127,7 @@ public abstract class AbstractOrganization implements PersistentObject {
 
     /**
      * @return database identity
+     * @xsnapshot.property match="entity"
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -143,7 +144,7 @@ public abstract class AbstractOrganization implements PersistentObject {
 
     /**
      * @return abbreviation name
-     * @xsnapshot.property match="default"
+     * @xsnapshot.property match="entity"
      */
     @Length(max = LONG_COL_LENGTH)
     public String getAbbreviationName() {
@@ -153,7 +154,7 @@ public abstract class AbstractOrganization implements PersistentObject {
     /**
      * @return name
      *
-     * @xsnapshot.property match="default"
+     * @xsnapshot.property match="entity"
      */
     @Transient
     @Length(max = LONG_COL_LENGTH)

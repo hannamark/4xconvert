@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The caarray-app
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This caarray-app Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the caarray-app Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the caarray-app Software; (ii) distribute and
+ * have distributed to and by third parties the caarray-app Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,28 +80,68 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.service.organization;
+
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.common.CurationStatus;
+import gov.nih.nci.po.dto.entity.OrganizationDTO;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+
+import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
+
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
- * @author Scott Miller
+ *
+ * @author gax
  */
-public class EjbTestHelper {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({ PoHibernateSessionInterceptor.class })
+@SecurityDomain("po")
+public class OrganizationEntityServiceBean implements OrganizationEntityServiceRemote {
+
+    private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
+    private OrganizationServiceLocal orgService;
+
+    /**
+     * @param service service, injected
+     */
+    @EJB
+    void setOrganizationServiceBean(OrganizationServiceLocal svc) {
+        this.orgService = svc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     
-    /**
-     * Get a newly created org service.
-     * @return the service
-     */
-    public static OrganizationServiceBean getOrganizationServiceBean() {
-        OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
-        return organizationServiceBean;
+    public OrganizationDTO getOrganization(long id) {
+        Organization org = orgService.getOrganization(id);
+        return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
     }
 
-
     /**
-     * Get a newly created and configured generic service.
-     * @return the service
+     * {@inheritDoc}
      */
-    public static GenericServiceBean getGenericServiceBean() {
-        return new GenericServiceBean();
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public long createOrganization(OrganizationDTO org) {
+        Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
+        // newly created org can not have an id set.
+        orgBO.setId(null);
+        // set initial curation status
+        orgBO.setCurationStatus(CurationStatus.NEW);
+        return orgService.create(orgBO);
     }
+
 }
