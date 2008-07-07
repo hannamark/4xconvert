@@ -292,7 +292,7 @@
                                 <property name="src.dir" value="src/main/java" />
                                 <path id="xsnapshot.classpath">
                                     <pathelement location="src/main/xsnapshotResources" />
-                                    <fileset dir="${user.home}/.m2/repository/">
+                                    <fileset dir="${settings.localRepository}">
                                         <include name="ant/ant/1.6.3/ant-1.6.3.jar" />
                                         <include name="commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" />
                                         <include name="commons-lang/commons-lang/2.3/commons-lang-2.3.jar" />
