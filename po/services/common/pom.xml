@@ -7,12 +7,10 @@
         <artifactId>po-services</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <artifactId>po-services-common</artifactId>
     <packaging>jar</packaging>
     <name>po-services-common</name>
     <url>../../services/common/target/site</url>
-
     <properties>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <hibernate.version>3.2.5.ga</hibernate.version>
@@ -21,7 +19,6 @@
         <hibernate.validator.version>3.0.0.ga</hibernate.validator.version>
         <hibernate.search.version>3.0.0.GA</hibernate.search.version>
         <schema.file>schema.sql</schema.file>
-
         <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
         <test.jdbc.username>sa</test.jdbc.username>
         <test.jdbc.password></test.jdbc.password>
@@ -30,7 +27,6 @@
         <admin.db.username>postgres</admin.db.username>
         <admin.db.password>postgres</admin.db.password>
     </properties>
-
     <dependencies>
         <!-- JBoss Provided Libs -->
         <dependency>
@@ -59,7 +55,6 @@
             <version>${nci-commons.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -78,9 +73,8 @@
             <version>3.2.1</version>
             <scope>compile</scope>
         </dependency>
-
         <!--
-            JBoss provieds log4j, but we package here as well.  See:
+            JBoss provieds log4j, but we package here as well. See:
             http://wiki.jboss.org/wiki/Wiki.jsp?page=ClassLoaderScopingProperties
         -->
         <dependency>
@@ -153,12 +147,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
         <dependency>
             <groupId>net.sf.xsnapshot</groupId>
             <artifactId>xsnapshot</artifactId>
             <version>1.1-beta2</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Testing only jars -->
@@ -174,8 +167,45 @@
             <version>1.0.1B</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Dependencies for the ant build script for xsnapshot generation -->
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.6.3</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging-api</artifactId>
+            <version>1.0.3</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>xdoclet</groupId>
+            <artifactId>xdoclet-xjavadoc</artifactId>
+            <version>1.5.snapshot050611</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>xdoclet</groupId>
+            <artifactId>xdoclet-xdoclet-module</artifactId>
+            <version>1.2.3</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>xdoclet</groupId>
+            <artifactId>xdoclet</artifactId>
+            <version>1.2.3</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.xsnapshot</groupId>
+            <artifactId>xdoclet-xsnapshot-module</artifactId>
+            <version>1.1-beta2</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -251,6 +281,55 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="output.dir" value="target/generated-sources/xsnapshot/java" />
+                                <property name="src.dir" value="src/main/java" />
+                                <path id="xsnapshot.classpath">
+                                    <pathelement location="src/main/xsnapshotResources" />
+                                    <fileset dir="${user.home}/.m2/repository/">
+                                        <include name="ant/ant/1.6.3/ant-1.6.3.jar" />
+                                        <include name="commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" />
+                                        <include name="commons-lang/commons-lang/2.3/commons-lang-2.3.jar" />
+                                        <include name="commons-logging/commons-logging-api/1.0.3/commons-logging-api-1.0.3.jar" />
+                                        <include name="xdoclet/xdoclet-xjavadoc/1.5.snapshot050611/xdoclet-xjavadoc-1.5.snapshot050611.jar" />
+                                        <include name="xdoclet/xdoclet/1.2.3/xdoclet-1.2.3.jar" />
+                                        <include name="xdoclet/xdoclet-xdoclet-module/1.2.3/xdoclet-xdoclet-module-1.2.3.jar" />
+                                        <include name="net/sf/xsnapshot/xdoclet-xsnapshot-module/1.1-beta2/xdoclet-xsnapshot-module-1.1-beta2.jar" />
+                                        <include name="net/sf/xsnapshot/xsnapshot/1.1-beta2/xsnapshot-1.1-beta2.jar" />
+                                    </fileset>
+                                </path>
+                                <taskdef name="xsnapshotdoclet" classname="net.sf.xsnapshot.ant.XSnapshotDocletTask" classpathref="xsnapshot.classpath" />
+                                <mkdir dir="${output.dir}" />
+                                <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">
+                                    <fileset dir="${src.dir}">
+                                        <include name="gov/nih/nci/po/data/**/*.java" />
+                                    </fileset>
+                                    <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
+                                    <snapshot />
+                                    <helper />
+                                </xsnapshotdoclet>
+                                <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">
+                                    <fileset dir="${src.dir}">
+                                        <include name="gov/nih/nci/po/data/**/*.java" />
+                                    </fileset>
+                                    <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
+                                    <properties />
+                                </xsnapshotdoclet>
+                            </tasks>
+                            <sourceRoot>target/generated-sources/xsnapshot/java</sourceRoot>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -281,12 +360,12 @@
                             <username>${admin.db.username}</username>
                             <password>${admin.db.password}</password>
                             <autocommit>true</autocommit>
-                            <sqlCommand>
-                                drop database if exists ${database.name};
+                            <sqlCommand> 
+                                drop database if exists ${database.name}; 
                                 drop user if exists ${jdbc.username};
-                                create database ${database.name};
-                                create user ${jdbc.username} with password '${jdbc.username}';
-                                grant all on database ${database.name} to ${jdbc.username};
+                                create database ${database.name}; 
+                                create user ${jdbc.username} with password '${jdbc.username}'; 
+                                grant all on database ${database.name} to ${jdbc.username}; 
                             </sqlCommand>
                         </configuration>
                     </plugin>
@@ -303,7 +382,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sql-maven-plugin</artifactId>
-
                         <configuration>
                             <onError>continue</onError>
                             <srcFiles>

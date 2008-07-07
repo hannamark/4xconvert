@@ -1,0 +1,173 @@
+/**
+ * Auto-generated file.  Do not edit.
+ * 
+ * This is the helper class for the <XDtXSnapshot:snapshotClass/> snapshot class.
+ */
+
+package <XDtPackage:packageOf><XDtXSnapshot:helperClass/></XDtPackage:packageOf>;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+
+import net.sf.xsnapshot.*;
+import net.sf.xsnapshot.support.*;
+
+public class <XDtClass:classOf><XDtXSnapshot:helperClass/></XDtClass:classOf> implements SnapshotHelper {
+  /**
+   *  Creates the snapshot object based on the model object given. This method should
+   * not be called directly. Instead, call createSnapshot(Object).
+   */
+  public Object createSnapshot(Object model, TransformContext context) throws XSnapshotException {
+    if (model == null) {
+      return null;
+    } else {
+      Class myClass = <XDtClass:fullClassName/>.class;
+      if (myClass.isInstance (model)) {
+<XDtClass:ifIsClassNotAbstract>
+        // check whether its already in the context map
+        Object existingSnapshot = context.getSnapshotInstance (model, "<XDtXSnapshot:snapshotName/>");
+        if (existingSnapshot != null) {
+          return existingSnapshot;
+        }
+        else {
+          <XDtXSnapshot:snapshotClass/> snapshot = new <XDtXSnapshot:snapshotClass/>();
+          context.setSnapshotInstance (model, "<XDtXSnapshot:snapshotName/>", snapshot);  
+          copyIntoSnapshot (model, snapshot, context);
+          return snapshot;
+        }
+</XDtClass:ifIsClassNotAbstract>
+<XDtClass:ifIsClassAbstract>
+        // cannot happen: there cannot be a concrete instance of an 
+        // abstract class
+        throw new IllegalStateException ("Concrete instance of an abstract class found, or helper called directly");
+</XDtClass:ifIsClassAbstract>
+      } else {
+         throw new IllegalArgumentException ("model object is of class " + model.getClass () + " which is not a subclass of <XDtClass:fullClassName/>");
+      }
+    }
+  }
+  /**
+   * Create the model for the given snapshot
+   */
+  public Object createModel(Object snapshot, TransformContext context) throws XSnapshotException {
+    if (snapshot == null) {
+      return null;
+    } else {
+      // check if this is actually of my type
+      Class myClass = <XDtXSnapshot:snapshotClass/>.class;
+      if (myClass.isInstance (snapshot)) {
+<XDtClass:ifIsClassNotAbstract> 
+        // check whether its already in the context map
+        Object existingModel = context.getModelInstance (snapshot);
+        if (existingModel != null) {
+          return existingModel;
+        }
+        else {            
+          Object model = new <XDtClass:fullClassName/>();
+          context.setModelInstance (snapshot, model);
+      	  copyIntoModel(snapshot, model, context);
+          return model;
+        }
+</XDtClass:ifIsClassNotAbstract>
+<XDtClass:ifIsClassAbstract>
+        // cannot happen: there cannot be a concrete instance of an 
+        // abstract class
+        throw new IllegalStateException ("Concrete instance of an abstract class found, or helper called directly");
+</XDtClass:ifIsClassAbstract>
+      } else {
+         throw new IllegalArgumentException ("snapshot object is of class " + snapshot.getClass () + " which is not a subclass of <XDtXSnapshot:snapshotClass/>");
+      }
+    }     
+  }
+
+  /**
+    * Copies a <XDtClass:fullClassName/> model object into a <XDtXSnapshot:snapshotClass/> snapshot object
+    * @param model the model object
+    * @param snapshot the snapshot object
+    */
+  public void copyIntoSnapshot (Object model, Object snapshot, TransformContext context) throws XSnapshotException {
+  <XDtXSnapshot:ifExtendsFromSnapshot>
+    // this class extends from a snapshot, so we also need to call the helper 
+    // for the parent snapshot's copyIntoSnapshot. Do that first
+    SnapshotHelper parentSnapshotHelper = context.getHelperForModel (<XDtXSnapshot:modelExtendsFrom/>.class, "<XDtXSnapshot:snapshotExtendsFrom/>");
+    parentSnapshotHelper.copyIntoSnapshot (model, snapshot, context);
+  </XDtXSnapshot:ifExtendsFromSnapshot>
+    <XDtXSnapshot:snapshotClass/> snapshotCasted = (<XDtXSnapshot:snapshotClass/>) snapshot;
+    <XDtClass:fullClassName/> modelCasted = (<XDtClass:fullClassName/>) model;
+
+  <XDtXSnapshot:forAllXSnapshotProperties>
+    <XDtXSnapshot:ifCanUseDirectModelGetter>
+    <XDtXSnapshot:modelPropertyType/> modelVal<XDtXSnapshot:snapshotPropertySuffix/> = modelCasted.<XDtXSnapshot:modelGetter/> ();
+    </XDtXSnapshot:ifCanUseDirectModelGetter>
+    <XDtXSnapshot:ifNotCanUseDirectModelGetter>
+    <XDtXSnapshot:modelPropertyType/> modelVal<XDtXSnapshot:snapshotPropertySuffix/> = (<XDtXSnapshot:modelPropertyType/>) XSnapshotPropertyUtils.getProperty (modelCasted, "<XDtXSnapshot:modelPropertyName/>");
+    </XDtXSnapshot:ifNotCanUseDirectModelGetter>
+
+    copyModelToSnapshot<XDtXSnapshot:snapshotPropertySuffix/> (modelVal<XDtXSnapshot:snapshotPropertySuffix/>, snapshotCasted, context);
+  </XDtXSnapshot:forAllXSnapshotProperties>
+  }
+ 
+  /**
+    * Copies a XDtXSnapshot:snapshotClass/> snapshot object into a <XDtClass:fullClassName/>  model object
+    * Warning: not an exact inverse of copyIntoSnapshot
+    * @param snapshot the snapshot object
+    * @param model the model object
+    */  
+  public void copyIntoModel(Object snapshot, Object model, TransformContext context) throws XSnapshotException {
+  <XDtXSnapshot:ifExtendsFromSnapshot>
+    // this class extends from a snapshot, so we also need to call the helper 
+    // for the parent snapshot's copyIntoModel. Do that first
+    SnapshotHelper parentSnapshotHelper = context.getHelperForModel (<XDtXSnapshot:modelExtendsFrom/>.class, "<XDtXSnapshot:snapshotExtendsFrom/>");
+    parentSnapshotHelper.copyIntoModel (snapshot, model, context);
+  </XDtXSnapshot:ifExtendsFromSnapshot>
+
+    <XDtClass:fullClassName/> modelCasted = (<XDtClass:fullClassName/>)model;
+    <XDtXSnapshot:snapshotClass/> snapshotCasted = (<XDtXSnapshot:snapshotClass/>)snapshot;
+
+  <XDtXSnapshot:forAllXSnapshotProperties>
+    <XDtXSnapshot:ifCanUseDirectSnapshotGetter>
+    <XDtXSnapshot:snapshotPropertyType/> snapshotVal<XDtXSnapshot:snapshotPropertySuffix/> = snapshotCasted.<XDtXSnapshot:snapshotGetter/> ();
+    </XDtXSnapshot:ifCanUseDirectSnapshotGetter>
+
+    <XDtXSnapshot:ifNotCanUseDirectSnapshotGetter>
+    <XDtXSnapshot:snapshotPropertyType/> snapshotVal<XDtXSnapshot:snapshotPropertySuffix/> = (<XDtXSnapshot:snapshotPropertyType/>) XSnapshotPropertyUtils.getProperty (snapshotCasted, "<XDtXSnapshot:snapshotPropertyName/>");
+    </XDtXSnapshot:ifNotCanUseDirectSnapshotGetter>
+    copySnapshotToModel<XDtXSnapshot:snapshotPropertySuffix/> (snapshotVal<XDtXSnapshot:snapshotPropertySuffix/>, modelCasted, context);
+    
+  </XDtXSnapshot:forAllXSnapshotProperties>
+  }
+
+<XDtXSnapshot:forAllXSnapshotProperties>
+  <XDtMerge:merge file="net/sf/xsnapshot/resources/model-to-snapshot-property-copy.xdt">
+  </XDtMerge:merge>
+
+  <XDtMerge:merge file="net/sf/xsnapshot/resources/snapshot-to-model-property-copy.xdt">
+  </XDtMerge:merge>
+
+  <XDtXSnapshot:ifCurrentTagIsArrayOrCollection>
+    <XDtMerge:merge file="net/sf/xsnapshot/resources/model-to-snapshot-collection-element-convert.xdt">
+  	</XDtMerge:merge>
+
+	<XDtMerge:merge file="net/sf/xsnapshot/resources/snapshot-to-model-collection-element-convert.xdt">
+  	</XDtMerge:merge>
+  </XDtXSnapshot:ifCurrentTagIsArrayOrCollection>
+
+  <XDtXSnapshot:ifCurrentTagIsMap>
+	<XDtMerge:merge file="net/sf/xsnapshot/resources/model-to-snapshot-map-key-convert.xdt">
+  	</XDtMerge:merge>
+
+	<XDtMerge:merge file="net/sf/xsnapshot/resources/snapshot-to-model-map-key-convert.xdt">
+  	</XDtMerge:merge>
+
+	<XDtMerge:merge file="net/sf/xsnapshot/resources/model-to-snapshot-map-value-convert.xdt">
+  	</XDtMerge:merge>
+
+	<XDtMerge:merge file="net/sf/xsnapshot/resources/snapshot-to-model-map-value-convert.xdt">
+  	</XDtMerge:merge>
+  </XDtXSnapshot:ifCurrentTagIsMap>     
+</XDtXSnapshot:forAllXSnapshotProperties>
+}

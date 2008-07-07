@@ -20,7 +20,7 @@
         <jboss.configuration>default</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.0.7</nci-commons.version>
+        <nci-commons.version>1.0.9</nci-commons.version>
         <compileSource>1.5</compileSource>
 
         <database.url.prefix>jdbc:postgresql://localhost:5432/</database.url.prefix>

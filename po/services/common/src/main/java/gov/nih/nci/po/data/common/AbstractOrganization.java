@@ -96,7 +96,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * @author Todd Parnell
  *
- * @xsnapshot.snapshot-class name="general" class="gov.nih.nci.po.dto.general.AbstractOrganizationDTO"
+ * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
  */
 @MappedSuperclass
 public abstract class AbstractOrganization implements PersistentObject {
@@ -152,7 +152,7 @@ public abstract class AbstractOrganization implements PersistentObject {
 
     /**
      * @return name
-     * 
+     *
      * @xsnapshot.property match="default"
      */
     @Transient

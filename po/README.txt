@@ -31,9 +31,4 @@
     Download JEMS installer
     Install this version of JBoss to C:\dev\app_servers\jboss-4.0.5.GA  (If you choose another location your profiles.xml file will need to be modified)
     Copy the postgres jar in to C:\dev\app_servers\jboss-4.0.5.GA\server\default\lib
-
-
-
-
-
-
+    

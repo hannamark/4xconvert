@@ -116,11 +116,10 @@ import org.hibernate.validator.Valid;
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class \
- *  name="general" \
- *  class="gov.nih.nci.po.dto.general.OrganizationDTO" \
- *  extends="gov.nih.nci.po.dto.general.AbstractOrganizationDTO" \
- *  model-extends="gov.nih.nci.po.data.common.AbstractOrganization"
+ * @xsnapshot.snapshot-class name="entity"
+ *      class="gov.nih.nci.po.dto.entity.OrganizationDTO"
+ *      extends="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
+ *      model-extends="gov.nih.nci.po.data.common.AbstractOrganization"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
@@ -152,7 +151,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
 
     /**
      * constructor to copy base org fields.
-     * 
+     *
      * @param o the org source
      */
     public Organization(AbstractOrganization o) {
@@ -208,8 +207,8 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
      */
     @ManyToMany
     @JoinTable(
-            name = "OrgTypes", 
-            joinColumns = { @JoinColumn(name = "organization_id") }, 
+            name = "OrgTypes",
+            joinColumns = { @JoinColumn(name = "organization_id") },
             inverseJoinColumns = @JoinColumn(name = "type_id")
     )
     @ForeignKey(name = "ORG_TYPE_ORG_FK", inverseName = "ORG_TYPE_TYPE_FK")
