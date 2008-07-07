@@ -169,7 +169,6 @@ public class ContactInfoCR extends AbstractContactInfo {
      * Set the id of the ci this cr is associated to.
      * @param id the id.
      */
-    @SuppressWarnings("deprecation")
     public void setContactInfoId(Long id) {
         if (getContactInfo() == null) {
             setContactInfo(new ContactInfo());
@@ -470,7 +469,7 @@ public class ContactInfoCR extends AbstractContactInfo {
     public List<URLCR> getUrlDrops() {
         return urlDrops;
     }
-    
+
     private boolean clearTitle;
 
     /**

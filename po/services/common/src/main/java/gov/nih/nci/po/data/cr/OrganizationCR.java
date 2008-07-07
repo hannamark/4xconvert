@@ -115,7 +115,7 @@ public class OrganizationCR extends AbstractOrganization {
     private Set<OrganizationType> typeDrops = new HashSet<OrganizationType>();
 
     /*
-     * Remote clients should not attempt to update the StatusInfo properties, all of this 
+     * Remote clients should not attempt to update the StatusInfo properties, all of this
      * information is gathered by the server -- see POServiceBean modify*(CR, RemoteUserName)
      */
     private transient StatusInfo statusInfo;
@@ -129,7 +129,6 @@ public class OrganizationCR extends AbstractOrganization {
     /**
      * @param organizationId id of org this change request is for
      */
-    @SuppressWarnings("deprecation")
     public OrganizationCR(long organizationId) {
         this.organization = new Organization();
         this.organization.setId(organizationId);
@@ -253,7 +252,7 @@ public class OrganizationCR extends AbstractOrganization {
     public void setStatusInfo(StatusInfo statusInfo) {
         this.statusInfo = statusInfo;
     }
-    
+
     private boolean clearAbbreviationName;
 
     /**

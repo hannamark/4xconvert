@@ -176,7 +176,6 @@ public class Certificate extends AbstractCertificate implements Auditable {
     /**
      * @param organization organization
      * */
-    @SuppressWarnings("unused")
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }

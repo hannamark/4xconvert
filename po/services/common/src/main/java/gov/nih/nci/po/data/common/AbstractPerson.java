@@ -102,6 +102,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 public abstract class AbstractPerson implements PersistentObject {
+    private static final long serialVersionUID = 1L;
+
     private static final int SHORT_COL_LENGTH = 10;
     private static final int LONG_COL_LENGTH = 50;
     private Long id;

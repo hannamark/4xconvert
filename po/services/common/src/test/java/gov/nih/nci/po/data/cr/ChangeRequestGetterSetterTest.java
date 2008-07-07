@@ -63,7 +63,6 @@ public class ChangeRequestGetterSetterTest {
     /**
      * Test OrganizationCR getter and setters
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testOrganzationCRGetterSetters() {
         OrganizationCR organizationCR = new OrganizationCR();

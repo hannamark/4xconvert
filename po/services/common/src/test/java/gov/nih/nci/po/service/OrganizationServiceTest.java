@@ -115,16 +115,16 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author Scott Miller
  */
 public class OrganizationServiceTest extends AbstractHibernateTestCase {
-    
+
     public static OrganizationType ORG_TYPE = new OrganizationType("name");
-    
+
     private OrganizationServiceBean orgService;
     private OrganizationType defaultOrgType;
     private OrganizationType auxOrgType;
     private Country defaultCountry;
     User user;
-    
-    
+
+
 
     @Before
     public void setUpData() {
@@ -144,7 +144,7 @@ public class OrganizationServiceTest extends AbstractHibernateTestCase {
         defaultCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, countryId);
         defaultOrgType = (OrganizationType) PoHibernateUtil.getCurrentSession().get(OrganizationType.class, orgTypeId);
         auxOrgType = (OrganizationType) PoHibernateUtil.getCurrentSession().get(OrganizationType.class, orgTypeId2);
- 
+
         user = new User();
         user.setLoginName("unittest" + new Random().nextLong());
         user.setFirstName("first");
@@ -184,7 +184,6 @@ public class OrganizationServiceTest extends AbstractHibernateTestCase {
     /**
      * Test creating a Org with invalid input.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testCreateOrgWithInvalidInput() {
         try {
@@ -202,7 +201,6 @@ public class OrganizationServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     public void testCreateOrg() {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
@@ -239,7 +237,7 @@ public class OrganizationServiceTest extends AbstractHibernateTestCase {
         return PoHibernateUtil.getCurrentSession().createQuery("from " + Organization.class.getName()).list();
     }
 
-    
+
 
     private void addAlternateId(Organization org, String code) {
         @SuppressWarnings("unchecked")

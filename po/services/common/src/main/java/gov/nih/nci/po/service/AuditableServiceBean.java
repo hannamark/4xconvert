@@ -19,7 +19,6 @@ public class AuditableServiceBean extends BaseServiceBean<AuditLogRecord> implem
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AuditLogRecord> search(SearchCriteria<AuditLogRecord> criteria) {
         return super.genericSearch(criteria, null);
@@ -28,7 +27,6 @@ public class AuditableServiceBean extends BaseServiceBean<AuditLogRecord> implem
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AuditLogRecord> search(SearchCriteria<AuditLogRecord> criteria,
             PageSortParams<AuditLogRecord> pageSortParams) {

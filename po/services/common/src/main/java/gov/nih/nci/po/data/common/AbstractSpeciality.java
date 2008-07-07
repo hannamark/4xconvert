@@ -101,6 +101,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 public abstract class AbstractSpeciality implements PersistentObject {
+    private static final long serialVersionUID = 1L;
+
     private static final int NAME_LENGTH = 100;
     private Long id;
     private String name;

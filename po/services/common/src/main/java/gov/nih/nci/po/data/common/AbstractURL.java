@@ -95,6 +95,8 @@ import org.hibernate.validator.Pattern;
  */
 @MappedSuperclass
 public abstract class AbstractURL implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Url field length.
      */
@@ -124,7 +126,7 @@ public abstract class AbstractURL implements Serializable {
      * @return the value
      */
     @NotEmpty
-    @Pattern(regex = URL_REGEX, 
+    @Pattern(regex = URL_REGEX,
              message = "URL is not well formed")
     @Length(max = MAX_VALUE_LENGTH)
     public String getValue() {

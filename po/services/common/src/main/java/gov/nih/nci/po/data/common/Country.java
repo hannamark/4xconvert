@@ -160,7 +160,6 @@ public class Country implements PersistentObject, Auditable {
     /**
      * @param id database id
      */
-    @SuppressWarnings("unused")
     public void setId(Long id) {
         this.id = id;
     }

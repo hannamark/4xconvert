@@ -6,7 +6,6 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.OrganizationServiceBean;
 import gov.nih.nci.po.service.OrganizationServiceTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -27,8 +26,6 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     @Before
     public void setupService() {
         remote = EjbTestHelper.getOrganizationEntityServiceBean();
-        
-      //  instance.setOrganizationServiceBean(local);
     }
 
     /**

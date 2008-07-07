@@ -97,6 +97,8 @@ import org.hibernate.validator.NotEmpty;
  */
 @MappedSuperclass
 public abstract class AbstractPhoneNumber implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Length for the value field.
      */

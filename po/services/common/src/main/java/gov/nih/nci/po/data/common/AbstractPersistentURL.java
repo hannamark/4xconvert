@@ -95,6 +95,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 public abstract class AbstractPersistentURL extends AbstractURL implements PersistentObject {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
 
     /**

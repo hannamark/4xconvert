@@ -201,13 +201,11 @@ public class CountingInterceptior extends EmptyInterceptor {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void postFlush(Iterator arg0) throws CallbackException {
         ++count;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void preFlush(Iterator arg0) throws CallbackException {
         ++count;
     }

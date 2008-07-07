@@ -117,7 +117,6 @@ public class BaseServiceBean<T extends PersistentObject> {
      * @param c Hibernate criteria to set pagination options
      * @param pageSortParams bean containing the options
      */
-    @SuppressWarnings("unchecked")
     protected void setPagination(Criteria c, PageSortParams pageSortParams) {
         if (pageSortParams != null) {
             if (pageSortParams.getPageSize() > 0) {

@@ -121,7 +121,6 @@ public class BOGetterSetterTest {
     /**
      * Test State getter and setters.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testCertificateGetterSetters() {
         Certificate certificate = new Certificate(new Person(), new Date(), new Organization(), "detail");

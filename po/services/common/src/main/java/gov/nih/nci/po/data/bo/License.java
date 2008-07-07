@@ -177,7 +177,6 @@ public class License extends AbstractLicense implements Auditable {
     /**
      * @param organization organization.
      */
-    @SuppressWarnings("unused")
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }
