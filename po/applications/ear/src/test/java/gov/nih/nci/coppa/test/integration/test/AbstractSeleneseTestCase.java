@@ -38,8 +38,8 @@ public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
     }
     
     protected void waitForElementById(String id, int timeoutSeconds) {
-        selenium.waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('" +
-                id + "');", toMillisecondsString(timeoutSeconds));
+        selenium.waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('" 
+                + id + "');", toMillisecondsString(timeoutSeconds));
     }
     
     protected void waitForElementByXPath(String xpathExpression, int timeoutSeconds) {

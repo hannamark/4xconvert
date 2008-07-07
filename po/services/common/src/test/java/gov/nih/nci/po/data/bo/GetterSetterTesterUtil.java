@@ -90,7 +90,6 @@ import gov.nih.nci.po.data.cr.DegreeCR;
 import gov.nih.nci.po.data.cr.OrganizationCR;
 import gov.nih.nci.po.data.cr.PersonCR;
 
-import java.beans.BeanDescriptor;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -108,10 +107,9 @@ import org.apache.log4j.Logger;
 /**
  * @author Jevon Gill
  */
-@SuppressWarnings("deprecation")
 public class GetterSetterTesterUtil {
 
-    private static final Logger log = Logger
+    private static final Logger LOG = Logger
             .getLogger(GetterSetterTesterUtil.class);
 
     public static ArrayList<Object> DEFAULT_TYPES = new ArrayList<Object>();
@@ -191,7 +189,7 @@ public class GetterSetterTesterUtil {
 
         DEFAULT_TYPES.add(ContactInfoCR.class);
         DEFAULT_ARGUMENTS.add(new ContactInfoCR());
-        
+
         DEFAULT_TYPES.add(Person.class);
         DEFAULT_ARGUMENTS.add(new Person());
 
@@ -214,22 +212,22 @@ public class GetterSetterTesterUtil {
         } catch (IntrospectionException e) {
             String msg = "Error creating PropertyDescriptor for property ["
                     + property + "]. Do you have a getter and a setter?";
-            log.error(msg, e);
+            LOG.error(msg, e);
             fail(msg);
         }
     }
-    
+
     private static void assertBasicGetterSetterBehavior(Object target,
             PropertyDescriptor descriptor) {
         String property = descriptor.getDisplayName();
         try {
 
-            log.debug("Testing property: " + descriptor.getDisplayName());
+            LOG.debug("Testing property: " + descriptor.getDisplayName());
 
             Object arg = new Object();
 
             Class<?> type = descriptor.getPropertyType();
-            log.debug("Testing property: " + descriptor.getDisplayName() + "; type=" + type.getName());
+            LOG.debug("Testing property: " + descriptor.getDisplayName() + "; type=" + type.getName());
 
             if (DEFAULT_TYPES.contains(type)) {
                 arg = DEFAULT_ARGUMENTS.get(DEFAULT_TYPES.indexOf(type));
@@ -238,35 +236,35 @@ public class GetterSetterTesterUtil {
 
                     arg = type.newInstance();
                 } catch (InstantiationException e) {
-                    String msg = "Error instantiating property [" + property 
+                    String msg = "Error instantiating property [" + property
                             + "].Is this a property of a custom type?";
-                    log.error(msg, e);
+                    LOG.error(msg, e);
                     fail(msg);
                 }
             }
 
-            log.debug("Attempting to perform get/set for property:" + descriptor.getDisplayName());
+            LOG.debug("Attempting to perform get/set for property:" + descriptor.getDisplayName());
             Method readMethod = descriptor.getReadMethod();
             Method writeMethod = descriptor.getWriteMethod();
             writeMethod.invoke(target, arg);
             Object propertyValue = readMethod.invoke(target);
             assertEquals(property + " getter/setter failed test", arg,
                     propertyValue);
-            log.debug("Completed attempt to perform get/set for property:" + descriptor.getDisplayName());
-            log.debug("\n");
+            LOG.debug("Completed attempt to perform get/set for property:" + descriptor.getDisplayName());
+            LOG.debug("\n");
 
         } catch (IllegalAccessException e) {
             String msg = "Error accessing property. Are the getter and setter both accessible?";
-            log.error(msg, e);
+            LOG.error(msg, e);
             fail(msg);
         } catch (InvocationTargetException e) {
             String msg = "Error invoking method on target";
             fail(msg);
-            log.error(msg, e);
+            LOG.error(msg, e);
         }
-        
+
     }
-    
+
     /**
      * See {@link #assertBasicGetterSetterBehavior(Object,String)} method. Big difference here is that we try to
      * automatically introspect the target object, finding read/write properties, and automatically testing the getter

@@ -97,6 +97,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 public abstract class AbstractContactInfo implements PersistentObject {
+    private static final long serialVersionUID = 1L;
+
     private static final int LONG_COL_LENGTH = 100;
     private Long id;
     private String title;

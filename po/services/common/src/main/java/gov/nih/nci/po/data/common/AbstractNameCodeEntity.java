@@ -88,7 +88,6 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
-
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
@@ -102,6 +101,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 public abstract class AbstractNameCodeEntity implements PersistentObject {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Recommended column length for codes.
      */
@@ -125,7 +126,6 @@ public abstract class AbstractNameCodeEntity implements PersistentObject {
     /**
      * @param id new database id
      */
-    @SuppressWarnings("unused")
     protected void setId(Long id) {
         this.id = id;
     }

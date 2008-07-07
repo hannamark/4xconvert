@@ -99,6 +99,7 @@ import org.hibernate.validator.Length;
  */
 @MappedSuperclass
 public abstract class AbstractAddress implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final int LINE_LENGTH = 254;
     private static final int CITY_LENGTH = 50;

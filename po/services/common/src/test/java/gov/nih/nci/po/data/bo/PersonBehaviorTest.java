@@ -9,21 +9,31 @@ import gov.nih.nci.po.data.common.PersonType;
 
 import org.junit.Test;
 
+/**
+ * test for person.
+ * @author Scott Miller
+ */
 public class PersonBehaviorTest {
 
+    /**
+     * Test the getters and setters.
+     */
     @Test
     public void testBasicGetterSetters() {
         Person person = new Person();
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"firstName");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"lastName");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"middleName");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"suffix");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"prefix");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"dateOfBirth");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"preferredContactInfo");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person,"curationStatus");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "firstName");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "lastName");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "middleName");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "suffix");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "prefix");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "dateOfBirth");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "preferredContactInfo");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "curationStatus");
     }
 
+    /**
+     * Test the investigator flag flow.
+     */
     @Test
     public void testIsInvestigator() {
         Person person = new Person();
@@ -36,7 +46,10 @@ public class PersonBehaviorTest {
         person.getTypes().add(new PersonType(PersonType.INVESTIGATOR));
         assertTrue(person.isInvestigator());
     }
-    
+
+    /**
+     * test duplocate getter setter.
+     */
     @Test
     public void testDuplicateBehavior() {
         Person person = new Person();
@@ -46,6 +59,6 @@ public class PersonBehaviorTest {
         assertNull(person.getDuplicateOf());
         person.setCurationStatus(CurationStatus.REJECTED);
         person.setDuplicateOf(dupPerson);
-        assertSame(dupPerson, person.getDuplicateOf());       
+        assertSame(dupPerson, person.getDuplicateOf());
     }
 }

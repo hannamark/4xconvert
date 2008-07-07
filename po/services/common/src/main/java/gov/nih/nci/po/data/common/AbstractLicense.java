@@ -101,6 +101,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 public abstract class AbstractLicense implements PersistentObject {
+    private static final long serialVersionUID = 1L;
+
     private static final int DETAIL_LENGTH = 100;
     private static final int NUMBER_LENGTH = 50;
     private Long id;

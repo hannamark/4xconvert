@@ -107,19 +107,21 @@ public abstract class AbstractHibernateTestCase {
 
     /**
      * In JUnit3x you would normally override the setUp() and add your own functionality locally however, in JUnit4 to
-     * override simply define your method and give it the <code>@Before annotation</code>. Doing so will cause that method to be invoked after the parent class's setUp().
+     * override simply define your method and give it the <code>@Before annotation</code>. Doing so will cause that
+     * method to be invoked after the parent class's setUp().
      */
     @Before
-    final public void setUp() {
+    public final void setUp() {
         transaction = PoHibernateUtil.getHibernateHelper().beginTransaction();
     }
 
     /**
      * In JUnit3x you would normally override the tearDown() and add your own functionality locally however, in JUnit4
-     * to override simply define your method and give it the <code>@After annotation</code>. Doing so will cause that method to be invoked after the parent class's tearDown().
+     * to override simply define your method and give it the <code>@After annotation</code>. Doing so will cause that
+     * method to be invoked after the parent class's tearDown().
      */
     @After
-    final public void tearDown() {
+    public final void tearDown() {
         try {
             transaction.commit();
         } catch (Exception e) {
