@@ -82,6 +82,10 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.service.organization.OrganizationEntityServiceBean;
+import gov.nih.nci.po.service.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.po.util.RemoteBeanHandler;
+
 /**
  * @author Scott Miller
  */
@@ -94,6 +98,16 @@ public class EjbTestHelper {
     public static OrganizationServiceBean getOrganizationServiceBean() {
         OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
         return organizationServiceBean;
+    }
+    
+    public static OrganizationEntityServiceBean getOrganizationEntityServiceBean() {
+        OrganizationEntityServiceBean organizationServiceBean = new OrganizationEntityServiceBean();
+        organizationServiceBean.setOrganizationServiceBean(getOrganizationServiceBean());
+        return organizationServiceBean;
+    }
+    
+    public static OrganizationEntityServiceRemote getOrganizationEntityServiceBeanAsRemote () {
+        return (OrganizationEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getOrganizationEntityServiceBean());
     }
 
 

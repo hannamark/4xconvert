@@ -17,14 +17,13 @@ import static org.junit.Assert.*;
  */
 public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase {
 
-    private OrganizationEntityServiceBean instance;
-    private OrganizationServiceBean local;
+    private OrganizationEntityServiceRemote remote;
     
     @Before
     public void setupService() {
-        local = EjbTestHelper.getOrganizationServiceBean();
-        instance = new OrganizationEntityServiceBean();
-        instance.setOrganizationServiceBean(local);
+        remote = EjbTestHelper.getOrganizationEntityServiceBean();
+        
+      //  instance.setOrganizationServiceBean(local);
     }
 
     @Test
@@ -33,7 +32,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         t.setUpData();
         long id = t.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
-        OrganizationDTO result = instance.getOrganization(id);
+        OrganizationDTO result = remote.getOrganization(id);
         assertEquals(org.getId(), result.getId());
         assertEquals(org.getName(), result.getName());
     }
@@ -45,9 +44,9 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             dto.setId(99L);
             dto.setName("some name");
             dto.setAbbreviationName("short");        
-            long id = instance.createOrganization(dto);
+            long id = remote.createOrganization(dto);
             assertNull(dto.getId());// make sure this id was not used
-            Organization o = local.getOrganization(id);
+            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
             assertEquals(dto.getName(), o.getName());
             assertEquals(dto.getAbbreviationName(), o.getAbbreviationName());        
         } catch(org.hibernate.PropertyValueException e) {

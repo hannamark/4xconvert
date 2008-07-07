@@ -83,7 +83,6 @@
 package gov.nih.nci.po.service.organization;
 
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 
@@ -113,11 +112,18 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     private OrganizationServiceLocal orgService;
 
     /**
-     * @param service service, injected
+     * @param svc service, injected
      */
     @EJB
-    void setOrganizationServiceBean(OrganizationServiceLocal svc) {
+    public void setOrganizationServiceBean(OrganizationServiceLocal svc) {
         this.orgService = svc;
+    }
+    
+    /**
+     * @return orgService that was injected by container.
+     */
+    public OrganizationServiceLocal getOrganizationServiceBean() {
+        return this.orgService;
     }
 
     /**
@@ -137,10 +143,6 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public long createOrganization(OrganizationDTO org) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
-        // newly created org can not have an id set.
-        orgBO.setId(null);
-        // set initial curation status
-        orgBO.setCurationStatus(CurationStatus.NEW);
         return orgService.create(orgBO);
     }
 
