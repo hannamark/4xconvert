@@ -33,3 +33,8 @@
     Copy the postgres jar in to C:\dev\app_servers\jboss-4.0.5.GA\server\default\lib
 
 Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.jboss.org/jemsinstaller/downloads/)
+
+  * Eclipse
+
+    Install Eclipse maven plugin: http://m2eclipse.sonatype.org/update/
+    Need to add other plugins here as well
