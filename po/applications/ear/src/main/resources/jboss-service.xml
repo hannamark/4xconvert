@@ -8,4 +8,16 @@ PUBLIC "-//JBoss//DTD MBean Service 4.2//EN"
         <depends optional-attribute-name="LoginConfigService">jboss.security:service=XMLLoginConfig</depends>
         <depends optional-attribute-name="SecurityManagerService">jboss.security:service=JaasSecurityManager</depends>
     </mbean>
+   <mbean code="org.jboss.logging.Log4jService"
+      name="jboss.system:type=POLog4jService,service=Logging"
+      xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
+      <attribute name="ConfigurationURL">resource:po-log4j.xml</attribute>
+      <!-- Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8
+      this needs to be set to avoid a possible deadlock on exception at the
+      appender level. See bug#696819.
+      -->
+      <attribute name="Log4jQuietMode">true</attribute>
+      <!-- How frequently in seconds the ConfigurationURL is checked for changes -->
+      <attribute name="RefreshPeriod">60</attribute>
+   </mbean>
 </server>

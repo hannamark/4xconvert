@@ -19,9 +19,6 @@
     <module>
         <java>security.jar</java>
     </module>
-    <module>
-        <java>log4j.jar</java>
-    </module>
     <security-role>
         <role-name>client</role-name>
     </security-role>

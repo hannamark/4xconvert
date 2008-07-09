@@ -34,8 +34,8 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-            <scope>compile</scope>
+            <version>1.2.13</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci</groupId>
@@ -96,12 +96,6 @@
                     <finalName>po-web</finalName>
                     <resourcesDir>target/classes</resourcesDir>
                     <modules>
-                        <jarModule>
-                            <groupId>log4j</groupId>
-                            <artifactId>log4j</artifactId>
-                            <includeInApplicationXml>true</includeInApplicationXml>
-                            <bundleFileName>log4j.jar</bundleFileName>
-                        </jarModule>
                         <jarModule>
                             <groupId>gov.nih.nci</groupId>
                             <artifactId>security</artifactId>
