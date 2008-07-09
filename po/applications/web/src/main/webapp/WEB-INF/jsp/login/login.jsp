@@ -6,9 +6,9 @@
 </head>
 <body onload="setFocusToFirstControl();">
     <div class="po_form">
-        <form action="j_security_check" id="loginForm">
+        <form action="j_security_check" method="post" id="loginForm">
             <input id="enableEnterSubmit" type="submit"/>
-            <c:if test="${not empty failedLogin}">
+            <c:if test="${not empty param.failedLogin}">
               <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
             </c:if>
              <div class="fieldrow">
