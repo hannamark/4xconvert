@@ -3,7 +3,6 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
 import gov.nih.nci.pa.service.ProtocolServiceLocal;
-import gov.nih.nci.pa.service.SafetyRegulationServiceLocal;
 //import gov.nih.nci.pa.service.TrialDesignServiceLocal;
 import gov.nih.nci.pa.service.TrialDesignServiceRemote;;
 
@@ -66,13 +65,6 @@ public final class PaRegistry {
         this.serviceLocator = serviceLocator;
     }
     
-    
-    /**
-     * @return the service.
-     */
-    public static SafetyRegulationServiceLocal getSafetyRegulationService() {
-        return getInstance().getServiceLocator().getSafetyRegulationService();
-    }
     
     /**
      * @return the trial service.

@@ -2,7 +2,6 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
 import gov.nih.nci.pa.service.ProtocolServiceLocal;
-import gov.nih.nci.pa.service.SafetyRegulationServiceLocal;
 import gov.nih.nci.pa.service.TrialDesignServiceRemote;
 
 /**
@@ -25,12 +24,6 @@ public class JndiServiceLocator implements ServiceLocator {
         return (ProtocolOrganizationServiceRemote) JNDIUtil.lookup("pa/ProtocolOrganizationServiceBean/remote");
     }
     
-    /**
-     * @return Safety Regulation Service
-     */
-    public SafetyRegulationServiceLocal getSafetyRegulationService() {
-       return (SafetyRegulationServiceLocal) JNDIUtil.lookup("pa/SafetyRegulationServiceBean/local");  
-    }
     
     /**
      * @return Safety Trial Design Service
