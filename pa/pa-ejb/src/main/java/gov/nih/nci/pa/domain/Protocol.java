@@ -35,7 +35,7 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-
+@SuppressWarnings("PMD")
 public class Protocol extends AbstractEntity {
 
     private static final long serialVersionUID = 1234567890L;

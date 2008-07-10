@@ -1,8 +1,6 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.AssigningAuthorityCode;
-import gov.nih.nci.pa.enums.YesNoCode;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

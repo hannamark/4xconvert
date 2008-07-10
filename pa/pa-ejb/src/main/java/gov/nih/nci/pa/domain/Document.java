@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @MappedSuperclass
+@SuppressWarnings("PMD")
 public abstract class Document extends AbstractEntity {
     
     private static final long serialVersionUID = 1234567890L;

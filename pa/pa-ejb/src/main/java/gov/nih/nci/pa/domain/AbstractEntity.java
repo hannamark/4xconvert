@@ -21,7 +21,7 @@ public  class AbstractEntity implements Serializable, Auditable {
     
     private static final long serialVersionUID = 1234567890L;
     
-    protected Long id;
+    private Long id;
     
     /**
      * Standard max length for text columns.
