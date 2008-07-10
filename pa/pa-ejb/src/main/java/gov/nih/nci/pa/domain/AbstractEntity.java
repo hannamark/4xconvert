@@ -2,6 +2,12 @@ package gov.nih.nci.pa.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 /**
  * Protocol bean for managing protocol.
  * @author Naveen Amiruddin
@@ -10,20 +16,37 @@ import java.io.Serializable;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public abstract class AbstractEntity implements Serializable, Auditable {
+@MappedSuperclass
+public  class AbstractEntity implements Serializable, Auditable {
+    
+    private static final long serialVersionUID = 1234567890L;
+    
+    protected Long id;
+    
     /**
      * Standard max length for text columns.
      */
     public static final int LONG_TEXT_LENGTH = 200;
     
     /**
-     * @return Long long
+     * set id.
+     * @param id id
      */
-    public abstract Long getId();
+     public void setId(Long id) {
+        this.id = id;
+    }
 
+    /**
+     * Get the id of the object.
+     * @return the id
+     */
 
-
-
-    
- 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)    
+    @Column(name = "ID")
+    public Long getId() {
+        return this.id;
+    }
 }
+
+

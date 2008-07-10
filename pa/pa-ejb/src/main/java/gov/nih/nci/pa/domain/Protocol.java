@@ -35,7 +35,7 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-@SuppressWarnings("PMD")
+
 public class Protocol extends AbstractEntity {
 
     private static final long serialVersionUID = 1234567890L;
@@ -51,7 +51,6 @@ public class Protocol extends AbstractEntity {
     private List<StudySite> studySites = new ArrayList<StudySite>();
     private List<StudyInvestigator> studyInvestigators = new ArrayList<StudyInvestigator>();
     private List<StudyCondition> studyConditions = new ArrayList<StudyCondition>();
-    
     
     /**
      * Default constructor.
@@ -129,7 +128,7 @@ public class Protocol extends AbstractEntity {
     }
 
     /**
-     * @return sponsor monitor code
+     * @return intent code
      */
     @Column(name = "MONITOR_CODE")
     @Enumerated(EnumType.STRING)
@@ -180,7 +179,7 @@ public class Protocol extends AbstractEntity {
      * 
      * @return protocol statuses
      */
-   @OneToMany(mappedBy = "protocol")
+    @OneToMany(mappedBy = "protocol")
     public List<ProtocolStatus> getProtocolStatuses() {
          return protocolStatuses;
     }
@@ -239,5 +238,6 @@ public class Protocol extends AbstractEntity {
     public void setStudyConditions(List<StudyCondition> studyConditions) {
         this.studyConditions = studyConditions;
     }
+    
     
 }

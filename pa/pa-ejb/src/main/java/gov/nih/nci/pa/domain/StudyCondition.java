@@ -33,7 +33,7 @@ public class StudyCondition extends AbstractEntity {
 
     private Long id;
     private YesNoCode leadIndicator;
-    private Protocol protocol;
+    private StudyProtocol studyProtocol;
     private Condition condition;
 
     /**
@@ -71,19 +71,19 @@ public class StudyCondition extends AbstractEntity {
     }
     /**
      * 
-     * @return protocol 
+     * @return studyProtocol 
      */
     @ManyToOne
-    @JoinColumn(name = "PROTOCOL_ID", nullable = false)
-    public Protocol getProtocol() {
-        return protocol;
+    @JoinColumn(name = "STUDY_PROTOCOL_ID", nullable = false)
+    public StudyProtocol getStudyProtocol() {
+        return studyProtocol;
     }
     /**
      * 
-     * @param protocol protocol 
+     * @param studyProtocol studyProtocol 
      */
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+        this.studyProtocol = studyProtocol;
     }
     /**
      * 
