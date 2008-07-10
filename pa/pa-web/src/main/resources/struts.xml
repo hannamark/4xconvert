@@ -24,8 +24,8 @@
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 			<result name="error">/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>
-		<action name="trailDetailEdit">
-			<result>/jsp/pajsp/trailDetailEdit.jsp</result>
+		<action name="trialDetailEdit">
+			<result>/jsp/pajsp/trialDetailEdit.jsp</result>
 		</action>		
 		<action name="login">
 			<result>/jsp/pajsp/login.jsp</result>
@@ -34,6 +34,14 @@
 			<result name="input">/jsp/pajsp/login.jsp</result>
 			<result name="error">/jsp/pajsp/login.jsp</result>
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
+		</action>		
+		<action name="trialDesignCheck" class="gov.nih.nci.pa.action.TrialDesignAction" method="query">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/trialDesign.jsp</result>
+			<result name="error">/jsp/pajsp/trialDesign.jsp</result>
 		</action>
+		<action name="trialDesign">
+			<result>/jsp/pajsp/trialDesign.jsp</result>
+		</action>				
 	</package>
 </struts>
