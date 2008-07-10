@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.opensymphony.xwork2.ActionSupport;
 
+
 public class LoginActionTest extends ActionSupport{
 
 	/**
@@ -17,6 +18,7 @@ public class LoginActionTest extends ActionSupport{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+
 	public static final String TEST_LOGIN_CONFIG = "test.java.security.login.config";    
 	private static Properties properties = new Properties();
     static {
@@ -31,7 +33,7 @@ public class LoginActionTest extends ActionSupport{
     public static String getLoginConfig() {
         return properties.getProperty(TEST_LOGIN_CONFIG
             , "Error:  java.security.auth.login.config not set in build.properties.");
-    }
+    }          
     
 	@Test
 	public void testLoginSuccess() throws Exception {
