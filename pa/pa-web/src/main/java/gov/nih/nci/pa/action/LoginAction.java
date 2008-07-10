@@ -1,8 +1,8 @@
 package gov.nih.nci.pa.action;
 
-import java.util.Map;
+//import java.util.Map;
 
-import com.opensymphony.xwork2.ActionContext;
+//import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
@@ -81,8 +81,8 @@ public class LoginAction extends ActionSupport {
 
      if (performAuthentication(getUserName(), getPassword())) {
          // if login success full , create an entry in session
-         Map session = ActionContext.getContext().getSession();
-         session.put(Constants.LOGGED_USER_NAME, userName);
+         ///Map session = ActionContext.getContext().getSession();
+         ///session.put(Constants.LOGGED_USER_NAME, userName);
        return SUCCESS;
      } else {
        addActionError("Invalid user name or password! Please try again!");
