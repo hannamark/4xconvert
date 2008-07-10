@@ -3,6 +3,9 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
 import gov.nih.nci.pa.service.ProtocolServiceLocal;
+import gov.nih.nci.pa.service.SafetyRegulationServiceLocal;
+//import gov.nih.nci.pa.service.TrialDesignServiceLocal;
+import gov.nih.nci.pa.service.TrialDesignServiceRemote;;
 
 /**
  * 
@@ -13,7 +16,7 @@ import gov.nih.nci.pa.service.ProtocolServiceLocal;
 public final class PaRegistry {
     
     /**
-     * Number of records to display by default in displaytag controlled tables.
+     * Number of records to display by default in display tag controlled tables.
      */
     public static final int DEFAULT_RECORDS_PER_PAGE = 20;
     private static final PaRegistry PA_REGISTRY = new PaRegistry();
@@ -61,5 +64,27 @@ public final class PaRegistry {
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
+    }
+    
+    
+    /**
+     * @return the service.
+     */
+    public static SafetyRegulationServiceLocal getSafetyRegulationService() {
+        return getInstance().getServiceLocator().getSafetyRegulationService();
+    }
+    
+    /**
+     * @return the trial service.
+     */
+/*    public static TrialDesignServiceLocal getTrialDesignService() {
+        return getInstance().getServiceLocator().getTrialDesignService();
+    }
+*/
+    /**
+     * @return the trial service.
+     */
+    public static TrialDesignServiceRemote getTrialDesignService() {
+        return getInstance().getServiceLocator().getTrialDesignService();
     }
 }
