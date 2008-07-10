@@ -17,7 +17,7 @@
 			<li><a href="searchProtocol.action">Search Protocol</a></li>
 	</ul>	
 	<ul>
-			<li><a href="trailDetailEdit.action">Trail Detail Edit</a></li>
+			<li><a href="trialDetailEdit.action">Trial Detail Edit</a></li>
 	</ul>	
 
 	<ul>
