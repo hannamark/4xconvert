@@ -8,7 +8,7 @@
 		    	<li><a href="Protocol_Grant.html"  class="selected">Protocol Grants</a></li>
 		    	<li><a href="Administrative_Data.html"  >Administrative Data</a></li>
 				<li><a href="Participating_Organization.html" >Participating Organization </a></li>
-				<li><a href="Safety_Regulation.html"  >Safety Regulation</a></li>
+				<li><a href="checkSafetyRegulation.action"  >Safety Regulation</a></li>
 				<li><a href="Publication.html"  >Publication</a></li>
 				<li><a href="Disease_Condition.html" >Disease Condition </a></li>
 				<li><a href="Study_Design.html"  >Study Design</a></li>
