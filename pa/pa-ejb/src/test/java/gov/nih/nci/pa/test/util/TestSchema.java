@@ -1,12 +1,16 @@
 package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.domain.Condition;
+import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.HealthcareSite;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Investigator;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Protocol;
 import gov.nih.nci.pa.domain.ProtocolStatus;
 import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyInvestigator;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.SponsorMonitorCode;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
@@ -33,15 +37,21 @@ public class TestSchema {
 
         static {
             Configuration config = new AnnotationConfiguration().
+                
                 addAnnotatedClass(Condition.class).
+                /*
                 addAnnotatedClass(HealthcareSite.class).
                 addAnnotatedClass(Investigator.class).
                 addAnnotatedClass(Protocol.class).
+                addAnnotatedClass(Document.class).
+                addAnnotatedClass(StudyProtocol.class).
+                addAnnotatedClass(ObservationalStudyProtocol.class).
+                addAnnotatedClass(InterventionalStudyProtocol.class).
+                addAnnotatedClass(StudyCondition.class).
                 addAnnotatedClass(ProtocolStatus.class).
                 addAnnotatedClass(SessionEntry.class).
-                addAnnotatedClass(StudyCondition.class).
                 addAnnotatedClass(StudyInvestigator.class).
-                addAnnotatedClass(StudySite.class).
+                addAnnotatedClass(StudySite.class). */
                 setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
                 setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
                 setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
@@ -57,7 +67,13 @@ public class TestSchema {
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
 
+        /**
+         * 
+         */
         public static void reset() {
+        }
+        
+        public static void reset1() {
             // clean up HQLDB schema
             Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
             try {
