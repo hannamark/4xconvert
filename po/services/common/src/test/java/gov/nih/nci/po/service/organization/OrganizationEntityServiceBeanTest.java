@@ -6,7 +6,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.OrganizationServiceTest;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.junit.Before;
@@ -33,7 +33,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
      */
     @Test
     public void testGetOrganization() {
-        OrganizationServiceTest t = new OrganizationServiceTest();
+        OrganizationServiceBeanTest t = new OrganizationServiceBeanTest();
         t.setUpData();
         long id = t.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);

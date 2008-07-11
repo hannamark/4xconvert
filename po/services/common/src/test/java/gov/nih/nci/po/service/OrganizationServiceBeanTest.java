@@ -114,7 +114,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  *
  * @author Scott Miller
  */
-public class OrganizationServiceTest extends AbstractHibernateTestCase {
+public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
 
     public static OrganizationType ORG_TYPE = new OrganizationType("name");
 

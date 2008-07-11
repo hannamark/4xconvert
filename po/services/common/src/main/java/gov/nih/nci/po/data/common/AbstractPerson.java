@@ -98,7 +98,9 @@ import org.hibernate.validator.Length;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Represents a single, natural person.
+ * @author Todd Parnell
+ *
+ * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.po.dto.entity.AbstractPersonDTO"
  */
 @MappedSuperclass
 public abstract class AbstractPerson implements PersistentObject {
@@ -137,6 +139,7 @@ public abstract class AbstractPerson implements PersistentObject {
 
     /**
      * @return database id
+     * @xsnapshot.property match="entity"
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -161,6 +164,7 @@ public abstract class AbstractPerson implements PersistentObject {
 
     /**
      * @return first (given) name
+     * @xsnapshot.property match="entity"
      */
     @Transient
     @Length(max = LONG_COL_LENGTH)
@@ -170,6 +174,7 @@ public abstract class AbstractPerson implements PersistentObject {
 
     /**
      * @return last (family) name
+     * @xsnapshot.property match="entity"
      */
     @Transient
     @Length(max = LONG_COL_LENGTH)
@@ -179,6 +184,7 @@ public abstract class AbstractPerson implements PersistentObject {
 
     /**
      * @return middle initial
+     * @xsnapshot.property match="entity"
      */
     @Length(max = LONG_COL_LENGTH)
     public String getMiddleName() {
@@ -187,6 +193,7 @@ public abstract class AbstractPerson implements PersistentObject {
 
     /**
      * @return name prefix
+     * @xsnapshot.property match="entity"
      */
     @Length(max = SHORT_COL_LENGTH)
     public String getPrefix() {
@@ -195,6 +202,7 @@ public abstract class AbstractPerson implements PersistentObject {
 
     /**
      * @return name suffix
+     * @xsnapshot.property match="entity"
      */
     @Length(max = SHORT_COL_LENGTH)
     public String getSuffix() {
