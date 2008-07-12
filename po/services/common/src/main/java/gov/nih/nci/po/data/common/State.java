@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.common;
 
 import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -95,7 +96,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 

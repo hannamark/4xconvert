@@ -7,7 +7,7 @@ import gov.nih.nci.po.data.common.CurationStatus;
 import org.junit.Test;
 
 public class OrganizationBehaviorTest {
-    
+
     @Test
     public void testBasicGetterSetters() {
         Organization org = new Organization();
@@ -22,10 +22,10 @@ public class OrganizationBehaviorTest {
         Organization org = new Organization();
         Organization dupOrg = new Organization();
         org.setCurationStatus(CurationStatus.CURATED);
-        org.setDuplicateOf(dupOrg);
+        org.setDuplicateOfOrg(dupOrg);
         assertNull(org.getDuplicateOf());
         org.setCurationStatus(CurationStatus.REJECTED);
-        org.setDuplicateOf(dupOrg);
-        assertSame(dupOrg, org.getDuplicateOf());       
+        org.setDuplicateOfOrg(dupOrg);
+        assertSame(dupOrg, org.getDuplicateOf());
     }
 }

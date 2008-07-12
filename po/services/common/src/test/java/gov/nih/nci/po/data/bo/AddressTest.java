@@ -84,6 +84,7 @@ public class AddressTest extends AbstractHibernateTestCase {
         Address address = new Address("", "b", "c", "d", validCountry);
         saveExpectedException(address, "streetAddressLine");
     }
+
     @Test
     public void createAddressWithEmptyCityOrMunicipality() {
         Address address = new Address("a", "", "c", "d", validCountry);

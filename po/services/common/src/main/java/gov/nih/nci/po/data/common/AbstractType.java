@@ -1,5 +1,7 @@
 package gov.nih.nci.po.data.common;
 
+import gov.nih.nci.po.util.NotEmpty;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -27,7 +28,7 @@ public abstract class AbstractType implements PersistentObject {
 
     /**
      * Default constructor.
-     * 
+     *
      * @deprecated use non-default constructor
      */
     @Deprecated

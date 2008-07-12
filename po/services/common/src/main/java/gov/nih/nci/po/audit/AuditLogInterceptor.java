@@ -192,7 +192,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         if (audits.get() != null && !audits.get().isEmpty()) {
             SessionFactory sf = PoHibernateUtil.getHibernateHelper().getSessionFactory();
-            @SuppressWarnings("deprecation")
             Session session = sf.openSession(PoHibernateUtil.getCurrentSession().connection());
             Long transactionId = null;
             try {
@@ -287,7 +286,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private Object[] getOldValues(Object[] oldValues, String[] properties, Auditable auditableObj) {
         Object[] myOldValues = oldValues;
         Session session = null;
@@ -457,7 +455,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String columnName = null;
         Property property = pc.getProperty(fieldName);
         for (Iterator<?> it3 = property.getColumnIterator(); it3.hasNext();) {
-            Object o = it3.next(); 
+            Object o = it3.next();
             if (!(o instanceof Column)) {
                 LOG.debug("Skipping non-column (probably a formula");
                 continue;

@@ -88,6 +88,7 @@ import gov.nih.nci.po.data.common.AbstractOrganization;
 import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.data.common.OrganizationType;
 import gov.nih.nci.po.data.cr.OrganizationCR;
+import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -109,7 +110,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
@@ -268,11 +268,19 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     /**
      * @param org the organization for which this is a duplicate
      */
-    public void setDuplicateOf(Organization org) {
+    public void setDuplicateOfOrg(Organization org) {
         if (this.getCurationStatus().equals(CurationStatus.REJECTED)
                 || this.getCurationStatus().equals(CurationStatus.DEPRECATED)) {
             this.duplicateOf = org;
         }
+    }
+
+    /**
+     * @param org the organization for which this is a duplicate
+     */
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(Organization org) {
+        this.duplicateOf = org;
     }
 
     /**

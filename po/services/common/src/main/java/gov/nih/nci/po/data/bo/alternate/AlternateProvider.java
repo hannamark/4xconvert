@@ -83,12 +83,12 @@
 package gov.nih.nci.po.data.bo.alternate;
 
 import gov.nih.nci.po.data.common.AbstractNameCodeEntity;
+import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 
 /**
  * Alternate providers are naming authorities that have separate identifiers for people

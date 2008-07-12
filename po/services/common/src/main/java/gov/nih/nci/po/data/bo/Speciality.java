@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.common.AbstractSpeciality;
+import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -91,7 +92,6 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -139,7 +139,7 @@ public class Speciality extends AbstractSpeciality implements Auditable {
     public Boolean getBoardCertified() {
         return super.getBoardCertified();
     }
-    
+
     /**
      * @return board eligible
      */
@@ -148,7 +148,7 @@ public class Speciality extends AbstractSpeciality implements Auditable {
     public Boolean getBoardEligible() {
         return super.getBoardEligible();
     }
-    
+
     /**
      * @return name
      */

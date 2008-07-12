@@ -126,13 +126,4 @@ public class BOGetterSetterTest {
         Certificate certificate = new Certificate(new Person(), new Date(), new Organization(), "detail");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(certificate);
     }
-
-    /**
-     * Test Person getter and setters.
-     */
-    @Test
-    public void testPersonGetterSetters() {
-        Person person = new Person();
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person);
-    }
 }

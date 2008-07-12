@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo.alternate;
 
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.common.AbstractNameCodeEntity;
+import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -93,7 +94,6 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;

@@ -2,6 +2,7 @@ package gov.nih.nci.po.service.person;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.Email;
@@ -101,8 +102,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
             assertEquals(dto.getFirstName(), p.getFirstName());
         } catch (org.hibernate.PropertyValueException e) {
             // temporarily catch this until DTOs are complete
-            assertEquals("not-null property references a null or transient value: "
-                    + "gov.nih.nci.po.data.bo.Address.cityOrMunicipality", e.getMessage());
+            assertTrue(e.getMessage().startsWith("not-null property references a null or transient value:"));
         }
 
     }

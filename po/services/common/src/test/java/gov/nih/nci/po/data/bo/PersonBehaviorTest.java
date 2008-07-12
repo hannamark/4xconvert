@@ -55,10 +55,10 @@ public class PersonBehaviorTest {
         Person person = new Person();
         Person dupPerson = new Person();
         person.setCurationStatus(CurationStatus.CURATED);
-        person.setDuplicateOf(dupPerson);
+        person.setDuplicateOfPerson(dupPerson);
         assertNull(person.getDuplicateOf());
         person.setCurationStatus(CurationStatus.REJECTED);
-        person.setDuplicateOf(dupPerson);
+        person.setDuplicateOfPerson(dupPerson);
         assertSame(dupPerson, person.getDuplicateOf());
     }
 }

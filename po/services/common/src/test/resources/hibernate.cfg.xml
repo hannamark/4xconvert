@@ -14,8 +14,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.jdbc.batch_versioned_data">true</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
         <property name="hibernate.current_session_context_class">thread</property>
-        <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
-        <property name="hibernate.cache.use_query_cache">true</property>
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property> 
 
         <mapping class="gov.nih.nci.po.data.bo.Address" />
         <mapping class="gov.nih.nci.po.data.bo.Certificate" />
@@ -53,5 +53,12 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
 
         <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
         <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
+        
+        <event type="pre-update">
+            <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
+        </event>
+        <event type="pre-insert">
+            <listener class="org.hibernate.validator.event.ValidatePreInsertEventListener"/>
+        </event>
     </session-factory>
 </hibernate-configuration>

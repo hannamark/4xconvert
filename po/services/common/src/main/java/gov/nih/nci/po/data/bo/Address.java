@@ -85,13 +85,13 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.common.AbstractAddress;
 import gov.nih.nci.po.data.common.Country;
+import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 

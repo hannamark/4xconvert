@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.common.AbstractLicense;
+import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.Date;
 
@@ -93,7 +94,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 /**

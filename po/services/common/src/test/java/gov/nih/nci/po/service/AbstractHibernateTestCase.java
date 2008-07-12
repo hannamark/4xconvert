@@ -130,7 +130,7 @@ public abstract class AbstractHibernateTestCase {
     }
 
     @Before
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings("unchecked")
     final public void initDbIfNeeded() throws HibernateException, SQLException {
         // First drop the audit sequence (& associated table, see
         // http://opensource.atlassian.com/projects/hibernate/browse/HHH-2472)

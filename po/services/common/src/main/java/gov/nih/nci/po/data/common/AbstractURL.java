@@ -82,12 +82,13 @@
  */
 package gov.nih.nci.po.data.common;
 
+import gov.nih.nci.po.util.NotEmpty;
+
 import java.io.Serializable;
 
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.Pattern;
 
 /**

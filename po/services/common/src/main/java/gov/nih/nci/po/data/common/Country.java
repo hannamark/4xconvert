@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.common;
 
 import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -97,7 +98,6 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 

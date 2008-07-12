@@ -83,12 +83,12 @@
 package gov.nih.nci.po.data.common;
 
 import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
 
 
 /**
