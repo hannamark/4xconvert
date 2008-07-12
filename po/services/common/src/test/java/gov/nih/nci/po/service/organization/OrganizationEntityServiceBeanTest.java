@@ -63,5 +63,4 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
                     + "gov.nih.nci.po.data.bo.Address.cityOrMunicipality", e.getMessage());
         }
     }
-
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
@@ -8,7 +7,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>po-services-common</artifactId>
-    <packaging>jar</packaging>
+    <packaging>ejb</packaging>
     <name>po-services-common</name>
     <url>../../services/common/target/site</url>
     <properties>
@@ -74,8 +73,7 @@
             <scope>compile</scope>
         </dependency>
         <!--
-            JBoss provieds log4j, but we package here as well. See:
-            http://wiki.jboss.org/wiki/Wiki.jsp?page=ClassLoaderScopingProperties
+            JBoss provieds log4j, but we package here as well. See: http://wiki.jboss.org/wiki/Wiki.jsp?page=ClassLoaderScopingProperties
         -->
         <dependency>
             <groupId>log4j</groupId>
@@ -221,6 +219,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <configuration>
+                    <ejbVersion>3.0</ejbVersion>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                    <generateClient>true</generateClient>
+                    <clientIncludes>
+                        <clientInclude>gov/nih/nci/po/dto/**</clientInclude>
+                        <clientInclude>gov/nih/nci/po/service/person/**</clientInclude>
+                        <clientInclude>gov/nih/nci/po/service/organization/**</clientInclude>
+                    </clientIncludes>
+                    <clientExcludes>
+                        <clientExclude>gov/nih/nci/po/dto/**/*Helper*</clientExclude>
+                        <clientExclude>gov/nih/nci/po/service/**/*Bean*</clientExclude>
+                        <clientExclude>**hibernate.cfg.xml</clientExclude>
+                    </clientExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>hibernate3-maven-plugin</artifactId>
                 <version>2.0</version>
@@ -318,17 +339,17 @@
                                 <taskdef name="xsnapshotdoclet" classname="net.sf.xsnapshot.ant.XSnapshotDocletTask" classpathref="xsnapshot.classpath" />
                                 <mkdir dir="${output.dir}" />
                                 <fileset dir="${project.build.sourceDirectory}" id="model">
-                                    <include name="gov/nih/nci/po/data/common/*.java"/>
-                                    <include name="gov/nih/nci/po/data/bo/*.java"/>
+                                    <include name="gov/nih/nci/po/data/common/*.java" />
+                                    <include name="gov/nih/nci/po/data/bo/*.java" />
                                 </fileset>
                                 <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">
-                                    <fileset refid="model"/>
+                                    <fileset refid="model" />
                                     <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
                                     <snapshot />
                                     <helper />
                                 </xsnapshotdoclet>
                                 <xsnapshotdoclet destdir="${project.build.outputDirectory}" verbose="true" mergedir="${output.dir}">
-                                    <fileset refid="model"/>
+                                    <fileset refid="model" />
                                     <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
                                     <properties />
                                 </xsnapshotdoclet>

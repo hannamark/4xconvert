@@ -1,7 +1,6 @@
 package gov.nih.nci.po.service.person;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ContactInfo;
@@ -15,7 +14,6 @@ import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -26,7 +24,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     private PersonEntityServiceRemote remote;
     private static Country USA = new Country("United States", "001", "US", "USA");
-    
+
 //    private Country validCountry;
 
     /**
@@ -49,7 +47,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(per.getFirstName(), result.getFirstName());
         assertEquals(per.getLastName(), result.getLastName());
     }
-    
+
     private Person makePerson() {
         long now = System.currentTimeMillis();
         long longAgo = now - (DateUtils.MILLIS_PER_DAY * 365L * 50L);
@@ -65,7 +63,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         p.setPreferredContactInfo(ci);
         return p;
     }
-    
+
     private ContactInfo makeContactInfo() {
         ContactInfo ci = new ContactInfo(makeAddress());
         ci.setTitle("Chief of Staff Title");
@@ -73,7 +71,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         ci.getEmail().add(new Email("test@example.com"));
         return ci;
     }
-    
+
     private Address makeAddress() {
     	Address ad = new Address("1601 18th Street NW", "Washington", "DC", "20016", USA);
 /*        Address ad = new Address();
