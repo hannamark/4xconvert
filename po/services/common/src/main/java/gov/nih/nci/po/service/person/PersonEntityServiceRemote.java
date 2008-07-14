@@ -84,6 +84,7 @@ package gov.nih.nci.po.service.person;
 
 import gov.nih.nci.po.dto.entity.PersonDTO;
 
+import gov.nih.nci.po.service.EntityValidationException;
 import javax.ejb.Remote;
 
 /**
@@ -103,6 +104,14 @@ public interface PersonEntityServiceRemote {
      * Remote API to create a person.
      * @param person Person
      * @return db id
+     * @throws EntityValidationException if validation fails.
      */
-    long createPerson(PersonDTO person);
+    long createPerson(PersonDTO person) throws EntityValidationException;
+    
+    /**
+     * Validate a person entity.
+     * @param person the person to validate.
+     * @throws EntityValidationException if validation fails.
+     */
+    void validate(PersonDTO person) throws EntityValidationException;
 }

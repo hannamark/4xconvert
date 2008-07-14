@@ -84,6 +84,7 @@ package gov.nih.nci.po.service.organization;
 
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 
+import gov.nih.nci.po.service.EntityValidationException;
 import javax.ejb.Remote;
 
 /**
@@ -103,6 +104,15 @@ public interface OrganizationEntityServiceRemote {
      * Remote API to create an Organization.
      * @param org organization
      * @return db id
+     * @throws EntityValidationException if validation fails 
      */
-    long createOrganization(OrganizationDTO org);
+    long createOrganization(OrganizationDTO org) throws EntityValidationException;
+    
+    /**
+     * Validate that an entity has acceptable values.
+     * @param org the entity to validate
+     * @throws EntityValidationException if validation fails
+     */
+    
+    void validate(OrganizationDTO org) throws EntityValidationException;
 }

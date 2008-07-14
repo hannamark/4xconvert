@@ -100,14 +100,17 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean implements PersonServiceLocal {
+public class PersonServiceBean extends BaseServiceBean<Person> implements PersonServiceLocal {
 
     /**
      * {@inheritDoc}
      */
-    public long create(Person p) {
+    public long create(Person p) throws EntityValidationException {
         p.setId(null);
         p.setCurationStatus(CurationStatus.NEW);
+        
+        validate(p);
+        
         Session s = PoHibernateUtil.getCurrentSession();
 
         if (!p.getContactInfos().contains(p.getPreferredContactInfo())) {
@@ -144,6 +147,4 @@ public class PersonServiceBean implements PersonServiceLocal {
         Session s = PoHibernateUtil.getCurrentSession();
         return (Person) s.get(Person.class, id);
     }
-    
-
 }

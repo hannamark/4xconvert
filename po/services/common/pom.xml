@@ -179,6 +179,7 @@
                         <clientInclude>gov/nih/nci/po/dto/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/person/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/organization/**</clientInclude>
+                        <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
                     </clientIncludes>
                     <clientExcludes>
                         <clientExclude>gov/nih/nci/po/dto/**/*Helper*</clientExclude>

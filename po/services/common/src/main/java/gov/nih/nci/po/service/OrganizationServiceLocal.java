@@ -97,12 +97,19 @@ public interface OrganizationServiceLocal {
     /**
      * @param org new organization
      * @return id
+     * @throws EntityValidationException if validation fails
      */
-    long create(Organization org);
+    long create(Organization org) throws EntityValidationException;
 
     /**
      * @param id db id to get
      * @return organization with matching id
      */
     Organization getOrganization(long id);
+    
+    /**
+     * @param entity the entity to validate
+     * @throws EntityValidationException if validation fails
+     */
+    void validate(Organization entity) throws EntityValidationException;
 }

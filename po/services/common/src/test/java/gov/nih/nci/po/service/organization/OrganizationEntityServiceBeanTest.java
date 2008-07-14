@@ -1,5 +1,6 @@
 package gov.nih.nci.po.service.organization;
 
+import gov.nih.nci.po.data.bo.Address;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -7,9 +8,11 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,9 +61,33 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
             assertEquals(dto.getName(), o.getName());
             assertEquals(dto.getAbbreviationName(), o.getAbbreviationName());
-        } catch (org.hibernate.PropertyValueException e) {
-            // temporarily catch this untill DTOs are complete
-            assertTrue(e.getMessage().startsWith("not-null property references a null or transient value:"));
+        } catch (EntityValidationException e) {
+            // as the DTO to BO conversion gets more completem, we should not
+            // have to catch this exception.
+            Map<String, String[]> errors = e.getErrors();
+            assertEquals(4, errors.size()) ;
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.streetAddressLine"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.postalCode"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.cityOrMunicipality"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
         }
     }
+    
+    @Test
+    public void validate() {
+        try {
+            OrganizationDTO dto = new OrganizationDTO();
+            dto.setAbbreviationName("short");
+            remote.validate(dto);
+        } catch (EntityValidationException e) {
+            Map<String, String[]> errors = e.getErrors();
+            assertEquals(5, errors.size()) ;
+            assertTrue(errors.containsKey("name"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.streetAddressLine"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.postalCode"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.cityOrMunicipality"));
+            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
+        }
+    }
+
 }

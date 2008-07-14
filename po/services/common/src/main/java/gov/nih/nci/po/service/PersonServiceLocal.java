@@ -97,13 +97,21 @@ public interface PersonServiceLocal {
     /**
      * @param person new Person
      * @return id
+     * @throws EntityValidationException if validation fails
      */
-    long create(Person person);
+    long create(Person person) throws EntityValidationException;
 
     /**
      * @param id db id to get
      * @return person with matching id
      */
     Person getPerson(long id);
+    
+    /**
+     * Validate a Person.
+     * @param person the entity to validate
+     * @throws EntityValidationException if validation fails
+     */
+    void validate(Person person) throws EntityValidationException;
 
 }

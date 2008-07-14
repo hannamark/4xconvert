@@ -83,6 +83,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.List;
 
 import javax.ejb.TransactionAttribute;
@@ -94,6 +95,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.util.Map;
 
 /**
  * @author smatyas
@@ -210,5 +212,19 @@ public class BaseServiceBean<T extends PersistentObject> {
         validateSearchCriteria(criteria);
         Query q = criteria.getQuery("", true);
         return ((Number) q.uniqueResult()).intValue();
+    }
+    
+     /**
+     * 
+      * @param entity the entity to validate
+      * @throws EntityValidationException is validation fails
+      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void validate(T entity) throws EntityValidationException {
+        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
+        messages.remove("curationStatus");
+        if (messages != null && !messages.isEmpty()) {
+            throw new EntityValidationException(messages);
+        }
     }
 }

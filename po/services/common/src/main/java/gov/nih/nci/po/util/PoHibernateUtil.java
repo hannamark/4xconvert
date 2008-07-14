@@ -82,11 +82,18 @@
  */
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.audit.AuditLogInterceptor;
 
 import org.hibernate.Session;
+import org.hibernate.validator.ClassValidator;
 
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.hibernate.validator.InvalidValue;
 
 /**
  * PO implementation of hibernate util.
@@ -95,6 +102,9 @@ public class PoHibernateUtil {
     private static final HibernateHelper HIBERNATE_HELPER =
         new HibernateHelper(null, null, new CompositeInterceptor(new CurationStatusInterceptor(),
                                                                  new AuditLogInterceptor()));
+    private static final Map<Class<?>, ClassValidator<?>> CLASS_VALIDATOR_MAP =
+        new HashMap<Class<?>, ClassValidator<?>>();
+
 
     /**
      * Get the hibernate helper.
@@ -110,5 +120,42 @@ public class PoHibernateUtil {
      */
     public static Session getCurrentSession() {
         return getHibernateHelper().getCurrentSession();
+    }
+    
+    private static synchronized ClassValidator getClassValidator(Object o) {
+        ClassValidator classValidator = CLASS_VALIDATOR_MAP.get(o.getClass());
+        if (classValidator == null) {
+            classValidator = new ClassValidator(o.getClass());
+            CLASS_VALIDATOR_MAP.put(o.getClass(), classValidator);
+        }
+        return classValidator;
+    }
+    
+    /**
+     * @param entity the entity to validate
+     * @return a map of validation messages keyed by the property path.
+     */
+    public static Map<String, String[]> validate(PersistentObject entity) {
+        Map<String, List<String>> messageMap = new HashMap<String, List<String>>();
+        ClassValidator classValidator = getClassValidator(entity);
+        @SuppressWarnings("unchecked")
+        InvalidValue[] validationMessages = classValidator.getInvalidValues(entity);
+        for (int i = 0; i < validationMessages.length; i++) {
+            String path = validationMessages[i].getPropertyPath();
+            List<String> m = messageMap.get(path);
+            if (m == null) {
+                m = new ArrayList<String>();
+                messageMap.put(path, m);
+            }
+            String msg = validationMessages[i].getMessage();
+            msg = msg.replace("(fieldName)", "").trim();
+            m.add(msg);
+        }
+        
+        Map<String, String[]> returnMap = new HashMap<String, String[]>();
+        for (Map.Entry<String, List<String>> entry : messageMap.entrySet()) {
+            returnMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
+        }
+        return returnMap;
     }
 }

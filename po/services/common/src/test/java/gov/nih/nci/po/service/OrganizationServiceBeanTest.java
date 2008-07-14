@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -164,21 +166,24 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     public long createOrganization(String oName, String cityOrMunicipality) {
-        Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345",
-                defaultCountry);
-        ContactInfo contactInfo = new ContactInfo(mailingAddress);
-        Organization org = new Organization(contactInfo);
-        org.setName(oName);
-        org.setAbbreviationName("defaultOrgCode");
-        org.setCurationStatus(CurationStatus.NEW);
-        org.getPrimaryContactInfo().setOrganization(org);
-        org.getTypes().add(defaultOrgType);
-        org.getTypes().add(auxOrgType);
-        addAlternateId(org, "altCode");
-        long orgId = orgService.create(org);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        return orgId;
+        try {
+            Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", defaultCountry);
+            ContactInfo contactInfo = new ContactInfo(mailingAddress);
+            Organization org = new Organization(contactInfo);
+            org.setName(oName);
+            org.setAbbreviationName("defaultOrgCode");
+            org.setCurationStatus(CurationStatus.NEW);
+            org.getPrimaryContactInfo().setOrganization(org);
+            org.getTypes().add(defaultOrgType);
+            org.getTypes().add(auxOrgType);
+            addAlternateId(org, "altCode");
+            long orgId = orgService.create(org);
+            PoHibernateUtil.getCurrentSession().flush();
+            PoHibernateUtil.getCurrentSession().clear();
+            return orgId;
+        } catch (EntityValidationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -189,7 +194,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
         try {
             orgService.create(new Organization(new ContactInfo()));
             fail("Expected illegal argument exception");
-        } catch (PropertyValueException e) {
+        } catch (EntityValidationException e) {
             // expected
         }
     }
@@ -201,7 +206,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testCreateOrg() {
+    public void testCreateOrg() throws EntityValidationException {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
         PoHibernateUtil.getCurrentSession().save(ORG_TYPE);

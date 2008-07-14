@@ -80,79 +80,40 @@
 * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.po.service.organization;
 
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.dto.entity.OrganizationDTO;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
-import gov.nih.nci.po.util.PoXsnapshotHelper;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.jboss.annotation.security.SecurityDomain;
+import java.util.Map;
 
 /**
  *
- * @author gax1
+ * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class })
-@SecurityDomain("po")
-public class OrganizationEntityServiceBean implements OrganizationEntityServiceRemote {
-
-    private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
-    private OrganizationServiceLocal orgService;
+public class EntityValidationException extends Exception {
+    private final Map<String, String[]> errors;
 
     /**
-     * @param svc service, injected
+     * @param errors validation messages
      */
-    @EJB
-    public void setOrganizationServiceBean(OrganizationServiceLocal svc) {
-        this.orgService = svc;
+    public EntityValidationException(Map<String, String[]> errors) {
+        super();
+        this.errors = errors;
     }
     
-    /**
-     * @return orgService that was injected by container.
-     */
-    public OrganizationServiceLocal getOrganizationServiceBean() {
-        return this.orgService;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     
-    public OrganizationDTO getOrganization(long id) {
-        Organization org = orgService.getOrganization(id);
-        return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
+    /**
+     * @param msg the traditional error message.
+     * @param errors validation messages
+     */
+    public EntityValidationException(String msg, Map<String, String[]> errors) {
+        super(msg);
+        this.errors = errors;
     }
 
     /**
-     * {@inheritDoc}
+     * @return all validation error messages keyed by the offending property path.
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public long createOrganization(OrganizationDTO org) throws EntityValidationException {
-        Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
-        return orgService.create(orgBO);
+    public Map<String, String[]> getErrors() {
+        return errors;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void validate(OrganizationDTO org) throws EntityValidationException {
-        Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
-        orgService.validate(orgBO);
-    }
-
 }

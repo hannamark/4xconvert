@@ -176,7 +176,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPerson() {
+    public void createPerson() throws EntityValidationException {
         Person person = getBasicPerson();
         long id = personServiceBean.create(person);
         PoHibernateUtil.getCurrentSession().flush();
@@ -210,7 +210,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithProviderPerson() {
+    public void createPersonWithProviderPerson() throws EntityValidationException {
         AlternateProvider alternateProvider = new AlternateProvider();
         alternateProvider.setCode("myAltCode");
         alternateProvider.setName("myAltName");
@@ -249,7 +249,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithProviderPersonWithNullAltIdCollection() {
+    public void createPersonWithProviderPersonWithNullAltIdCollection() throws EntityValidationException {
         ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
         Person person = new Person(ci);
         person.setCurationStatus(null);
@@ -270,7 +270,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithProviderPersonAutomaticallySetsBackPointerFromPPToPerson() {
+    public void createPersonWithProviderPersonAutomaticallySetsBackPointerFromPPToPerson() throws EntityValidationException {
         AlternateProvider alternateProvider = new AlternateProvider();
         alternateProvider.setCode("myAltCode");
         alternateProvider.setName("myAltName");
@@ -305,7 +305,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithNonNullId() {
+    public void createPersonWithNonNullId() throws EntityValidationException {
         ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
         Person person = new Person(ci);
         person.setCurationStatus(null);
@@ -333,7 +333,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() {
+    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
         ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
         Person person = new Person(ci);
         person.setCurationStatus(CurationStatus.CURATED);
@@ -406,7 +406,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
 
 
     @Test
-    public void createPersonWithMultipleContactInfos() {
+    public void createPersonWithMultipleContactInfos() throws EntityValidationException {
         ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
         Person person = new Person(ci);
         person.setCurationStatus(CurationStatus.NEW);
@@ -435,7 +435,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithMultipleContactInfosButPreferredCIIsNotAddedToCIList() {
+    public void createPersonWithMultipleContactInfosButPreferredCIIsNotAddedToCIList() throws EntityValidationException {
         ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
         Person person = new Person(ci);
         person.setCurationStatus(CurationStatus.NEW);

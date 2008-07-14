@@ -104,9 +104,12 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
     /**
      * {@inheritDoc}
      */
-    public long create(Organization org) {
+    public long create(Organization org) throws EntityValidationException {
         org.setId(null);
         org.setCurationStatus(CurationStatus.NEW);
+        
+        validate(org);
+        
         Session s = PoHibernateUtil.getCurrentSession();
         ContactInfo ci = org.getPrimaryContactInfo();
         if (ci != null && ci.getId() == null) {
@@ -126,4 +129,5 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
         Session s = PoHibernateUtil.getCurrentSession();
         return (Organization) s.get(Organization.class, id);
     }
+    
 }

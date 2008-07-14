@@ -84,6 +84,7 @@ package gov.nih.nci.po.service.person;
 
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.dto.entity.PersonDTO;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -132,9 +133,17 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      * {@inheritDoc}
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public long createPerson(PersonDTO person) {
+    public long createPerson(PersonDTO person) throws EntityValidationException {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
         return perService.create(perBO);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void validate(PersonDTO person) throws EntityValidationException {
+        Person perBO = (Person) PoXsnapshotHelper.createModel(person);
+        perService.validate(perBO);
     }
     
 

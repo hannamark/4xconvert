@@ -13,10 +13,12 @@ import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.dto.entity.PersonDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
 
+import java.util.Map;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,14 +77,6 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     private Address makeAddress() {
     	Address ad = new Address("1601 18th Street NW", "Washington", "DC", "20016", USA);
-/*        Address ad = new Address();
-        ad.setId(99L);
-        ad.setCityOrMunicipality("Washington");
-        ad.setDeliveryAddressLine("Ste 2000");
-        ad.setStreetAddressLine("1601 18th Street NW");
-        ad.setStateOrProvince("DC");
-        ad.setPostalCode("20016");
-        ad.setCountry(new Country("United States", "001", "US", "USA"));*/
         return ad;
     }
 
@@ -100,11 +94,35 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
             Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, id);
             assertEquals(dto.getLastName(), p.getLastName());
             assertEquals(dto.getFirstName(), p.getFirstName());
-        } catch (org.hibernate.PropertyValueException e) {
-            // temporarily catch this until DTOs are complete
-            assertTrue(e.getMessage().startsWith("not-null property references a null or transient value:"));
+        } catch (EntityValidationException e) {
+            // as the DTO to BO conversion gets more completem, we should not
+            // have to catch this exception.
+            Map<String, String[]> errors = e.getErrors();
+            assertEquals(4, errors.size()) ;
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.streetAddressLine"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.postalCode"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
         }
 
     }
 
+    @Test
+    public void validate() {
+        try {
+            PersonDTO dto = new PersonDTO();
+            dto.setId(99L);
+            dto.setFirstName("Firsty");
+            dto.setMiddleName("Andrew");
+            remote.validate(dto);
+        } catch (EntityValidationException e) {
+            Map<String, String[]> errors = e.getErrors();
+            assertEquals(5, errors.size()) ;
+            assertTrue(errors.containsKey("lastName"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.streetAddressLine"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.postalCode"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
+            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
+        }
+    }
 }
