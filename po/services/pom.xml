@@ -14,8 +14,14 @@
     <packaging>pom</packaging>
     <name>po-services</name>
     <url>../../services/target/site</url>
+    
+    <properties>
+        <hibernate.version>3.2.0.ga</hibernate.version>
+        <hibernate.annotations.version>3.2.0.ga</hibernate.annotations.version>
+    </properties>
 
     <modules>
         <module>common</module>
+        <module>ear</module>
     </modules>
 </project>

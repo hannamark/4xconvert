@@ -12,8 +12,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.dialect">${hibernate.dialect}</property>
         <property name="hibernate.jdbc.batch_size">25</property>
         <property name="hibernate.jdbc.batch_versioned_data">true</property>
-        <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
-        <property name="hibernate.cache.use_query_cache">true</property>
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property> 
 
         <mapping class="gov.nih.nci.po.data.bo.Address"/>
         <mapping class="gov.nih.nci.po.data.bo.Certificate"/>

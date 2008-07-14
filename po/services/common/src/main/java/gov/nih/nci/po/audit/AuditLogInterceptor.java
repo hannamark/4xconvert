@@ -324,9 +324,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private static boolean needsAuditing(Auditable auditableObj, Type type, Object newValue,
                                          Object oldValue, String property) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("NeedsAuditing: %s, %s, %s", property, oldValue, newValue));
-        }
         if (type instanceof CollectionType) {
             return collectionNeedsAuditing(auditableObj, newValue, oldValue, property);
         }
@@ -350,9 +347,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         try {
             Method getter = auditableObj.getClass().getMethod("get" + StringUtils.capitalize(property));
             if (getter.getAnnotation(JoinTable.class) != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.debug("Found annotated getter: " + oldSet + ", " + newSet);
-                }
                 return !CollectionUtils.isEqualCollection((oldSet == null) ? Collections.emptySet() : oldSet,
                                                           (newSet == null) ? Collections.emptySet() : newSet);
             }
