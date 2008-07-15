@@ -294,6 +294,10 @@
     </target>
 	
 
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
     <target name="test-cobertura" depends="compile-tests" 
             description="Run JUnit and Cobertura tests">
         
@@ -328,6 +332,11 @@
         </junit>
         
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
+                          destdir="${pa-web.coverage.reports}" 
+                          srcdir="${pa-web.build.srcDir.0}" />
+        
+        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
+                          format="xml"        
                           destdir="${pa-web.coverage.reports}" 
                           srcdir="${pa-web.build.srcDir.0}" />
         

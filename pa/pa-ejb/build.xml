@@ -197,6 +197,11 @@
         <cobertura-report datafile="${pa-ejb.build.dir}/cobertura.ser"
                           destdir="${pa-ejb.coverage.reports}" 
                           srcdir="${pa-ejb.build.srcDir.0}" />
+
+        <cobertura-report datafile="${pa-ejb.build.dir}/cobertura.ser"
+                          format="xml"
+                          destdir="${pa-ejb.coverage.reports}" 
+                          srcdir="${pa-ejb.build.srcDir.0}" />
         
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
                          totalbranchrate="70" 
