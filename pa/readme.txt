@@ -154,4 +154,9 @@ Setting the CSM to enable Login:
  	Set the build.property file with the following entry:
  	test.java.security.login.config=/location of top resource folder/login.config
  	
-        
+
+Continuous Integration     
+----------------------
+1)  Current build targets on CI box
+	- deploy
+2)  Url is http://nci-reinharh-1.nci.nih.gov:48080/hudson/job/PA/   

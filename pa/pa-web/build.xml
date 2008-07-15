@@ -202,8 +202,8 @@
                           srcdir="${pa-web.build.srcDir.0}" />
         
         <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
-                         totallinerate="10"
+                         totalbranchrate="70" 
+                         totallinerate="70"
                          haltonfailure="false"/>
      </target>
 
