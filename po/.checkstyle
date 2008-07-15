@@ -9,5 +9,7 @@
     <filter name="FilesFromPackage" enabled="true">
         <filter-data value="services/target/generated-sources/xsnapshot/java"/>
         <filter-data value="services/src/test/java"/>
+        <filter-data value="web/src/test/java"/>
+        <filter-data value="ear/src/test/java"/>
     </filter>
 </fileset-config>

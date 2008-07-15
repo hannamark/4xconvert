@@ -5,15 +5,13 @@
 	<classpathentry kind="src" path="services/src/main/resources"/>
 	<classpathentry kind="src" path="services/src/test/java"/>
 	<classpathentry kind="src" path="services/src/test/resources"/>
-	<classpathentry kind="src" path="services/ear/src/test/java"/>
-	<classpathentry kind="src" path="services/ear/src/main/resources"/>
-	<classpathentry kind="src" output="applications/web/target/classes" path="applications/web/src/main/java"/>
-	<classpathentry excluding="**" kind="src" output="applications/web/target/classes" path="applications/web/src/main/resources"/>
-	<classpathentry kind="src" output="applications/web/target/test-classes" path="applications/web/src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="applications/web/target/test-classes" path="applications/web/src/test/resources"/>
-	<classpathentry excluding="**" kind="src" output="applications/ear/target/classes" path="applications/ear/src/main/resources"/>
-	<classpathentry kind="src" output="applications/ear/target/test-classes" path="applications/ear/src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="applications/ear/target/test-classes" path="applications/ear/src/test/resources"/>
+	<classpathentry kind="src" path="web/src/main/java"/>
+	<classpathentry kind="src" path="web/src/main/resources"/>
+	<classpathentry kind="src" path="web/src/test/java"/>
+	<classpathentry kind="src" path="web/src/test/resources"/>
+	<classpathentry kind="src" path="ear/src/main/resources"/>
+	<classpathentry kind="src" path="ear/src/test/java"/>
+	<classpathentry kind="src" path="ear/src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>

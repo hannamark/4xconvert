@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.po.service;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -104,7 +102,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import org.hibernate.PropertyValueException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

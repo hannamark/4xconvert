@@ -95,7 +95,8 @@
 
     <modules>
         <module>services</module>
-        <module>applications</module>
+        <module>web</module>
+        <module>ear</module>
     </modules>
 
     <distributionManagement>

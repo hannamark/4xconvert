@@ -82,18 +82,19 @@
  */
 package gov.nih.nci.po.util;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.audit.AuditLogInterceptor;
 
-import org.hibernate.Session;
-import org.hibernate.validator.ClassValidator;
-
-import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.Session;
+import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * PO implementation of hibernate util.
@@ -121,7 +122,8 @@ public class PoHibernateUtil {
     public static Session getCurrentSession() {
         return getHibernateHelper().getCurrentSession();
     }
-    
+
+    @SuppressWarnings("unchecked")
     private static synchronized ClassValidator getClassValidator(Object o) {
         ClassValidator classValidator = CLASS_VALIDATOR_MAP.get(o.getClass());
         if (classValidator == null) {
@@ -130,7 +132,7 @@ public class PoHibernateUtil {
         }
         return classValidator;
     }
-    
+
     /**
      * @param entity the entity to validate
      * @return a map of validation messages keyed by the property path.
@@ -140,18 +142,18 @@ public class PoHibernateUtil {
         ClassValidator classValidator = getClassValidator(entity);
         @SuppressWarnings("unchecked")
         InvalidValue[] validationMessages = classValidator.getInvalidValues(entity);
-        for (int i = 0; i < validationMessages.length; i++) {
-            String path = validationMessages[i].getPropertyPath();
+        for (InvalidValue validationMessage : validationMessages) {
+            String path = validationMessage.getPropertyPath();
             List<String> m = messageMap.get(path);
             if (m == null) {
                 m = new ArrayList<String>();
                 messageMap.put(path, m);
             }
-            String msg = validationMessages[i].getMessage();
+            String msg = validationMessage.getMessage();
             msg = msg.replace("(fieldName)", "").trim();
             m.add(msg);
         }
-        
+
         Map<String, String[]> returnMap = new HashMap<String, String[]>();
         for (Map.Entry<String, List<String>> entry : messageMap.entrySet()) {
             returnMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));

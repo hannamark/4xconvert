@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
-        <artifactId>po-applications</artifactId>
+        <artifactId>po</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>po-web</artifactId>
     <packaging>war</packaging>
     <name>po-web</name>
-    <url>../../applications/web/target/site</url>
+    <url>../../web/target/site</url>
 
     <properties>
         <showErrorStackTraces>true</showErrorStackTraces>

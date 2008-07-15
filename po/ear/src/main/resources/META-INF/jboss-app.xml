@@ -5,7 +5,7 @@
 <jboss-app>
 
     <loader-repository>
-        po-web.ear:archive=po-web.ear
+        po.ear:archive=po.ear
         <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
     </loader-repository>
 

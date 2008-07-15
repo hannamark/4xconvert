@@ -4,7 +4,7 @@
 "http://www.jboss.org/j2ee/dtd/security_config.dtd">
 
 <policy>
-    <application-policy name="po-web">
+    <application-policy name="po">
         <authentication>
             <!--
                 Notes on the policy here:

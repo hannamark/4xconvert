@@ -1,6 +1,5 @@
 package gov.nih.nci.po.service.organization;
 
-import gov.nih.nci.po.data.bo.Address;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +12,7 @@ import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,7 +72,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
         }
     }
-    
+
     @Test
     public void validate() {
         try {

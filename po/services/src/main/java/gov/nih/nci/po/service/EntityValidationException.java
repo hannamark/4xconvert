@@ -90,6 +90,8 @@ import java.util.Map;
  * @author gax
  */
 public class EntityValidationException extends Exception {
+    private static final long serialVersionUID = 1L;
+
     private final Map<String, String[]> errors;
 
     /**
@@ -99,8 +101,8 @@ public class EntityValidationException extends Exception {
         super();
         this.errors = errors;
     }
-    
-    
+
+
     /**
      * @param msg the traditional error message.
      * @param errors validation messages
