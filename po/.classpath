@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="services/common/target/classes" path="services/common/src/main/java"/>
-	<classpathentry kind="src" path="services/common/target/generated-sources/xsnapshot/java"/>
-	<classpathentry excluding="**" kind="src" output="services/common/target/classes" path="services/common/src/main/resources"/>
-	<classpathentry kind="src" output="services/common/target/test-classes" path="services/common/src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="services/common/target/test-classes" path="services/common/src/test/resources"/>
-	<classpathentry kind="src" path="services/ear/src/main/resources"/>
+	<classpathentry kind="src" path="services/src/main/java"/>
+	<classpathentry kind="src" path="services/target/generated-sources/xsnapshot/java"/>
+	<classpathentry kind="src" path="services/src/main/resources"/>
+	<classpathentry kind="src" path="services/src/test/java"/>
+	<classpathentry kind="src" path="services/src/test/resources"/>
 	<classpathentry kind="src" path="services/ear/src/test/java"/>
+	<classpathentry kind="src" path="services/ear/src/main/resources"/>
 	<classpathentry kind="src" output="applications/web/target/classes" path="applications/web/src/main/java"/>
-	<classpathentry kind="src" output="applications/web/target/test-classes" path="applications/web/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="applications/web/target/classes" path="applications/web/src/main/resources"/>
+	<classpathentry kind="src" output="applications/web/target/test-classes" path="applications/web/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="applications/web/target/test-classes" path="applications/web/src/test/resources"/>
-	<classpathentry kind="src" output="applications/ear/target/test-classes" path="applications/ear/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="applications/ear/target/classes" path="applications/ear/src/main/resources"/>
+	<classpathentry kind="src" output="applications/ear/target/test-classes" path="applications/ear/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="applications/ear/target/test-classes" path="applications/ear/src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>

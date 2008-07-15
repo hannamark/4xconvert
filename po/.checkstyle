@@ -7,9 +7,7 @@
         <file-match-pattern match-pattern="." include-pattern="true"/>
     </fileset>
     <filter name="FilesFromPackage" enabled="true">
-        <filter-data value="services/common/target/generated-sources/xsnapshot/java"/>
-        <filter-data value="services/common/src/test/java"/>
-        <filter-data value="applications/web/src/test/java"/>
-        <filter-data value="applications/ear/src/test/java"/>
+        <filter-data value="services/target/generated-sources/xsnapshot/java"/>
+        <filter-data value="services/src/test/java"/>
     </filter>
 </fileset-config>
