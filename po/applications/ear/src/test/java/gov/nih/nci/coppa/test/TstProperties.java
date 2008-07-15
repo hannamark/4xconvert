@@ -22,6 +22,10 @@ public final class TstProperties {
     public static final String SELENIUM_SERVER_PORT_KEY = "selenium.server.port";
     public static final String SELENIUM_SERVER_PORT_DEFAULT = "4444";
 
+    public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
+    public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
+
+
     private static Properties properties = new Properties();
     static {
         try {
@@ -31,7 +35,7 @@ public final class TstProperties {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static String getServerHostname() {
         return properties.getProperty(SERVER_HOSTNAME_KEY, SERVER_HOSTNAME_DEFAULT);
     }
@@ -48,4 +52,7 @@ public final class TstProperties {
         return Integer.parseInt(properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT));
     }
 
+    public static String getSeleniumBrowser() {
+        return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
+    }
 }
