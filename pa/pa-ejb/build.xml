@@ -229,6 +229,7 @@
         	                       rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa-ejb.build.dir}/pmd.txt"/>
+            <formatter type="xml"  toFile="${pa-ejb.build.dir}/pmd.xml"/>
             <fileset dir="src/main">
                 <include name="**/*.java"/>
             </fileset>
