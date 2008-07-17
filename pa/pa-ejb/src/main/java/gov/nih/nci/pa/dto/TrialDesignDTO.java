@@ -1,11 +1,12 @@
 package gov.nih.nci.pa.dto;
 
-import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 
 import java.io.Serializable;
+import gov.nih.nci.pa.enums.PhaseCode;
 
 /**
- * SafetyRegulationDTO for transferring Safety & Regulation object .
+ * TrialDesignDTO for transferring TrialDesignDTO object .
  * @author Gil Naveh
  * @since 06/2008
  
@@ -20,9 +21,11 @@ public class TrialDesignDTO implements Serializable {
     private Long studySiteID;
     private String acronym;
     private String officialTitle;
-    
+    private String type;
+    private PhaseCode phaseCode;
 
-     /**
+
+    /**
      * Default constructor.
      */
     public TrialDesignDTO() {
@@ -31,12 +34,14 @@ public class TrialDesignDTO implements Serializable {
 
     /**
      * Constructor for creating a dto from a domain object.
-     * @param sp domain object
+     * @param isp domain object
      */
-    public TrialDesignDTO(StudyProtocol sp) {
-        this.studySiteID = sp.getId();
-        this.acronym = sp.getAcronym();
-        this.officialTitle = sp.getOfficialTitle();       
+    public TrialDesignDTO(InterventionalStudyProtocol isp) {
+        this.studySiteID = isp.getId();
+        this.acronym = isp.getAcronym();
+        this.officialTitle = isp.getOfficialTitle();
+        //this.type = isp.get
+        this.phaseCode = isp.getPhaseCode();
     }
     
  
@@ -89,4 +94,35 @@ public class TrialDesignDTO implements Serializable {
     public void setOfficialTitle(String officialTitle) {
       this.officialTitle = officialTitle;
     }
+    
+    /**
+     * 
+     * @return  Type ISP SP or EP
+     */
+         public String getType() {
+           return type;
+         }
+    /**
+     * 
+     * @param type ref
+     */
+        public void setType(String type) {
+          this.type = type;
+        }
+
+    /**
+     * 
+     * @return phase Code
+     */
+        public PhaseCode getPhaseCode() {
+          return phaseCode;
+        }
+    /**
+     * 
+     * @param phaseCode ref
+     */
+        public void setPhaseCode(PhaseCode phaseCode) {
+          this.phaseCode = phaseCode;
+        }
+
 }
