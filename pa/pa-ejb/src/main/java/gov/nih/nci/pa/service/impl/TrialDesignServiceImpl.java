@@ -19,8 +19,9 @@ public class TrialDesignServiceImpl {
      * @throws PAException on error 
      */
     public TrialDesignDTO getTrialDesign(String spid) throws PAException {      
-       LOG.debug("Entering getProtocol ");       
+       LOG.debug("Entering TrialDesignServiceImpl ");       
        return new TrialDesignDAO().getTrialDesign(spid);      
     }
+
 
 }
