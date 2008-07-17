@@ -108,7 +108,7 @@ Setting the CSM to enable Login:
     https://gforge.nci.nih.gov/frs/?group_id=12
     Package: CSM_API_4_0_Source.zip
  2) Add the following entries to your build.properties:
- test.java.security.login.config=D:/project/coppa/trunk/code/pa/pa-web/src/test/resources/login.config
+ test.java.security.login.config= "location of pa on local file system" + /pa/pa-web/src/test/resources/login.config
      
  In order to deploy csm-upt:
  ----------------------------
