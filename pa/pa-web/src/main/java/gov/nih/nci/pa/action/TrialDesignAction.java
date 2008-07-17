@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.action;
 
+import org.apache.log4j.Logger;
+
 import gov.nih.nci.pa.dto.TrialDesignDTO;
 import gov.nih.nci.pa.util.PaRegistry;
 import com.opensymphony.xwork2.ActionSupport;
@@ -12,6 +14,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 @Validation
 public class TrialDesignAction  extends ActionSupport {
+     private static final Logger LOG  = Logger.getLogger(TrialDesignAction.class);
 
     /**
      * 
@@ -26,7 +29,12 @@ public class TrialDesignAction  extends ActionSupport {
      */
     public String query()  {
         try {              
-            this.trialDesign = PaRegistry.getTrialDesignService().getTrialDesign(stusyProtocolID);           
+            this.trialDesign = PaRegistry.getTrialDesignService().getTrialDesign(stusyProtocolID);  
+            if (this.trialDesign.getType().equalsIgnoreCase("ISP")) {
+                LOG.info("An ISP project");               
+            } else if (this.trialDesign.getType().equalsIgnoreCase("SP")) {
+               LOG.info("a new trial design route to insert new page");
+            }
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
