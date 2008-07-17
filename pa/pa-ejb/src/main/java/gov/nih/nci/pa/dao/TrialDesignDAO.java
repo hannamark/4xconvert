@@ -1,5 +1,8 @@
 package gov.nih.nci.pa.dao;
 
+import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+
 import gov.nih.nci.pa.dto.TrialDesignDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -17,6 +20,9 @@ import java.util.Iterator;
 public class TrialDesignDAO {
 
       private static final Logger LOG  = Logger.getLogger(TrialDesignDAO.class);
+      private static final int THREE = 3;
+      //private static final int FOUR = 4;
+
    /**
     *
     * @param protocolID for protocol ID            
@@ -50,10 +56,9 @@ public class TrialDesignDAO {
    private String generateTrialDesignQuery(String protocolID) throws PAException {
        LOG.debug("Entering generateTrialDesignQuery ");
        String hql = null;
-       try {
-   
-          hql = " select sp.id, sp.acronym, sp.officialTitle "
-               + " from StudyProtocol sp " 
+       try {             
+           hql = " select sp.id, sp.acronym, sp.officialTitle, sp.phaseCode "
+                + " from StudyProtocol as sp  "  
                + generateWhereClause(protocolID);                    
        } catch (Exception e) {
            LOG.error("General error in while converting to DTO", e);
@@ -97,19 +102,25 @@ public class TrialDesignDAO {
   private TrialDesignDTO convertToTrialDesignDTO(Query query) throws PAException {
       LOG.debug("Entering convert To TrialDesignDTO ");
       TrialDesignDTO trialDesignDto = null;     
+      InterventionTypeCode interventionTypeCode = null;
+      PhaseCode phaseCode = null;
       try {  
            for (Iterator it = query.iterate(); it.hasNext();) {
              trialDesignDto = new TrialDesignDTO();
               Object[] row = (Object[]) it.next();             
               trialDesignDto.setStudySiteID(Long.parseLong(row[0].toString()));
               trialDesignDto.setAcronym(row[1].toString());
-              trialDesignDto.setOfficialTitle(row[2].toString());              
+              trialDesignDto.setOfficialTitle(row[2].toString());
+              //trialDesignDto.setType(row[THREE].toString());
+                            
+              phaseCode = (PhaseCode) row[THREE];
+              trialDesignDto.setPhaseCode(phaseCode);
             }          
       } catch (Exception e) {
           LOG.error("General error in while converting to DTO", e);
           throw new PAException("General error in while converting to DTO2" + e, e);
       } finally {
-          LOG.debug("Leaving convert safetyRegulationResults To safetyRegulationDto ");
+          LOG.debug("Leaving convert Trail Design Results To TrialDesignDTO ");
       }
       return trialDesignDto;
   }
