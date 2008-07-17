@@ -107,23 +107,9 @@ Setting the CSM to enable Login:
  1) Download CSM from:  
     https://gforge.nci.nih.gov/frs/?group_id=12
     Package: CSM_API_4_0_Source.zip
- 2) Add the following entries to your login-config.xml:
-    <!-- The configuration for PA -->
-    <application-policy name = "pa">
-      <authentication>
-        <login-module code = "gov.nih.nci.security.authentication.loginmodules.RDBMSLoginModule" flag = "required" >
-         <module-option name="driver">org.postgresql.Driver</module-option>
-         <module-option name="url">jdbc:postgresql://localhost:5432/ctods</module-option>
-         <module-option name="user">ctods</module-option>
-         <module-option name="passwd">ctods</module-option>         
-         <module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
-         <module-option name="encryption-enabled">YES</module-option>
-        </login-module>
-      </authentication>
-    </application-policy>
-    
+ 2) Add the following entries to your build.properties:
+ test.java.security.login.config=D:/project/coppa/trunk/code/pa/pa-web/src/test/resources/login.config
      
-        
  In order to deploy csm-upt:
  ----------------------------
  1) Download UPT package from: 
