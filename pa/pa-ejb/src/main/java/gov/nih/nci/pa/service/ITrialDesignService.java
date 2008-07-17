@@ -12,7 +12,7 @@ public interface ITrialDesignService {
      /**
      * 
      * @param pId ProtocolID
-     * @return SafetyRegulationDto   
+     * @return TrialDesignDto   
      * @throws PAException on error 
      */
      TrialDesignDTO getTrialDesign(String pId) throws PAException;
