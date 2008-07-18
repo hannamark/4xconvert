@@ -35,6 +35,7 @@
 			<result>/jsp/pajsp/login.jsp</result>
 		</action>
 		<action name="authenticate" class="gov.nih.nci.pa.action.LoginAction">
+			<interceptor-ref name="nci-commonsParams" />
 			<result name="input">/jsp/pajsp/login.jsp</result>
 			<result name="error">/jsp/pajsp/login.jsp</result>
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
@@ -46,6 +47,21 @@
 		</action>
 		<action name="trialDesign">
 			<result>/jsp/pajsp/trialDesign.jsp</result>
-		</action>				
+		</action>	
+		
+		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInfoAction" method="queryCheck">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/nciSpecificInfo.jsp</result>
+			<result name="error">/jsp/pajsp/nciSpecificInfo.jsp</result>
+		</action>
+		
+		<action name="updateNCISpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInfoAction" method="queryUpdate">
+		    <interceptor-ref name="nci-commonsParams" />
+			<result name="input">/jsp/pajsp/nciSpecificInfo.jsp</result>			
+			<result name="error">/jsp/pajsp/nciSpecificInfo.jsp</result>
+			<result>/jsp/pajsp/nciSpecificInfo.jsp</result>
+		</action>	
+		
+				
 	</package>
 </struts>
