@@ -41,6 +41,7 @@ public class ProtocolSearchAction extends ActionSupport {
             return ERROR;
         }
     }
+    
     /**
      * 
      * @return prot

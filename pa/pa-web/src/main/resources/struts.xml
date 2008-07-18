@@ -24,6 +24,10 @@
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 			<result name="error">/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>
+		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
+			<interceptor-ref name="nci-commonsParams" />				         
+			<result>/jsp/pajsp/protocolDiseaseCondition.jsp</result>
+		</action>	
 		<action name="trialDetailEdit">
 			<result>/jsp/pajsp/trialDetailEdit.jsp</result>
 		</action>		

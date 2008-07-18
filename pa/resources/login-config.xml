@@ -141,8 +141,8 @@ The outline of the application-policy is:
         <login-module code = "gov.nih.nci.security.authentication.loginmodules.RDBMSLoginModule" flag = "required" >
          <module-option name="driver">org.postgresql.Driver</module-option>
          <module-option name="url">jdbc:postgresql://localhost:5432/ctods</module-option>
-         <module-option name="user">ctods</module-option>
-         <module-option name="passwd">ctods</module-option>         
+         <module-option name="user">postgres</module-option>
+         <module-option name="passwd">postgres</module-option>         
          <module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
          <module-option name="encryption-enabled">YES</module-option>
         </login-module>

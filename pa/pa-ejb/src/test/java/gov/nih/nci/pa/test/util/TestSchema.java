@@ -2,6 +2,7 @@ package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.DocumentIdentification;
 import gov.nih.nci.pa.domain.HealthcareSite;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Investigator;
@@ -16,9 +17,11 @@ import gov.nih.nci.pa.enums.SponsorMonitorCode;
 import gov.nih.nci.pa.enums.StudyPhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.YesNoCode;
 import gov.nih.nci.pa.service.SessionEntry;
 import gov.nih.nci.pa.util.HibernateUtil;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,34 +38,25 @@ public class TestSchema {
         public static ArrayList<Long> protocolIds;
         public static ArrayList<Long> healthcareSiteIds;
 
-        static {
+        static {            
             Configuration config = new AnnotationConfiguration().
-                
-                addAnnotatedClass(Condition.class).
-                /*
-                addAnnotatedClass(HealthcareSite.class).
-                addAnnotatedClass(Investigator.class).
-                addAnnotatedClass(Protocol.class).
-                addAnnotatedClass(Document.class).
-                addAnnotatedClass(StudyProtocol.class).
-                addAnnotatedClass(ObservationalStudyProtocol.class).
-                addAnnotatedClass(InterventionalStudyProtocol.class).
-                addAnnotatedClass(StudyCondition.class).
-                addAnnotatedClass(ProtocolStatus.class).
-                addAnnotatedClass(SessionEntry.class).
-                addAnnotatedClass(StudyInvestigator.class).
-                addAnnotatedClass(StudySite.class). */
-                setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
-                setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
-                setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
-                setProperty("hibernate.connection.username", "sa").
-                setProperty("hibernate.connection.password", "").
-                setProperty("hibernate.connection.pool_size", "1").
-                setProperty("hibernate.connection.autocommit", "true").
-                setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
-                setProperty("hibernate.hbm2ddl.auto", "create-drop").
-                setProperty("hibernate.show_sql", TestProperties.getShowSQL());
-
+            addAnnotatedClass(Document.class).
+            addAnnotatedClass(DocumentIdentification.class). 
+            addAnnotatedClass(StudyCondition.class).
+            addAnnotatedClass(Condition.class).
+            addAnnotatedClass(StudyProtocol.class).
+          
+            
+            setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
+            setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
+            setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
+            setProperty("hibernate.connection.username", "sa").
+            setProperty("hibernate.connection.password", "").
+            setProperty("hibernate.connection.pool_size", "1").
+            setProperty("hibernate.connection.autocommit", "true").
+            setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
+            setProperty("hibernate.hbm2ddl.auto", "create-drop").
+            setProperty("hibernate.show_sql", TestProperties.getShowSQL());
             HibernateUtil.getHibernateHelper().setConfiguration(config);
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
@@ -81,12 +75,10 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
-                        statement.executeUpdate("delete from STUDY_INVESTIGATOR");
-                        statement.executeUpdate("delete from INVESTIGATOR");
-                        statement.executeUpdate("delete from STUDY_SITE");
-                        statement.executeUpdate("delete from HEALTHCARE_SITE");
-                        statement.executeUpdate("delete from PROTOCOL_STATUS");
-                        statement.executeUpdate("delete from PROTOCOL");
+                        statement.executeUpdate("delete from STUDY_PROTOCOL");
+                        statement.executeUpdate("delete from STUDY_CONDITIONS");
+                        statement.executeUpdate("delete from CONDITIONS");
+                        statement.executeUpdate("delete from Document_Identification");
                         connection.commit();
                     }
                     finally {
@@ -125,8 +117,33 @@ public class TestSchema {
                 addUpdObject(obj);
             }
         }
+        
+        public static void primeData(){
+            StudyProtocol sp = new StudyProtocol();           
+            sp.setNciAccessionNumber("555111");
+            sp.setOfficialTitle("cacncer for THOLA");
+            addUpdObject(sp); 
+            sp.setId(sp.getId());           
+            //
+            Condition co = new Condition();
+            // co.setId(5L);
+            co.setCode("1AV55FGSY44");
+            co.setName("BAD-DISEASE");
+            co.setParentCode("ParentCode");          
+            addUpdObject(co);
+            co.setId(co.getId());
+            //
+            StudyCondition con = new StudyCondition();
+            con.setStudyProtocol(sp);
+            con.setLeadIndicator(YesNoCode.YES);
+            con.setCondition(co);
+            con.setStudyProtocol(sp);
+            addUpdObject(con);
+            con.setId(con.getId());
+            HibernateUtil.getCurrentSession().clear();
+        }
 
-        public static void primeData() {
+        public static void primeData1() {
             ArrayList<HealthcareSite> hs = new ArrayList<HealthcareSite>();
             ArrayList<Investigator> i = new ArrayList<Investigator>();
             ArrayList<Protocol> p = new ArrayList<Protocol>();

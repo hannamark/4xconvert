@@ -171,7 +171,6 @@ public class ProtocolDAO {
             LOG.debug("Leaving generateProtocolQuery ");
         }
         return hql.toString();
-
     }
 
     /**

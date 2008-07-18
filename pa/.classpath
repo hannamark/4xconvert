@@ -116,5 +116,7 @@
 	<classpathentry kind="lib" path="lib/main/jboss-annotations-ejb3.jar"/>
 	<classpathentry kind="lib" path="lib/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/test/hsqldb-1.8.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/main/spring-mock.jar"/>
+	<classpathentry kind="lib" path="lib/main/mockrunner-0.3.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -2,7 +2,7 @@ package gov.nih.nci.pa.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,10 +40,8 @@ public  class AbstractEntity implements Serializable, Auditable {
      * Get the id of the object.
      * @return the id
      */
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)    
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)       
     public Long getId() {
         return this.id;
     }

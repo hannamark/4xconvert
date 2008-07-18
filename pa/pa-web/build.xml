@@ -63,7 +63,11 @@
     	    <include name="*.jar"/>
     	</fileset>
     </path>
-
+    <path id="ejb.package">       
+    	<fileset dir="${basedir}/../pa-ejb/target">
+    	    <include name="*.jar"/>
+    	</fileset>
+    </path>	
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
@@ -166,7 +170,8 @@
             <classpath>
                 <path refid="build.test.classpath"/>
                 <pathelement location="${pa-web.build.outputDir}"/> 
-            	<path refid="jboss.classpath"/>            	    
+            	<path refid="jboss.classpath"/>  
+            	<path refid="ejb.package"/>      	    
             </classpath>
         </javac>
         <copy todir="${pa-web.build.testOutputDir}">
@@ -335,6 +340,7 @@
             <classpath location="${pa-web.build.testOutputDir}"/>
             <classpath refid="cobertura.classpath"/>
             <classpath refid="build.test.classpath"/>
+            <classpath refid="ejb.package"/>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>

@@ -27,12 +27,14 @@ public class ProtocolDAOTest {
         //TestSchema.reset();
         //TestSchema.primeData();        
     }
+    
+    
     @Test
     public void testDummy() {
         assertEquals(true, true);
     }
     //@Test
-    public void testGetByProtocolId() {
+    public void testGetByProtocolId() {       
         Protocol prot = new Protocol();
         prot.setLongTitleText("testGetById");
         assertNull(prot.getId());

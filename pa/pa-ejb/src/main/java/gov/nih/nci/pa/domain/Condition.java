@@ -2,9 +2,7 @@ package gov.nih.nci.pa.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
 import javax.persistence.Table;
 
 /**
@@ -25,28 +23,13 @@ public class Condition extends AbstractEntity {
     
     private static final long serialVersionUID = 1234567890L;
     
-    private Long id;
+
     private String name;
     private String code;
     private String parentCode;
     
-    /**
-     * Get the id of the object.
-     * @return the id
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)    
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * set id.
-     * @param id id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+   
+   
     /**
      * 
      * @return name 

@@ -7,7 +7,7 @@ public class QuerySeleniumTest extends SeleneseTestCase  {
         super.setUp("http://localhost:8280" , "*chrome");
         selenium.open("/pa/index.action");
         selenium.type("userName", "admin");
-        selenium.type("password", "admin");
+        selenium.type("password", "pass");
         selenium.click("authenticate_0");
         selenium.waitForPageToLoad("30000");
         selenium.click("submit");
