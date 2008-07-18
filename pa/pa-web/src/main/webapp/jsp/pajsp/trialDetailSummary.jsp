@@ -3,9 +3,6 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
-
-<s:form action="trialOnHold">	
-    <table width="480">
 	   	<tr>
   			<th colspan="2"><fmt:message key="trial.detail.summary.title"/></th>
 		</tr>
@@ -69,11 +66,3 @@
 					<a href="SupportingDoc.html" target="popup" onClick="wopen('SupportingDoc.html', 'popup', 640, 200); return false;"> Click Here</a>
 			  </td>
 		</tr>
-
-		<tr>
-			  <td>
-				 <INPUT TYPE="button" NAME="button"  class="button" value="On-Hold" onclick="wopen('OnHold.html', 'popup', 620, 200); return false;"/>
-			  </td>
-		</tr>
-	</table>
-</s:form>

@@ -25,9 +25,20 @@
 		</td>
 	</tr>
 	<h3><strong>
+	          	Study Site ID:
+	                    ${trialDesign.studySiteID}
+        </strong></h3>
+	
+	<h3><strong>
 	nciIdentifier is:
           ${trialDesign.acronym}
      </strong></h3>
+     
+     <h3><strong>
+     	Official Title:
+               ${trialDesign.officialTitle}
+     </strong></h3>
+    
      
    </div>
  </div>
