@@ -28,7 +28,6 @@
     <property name="pa-web.lib.main.dir" value="${pa-web.lib.dir}/main"/>
     <property name="cobertura.lib.dir" value="${pa-web.lib.test.dir}/cobertura"/>
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
-    <property name="pa-web.artifactsDir" value="${pa-web.build.dir}/artifacts"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -136,13 +135,12 @@
     <!-- ====================================================================== -->
     
     <target name="create-artifacts">	
-    	<mkdir dir="${pa-web.artifactsDir}" />
     	<echo message="creating login.config"/>
     	<filter token="jdbc.driver" value="${jdbc.driver}"/>
     	<filter token="jdbc.url" value="${jdbc.url}"/> 
     	<filter token="db.username" value="${db.username}"/>
     	<filter token="db.password" value="${db.password}"/>	                	   		    		
-    	<copy file="${basedir}/../resources/login.config" todir="${pa-web.artifactsDir}" filtering="true" />    		    				
+    	<copy file="${basedir}/../resources/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />    		    				
     </target>
     
     <!-- ====================================================================== -->
