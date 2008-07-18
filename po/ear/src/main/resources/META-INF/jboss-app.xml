@@ -12,5 +12,8 @@
     <module>
         <service>jboss-service.xml</service>
     </module>
-
+    <module>
+        <service>po-ds.xml</service>
+    </module>
+    
 </jboss-app>

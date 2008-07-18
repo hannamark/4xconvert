@@ -23,16 +23,23 @@
 
     <dependencies>
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.8</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>${pom.parent.groupId}</groupId>
             <artifactId>po-web</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.8</version>
-            <scope>provided</scope>
+            <groupId>${pom.parent.groupId}</groupId>
+            <artifactId>po-services</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci</groupId>
@@ -49,11 +56,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- the newer Jetty conflicts with selenium.
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
-            <version>6.1.9</version>
-            -->
             <groupId>jetty</groupId>
             <artifactId>org.mortbay.jetty</artifactId>
             <version>5.1.10</version>
@@ -94,18 +96,131 @@
                     <resourcesDir>target/classes</resourcesDir>
                     <modules>
                         <jarModule>
+                            <groupId>commons-beanutils</groupId>
+                            <artifactId>commons-beanutils</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-beanutils</groupId>
+                            <artifactId>commons-beanutils-bean-collections</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-beanutils</groupId>
+                            <artifactId>commons-beanutils-core</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-collections</groupId>
+                            <artifactId>commons-collections</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-configuration</groupId>
+                            <artifactId>commons-configuration</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-digester</groupId>
+                            <artifactId>commons-digester</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-lang</groupId>
+                            <artifactId>commons-lang</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>com.fiveamsolutions</groupId>
+                            <artifactId>nci-commons-core</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
                             <groupId>gov.nih.nci</groupId>
                             <artifactId>security</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                             <bundleFileName>security.jar</bundleFileName>
                         </jarModule>
+                        <jarModule>
+                            <groupId>net.sf.xsnapshot</groupId>
+                            <artifactId>xsnapshot</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <ejbModule>
+                            <groupId>${pom.parent.groupId}</groupId>
+                            <artifactId>po-services</artifactId>
+                        </ejbModule>
                         <webModule>
                             <groupId>${pom.parent.groupId}</groupId>
                             <artifactId>po-web</artifactId>
                             <contextRoot>/po-web</contextRoot>
                             <bundleFileName>po-web.war</bundleFileName>
                         </webModule>
+                        
+                        <jarModule>
+                            <groupId>net.sf.ehcache</groupId>
+                            <artifactId>ehcache</artifactId>
+                            <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>commons-logging</groupId>
+                            <artifactId>commons-logging</artifactId>
+                            <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>isorelax</groupId>
+                           <artifactId>isorelax</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>dom4j</groupId>
+                           <artifactId>dom4j</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>javax.servlet</groupId>
+                           <artifactId>servlet-api</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>jaxen</groupId>
+                           <artifactId>jaxen</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>msv</groupId>
+                           <artifactId>msv</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>relaxngDatatype</groupId>
+                           <artifactId>relaxngDatatype</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>saxpath</groupId>
+                           <artifactId>saxpath</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>xerces</groupId>
+                           <artifactId>xercesImpl</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
+                        <jarModule>
+                           <groupId>xml-apis</groupId>
+                           <artifactId>xml-apis</artifactId>
+                           <excluded>true</excluded>
+                        </jarModule>
                     </modules>
+                    <security>
+                        <security-role id="client">
+                            <role-name>client</role-name>
+                        </security-role>
+                        <security-role id="Curator">
+                            <role-name>Curator</role-name>
+                        </security-role>
+                    </security>
                 </configuration>
             </plugin>
             <plugin>
@@ -117,7 +232,7 @@
                             <deployable>
                                 <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
                                 <pingTimeout>30000</pingTimeout>
-                                <location>${pom.basedir}/target/po-web.ear</location>
+                                <location>${pom.basedir}/target/po.ear</location>
                             </deployable>
                         </deployables>
                     </deployer>
@@ -132,7 +247,7 @@
                         <param>${pom.basedir}/../web/src/main/webapp</param>
                     </srcDirectories>
                     <deployDirectory>${jboss.home}/server/${jboss.configuration}/tmp/deploy</deployDirectory>
-                    <deployDirectoryPattern>tmp*po-web.ear-contents</deployDirectoryPattern>
+                    <deployDirectoryPattern>tmp*po.ear-contents</deployDirectoryPattern>
                     <deploySubDirectory>po-web-exp.war</deploySubDirectory>
                     <deployedArtifact>${deployedArtifact}</deployedArtifact>
                 </configuration>
@@ -186,7 +301,7 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po-web.ear"></property>
+                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po.ear"></property>
                                         <delete file="${deployed.po.ear}" verbose="true"></delete>
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
@@ -200,7 +315,7 @@
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po-web.ear"></property>
+                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po.ear"></property>
                                         <delete file="${deployed.po.ear}" verbose="true"></delete>
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
