@@ -210,7 +210,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         Auditable auditableOwner = (Auditable) owner;
         String role = pc.getRole();
-        assert pc.isDirty() : role;
         Object oldV = pc.getStoredSnapshot();
         Object newV = pc.getValue();
         String oldValStr = getValueString((Collection<Auditable>) oldV);
