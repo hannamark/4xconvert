@@ -4,8 +4,6 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
 import gov.nih.nci.pa.service.ProtocolServiceLocal;
-//import gov.nih.nci.pa.service.TrialDesignServiceLocal;
-import gov.nih.nci.pa.service.TrialDesignServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInfoServiceRemote;
 
 /**
@@ -77,19 +75,6 @@ public final class PaRegistry {
     }
     
     
-    /**
-     * @return the trial service.
-     */
-/*    public static TrialDesignServiceLocal getTrialDesignService() {
-        return getInstance().getServiceLocator().getTrialDesignService();
-    }
-*/
-    /**
-     * @return the trial remote service.
-     */
-    public static TrialDesignServiceRemote getTrialDesignService() {
-        return getInstance().getServiceLocator().getTrialDesignService();
-    }
 
     /**
      * @return the trial local service.

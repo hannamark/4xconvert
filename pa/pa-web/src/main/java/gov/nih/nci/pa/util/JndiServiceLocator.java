@@ -3,7 +3,6 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
 import gov.nih.nci.pa.service.ProtocolServiceLocal;
-import gov.nih.nci.pa.service.TrialDesignServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInfoServiceRemote;
 
 /**
@@ -27,12 +26,7 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
 
-    /**
-     * @return Safety Trial Design Service
-     */
-    public TrialDesignServiceRemote getTrialDesignService() {
-       return (TrialDesignServiceRemote) JNDIUtil.lookup("pa/TrialDesignServiceBean/remote");
-    }
+
 
     /**
      * @return NCI Specific Information Service

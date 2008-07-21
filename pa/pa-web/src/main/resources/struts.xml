@@ -28,9 +28,6 @@
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/protocolDiseaseCondition.jsp</result>
 		</action>	
-		<action name="trialDetailEdit">
-			<result>/jsp/pajsp/trialDetailEdit.jsp</result>
-		</action>		
 		<action name="login">
 			<result>/jsp/pajsp/login.jsp</result>
 		</action>
@@ -40,14 +37,6 @@
 			<result name="error">/jsp/pajsp/login.jsp</result>
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>		
-		<action name="trialDesignCheck" class="gov.nih.nci.pa.action.TrialDesignAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/trialDesign.jsp</result>
-			<result name="error">/jsp/pajsp/trialDesign.jsp</result>
-		</action>
-		<action name="trialDesign">
-			<result>/jsp/pajsp/trialDesign.jsp</result>
-		</action>	
 		
 		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInfoAction" method="queryCheck">
 			<interceptor-ref name="nci-commonsParams" />			
