@@ -19,7 +19,7 @@
 		<action name="searchProtocol">
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>
-		<action name="queryProtocol" class="gov.nih.nci.pa.action.ProtocolSearchAction" method="query">
+		<action name="queryProtocol" class="gov.nih.nci.pa.action.QueryStudyProtocolAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 			<result name="error">/jsp/pajsp/protocolSearchCriteria.jsp</result>
