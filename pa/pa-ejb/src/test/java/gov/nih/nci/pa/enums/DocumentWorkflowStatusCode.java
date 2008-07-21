@@ -1,11 +1,12 @@
 package gov.nih.nci.pa.enums;
 
+
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * The state of a document in relation to a business process workflow.  
+ * The state of a document in relation to a business process workflow.
  *
  * @author Naveen Amiruddin
  * @since 07/22/2007
@@ -15,23 +16,23 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 
 public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
-    
+
     /** On-hold. */
     ON_HOLD("On-hold"),
     /** Accepted. */
     ACCEPTED("Accepted"),
     /** Rejected. */
-    REJECTED("Rejected"),    
+    REJECTED("Rejected"),
     /** Abstracted. */
-    ABSTRACTED("Abstracted"),    
+    ABSTRACTED("Abstracted"),
     /** Abstraction Verified. */
-    ABSTRACTION_VERIFIED("Abstraction Verified"),    
+    ABSTRACTION_VERIFIED("Abstraction Verified"),
     /** Abstraction not verified. */
-    ABSTRACTION_NOT_VERIFIED("Abstraction not verified");    
-    
+    ABSTRACTION_NOT_VERIFIED("Abstraction not verified");
+
     private String code;
     /**
-     * 
+     *
      * @param code
      */
     private DocumentWorkflowStatusCode(String code) {
@@ -46,14 +47,14 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *@return String DisplayName 
+     *@return String DisplayName
      */
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     * 
+     *
      * @return String name
      */
     public String getName() {
@@ -61,14 +62,14 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     }
 
     /**
-     * 
+     *
      * @param code code
-     * @return DocumentWorkFlowStatusCode 
+     * @return DocumentWorkFlowStatusCode
      */
     public static DocumentWorkflowStatusCode getByCode(String code) {
         return getByClassAndCode(DocumentWorkflowStatusCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
@@ -80,7 +81,7 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
         }
         return a;
     }
-    
+
 
 }
 
