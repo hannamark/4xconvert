@@ -27,6 +27,7 @@ public class DocumentIdentification extends AbstractEntity {
     private static final long serialVersionUID = 1234567890L;
     
     private AssigningAuthorityCode assigningAuthorityCode;
+    private Boolean primaryIndicator; 
     private String identifier;
     private Document document;
     /** 
@@ -48,7 +49,23 @@ public class DocumentIdentification extends AbstractEntity {
         this.assigningAuthorityCode = assigningAuthorityCode;
     }
     
-    
+    /**
+     * 
+     * @return primaryIndicator
+     */
+    @Column(name = "PRIMARY_INDICATOR")
+    public Boolean getPrimaryIndicator() {
+        return primaryIndicator;
+    }
+
+    /**
+     * 
+     * @param primaryIndicator primaryIndicator
+     */
+    public void setPrimaryIndicator(Boolean primaryIndicator) {
+        this.primaryIndicator = primaryIndicator;
+    }
+
     /**
      * 
      * @return identifier
