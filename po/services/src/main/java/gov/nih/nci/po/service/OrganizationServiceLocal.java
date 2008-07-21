@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
 
+import java.util.Map;
 import javax.ejb.Local;
 
 /**
@@ -109,7 +110,7 @@ public interface OrganizationServiceLocal {
     
     /**
      * @param entity the entity to validate
-     * @throws EntityValidationException if validation fails
+     * @return return validation error messages per invalid field path.
      */
-    void validate(Organization entity) throws EntityValidationException;
+    Map<String, String[]> validate(Organization entity);
 }

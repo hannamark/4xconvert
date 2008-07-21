@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
 
+import java.util.Map;
 import javax.ejb.Local;
 
 /**
@@ -108,10 +109,9 @@ public interface PersonServiceLocal {
     Person getPerson(long id);
     
     /**
-     * Validate a Person.
-     * @param person the entity to validate
-     * @throws EntityValidationException if validation fails
+     * @param entity the entity to validate
+     * @return return validation error messages per invalid field path.
      */
-    void validate(Person person) throws EntityValidationException;
+    Map<String, String[]> validate(Person entity);
 
 }

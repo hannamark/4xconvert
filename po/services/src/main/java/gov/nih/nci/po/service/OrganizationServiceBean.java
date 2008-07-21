@@ -108,7 +108,7 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
         org.setId(null);
         org.setCurationStatus(CurationStatus.NEW);
         
-        validate(org);
+        ensureValid(org);
         
         Session s = PoHibernateUtil.getCurrentSession();
         ContactInfo ci = org.getPrimaryContactInfo();

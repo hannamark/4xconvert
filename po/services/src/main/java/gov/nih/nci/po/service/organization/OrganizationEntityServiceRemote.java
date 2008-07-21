@@ -85,6 +85,7 @@ package gov.nih.nci.po.service.organization;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 
 import gov.nih.nci.po.service.EntityValidationException;
+import java.util.Map;
 import javax.ejb.Remote;
 
 /**
@@ -111,8 +112,7 @@ public interface OrganizationEntityServiceRemote {
     /**
      * Validate that an entity has acceptable values.
      * @param org the entity to validate
-     * @throws EntityValidationException if validation fails
-     */
-    
-    void validate(OrganizationDTO org) throws EntityValidationException;
+     * @return return validation error messages per invalid field path.
+     */    
+    Map<String, String[]> validate(OrganizationDTO org);
 }

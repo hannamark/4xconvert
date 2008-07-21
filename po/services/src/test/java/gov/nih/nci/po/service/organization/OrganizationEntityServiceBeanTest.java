@@ -75,19 +75,17 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
 
     @Test
     public void validate() {
-        try {
-            OrganizationDTO dto = new OrganizationDTO();
-            dto.setAbbreviationName("short");
-            remote.validate(dto);
-        } catch (EntityValidationException e) {
-            Map<String, String[]> errors = e.getErrors();
-            assertEquals(5, errors.size()) ;
-            assertTrue(errors.containsKey("name"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.streetAddressLine"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.postalCode"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.cityOrMunicipality"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
-        }
+        
+        OrganizationDTO dto = new OrganizationDTO();
+        dto.setAbbreviationName("short");
+        Map<String, String[]> errors = remote.validate(dto);
+        assertEquals(5, errors.size()) ;
+        assertTrue(errors.containsKey("name"));
+        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.streetAddressLine"));
+        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.postalCode"));
+        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.cityOrMunicipality"));
+        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
+
     }
 
 }

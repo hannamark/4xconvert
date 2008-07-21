@@ -109,20 +109,19 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void validate() {
-        try {
-            PersonDTO dto = new PersonDTO();
-            dto.setId(99L);
-            dto.setFirstName("Firsty");
-            dto.setMiddleName("Andrew");
-            remote.validate(dto);
-        } catch (EntityValidationException e) {
-            Map<String, String[]> errors = e.getErrors();
-            assertEquals(5, errors.size()) ;
-            assertTrue(errors.containsKey("lastName"));
-            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.streetAddressLine"));
-            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.postalCode"));
-            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
-            assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
-        }
+        
+        PersonDTO dto = new PersonDTO();
+        dto.setId(99L);
+        dto.setFirstName("Firsty");
+        dto.setMiddleName("Andrew");
+        Map<String, String[]> errors = remote.validate(dto);
+        System.out.println(errors);
+        assertEquals(5, errors.size()) ;
+        assertTrue(errors.containsKey("lastName"));
+        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.streetAddressLine"));
+        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.postalCode"));
+        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
+        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
+
     }
 }

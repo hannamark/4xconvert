@@ -90,6 +90,7 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -150,9 +151,9 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    public void validate(OrganizationDTO org) throws EntityValidationException {
+    public Map<String, String[]> validate(OrganizationDTO org) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
-        orgService.validate(orgBO);
+        return orgService.validate(orgBO);
     }
 
 }

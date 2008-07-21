@@ -85,6 +85,7 @@ package gov.nih.nci.po.service.person;
 import gov.nih.nci.po.dto.entity.PersonDTO;
 
 import gov.nih.nci.po.service.EntityValidationException;
+import java.util.Map;
 import javax.ejb.Remote;
 
 /**
@@ -111,7 +112,7 @@ public interface PersonEntityServiceRemote {
     /**
      * Validate a person entity.
      * @param person the person to validate.
-     * @throws EntityValidationException if validation fails.
+     * @return return validation error messages per invalid field path.
      */
-    void validate(PersonDTO person) throws EntityValidationException;
+    Map<String, String[]> validate(PersonDTO person);
 }

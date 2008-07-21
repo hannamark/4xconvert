@@ -215,16 +215,26 @@ public class BaseServiceBean<T extends PersistentObject> {
     }
     
      /**
-     * 
+      * 
       * @param entity the entity to validate
-      * @throws EntityValidationException is validation fails
+      * @return return validation error messages per invalid field path.
+      * @see PoHibernateUtil.validate(entity)
       */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void validate(T entity) throws EntityValidationException {
-        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-        messages.remove("curationStatus");
-        if (messages != null && !messages.isEmpty()) {
-            throw new EntityValidationException(messages);
+    public Map<String, String[]> validate(T entity) {
+         Map<String, String[]> messages = PoHibernateUtil.validate(entity);
+         messages.remove("curationStatus");
+         return messages;
+    }
+    
+    /**
+     * @param entity the entity to validate
+     * @throws EntityValidationException is validation fails
+     */
+    protected void ensureValid(T entity) throws EntityValidationException {
+        Map<String, String[]> errors = validate(entity);
+        if (errors != null && !errors.isEmpty()) {
+            throw new EntityValidationException(errors);
         }
     }
 }

@@ -89,6 +89,7 @@ import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
+import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -141,9 +142,9 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void validate(PersonDTO person) throws EntityValidationException {
+    public Map<String, String[]> validate(PersonDTO person) {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
-        perService.validate(perBO);
+        return perService.validate(perBO);
     }
     
 

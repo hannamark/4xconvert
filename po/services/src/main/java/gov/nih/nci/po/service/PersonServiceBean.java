@@ -109,7 +109,7 @@ public class PersonServiceBean extends BaseServiceBean<Person> implements Person
         p.setId(null);
         p.setCurationStatus(CurationStatus.NEW);
         
-        validate(p);
+       ensureValid(p);
         
         Session s = PoHibernateUtil.getCurrentSession();
 
