@@ -5,18 +5,18 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="protocol.search.title"/></title>   
+    <title><fmt:message key="studyProtocol.search.title"/></title>   
     <s:head/>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 function resetValues () {
     document.forms.queryProtocol.queryProtocol_criteria_nciIdentifier.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_longTitleText.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationProtocolId.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationTrialIdentifier.value="";
     document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationId.value="";
     document.forms.queryProtocol.queryProtocol_criteria_studyPhaseCode.value="";
     document.forms.queryProtocol.queryProtocol_criteria_studyStatusCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_abstractionStatusCode.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_documentWorkflowStatusCode.value="";
 
 
 }
@@ -25,7 +25,7 @@ function resetValues () {
 <!-- main content begins-->
 
    <div id="contentwide">
-    <h1><fmt:message key="protocol.search.header"/></h1>
+    <h1><fmt:message key="studyProtocol.search.header"/></h1>
     <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
  
@@ -33,30 +33,32 @@ function resetValues () {
         <table cellspacing="2" >    
             <tr>
                 <td align=right>
-                     <label for="nciIdentifier"> <fmt:message key="protocol.nciIdentifier"/></label>
+                     <label for="nciIdentifier"> <fmt:message key="studyProtocol.nciIdentifier"/></label>
                 </td>
                 <td align=left>
                     <s:textfield name="criteria.nciIdentifier" size="15" maxlength="20" />
                 </td>
                 <td align=right>
-                    <b><fmt:message key="protocol.officialTitle"/></b> 
+                    <b><fmt:message key="studyProtocol.officialTitle"/></b> 
                 </td>
                 <td align=left>                                             
-                    <s:textfield name="criteria.longTitleText"   size="50" maxlength="50"  />
+                    <s:textfield name="criteria.officialTitle"   size="50" maxlength="50"  />
                 </td>
              </tr>                                               
+
+            <tr>
+            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getrotocolOrganizationService().getOrganizationsAssociatedWithProtocol()" />
              <tr>
                 <td align=right>
-                    <b><fmt:message key="studySite.localProtocolIdentifer"/></b> 
+                    <b><fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></b> 
                 </td>
-                <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getrotocolOrganizationService().getOrganizationsAssociatedWithProtocol()" />
 
                 <td align=left>
-                    <s:textfield name="criteria.leadOrganizationProtocolId" size="15" maxlength="10" />
+                    <s:textfield name="criteria.leadOrganizationTrialIdentifier" size="15" maxlength="10" />
                                                                                          
                 </td>                    
                 <td align=right>
-                    <b><fmt:message key="protocol.leadOrganization"/></b> 
+                    <b><fmt:message key="studyProtocol.leadOrganization"/></b> 
                     
                 </td>
                 <td align=left>
@@ -66,44 +68,45 @@ function resetValues () {
             </tr>           
             <tr>
                 <td align=right>
-                    <b><fmt:message key="protocol.studyPhase"/></b>                         
+                    <b><fmt:message key="studyProtocol.studyPhase"/></b>                         
                 </td>
-                <s:set name="studyPhaseCodeValues" value="@gov.nih.nci.pa.enums.StudyPhaseCode@getCodedNames()" />
+                <s:set name="studyPhaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td align=left>
-                    <s:select headerKey="" headerValue="All" name="criteria.studyPhaseCode" list="#studyPhaseCodeValues"  value="criteria.studyPhaseCode" />
+                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#studyPhaseCodeValues"  value="criteria.studyPhaseCode" />
                 </td>      
                 
                 <td align=right>
-                    <b><fmt:message key="protocol.studyStatus"/></b>                      
+                    <b><fmt:message key="studyProtocol.studyStatus"/></b>                      
                 </td>
-               <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getCodedNames()" />
+               <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                
                 <td align=left>
                    <s:select headerKey="" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" />
                 </td>                  
             </tr>                                        
-            <s:set name="abstractionStatusCodeValues" value="@gov.nih.nci.pa.enums.AbstractionStatusCode@getCodedNames()" />
-
-            <tr>
+            
             <td align=right>
-                    <b><fmt:message key="protocol.abstractionStatus"/></b>    
+                    <b><fmt:message key="studyProtocol.documentWorkflowStatus"/></b>    
                 </td>
-                <td >
-                    <s:select headerKey="" headerValue="All" name="criteria.abstractionStatusCode" list="#abstractionStatusCodeValues"  value="criteria.abstractionStatusCodeValues" />
-                </td>    
+                <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
+                <td align=left>
+                   <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" />
+                </td>                  
+    
                 <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                 </td> 
             </tr>
         </table>
-   </s:form>
-
    <c:if test="${records != null}">
    <jsp:include page="/jsp/pajsp/protocolSearchResults.jsp">
         <jsp:param name="listName" value="records" />        
    </jsp:include>
    </c:if>
+        
+   </s:form>
+
  </div>
 </body>
 </html>
