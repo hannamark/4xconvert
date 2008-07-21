@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
 
@@ -19,16 +20,15 @@ import javax.persistence.OneToMany;
  * copyright holder, NCI.
  */
 @Entity
-@MappedSuperclass
-@SuppressWarnings("PMD")
-public abstract class Document extends AbstractEntity {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Document extends AbstractEntity {
     
     private static final long serialVersionUID = 1234567890L;
     
     private String officialTitle = null;
-    private String nciAccessionNumber = null;
-    
-    private List<DocumentIdentification> documentIdentifications = new ArrayList<DocumentIdentification>(); 
+
+    /** . **/
+    public List<DocumentIdentification> documentIdentifications = new ArrayList<DocumentIdentification>(); 
     
     /**
      * The formal title of the document. 
@@ -45,23 +45,6 @@ public abstract class Document extends AbstractEntity {
      */
     public void setOfficialTitle(String officialTitle) {
         this.officialTitle = officialTitle;
-    }
-
-    /**
-     * 
-     * @return nciAccessionNumber
-     */
-    @Column(name = "NCI_ACCESSION_NUMBER")
-    public String getNciAccessionNumber() {
-        return nciAccessionNumber;
-    }
-
-    /**
-     * 
-     * @param nciAccessionNumber nciAccessionNumber
-     */
-    public void setNciAccessionNumber(String nciAccessionNumber) {
-        this.nciAccessionNumber = nciAccessionNumber;
     }
 
     /**
