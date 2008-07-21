@@ -17,21 +17,16 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="show_sql">true</property>
      
 		<!-- mapping classes -->
-		<!--
-		<mapping class="gov.nih.nci.pa.domain.Protocol" />
-		<mapping class="gov.nih.nci.pa.domain.ProtocolStatus" />
-		<mapping class="gov.nih.nci.pa.domain.HealthcareSite" />
-		<mapping class="gov.nih.nci.pa.domain.StudySite" />
-		<mapping class="gov.nih.nci.pa.domain.Investigator" />
-		<mapping class="gov.nih.nci.pa.domain.StudyInvestigator" />
-        	-->
-		<mapping class="gov.nih.nci.pa.domain.Document" />
-		<mapping class="gov.nih.nci.pa.domain.DocumentIdentification" />
-		<mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
-		<mapping class="gov.nih.nci.pa.domain.ObservationalStudyProtocol" />
-		<mapping class="gov.nih.nci.pa.domain.InterventionalStudyProtocol" />
-		<mapping class="gov.nih.nci.pa.domain.StudyCondition" />
-		<mapping class="gov.nih.nci.pa.domain.Condition" />
-		<mapping class="gov.nih.nci.pa.service.SessionEntry" />
+        <mapping class="gov.nih.nci.pa.domain.Document" />
+        <mapping class="gov.nih.nci.pa.domain.DocumentIdentification" />
+        <mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
+        <mapping class="gov.nih.nci.pa.domain.StudyCondition" />
+        <mapping class="gov.nih.nci.pa.domain.Condition" />
+        <mapping class="gov.nih.nci.pa.domain.Organization" />
+        <mapping class="gov.nih.nci.pa.domain.StudyCoordinatingCenter" />
+        <mapping class="gov.nih.nci.pa.domain.StudyCoordinatingCenterRole" />
+        <mapping class="gov.nih.nci.pa.domain.StudyOverallStatus" />
+        <mapping class="gov.nih.nci.pa.domain.DocumentWorkflowStatus" />
+	<mapping class="gov.nih.nci.pa.service.SessionEntry" />
     </session-factory>
 </hibernate-configuration>
