@@ -61,8 +61,8 @@ public enum YesNoCode implements CodedEnum<String> {
      * @param code code
      * @return TrialPhaseType 
      */
-    public static StudyPhaseCode getByCode(String code) {
-        return getByClassAndCode(StudyPhaseCode.class, code);
+    public static YesNoCode getByCode(String code) {
+        return getByClassAndCode(YesNoCode.class, code);
     }
     
     /**
