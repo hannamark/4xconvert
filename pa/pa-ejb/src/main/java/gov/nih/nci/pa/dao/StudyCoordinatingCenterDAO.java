@@ -24,7 +24,7 @@ import gov.nih.nci.pa.util.HibernateUtil;
 
 public class StudyCoordinatingCenterDAO {
 
-    private static final Logger LOG  = Logger.getLogger(StudySiteDAO.class);
+    private static final Logger LOG  = Logger.getLogger(StudyCoordinatingCenterDAO.class);
     
     /**
      * get all lead organization that have been associated with study protocols.
