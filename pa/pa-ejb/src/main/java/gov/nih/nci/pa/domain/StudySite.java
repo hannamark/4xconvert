@@ -22,11 +22,12 @@ import javax.persistence.Table;
 @Table(name = "STUDY_SITE")
 
 public class StudySite extends AbstractEntity {
+    private static final long serialVersionUID = 1234567890L;
 
     private Long id;
     private String leadOrganizationProtocolId;
-    private Protocol protocol;
-    private HealthcareSite healtcareSite;
+    private StudyProtocol protocol;
+    private Organization healtcareSite;
 
     /**
      * set id.
@@ -50,7 +51,7 @@ public class StudySite extends AbstractEntity {
 
     /**
      * 
-     * @return localProtocolIdentifer Local Protocol Identifier
+     * @return localProtocolIdentifer Local StudyProtocol Identifier
      */
     @Column(name = "LOCAL_PROTOCOL_IDENTIFIER", length = LONG_TEXT_LENGTH)
     public String getLeadOrganizationProtocolId() {
@@ -66,18 +67,18 @@ public class StudySite extends AbstractEntity {
     }
 
     /**
-    * @return protocol Protocol
+    * @return protocol StudyProtocol
     */
     @ManyToOne
     @JoinColumn(name = "PROTOCOL_ID", nullable = false)
-    public Protocol getProtocol() {
+    public StudyProtocol getProtocol() {
        return protocol;
     }
     
     /**
      * @param protocol protocol
      */
-    public void setProtocol(Protocol protocol) {
+    public void setProtocol(StudyProtocol protocol) {
        this.protocol = protocol;
     }
 
@@ -86,14 +87,14 @@ public class StudySite extends AbstractEntity {
      */
     @ManyToOne
     @JoinColumn(name = "HEALTHCARE_SITE_ID", nullable = false)
-    public HealthcareSite getHealtcareSite() {
+    public Organization getHealtcareSite() {
        return healtcareSite;
     }
     
     /**
      * @param healtcareSite healtcareSite
      */
-    public void setHealtcareSite(HealthcareSite healtcareSite) {
+    public void setHealtcareSite(Organization healtcareSite) {
        this.healtcareSite = healtcareSite;
     }
 }
