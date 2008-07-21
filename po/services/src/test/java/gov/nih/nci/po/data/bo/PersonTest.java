@@ -136,7 +136,7 @@ public class PersonTest extends AbstractHibernateTestCase {
         assertEquals("http://d.com", savedCI.getUrl().get(3).getValue());
     }
 
-    private ContactInfo createCI(Address address1, String title) {
+    private static ContactInfo createCI(Address address1, String title) {
         ContactInfo ci = new ContactInfo(address1);
 
         ci.getEmail().add(new Email("a@b.com"));

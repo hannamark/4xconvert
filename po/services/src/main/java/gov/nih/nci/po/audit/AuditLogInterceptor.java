@@ -124,11 +124,14 @@ import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.log4j.Priority;
+import org.hibernate.collection.PersistentCollection;
 
 /**
  * Interceptor that adds audit log records for audits.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "unchecked" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "unchecked", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class AuditLogInterceptor extends EmptyInterceptor {
 
     private static final BagType BOGUS_TYPE = new BagType("", "", true);
@@ -155,6 +158,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private final transient ThreadLocal<Set<DetailHelper>> details =
         new ThreadLocal<Set<DetailHelper>>();
+    private final transient ThreadLocal<Map<RecordKey, AuditLogRecord>> records =
+        new ThreadLocal<Map<RecordKey, AuditLogRecord>>();
 
     /**
      * {@inheritDoc}
@@ -183,6 +188,48 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         return false;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onCollectionUpdate(Object collection, Serializable key) {
+        if (!(collection instanceof PersistentCollection)) {
+            return;
+        }
+
+        PersistentCollection pc = (PersistentCollection) collection;
+        Object owner = pc.getOwner();
+        if (!(owner instanceof Auditable)) {
+            return;
+        }
+        if (audits.get() == null) {
+            audits.set(new HashSet<AuditLogHelper>());
+            details.set(new HashSet<DetailHelper>());
+        }
+
+        Auditable auditableOwner = (Auditable) owner;
+        String role = pc.getRole();
+        assert pc.isDirty() : role;
+        Object oldV = pc.getStoredSnapshot();
+        Object newV = pc.getValue();
+        String oldValStr = getValueString((Collection<Auditable>) oldV);
+        String newValStr = getValueString((Collection<Auditable>) newV);
+
+        int idx = role.lastIndexOf('.');
+        String className = role.substring(0, idx);
+        String property = role.substring(idx + 1);
+        Map<String, String> tabColMA = getColumnTableName(className, property);
+
+        String entityName = tabColMA.get(TABLE_NAME);
+        String attribute = tabColMA.get(COLUMN_NAME);
+
+        AuditLogRecord record = getOrCreateRecord(auditableOwner, entityName, (Long) key, AuditType.UPDATE);
+        audits.get().add(new AuditLogHelper(record, auditableOwner));
+        AuditLogDetail detail = new AuditLogDetail(record, attribute, oldValStr, newValStr, true);
+        record.getDetails().add(detail);
+        details.get().add(new DetailHelper(detail, (Collection<Auditable>) newV));
+    }
 
     /**
      * {@inheritDoc}
@@ -192,6 +239,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         if (audits.get() != null && !audits.get().isEmpty()) {
             SessionFactory sf = PoHibernateUtil.getHibernateHelper().getSessionFactory();
+            @SuppressWarnings("deprecation")
             Session session = sf.openSession(PoHibernateUtil.getCurrentSession().connection());
             Long transactionId = null;
             try {
@@ -214,7 +262,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
                 for (AuditLogHelper audit : audits.get()) {
                     audit.getAuditLogRecord().setTransactionId(transactionId);
                     if (AuditType.INSERT.equals(audit.getAuditLogRecord().getType())) {
-                        audit.auditLogRecord.setEntityId(audit.getEntity().getId());
+                        audit.getAuditLogRecord().setEntityId(audit.getEntity().getId());
                     }
                     session.save(audit.getAuditLogRecord());
                 }
@@ -223,6 +271,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             } finally {
                 audits.get().clear();
                 details.get().clear();
+                records.get().clear();
                 session.flush();
                 session.close();
             }
@@ -238,6 +287,51 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             audits.get().clear();
             details.get().clear();
         }
+    }
+
+    /** a composite key for entity audit records. */
+    private static final class RecordKey {
+        private final Auditable entity;
+        private final AuditType type;
+        
+        RecordKey(Auditable entity, AuditType type) {
+            this.entity = entity; this.type = type;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(Object obj) {
+            RecordKey r = (RecordKey) obj;
+            return entity == r.entity && type == r.type;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder().append(entity).appendSuper(type.hashCode()).toHashCode();
+        }
+        
+    }
+    
+    /**
+     * @param id 
+     */
+    private AuditLogRecord getOrCreateRecord(Auditable entity, String entityName, Long id,  AuditType eventToLog) {
+        Map<RecordKey, AuditLogRecord> map = records.get();
+        if (map == null) {
+            map = new HashMap<RecordKey, AuditLogRecord>();
+            records.set(map);
+        }
+        RecordKey key = new RecordKey(entity, eventToLog);
+        AuditLogRecord record = map.get(key);
+        if (record == null) {
+            String user = UsernameHolder.getUser();
+            record = new AuditLogRecord(eventToLog, entityName, id, user, new Date());
+            map.put(key, record);
+        }
+        return record;
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -257,20 +351,19 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         for (int i = 0; i < properties.length; i++) {
             String property = properties[i];
-            if (needsAuditing(auditableObj, types[i], newValues[i], myOldValues[i], property)) {
+            Object oldV = myOldValues[i];
+            Object newV = newValues[i];
+            if (needsAuditing(auditableObj, types[i], newV, oldV, property)) {
                 Map<String, String> tabColMA = getColumnTableName(getPersistentClass(auditableObj).getName(),
                                                                                      property);
                 if (record == null) {
-                    String user = UsernameHolder.getUser();
                     String entityName = tabColMA.get(TABLE_NAME);
-
-                    record = new AuditLogRecord(eventToLog, entityName, auditableObj.getId(), user, new Date());
-
+                    record = getOrCreateRecord(auditableObj, entityName, auditableObj.getId(), eventToLog);
                     audits.get().add(new AuditLogHelper(record, auditableObj));
                 }
                 String attribute = tabColMA.get(COLUMN_NAME);
-                String oldValStr = getValueString(myOldValues[i], types[i]);
-                String newValStr = getValueString(newValues[i], types[i]);
+                String oldValStr = getValueString(oldV, types[i]);
+                String newValStr = getValueString(newV, types[i]);
                 AuditLogDetail detail = new AuditLogDetail(record, attribute, oldValStr, newValStr,
                                                            types[i] instanceof EntityType
                                                                || types[i] instanceof CollectionType);
@@ -280,12 +373,13 @@ public class AuditLogInterceptor extends EmptyInterceptor {
                     // Thus, the call above to getValueString could have resulted in a bogus value.
                     // We store off the information we need to a threadlocal, and will refresh
                     // the value post-flush.
-                    details.get().add(new DetailHelper(detail, (Collection<Auditable>) newValues[i]));
+                    details.get().add(new DetailHelper(detail, (Collection<Auditable>) newV));
                 }
             }
         }
     }
 
+    @SuppressWarnings("deprecation")
     private Object[] getOldValues(Object[] oldValues, String[] properties, Auditable auditableObj) {
         Object[] myOldValues = oldValues;
         Session session = null;
@@ -347,6 +441,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         try {
             Method getter = auditableObj.getClass().getMethod("get" + StringUtils.capitalize(property));
             if (getter.getAnnotation(JoinTable.class) != null) {
+                if (LOG.isEnabledFor(Priority.DEBUG)) {
+                    LOG.debug("Found annotated getter: " + oldSet + ", " + newSet);
+                }
                 return !CollectionUtils.isEqualCollection((oldSet == null) ? Collections.emptySet() : oldSet,
                                                           (newSet == null) ? Collections.emptySet() : newSet);
             }
@@ -383,11 +480,20 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             return null;
         }
         if (type instanceof EntityType) {
-            Auditable a = (Auditable) value;
-            return (a.getId() == null) ? null : a.getId().toString();
+            return getValueString((Auditable) value);
         }
         if (type instanceof CollectionType) {
-            Collection c = CollectionUtils.collect((Collection) value, new Transformer() {
+            return getValueString((Collection<Auditable>) value);
+        }
+        return value.toString();
+    }
+    
+    private static <A extends Auditable> String getValueString(A value) {
+        return (value.getId() == null) ? null : value.getId().toString();
+    }
+    
+    private static <A extends Auditable> String getValueString(Collection<A> value) {
+        Collection c = CollectionUtils.collect(value, new Transformer() {
                 /**
                  * Transforms to id, ignoring ids that are null.
                  * @param arg0 auditable to transform
@@ -399,9 +505,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
             }, new ArrayList<Long>());
             return StringUtils.join(c, ", ");
-        }
-
-        return value.toString();
     }
 
     /**
@@ -411,7 +514,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      * @param fieldName
      * @return Map
      */
-    private static Map<String, String> getColumnTableName(String className, String fieldName) {
+    private static synchronized Map<String, String> getColumnTableName(String className, String fieldName) {
         String hashkey = className + ";" + fieldName;
         Map<String, String> retMap = COLUMN_CACHE.get(hashkey);
         if (retMap != null) {
@@ -449,7 +552,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String columnName = null;
         Property property = pc.getProperty(fieldName);
         for (Iterator<?> it3 = property.getColumnIterator(); it3.hasNext();) {
-            Object o = it3.next();
+            Object o = it3.next(); 
             if (!(o instanceof Column)) {
                 LOG.debug("Skipping non-column (probably a formula");
                 continue;
