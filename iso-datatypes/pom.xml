@@ -1,0 +1,201 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>gov.nih.nci.coppa</groupId>
+    <artifactId>iso-datatypes</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>iso</name>
+    
+    <properties>
+        <nci-commons.version>1.0.9</nci-commons.version>
+        <compileSource>1.5</compileSource>
+    </properties>
+    
+    <scm>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</developerConnection>
+        <tag>HEAD</tag>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/iso</url>
+    </scm>
+    
+    <ciManagement>
+        <system>Hudson</system>
+        <url>http://nci-millersc-1.nci.nih.gov:8090/</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <address>team-po@5amsolutions.com</address>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+    
+    <developers>
+        <developer>
+            <email>smiller@5amsolutions.com</email>
+            <id>smiller</id>
+            <name>Scott Miller</name>
+        </developer>
+        <developer>
+            <email>tparnell@5amsolutions.com</email>
+            <id>tparnell</id>
+            <name>Todd Parnell</name>
+        </developer>
+        <developer>
+            <email>gax@5amsolutions.com</email>
+            <id>gax</id>
+            <name>Ashenafi Gax Ayalew</name>
+        </developer>
+        <developer>
+            <email>smatyas@5amsolutions.com</email>
+            <id>smatyas</id>
+            <name>Stephen Matyas</name>
+        </developer>
+        <developer>
+            <email>lpower@5amsolutions.com</email>
+            <id>lpower</id>
+            <name>Leslie Power</name>
+        </developer>
+    </developers>
+    
+    <distributionManagement>
+        <repository>
+            <id>5AM-Releases</id>
+            <name>5AM Releases</name>
+            <url>dav:http://maven.5amsolutions.com/archiva/repository/internal/</url>
+        </repository>
+        <snapshotRepository>
+            <id>5AM-Snapshots</id>
+            <name>5AM Snapshots</name>
+            <url>dav:http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    
+     <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${compileSource}</source>
+                    <target>${compileSource}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.fiveamsolutions</groupId>
+                        <artifactId>nci-commons-core</artifactId>
+                        <version>${nci-commons.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.fiveamsolutions</groupId>
+                        <artifactId>nci-commons-core</artifactId>
+                        <version>${nci-commons.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
+    </build>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>5amCheckstyle.xml</configLocation>
+               </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <rulesets>
+                        <ruleset>5amPmd.xml</ruleset>
+                    </rulesets>
+                    <failOnViolation>true</failOnViolation>
+                    <linkXref>true</linkXref>
+                    <targetJdk>${compileSource}</targetJdk>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+    
+    <repositories>
+        <repository>
+            <id>5AM-Releases</id>
+            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>5AM-Snapshots</id>
+            <url>http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>maven</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>5AM-Releases</id>
+            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <!-- Testing only jars -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
