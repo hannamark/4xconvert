@@ -7,7 +7,7 @@ import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 
-import gov.nih.nci.pa.dao.StudySiteDAO;
+import gov.nih.nci.pa.dao.StudyCoordinatingCenterDAO;
 import gov.nih.nci.pa.dto.OrganizationDTO;
 import gov.nih.nci.pa.service.IProtocolOrganizationService;
 import gov.nih.nci.pa.service.PAException;
@@ -31,8 +31,8 @@ public class ProtocolOrganizationServiceImpl implements IProtocolOrganizationSer
     throws PAException {
         try {
         LOG.debug("Entereing getOrganizationAssociatedsWithProtocol");
-        StudySiteDAO studySiteDAO = new StudySiteDAO();
-        return studySiteDAO.getOrganizationsAssociatedWithProtocol();
+        StudyCoordinatingCenterDAO sccd = new StudyCoordinatingCenterDAO(); 
+        return sccd.getLeadOrganizations();
         } finally {
             LOG.debug("Leaving getOrganizationAssociatedsWithProtocol");
         }
