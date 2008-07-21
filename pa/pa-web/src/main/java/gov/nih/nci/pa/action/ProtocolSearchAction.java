@@ -1,11 +1,12 @@
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.dto.QueryStudyProtocolCriteria;
+import gov.nih.nci.pa.dto.QueryStudyProtocolDTO;
+import gov.nih.nci.pa.util.PaRegistry;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.nih.nci.pa.dto.ProtocolDTO;
-import gov.nih.nci.pa.service.ProtocolSearchCriteria;
-import gov.nih.nci.pa.util.PaRegistry;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
@@ -18,9 +19,9 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 public class ProtocolSearchAction extends ActionSupport {    
     
-    private List<ProtocolDTO> records = new ArrayList<ProtocolDTO>();
+    private List<QueryStudyProtocolDTO> records = new ArrayList<QueryStudyProtocolDTO>();
     
-    private ProtocolSearchCriteria criteria = new ProtocolSearchCriteria();
+    private QueryStudyProtocolCriteria criteria = new QueryStudyProtocolCriteria();
 
     /**  
      * @return res
@@ -34,7 +35,7 @@ public class ProtocolSearchAction extends ActionSupport {
      */
     public String query()  {
         try {            
-            records = PaRegistry.getProtocolService().getProtocol(criteria);       
+            records = PaRegistry.getProtocolService().getStudyProtocolByCriteria(criteria);       
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -44,25 +45,25 @@ public class ProtocolSearchAction extends ActionSupport {
     
     /**
      * 
-     * @return prot
+     * @return records
      */
-    public List<ProtocolDTO>  getRecords() {
+    public List<QueryStudyProtocolDTO>  getRecords() {
         return records;
     }
 
     /**
      * 
-     * @return ProtocolSearchCriteria psc
+     * @return QueryStudyProtocolCriteria QueryStudyProtocolCriteria
      */
-    public ProtocolSearchCriteria getCriteria() {
+    public QueryStudyProtocolCriteria getCriteria() {
         return criteria;
     }
     
     /**
      * 
-     * @param criteria ProtocolSearchCriteria
+     * @param criteria QueryStudyProtocolCriteria
      */
-    public void setCriteria(ProtocolSearchCriteria criteria) {
+    public void setCriteria(QueryStudyProtocolCriteria criteria) {
         this.criteria = criteria;
     }
 
