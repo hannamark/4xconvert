@@ -10,5 +10,5 @@ import javax.ejb.Remote;
  *
  */
 @Remote
-public interface ProtocolServiceRemote extends IProtocolService {
+public interface ProtocolServiceRemote extends ProtocolService {
 }

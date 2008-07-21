@@ -1,7 +1,8 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.dto.ProtocolDTO;
-import gov.nih.nci.pa.service.impl.ProtocolServiceImpl;
+import gov.nih.nci.pa.dto.QueryStudyProtocolDTO;
+import gov.nih.nci.pa.dto.QueryStudyProtocolCriteria;
+import gov.nih.nci.pa.service.impl.StudyProtocolServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +23,17 @@ public class ProtocolServiceBean  implements ProtocolServiceLocal, ProtocolServi
     private static final Logger LOG  = Logger.getLogger(ProtocolServiceBean.class);
     
     /**
-     * @param psc ProtocolSearchCriteria
-     * @return List ProtocolDTO
+     * @param queryStudyProtocolCriteria queryStudyProtocolCriteria
+     * @return List queryStudyProtocolCriteria
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<ProtocolDTO> getProtocol(ProtocolSearchCriteria psc) throws PAException {
+    public List<QueryStudyProtocolDTO> 
+                getStudyProtocolByCriteria(QueryStudyProtocolCriteria queryStudyProtocolCriteria) throws PAException {
         LOG.debug("Entering getProtocol ");
-        ProtocolServiceImpl pImpl = new ProtocolServiceImpl();
-        List<ProtocolDTO> pdtos = new ArrayList<ProtocolDTO>();
-        pdtos = pImpl.getProtocol(psc);
+        StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
+        List<QueryStudyProtocolDTO> pdtos = new ArrayList<QueryStudyProtocolDTO>();
+        pdtos = pImpl.getStudyProtocolByCriteria(queryStudyProtocolCriteria);
         LOG.debug("Leaving getProtocol ");
         return pdtos;
     }

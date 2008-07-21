@@ -10,5 +10,5 @@ import javax.ejb.Local;
  *
  */
 @Local
-public interface ProtocolServiceLocal extends IProtocolService {
+public interface ProtocolServiceLocal extends ProtocolService {
 }
