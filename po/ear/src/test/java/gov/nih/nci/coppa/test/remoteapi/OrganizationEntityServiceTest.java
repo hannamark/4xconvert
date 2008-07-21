@@ -80,10 +80,11 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.test.integration;
+package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.organization.OrganizationEntityServiceRemote;
 
 import javax.naming.NamingException;
@@ -123,8 +124,8 @@ public class OrganizationEntityServiceTest {
      * Method to check that the remote service is working.
      * @throws Exception on error.
      */
-    @Test
-    public void testCreateAndGetOrg() throws Exception {
+    @Test(expected = EntityValidationException.class)
+    public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
         dto1.setName("Test Name");
         dto1.setAbbreviationName("TST");

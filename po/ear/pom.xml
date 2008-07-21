@@ -61,6 +61,43 @@
             <version>5.1.10</version>
             <scope>test</scope>
         </dependency>        
+        
+        <!-- API tests -->
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jbossall-client</artifactId>
+            <version>4.0.5</version>
+            <scope>system</scope>
+            <systemPath>${jboss.home}/client/jbossall-client.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-ejb3x</artifactId>
+            <version>4.0.5</version>
+            <scope>system</scope>
+            <systemPath>${jboss.home}/client/jboss-ejb3x.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-ejb3-client</artifactId>
+            <version>4.0.5</version>
+            <scope>system</scope>
+            <systemPath>${jboss.home}/client/jboss-ejb3-client.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-aop-jdk50-client</artifactId>
+            <version>4.0.5</version>
+            <scope>system</scope>
+            <systemPath>${jboss.home}/client/jboss-aop-jdk50-client.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-aspect-jdk50-client</artifactId>
+            <version>4.0.5</version>
+            <scope>system</scope>
+            <systemPath>${jboss.home}/client/jboss-aspect-jdk50-client.jar</systemPath>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

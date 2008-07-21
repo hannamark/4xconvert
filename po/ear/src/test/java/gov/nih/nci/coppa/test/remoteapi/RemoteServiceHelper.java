@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.test.integration;
+package gov.nih.nci.coppa.test.remoteapi;
 
 import gov.nih.nci.po.service.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.po.service.person.PersonEntityServiceRemote;
@@ -96,8 +96,8 @@ import javax.naming.NamingException;
  */
 public class RemoteServiceHelper {
 
-    static final String PERSON_SERVICE_BEAN_REMOTE = "po-services/PersonEntityServiceBean/remote";
-    static final String ORG_SERVICE_BEAN_REMOTE = "po-services/OrganizationEntityServiceBean/remote";
+    static final String PERSON_SERVICE_BEAN_REMOTE = "po/PersonEntityServiceBean/remote";
+    static final String ORG_SERVICE_BEAN_REMOTE = "po/OrganizationEntityServiceBean/remote";
 
     private static String username = "ejbclient";
     private static String password = "pass";
