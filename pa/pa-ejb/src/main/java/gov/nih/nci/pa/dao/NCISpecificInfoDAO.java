@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.dao;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.service.NCISpecificInfoData;
+import gov.nih.nci.pa.dto.NCISpecificInformationData;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -9,6 +9,7 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.apache.log4j.Logger;
 import java.util.Iterator;
 /**
@@ -46,25 +47,39 @@ public class NCISpecificInfoDAO {
      
      /**
      *
-     * @param nciSpecificInfoData for abstracted data            
+     * @param nciSpecificInformationData for abstracted data            
      * @return List queryList
      * @throws PAException paException
      */
-      public NCISpecificInfoDTO updateNCISpecificData(NCISpecificInfoData nciSpecificInfoData) throws PAException {
+    public NCISpecificInfoDTO updateNCISpecificData(NCISpecificInformationData nciSpecificInformationData) 
+                                                                                                   throws PAException {
         LOG.debug("Entering getNCISpecificInfo ");
         Session session = null;
         StudyProtocol studyProtocol = new StudyProtocol();
         NCISpecificInfoDTO nciSpecificInfoDto = null; 
         try {
              session = HibernateUtil.getCurrentSession();
-                          
-             studyProtocol.setId(nciSpecificInfoData.getProtocolId());
-             studyProtocol.setMonitorCode(nciSpecificInfoData.getMonitorCode());
-             session.save(studyProtocol);
-             //set the DTO object for return
-             nciSpecificInfoDto.setStudySiteID(nciSpecificInfoData.getProtocolId());
-             nciSpecificInfoDto.setMonitorCode(nciSpecificInfoData.getMonitorCode());
+             Transaction transaction = session.beginTransaction();
              
+             MonitorCode monitorCode = null;
+             studyProtocol.setId(nciSpecificInformationData.getProtocolId());
+             if (nciSpecificInformationData.getMonitorCode() != null) {
+                 monitorCode = MonitorCode.getByCode(nciSpecificInformationData.getMonitorCode());
+                 studyProtocol.setMonitorCode(monitorCode);
+             }
+            
+             //session.save(studyProtocol);
+             session.saveOrUpdate(studyProtocol);
+             transaction.commit();
+             //set the DTO object for return
+             /*
+             if (nciSpecificInfoData.getProtocolId() != null) {
+                 nciSpecificInfoDto.setStudySiteID(nciSpecificInfoData.getProtocolId());
+             }
+             if (nciSpecificInfoData.getMonitorCode() != null) {
+                nciSpecificInfoDto.setMonitorCode(nciSpecificInfoData.getMonitorCode());
+             }
+             */
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate exception in query protocol ", hbe);
             throw new PAException(" Hibernate exception in query protocol ", hbe);
