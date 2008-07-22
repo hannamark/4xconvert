@@ -3,6 +3,8 @@ package gov.nih.nci.pa.action;
 //import java.util.Map;
 
 //import com.opensymphony.xwork2.ActionContext;
+import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
@@ -80,9 +82,8 @@ public class LoginAction extends ActionSupport {
    //that checks with CSM if user exists and has Permission
 
      if (performAuthentication(getUserName(), getPassword())) {
-         // if login success full , create an entry in session
-         ///Map session = ActionContext.getContext().getSession();
-         ///session.put(Constants.LOGGED_USER_NAME, userName);
+       // if login success full , create an entry in session
+       ServletActionContext.getRequest().getSession().setAttribute(Constants.LOGGED_USER_NAME, userName);
        return SUCCESS;
      } else {
        addActionError("Invalid user name or password! Please try again!");
@@ -122,6 +123,7 @@ public class LoginAction extends ActionSupport {
    boolean isUserAuthenticated = false;
    try {
        final AuthenticationManager authenticationManager = SecurityServiceProvider.getAuthenticationManager("pa");
+       Class c = authenticationManager.getClass();
        isUserAuthenticated = authenticationManager.login(checkUserName, checkPassword);
  
        return isUserAuthenticated;
