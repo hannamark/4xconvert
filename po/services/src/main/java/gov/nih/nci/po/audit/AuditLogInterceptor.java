@@ -87,7 +87,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -101,7 +100,6 @@ import javax.persistence.JoinTable;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -134,6 +132,7 @@ import org.hibernate.collection.PersistentCollection;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "unchecked", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class AuditLogInterceptor extends EmptyInterceptor {
 
+    private static final int MAX_VALUE_LENGTH = 1024;
     private static final BagType BOGUS_TYPE = new BagType("", "", true);
     private static final String COLUMN_NAME = "columnName";
     private static final String TABLE_NAME = "tableName";
@@ -158,6 +157,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private final transient ThreadLocal<Set<DetailHelper>> details =
         new ThreadLocal<Set<DetailHelper>>();
+    
     private final transient ThreadLocal<Map<RecordKey, AuditLogRecord>> records =
         new ThreadLocal<Map<RecordKey, AuditLogRecord>>();
 
@@ -492,18 +492,19 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     }
     
     private static <A extends Auditable> String getValueString(Collection<A> value) {
-        Collection c = CollectionUtils.collect(value, new Transformer() {
-                /**
-                 * Transforms to id, ignoring ids that are null.
-                 * @param arg0 auditable to transform
-                 * @return id
-                 */
-                public Object transform(Object arg0) {
-                    return ((Auditable) arg0).getId();
-                }
-
-            }, new ArrayList<Long>());
-            return StringUtils.join(c, ", ");
+        String sep = "";
+        StringBuffer sb = new StringBuffer();
+        for (A a : value) {
+            sb.append(sep).append(a.getId());
+            sep = ", ";
+            if (sb.length() > MAX_VALUE_LENGTH) {
+                String suffix = "...";
+                sb.setLength(MAX_VALUE_LENGTH);
+                sb.replace(MAX_VALUE_LENGTH - suffix.length(), MAX_VALUE_LENGTH, suffix);
+                break;
+            }
+        }
+        return sb.toString();
     }
 
     /**

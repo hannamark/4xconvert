@@ -14,6 +14,9 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Map;
@@ -162,4 +165,52 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         assertSame(r, r2);
     }
 
+    private static String callGetValueString(Collection<? extends Auditable> value) {
+        try {
+            Method m = AuditLogInterceptor.class.getDeclaredMethod("getValueString", Collection.class);
+            m.setAccessible(true);
+            return (String) m.invoke(null, value);
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException(ex);
+        } catch (SecurityException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException(ex);
+        } catch (InvocationTargetException ex) {
+            Throwable t = ex.getTargetException();
+            if(t instanceof RuntimeException)
+                throw (RuntimeException) t;
+            throw new RuntimeException(t);
+        }
+    }
+    
+    @Test
+    public void getValueString() {
+        class Foo implements Auditable {
+            public Long getId() {
+                return Long.MAX_VALUE;
+            }
+        }
+        final Foo dummy = new Foo();
+        ArrayList<Foo> list = new ArrayList<Foo>(){
+            @Override
+            public Iterator<Foo> iterator() {
+                return new Iterator<Foo>() {
+                    int iteration = 0;
+                    public boolean hasNext() { return true; }
+                    public Foo next() { iteration++; return dummy; }
+                    public void remove() { };
+                };
+            }
+            
+        };
+        
+        String s = callGetValueString(list);
+        assertTrue(s.length() == 1024);
+        assertTrue(s.endsWith("..."));
+    }
+    
+    
 }
