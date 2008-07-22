@@ -3,7 +3,7 @@ package gov.nih.nci.pa.action;
 import org.apache.log4j.Logger;
 
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
-import gov.nih.nci.pa.service.NCISpecificInfoData;
+import gov.nih.nci.pa.dto.NCISpecificInfoData;
 import gov.nih.nci.pa.util.PaRegistry;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -14,8 +14,8 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  */
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 @Validation
-public class NCISpecificInfoAction  extends ActionSupport {
-     private static final Logger LOG  = Logger.getLogger(NCISpecificInfoAction.class);
+public class NCISpecificInformationAction  extends ActionSupport {
+     private static final Logger LOG  = Logger.getLogger(NCISpecificInformationAction.class);
 
     /**
      * 
