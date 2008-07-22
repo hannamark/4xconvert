@@ -8,6 +8,7 @@ import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.ReportingDataSetMethodCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,8 @@ public class StudyProtocol extends Document {
     
     private String biospecimenDescription;
     private BiospecimenRetentionCode biospecimenRetentionCode;
-
+    private ReportingDataSetMethodCode reportingDataSetMethodCode;
+    
     /** Number of study groups/cohorts. Enter 1 for a single-group study. Many observational
      *  studies have one group/cohort; case control studies typically have two* */
     private Integer groupNumber;
@@ -297,6 +299,25 @@ public class StudyProtocol extends Document {
     public void setBiospecimenRetentionCode(
             BiospecimenRetentionCode biospecimenRetentionCode) {
         this.biospecimenRetentionCode = biospecimenRetentionCode;
+    }
+    
+    /**
+     * 
+     * @return ReportingDataSetMethodCode reportingDataSetMethodCode
+     */
+    @Column(name = "REPORTING_DATASET_METHOD_CODE")
+    @Enumerated(EnumType.STRING)
+    
+    public ReportingDataSetMethodCode getReportingDataSetMethodCode() {
+        return reportingDataSetMethodCode;
+    }
+    /**
+     * 
+     * @param reportingDataSetMethodCode reportingDataSetMethodCode
+     */
+    public void setReportingDataSetMethodCode(
+            ReportingDataSetMethodCode reportingDataSetMethodCode) {
+        this.reportingDataSetMethodCode = reportingDataSetMethodCode;
     }
     /**
      * 
