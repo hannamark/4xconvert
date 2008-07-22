@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
-import gov.nih.nci.pa.dto.NCISpecificInfoData;
+import gov.nih.nci.pa.dto.NCISpecificInformationData;
 /**
  * 
  * @author gnaveh
@@ -19,9 +19,9 @@ public interface NCISpecificInformationService {
 
     /**
      * 
-     * @param nciSpecificInfoData NCISpecificInfoData 
+     * @param nciSpecificInformationData NCISpecificInformationData 
      * @return NCISpecificInfoDto   
      * @throws PAException on error 
      */
-     NCISpecificInfoDTO updateNCISpecificData(NCISpecificInfoData nciSpecificInfoData) throws PAException;
+     NCISpecificInfoDTO updateNCISpecificData(NCISpecificInformationData nciSpecificInformationData) throws PAException;
 }

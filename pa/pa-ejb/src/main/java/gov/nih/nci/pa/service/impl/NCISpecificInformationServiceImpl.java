@@ -2,7 +2,7 @@ package gov.nih.nci.pa.service.impl;
 
 import gov.nih.nci.pa.dao.NCISpecificInfoDAO;
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
-import gov.nih.nci.pa.dto.NCISpecificInfoData;
+import gov.nih.nci.pa.dto.NCISpecificInformationData;
 import gov.nih.nci.pa.service.PAException;
 
 /**
@@ -10,7 +10,7 @@ import gov.nih.nci.pa.service.PAException;
  * @author gnaveh
  *
  */
-public class NCISpecificInfoServiceImpl {
+public class NCISpecificInformationServiceImpl {
 
     /**
      * @param spid ProtocolID
@@ -22,13 +22,13 @@ public class NCISpecificInfoServiceImpl {
     }
     
     /**
-     * @param nciSpecificInfoData the abstracted data
+     * @param nciSpecificInformationData the abstracted data
      * @return NCI Specific Info DTO object
      * @throws PAException on error
      */
     public NCISpecificInfoDTO 
-              updateNCISpecificData(NCISpecificInfoData nciSpecificInfoData) throws PAException {               
-        return new NCISpecificInfoDAO().updateNCISpecificData(nciSpecificInfoData);      
+       updateNCISpecificData(NCISpecificInformationData nciSpecificInformationData) throws PAException {               
+        return new NCISpecificInfoDAO().updateNCISpecificData(nciSpecificInformationData);      
      }
 
 }
