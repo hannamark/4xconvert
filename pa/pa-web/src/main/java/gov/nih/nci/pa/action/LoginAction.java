@@ -122,8 +122,7 @@ public class LoginAction extends ActionSupport {
 
    boolean isUserAuthenticated = false;
    try {
-       final AuthenticationManager authenticationManager = SecurityServiceProvider.getAuthenticationManager("pa");
-       Class c = authenticationManager.getClass();
+       final AuthenticationManager authenticationManager = SecurityServiceProvider.getAuthenticationManager("pa"); 
        isUserAuthenticated = authenticationManager.login(checkUserName, checkPassword);
  
        return isUserAuthenticated;
