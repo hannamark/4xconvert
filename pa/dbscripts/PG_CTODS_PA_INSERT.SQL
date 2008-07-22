@@ -55,4 +55,10 @@ insert into study_coordinating_center_roles (id, responsibility_code,study_coord
 insert into study_coordinating_center_roles (id, responsibility_code,study_coordinating_center_id) values (4,'PROTOCOL_MANAGEMENT',4);
 insert into study_coordinating_center_roles (id, responsibility_code,study_coordinating_center_id) values (5,'PROTOCOL_MANAGEMENT',5);
 
+insert into conditions (id,code,name,parent_code ) Values (1,'A','Cancer',null );
+insert into conditions (id,code,name,parent_code ) Values (2,'B','Breast Cancer','A' );
+
+insert into study_conditions(id,lead_indicator,conditions_id,study_protocol_id) values (1,'YES',1,1);
+insert into study_conditions(id,lead_indicator,conditions_id,study_protocol_id) values (2,'NO',2,1);
+
 commit ;
