@@ -91,7 +91,7 @@ public enum AbstractionStatusCode implements CodedEnum<String> {
       * construct a array of display names for Abstracted Status coded Enum.
       * @return String[] display names for Abstracted Status Code
       */
-     public static String[]  getCodedNames() {
+     public static String[]  getDisplayNames() {
          AbstractionStatusCode[] absStatusCodes = AbstractionStatusCode.values();
          String[] codedNames = new String[absStatusCodes.length];
          for (int i = 0; i < absStatusCodes.length; i++) {
