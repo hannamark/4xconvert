@@ -8,6 +8,6 @@ import javax.ejb.Local;
  *
  */
 @Local
-public interface NCISpecificInfoServiceLocal extends INCISpecificInfoService {
+public interface NCISpecificInformationServiceLocal extends NCISpecificInformationService {
 
 }

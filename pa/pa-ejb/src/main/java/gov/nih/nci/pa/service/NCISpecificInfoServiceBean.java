@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
+import gov.nih.nci.pa.dto.NCISpecificInfoData;
 import gov.nih.nci.pa.service.impl.NCISpecificInfoServiceImpl;
 
 import javax.ejb.TransactionAttribute;
@@ -17,7 +18,7 @@ import javax.ejb.Stateless;
  *
  */
 @Stateless
-public class NCISpecificInfoServiceBean implements NCISpecificInfoServiceLocal, NCISpecificInfoServiceRemote {
+public class NCISpecificInfoServiceBean implements NCISpecificInformationServiceLocal, NCISpecificInformationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(NCISpecificInfoServiceBean.class);
     

@@ -2,7 +2,7 @@ package gov.nih.nci.pa.service.impl;
 
 import gov.nih.nci.pa.dao.NCISpecificInfoDAO;
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
-import gov.nih.nci.pa.service.NCISpecificInfoData;
+import gov.nih.nci.pa.dto.NCISpecificInfoData;
 import gov.nih.nci.pa.service.PAException;
 
 /**

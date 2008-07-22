@@ -1,13 +1,13 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
-
+import gov.nih.nci.pa.dto.NCISpecificInfoData;
 /**
  * 
  * @author gnaveh
  *
  */
-public interface INCISpecificInfoService {
+public interface NCISpecificInformationService {
 
     /**
     * 

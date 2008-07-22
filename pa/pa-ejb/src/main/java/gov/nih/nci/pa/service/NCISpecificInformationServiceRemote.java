@@ -8,6 +8,6 @@ import javax.ejb.Remote;
  *
  */
 @Remote
-public interface NCISpecificInfoServiceRemote extends INCISpecificInfoService {
+public interface NCISpecificInformationServiceRemote extends NCISpecificInformationService {
 
 }
