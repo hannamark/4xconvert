@@ -38,9 +38,9 @@
 			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
 		</action>		
 		
-		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInfoAction" method="queryCheck">
+		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="queryCheck">
 			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/nciSpecificInfo.jsp</result>
+			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
 			<result name="error">/jsp/pajsp/nciSpecificInfo.jsp</result>
 		</action>
 		

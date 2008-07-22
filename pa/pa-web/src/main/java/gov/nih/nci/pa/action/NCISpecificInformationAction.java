@@ -3,7 +3,7 @@ package gov.nih.nci.pa.action;
 import org.apache.log4j.Logger;
 
 import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
-import gov.nih.nci.pa.dto.NCISpecificInfoData;
+import gov.nih.nci.pa.dto.NCISpecificInformationData;
 import gov.nih.nci.pa.util.PaRegistry;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -24,7 +24,7 @@ public class NCISpecificInformationAction  extends ActionSupport {
      //TO-DO: This value should extracted from session variable
      private static String protocolID = "2";  
      private NCISpecificInfoDTO nciSpecificInfoDTO;
-     private NCISpecificInfoData nciSpecificInfoData = new NCISpecificInfoData();
+     private NCISpecificInformationData nciSpecificInformationData = new NCISpecificInformationData();
   
      /**  
      * @return res
@@ -32,7 +32,7 @@ public class NCISpecificInformationAction  extends ActionSupport {
     public String queryCheck()  {
         try {              
             this.nciSpecificInfoDTO = 
-                      PaRegistry.getNCISpecificInfoService().getNCISpecificInfo(protocolID);              
+                      PaRegistry.getNCISpecificInformationService().getNCISpecificInfo(protocolID);              
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -46,7 +46,7 @@ public class NCISpecificInformationAction  extends ActionSupport {
     public String queryUpdate()  {
         try {              
             this.nciSpecificInfoDTO = 
-                      PaRegistry.getNCISpecificInfoService().updateNCISpecificData(nciSpecificInfoData);              
+         PaRegistry.getNCISpecificInformationService().updateNCISpecificData(nciSpecificInformationData);              
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -73,14 +73,14 @@ public class NCISpecificInformationAction  extends ActionSupport {
    * 
    * @return nciSpecificInfoData dto
    */
-     public NCISpecificInfoData getNciSpecificInfoData() {
-      return nciSpecificInfoData;
+     public NCISpecificInformationData getNciSpecificInformationData() {
+      return nciSpecificInformationData;
      }
   /**
    * 
-   * @param nciSpecificInfoData ref
+   * @param nciSpecificInformationData ref
    */
-    public void setNciSpecificInfoData(NCISpecificInfoData nciSpecificInfoData) {
-       this.nciSpecificInfoData = nciSpecificInfoData;
+    public void setNciSpecificInformationData(NCISpecificInformationData nciSpecificInformationData) {
+       this.nciSpecificInformationData = nciSpecificInformationData;
     }
 }
