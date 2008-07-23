@@ -16,10 +16,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_query_cache">false</property> 
 
         <mapping class="gov.nih.nci.po.data.bo.Address"/>
-        <mapping class="gov.nih.nci.po.data.bo.Certificate"/>
-        <mapping class="gov.nih.nci.po.data.bo.License"/>
-        <mapping class="gov.nih.nci.po.data.bo.Degree"/>
-        <mapping class="gov.nih.nci.po.data.bo.Speciality"/>
         <mapping class="gov.nih.nci.po.data.bo.Person"/>
         <mapping class="gov.nih.nci.po.data.bo.ContactInfo"/>
         <mapping class="gov.nih.nci.po.data.bo.Organization"/>
@@ -32,7 +28,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.alternate.ProviderOrganization" />
 
         <mapping class="gov.nih.nci.po.data.common.Country" />
-        <mapping class="gov.nih.nci.po.data.common.DegreeType" />
         <mapping class="gov.nih.nci.po.data.common.PersonType"/>
         <mapping class="gov.nih.nci.po.data.common.OrganizationType"/>
         <mapping class="gov.nih.nci.po.data.common.State"/>

@@ -83,25 +83,42 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractAddress;
 import gov.nih.nci.po.data.common.Country;
 import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Primary address class.
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
-public class Address extends AbstractAddress implements Auditable {
+public class Address implements Auditable, PersistentObject {
     private static final long serialVersionUID = 1L;
+
+    private static final int LINE_LENGTH = 254;
+    private static final int CITY_LENGTH = 50;
+    private static final int STATE_LENGTH = 50;
+    private static final int POSTAL_LENGTH = 20;
+
+    private Long id;
+    private String streetAddressLine;
+    private String deliveryAddressLine;
+    private String cityOrMunicipality;
+    private String stateOrProvince;
+    private String postalCode;
+    private Country country;
 
     /**
      * @param streetAddressLine line 1
@@ -112,19 +129,11 @@ public class Address extends AbstractAddress implements Auditable {
      */
     public Address(String streetAddressLine, String cityOrMunicipality, String stateOrProvince, String postalCode,
                    Country country) {
-        setStreetAddressLine(streetAddressLine);
-        setCityOrMunicipality(cityOrMunicipality);
-        setStateOrProvince(stateOrProvince);
-        setPostalCode(postalCode);
-        setCountry(country);
-    }
-
-    /**
-     * Copy constructor.
-     * @param address the address.
-     */
-    public Address(AbstractAddress address) {
-        super(address);
+        this.streetAddressLine = streetAddressLine;
+        this.cityOrMunicipality = cityOrMunicipality;
+        this.stateOrProvince = stateOrProvince;
+        this.postalCode = postalCode;
+        this.country = country;
     }
 
     /**
@@ -135,40 +144,114 @@ public class Address extends AbstractAddress implements Auditable {
     }
 
     /**
-     * {@inheritDoc}
+     * @return database identifier
      */
-    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * The setter for the id.
+     * @param id the id.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return line 1
+     */
     @NotEmpty
+    @Length(max = LINE_LENGTH)
     public String getStreetAddressLine() {
-        return super.getStreetAddressLine();
+        return streetAddressLine;
     }
 
     /**
-     * {@inheritDoc}
+     * @param streetAddressLine line 1
      */
-    @Override
+    public void setStreetAddressLine(String streetAddressLine) {
+        this.streetAddressLine = streetAddressLine;
+    }
+
+    /**
+     * @return line 2
+     */
+    @Length(max = LINE_LENGTH)
+    public String getDeliveryAddressLine() {
+        return deliveryAddressLine;
+    }
+
+    /**
+     * @param deliveryAddressLine line 2
+     */
+    public void setDeliveryAddressLine(String deliveryAddressLine) {
+        this.deliveryAddressLine = deliveryAddressLine;
+    }
+
+    /**
+     * @return cityOrMunicipality
+     */
     @NotEmpty
+    @Length(max = CITY_LENGTH)
     public String getCityOrMunicipality() {
-        return super.getCityOrMunicipality();
+        return cityOrMunicipality;
+    }
+
+    /**
+     * @param cityOrMunicipality cityOrMunicipality
+     */
+    public void setCityOrMunicipality(String cityOrMunicipality) {
+        this.cityOrMunicipality = cityOrMunicipality;
+    }
+
+    /**
+     * @return postal code
+     */
+    @NotEmpty
+    @Length(max = POSTAL_LENGTH)
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    /**
+     * @param postalCode postal code
+     */
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     * @return stateOrProvince
+     */
+    @Length(max = STATE_LENGTH)
+    public String getStateOrProvince() {
+        return stateOrProvince;
+    }
+
+    /**
+     * @param stateOrProvince stateOrProvince
+     */
+    public void setStateOrProvince(String stateOrProvince) {
+        this.stateOrProvince = stateOrProvince;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     @ForeignKey(name = "ADDRESS_COUNTRY_FK")
     public Country getCountry() {
-        return super.getCountry();
+        return country;
     }
 
     /**
-     * {@inheritDoc}
+     * @param country country
      */
-    @Override
-    @NotEmpty
-    public String getPostalCode() {
-        return super.getPostalCode();
+    public void setCountry(Country country) {
+        this.country = country;
     }
 }

@@ -132,10 +132,6 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     private static final long serialVersionUID = 7515315163406642400L;
     private ContactInfo preferredContactInfo;
     private List<ContactInfo> contactInfos = new ArrayList<ContactInfo>(1);
-    private List<Degree> degrees = new ArrayList<Degree>();
-    private List<Certificate> certificates = new ArrayList<Certificate>();
-    private List<License> licenses = new ArrayList<License>();
-    private List<Speciality> specialities = new ArrayList<Speciality>();
     private Set<ProviderPerson> altIds = new HashSet<ProviderPerson>();
     private CurationStatus curationStatus;
     private CurationStatus priorCurationStatus;
@@ -166,30 +162,12 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     /**
-     * @return certificates
-     */
-    @OneToMany(mappedBy = "person")
-    @Sort(type = SortType.NATURAL)
-    public List<Certificate> getCertificates() {
-        return certificates;
-    }
-
-    /**
      * @return list of contact info
      */
     @OneToMany(mappedBy = "person")
     @Sort(type = SortType.NATURAL)
     public List<ContactInfo> getContactInfos() {
         return contactInfos;
-    }
-
-    /**
-     * @return degrees
-     */
-    @OneToMany(mappedBy = "person")
-    @Sort(type = SortType.NATURAL)
-    public List<Degree> getDegrees() {
-        return degrees;
     }
 
     /**
@@ -211,15 +189,6 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     /**
-     * @return licenses
-     */
-    @OneToMany(mappedBy = "person")
-    @Sort(type = SortType.NATURAL)
-    public List<License> getLicenses() {
-        return licenses;
-    }
-
-    /**
      * @return preferred contact info
      */
     @ManyToOne(cascade = CascadeType.ALL)
@@ -232,15 +201,6 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     /**
-     * @return specialities
-     */
-    @OneToMany(mappedBy = "person")
-    @Sort(type = SortType.NATURAL)
-    public List<Speciality> getSpecialities() {
-        return specialities;
-    }
-
-    /**
      * @param preferredContactInfo preferred contact info
      */
     public void setPreferredContactInfo(ContactInfo preferredContactInfo) {
@@ -248,28 +208,8 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     @SuppressWarnings("unused")
-    private void setCertificates(List<Certificate> certificates) {
-        this.certificates = certificates;
-    }
-
-    @SuppressWarnings("unused")
     private void setContactInfos(List<ContactInfo> contactInfos) {
         this.contactInfos = contactInfos;
-    }
-
-    @SuppressWarnings("unused")
-    private void setDegrees(List<Degree> degrees) {
-        this.degrees = degrees;
-    }
-
-    @SuppressWarnings("unused")
-    private void setLicenses(List<License> licenses) {
-        this.licenses = licenses;
-    }
-
-    @SuppressWarnings("unused")
-    private void setSpecialities(List<Speciality> specialities) {
-        this.specialities = specialities;
     }
 
     /**

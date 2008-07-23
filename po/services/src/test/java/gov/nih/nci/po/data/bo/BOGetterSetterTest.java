@@ -2,10 +2,7 @@ package gov.nih.nci.po.data.bo;
 
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.common.Country;
-import gov.nih.nci.po.data.common.DegreeType;
 import gov.nih.nci.po.data.common.State;
-
-import java.util.Date;
 
 import org.junit.Test;
 
@@ -15,36 +12,6 @@ import org.junit.Test;
  * @author Steve Matyas
  */
 public class BOGetterSetterTest {
-
-    /**
-     * Test License getter and setters.
-     */
-    @Test
-    public void testLicenseGetterSetters() {
-        License license = new License(new Person(), new Date(), new Organization(), "detail");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(license);
-
-    }
-
-    /**
-     * Test Degree Type getter and setters.
-     */
-    @Test
-    public void testDegreeTypeGetterSetters() {
-        DegreeType degreeType = new DegreeType("code", "name");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(degreeType);
-
-    }
-
-    /**
-     * Test Degree getters and setters.
-     */
-    @Test
-    public void testDegreeGetterSetters() {
-        Degree degree = new Degree();
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(degree);
-
-    }
 
     /**
      * Test URL getters and setters.
@@ -101,29 +68,11 @@ public class BOGetterSetterTest {
     }
 
     /**
-     * Test Speciality getter and setters.
-     */
-    @Test
-    public void testSpecialityGetterSetters() {
-        Speciality speciality = new Speciality("Name", true, true, new Person());
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(speciality);
-    }
-
-    /**
      * Test State getter and setters.
      */
     @Test
     public void testStateGetterSetters() {
         State state = new State();
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(state);
-    }
-
-    /**
-     * Test State getter and setters.
-     */
-    @Test
-    public void testCertificateGetterSetters() {
-        Certificate certificate = new Certificate(new Person(), new Date(), new Organization(), "detail");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(certificate);
     }
 }
