@@ -15,14 +15,11 @@
 		<action name="helloWorld" class="helloWorldAction"> 
 			<result name="input">/jsp/index.jsp</result>
 			<result>/jsp/helloWorld.jsp</result>
-		</action>		
-		<action name="searchProtocol">
-			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
-		</action>
-		<action name="queryProtocol" class="gov.nih.nci.pa.action.QueryStudyProtocolAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />
-			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
-			<result name="error">/jsp/pajsp/protocolSearchCriteria.jsp</result>
+		</action>	
+		
+		<action name="studyProtocolQuery" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="query">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
 		</action>
 		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
 			<interceptor-ref name="nci-commonsParams" />				         
@@ -35,7 +32,7 @@
 			<interceptor-ref name="nci-commonsParams" />
 			<result name="input">/jsp/pajsp/login.jsp</result>
 			<result name="error">/jsp/pajsp/login.jsp</result>
-			<result>/jsp/pajsp/protocolSearchCriteria.jsp</result>
+			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
 		</action>		
 		
 		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="queryCheck">
