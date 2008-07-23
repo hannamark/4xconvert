@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.po.data.convert.ISOUtils;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -127,8 +128,8 @@ public class OrganizationEntityServiceTest {
     @Test(expected = EntityValidationException.class)
     public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
-        dto1.setName("Test Name");
-        dto1.setAbbreviationName("TST");
+        dto1.setName(ISOUtils.TOSt.convert("Test Name"));
+        dto1.setAbbreviationName(ISOUtils.TOSt.convert("TST"));
         long id = orgService.createOrganization(dto1);
         OrganizationDTO dto2 = orgService.getOrganization(id);
         assertEquals(dto1, dto2);
