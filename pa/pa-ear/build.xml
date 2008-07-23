@@ -14,10 +14,10 @@
     <property name="pa-ear.build.dir" value="${basedir}/target"/>
     <property name="pa-ear.build.outputDir" value="${pa-ear.build.dir}/classes"/>	
     <property name="pa-ear.build.testOutputDir" value="${pa-ear.build.dir}/test-classes"/>
-    <property name="pa-ear.build.resourceDir.0" value="${basedir}/src/main/resources"/>	
+    <property name="pa-ear.build.resourceDir.0" value="${basedir}/src/resources"/>	
     <property name="pa-ear.test.reports" value="${pa-ear.build.dir}/test-reports"/>
-    <property name="pa-ear.build.testDir.0" value="${basedir}/src/test/java"/>
-    <property name="pa-ear.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+    <property name="pa-ear.build.testDir.0" value="${basedir}/test/java"/>
+    <property name="pa-ear.build.testResourceDir.0" value="${basedir}/test/resources"/>
 	<property name="pa-ear.build.finalName" value="pa"/>
 	<property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
 	<property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
