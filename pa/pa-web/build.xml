@@ -14,11 +14,11 @@
     <property name="pa-web.build.finalName" value="pa-web"/>
     <property name="pa-web.build.dir" value="${basedir}/target"/>
     <property name="pa-web.build.outputDir" value="${pa-web.build.dir}/classes"/>
-    <property name="pa-web.build.srcDir.0" value="${basedir}/src/main/java"/>
-    <property name="pa-web.build.resourceDir.0" value="${basedir}/src/main/resources"/>
+    <property name="pa-web.build.srcDir.0" value="${basedir}/src/java"/>
+    <property name="pa-web.build.resourceDir.0" value="${basedir}/src/resources"/>
     <property name="pa-web.build.testOutputDir" value="${pa-web.build.dir}/test-classes"/>
-    <property name="pa-web.build.testDir.0" value="${basedir}/src/test/java"/>
-    <property name="pa-web.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+    <property name="pa-web.build.testDir.0" value="${basedir}/test/java"/>
+    <property name="pa-web.build.testResourceDir.0" value="${basedir}/test/resources"/>
     <property name="pa-web.test.reports" value="${pa-web.build.dir}/test-reports"/>
     <property name="pa-web.coverage.reports" value="${pa-web.build.dir}/coverage-reports"/>
     <property name="pa-web.reporting.outputDirectory" value="${pa-web.build.dir}/site"/>
@@ -235,7 +235,7 @@
         		<path refid="jboss.classpath"/>  
         		<path refid="jboss.classpath.client"/>
         	</classpath>
-            <fileset dir="src/main" includes="**/*.java" />
+            <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa-web.build.dir}/checkstyle.txt"/>
         </checkstyle>
@@ -251,7 +251,7 @@
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa-web.build.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${pa-web.build.dir}/pmd.xml"/>
-            <fileset dir="src/main">
+            <fileset dir="srcn">
                 <include name="**/*.java"/>
             </fileset>
          </pmd>
@@ -263,7 +263,7 @@
 
     <target name="test-simian" description="Run Simian similarity analyzer checks">
         <simian>
-            <fileset dir="src/main" includes="**/*.java"/>
+            <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${pa-web.build.dir}/simian.txt"/>
             <formatter type="plain"/>
         </simian>
@@ -289,12 +289,12 @@
 
         <war destfile="${pa-web.build.dir}/${pa-web.war}" 
              compress="false" 
-             webxml="${basedir}/src/main/webapp/WEB-INF/web.xml">
+             webxml="${basedir}/src/webapp/WEB-INF/web.xml">
             
             <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${pa-web.build.outputDir}"/>
-            <webinf dir="${basedir}/src/main/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${basedir}/src/main/webapp"/>
+            <webinf dir="${basedir}/src/webapp/WEB-INF" excludes="web.xml"/>
+            <fileset dir="${basedir}/src/webapp"/>
         </war>
 	</target>
 

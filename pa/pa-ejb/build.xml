@@ -13,11 +13,11 @@
     <property name="pa-ejb.build.finalName" value="pa-ejb"/>
     <property name="pa-ejb.build.dir" value="${basedir}/target"/>
     <property name="pa-ejb.build.outputDir" value="${pa-ejb.build.dir}/classes"/>
-    <property name="pa-ejb.build.srcDir.0" value="${basedir}/src/main/java"/>
-    <property name="pa-ejb.build.resourceDir.0" value="${basedir}/src/main/resources"/>
+    <property name="pa-ejb.build.srcDir.0" value="${basedir}/src/java"/>
+    <property name="pa-ejb.build.resourceDir.0" value="${basedir}/src/resources"/>
     <property name="pa-ejb.build.testOutputDir" value="${pa-ejb.build.dir}/test-classes"/>
-    <property name="pa-ejb.build.testDir.0" value="${basedir}/src/test/java"/>
-    <property name="pa-ejb.build.testResourceDir.0" value="${basedir}/src/test/resources"/>
+    <property name="pa-ejb.build.testDir.0" value="${basedir}/test/java"/>
+    <property name="pa-ejb.build.testResourceDir.0" value="${basedir}/test/resources"/>
     <property name="pa-ejb.test.reports" value="${pa-ejb.build.dir}/test-reports"/>
     <property name="pa-ejb.coverage.reports" value="${pa-ejb.build.dir}/coverage-reports"/>
     <property name="pa-ejb.reporting.outputDirectory" value="${pa-ejb.build.dir}/site"/>
@@ -219,7 +219,7 @@
                 <path refid="build.test.classpath"/>
                 <pathelement location="${pa-ejb.build.outputDir}"/>
             </classpath>
-        	<fileset dir="src/main" includes="**/*.java" />
+        	<fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa-ejb.build.dir}/checkstyle.txt"/>
         </checkstyle>
@@ -235,7 +235,7 @@
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa-ejb.build.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${pa-ejb.build.dir}/pmd.xml"/>
-            <fileset dir="src/main">
+            <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
          </pmd>
@@ -247,7 +247,7 @@
 
     <target name="test-simian" description="Run Simian similarity analyzer checks">
         <simian>
-            <fileset dir="src/main" includes="**/*.java"/>
+            <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${pa-ejb.build.dir}/simian.txt"/>
             <formatter type="plain"/>
         </simian>
