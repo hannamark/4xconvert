@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="pa-web/src/test/resources"/>
-	<classpathentry kind="src" path="pa-ear/src/test/java"/>
-	<classpathentry kind="src" path="pa-ear/src/test/resources"/>
-	<classpathentry kind="src" path="pa-ejb/src/main/java"/>
-	<classpathentry kind="src" path="pa-ejb/src/main/resources"/>
-	<classpathentry kind="src" path="pa-ejb/src/test/resources"/>
-	<classpathentry kind="src" path="pa-ejb/src/test/java"/>
-	<classpathentry kind="src" path="pa-web/src/test/java"/>
-	<classpathentry kind="src" path="pa-web/src/main/resources"/>
-	<classpathentry kind="src" path="pa-web/src/main/java"/>
+	<classpathentry kind="src" path="pa-web/test/resources"/>
+	<classpathentry kind="src" path="pa-ear/test/resources"/>
+	<classpathentry kind="src" path="pa-ejb/test/resources"/>
+	<classpathentry kind="src" path="pa-ear/test/java"/>
+	<classpathentry kind="src" path="pa-ejb/test/java"/>
+	<classpathentry kind="src" path="pa-web/test/java"/>
+
+	<classpathentry kind="src" path="pa-ejb/src/java"/>
+	<classpathentry kind="src" path="pa-ejb/src/resources"/>
+	<classpathentry kind="src" path="pa-web/src/resources"/>
+	<classpathentry kind="src" path="pa-web/src/java"/>
+
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/main/aopalliance-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/main/jstl-1.1.2.jar"/>
