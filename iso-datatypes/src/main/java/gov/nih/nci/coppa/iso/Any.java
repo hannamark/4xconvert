@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.io.Serializable;
+
 /**
  * Represents the iso Any type.
  * @author Scott Miller
  */
-public class Any {
+public class Any implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private String flavorId;
     private NullFlavor nullFlavor;
