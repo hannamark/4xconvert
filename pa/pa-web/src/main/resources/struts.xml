@@ -41,14 +41,14 @@
 		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="queryCheck">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result name="error">/jsp/pajsp/nciSpecificInfo.jsp</result>
+			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
 		</action>
 		
-		<action name="updateNCISpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInfoAction" method="queryUpdate">
+		<action name="updateNCISpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="queryUpdate">
 		    <interceptor-ref name="nci-commonsParams" />
-			<result name="input">/jsp/pajsp/nciSpecificInfo.jsp</result>			
-			<result name="error">/jsp/pajsp/nciSpecificInfo.jsp</result>
-			<result>/jsp/pajsp/nciSpecificInfo.jsp</result>
+			<result name="input">/jsp/pajsp/nciSpecificInformation.jsp</result>			
+			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
+			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
 		</action>	
 		
 				
