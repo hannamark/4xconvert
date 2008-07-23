@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
 
-import gov.nih.nci.pa.service.ProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.SessionManagerRemote;
 import gov.nih.nci.pa.test.util.TestPropertiesPaEar;
 
@@ -48,8 +48,8 @@ public class RemoteServiceHelper {
      * @return the service.
      * @throws NamingException on error.
      */
-    public static ProtocolServiceRemote getProtocolService() throws NamingException {
-        return (ProtocolServiceRemote) lookup(PROTOCOL_SERVICE_BEAN_REMOTE);
+    public static StudyProtocolServiceRemote getProtocolService() throws NamingException {
+        return (StudyProtocolServiceRemote) lookup(PROTOCOL_SERVICE_BEAN_REMOTE);
     }
 
     /**
