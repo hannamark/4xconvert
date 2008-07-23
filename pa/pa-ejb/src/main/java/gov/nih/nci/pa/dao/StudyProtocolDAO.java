@@ -1,6 +1,6 @@
 package gov.nih.nci.pa.dao;
 
-import gov.nih.nci.pa.dto.QueryStudyProtocolCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.enums.AssigningAuthorityCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -32,13 +32,13 @@ public class StudyProtocolDAO {
 
     /**
      *
-     * @param queryStudyProtocolCriteria
-     *            protocolSearchCriteria
+     * @param studyProtocolQueryCriteria
+     *            studyProtocolQueryCriteria
      * @return List queryList
      * @throws PAException paException
      */
     public List<Object> getStudyProtocolByCriteria(
-            QueryStudyProtocolCriteria queryStudyProtocolCriteria) throws PAException {
+            StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
         LOG.debug("Entering getStudyProtocolByCriteria ");
         List<Object> queryList = new ArrayList<Object>();
         Session session = null;
@@ -46,7 +46,7 @@ public class StudyProtocolDAO {
         session = HibernateUtil.getCurrentSession();
         Query query = null;
         // step 1: form the hql
-        String hql = generateStudyProtocolQuery(queryStudyProtocolCriteria);
+        String hql = generateStudyProtocolQuery(studyProtocolQueryCriteria);
         LOG.info(" query protocol = " + hql);
         // step 2: construct query object
         query = session.createQuery(hql);
@@ -65,27 +65,27 @@ public class StudyProtocolDAO {
     /**
      * generate HQL query for search protocol.
      *
-     * @param protocolSearchCriteria
-     *            protocolSearchCriteria
+     * @param studyProtocolQueryCriteria
+     *            studyProtocolQueryCriteria
      * @return hql
      * @throws PAException paException
      */
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private String generateStudyProtocolQuery(
-            QueryStudyProtocolCriteria queryStudyProtocolCriteria) throws PAException {
-        LOG.debug("Entering generateProtocolQuery ");
+            StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
+        LOG.debug("Entering generateStudyProtocolQuery ");
         StringBuffer hql = new StringBuffer();
         try {
             hql.append(" select sp , sos , dws , di from StudyProtocol as sp  "
                     +  "left outer join sp.studyOverallStatuses as sos  "
                     +  "left outer join sp.documentWorkflowStatuses as dws  "
                     +  "left outer join sp.documentIdentifications as di  ")
-            .append(generateWhereClause(queryStudyProtocolCriteria));
+            .append(generateWhereClause(studyProtocolQueryCriteria));
         } catch (Exception e) {
             LOG.error("General error in while converting to DTO3", e);
             throw new PAException("General error in while converting to DTO4", e);
         } finally {
-            LOG.debug("Leaving generateProtocolQuery ");
+            LOG.debug("Leaving generateStudyProtocolQuery ");
         }
         return hql.toString();
 
@@ -94,40 +94,47 @@ public class StudyProtocolDAO {
     /**
      * generate a where clause for a given protocol search criteria.
      *
-     * @param protocolSearchCriteria
+     * @param studyProtocolQueryCriteria
      * @return String String
      * @throws PAException paException
      */
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.InefficientStringBuffering", "PMD.ConsecutiveLiteralAppends" })
     private String generateWhereClause(
-            QueryStudyProtocolCriteria queryStudyProtocolCriteria) throws PAException {
+            StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
         LOG.debug("Entering generateWhereClause ");
         StringBuffer where = new StringBuffer();
         try {
             where.append("where 1 = 1 ");
-            if (PAUtil.isNotNullOrNotEmpty(queryStudyProtocolCriteria.getStudyProtocolId())) {
-                where.append(" and sp.id = ").append(queryStudyProtocolCriteria.getStudyProtocolId());
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getStudyProtocolId())) {
+                where.append(" and sp.id = ").append(studyProtocolQueryCriteria.getStudyProtocolId());
                       
             }
-            if (PAUtil.isNotNullOrNotEmpty(queryStudyProtocolCriteria.getPhaseCode())) {
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
+                    .getOfficialTitle())) {
+                where.append(" and upper(sp.officialTitle)  like '%"
+                        + studyProtocolQueryCriteria.getOfficialTitle().toUpperCase()
+                                .trim().replaceAll("'", "''") + "%'");
+            }
+            
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPhaseCode())) {
                 where.append("and sp.phaseCode  = '" 
-                        + StudyStatusCode.getByCode(queryStudyProtocolCriteria.getPhaseCode())
+                        + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getPhaseCode())
                         + "'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(queryStudyProtocolCriteria
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
                     .getNciIdentifier())) {
-                where.append(" and di.identifier = '").append(queryStudyProtocolCriteria.getNciIdentifier() + "'");
+                where.append(" and di.identifier = '").append(studyProtocolQueryCriteria.getNciIdentifier() + "'");
                 where.append(" and di.assigningAuthorityCode = '").append(AssigningAuthorityCode.NCI + "'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(queryStudyProtocolCriteria.getStudyStatusCode())) {
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
                 where.append("and sos.studyStatusCode  = '" 
-                        + StudyStatusCode.getByCode(queryStudyProtocolCriteria.getStudyStatusCode())
+                        + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getStudyStatusCode())
                         + "'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(queryStudyProtocolCriteria.getDocumentWorkflowStatusCode())) {
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
                 where.append("and dws.documentWorkflowStatusCode  = '" 
                         + DocumentWorkflowStatusCode.getByCode(
-                                queryStudyProtocolCriteria.getDocumentWorkflowStatusCode())
+                                studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())
                         + "'");
             }
             
