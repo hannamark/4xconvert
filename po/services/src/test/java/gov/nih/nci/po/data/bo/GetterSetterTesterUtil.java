@@ -85,10 +85,6 @@ package gov.nih.nci.po.data.bo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.common.CurationStatus;
-import gov.nih.nci.po.data.cr.ContactInfoCR;
-import gov.nih.nci.po.data.cr.DegreeCR;
-import gov.nih.nci.po.data.cr.OrganizationCR;
-import gov.nih.nci.po.data.cr.PersonCR;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -175,24 +171,8 @@ public class GetterSetterTesterUtil {
         CurationStatus cs = CurationStatus.REJECTED;
         DEFAULT_ARGUMENTS.add(cs);
 
-        DEFAULT_TYPES.add(OrganizationCR.class);
-        DEFAULT_ARGUMENTS.add(new OrganizationCR());
-
-        DEFAULT_TYPES.add(PersonCR.class);
-        DEFAULT_ARGUMENTS.add(new PersonCR());
-
-        DEFAULT_TYPES.add(DegreeCR.class);
-        DEFAULT_ARGUMENTS.add(new DegreeCR());
-
-        DEFAULT_TYPES.add(OrganizationCR.class);
-        DEFAULT_ARGUMENTS.add(new OrganizationCR());
-
-        DEFAULT_TYPES.add(ContactInfoCR.class);
-        DEFAULT_ARGUMENTS.add(new ContactInfoCR());
-
         DEFAULT_TYPES.add(Person.class);
         DEFAULT_ARGUMENTS.add(new Person());
-
     }
 
     /**

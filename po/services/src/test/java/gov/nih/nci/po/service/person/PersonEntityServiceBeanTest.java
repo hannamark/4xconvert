@@ -17,8 +17,8 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
-
 import java.util.Map;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +27,6 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     private PersonEntityServiceRemote remote;
     private static Country USA = new Country("United States", "001", "US", "USA");
-
-//    private Country validCountry;
 
     /**
      * setup the service.
@@ -104,24 +102,21 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
             assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
             assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
         }
-
     }
 
     @Test
     public void validate() {
-        
+
         PersonDTO dto = new PersonDTO();
         dto.setId(99L);
         dto.setFirstName("Firsty");
         dto.setMiddleName("Andrew");
         Map<String, String[]> errors = remote.validate(dto);
-        System.out.println(errors);
         assertEquals(5, errors.size()) ;
         assertTrue(errors.containsKey("lastName"));
         assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.streetAddressLine"));
         assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.postalCode"));
         assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
         assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
-
     }
 }

@@ -37,18 +37,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.common.OrganizationType"/>
         <mapping class="gov.nih.nci.po.data.common.State"/>
 
-        <mapping class="gov.nih.nci.po.data.cr.AddressCR" />
-        <mapping class="gov.nih.nci.po.data.cr.PersonCR" />
-        <mapping class="gov.nih.nci.po.data.cr.DegreeCR" />
-        <mapping class="gov.nih.nci.po.data.cr.SpecialityCR" />
-        <mapping class="gov.nih.nci.po.data.cr.CertificateCR" />
-        <mapping class="gov.nih.nci.po.data.cr.LicenseCR" />
-        <mapping class="gov.nih.nci.po.data.cr.EmailCR" />
-        <mapping class="gov.nih.nci.po.data.cr.PhoneNumberCR" />
-        <mapping class="gov.nih.nci.po.data.cr.URLCR" />
-        <mapping class="gov.nih.nci.po.data.cr.OrganizationCR" />
-        <mapping class="gov.nih.nci.po.data.cr.ContactInfoCR" />
-
         <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
         <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
     </session-factory>

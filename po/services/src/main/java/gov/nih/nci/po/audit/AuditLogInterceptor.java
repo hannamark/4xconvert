@@ -102,7 +102,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
@@ -111,6 +113,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.collection.PersistentCollection;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
@@ -122,9 +125,6 @@ import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.log4j.Priority;
-import org.hibernate.collection.PersistentCollection;
 
 /**
  * Interceptor that adds audit log records for audits.
@@ -157,7 +157,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private final transient ThreadLocal<Set<DetailHelper>> details =
         new ThreadLocal<Set<DetailHelper>>();
-    
+
     private final transient ThreadLocal<Map<RecordKey, AuditLogRecord>> records =
         new ThreadLocal<Map<RecordKey, AuditLogRecord>>();
 
@@ -188,7 +188,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -238,7 +238,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         if (audits.get() != null && !audits.get().isEmpty()) {
             SessionFactory sf = PoHibernateUtil.getHibernateHelper().getSessionFactory();
-            @SuppressWarnings("deprecation")
             Session session = sf.openSession(PoHibernateUtil.getCurrentSession().connection());
             Long transactionId = null;
             try {
@@ -292,7 +291,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     private static final class RecordKey {
         private final Auditable entity;
         private final AuditType type;
-        
+
         RecordKey(Auditable entity, AuditType type) {
             this.entity = entity; this.type = type;
         }
@@ -311,11 +310,11 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         public int hashCode() {
             return new HashCodeBuilder().append(entity).appendSuper(type.hashCode()).toHashCode();
         }
-        
+
     }
-    
+
     /**
-     * @param id 
+     * @param id
      */
     private AuditLogRecord getOrCreateRecord(Auditable entity, String entityName, Long id,  AuditType eventToLog) {
         Map<RecordKey, AuditLogRecord> map = records.get();
@@ -378,7 +377,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private Object[] getOldValues(Object[] oldValues, String[] properties, Auditable auditableObj) {
         Object[] myOldValues = oldValues;
         Session session = null;
@@ -486,11 +484,11 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         }
         return value.toString();
     }
-    
+
     private static <A extends Auditable> String getValueString(A value) {
         return (value.getId() == null) ? null : value.getId().toString();
     }
-    
+
     private static <A extends Auditable> String getValueString(Collection<A> value) {
         String sep = "";
         StringBuffer sb = new StringBuffer();
@@ -552,7 +550,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String columnName = null;
         Property property = pc.getProperty(fieldName);
         for (Iterator<?> it3 = property.getColumnIterator(); it3.hasNext();) {
-            Object o = it3.next(); 
+            Object o = it3.next();
             if (!(o instanceof Column)) {
                 LOG.debug("Skipping non-column (probably a formula");
                 continue;

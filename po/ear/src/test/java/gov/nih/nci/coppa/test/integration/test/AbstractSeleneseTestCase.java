@@ -21,7 +21,6 @@ public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
         String hostname = TstProperties.getServerHostname();
         int port = TstProperties.getServerPort();
         String browser = TstProperties.getSeleniumBrowser();
-        System.out.println(browser);
         if (port == 0) {
             super.setUp("http://" + hostname, browser);
         } else {

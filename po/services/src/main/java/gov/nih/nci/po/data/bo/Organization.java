@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.alternate.ProviderOrganization;
 import gov.nih.nci.po.data.common.AbstractOrganization;
 import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.data.common.OrganizationType;
-import gov.nih.nci.po.data.cr.OrganizationCR;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.HashSet;
@@ -109,7 +108,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
@@ -123,8 +121,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
-public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization>,
-        CuratableCR<OrganizationCR> {
+public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
     private static final long serialVersionUID = 1L;
     private ContactInfo primaryContactInfo;
     private Set<ProviderOrganization> altIds = new HashSet<ProviderOrganization>();
@@ -132,8 +129,6 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     private CurationStatus priorCurationStatus;
     private Organization duplicateOf;
     private Set<OrganizationType> types = new HashSet<OrganizationType>();
-    private Set<OrganizationCR> allChangeRequests = new HashSet<OrganizationCR>();
-    private Set<OrganizationCR> unprocessedChangeRequests = new HashSet<OrganizationCR>();
 
     /**
      * @param primaryContactInfo primary contact information
@@ -292,32 +287,5 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     @ForeignKey(name = "ORG_DUPLICATE_ORG_FK")
     public Organization getDuplicateOf() {
         return this.duplicateOf;
-    }
-
-    /**
-     * @return associated CRs
-     */
-    @OneToMany(mappedBy = "organization")
-    public Set<OrganizationCR> getAllChangeRequests() {
-        return allChangeRequests;
-    }
-
-    /**
-     * @return associated unprocessed CRs
-     */
-    @OneToMany(mappedBy = "organization")
-    @Where(clause = "processedById is NULL")
-    public Set<OrganizationCR> getUnprocessedChangeRequests() {
-        return unprocessedChangeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setAllChangeRequests(Set<OrganizationCR> changeRequests) {
-        this.allChangeRequests = changeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setUnprocessedChangeRequests(Set<OrganizationCR> unprocessedChangeRequests) {
-        this.unprocessedChangeRequests = unprocessedChangeRequests;
     }
 }

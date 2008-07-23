@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.alternate.ProviderPerson;
 import gov.nih.nci.po.data.common.AbstractPerson;
 import gov.nih.nci.po.data.common.CurationStatus;
 import gov.nih.nci.po.data.common.PersonType;
-import gov.nih.nci.po.data.cr.PersonCR;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
@@ -115,7 +114,6 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
@@ -130,7 +128,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson implements Auditable, Curatable<Person>, CuratableCR<PersonCR> {
+public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
     private static final long serialVersionUID = 7515315163406642400L;
     private ContactInfo preferredContactInfo;
     private List<ContactInfo> contactInfos = new ArrayList<ContactInfo>(1);
@@ -143,9 +141,6 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     private CurationStatus priorCurationStatus;
     private Person duplicateOf;
     private Set<PersonType> types = new HashSet<PersonType>();
-    private Set<PersonCR> allChangeRequests = new HashSet<PersonCR>();
-    private Set<PersonCR> unprocessedChangeRequests = new HashSet<PersonCR>();
-
 
     /**
      * @param preferredContactInfo primary contact information
@@ -405,32 +400,4 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     public Boolean getInvestigator() {
         return isInvestigator();
     }
-
-    /**
-     * @return associated CRs
-     */
-    @OneToMany(mappedBy = "person")
-    public Set<PersonCR> getAllChangeRequests() {
-        return allChangeRequests;
-    }
-
-    /**
-     * @return associated unprocessed CRs
-     */
-    @OneToMany(mappedBy = "person")
-    @Where(clause = "processedById is NULL")
-    public Set<PersonCR> getUnprocessedChangeRequests() {
-        return unprocessedChangeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setAllChangeRequests(Set<PersonCR> changeRequests) {
-        this.allChangeRequests = changeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setUnprocessedChangeRequests(Set<PersonCR> unprocessedChangeRequests) {
-        this.unprocessedChangeRequests = unprocessedChangeRequests;
-    }
-
 }
