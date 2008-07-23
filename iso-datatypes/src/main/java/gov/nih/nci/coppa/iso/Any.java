@@ -89,7 +89,7 @@ package gov.nih.nci.coppa.iso;
 public class Any {
 
     private String flavorId;
-    private String nullFlavor;
+    private NullFlavor nullFlavor;
 
     /**
      * @return the flavorId
@@ -108,14 +108,16 @@ public class Any {
     /**
      * @return the nullFlavor
      */
-    public String getNullFlavor() {
+    public NullFlavor getNullFlavor() {
         return this.nullFlavor;
     }
 
+
     /**
-     * @param nullFlavor the nullFlavor to set
+     * @param nullFlavor the NullFlavor to set
      */
-    public void setNullFlavor(String nullFlavor) {
+    public void setNullFlavor(NullFlavor nullFlavor) {
         this.nullFlavor = nullFlavor;
     }
+
 }
