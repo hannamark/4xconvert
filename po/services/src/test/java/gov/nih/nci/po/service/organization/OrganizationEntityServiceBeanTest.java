@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -43,7 +44,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(id);
         assertEquals(org.getId(), result.getId());
-        assertEquals(org.getName(), result.getName());
+        assertEquals(org.getName(), ISOUtils.TOString.convert(result.getName()));
     }
 
     /**
@@ -54,13 +55,13 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setId(99L);
-            dto.setName("some name");
-            dto.setAbbreviationName("short");
+            dto.setName(ISOUtils.TOSt.convert("some name"));
+            dto.setAbbreviationName(ISOUtils.TOSt.convert("short"));
             long id = remote.createOrganization(dto);
             assertNull(dto.getId()); // make sure this id was not used
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
-            assertEquals(dto.getName(), o.getName());
-            assertEquals(dto.getAbbreviationName(), o.getAbbreviationName());
+            assertEquals(ISOUtils.TOString.convert(dto.getName()), o.getName());
+            assertEquals(ISOUtils.TOString.convert(dto.getAbbreviationName()), o.getAbbreviationName());
         } catch (EntityValidationException e) {
             // as the DTO to BO conversion gets more completem, we should not
             // have to catch this exception.
@@ -77,7 +78,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     public void validate() {
         
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setAbbreviationName("short");
+        dto.setAbbreviationName(ISOUtils.TOSt.convert("short"));
         Map<String, String[]> errors = remote.validate(dto);
         assertEquals(5, errors.size()) ;
         assertTrue(errors.containsKey("name"));

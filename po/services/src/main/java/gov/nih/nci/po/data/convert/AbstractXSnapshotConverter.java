@@ -80,106 +80,48 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
 
+package gov.nih.nci.po.data.convert;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
-import org.hibernate.validator.Length;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import net.sf.xsnapshot.TransformContext;
+import net.sf.xsnapshot.Transformer;
+import net.sf.xsnapshot.TransformerArgs;
 
 /**
- * @author Todd Parnell
  *
- * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
+ * @param <FROM> 
+ * @param <TO> 
+ * @author gax
  */
-@MappedSuperclass
-public abstract class AbstractOrganization implements PersistentObject {
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractXSnapshotConverter <FROM, TO> implements Transformer {
 
     /**
-     * Column length.
+     * @param value the value to convert.
+     * @return the converted value.
      */
-    protected static final int LONG_COL_LENGTH = 100;
-    private Long id;
-    private String name;
-    private String abbreviationName;
-
+    public abstract TO convert(FROM value);
+    
     /**
-     * Default constructor, do nothing.
+     * @param type the type to convert from.
+     * @param value the value to convert.
+     * @param args xsnapshot annotation paramerters.
+     * @param ctx conversion context.
+     * @return the converted value.
      */
-    public AbstractOrganization() {
-        // do nothing
+    public TO convert(Class<FROM> type, FROM value, TransformerArgs args, TransformContext ctx) {
+
+        return convert(value);
     }
 
     /**
-     * copy constructor.
-     * @param o the org to copy from
+     * @param type the type to convert from.
+     * @param value the value to convert.
+     * @param args xsnapshot annotation paramerters.
+     * @param ctx conversion context.
+     * @return the converted value.
      */
-    public AbstractOrganization(AbstractOrganization o) {
-        this.id = o.getId();
-        this.name = o.getName();
-        this.abbreviationName = o.getAbbreviationName();
+    public Object transform(Class type, Object value, TransformerArgs args, TransformContext ctx) {        
+        return this.convert((Class<FROM>) type, (FROM) value, args, ctx);
     }
 
-    /**
-     * @return database identity
-     * @xsnapshot.property match="entity"
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-      * @return abbreviation name
-      * @xsnapshot.property match="entity"
-      *                     type="gov.nih.nci.coppa.iso.St"
-      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
-      *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
-      */
-    @Length(max = LONG_COL_LENGTH)
-    public String getAbbreviationName() {
-        return abbreviationName;
-    }
-
-    /**
-     * @return name
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     */
-    @Transient
-    @Length(max = LONG_COL_LENGTH)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param abbreviationName abbreviation name
-     */
-    public void setAbbreviationName(String abbreviationName) {
-        this.abbreviationName = abbreviationName;
-    }
-
-    /**
-     * @param name name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
 }

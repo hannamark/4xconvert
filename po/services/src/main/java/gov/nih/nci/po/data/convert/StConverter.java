@@ -80,106 +80,29 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
 
+package gov.nih.nci.po.data.convert;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
-import org.hibernate.validator.Length;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.St;
 
 /**
- * @author Todd Parnell
  *
- * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
+ * @author gax
  */
-@MappedSuperclass
-public abstract class AbstractOrganization implements PersistentObject {
-    private static final long serialVersionUID = 1L;
+public class StConverter extends AbstractXSnapshotConverter<String, St> {
 
     /**
-     * Column length.
+     * {@inheritDoc}
      */
-    protected static final int LONG_COL_LENGTH = 100;
-    private Long id;
-    private String name;
-    private String abbreviationName;
-
-    /**
-     * Default constructor, do nothing.
-     */
-    public AbstractOrganization() {
-        // do nothing
-    }
-
-    /**
-     * copy constructor.
-     * @param o the org to copy from
-     */
-    public AbstractOrganization(AbstractOrganization o) {
-        this.id = o.getId();
-        this.name = o.getName();
-        this.abbreviationName = o.getAbbreviationName();
-    }
-
-    /**
-     * @return database identity
-     * @xsnapshot.property match="entity"
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-      * @return abbreviation name
-      * @xsnapshot.property match="entity"
-      *                     type="gov.nih.nci.coppa.iso.St"
-      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
-      *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
-      */
-    @Length(max = LONG_COL_LENGTH)
-    public String getAbbreviationName() {
-        return abbreviationName;
-    }
-
-    /**
-     * @return name
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     */
-    @Transient
-    @Length(max = LONG_COL_LENGTH)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param abbreviationName abbreviation name
-     */
-    public void setAbbreviationName(String abbreviationName) {
-        this.abbreviationName = abbreviationName;
-    }
-
-    /**
-     * @param name name
-     */
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public St convert(String value) {
+        St iso = new St();
+        if (value == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            iso.setValue(value);
+        }
+        return iso;
     }
 }

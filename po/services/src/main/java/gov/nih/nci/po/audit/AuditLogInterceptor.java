@@ -284,6 +284,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         if (audits.get() != null) {
             audits.get().clear();
             details.get().clear();
+            records.get().clear();
         }
     }
 
