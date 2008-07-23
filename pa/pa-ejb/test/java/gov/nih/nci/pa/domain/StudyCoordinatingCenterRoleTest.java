@@ -31,7 +31,7 @@ public class StudyCoordinatingCenterRoleTest {
     /**
      * 
      */
-//    @Test
+    @Test
     public void createStudyCoordinatingCenterRole() {
         Session session  = TestSchema.getSession();
         
