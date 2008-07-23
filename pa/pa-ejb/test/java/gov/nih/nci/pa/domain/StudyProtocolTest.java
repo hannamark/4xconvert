@@ -13,8 +13,11 @@ import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 
+import org.hibernate.Session;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -22,7 +25,13 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class StudyProtocolTest extends CommonTest {
+public class StudyProtocolTest {
+
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset();
+               
+    }
     
     /**
      * 
@@ -30,29 +39,13 @@ public class StudyProtocolTest extends CommonTest {
     @Test
     public void createStudyProtocolTest() {
         
-        StudyProtocol create = new StudyProtocol();
+        StudyProtocol create = createStudyProtocolObj();
+        Session session  = TestSchema.getSession();
         try {
-            create.setOfficialTitle("Breast Cancer..");
-            create.setMonitorCode(MonitorCode.CCR);
-            create.setPhaseCode(PhaseCode.I);
-            create.setMonitorCode(MonitorCode.CCR);
-            create.setPhaseCode(PhaseCode.I);
-            create.setNumberOfInterventionGroups(new Integer(1));
-            create.setControlConcurrencyTypeCode(ControlConcurrencyTypeCode.CONCURRENT);
-            create.setAllocationCode(AllocationCode.NON_RANDOMIZED_TRIAL);
-            create.setDelayedpostingIndicator(new Boolean(false));
-            create.setDesignConfigurationCode(DesignConfigurationCode.FACTORIAL);
-            create.setControlTypeCode(ControlTypeCode.PLACEBO);
-            create.setFdaRegulatedIndicator(new Boolean(true));
-            create.setSection801Indicator(new Boolean(true));
-            create.setInterventionTypeCode(InterventionTypeCode.RADIATION);
-            create.setBiospecimenDescription("blah blah");
-            create.setBiospecimenRetentionCode(BiospecimenRetentionCode.RETAINED);
-            create.setGroupNumber(new Integer(1));
-            create.setStudyModelCode("SMC");
-            create.setTimePerspectiveCode("TPC");
             
-            Serializable cid = session.save(create);
+            TestSchema.addUpdObject(create);
+            Serializable cid = create.getId();
+            
             assertNotNull(cid);
             StudyProtocol saved = (StudyProtocol) session.load(StudyProtocol.class, cid);
             assertNotNull(saved);
@@ -89,10 +82,6 @@ public class StudyProtocolTest extends CommonTest {
                     , saved.getStudyModelCode());
             assertEquals("Time Prespective code Does not match ", create.getTimePerspectiveCode()
                     , saved.getTimePerspectiveCode());
-            
-            
-            System.out.println("..end..");
-            transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

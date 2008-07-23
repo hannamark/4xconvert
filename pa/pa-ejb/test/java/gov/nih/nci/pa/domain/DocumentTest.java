@@ -3,8 +3,12 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import gov.nih.nci.pa.test.util.TestSchema;
+
 import java.io.Serializable;
 
+import org.hibernate.Session;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -12,29 +16,37 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class DocumentTest extends CommonTest {
+public class DocumentTest {
     
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset();
+               
+    }
+        
     /**
      * 
      */
     @Test
     public void createDocumentTest() {
         
-        Document create = new Document();
+        Document create = createDocumentObj();
+        Session session = TestSchema.getSession();
         try {
-            create.setOfficialTitle("Breast Cancer..");
-            Serializable cid = session.save(create);
+            TestSchema.addUpdObject(create);
+            Serializable cid = create.getId();
             assertNotNull(cid);
-            System.out.println("...4");
             Document saved = (Document) session.load(Document.class, cid);
-            System.out.println("...5");
             assertNotNull(saved);
-            System.out.println("...6");
             assertEquals("Official Title does not match " , create.getOfficialTitle() , saved.getOfficialTitle());
-            transaction.commit();
-            System.out.println("...8");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static Document createDocumentObj() {
+        Document create = new Document();
+        create.setOfficialTitle("Breast Cancer..");
+        return create ;
     }
 }

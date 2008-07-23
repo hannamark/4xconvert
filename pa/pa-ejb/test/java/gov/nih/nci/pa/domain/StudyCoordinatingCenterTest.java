@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
 
+import org.hibernate.Session;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -14,37 +17,46 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class StudyCoordinatingCenterTest extends CommonTest {
+public class StudyCoordinatingCenterTest {
+    
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset();
+    }
     
     /**
      * 
      */
     @Test
     public void createStudyCoordinatingCenter() {
-        StudyProtocol sp = new StudyProtocol();
-        sp.setOfficialTitle("Breast Cancer..");
-        sp.setMonitorCode(MonitorCode.CCR);
-        sp.setPhaseCode(PhaseCode.I);
-        Serializable spid = session.save(sp);
+        Session session  = TestSchema.getSession();
+
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+
+        Serializable spid = sp.getId();
         assertNotNull(spid);
         
-        Organization o = new Organization();
-        o.setName("Mayo University");
-        o.setNciInstituteCode("P001");
-        Serializable oid = session.save(o);
-        assertNotNull(oid);
+        Organization o = OrganizationTest.OrganizationObj();
+        TestSchema.addUpdObject(o);
+        assertNotNull(o.getId());
         
+        StudyCoordinatingCenter create = createStudyCoordinatingCenterObj(sp , o);
+        
+        TestSchema.addUpdObject(create);
+        StudyCoordinatingCenter saved = (StudyCoordinatingCenter) session.load(StudyCoordinatingCenter.class, create.getId());
+        
+        assertEquals("Organization does match  " , create.getOrganization().getName(), saved.getOrganization().getName());
+        assertEquals("Study Protocol Does not match  " , create.getStudyProtocol().getId(), saved.getStudyProtocol().getId());
+        
+        
+    }
+    
+    public static StudyCoordinatingCenter createStudyCoordinatingCenterObj(StudyProtocol sp , Organization o ) {
         StudyCoordinatingCenter create = new StudyCoordinatingCenter();
         create.setOrganization(o);
         create.setStudyProtocol(sp);
-        
-        Serializable id = session.save(create);
-        StudyCoordinatingCenter saved = (StudyCoordinatingCenter) session.load(StudyCoordinatingCenter.class, id);
-        
-        assertEquals("Organization does match  " , create.getOrganization(), saved.getOrganization());
-        assertEquals("Study Protocol Does not match  " , create.getStudyProtocol(), saved.getStudyProtocol());
-        
-        System.out.println("end");
+        return create ;
         
     }
     
