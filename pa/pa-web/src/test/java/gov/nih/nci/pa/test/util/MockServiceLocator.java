@@ -3,7 +3,7 @@ package gov.nih.nci.pa.test.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
-import gov.nih.nci.pa.service.ProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
 
@@ -26,7 +26,7 @@ public class MockServiceLocator implements ServiceLocator{
         return null;
     }
 
-    public ProtocolServiceLocal getProtocolService() {
+    public StudyProtocolServiceRemote getStudyProtocolService() {
       
         return null;
     }
