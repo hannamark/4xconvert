@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.data.common.CurationStatus;
 
 import org.junit.Test;
 

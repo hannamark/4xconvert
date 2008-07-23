@@ -83,14 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.bo.alternate.ProviderOrganization;
-import gov.nih.nci.po.data.common.AbstractOrganization;
-import gov.nih.nci.po.data.common.CurationStatus;
-import gov.nih.nci.po.data.common.OrganizationType;
 import gov.nih.nci.po.util.NotEmpty;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,10 +91,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -117,18 +107,16 @@ import org.hibernate.validator.Valid;
  * @xsnapshot.snapshot-class name="entity"
  *      class="gov.nih.nci.po.dto.entity.OrganizationDTO"
  *      extends="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
- *      model-extends="gov.nih.nci.po.data.common.AbstractOrganization"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganization"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
 public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
     private static final long serialVersionUID = 1L;
     private ContactInfo primaryContactInfo;
-    private Set<ProviderOrganization> altIds = new HashSet<ProviderOrganization>();
     private CurationStatus curationStatus;
     private CurationStatus priorCurationStatus;
     private Organization duplicateOf;
-    private Set<OrganizationType> types = new HashSet<OrganizationType>();
 
     /**
      * @param primaryContactInfo primary contact information
@@ -179,42 +167,6 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
      */
     public void setPrimaryContactInfo(ContactInfo primaryContactInfo) {
         this.primaryContactInfo = primaryContactInfo;
-    }
-
-    /**
-     * @return the altIds
-     */
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
-    public Set<ProviderOrganization> getAltIds() {
-        return altIds;
-    }
-
-    /**
-     * @param altIds the altIds to set
-     */
-    public void setAltIds(Set<ProviderOrganization> altIds) {
-        this.altIds = altIds;
-    }
-
-    /**
-     * @return the types
-     */
-    @ManyToMany
-    @JoinTable(
-            name = "OrgTypes",
-            joinColumns = { @JoinColumn(name = "organization_id") },
-            inverseJoinColumns = @JoinColumn(name = "type_id")
-    )
-    @ForeignKey(name = "ORG_TYPE_ORG_FK", inverseName = "ORG_TYPE_TYPE_FK")
-    public Set<OrganizationType> getTypes() {
-        return this.types;
-    }
-
-    /**
-     * @param types org types
-     */
-    public void setTypes(Set<OrganizationType> types) {
-        this.types = types;
     }
 
     /**

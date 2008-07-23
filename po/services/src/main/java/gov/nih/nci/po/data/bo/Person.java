@@ -83,32 +83,21 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.bo.alternate.ProviderPerson;
-import gov.nih.nci.po.data.common.AbstractPerson;
-import gov.nih.nci.po.data.common.CurationStatus;
-import gov.nih.nci.po.data.common.PersonType;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
@@ -124,7 +113,7 @@ import org.hibernate.validator.Valid;
  * @xsnapshot.snapshot-class name="entity"
  *      class="gov.nih.nci.po.dto.entity.PersonDTO"
  *      extends="gov.nih.nci.po.dto.entity.AbstractPersonDTO"
- *      model-extends="gov.nih.nci.po.data.common.AbstractPerson"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractPerson"
  */
 @Entity
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
@@ -132,11 +121,9 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     private static final long serialVersionUID = 7515315163406642400L;
     private ContactInfo preferredContactInfo;
     private List<ContactInfo> contactInfos = new ArrayList<ContactInfo>(1);
-    private Set<ProviderPerson> altIds = new HashSet<ProviderPerson>();
     private CurationStatus curationStatus;
     private CurationStatus priorCurationStatus;
     private Person duplicateOf;
-    private Set<PersonType> types = new HashSet<PersonType>();
 
     /**
      * @param preferredContactInfo primary contact information
@@ -213,21 +200,6 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     /**
-     * @return the altIds
-     */
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
-    public Set<ProviderPerson> getAltIds() {
-        return altIds;
-    }
-
-    /**
-     * @param altIds the altIds to set
-     */
-    public void setAltIds(Set<ProviderPerson> altIds) {
-        this.altIds = altIds;
-    }
-
-    /**
      * @param newStatus the status of this person record
      */
     public void setCurationStatus(CurationStatus newStatus) {
@@ -297,47 +269,5 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @ForeignKey(name = "PERSON_DUPLICATE_PERSON_FK")
     public Person getDuplicateOf() {
         return this.duplicateOf;
-    }
-
-
-    /**
-     * @return the types
-     */
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "PersonTypes",
-            joinColumns = {@JoinColumn(name = "person_id") },
-            inverseJoinColumns = @JoinColumn(name = "type_id")
-    )
-    @ForeignKey(name = "PER_TYPE_PER_FK", inverseName = "PER_TYPE_TYPE_FK")
-    public Set<PersonType> getTypes() {
-        return this.types;
-    }
-
-    /**
-     * @param types person types
-     */
-    public void setTypes(Set<PersonType> types) {
-        this.types = types;
-    }
-
-    /**
-     * @return true if the types collection contains a PersonType.name equal to "Investigator"
-     */
-    @Transient
-    public Boolean isInvestigator() {
-        return CollectionUtils.exists(getTypes(), new Predicate() {
-            public boolean evaluate(Object object) {
-                return (object != null && PersonType.INVESTIGATOR.equals(((PersonType) object).getName()));
-            }
-        });
-    }
-
-    /**
-     * @return true if the types collection contains a PersonType.name equal to "Investigator"
-     */
-    @Transient
-    public Boolean getInvestigator() {
-        return isInvestigator();
     }
 }

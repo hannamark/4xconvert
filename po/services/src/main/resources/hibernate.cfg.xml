@@ -15,24 +15,24 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property> 
 
-        <mapping class="gov.nih.nci.po.data.bo.Address"/>
-        <mapping class="gov.nih.nci.po.data.bo.Person"/>
-        <mapping class="gov.nih.nci.po.data.bo.ContactInfo"/>
-        <mapping class="gov.nih.nci.po.data.bo.Organization"/>
+        <mapping class="gov.nih.nci.po.data.bo.Address" />
+        <mapping class="gov.nih.nci.po.data.bo.ContactInfo" />
+        <mapping class="gov.nih.nci.po.data.bo.Country" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
+        <mapping class="gov.nih.nci.po.data.bo.Organization" />
+        <mapping class="gov.nih.nci.po.data.bo.Person" />
         <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
+        <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>
-
-        <mapping class="gov.nih.nci.po.data.bo.alternate.AlternateProvider" />
-        <mapping class="gov.nih.nci.po.data.bo.alternate.ProviderPerson" />
-        <mapping class="gov.nih.nci.po.data.bo.alternate.ProviderOrganization" />
-
-        <mapping class="gov.nih.nci.po.data.common.Country" />
-        <mapping class="gov.nih.nci.po.data.common.PersonType"/>
-        <mapping class="gov.nih.nci.po.data.common.OrganizationType"/>
-        <mapping class="gov.nih.nci.po.data.common.State"/>
 
         <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
         <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
+        
+        <event type="pre-update">
+            <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
+        </event>
+        <event type="pre-insert">
+            <listener class="org.hibernate.validator.event.ValidatePreInsertEventListener"/>
+        </event>
     </session-factory>
 </hibernate-configuration>

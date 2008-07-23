@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import gov.nih.nci.po.data.common.CurationStatus;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

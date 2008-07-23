@@ -83,17 +83,12 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ContactInfo;
-import gov.nih.nci.po.data.bo.GetterSetterTesterUtil;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.alternate.AlternateProvider;
-import gov.nih.nci.po.data.bo.alternate.ProviderOrganization;
-import gov.nih.nci.po.data.common.Country;
-import gov.nih.nci.po.data.common.CurationStatus;
-import gov.nih.nci.po.data.common.OrganizationType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -115,11 +110,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
 
-    public static OrganizationType ORG_TYPE = new OrganizationType("name");
 
     private OrganizationServiceBean orgService;
-    private OrganizationType defaultOrgType;
-    private OrganizationType auxOrgType;
     private Country defaultCountry;
     User user;
 
@@ -129,11 +121,6 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     public void setUpData() {
         orgService = EjbTestHelper.getOrganizationServiceBean();
 
-        OrganizationType tmpOrgType = new OrganizationType("defaultOrgType");
-        Serializable orgTypeId = PoHibernateUtil.getCurrentSession().save(tmpOrgType);
-        OrganizationType tmpOrgType2 = new OrganizationType("auxOrgType");
-        Serializable orgTypeId2 = PoHibernateUtil.getCurrentSession().save(tmpOrgType2);
-
         Serializable countryId = PoHibernateUtil.getCurrentSession().save(
                 new Country("defaultCountryName", "997", "JJ", "JJI"));
 
@@ -141,8 +128,6 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().clear();
 
         defaultCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, countryId);
-        defaultOrgType = (OrganizationType) PoHibernateUtil.getCurrentSession().get(OrganizationType.class, orgTypeId);
-        auxOrgType = (OrganizationType) PoHibernateUtil.getCurrentSession().get(OrganizationType.class, orgTypeId2);
 
         user = new User();
         user.setLoginName("unittest" + new Random().nextLong());
@@ -171,9 +156,6 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
             org.setAbbreviationName("defaultOrgCode");
             org.setCurationStatus(CurationStatus.NEW);
             org.getPrimaryContactInfo().setOrganization(org);
-            org.getTypes().add(defaultOrgType);
-            org.getTypes().add(auxOrgType);
-            addAlternateId(org, "altCode");
             long orgId = orgService.create(org);
             PoHibernateUtil.getCurrentSession().flush();
             PoHibernateUtil.getCurrentSession().clear();
@@ -197,16 +179,9 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testAlternateProviderFields() throws Exception {
-        AlternateProvider alternateProvider = new AlternateProvider();
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(alternateProvider);
-    }
-
-    @Test
     public void testCreateOrg() throws EntityValidationException {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
-        PoHibernateUtil.getCurrentSession().save(ORG_TYPE);
 
         Organization org = new Organization(new ContactInfo());
         org.setName("testOrg");
@@ -214,8 +189,6 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.getPrimaryContactInfo().setMailingAddress(mailingAddress);
         org.getPrimaryContactInfo().setOrganization(org);
-        addAlternateId(org, "altCode");
-        org.getTypes().add(ORG_TYPE);
         org.setCurationStatus(CurationStatus.REJECTED);
 
         long orgId = orgService.create(org);
@@ -225,8 +198,6 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
 
         Organization retrievedOrg = orgService.getOrganization(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
-        assertTrue(!retrievedOrg.getAltIds().isEmpty());
-        assertTrue(!retrievedOrg.getTypes().isEmpty());
         assertEquals(CurationStatus.NEW, retrievedOrg.getCurationStatus());
 
         List<Organization> orgs = getAllOrganizations();
@@ -238,29 +209,4 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     private List<Organization> getAllOrganizations() {
         return PoHibernateUtil.getCurrentSession().createQuery("from " + Organization.class.getName()).list();
     }
-
-
-
-    private void addAlternateId(Organization org, String code) {
-        @SuppressWarnings("unchecked")
-        List<AlternateProvider> l = PoHibernateUtil.getCurrentSession().createQuery(
-                "FROM " + AlternateProvider.class.getName()).list();
-        AlternateProvider ap = null;
-        if (l.isEmpty()) {
-            ap = new AlternateProvider();
-            ap.setCode("test");
-            ap.setName("Test provider");
-            PoHibernateUtil.getCurrentSession().save(ap);
-        } else {
-            ap = l.get(0);
-        }
-
-        ProviderOrganization providerOrg = new ProviderOrganization();
-        providerOrg.setAlternateProvider(ap);
-        providerOrg.setOrganization(org);
-        providerOrg.setAlternateProviderIdentifier(code);
-
-        org.getAltIds().add(providerOrg);
-    }
-
 }

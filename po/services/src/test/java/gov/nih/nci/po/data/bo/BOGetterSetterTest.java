@@ -1,8 +1,6 @@
 package gov.nih.nci.po.data.bo;
 
 import static org.junit.Assert.assertSame;
-import gov.nih.nci.po.data.common.Country;
-import gov.nih.nci.po.data.common.State;
 
 import org.junit.Test;
 

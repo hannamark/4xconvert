@@ -83,17 +83,30 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractEmail;
-import gov.nih.nci.po.data.common.Contact;
+import gov.nih.nci.po.util.NotEmpty;
+
+import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.hibernate.validator.Length;
 
 /**
  * Represents an email address.
  */
 @Entity
-public class Email extends AbstractEmail implements Auditable, Contact {
+public class Email implements Auditable, Contact, Serializable {
     private static final long serialVersionUID = 7991318155036413255L;
+
+    /**
+     * Length of the value field.
+     */
+    protected static final int MAX_NAME_LENGTH = 254;
+    private Long id;
+    private String value;
 
     /**
      * Constructs a new email with a blank value.
@@ -106,6 +119,37 @@ public class Email extends AbstractEmail implements Auditable, Contact {
      * @param value email value
      */
     public Email(String value) {
-        super(value);
+        this.value = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the value
+     */
+    @NotEmpty
+    @org.hibernate.validator.Email
+    @Length(max = MAX_NAME_LENGTH)
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 }

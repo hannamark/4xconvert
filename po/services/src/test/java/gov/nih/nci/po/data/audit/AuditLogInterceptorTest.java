@@ -9,8 +9,8 @@ import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ContactInfo;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.common.Country;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.util.PoHibernateUtil;
 

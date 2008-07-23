@@ -83,17 +83,32 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractPersistentURL;
+import gov.nih.nci.po.util.NotEmpty;
 
-import gov.nih.nci.po.data.common.Contact;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.Pattern;
 
 /**
  * Business object for URLs.
  */
 @Entity
-public class URL extends AbstractPersistentURL implements Auditable, Contact {
-    private static final long serialVersionUID = 5012258592019892220L;
+public class URL implements Auditable, Contact {
+    private static final long serialVersionUID = 1L;
+
+    // http://www.manamplified.org/archives/2006/10/url-regex-pattern.html
+    private static final String URL_REGEX =
+        "([A-Za-z][A-Za-z0-9+.-]{1,120}:[A-Za-z0-9/](([A-Za-z0-9$_.+!*,;/?:@&~=-])|%[A-Fa-f0-9]{2}){1,333}"
+        + "(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*,;/?:@&~=%-]{0,1000}))?)";
+
+    private static final int MAX_VALUE_LENGTH = 254;
+
+    private Long id;
+    private String value;
 
     /**
      * Constructs a new url with a blank value.
@@ -106,6 +121,38 @@ public class URL extends AbstractPersistentURL implements Auditable, Contact {
      * @param value url value
      */
     public URL(String value) {
-        super(value);
+        this.value = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the value
+     */
+    @NotEmpty
+    @Pattern(regex = URL_REGEX,
+             message = "URL is not well formed")
+    @Length(max = MAX_VALUE_LENGTH)
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 }

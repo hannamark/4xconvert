@@ -359,9 +359,6 @@
                                 <srcFile>target/hibernate3/sql/${schema.file}</srcFile>
                                 <srcFile>src/main/sql/csmCreateSchema.sql</srcFile>
                                 <srcFile>src/main/sql/countries.sql</srcFile>
-                                <srcFile>src/main/sql/degreetypes.sql</srcFile>
-                                <srcFile>src/main/sql/organizationtypes.sql</srcFile>
-                                <srcFile>src/main/sql/persontypes.sql</srcFile>
                                 <srcFile>src/main/sql/csmBootstrapData.sql</srcFile>
                                 <srcFile>src/main/sql/extraCreateSchema.sql</srcFile>
                             </srcFiles>

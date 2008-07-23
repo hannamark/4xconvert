@@ -10,7 +10,7 @@
     <artifactId>po-ear</artifactId>
     <packaging>ear</packaging>
     <name>po-ear</name>
-    <url>../../applications/ear/target/site</url>
+    <url>../../ear/target/site</url>
 
     <properties>
         <!-- specify real path so cargo:deploy deploys for real -->

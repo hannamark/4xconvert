@@ -80,64 +80,101 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.common;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.NotEmpty;
 
-import java.io.Serializable;
-
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import org.hibernate.validator.Length;
-import org.hibernate.validator.Pattern;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Business object for URLs.
+ * @author Todd Parnell
+ *
+ * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
  */
 @MappedSuperclass
-public abstract class AbstractURL implements Serializable {
+public abstract class AbstractOrganization implements PersistentObject {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Url field length.
+     * Column length.
      */
-    protected static final int MAX_VALUE_LENGTH = 254;
-    // http://www.manamplified.org/archives/2006/10/url-regex-pattern.html
-    private static final String URL_REGEX =
-        "([A-Za-z][A-Za-z0-9+.-]{1,120}:[A-Za-z0-9/](([A-Za-z0-9$_.+!*,;/?:@&~=-])|%[A-Fa-f0-9]{2}){1,333}"
-        + "(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*,;/?:@&~=%-]{0,1000}))?)";
-
-    private String value;
+    protected static final int LONG_COL_LENGTH = 100;
+    private Long id;
+    private String name;
+    private String abbreviationName;
 
     /**
-     * Constructs a new url with a blank value.
+     * Default constructor, do nothing.
      */
-    public AbstractURL() {
+    public AbstractOrganization() {
         // do nothing
     }
 
     /**
-     * @param value url value
+     * copy constructor.
+     * @param o the org to copy from
      */
-    public AbstractURL(String value) {
-        this.value = value;
+    public AbstractOrganization(AbstractOrganization o) {
+        this.id = o.getId();
+        this.name = o.getName();
+        this.abbreviationName = o.getAbbreviationName();
     }
 
     /**
-     * @return the value
+     * @return database identity
+     * @xsnapshot.property match="entity"
      */
-    @NotEmpty
-    @Pattern(regex = URL_REGEX,
-             message = "URL is not well formed")
-    @Length(max = MAX_VALUE_LENGTH)
-    public String getValue() {
-        return value;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
     }
 
     /**
-     * @param value the value to set
+     * @param id database id
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return abbreviation name
+     * @xsnapshot.property match="entity"
+     */
+    @Length(max = LONG_COL_LENGTH)
+    public String getAbbreviationName() {
+        return abbreviationName;
+    }
+
+    /**
+     * @return name
+     *
+     * @xsnapshot.property match="entity"
+     */
+    @Transient
+    @Length(max = LONG_COL_LENGTH)
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param abbreviationName abbreviation name
+     */
+    public void setAbbreviationName(String abbreviationName) {
+        this.abbreviationName = abbreviationName;
+    }
+
+    /**
+     * @param name name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

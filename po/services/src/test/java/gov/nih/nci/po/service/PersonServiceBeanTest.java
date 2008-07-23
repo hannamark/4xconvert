@@ -83,7 +83,6 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogDetail;
@@ -91,22 +90,15 @@ import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ContactInfo;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.alternate.AlternateProvider;
-import gov.nih.nci.po.data.bo.alternate.ProviderPerson;
-import gov.nih.nci.po.data.common.Country;
-import gov.nih.nci.po.data.common.CurationStatus;
-import gov.nih.nci.po.data.common.OrganizationType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
@@ -136,16 +128,9 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         defaultCountry = new Country("USA", "840", "US", "USA");
         PoHibernateUtil.getCurrentSession().save(defaultCountry);
 
-        //Country country2 = new Country("UK", "826", "UK", "UKK");
-        //Serializable cid2 = PoHibernateUtil.getCurrentSession().save(country2);
-
-        OrganizationType tmp = new OrganizationType("defaultOrgType");
-        Serializable otId = PoHibernateUtil.getCurrentSession().save(tmp);
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-
-        PoHibernateUtil.getCurrentSession().get(OrganizationType.class, otId);
 
         assertNotNull(defaultCountry);
 
@@ -210,101 +195,6 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void createPersonWithProviderPerson() throws EntityValidationException {
-        AlternateProvider alternateProvider = new AlternateProvider();
-        alternateProvider.setCode("myAltCode");
-        alternateProvider.setName("myAltName");
-
-        PoHibernateUtil.getCurrentSession().save(alternateProvider);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
-        person.setCurationStatus(null);
-        Date now = new Date();
-        person.setDateOfBirth(now);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        ci.setPerson(person);
-        person.setAltIds(createProviderPersonSet(createProviderPerson(alternateProvider, "myAltIdentifier")));
-        for (ProviderPerson pp : person.getAltIds()) {
-            pp.setPerson(person);
-        }
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-        assertEquals(1, savedPerson.getAltIds().size());
-        Iterator<ProviderPerson> altIdIterator = savedPerson.getAltIds().iterator();
-        assertTrue(altIdIterator.hasNext());
-        ProviderPerson next = altIdIterator.next();
-        assertEquals(alternateProvider.getName(), next.getAlternateProvider().getName());
-        assertEquals(alternateProvider.getCode(), next.getAlternateProvider().getCode());
-        assertEquals("myAltIdentifier", next.getAlternateProviderIdentifier());
-        assertFalse(altIdIterator.hasNext());
-    }
-
-    @Test
-    public void createPersonWithProviderPersonWithNullAltIdCollection() throws EntityValidationException {
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
-        person.setCurationStatus(null);
-        Date now = new Date();
-        person.setDateOfBirth(now);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        ci.setPerson(person);
-        person.setAltIds(null);
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-        assertEquals(0, savedPerson.getAltIds().size());
-        assertFalse(savedPerson.getAltIds().iterator().hasNext());
-    }
-
-    @Test
-    public void createPersonWithProviderPersonAutomaticallySetsBackPointerFromPPToPerson() throws EntityValidationException {
-        AlternateProvider alternateProvider = new AlternateProvider();
-        alternateProvider.setCode("myAltCode");
-        alternateProvider.setName("myAltName");
-
-        PoHibernateUtil.getCurrentSession().save(alternateProvider);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
-        person.setCurationStatus(null);
-        Date now = new Date();
-        person.setDateOfBirth(now);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        ci.setPerson(person);
-        person.setAltIds(createProviderPersonSet(createProviderPerson(alternateProvider, "myAltIdentifier")));
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-        assertEquals(1, savedPerson.getAltIds().size());
-        Iterator<ProviderPerson> altIdIterator = savedPerson.getAltIds().iterator();
-        assertTrue(altIdIterator.hasNext());
-        ProviderPerson next = altIdIterator.next();
-        assertEquals(alternateProvider.getName(), next.getAlternateProvider().getName());
-        assertEquals(alternateProvider.getCode(), next.getAlternateProvider().getCode());
-        assertEquals("myAltIdentifier", next.getAlternateProviderIdentifier());
-        assertFalse(altIdIterator.hasNext());
-    }
-
-    @Test
     public void createPersonWithNonNullId() throws EntityValidationException {
         ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
         Person person = new Person(ci);
@@ -358,20 +248,6 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
                 .getMailingAddress());
 
         assertEquals(person.getId(), savedPerson.getPreferredContactInfo().getPerson().getId());
-    }
-
-    private Set<ProviderPerson> createProviderPersonSet(ProviderPerson pp) {
-        Set<ProviderPerson> altIds = new HashSet<ProviderPerson>();
-        altIds.add(pp);
-        return altIds;
-    }
-
-    private ProviderPerson createProviderPerson(AlternateProvider alternateProvider,
-            String ppAlternateProviderIdentifier) {
-        ProviderPerson providerPerson = new ProviderPerson();
-        providerPerson.setAlternateProvider(alternateProvider);
-        providerPerson.setAlternateProviderIdentifier(ppAlternateProviderIdentifier);
-        return providerPerson;
     }
 
     private void verifyEquals(Person expected, Person found) {

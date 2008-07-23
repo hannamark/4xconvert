@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractContactInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +90,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -101,8 +103,11 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 
@@ -112,8 +117,12 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class ContactInfo extends AbstractContactInfo implements Auditable {
+public class ContactInfo implements Auditable, PersistentObject {
     private static final long serialVersionUID = 1L;
+
+    private static final int LONG_COL_LENGTH = 100;
+    private Long id;
+    private String title;
     private Person person;
     private Organization organization;
     private Address mailingAddress;
@@ -139,12 +148,34 @@ public class ContactInfo extends AbstractContactInfo implements Auditable {
     }
 
     /**
-     * @param id PO internal id
+     * @return database id
      */
-    @SuppressWarnings("PMD.UselessOverridingMethod")// usefull to promote from protected to public
-    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id database id
+     */
     public void setId(Long id) {
-        super.setId(id);
+        this.id = id;
+    }
+
+    /**
+     * @return title
+     */
+    @Length(max = LONG_COL_LENGTH)
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title new title
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**

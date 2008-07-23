@@ -295,8 +295,8 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>57</totalBranchRate>
-                        <totalLineRate>71</totalLineRate>
+                        <totalBranchRate>60</totalBranchRate>
+                        <totalLineRate>77</totalLineRate>
                         <regexes>
                             <regex>
                                 <pattern>gov.nih.nci.po.dto.*</pattern>

@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.common.CurationStatus;
 
 import java.io.Serializable;
 

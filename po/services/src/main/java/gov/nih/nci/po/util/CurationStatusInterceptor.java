@@ -83,7 +83,7 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.common.CurationStatus;
+import gov.nih.nci.po.data.bo.CurationStatus;
 
 import java.io.Serializable;
 

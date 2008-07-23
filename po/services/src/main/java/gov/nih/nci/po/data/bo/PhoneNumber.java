@@ -83,18 +83,27 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.AbstractPhoneNumber;
-import gov.nih.nci.po.data.common.Contact;
+import gov.nih.nci.po.util.NotEmpty;
+
+import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.hibernate.validator.Length;
 
 /**
  * Stores phone number information.
  */
 @Entity
-public class PhoneNumber extends AbstractPhoneNumber implements Auditable, Contact {
+public class PhoneNumber implements Auditable, Contact, Serializable {
 
-    private static final long serialVersionUID = 2014014061416557238L;
+    private static final long serialVersionUID = 1L;
+    private static final int PHONE_LENGTH = 30;
+    private Long id;
+    private String value;
 
     /**
      * Constructs a new phone number with a blank value.
@@ -107,6 +116,36 @@ public class PhoneNumber extends AbstractPhoneNumber implements Auditable, Conta
      * @param number phone number
      */
     public PhoneNumber(String number) {
-        super(number);
+        this.value = number;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    @SuppressWarnings("unused")
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the value
+     */
+    @NotEmpty
+    @Length(max = PHONE_LENGTH)
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 }

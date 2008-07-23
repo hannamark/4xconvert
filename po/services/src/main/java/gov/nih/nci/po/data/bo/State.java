@@ -80,39 +80,49 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.common;
+package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.NotEmpty;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
-/**
- * Helper class for those tables that only consist of name and code.
- *
- * <p>
- * Note: this class has a natural ordering that is inconsistent with equals.
- * The natural order of this class is based upon the name field, but the equals
- * method takes into account the subclass (NameCodeEntities with different concrete
- * types may compare equals on name, but are never equals).
- */
-@MappedSuperclass
-public abstract class AbstractNameCodeEntity implements PersistentObject {
-    private static final long serialVersionUID = 1L;
 
-    /**
-     * Recommended column length for codes.
-     */
-    public static final int MAX_CODE_LENGTH = 50;
-    /**
-     * Recommended column length for names.
-     */
-    public static final int MAX_NAME_LENGTH = 254;
+/**
+ * State represents the second part of ISO 3166, the names of country subdivisions and dependent areas.
+ */
+@Entity
+@org.hibernate.annotations.Entity(mutable = false)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)  // Unit tests write, so cannot use read-only
+@Table(uniqueConstraints = {
+            @UniqueConstraint(columnNames = { "code", "country_id" }),
+            @UniqueConstraint(columnNames = { "name", "country_id" })
+       })
+public class State implements Auditable, PersistentObject {
+    private static final long serialVersionUID = 1L;
+    private static final int CODE_LENGTH = 3;
+    private static final int STATE_COL_LENGTH = 50;
 
     private Long id;
+    private String code;
+    private String name;
+    private Country country;
 
     /**
      * @return database identifier
@@ -131,21 +141,52 @@ public abstract class AbstractNameCodeEntity implements PersistentObject {
     }
 
     /**
-     * @return coded value
+     * @return country
      */
-    @Transient
-    public abstract String getCode();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "country_id")
+    @NotNull
+    @ForeignKey(name = "STATE_COUNTRY_FK")
+    public Country getCountry() {
+        return country;
+    }
+
     /**
-     * @param code new coded value
+     * @param country country
      */
-    public abstract void setCode(String code);
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
     /**
-     * @return decoded value
+     * {@inheritDoc}
      */
-    @Transient
-    public abstract String getName();
+    @NotEmpty
+    @Length(max = CODE_LENGTH)
+    public String getCode() {
+        return code;
+    }
+
     /**
-     * @param name new decoded value
+     * {@inheritDoc}
      */
-    public abstract void setName(String name);
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NotEmpty
+    @Length(max = STATE_COL_LENGTH)
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -2,9 +2,6 @@ package gov.nih.nci.po.data.bo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.po.data.common.Country;
-import gov.nih.nci.po.data.common.CurationStatus;
-import gov.nih.nci.po.data.common.OrganizationType;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -17,7 +14,6 @@ import org.junit.Test;
 
 public class PersonTest extends AbstractHibernateTestCase {
     private Country defaultCountry;
-    private OrganizationType defaultOrgType;
 
     @SuppressWarnings("deprecation")
     @Before
@@ -27,11 +23,6 @@ public class PersonTest extends AbstractHibernateTestCase {
 
         defaultCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, cid);
         assertNotNull(defaultCountry);
-
-        OrganizationType tmp = new OrganizationType();
-        tmp.setName("defaultOrgType");
-        Serializable otId = PoHibernateUtil.getCurrentSession().save(tmp);
-        defaultOrgType = (OrganizationType) PoHibernateUtil.getCurrentSession().get(OrganizationType.class, otId);
     }
 
     @Test
@@ -201,7 +192,6 @@ public class PersonTest extends AbstractHibernateTestCase {
         organization.setAbbreviationName("tstOrg");
         organization.setName("orgName");
         organization.setCurationStatus(CurationStatus.NEW);
-        organization.getTypes().add(defaultOrgType);
         orgCI.setOrganization(organization);
         Long orgId = (Long) PoHibernateUtil.getCurrentSession().save(organization);
         PoHibernateUtil.getCurrentSession().flush();

@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.data.common.Country;
 import gov.nih.nci.po.util.NotEmpty;
 
 import javax.persistence.Entity;
