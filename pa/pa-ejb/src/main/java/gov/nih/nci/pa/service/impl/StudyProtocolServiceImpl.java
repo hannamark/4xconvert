@@ -5,11 +5,11 @@ import gov.nih.nci.pa.domain.DocumentIdentification;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.dto.QueryStudyProtocolCriteria;
-import gov.nih.nci.pa.dto.QueryStudyProtocolDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.ProtocolService;
+import gov.nih.nci.pa.service.StudyProtocolService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  * @author Harsha, Naveen
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
-public class StudyProtocolServiceImpl implements ProtocolService {
+public class StudyProtocolServiceImpl implements StudyProtocolService {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceImpl.class);
     private static final int THREE = 3;
@@ -32,8 +32,8 @@ public class StudyProtocolServiceImpl implements ProtocolService {
      * @return List QueryStudyProtocolDTO   
      * @throws PAException on error 
      */
-    public List<QueryStudyProtocolDTO> 
-        getStudyProtocolByCriteria(QueryStudyProtocolCriteria spsc) throws PAException {      
+    public List<StudyProtocolQueryDTO> 
+        getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {      
        LOG.debug("Entering getProtocol ");
        List<Object> queryList = new StudyProtocolDAO().getStudyProtocolByCriteria(spsc); 
        return convertToStudyProtocolDTO(queryList);
@@ -47,11 +47,11 @@ public class StudyProtocolServiceImpl implements ProtocolService {
     * @throws PAException paException
     */
 
-   private List<QueryStudyProtocolDTO> convertToStudyProtocolDTO(
+   private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(
            List<Object> protocolQueryResult) throws PAException {
        LOG.debug("Entering convertToStudyProtocolDTO ");
-       List<QueryStudyProtocolDTO> studyProtocolDtos = new ArrayList<QueryStudyProtocolDTO>();
-       QueryStudyProtocolDTO studyProtocolDto = null;
+       List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
+       StudyProtocolQueryDTO studyProtocolDto = null;
        StudyProtocol studyProtocol = null;
        StudyOverallStatus studyOverallStatus = null;
        DocumentWorkflowStatus documentWorkflowStatus = null;
@@ -64,7 +64,7 @@ public class StudyProtocolServiceImpl implements ProtocolService {
                if (searchResult == null) {
                       break; 
                }
-               studyProtocolDto = new QueryStudyProtocolDTO();
+               studyProtocolDto = new StudyProtocolQueryDTO();
                // get study protocol
                studyProtocol = (StudyProtocol) searchResult[0];
                // get studyOverallStatus
