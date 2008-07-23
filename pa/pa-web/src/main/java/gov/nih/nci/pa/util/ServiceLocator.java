@@ -2,7 +2,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
-import gov.nih.nci.pa.service.ProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 /**
  *
@@ -13,9 +13,9 @@ public interface ServiceLocator {
 
     /**
      *
-     * @return ProtocolServiceLocal protocolServiceLocal
+     * @return StudyProtocolServiceRemote studyProtocolServiceRemote
      */
-    ProtocolServiceLocal getProtocolService();
+    StudyProtocolServiceRemote getStudyProtocolService();
 
 
     /**
