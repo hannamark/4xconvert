@@ -59,10 +59,14 @@ public class TestSchema {
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
 
+        public static Session getSession() {
+            return HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
+        }
         /**
          * 
          */
         public static void reset() {
+            HibernateUtil.getHibernateHelper().openTestSession();
         }
         
         public static void reset1() {
@@ -225,4 +229,6 @@ public class TestSchema {
 //
 //            HibernateUtil.getCurrentSession().clear();
 //        }
+        
+
 }
