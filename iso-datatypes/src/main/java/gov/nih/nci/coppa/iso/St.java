@@ -88,6 +88,8 @@ package gov.nih.nci.coppa.iso;
  */
 public class St extends Any {
 
+    private static final long serialVersionUID = 1L;
+
     private String value;
 
     /**
