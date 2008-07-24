@@ -128,8 +128,8 @@ public class OrganizationEntityServiceTest {
     @Test(expected = EntityValidationException.class)
     public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
-        dto1.setName(ISOUtils.TOSt.convert("Test Name"));
-        dto1.setAbbreviationName(ISOUtils.TOSt.convert("TST"));
+        dto1.setName(ISOUtils.TO_ST.convert("Test Name"));
+        dto1.setAbbreviationName(ISOUtils.TO_ST.convert("TST"));
         long id = orgService.createOrganization(dto1);
         OrganizationDTO dto2 = orgService.getOrganization(id);
         assertEquals(dto1, dto2);

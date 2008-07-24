@@ -44,7 +44,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(id);
         assertEquals(org.getId(), result.getId());
-        assertEquals(org.getName(), ISOUtils.TOString.convert(result.getName()));
+        assertEquals(org.getName(), ISOUtils.TO_STRING.convert(result.getName()));
     }
 
     /**
@@ -55,13 +55,13 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setId(99L);
-            dto.setName(ISOUtils.TOSt.convert("some name"));
-            dto.setAbbreviationName(ISOUtils.TOSt.convert("short"));
+            dto.setName(ISOUtils.TO_ST.convert("some name"));
+            dto.setAbbreviationName(ISOUtils.TO_ST.convert("short"));
             long id = remote.createOrganization(dto);
             assertNull(dto.getId()); // make sure this id was not used
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
-            assertEquals(ISOUtils.TOString.convert(dto.getName()), o.getName());
-            assertEquals(ISOUtils.TOString.convert(dto.getAbbreviationName()), o.getAbbreviationName());
+            assertEquals(ISOUtils.TO_STRING.convert(dto.getName()), o.getName());
+            assertEquals(ISOUtils.TO_STRING.convert(dto.getAbbreviationName()), o.getAbbreviationName());
         } catch (EntityValidationException e) {
             // as the DTO to BO conversion gets more completem, we should not
             // have to catch this exception.
@@ -78,7 +78,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     public void validate() {
         
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setAbbreviationName(ISOUtils.TOSt.convert("short"));
+        dto.setAbbreviationName(ISOUtils.TO_ST.convert("short"));
         Map<String, String[]> errors = remote.validate(dto);
         assertEquals(5, errors.size()) ;
         assertTrue(errors.containsKey("name"));
