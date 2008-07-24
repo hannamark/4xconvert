@@ -92,9 +92,16 @@ public class Enxp {
     private String codeSystem;
     private String codeSystemVersion;
     private EntityNamePartQualifier qualifier;
-    private EntityNamePartType type;
+    private final EntityNamePartType type;
     private String value;
 
+    /**
+     * @param type the type to set
+     */
+    public Enxp(EntityNamePartType type) {
+        this.type = type;
+    }
+    
     /**
      * @return the code
      */
@@ -156,13 +163,6 @@ public class Enxp {
      */
     public EntityNamePartType getType() {
         return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(EntityNamePartType type) {
-        this.type = type;
     }
 
     /**

@@ -82,55 +82,38 @@
  */
 package gov.nih.nci.coppa.iso;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.list.PredicatedList;
 
 /**
- * Represents the iso datatype.
+ * Represents the iso datatype. * EN.ON (Organization Name)
  * @author lpower
  */
-public class En extends Any {
+public class EnOn extends En {
 
     private static final long serialVersionUID = 1L;
+    private static final Predicate ON_PREDICATE = new Predicate() {
 
-    private final List<Enxp> part;
-    private Set<EntityNameUse> use;
-
-    /** 
-     * Default ctor. 
-     */
-    public En() {
-        part = new ArrayList<Enxp>();
-    }
-    
-    /**
-     * @param partRestriction a filter for disallowed values
-     */
-    protected En(Predicate partRestriction) {
-        part = (List<Enxp>) PredicatedList.decorate(new ArrayList<Enxp>(), partRestriction);
-    }
-    
-    /**
-     * @return the part
-     */
-    public List<Enxp> getPart() {
-        return part;
-    }
+        /** {@inheritDoc} */
+        @SuppressWarnings("PMD.MissingBreakInSwitch")
+        public boolean evaluate(Object object) {
+            if (object == null) {
+                return false;
+            }
+            
+            switch (((Enxp) object).getType()) {
+                case FAM:
+                case GIV: 
+                    return false;
+                default:
+                    return true;
+            }
+        }
+    };
 
     /**
-     * @return the use
+     * Default ctor.
      */
-    public Set<EntityNameUse> getUse() {
-        return use;
-    }
-
-    /**
-     * @param use the use to set
-     */
-    public void setUse(Set<EntityNameUse> use) {
-        this.use = use;
+    public EnOn() {
+        super(ON_PREDICATE);
     }
 }

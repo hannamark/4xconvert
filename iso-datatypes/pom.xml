@@ -190,6 +190,13 @@
     </pluginRepositories>
 
     <dependencies>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>
