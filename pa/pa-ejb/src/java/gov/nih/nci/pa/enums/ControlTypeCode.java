@@ -74,7 +74,7 @@ public enum ControlTypeCode implements CodedEnum<String> {
         ControlTypeCode[] l = ControlTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
-            a[i] = l[i].getDisplayName();
+            a[i] = l[i].getCode();
         }
         return a;
     }

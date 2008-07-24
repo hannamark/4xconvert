@@ -69,7 +69,7 @@ public enum AllocationCode implements CodedEnum<String> {
         AllocationCode[] l = AllocationCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
-            a[i] = l[i].getDisplayName();
+            a[i] = l[i].getCode();
         }
         return a;
     }

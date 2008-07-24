@@ -69,7 +69,7 @@ public enum ResponsibilityCode implements CodedEnum<String> {
         ResponsibilityCode[] l = ResponsibilityCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
-            a[i] = l[i].getDisplayName();
+            a[i] = l[i].getCode();
         }
         return a;
     }
