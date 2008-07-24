@@ -90,6 +90,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -98,21 +101,26 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Organizations.
  *
  * @xsnapshot.snapshot-class name="entity"
  *      class="gov.nih.nci.po.dto.entity.OrganizationDTO"
- *      extends="gov.nih.nci.po.dto.entity.AbstractOrganizationDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganization"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
-public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
+public class Organization implements PersistentObject, Auditable, Curatable<Organization> {
     private static final long serialVersionUID = 1L;
+    private static final int LONG_COL_LENGTH = 100;
+    private Long id;
+    private String name;
+    private String abbreviationName;
     private ContactInfo primaryContactInfo;
     private CurationStatus curationStatus;
     private CurationStatus priorCurationStatus;
@@ -133,22 +141,60 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     }
 
     /**
-     * constructor to copy base org fields.
-     *
-     * @param o the org source
+     * @return database identity
+     * @xsnapshot.property match="entity"
      */
-    public Organization(AbstractOrganization o) {
-        super(o);
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
     }
 
     /**
-     * {@inheritDoc}
+     * @param id database id
      */
-    @Override
-    @NotEmpty
-    public String getName() {
-        return super.getName();
+    public void setId(Long id) {
+        this.id = id;
     }
+
+    /**
+     * @return name
+     * @xsnapshot.property match="entity"
+     *                     type="gov.nih.nci.coppa.iso.St"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     */
+    @NotEmpty
+    @Length(max = LONG_COL_LENGTH)
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return abbreviation name
+     * @xsnapshot.property match="entity"
+     *                     type="gov.nih.nci.coppa.iso.St"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     */
+   @Length(max = LONG_COL_LENGTH)
+   public String getAbbreviationName() {
+       return abbreviationName;
+   }
+
+   /**
+    * @param abbreviationName abbreviation name
+    */
+   public void setAbbreviationName(String abbreviationName) {
+       this.abbreviationName = abbreviationName;
+   }
 
     /**
      * @return contact info

@@ -86,6 +86,7 @@ import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -93,9 +94,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
@@ -103,8 +109,11 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 /**
@@ -112,13 +121,21 @@ import org.hibernate.validator.Valid;
  *
  * @xsnapshot.snapshot-class name="entity"
  *      class="gov.nih.nci.po.dto.entity.PersonDTO"
- *      extends="gov.nih.nci.po.dto.entity.AbstractPersonDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractPerson"
  */
 @Entity
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
-    private static final long serialVersionUID = 7515315163406642400L;
+public class Person implements PersistentObject, Auditable, Curatable<Person> {
+    private static final long serialVersionUID = 1L;
+    private static final int SHORT_COL_LENGTH = 10;
+    private static final int LONG_COL_LENGTH = 50;
+
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String middleName;
+    private String suffix;
+    private String prefix;
+    private Date dateOfBirth;
     private ContactInfo preferredContactInfo;
     private List<ContactInfo> contactInfos = new ArrayList<ContactInfo>(1);
     private CurationStatus curationStatus;
@@ -141,11 +158,117 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     /**
-     * Copy constructor.
-     * @param p the person.
+     * @return database id
+     * @xsnapshot.property match="entity"
      */
-    public Person(AbstractPerson p) {
-        super(p);
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id database id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return first (given) name
+     * @xsnapshot.property match="entity"
+     */
+    @Length(max = LONG_COL_LENGTH)
+    @NotEmpty
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName first name
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return last (family) name
+     * @xsnapshot.property match="entity"
+     */
+    @Length(max = LONG_COL_LENGTH)
+    @NotEmpty
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName last name
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @return middle initial
+     * @xsnapshot.property match="entity"
+     */
+    @Length(max = LONG_COL_LENGTH)
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    /**
+     * @param middleName middle initial
+     */
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    /**
+     * @return name prefix
+     * @xsnapshot.property match="entity"
+     */
+    @Length(max = SHORT_COL_LENGTH)
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
+     * @param prefix prefix
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
+     * @return name suffix
+     * @xsnapshot.property match="entity"
+     */
+    @Length(max = SHORT_COL_LENGTH)
+    public String getSuffix() {
+        return suffix;
+    }
+
+    /**
+     * @param suffix suffix
+     */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    /**
+     * @return date of birth
+     */
+    @Temporal(value = TemporalType.TIMESTAMP)
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    /**
+     * @param dateOfBirth date of birth
+     */
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     /**
@@ -155,24 +278,6 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Sort(type = SortType.NATURAL)
     public List<ContactInfo> getContactInfos() {
         return contactInfos;
-    }
-
-    /**
-     * @return first (given) name
-     */
-    @Override
-    @NotEmpty
-    public String getFirstName() {
-        return super.getFirstName();
-    }
-
-    /**
-     * @return last (family) name
-     */
-    @Override
-    @NotEmpty
-    public String getLastName() {
-        return super.getLastName();
     }
 
     /**

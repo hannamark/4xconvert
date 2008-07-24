@@ -89,8 +89,8 @@ import net.sf.xsnapshot.TransformerArgs;
 
 /**
  *
- * @param <FROM> 
- * @param <TO> 
+ * @param <FROM>
+ * @param <TO>
  * @author gax
  */
 public abstract class AbstractXSnapshotConverter <FROM, TO> implements Transformer {
@@ -100,7 +100,7 @@ public abstract class AbstractXSnapshotConverter <FROM, TO> implements Transform
      * @return the converted value.
      */
     public abstract TO convert(FROM value);
-    
+
     /**
      * @param type the type to convert from.
      * @param value the value to convert.
@@ -120,7 +120,8 @@ public abstract class AbstractXSnapshotConverter <FROM, TO> implements Transform
      * @param ctx conversion context.
      * @return the converted value.
      */
-    public Object transform(Class type, Object value, TransformerArgs args, TransformContext ctx) {        
+    @SuppressWarnings("unchecked")
+    public Object transform(Class type, Object value, TransformerArgs args, TransformContext ctx) {
         return this.convert((Class<FROM>) type, (FROM) value, args, ctx);
     }
 

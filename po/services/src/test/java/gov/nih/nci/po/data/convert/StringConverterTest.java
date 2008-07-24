@@ -2,14 +2,14 @@
 
 Expression projectName is undefined on line 5, column 3 in Templates/Licenses/license-default.txt.
 
-	
+
  *  The software subject to this notice and license includes both human readable
  *  source code form and machine readable, binary, object code form. The Expression projectName is undefined on line 9, column 89 in Templates/Licenses/license-default.txt.
  *  Software was developed in conjunction with the National Cancer Institute
  *  (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  *  government employees are authors, any rights in such works shall be subject
  *  to Title 17 of the United States Code, section 105.
- * 
+ *
  *  This Expression project.name is undefined on line 15, column 25 in Templates/Licenses/license-default.txt. Software License (the License) is between NCI and You. You (or
  *  Your) shall mean a person or an entity, and all other entities that control,
  *  are controlled by, or are under common control with the entity. Control for
@@ -17,7 +17,7 @@ Expression projectName is undefined on line 5, column 3 in Templates/Licenses/li
  *  the direction or management of such entity, whether by contract or otherwise,
  *  or (ii) ownership of fifty percent (50%) or more of the outstanding shares,
  *  or (iii) beneficial ownership of such entity.
- * 
+ *
  *  This License is granted provided that You agree to the conditions described
  *  below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  *  no-charge, irrevocable, transferable and royalty-free right and license in
@@ -31,26 +31,26 @@ Expression projectName is undefined on line 5, column 3 in Templates/Licenses/li
  *  and not by way of limitation, NCI shall have no right of accounting or right
  *  of payment from You or Your sub-licensees for the rights granted under this
  *  License. This License is granted at no charge to You.
- * 
+ *
  *  Your redistributions of the source code for the Software must retain the
  *  above copyright notice, this list of conditions and the disclaimer and
  *  limitation of liability of Article 6, below. Your redistributions in object
  *  code form must reproduce the above copyright notice, this list of conditions
  *  and the disclaimer of Article 6 in the documentation and/or other materials
  *  provided with the distribution, if any.
- * 
+ *
  *  Your end-user documentation included with the redistribution, if any, must
  *  include the following acknowledgment: This product includes software
  *  developed by 5AM and the National Cancer Institute. If You do not include
  *  such end-user documentation, You shall include this acknowledgment in the
  *  Software itself, wherever such third-party acknowledgments normally appear.
- * 
+ *
  *  You may not use the names "The National Cancer Institute", "NCI", or "5AM"
  *  to endorse or promote products derived from this Software. This License does
  *  not authorize You to use any trademarks, service marks, trade names, logos or
  *  product names of either NCI or 5AM, except as required to comply with the
  *  terms of this License.
- * 
+ *
  *  For sake of clarity, and not by way of limitation, You may incorporate this
  *  Software into Your proprietary programs and into any third party proprietary
  *  programs. However, if You incorporate the Software into third party
@@ -64,14 +64,14 @@ Expression projectName is undefined on line 5, column 3 in Templates/Licenses/li
  *  to indemnify NCI for any claims against NCI by such third parties, except to
  *  the extent prohibited by law, resulting from Your failure to obtain such
  *  permissions.
- * 
+ *
  *  For sake of clarity, and not by way of limitation, You may add Your own
  *  copyright statement to Your modifications and to the derivative works, and
  *  You may provide additional or different license terms and conditions in Your
  *  sublicenses of modifications of the Software, or any derivative works of the
  *  Software as a whole, provided Your use, reproduction, and distribution of the
  *  Work otherwise complies with the conditions stated in this License.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  *  (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
  *  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED. IN NO
@@ -88,12 +88,12 @@ Expression projectName is undefined on line 5, column 3 in Templates/Licenses/li
 
 package gov.nih.nci.po.data.convert;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -108,26 +108,26 @@ public class StringConverterTest {
         String expResult = null;
         String result = instance.convert(value);
         assertEquals(expResult, result);
-        
-        
+
+
         value = new St();
         value.setNullFlavor(NullFlavor.NI);
         result = instance.convert(value);
         assertNull(result);
-        
+
         expResult = "foo";
         value.setNullFlavor(null);
         value.setValue(expResult);
         result = instance.convert(value);
         assertEquals(expResult, result);
     }
-    
+
     @Test( expected = IllegalArgumentException.class )
     public void testConvertBad() {
         St value = new St();
         assertNull(value.getNullFlavor());
         assertNull(value.getValue());
-        
+
         StringConverter instance = new StringConverter();
         instance.convert(value);
     }

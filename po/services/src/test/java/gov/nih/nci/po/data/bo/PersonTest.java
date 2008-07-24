@@ -15,7 +15,6 @@ import org.junit.Test;
 public class PersonTest extends AbstractHibernateTestCase {
     private Country defaultCountry;
 
-    @SuppressWarnings("deprecation")
     @Before
     public void init() {
         Country country = new Country("USA", "840", "US", "USA");
