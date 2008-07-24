@@ -86,7 +86,8 @@ package gov.nih.nci.coppa.iso;
  * Represents iso datatype QTY.
  * @author lpower
  */
-public class Qty extends Any {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class Qty extends Any {
 
     private static final long serialVersionUID = 1L;
 

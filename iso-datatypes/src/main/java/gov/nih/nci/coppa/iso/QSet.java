@@ -87,7 +87,8 @@ package gov.nih.nci.coppa.iso;
  * @author lpower
  * @param <T>
  */
-public class QSet<T extends Qty> extends Any {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class QSet<T extends Qty> extends Any {
 
     private static final long serialVersionUID = 1L;
 
@@ -106,5 +107,4 @@ public class QSet<T extends Qty> extends Any {
     public void setOriginalText(Ed originalText) {
         this.originalText = originalText;
     }
-
 }

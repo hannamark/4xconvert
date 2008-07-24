@@ -88,8 +88,9 @@ import java.io.Serializable;
  * Represents the iso Any type.
  * @author Scott Miller
  */
-public class Any implements Serializable {
-    
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class Any implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private String flavorId;
