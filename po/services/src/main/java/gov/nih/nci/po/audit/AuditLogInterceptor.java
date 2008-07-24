@@ -83,6 +83,7 @@
 
 package gov.nih.nci.po.audit;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.io.Serializable;
@@ -212,8 +213,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String role = pc.getRole();
         Object oldV = pc.getStoredSnapshot();
         Object newV = pc.getValue();
-        String oldValStr = getValueString((Collection<Auditable>) oldV);
-        String newValStr = getValueString((Collection<Auditable>) newV);
+        String oldValStr = getValueString((Collection<?>) oldV);
+        String newValStr = getValueString((Collection<?>) newV);
 
         int idx = role.lastIndexOf('.');
         String className = role.substring(0, idx);
@@ -490,11 +491,14 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         return (value.getId() == null) ? null : value.getId().toString();
     }
 
-    private static <A extends Auditable> String getValueString(Collection<A> value) {
+    private static String getValueString(Collection<?> value) {
         String sep = "";
         StringBuffer sb = new StringBuffer();
-        for (A a : value) {
-            sb.append(sep).append(a.getId());
+        for (Object a : value) {
+            if (a instanceof PersistentObject) {
+                a = ((PersistentObject) a).getId();
+            } 
+            sb.append(sep).append(String.valueOf(a));
             sep = ", ";
             if (sb.length() > MAX_VALUE_LENGTH) {
                 String suffix = "...";
