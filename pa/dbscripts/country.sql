@@ -1,3 +1,4 @@
+CREATE SEQUENCE serial START 901;
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'RS', 'SRB', 'Serbia', '688' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'IR', 'IRN', 'Iran (Islamic Republic Of)', '364' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'IQ', 'IRQ', 'Iraq', '368' );
@@ -8,11 +9,11 @@ INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval(
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'JP', 'JPN', 'Japan', '392' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KE', 'KEN', 'Kenya', '404' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KI', 'KIR', 'Kiribati', '296' );
-INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KP', 'PRK', 'Korea, Democratic People's Replublic of', '408' );
+INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KP', 'PRK', 'Korea, Democratic Peoples Replublic of', '408' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KS', 'KOR', 'Korea, Republic of', '410' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KW', 'KWT', 'Kuwait', '414' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'KG', 'KGZ', 'Kyrgyzstan', '417' );
-INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'LA', 'LAO', 'Lao People's Democratic Republic', '418' );
+INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'LA', 'LAO', 'Lao Peoples Democratic Republic', '418' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'LV', 'LVA', 'Latvia', '428' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'LB', 'LBN', 'Lebanon', '422' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'LS', 'LSO', 'Lesotho', '426' );
@@ -189,7 +190,7 @@ INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval(
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CD', 'COD', 'Congo, Democratic Republic of th', '180' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CK', 'COK', 'Cook Islands', '184' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CR', 'CRI', 'Costa Rica', '188' );
-INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CI', 'CIV', 'Cote D'Ivoire', '384' );
+INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CI', 'CIV', 'Cote D Ivoire', '384' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'HR', 'HRV', 'Croatia', '191' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CU', 'CUB', 'Cuba', '192' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'CY', 'CYP', 'Cyprus', '196' );
