@@ -80,17 +80,16 @@
 * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.po.service.organization;
+package gov.nih.nci.services.organization;
 
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
-
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+
 import java.util.Map;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -120,7 +119,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     public void setOrganizationServiceBean(OrganizationServiceLocal svc) {
         this.orgService = svc;
     }
-    
+
     /**
      * @return orgService that was injected by container.
      */
@@ -133,7 +132,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    
+
     public OrganizationDTO getOrganization(long id) {
         Organization org = orgService.getOrganization(id);
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);

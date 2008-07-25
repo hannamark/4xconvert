@@ -10,11 +10,12 @@ import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.dto.entity.PersonDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.services.person.PersonDTO;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.Date;
 import java.util.Map;

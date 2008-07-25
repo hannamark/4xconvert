@@ -82,17 +82,17 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.organization.OrganizationEntityServiceBean;
-import gov.nih.nci.po.service.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.po.service.person.PersonEntityServiceBean;
-import gov.nih.nci.po.service.person.PersonEntityServiceRemote;
 import gov.nih.nci.po.util.RemoteBeanHandler;
+import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceBean;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  * @author Scott Miller
  */
 public class EjbTestHelper {
-    
+
     /**
      * Get a newly created org service.
      * @return the service
@@ -101,13 +101,13 @@ public class EjbTestHelper {
         OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
         return organizationServiceBean;
     }
-    
+
     public static OrganizationEntityServiceBean getOrganizationEntityServiceBean() {
         OrganizationEntityServiceBean organizationServiceBean = new OrganizationEntityServiceBean();
         organizationServiceBean.setOrganizationServiceBean(getOrganizationServiceBean());
         return organizationServiceBean;
     }
-    
+
     public static OrganizationEntityServiceRemote getOrganizationEntityServiceBeanAsRemote () {
         return (OrganizationEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getOrganizationEntityServiceBean());
     }
@@ -126,12 +126,12 @@ public class EjbTestHelper {
     	personServiceBean.setPersonServiceBean(getPersonServiceBean());
         return personServiceBean;
     }
-    
+
     public static PersonEntityServiceRemote getPersonEntityServiceBeanAsRemote () {
         return (PersonEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getPersonEntityServiceBean());
     }
 
-    
+
     /**
      * Get a newly created and configured generic service.
      * @return the service

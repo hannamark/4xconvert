@@ -80,67 +80,73 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.test.remoteapi;
+package gov.nih.nci.services.person;
 
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.services.person.PersonDTO;
+import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 
-import java.util.Properties;
+import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
- * @author Scott Miller
- */
-public class RemoteServiceHelper {
+*
+* @author lpower
+*/
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({ PoHibernateSessionInterceptor.class })
+@SecurityDomain("po")
+public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
-    static final String PERSON_SERVICE_BEAN_REMOTE = "po/PersonEntityServiceBean/remote";
-    static final String ORG_SERVICE_BEAN_REMOTE = "po/OrganizationEntityServiceBean/remote";
+    private PersonServiceLocal perService;
+    private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
 
-    private static String username = "ejbclient";
-    private static String password = "pass";
-
-    private static InitialContext ctx;
-
-    private static Object lookup(String resource) throws NamingException {
-        if (ctx == null) {
-            Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, username);
-            env.setProperty(Context.SECURITY_CREDENTIALS, password);
-            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-            ctx = new InitialContext(env);
-        }
-        return ctx.lookup(resource);
+    /**
+     * @param svc service, injected
+     */
+    @EJB
+    public void setPersonServiceBean(PersonServiceLocal svc) {
+        this.perService = svc;
     }
 
     /**
-     * Closes the context.
-     * @throws NamingException on error.
+     * {@inheritDoc}
      */
-    public static void close() throws NamingException {
-        if (ctx != null) {
-            ctx.close();
-            ctx = null;
-        }
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public PersonDTO getPerson(long id) {
+        Person perBO = perService.getPerson(id);
+        return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
     }
 
     /**
-     * Get the person service.
-     * @return the service.
-     * @throws NamingException on error.
+     * {@inheritDoc}
      */
-    public static PersonEntityServiceRemote getPersonEntityService() throws NamingException {
-        return (PersonEntityServiceRemote) lookup(PERSON_SERVICE_BEAN_REMOTE);
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public long createPerson(PersonDTO person) throws EntityValidationException {
+        Person perBO = (Person) PoXsnapshotHelper.createModel(person);
+        return perService.create(perBO);
     }
 
     /**
-     * Get the person service.
-     * @return the service.
-     * @throws NamingException on error.
+     * {@inheritDoc}
      */
-    public static OrganizationEntityServiceRemote getOrganizationEntityService() throws NamingException {
-        return (OrganizationEntityServiceRemote) lookup(ORG_SERVICE_BEAN_REMOTE);
+    public Map<String, String[]> validate(PersonDTO person) {
+        Person perBO = (Person) PoXsnapshotHelper.createModel(person);
+        return perService.validate(perBO);
     }
+
+
 }

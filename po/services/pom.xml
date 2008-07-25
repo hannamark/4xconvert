@@ -190,14 +190,13 @@
                     </archive>
                     <generateClient>true</generateClient>
                     <clientIncludes>
-                        <clientInclude>gov/nih/nci/po/dto/**</clientInclude>
-                        <clientInclude>gov/nih/nci/po/service/person/**</clientInclude>
-                        <clientInclude>gov/nih/nci/po/service/organization/**</clientInclude>
+                        <clientInclude>gov/nih/nci/services/person/**</clientInclude>
+                        <clientInclude>gov/nih/nci/services/organization/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
                     </clientIncludes>
                     <clientExcludes>
-                        <clientExclude>gov/nih/nci/po/dto/**/*Helper*</clientExclude>
-                        <clientExclude>gov/nih/nci/po/service/**/*Bean*</clientExclude>
+                        <clientExclude>gov/nih/nci/services/**/*Helper*</clientExclude>
+                        <clientExclude>gov/nih/nci/services/**/*Bean*</clientExclude>
                         <clientExclude>**hibernate.cfg.xml</clientExclude>
                     </clientExcludes>
                 </configuration>

@@ -82,11 +82,11 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.po.data.convert.ISOUtils;
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.dto.entity.OrganizationDTO;
+import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import javax.naming.NamingException;
 

@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.ISOUtils;
-import gov.nih.nci.po.dto.entity.OrganizationDTO;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.Map;
 
@@ -76,7 +77,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
 
     @Test
     public void validate() {
-        
+
         OrganizationDTO dto = new OrganizationDTO();
         dto.setAbbreviationName(ISOUtils.TO_ST.convert("short"));
         Map<String, String[]> errors = remote.validate(dto);
