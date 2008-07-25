@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+$Id: install.xml 4757 2008-05-15 20:43:31Z zengje $
+$HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
+-->
+<project name="pa-ear-pa-ear-installer" default="upgrade" basedir="." 
+	xmlns:ivy="antlib:org.apache.ivy.ant"
+	>
+	<description>
+		TBD
+	</description>
+
+	<!-- Properties file related properties and tasks -->
+	<property environment="env" />
+	<property file="project.properties"/>
+	<property name="properties.file" value="${basedir}/install.properties"/>
+	<echo message="Using properties file of ${properties.file}."/>
+	<available file="${properties.file}" property="properties.file.exists" />
+	<fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
+	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
+	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
+	<property file="${properties.file}" />
+	
+	<!-- Generic properties -->
+	<property name="log.dir" value="${basedir}/logs" />
+	<property name="working.dir" value="${basedir}/working" />
+	<property name="temp.dir" value="${working.dir}/temp" />
+
+	<!-- Install Time properties -->
+	<!-- Source and target directories -->
+	<property name="bda-utils.dir" value="bda-utils" />
+	<property name="tools.dir" value="${basedir}/${tools.dist.relative.dir}" />
+	<property name="common.dir.src" value="${basedir}/${common.dist.relative.dir}" />
+	<property name="common.dir.dest" value="${working.dir}/${common.dist.relative.dir}" />
+	<property name="jboss-conf.dir.dest" value="${working.dir}/${jboss-conf.dist.relative.dir}" />
+	<property name="db.dir.src" value="${basedir}/${db.dist.relative.dir}" />
+	<property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
+	<property name="pa.db-install.dir.dest" value="${working.dir}/${pa.db-install.dist.relative.dir}" />
+	<property name="pa.db-upgrade.dir.dest" value="${working.dir}/${pa.db-upgrade.dist.relative.dir}" />
+
+	<!-- Jboss configurtion related properties -->
+	<property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
+	<property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
+
+	<!-- *-ds.xml and WAR -->
+	<property name="pa-ear.dir.dist" value="${basedir}/${pa-ear.dist.relative.dir}" />
+	<property name="pa-ear.ds.file" value="pa-ds.xml" />
+	<property name="pa-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
+	<property name="pa-ear.hibernate.file" value="hibernate.cfg.xml" />
+	<property name="pa-ear.ear.file" value="pa.ear" />
+
+	<!-- Paths -->
+	<path id="bda-utils.classpath">
+		<fileset dir="${bda-utils.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<!-- Task definitions -->
+	<taskdef uri="antlib:org.apache.ant.antunit" resource="org/apache/ant/antunit/antlib.xml">
+		<classpath>
+			<pathelement location="${bda-utils.dir}/antunit-1.0.jar" />
+		</classpath>
+	</taskdef>
+	<taskdef name="xmlconfig" classname="com.xmlconfig.anttask.XmlConfig" classpathref="bda-utils.classpath" />
+	<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
+		<classpath>
+			<pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${bda-utils.dir}/ant-contrib-1.0b3.jar"/>
+			<pathelement location="${bda-utils.dir}/bcel-5.1.jar"/>
+			<pathelement location="${bda-utils.dir}/commons-httpclient-3.0.1.jar"/>
+			<pathelement location="${bda-utils.dir}/commons-logging-1.0.4.jar"/>
+			<pathelement location="${bda-utils.dir}/ivy-1.3.1.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- Conditionals -->
+	<available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
+	<!-- pa-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
+	<switch value="${database.type}">
+		<case value="oracle">
+			<property name="database.dialect" value="org.hibernate.dialect.OracleDialect"/>
+			<property name="database.driver.file" value="${bda-utils.dir}/ojdbc14-10.2.0.3.0.jar"/>
+			<property name="database.driver" value="oracle.jdbc.driver.OracleDriver"/>
+			<property name="db-upgrade.list.file" value="${db-upgrade.oracle.list.file}"/>
+			<property name="db-upgrade.conf.file" value="${db-upgrade.oracle.conf.file}"/>
+		</case>
+		<case value="mysql">
+			<property name="database.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+			<property name="database.driver.file" value="${bda-utils.dir}/mysql-connector-java-5.0.5.jar"/>
+			<property name="database.driver" value="com.mysql.jdbc.Driver"/>
+			<property name="db-upgrade.list.file" value="${db-upgrade.mysql.list.file}"/>
+			<property name="db-upgrade.conf.file" value="${db-upgrade.mysql.conf.file}"/>
+		</case>
+		<case value="postgresql">
+			<property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+			<property name="database.driver.file" value="${bda-utils.dir}/postgresql-jdbc3-8.3-603.jar"/>
+			<property name="database.driver" value="org.postgresql.Driver"/>
+			<property name="db-upgrade.list.file" value="${db-upgrade.postgresql.list.file}"/>
+			<property name="db-upgrade.conf.file" value="${db-upgrade.postgresql.conf.file}"/>
+		</case>
+		<default>
+			<fail message="Invalid database type ${database.type}"/>
+		</default>
+	</switch>
+
+	<!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
+	<propertyregex property="properties.file.type"
+		input="${properties.file}"
+		regexp=".*(install|upgrade).*"
+		select="\1"
+		/>
+	<echo message="Properties file type = ${properties.file.type}"/>
+	<switch value="${properties.file.type}">
+		<case value="install">
+			<property name="properties.template.file" value="install-properties.template" />
+		</case>
+		<case value="upgrade">
+			<property name="properties.template.file" value="upgrade-properties.template" />
+		</case>
+		<default>
+			<fail message="Property file name must include 'install' or 'upgrade' so it can be determined which properties template should be used. If you are not certain include 'upgrade' in the name of your proeprties file."/>
+		</default>
+	</switch>
+
+	<!-- Includes-->
+	<import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
+
+	<!-- Generated and used by database incremental build process, copied deploy:*:prep of build.xml -->
+	<import file="db-integrate.xml" />
+
+	<!-- Read db configs from existing ds.xml if it exists for use in upgrade installs, if already set in properties file values from properties file will be used -->
+	<available file="${jboss.home}/server/${jboss.server.name}/deploy/${pa-ear.ds.file}" property="ds.exists"/>
+	<if>
+		<isset property="ds.exists"/>
+		<then>
+			<jboss-read-dbconfig
+				jboss.ds-xml.file="${pa-ear.ds.file}"
+				/>
+		</then>
+		<else>
+			<echo message="Warning- could not find ${jboss.home}/server/${jboss.server.name}/deploy/${pa-ear.ds.file}"/>
+		</else>
+	</if>
+
+	<!-- There is any issue with copying files with a filtersfile, any properties with a value of
+		another property do not get expanded (xx=${yy} @xx@ will be replaced with ${yy} not the
+		value).  I have defined a filter set below for these properties, I then two two copies
+		one to the resource.dir.temp using the filterset and then one to the desired directory 
+		with the filter file.  If you add new properties that refer to other properties in the
+		properties file please add them to the filterset-pre below.
+	     Also you should include properties that are declared in this file, like database info below.
+	-->
+	<property name="resource.dir.temp" value="${working.dir}/tmp" />
+	<filterset id="filterset.pre">
+		<filter token="application.base.path" value="${application.base.path}"/>
+		<filter token="application.url" value="${application.url}"/>
+		<filter token="database.url" value="${database.url}"/>
+		<filter token="database.system.url" value="${database.system.url}"/>
+		<filter token="jboss.home" value="${jboss.home}"/>
+		<!-- added internal properties that may be used in a filtered copy -->
+		<filter token="database.driver" value="${database.driver}"/>
+		<filter token="database.dialect" value="${database.dialect}"/>
+		<filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
+	</filterset>
+	
+
+	<!-- Start logging --> 
+	<mkdir dir="${log.dir}" />
+	<tstamp>
+		<format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
+	</tstamp>
+	<record name="${log.dir}/install-${install.time}.log" action="start"/>
+
+
+	<!-- Installer section -->
+	<target name="diag">
+		<echoproperties/>
+	</target>
+
+	<!-- Clean up destination directory -->
+	<target name="install:clean" description="Removes all files from the local filesystem">
+		<sleep seconds="5" />
+		<delete dir="${jboss.home}" quiet="false" />
+		<delete dir="${tomcat.home}" quiet="false" />
+	</target>
+
+	<!-- Does directory management and copy some files with filtering to ensure token expansion -->
+	<target name="install:init" description="Does directory management to initialize install">
+		<mkdir dir="${working.dir}" />
+		<delete dir="${working.dir}"/>
+		<mkdir dir="${working.dir}" />
+		<mkdir dir="${resource.dir.temp}"/>
+		<!-- Copy files to ensure values containing variables are expanded, such properties are stored in filterset.pre and then copy with filter files -->
+		<copy todir="${resource.dir.temp}" filtering="true">
+			<fileset dir="${common.dir.src}">
+				<include name="**/*"/>
+			</fileset>
+			<filterset refid="filterset.pre"/>
+		</copy> 
+		<copy todir="${common.dir.dest}" filtering="true">
+			<fileset dir="${resource.dir.temp}">
+				<include name="**/*"/>
+			</fileset>
+			<filterset>
+				<filtersfile file="${properties.file}"/>
+				<filtersfile file="project.properties"/>
+			</filterset>
+		</copy> 
+		<delete dir="${resource.dir.temp}"/>
+	</target>
+
+	<!-- Wrapper install database target, depends on both MySQL and Oracle sub-targets, ifs should ensure only one is run.  Target path can be skipped by exlude.database also calls upgrade:database -->
+	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
+		depends="
+		install:init
+		">
+		<property name="db.dir.temp" value="${working.dir}/tmp"/>
+		<mkdir dir="${db.dir.temp}"/>
+		<copy todir="${db.dir.temp}" filtering="true">
+			<fileset dir="${db.dir.src}">
+				<include name="**/*"/>
+			</fileset>
+			<filterset refid="filterset.pre"/>
+		</copy> 
+		<copy todir="${db.dir.dest}" filtering="true">
+			<fileset dir="${db.dir.temp}">
+				<include name="**/*"/>
+			</fileset>
+			<filterset>
+				<filtersfile file="${properties.file}"/>
+				<filtersfile file="project.properties"/>
+			</filterset>
+		</copy>
+
+		<switch value="${database.type}">
+			<case value="oracle">
+				<for list="${db.install.oracle.file.list}" param="db.install.oracle.file">
+					<sequential>
+						<run-sql-script database.url="${database.url}"
+							database.user="${database.user}" 
+							database.password="${database.password}" 
+							sql.delimiter="/" 
+							sql.delimitertype="row"
+							sql.file="${pa.db-install.dir.dest}/${database.type}/@{db.install.oracle.file}"
+							onerror="continue"/>
+					</sequential>
+				</for>
+			</case>
+			<case value="mysql">
+				<database-create/>
+				<for list="${db.install.mysql.file.list}" param="db.install.mysql.file">
+					<sequential>
+						<run-sql-script
+							database.url="${database.url}"
+							database.user="${database.user}"
+							database.password="${database.password}"
+							sql.file="${pa.db-install.dir.dest}/${database.type}/@{db.install.mysql.file}"
+							/>
+					</sequential>
+				</for>
+			</case>
+			<case value="postgresql">
+				<database-create/>
+				<for list="${db.install.postgresql.file.list}" param="db.install.postgresql.file">
+					<sequential>
+						<echo message="processing ${pa.db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
+						<run-sql-script
+							database.url="${database.url}"
+							database.user="${database.user}"
+							database.password="${database.password}"
+							sql.delimiter="/" 
+							sql.delimitertype="row"
+							sql.file="${pa.db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
+							/>
+					</sequential>
+				</for>
+			</case>
+		</switch>
+		<antcall target="upgrade:database" inheritAll="false"/>
+	</target>
+
+	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
+		<!--
+		<unzip dest="${application.base.path}" src="${tools.dir}/${jboss.binaries.file}" />
+		<java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
+			<arg value="${jboss-conf.dir.dest}/InstallConfigRecord.xml"/>
+		</java>
+		-->
+		<java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
+			<arg line="-installGroup ejb3 installpath=${jboss.home}"/>
+		</java>
+		<if>    
+			<os family="unix"/>
+			<then>  
+				<chmod dir="${jboss.home}/bin" perm="ugo+rx" 
+					includes="**/*.sh"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="install:jboss:pa-ear" description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries" unless="exclude.jboss">
+		<!-- added to ensure working.dirs are fresh for our install -->
+		<delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+		<delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
+
+		<copy file="${pa-ear.dir.dist}/${pa-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+		<copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+		<copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+		
+		<!-- Replace this with file from ivy when project is ivy'fied -->
+	</target>
+
+	<target name="install:jboss:pa-ear:configure" description="Configure pa-ear application" unless="exclude.jboss">
+		<!--
+		<copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+		<copy file="${jboss-conf.dir.dest}/${pa-ear.app-sec-conf.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+		<copy file="${jboss-conf.dir.dest}/${pa-ear.hibernate.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+		-->
+	</target>
+
+	<!-- Wrapper target to configure jboss container, not deployed application -->
+	<target name="install:jboss:configure" description="Configure pa-ear" unless="exclude.jboss"
+		depends="install:jboss:binaries,
+		-install:jboss:configure:ports,
+		-install:jboss:configure:login-conf,
+		-install:jboss:configure:log4j,
+		-install:jboss:configure:update-shutdown
+		"/>
+
+	<!-- Configure ports used by JBOSS (either bindings or editing jboss config.files) -->
+	<target name="-install:jboss:configure:ports" description="Configure pa-ear" unless="exclude.jboss">
+		<jboss-bindings
+			jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindings.xml"
+			jboss.server.binding.template.location="${jboss.binding.template.location}"
+			jboss.server.service.template.location="${jboss.service.template.location}"
+			/>
+	</target>
+
+	<!-- Add custom login-config.xml content from snippet from pa-ear/software/resources/deploy/login-config.${auth.type}-block.xml -->
+	<target name="-install:jboss:configure:login-conf" unless="exclude.jboss">
+		<if>    
+			<equals arg1="${authentication.type}" arg2="ldap"/>
+			<then>  
+				<property name="login-config.block.file" value="${jboss-conf.dir.dest}/login-config.ldap-block.xml"/>
+			</then> 
+			<else>  
+				<if>    
+					<equals arg1="${authentication.type}" arg2="db"/>
+					<then>  
+						<property name="login-config.block.file" value="${jboss-conf.dir.dest}/login-config.db-block.xml"/>
+					</then> 
+					<else>  
+						<fail message="${authentication.type} is not a valid authentiation type, please change to db or ldap and re-run the build."/>
+					</else> 
+				</if>   
+			</else> 
+		</if>   
+		<echo message="Inserting ${login-config.block.file} into ${jboss.home}/server/${jboss.server.name}/conf/login-config.xml"/>
+		<xmlconfig in="${jboss.home}/server/${jboss.server.name}/conf/login-config.xml" verbose="false">
+			<insertbranch path="//policy" srcxmlfile="${login-config.block.file}" srcpath="//application-policy" />
+		</xmlconfig>
+	</target>
+
+	<!-- Configure MQ settings based on contents of ncia/software/resrouces/deploy/jbossmq-destinations-service.block.xml -->
+	<target name="-install:jboss:configure:jbossmq-dest" unless="exclude.jboss">
+		<property name="jboss-mq.block.file" value="${resource.dir.target}/jbossmq-destinations-service.block.xml"/>
+		<xmlconfig in="${jboss.home}/server/${jboss.server.name}/deploy/jms/jbossmq-destinations-service.xml" verbose="false">
+			<insertbranch path="//server" srcxmlfile="${jboss-mq.block.file}" srcpath="//mbean[1]" />
+			<insertbranch path="//server" srcxmlfile="${jboss-mq.block.file}" srcpath="//mbean[2]" />
+		</xmlconfig>
+	</target>
+
+
+	<!-- Configure log4j settings based on contents of pa-ear/software/resrouces/deploy/log4j.block.xml -->
+	<target name="-install:jboss:configure:log4j" unless="exclude.jboss">
+        <!--
+		<property name="log4j.block.file" value="${resource.dir.target}/log4j.block.xml"/>
+		<loadfile 
+			property="xml.content"
+			srcFile="${log4j.block.file}"/>
+
+		<replaceregexp file="${jboss.home}/server/default/conf/log4j.xml" byline="true"
+			match="(^.*\/log4j:configuration.)"
+			replace="${xml.content}${line.separator}\1"/>
+		-->
+	</target>
+
+	<!-- Calls to bda macros for basic functionality -->
+	<target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
+		<jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}"/>
+		<jboss-stop-jboss />
+	</target>
+	<target name="install:jboss:start"  unless="exclude.jboss">
+		<if>
+			<not>
+				<isset property="exclude.start.servers"/>
+			</not>
+			<then>
+				<jboss-start-jboss />
+			</then>
+		</if>
+	</target>
+	<target name="install:validation:pre-install">
+		<validate-pre-install
+			ant.check.version="${ant.minimum.version}"
+			java.check.version.major="${java.major.version}"
+			java.check.version.minor="${java.minor.version}"
+			database.version="${mysql.minimum.version}"
+			/>
+	</target>
+	<target name="install:validation:pre-install:ports">
+		<validate-ports-preinstall />
+	</target>
+	<target name="install:validation:post-install">
+		<if>
+			<not>
+				<isset property="exclude.start.servers"/>
+			</not>
+			<then>
+				<validate-post-install />
+			</then>
+		</if>
+	</target>
+	<target name="-install:jboss:configure:update-shutdown" unless="exclude.jboss">
+		<jboss-update-shutdown />
+	</target>
+
+	<!-- Wrapper target to deploy JBOSS container -->
+	<target name="install:jboss" unless="exclude.jboss"
+		depends="
+		install:check,
+		install:validation:pre-install,
+		install:jboss:stop,
+		install:validation:pre-install:ports,
+		install:clean,
+		install:init,
+		install:jboss:binaries,
+		install:jboss:pa-ear:re-configure,
+		install:jboss:pa-ear,
+		install:jboss:pa-ear:configure,
+		install:jboss:configure,
+		install:jboss:start
+		" />
+
+	<!-- Wrapper target to deploy all containers to one server -->
+	<target name="install" description="Installs and configures JBOSS, creates database, and deploys application" 
+		depends="
+		install:check,
+		install:validation:pre-install,
+		install:jboss:stop,
+		install:validation:pre-install:ports,
+		install:clean,
+		install:init,
+		install:database,
+		install:jboss,
+		install:jboss:start,
+		install:validation:post-install
+		"/>
+
+	<!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
+	<target name="install:jboss:pa-ear:re-configure" unless="exclude.jboss">
+	    
+		<mkdir dir="${temp.dir}/pa-ear"/>
+		<delete dir="${temp.dir}/pa-ear"/>
+		<mkdir dir="${temp.dir}/pa-ear"/>
+		<unzip src="${pa-ear.dir.dist}/${pa-ear.ear.file}" dest="${temp.dir}/pa-ear"/>
+		<unzip src="${temp.dir}/pa-ear/pa-ejb.jar" dest="${temp.dir}/pa-ejb-jar"/>
+		<copy todir="${temp.dir}/pa-ejb-jar/" file="${jboss-conf.dir.dest}/pa-ds.xml"/>
+
+		<move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
+		<move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar..orig"/>
+
+		<jar jarfile="${temp.dir}/pa-ear/pa-ejb.jar" 
+			compress="true" 
+			index="false" 
+			basedir="${temp.dir}/pa-ejb-jar"/>
+
+		<ear destfile="${pa-ear.dir.dist}/${pa-ear.ear.file}" 
+			basedir="${temp.dir}/pa-ear" 
+			compress="false" 
+			appxml="${temp.dir}/pa-ear/META-INF/application.xml"
+			/>
+	</target>
+
+	<!-- Wrapper target to upgrade jboss container. Does not install or configure binaries -->
+	<target name="upgrade:jboss" unless="exclude.jboss"
+		depends="
+		upgrade:check,
+		install:validation:pre-install,
+		install:jboss:stop,
+		install:init,
+		install:jboss:pa-ear:re-configure,
+		install:jboss:pa-ear,
+		install:jboss:pa-ear:configure,
+		install:jboss:start
+		" />
+
+	<!-- Wrapper target to upgrade all container. Does not install or configure binaries -->
+	<target name="upgrade" description="Deploys application and runs incremental database build" 
+		depends="
+		upgrade:check,
+		upgrade:init,
+		install:validation:pre-install,
+		install:jboss:stop,
+		install:init,
+		upgrade:database,
+		upgrade:jboss,
+		install:validation:post-install
+		"/>
+
+	<!-- Wrapper upgrade database target, depends on both MySQL and Oracle sub-targets, ifs should ensure only one is run.  Target path can be skipped by exlude.database. -->
+	<target name="upgrade:database" description="Apply incremental DB changes" unless="exclude.database"
+		depends="
+		install:init,
+		upgrade:init
+		">
+		<!-- **figure out the changes/scripts based upon current version IN the database, if any ** -->
+		<switch value="${database.type}">
+			<case value="oracle">
+				<if>
+					<available file="${db-upgrade.list.file}"/>
+					<then>
+						<property name="db.continue" value="true"/>
+						<database-create-control-table
+							database.url="${database.url}"
+							database.user="${database.user}"
+							database.password="${database.password}"
+							/>
+						<!-- sql.delimiter=/ and sql.delimiter.type=row are required to allow jdbc to run programmatic sql like ceation of procedures or functions or triggers.  This means sql files must have all commands terminated with '/' on it's own line, not ;.	-->
+						<database-identify-scripts
+							sqlfiles.list.file="${db-upgrade.list.file}"
+							build.properties.file="${db-upgrade.conf.file}"
+							sql.delimiter="/" 
+							sql.delimitertype="row"
+							database.sql.dir="${pa.db-upgrade.dir.dest}"/>
+					</then>
+					<else>
+						<echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
+					</else>
+				</if>
+			</case>
+			<case value="mysql">
+				<if>
+					<available file="${db-upgrade.list.file}"/>
+					<then>
+						<property name="db.continue" value="true"/>
+						<database-create-control-table
+							database.url="${database.url}"
+							database.user="${database.user}"
+							database.password="${database.password}"
+							/>
+						<database-identify-scripts
+							sqlfiles.list.file="${db-upgrade.list.file}"
+							build.properties.file="${db-upgrade.conf.file}"
+							database.sql.dir="${pa.db-upgrade.dir.dest}"
+							/>
+					</then>
+					<else>
+						<echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
+					</else>
+				</if>
+			</case>
+			<case value="postgresql">
+				<if>
+					<available file="${db-upgrade.list.file}"/>
+					<then>
+						<property name="db.continue" value="true"/>
+						<database-create-control-table
+							database.url="${database.url}"
+							database.user="${database.user}"
+							database.password="${database.password}"
+							/>
+						<database-identify-scripts
+							sqlfiles.list.file="${db-upgrade.list.file}"
+							build.properties.file="${db-upgrade.conf.file}"
+							sql.delimiter="/" 
+							sql.delimitertype="row"
+							database.sql.dir="${pa.db-upgrade.dir.dest}"/>
+					</then>
+					<else>
+						<echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
+					</else>
+				</if>
+			</case>
+		</switch>
+		<echo  message="db.continue=${db.continue}"/>
+		<if>
+			<isset property="db.continue"/>
+			<then>
+				<!-- **make the changes to the db aka invoke the proper scripts ** -->
+				<antcall target="database-integrate" />
+				<!-- ** make sure the versioning information IN the database is updated to reflect what we just did ** -->
+				<database-update-version-table
+					database.driver="${database.driver}"
+					database.url="${database.url}"
+					database.user="${database.user}"
+					database.password="${database.password}"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="upgrade:init">
+		<echo  message="Checking if database properties exist.  If they do not on an upgrade install then ${jboss.home}/server/${jboss.server.name}/deploy/${pa-ear.ds.file} may not exist."/>
+		<property name="db.prop.list" value="database.url,database.user,database.password,database.name"/>
+		<properties-exist properties.list="${db.prop.list}"/>
+	</target>
+	<target name="install:check">
+		<if>
+			<not>   
+				<contains string="${properties.file}" substring="install"/>
+			</not>  
+			<then>  
+				<fail message="When calling install targets the properties.file property, '${properties.file}', must contain 'install' in the name."/>
+			</then> 
+		</if>   
+	</target>
+	<target name="upgrade:check">
+		<if>
+			<not>   
+				<contains string="${properties.file}" substring="upgrade"/>
+			</not>  
+			<then>  
+				<fail message="When calling install targets the properties.file property, '${properties.file}', must contain 'upgrade' in the name."/>
+			</then> 
+		</if>   
+	</target>
+</project>
