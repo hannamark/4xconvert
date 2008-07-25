@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.iso;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.list.PredicatedList;
 
@@ -99,20 +100,21 @@ public class En extends Any {
     private final List<Enxp> part;
     private Set<EntityNameUse> use;
 
-    /** 
-     * Default ctor. 
+    /**
+     * Default ctor.
      */
     public En() {
         part = new ArrayList<Enxp>();
     }
-    
+
     /**
      * @param partRestriction a filter for disallowed values
      */
+    @SuppressWarnings("unchecked")
     protected En(Predicate partRestriction) {
-        part = (List<Enxp>) PredicatedList.decorate(new ArrayList<Enxp>(), partRestriction);
+        part = PredicatedList.decorate(new ArrayList<Enxp>(), partRestriction);
     }
-    
+
     /**
      * @return the part
      */
