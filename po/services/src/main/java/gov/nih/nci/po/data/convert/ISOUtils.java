@@ -89,12 +89,17 @@ package gov.nih.nci.po.data.convert;
  */
 public class ISOUtils {
     /**
-     * Converts to iso ST.
+     * Converts from iso ST.
      */
-    public static final StConverter TO_ST = new StConverter();
+    public static final StConverter ST = new StConverter();
     
     /**
-     * Converts to java String.
+     * Converts from java String.
      */
-    public static final StringConverter TO_STRING = new StringConverter();
+    public static final StringConverter STRING = new StringConverter();
+    
+    /**
+     * Converts from java String.
+     */
+    public static final EnConverter EN = new EnConverter();
 }

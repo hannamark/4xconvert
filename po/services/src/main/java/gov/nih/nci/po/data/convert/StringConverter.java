@@ -83,32 +83,63 @@
 
 package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.coppa.iso.EnOn;
+import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
 
 /**
  *
  * @author gax
  */
-public class StringConverter extends AbstractXSnapshotConverter<St, String> {
-
+public class StringConverter extends AbstractXSnapshotConverter<String> {
+    
     /**
      * {@inheritDoc}
      */
-    public String convert(St iso) {
-        if (iso == null) {
-            // this should not happen, but we might be able to help convert
-            return null;
-        }
-        // todo https://jira.5amsolutions.com/browse/PO-406 .1
-        iso.getFlavorId();
+    @Override
+    public <TO> TO convert(Class<TO> returnClass, String value) {
+        if (returnClass == St.class) {
+            return (TO) convertToSt(value);
+        } 
+        if (returnClass == EnOn.class) {
+            return (TO) convertToEnOn(value);
+        } 
         
-        if (iso.getNullFlavor() != null) {
-            return null;
+        throw new UnsupportedOperationException(returnClass.getName());
+    }
+    
+  
+    /**
+     * 
+     * @param value a string to parse.
+     * @return an iso ST
+     */
+    public St convertToSt(String value) {
+        St iso = new St();
+        if (value == null) {
+            iso.setNullFlavor(NullFlavor.NI);
         } else {
-            if (iso.getValue() == null) {
-                throw new IllegalArgumentException("nullFlavor or value must be set");
-            }
-            return iso.getValue();
+            iso.setValue(value);
         }
-    }    
+        return iso;
+    }
+
+    /**
+     * @param value string to parse.
+     * @return a 1 part EnOn.
+     */
+    public EnOn convertToEnOn(String value) {
+        EnOn iso = new EnOn();
+        if (value == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            // todo https://jira.5amsolutions.com/browse/PO-410
+            Enxp e = new Enxp(null);
+            e.setValue(value);
+            iso.getPart().add(e);
+        }
+        return iso;
+    }
+    
 }

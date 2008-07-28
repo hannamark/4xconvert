@@ -83,26 +83,46 @@
 
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
 
 /**
  *
  * @author gax
  */
-public class StConverter extends AbstractXSnapshotConverter<String, St> {
+public class StConverter extends AbstractXSnapshotConverter<St> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public St convert(String value) {
-        St iso = new St();
-        if (value == null) {
-            iso.setNullFlavor(NullFlavor.NI);
-        } else {
-            iso.setValue(value);
+    public <TO> TO convert(Class<TO> returnClass, St value) {
+        if (returnClass == String.class) {
+            return (TO) convertToString(value);
+        } 
+        
+        throw new UnsupportedOperationException(returnClass.getName());
+    }
+    
+    /**
+     * Convert an St to a String.
+     * @param iso an ST.
+     * @return a string.
+     */
+    public String convertToString(St iso) {
+        if (iso == null) {
+            // this should not happen, but we might be able to help convert
+            return null;
         }
-        return iso;
+        // todo https://jira.5amsolutions.com/browse/PO-406 .1
+        iso.getFlavorId();
+        
+        if (iso.getNullFlavor() != null) {
+            return null;
+        } else {
+            if (iso.getValue() == null) {
+                throw new IllegalArgumentException("nullFlavor or value must be set");
+            }
+            return iso.getValue();
+        }
     }
 }

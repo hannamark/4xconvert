@@ -90,39 +90,40 @@ import net.sf.xsnapshot.TransformerArgs;
 /**
  *
  * @param <FROM>
- * @param <TO>
  * @author gax
  */
-public abstract class AbstractXSnapshotConverter <FROM, TO> implements Transformer {
+public abstract class AbstractXSnapshotConverter <FROM> implements Transformer {
 
     /**
+     * @param <TO> return type. 
+     * @param returnClass the type to convert to.
      * @param value the value to convert.
      * @return the converted value.
      */
-    public abstract TO convert(FROM value);
+    public abstract <TO> TO convert(Class<TO> returnClass, FROM value);
 
     /**
-     * @param type the type to convert from.
+     * @param <TO> return type.
+     * @param returnClass the type to convert to.
      * @param value the value to convert.
      * @param args xsnapshot annotation paramerters.
      * @param ctx conversion context.
      * @return the converted value.
      */
-    public TO convert(Class<FROM> type, FROM value, TransformerArgs args, TransformContext ctx) {
-
-        return convert(value);
+    public <TO> TO convert(Class<TO> returnClass, FROM value, TransformerArgs args, TransformContext ctx) {
+        return convert(returnClass, value);
     }
 
     /**
-     * @param type the type to convert from.
+     * @param returnClass the type to convert to.
      * @param value the value to convert.
      * @param args xsnapshot annotation paramerters.
      * @param ctx conversion context.
      * @return the converted value.
      */
     @SuppressWarnings("unchecked")
-    public Object transform(Class type, Object value, TransformerArgs args, TransformContext ctx) {
-        return this.convert((Class<FROM>) type, (FROM) value, args, ctx);
+    public Object transform(Class returnClass, Object value, TransformerArgs args, TransformContext ctx) {
+        return this.convert((Class<?>) returnClass, (FROM) value, args, ctx);
     }
 
 }

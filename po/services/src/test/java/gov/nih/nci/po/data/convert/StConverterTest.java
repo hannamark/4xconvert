@@ -13,22 +13,33 @@ public class StConverterTest {
 
     @Test
     public void testConvert() {
-        String value = null;
+    
+        St value = null;
         StConverter instance = new StConverter();
-        St result = instance.convert(value);
-        assertEquals(NullFlavor.NI, result.getNullFlavor());
-       
-        
-        value = "foo";
-        result = instance.convert(value);
-        assertNull(result.getNullFlavor());
-        assertEquals(value, result.getValue());
-        
-        
-        value = "";
-        result = instance.convert(value);
-        assertNull(result.getNullFlavor());
-        assertEquals(value, result.getValue());
+        String expResult = null;
+        String result = instance.convertToString(value);
+        assertEquals(expResult, result);
+
+        value = new St();
+        value.setNullFlavor(NullFlavor.NI);
+        result = instance.convertToString(value);
+        assertNull(result);
+
+        expResult = "foo";
+        value.setNullFlavor(null);
+        value.setValue(expResult);
+        result = instance.convertToString(value);
+        assertEquals(expResult, result);
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void testConvertBad() {
+        St value = new St();
+        assertNull(value.getNullFlavor());
+        assertNull(value.getValue());
+
+        StConverter instance = new StConverter();
+        instance.convertToString(value);
     }
 
 }

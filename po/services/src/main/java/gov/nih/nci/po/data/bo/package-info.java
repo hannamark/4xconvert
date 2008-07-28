@@ -4,8 +4,7 @@
  * 
  * <p>
  * The classes are decorated with Hiberate annotation for persisance and cacheing.
- * They may also be decorated with references to CDE definitions that
- * correspond to information they represent.
+ * They may also be decorated with XSnapshot xdoclet tags for convertion to/from DTOs.
  *
  * @since 1.0
  */

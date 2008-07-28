@@ -160,9 +160,9 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     /**
      * @return name
      * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     type="gov.nih.nci.coppa.iso.EnOn"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
     @NotEmpty
     @Length(max = LONG_COL_LENGTH)
@@ -180,9 +180,9 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     /**
      * @return abbreviation name
      * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     type="gov.nih.nci.coppa.iso.EnOn"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
    @Length(max = LONG_COL_LENGTH)
    public String getAbbreviationName() {
