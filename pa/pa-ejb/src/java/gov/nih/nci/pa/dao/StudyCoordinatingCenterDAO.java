@@ -41,6 +41,7 @@ public class StudyCoordinatingCenterDAO {
         OrganizationDTO orgDto;
         try {
             session = HibernateUtil.getCurrentSession();
+            
             List organizations = 
                 session.createQuery("Select distinct organization from StudyCoordinatingCenter").list();
             for (int i = 0; i < organizations.size(); i++) {
