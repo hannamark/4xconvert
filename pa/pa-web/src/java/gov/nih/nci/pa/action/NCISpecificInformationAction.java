@@ -22,17 +22,19 @@ public class NCISpecificInformationAction  extends ActionSupport {
      */
      private static final long serialVersionUID = 1L;
      //TO-DO: This value should extracted from session variable
-     private static String protocolID = "2";  
+     private Long studyProtocolID = 2L;  
      private NCISpecificInfoDTO nciSpecificInfoDTO;
      private NCISpecificInformationData nciSpecificInformationData = new NCISpecificInformationData();
   
      /**  
      * @return res
      */
-    public String queryCheck()  {
+    public String query()  {
         try {              
             this.nciSpecificInfoDTO = 
-                      PaRegistry.getNCISpecificInformationService().getNCISpecificInfo(protocolID);              
+                      PaRegistry.getNCISpecificInformationService().getNCISpecificInfo(studyProtocolID);
+            LOG.info("1.) nciSpecificInfoDTO.getStudyProtocolID is: " + nciSpecificInfoDTO.getStudyProtocolID());
+            LOG.info("2.) nciSpecificInfoDTO.getMonitorCode is: " + nciSpecificInfoDTO.getMonitorCode());
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -43,10 +45,12 @@ public class NCISpecificInformationAction  extends ActionSupport {
     /**  
      * @return res
      */
-    public String queryUpdate()  {
+    public String update()  {
         try {              
             this.nciSpecificInfoDTO = 
-         PaRegistry.getNCISpecificInformationService().updateNCISpecificData(nciSpecificInformationData);              
+         PaRegistry.getNCISpecificInformationService().updateNCISpecificInfo(nciSpecificInformationData);
+            
+            
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
