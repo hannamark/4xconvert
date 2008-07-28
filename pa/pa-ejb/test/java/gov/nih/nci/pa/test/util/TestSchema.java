@@ -4,8 +4,13 @@ import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentIdentification;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PersonIdentification;
 import gov.nih.nci.pa.domain.StudyCondition;
+import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyContactRole;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -41,9 +46,11 @@ public class TestSchema {
             addAnnotatedClass(StudyCoordinatingCenterRole.class).
             addAnnotatedClass(StudyOverallStatus.class).
             addAnnotatedClass(DocumentWorkflowStatus.class).
-          
-            
-            
+            addAnnotatedClass(Person.class).
+            addAnnotatedClass(PersonIdentification.class).
+            addAnnotatedClass(HealthCareProvider.class).
+            addAnnotatedClass(StudyContact.class).
+            addAnnotatedClass(StudyContactRole.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
