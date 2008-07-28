@@ -24,16 +24,16 @@ public class NCISpecificInformationServiceBean
     private static final Logger LOG  = Logger.getLogger(NCISpecificInformationServiceBean.class);
     
     /**
-     * @param spid Study protocol ID
+     * @param studyProtocolID Study protocol ID
      * @return NCISpecificInfoDTO
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public NCISpecificInfoDTO getNCISpecificInfo(String spid) throws PAException {
+    public NCISpecificInfoDTO getNCISpecificInfo(Long studyProtocolID) throws PAException {
         LOG.debug("Entering getNCISpecificInfo ");
         NCISpecificInformationServiceImpl nciImpl = new NCISpecificInformationServiceImpl();
        
-        return nciImpl.getNCISpecificInfo(spid);
+        return nciImpl.getNCISpecificInfo(studyProtocolID);
     }
     
     /**
@@ -41,12 +41,12 @@ public class NCISpecificInformationServiceBean
      * @return NCISpecificInfoDTO
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public NCISpecificInfoDTO updateNCISpecificData(NCISpecificInformationData nciSpecificInformartionData) 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public NCISpecificInfoDTO updateNCISpecificInfo(NCISpecificInformationData nciSpecificInformartionData) 
                                                                                              throws PAException {
-        LOG.debug("Entering updateNCISpecificData ");
+        LOG.debug("Entering updateNCISpecificInfo ");
         NCISpecificInformationServiceImpl nciImpl = new NCISpecificInformationServiceImpl();
        
-        return nciImpl.updateNCISpecificData(nciSpecificInformartionData);
+        return nciImpl.updateNCISpecificInfo(nciSpecificInformartionData);
     }
 }

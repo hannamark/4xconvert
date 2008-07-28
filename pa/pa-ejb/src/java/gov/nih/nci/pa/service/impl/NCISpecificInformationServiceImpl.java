@@ -13,12 +13,12 @@ import gov.nih.nci.pa.service.PAException;
 public class NCISpecificInformationServiceImpl {
 
     /**
-     * @param spid ProtocolID
+     * @param studyProtocolID studyProtocolID
      * @return TrialDesignDTO   
      * @throws PAException on error 
      */
-    public NCISpecificInfoDTO getNCISpecificInfo(String spid) throws PAException {                 
-       return new NCISpecificInfoDAO().getNCISpecificInfo(spid);      
+    public NCISpecificInfoDTO getNCISpecificInfo(Long studyProtocolID) throws PAException {                 
+       return new NCISpecificInfoDAO().getNCISpecificInfo(studyProtocolID);      
     }
     
     /**
@@ -27,8 +27,8 @@ public class NCISpecificInformationServiceImpl {
      * @throws PAException on error
      */
     public NCISpecificInfoDTO 
-       updateNCISpecificData(NCISpecificInformationData nciSpecificInformationData) throws PAException {               
-        return new NCISpecificInfoDAO().updateNCISpecificData(nciSpecificInformationData);      
+       updateNCISpecificInfo(NCISpecificInformationData nciSpecificInformationData) throws PAException {               
+        return new NCISpecificInfoDAO().updateNCISpecificInfo(nciSpecificInformationData);      
      }
 
 }

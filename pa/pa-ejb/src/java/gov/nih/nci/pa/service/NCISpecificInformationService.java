@@ -11,11 +11,11 @@ public interface NCISpecificInformationService {
 
     /**
     * 
-    * @param pId ProtocolID
+    * @param studyProtocolID studyProtocolID
     * @return NCISpecificInfoDto   
     * @throws PAException on error 
     */
-    NCISpecificInfoDTO getNCISpecificInfo(String pId) throws PAException;
+    NCISpecificInfoDTO getNCISpecificInfo(Long studyProtocolID) throws PAException;
 
     /**
      * 
@@ -23,5 +23,5 @@ public interface NCISpecificInformationService {
      * @return NCISpecificInfoDto   
      * @throws PAException on error 
      */
-     NCISpecificInfoDTO updateNCISpecificData(NCISpecificInformationData nciSpecificInformationData) throws PAException;
+     NCISpecificInfoDTO updateNCISpecificInfo(NCISpecificInformationData nciSpecificInformationData) throws PAException;
 }
