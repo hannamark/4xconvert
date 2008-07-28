@@ -31,17 +31,17 @@
 			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
 		</action>		
 		
-		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="queryCheck">
+		<action name="nciSpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
 			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
 		</action>
 		
-		<action name="updateNCISpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="queryUpdate">
+		<action name="updateNCISpecificInfo" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="update">
 		    <interceptor-ref name="nci-commonsParams" />
 			<result name="input">/jsp/pajsp/nciSpecificInformation.jsp</result>			
 			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
+			<result>/jsp/pajsp/nciSpecificInformationView.jsp</result>
 		</action>	
 		
 				
