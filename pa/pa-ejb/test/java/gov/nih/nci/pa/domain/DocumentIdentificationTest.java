@@ -19,6 +19,10 @@ import org.junit.Test;
 public class DocumentIdentificationTest {
     
 
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -54,14 +58,18 @@ public class DocumentIdentificationTest {
                 docIdentifier.getAssigningAuthorityCode(), docIdentifierSaved.getAssigningAuthorityCode());
 
     }
-    
+    /**
+     * 
+     * @param doc doc
+     * @return DocumentIdentification
+     */
     public static DocumentIdentification createDocumentIdentificationObj(Document doc) {
 
         DocumentIdentification docIdentifier = new DocumentIdentification();
         docIdentifier.setAssigningAuthorityCode(AssigningAuthorityCode.NCI);
         docIdentifier.setIdentifier("NCI_2008_0001");
         docIdentifier.setDocument(doc);
-        return docIdentifier ;
+        return docIdentifier;
     }
 
 }

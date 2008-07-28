@@ -2,8 +2,6 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
@@ -19,6 +17,10 @@ import org.junit.Test;
  */
 public class StudyCoordinatingCenterTest {
     
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -37,26 +39,35 @@ public class StudyCoordinatingCenterTest {
         Serializable spid = sp.getId();
         assertNotNull(spid);
         
-        Organization o = OrganizationTest.OrganizationObj();
+        Organization o = OrganizationTest.organizationObj();
         TestSchema.addUpdObject(o);
         assertNotNull(o.getId());
         
         StudyCoordinatingCenter create = createStudyCoordinatingCenterObj(sp , o);
         
         TestSchema.addUpdObject(create);
-        StudyCoordinatingCenter saved = (StudyCoordinatingCenter) session.load(StudyCoordinatingCenter.class, create.getId());
+        StudyCoordinatingCenter saved = (StudyCoordinatingCenter) 
+            session.load(StudyCoordinatingCenter.class, create.getId());
         
-        assertEquals("Organization does match  " , create.getOrganization().getName(), saved.getOrganization().getName());
-        assertEquals("Study Protocol Does not match  " , create.getStudyProtocol().getId(), saved.getStudyProtocol().getId());
+        assertEquals("Organization does match  " , create.getOrganization().getName(), 
+                saved.getOrganization().getName());
+        assertEquals("Study Protocol Does not match  " , create.getStudyProtocol().getId(), 
+                saved.getStudyProtocol().getId());
         
         
     }
     
-    public static StudyCoordinatingCenter createStudyCoordinatingCenterObj(StudyProtocol sp , Organization o ) {
+    /**
+     * 
+     * @param sp StudyProtocol
+     * @param o Organization
+     * @return StudyCoordinatingCenter
+     */
+    public static StudyCoordinatingCenter createStudyCoordinatingCenterObj(StudyProtocol sp , Organization o) {
         StudyCoordinatingCenter create = new StudyCoordinatingCenter();
         create.setOrganization(o);
         create.setStudyProtocol(sp);
-        return create ;
+        return create;
         
     }
     

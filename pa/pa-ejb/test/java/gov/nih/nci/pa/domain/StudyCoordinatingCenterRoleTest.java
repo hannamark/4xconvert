@@ -22,6 +22,10 @@ import org.junit.Test;
 
 public class StudyCoordinatingCenterRoleTest {
     
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -39,7 +43,7 @@ public class StudyCoordinatingCenterRoleTest {
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
         
-        Organization o = OrganizationTest.OrganizationObj();
+        Organization o = OrganizationTest.organizationObj();
         TestSchema.addUpdObject(o);
         assertNotNull(o.getId());
         
@@ -62,11 +66,16 @@ public class StudyCoordinatingCenterRoleTest {
         
     }
     
+    /**
+     * 
+     * @param scc StudyCoordinatingCenterRole
+     * @return  StudyCoordinatingCenterRole
+     */
     public static StudyCoordinatingCenterRole createStudyCoordinatingCenterRoleObj(StudyCoordinatingCenter scc) {
         StudyCoordinatingCenterRole create = new StudyCoordinatingCenterRole();
         create.setStudyCoordinatingCenter(scc);
         create.setResponsibilityCode(ResponsibilityCode.REGISTRATION_MANAGEMENT);
-        return create ;
+        return create;
         
     }
 

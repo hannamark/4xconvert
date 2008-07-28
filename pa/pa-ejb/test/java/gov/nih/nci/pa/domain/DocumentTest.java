@@ -18,6 +18,10 @@ import org.junit.Test;
  */
 public class DocumentTest {
     
+    /**
+     * 
+     * @throws Exception Exception
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -44,9 +48,13 @@ public class DocumentTest {
         }
     }
     
+    /**
+     * 
+     * @return Document
+     */
     public static Document createDocumentObj() {
         Document create = new Document();
         create.setOfficialTitle("Breast Cancer..");
-        return create ;
+        return create;
     }
 }

@@ -27,6 +27,10 @@ import org.junit.Test;
  */
 public class StudyProtocolTest {
 
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -87,6 +91,10 @@ public class StudyProtocolTest {
         }
     }
     
+    /**
+     * 
+     * @return StudyProtocol
+     */
     public static StudyProtocol createStudyProtocolObj() {
         StudyProtocol create = new StudyProtocol();
         create.setOfficialTitle("Breast Cancer..");
@@ -108,7 +116,6 @@ public class StudyProtocolTest {
         create.setGroupNumber(new Integer(1));
         create.setStudyModelCode("SMC");
         create.setTimePerspectiveCode("TPC");
-        
-        return create ;
+        return create;
     }
 }

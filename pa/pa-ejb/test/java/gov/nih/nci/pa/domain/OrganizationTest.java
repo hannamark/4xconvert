@@ -18,6 +18,10 @@ import org.junit.Test;
  */
 public class OrganizationTest  {
     
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -29,7 +33,7 @@ public class OrganizationTest  {
      */
     @Test
     public void createOrganization() {
-        Organization create = OrganizationObj();
+        Organization create = organizationObj();
         TestSchema.addUpdObject(create);
         Session session  = TestSchema.getSession();
         
@@ -40,11 +44,15 @@ public class OrganizationTest  {
         assertEquals("Id does not match " , create.getNciInstituteCode(), saved.getNciInstituteCode());
     }
     
-    public static Organization OrganizationObj() {
+    /**
+     * 
+     * @return Organization
+     */
+    public static Organization organizationObj() {
         Organization create = new Organization();
         create.setName("Mayo University");
         create.setNciInstituteCode("P001");
-        return create ;
+        return create;
         
     }
 }

@@ -18,6 +18,10 @@ import org.junit.Test;
  */
 public class ConditionTest {
     
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -40,6 +44,10 @@ public class ConditionTest {
        
     }    
     
+    /**
+     * 
+     * @return Condition
+     */
     public Condition createConditionObj() {
         Condition create = new Condition();
         create.setCode("1111");

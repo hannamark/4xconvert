@@ -1,18 +1,15 @@
 package gov.nih.nci.pa.domain;
 
-import java.io.Serializable;
-
-import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.PhaseCode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.test.util.TestSchema;
+
+import java.io.Serializable;
 
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * 
@@ -21,7 +18,10 @@ import static org.junit.Assert.assertNotNull;
  */
 public class StudyOverallStatusTest {
 
-    
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -59,13 +59,18 @@ public class StudyOverallStatusTest {
         }
     }
     
+    /**
+     * 
+     * @param sp StudyProtocol
+     * @return StudyOverallStatus
+     */
     public StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
         StudyOverallStatus create = new StudyOverallStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
         create.setStudyStatusCode(StudyStatusCode.ACTIVE);
         create.setStudyStatusDate(now);
-        return create ;
+        return create;
 
     }
     

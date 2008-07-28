@@ -3,8 +3,6 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
@@ -20,6 +18,10 @@ import org.junit.Test;
  */
 public class DocumentWorkFlowStatusTest {
 
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -55,14 +57,19 @@ public class DocumentWorkFlowStatusTest {
                 saved.getStudyProtocol());
 
     }
-        
+    
+    /**
+     * 
+     * @param sp StudyProtocol
+     * @return DocumentWorkflowStatus
+     */
     public static DocumentWorkflowStatus createDocumentWorkflowStatus(StudyProtocol sp) {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
         create.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         create.setDocumentWorkflowStatusDate(now);
-        return create ;
+        return create;
     }
 }
 
