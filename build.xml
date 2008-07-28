@@ -48,6 +48,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="log.dir" value="${target.dir}/logs" />
 	<property name="dist.dir" value="${target.dir}/dist" />
 	<property name="download.dir" value="${target.dir}/download" />
+	<property name="pt.dir" value="${target.dir}/persistent-transient" />
+
 
 	<!-- Ivy Related props -->
 	<property name="ivy.bda.definition.file" location="ivy-bda.xml" />
@@ -68,6 +70,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="pa-ear.base.dir" value="${software.dir}/pa/pa-ear"/>
 	<property name="pa-ejb.base.dir" value="${software.dir}/pa/pa-ejb"/>
 	<property name="pa-web.base.dir" value="${software.dir}/pa/pa-web"/>
+	<property name="po.base.dir" value="${software.dir}/po"/>
+	<property name="po-ear.base.dir" value="${software.dir}/po/ear"/>
+	<property name="po-services.base.dir" value="${software.dir}/po/sevices"/>
+	<property name="po-web.base.dir" value="${software.dir}/po/web"/>
 
 	<!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
 	<property name="pa-ejb.build.file" value="build.xml"/>
@@ -76,7 +82,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	
 	<!-- The target name that should be called from the sub-project build file -->
 	<property name="pa-ear.build.target" value="package"/>
-	<property name="pa-web.build.target" value="war"/>
+	<property name="pa-web.build.target" value="package-notest"/>
 	<property name="pa-ejb.build.target" value="package-notest"/>
     
 	<!-- Distribution Structure properties, used to copy files into the distribution area.
@@ -184,8 +190,34 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<mkdir dir="${tools.dist.dir}"/>
 		<mkdir dir="${temp.dir}"/>
 		<mkdir dir="${download.dir}"/>
+		<mkdir dir="${pt.dir}"/>
 		<available file="${jboss.dest.file}" property="jboss.tools.exists"/>
+
+		<!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
+		<available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
+		<if>
+			<isset property="rt.jboss.exists"/>
+			<then>
+				<property name="local.jboss.home" value="${jboss.home}"/>
+			</then>
+			<else>
+				<property name="local.jboss.home" value="${pt.dir}/${jboss.binaries.relative.dir}"/>
+				<available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
+				<if>
+					<not>
+						<isset property="local.jboss.exists"/>
+					</not>
+					<then>
+						<antcall target="dist:tools:retrieve:jboss"/>
+						<java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
+							<arg line="-installGroup ejb3 installpath=${local.jboss.home}"/>
+						</java> 
+					</then>
+				</if>
+			</else>
+		</if>
 	</target>
+
 	<target name="ivy:clean" description="Clean">
 		<ivy:settings file="${ivy.settings.file}" />
 		<ivy:cleancache />
@@ -211,6 +243,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		build:pa-ear
 		"/>
 
+	<!-- First Maven Target -->
+	<target name="build:po" depends="init">
+		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml">
+			<filterset>
+				<filter token="jboss.home" value="${local.jboss.home}"/>
+			</filterset>
+		</copy>
+			
+		<exec executable="mvn" dir="${po.base.dir}" failonerror="true">
+			<arg line="-P local,bda install"/>
+		</exec>
+		<!--
+		<copy todir="">
+			-->
+	</target>
+		
 	<!-- Build generic-query-grid sub-project produces project level artifact -->
 	<target name="build:pa-ear" depends="init,build:pa-web, build:pa-ejb">
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
