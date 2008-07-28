@@ -10,10 +10,10 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 function resetValues () {
-    document.forms.updateNCISpecificInfo.monitorCode.value="";
-    document.forms.updateNCISpecificInfo.reportingDataSetMethodCode.value="";
-    document.forms.updateNCISpecificInfo.summary4TypeCode.value="";
-    document.forms.updateNCISpecificInfo.summary4Name.value="";
+    document.forms.nciSpecificInformationData.monitorCode.value="";
+    document.forms.nciSpecificInformationData.reportingDataSetMethodCode.value="";
+    document.forms.nciSpecificInformationData.summaryFourFundingCategoryCode.value="";
+    document.forms.nciSpecificInformationData.summary4Name.value="";
  
 
 }
@@ -29,7 +29,7 @@ function resetValues () {
     <s:form action="viewNCISpecificInfo"><s:actionerror/>
     	<table width="480">
  			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-			 <input type="hidden" name="nciSpecificInfoData.protocolId" value="${nciSpecificInfoDTO.studySiteID}"/>
+			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInfoDTO.studyProtocolID}"/>
 			 	<tr>
 			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
 				</tr>
@@ -38,16 +38,15 @@ function resetValues () {
 			               <label for="monitorCode"> <fmt:message key="nciSpecificInfo.nci.division"/></label>
 			          </td>		
 	                <td align=left>
-	                    "${nciSpecificInformationData.monitorCode}"
+	                    ${nciSpecificInformationData.monitorCode}
 	                </td>         
 			    </tr> 
 			    <tr>
 			    	<td align=right>
 			               <label for="reportingDataSetMethodCode"> <fmt:message key="nciSpecificInfo.report.data.set.method"/></label>
-			          </td>
-			    	<s:set name="reportingDataSetMethodCodeValues" value="@gov.nih.nci.pa.enums.ReportingDataSetMethodCode@getDisplayNames()" />
+			          </td>			    	
 	                <td align=left>
-	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.reportingDataSetMethodCode" list="#reportingDataSetMethodCodeValues"  value="nciSpecificInformationData.reportingDataSetMethodCode" />
+	                	${nciSpecificInformationData.reportingDataSetMethodCode}
 	                </td>   			            
 			     </tr>           
 			     <tr>
@@ -55,7 +54,7 @@ function resetValues () {
 			               <label for="summary4TypeCode"> <fmt:message key="nciSpecificInfo.summary4.funding.category"/></label>
 			          </td>
 			          <td align=left>
-			              <s:textfield name="nciSpecificInformationData.summary4TypeCode" size="30" maxlength="40" />
+			            ${nciSpecificInformationData.summaryFourFundingCategoryCode}
 			          </td>          
 			     </tr>
 				<tr>

@@ -18,8 +18,8 @@
         </tr>
 		<tr>
 			<td scope="row" class="label" nowrap>
-				<label for="trialTitle"> 
-					<fmt:message key="trial.detail.summary.trial.title"/>
+				<label for="officialTitle"> 
+					<fmt:message key="trial.detail.summary.official.title"/>
 				</label>
 			</td>
 			<td >
@@ -28,8 +28,16 @@
         </tr>       
         <tr>
 			<td scope="row" class="label" nowrap>
-				<label for="abstractionStatus"> 
-					<fmt:message key="trial.detail.summary.abstraction.status"/>
+				<label for="leadOrgTrialId"> 
+					<fmt:message key="trial.detail.summary.lead.organization.trial.identifier"/>
+				</label>
+			</td>
+			<td >
+				 Place Holder for session var
+			</td>
+			<td scope="row" class="label" nowrap>
+				<label for="leadOrg"> 
+					<fmt:message key="trial.detail.summary.lead.organization"/>
 				</label>
 			</td>
 			<td >
