@@ -163,6 +163,16 @@
 	         basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
 	         compress="false" 
 	         appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
+        <copy todir="${pa-ear.build.dir}" overwrite="true">
+            <filterset>
+                <filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>
+            </filterset>
+            <fileset dir="${pa.resourceDir}" includes="login-config.upt"/>
+            <fileset dir="${pa.resourceDir}" includes="login-config.pa"/>
+        </copy>	  	
 	  </target>
 	
     <!-- ====================================================================== -->

@@ -1,0 +1,14 @@
+    <!-- The configuration for CSMUPT -->
+    <application-policy name = "csmupt">
+        <authentication>
+            <login-module code = "gov.nih.nci.security.authentication.loginmodules.RDBMSLoginModule" flag = "sufficient">
+                <module-option name="driver">@jdbc.driver@</module-option>
+                <module-option name="url">@jdbc.url@</module-option>
+                <module-option name="user">@db.username@</module-option>
+                <module-option name="passwd">@db.password@</module-option>         
+       	        <module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
+       	        <module-option name="encryption-enabled">YES</module-option>
+       		</login-module>
+         </authentication>
+    </application-policy>
+

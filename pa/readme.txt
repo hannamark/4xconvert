@@ -64,8 +64,8 @@ Build/Deployment Steps
 Setup database:
     Download
     1. download & install from http://wwwmaster.postgresql.org/download/mirrors-ftp?file=%2Fbinary%2Fv8.3.0%2Fwin32%2Fpostgresql-8.3.0-1.zip
-    1.  Create "ctods" database
-    2.  Create "ctods" login as a superuser with the password "ctods"
+    1.  Create database (any name can be used, must match build.properties file).
+    2.  Create corresponding superuser account (any password can be used, must match build.properties file).
     3.  Run the following scripts
         - dbscripts/csmCreateSchema.sql
         - dbscripts/csmBootstrapData.sql
@@ -76,9 +76,12 @@ Build and deploy applications:
     1.  copy build.properties using build.properties.example as a template.
     	1.1 right click the file/TortoiseSVN/Add to ignore list, this will make we are not adding our local property file by mistake
     2.  Run command "ant deploy" to build and deploy applications
-    3.  Start JBoss
-    4.  Run command "ant test-integration" to test that ejb's are running
-    5.  Point browser at http://localhost:8080/pa to test web application (userid/password = curator/pass)
+    3.  Copy the generated application policy from 
+            <project root>/pa-ear/target/login-config.pa
+        into the JBoss servers login-config.xml file.
+    4.  Start JBoss
+    5.  Run command "ant test-integration" to test that ejb's are running
+    6.  Point browser at http://localhost:8080/pa to test web application (userid/password = curator/pass)
     
     
 Setting up the Eclipse IDE
@@ -116,22 +119,9 @@ Setting the CSM to enable Login:
  	https://gforge.nci.nih.gov/frs/?group_id=12
  	Package: CSM_UPT_4_0_Source.zip
  	
- 
- 2) Add the following entries to your login-config.xml:
- 
-  <!-- The configuration for CSMUPT -->
-        <application-policy name = "csmupt">
-         <authentication>
-       		<login-module code = "gov.nih.nci.security.authentication.loginmodules.RDBMSLoginModule" flag = "sufficient">
-       			<module-option name="driver">org.postgresql.Driver</module-option>
-       			<module-option name="url">jdbc:postgresql://localhost:5432/ctods</module-option>
-       			<module-option name="user">ctods</module-option>
-       			<module-option name="passwd">ctods</module-option>
-       			<module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
-       			<module-option name="encryption-enabled">YES</module-option>
-       		</login-module>
-         </authentication>
-    </application-policy>
+ 2) Copy the generated application policy from 
+         <project root>/pa-ear/target/login-config.upt
+    into the JBoss servers login-config.xml file.
   
  3) The default dialect in upt.war is set to MYSQL so in order to make in work on PostgreSQL database 
     change the file: csmupt.csm.new.hibernate.cfg.xml (in upt.war)  With the following line: 
