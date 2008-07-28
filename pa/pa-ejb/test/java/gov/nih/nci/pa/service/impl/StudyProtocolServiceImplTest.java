@@ -13,17 +13,29 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * 
+ * @author NAmiruddin
+ *
+ */
 public class StudyProtocolServiceImplTest {
     
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
                
     }
     
+    /**
+     * 
+     * @throws PAException  PAException
+     */
     @Test
     public void getStudyProtocolByCriteriaTest() throws PAException {
-        List<Object> obj = null ;
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         Long id = sp.getId();
@@ -33,8 +45,8 @@ public class StudyProtocolServiceImplTest {
         spqc.setStudyProtocolId(id);
         List<StudyProtocolQueryDTO> spDtos = spsImpl.getStudyProtocolByCriteria(spqc); 
         assertNotNull(spDtos);
-        assertEquals(" size of StudyProtocolQueryDTO does not match " , spDtos.size() , 1 );
-        assertEquals(" protocol title  does not match " , spDtos.get(0).getOfficialTitle() , sp.getOfficialTitle() );
+        assertEquals(" size of StudyProtocolQueryDTO does not match " , spDtos.size() , 1);
+        assertEquals(" protocol title  does not match " , spDtos.get(0).getOfficialTitle() , sp.getOfficialTitle());
         
     }
     
