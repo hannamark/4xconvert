@@ -2,6 +2,8 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.ReportingDataSetMethodCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import java.io.Serializable;
 
@@ -18,13 +20,15 @@ public class NCISpecificInfoDTO implements Serializable {
  
     private static final long serialVersionUID = 1L;
     
-    private Long studySiteID;
+    private Long studyProtocolID;
     private MonitorCode monitorCode;
+    private ReportingDataSetMethodCode reportingDataSetMethodCode;
+    private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
 
 
     /**
      * Default constructor.
-     */
+    */
     public NCISpecificInfoDTO() {
         // empty constructor
     }
@@ -34,7 +38,7 @@ public class NCISpecificInfoDTO implements Serializable {
      * @param sp domain object
      */
     public NCISpecificInfoDTO(StudyProtocol sp) {
-        this.studySiteID = sp.getId();
+        this.studyProtocolID = sp.getId();
         this.monitorCode = sp.getMonitorCode();       
     }
     
@@ -48,17 +52,17 @@ public class NCISpecificInfoDTO implements Serializable {
     }
 
      /**
-     * @return Study_Site ID
+     * @return study Protocol ID
      */
-    public Long getStudySiteID() {
-      return studySiteID;
+    public Long getStudyProtocolID() {
+      return studyProtocolID;
     }
     
     /**
-     * @param studySiteID unique Study_Site id
+     * @param studyProtocolID unique Study_Site id
      */
-    public void setStudySiteID(Long studySiteID) {
-      this.studySiteID = studySiteID;
+    public void setStudyProtocolID(Long studyProtocolID) {
+      this.studyProtocolID = studyProtocolID;
     }
    /**
     * 
@@ -73,5 +77,36 @@ public class NCISpecificInfoDTO implements Serializable {
     */
     public void setMonitorCode(MonitorCode monitorCode) {
       this.monitorCode = monitorCode;
+    }
+    
+    /**
+     * 
+     * @return ReportingDataSetMethodCode
+     */
+    public ReportingDataSetMethodCode getReportingDataSetMethodCode() {
+       return reportingDataSetMethodCode;
+    }
+   /**
+    * 
+    * @param reportingDataSetMethodCode for 
+    */
+    public void setReportingDataSetMethodCode(
+       ReportingDataSetMethodCode reportingDataSetMethodCode) {
+       this.reportingDataSetMethodCode = reportingDataSetMethodCode;
+    }
+    /**
+     * 
+     * @return summaryFourFundingCategoryCode
+     */
+    public SummaryFourFundingCategoryCode getSummaryFourFundingCategoryCode() {
+      return summaryFourFundingCategoryCode;
+    }
+    /**
+     * 
+     * @param summaryFourFundingCategoryCode ref
+     */
+    public void setSummaryFourFundingCategoryCode(
+      SummaryFourFundingCategoryCode summaryFourFundingCategoryCode) {
+        this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
     }
 }

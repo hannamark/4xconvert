@@ -10,7 +10,7 @@ import java.io.Serializable;
  * <pre>
  * Attr.                         Corresponding bo attribute
  * =====                         ==========================
- * protocolId                    domain.Protocol.id
+ * studyProtocolID                    domain.studyProtocol.id
  * monitorCode                   domain.StudyProtocol.monitorCode
 
  * </pre>
@@ -25,30 +25,30 @@ public class NCISpecificInformationData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long protocolId;
+    private String studyProtocolID;
     private String monitorCode;
     
     private String reportingDataSetMethodCode;
+    private String summaryFourFundingCategoryCode;
     
-    private String summary4TypeCode;
     private String summary4Name;
+    
  
-
-   
     /**
-     * @return protocolId
+     * @return studyProtocolID
      */
-    public Long getProtocolId() {
-        return protocolId;
+    public String getStudyProtocolID() {
+        return studyProtocolID;
     }
-
+    
     /**
-     * @param protocolId protocolId
+     * @param studyProtocolID studyProtocolID
      */
-    public void setProtocolId(Long protocolId) {
-        this.protocolId = protocolId;
+    public void setStudyProtocolID(String studyProtocolID) {
+        this.studyProtocolID = studyProtocolID;
     }
-
+    
+    
     /**
      * @return monitorCode 
      */
@@ -76,21 +76,23 @@ public class NCISpecificInformationData implements Serializable {
     public void setReportingDataSetMethodCode(String reportingDataSetMethodCode) {
         this.reportingDataSetMethodCode = reportingDataSetMethodCode;
     }
-
-    /**
-     * @return summary4TypeCode
-     */
-    public String getSummary4TypeCode() {
-        return summary4TypeCode;
-    }
-
     /**
      * 
-     * @param summary4TypeCode summary4TypeCode
+     * @return summaryFourFundingCategoryCode
      */
-    public void setSummary4TypeCode(String summary4TypeCode) {
-        this.summary4TypeCode = summary4TypeCode;
+    public String getSummaryFourFundingCategoryCode() {
+      return summaryFourFundingCategoryCode;
     }
+
+   /**
+    * 
+    * @param summaryFourFundingCategoryCode ref
+    */
+    public void setSummaryFourFundingCategoryCode(
+      String summaryFourFundingCategoryCode) {
+        this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
+    }
+
 
     /**
      * @return Summary4Name
@@ -105,6 +107,5 @@ public class NCISpecificInformationData implements Serializable {
      */
     public void setSummary4Name(String summary4Name) {
         this.summary4Name = summary4Name;
-    }  
-    
+   }
 }
