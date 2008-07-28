@@ -9,6 +9,7 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.ReportingDataSetMethodCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ public class StudyProtocol extends Document {
     private String biospecimenDescription;
     private BiospecimenRetentionCode biospecimenRetentionCode;
     private ReportingDataSetMethodCode reportingDataSetMethodCode;
+    private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
     
     /** Number of study groups/cohorts. Enter 1 for a single-group study. Many observational
      *  studies have one group/cohort; case control studies typically have two* */
@@ -321,6 +323,24 @@ public class StudyProtocol extends Document {
     }
     /**
      * 
+     * @return SummaryFourFundingCategoryCode summaryFourFundingCategoryCode
+     */
+    @Column(name = "SUMMARY_FOUR_FUNDING_CATEGORY_CODE")
+    @Enumerated(EnumType.STRING)
+    public SummaryFourFundingCategoryCode getSummaryFourFundingCategoryCode() {
+      return summaryFourFundingCategoryCode;
+    }
+    /**
+     * 
+     * @param summaryFourFundingCategoryCode summaryFourFundingCategoryCode
+     */
+    public void setSummaryFourFundingCategoryCode(
+      SummaryFourFundingCategoryCode summaryFourFundingCategoryCode) {
+          this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
+    }
+
+    /**
+     * 
      * @return groupNumber
      */
     @Column(name = "GROUP_NUMBER")
@@ -431,8 +451,5 @@ public class StudyProtocol extends Document {
             List<StudyCoordinatingCenter> studyCoordinatingCenters) {
         this.studyCoordinatingCenters = studyCoordinatingCenters;
     }
-    
-    
-    
     
 }
