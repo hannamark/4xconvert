@@ -1,7 +1,16 @@
 package gov.nih.nci.pa.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.hibernate.validator.NotNull;
+
 
 
 /**
@@ -14,18 +23,26 @@ import javax.persistence.MappedSuperclass;
  * copyright holder, NCI.
  */
 @Entity
-@MappedSuperclass
-@SuppressWarnings("PMD")
-public abstract class StudyContact extends AbstractEntity {
+public class StudyContact extends AbstractEntity {
 
-
+    private static final long serialVersionUID = 1234567890L;
     private StudyProtocol studyProtocol;
+    private HealthCareProvider healthCareProvider;
+
     private Boolean primaryIndicator;
+    private Person person;
+    private List<StudyContactRole> studyContactRoles = 
+        new ArrayList<StudyContactRole>();
+    
 
     /**
      * 
      * @return studyProtocol
      */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
+    @NotNull
+    
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }
@@ -37,5 +54,76 @@ public abstract class StudyContact extends AbstractEntity {
     public void setStudyProtocol(StudyProtocol studyProtocol) {
         this.studyProtocol = studyProtocol;
     }
+
+    /**
+     * 
+     * @return healthCareProvider healthCareProvider
+     */
+    @ManyToOne
+    @JoinColumn(name = "HEALTHCARE_PROVIDER_ID", updatable = false)
+    @NotNull
+    public HealthCareProvider getHealthCareProvider() {
+        return healthCareProvider;
+    }
+
+    /**
+     * 
+     * @param healthCareProvider healthCareProvider
+     */
+    public void setHealthCareProvider(HealthCareProvider healthCareProvider) {
+        this.healthCareProvider = healthCareProvider;
+    }
     
+    /**
+     * 
+     * @return primaryIndicator primaryIndicator
+     */
+    @Column(name = "PRIMARY_INDICATOR")
+    public Boolean getPrimaryIndicator() {
+        return primaryIndicator;
+    }
+
+    /**
+     * 
+     * @param primaryIndicator primaryIndicator
+     */
+    public void setPrimaryIndicator(Boolean primaryIndicator) {
+        this.primaryIndicator = primaryIndicator;
+    }
+
+    /**
+     * 
+     * @return person
+     */
+    
+    public Person getPerson() {
+        return person;
+    }
+
+    /**
+     * 
+     * @param person person
+     */
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+
+    /**
+     * 
+     * @return studyContactRoles studyContactRoles
+     */
+    @OneToMany(mappedBy = "studyContact")
+    public List<StudyContactRole> getStudyContactRoles() {
+        return studyContactRoles;
+    }
+
+    /**
+     * 
+     * @param studyContactRoles studyContactRoles) {
+     */
+    @OneToMany(mappedBy = "studyContact")
+    public void setStudyContactRoles(List<StudyContactRole> studyContactRoles) {
+        this.studyContactRoles = studyContactRoles;
+    }
 }

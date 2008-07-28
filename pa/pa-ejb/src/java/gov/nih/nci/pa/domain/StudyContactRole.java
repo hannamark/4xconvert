@@ -2,11 +2,16 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * . 
+ * The responsibility of the investigator on a particular study.. 
  * 
  * @author Naveen Amiruddin
  * @since 07/07/2007
@@ -27,6 +32,8 @@ public class StudyContactRole extends AbstractEntity {
      * 
      * @return studyContact
      */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_CONTACT_ID", nullable = false)
     public StudyContact getStudyContact() {
         return studyContact;
     }
@@ -41,6 +48,12 @@ public class StudyContactRole extends AbstractEntity {
      * 
      * @return studyContactRoleCode
      */
+    /**
+     * 
+     * @return responsibilityCode
+     */
+    @Column(name = "STUDY_CONTACT_ROLE_CODE")
+    @Enumerated(EnumType.STRING)
     public StudyContactRoleCode getStudyContactRoleCode() {
         return studyContactRoleCode;
     }
