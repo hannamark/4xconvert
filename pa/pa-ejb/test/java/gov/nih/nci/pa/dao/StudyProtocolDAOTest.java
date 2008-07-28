@@ -18,18 +18,29 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
-
+/**
+ * 
+ * @author NAmiruddin
+ *
+ */
 public class StudyProtocolDAOTest {
     
+    /**
+     * 
+     * @throws Exception Exception
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
                
     }
     
+    /**
+     * 
+     */
     @Test
     public void getStudyProtocolByCriteriaTest() {
-        List<Object> obj = null ;
+        List<Object> obj = null;
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         Long id = sp.getId();
