@@ -82,16 +82,23 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.io.Serializable;
 import org.apache.commons.collections.Predicate;
 
 /**
- * Represents the iso datatype. * EN.ON (Organization Name)
+ * Represents the iso datatype. EN.ON (Organization Name)
  * @author lpower
  */
 public class EnOn extends En {
 
     private static final long serialVersionUID = 1L;
-    private static final Predicate ON_PREDICATE = new Predicate() {
+    
+    /**
+     * serializable predicate that dissallows FAM and GIV parts.
+     */
+    private static class EnOnPredicate implements Predicate, Serializable {
+        
+        private static final long serialVersionUID = 1L;
 
         /** {@inheritDoc} */
         @SuppressWarnings("PMD.MissingBreakInSwitch")
@@ -100,7 +107,12 @@ public class EnOn extends En {
                 return false;
             }
             
-            switch (((Enxp) object).getType()) {
+            Enxp e = (Enxp) object;
+            if (e.getType() == null) {
+                return true;
+            }
+            
+            switch (e.getType()) {
                 case FAM:
                 case GIV: 
                     return false;
@@ -108,7 +120,9 @@ public class EnOn extends En {
                     return true;
             }
         }
-    };
+    }
+    
+    private static final Predicate ON_PREDICATE = new EnOnPredicate();
 
     /**
      * Default ctor.

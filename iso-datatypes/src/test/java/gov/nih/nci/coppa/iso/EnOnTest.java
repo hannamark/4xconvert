@@ -33,6 +33,11 @@ public class EnOnTest {
         
         e = new Enxp(EntityNamePartType.DEL);
         enon.getPart().add(e);
-        assertEquals(1, enon.getPart().size());
+        
+        e = new Enxp(null);
+        enon.getPart().add(e);
+
+        assertEquals(2, enon.getPart().size());
+        
     }
 }

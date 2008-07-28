@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.io.Serializable;
+
 /**
  * Represents the iso datatype.
  * @author lpower
  */
-public class Enxp {
+public class Enxp implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     
     private String code;
     private String codeSystem;
