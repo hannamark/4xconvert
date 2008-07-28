@@ -260,7 +260,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	</target>
 		
 	<!-- Build generic-query-grid sub-project produces project level artifact -->
-	<target name="build:pa-ear" depends="init,build:pa-web, build:pa-ejb">
+	<target name="build:pa-ear" depends="init,build:pa-ejb, build:pa-web">
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
 			target="${pa-ear.build.target}"
 			dir="${pa-ear.base.dir}" >
