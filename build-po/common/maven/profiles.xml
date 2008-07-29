@@ -1,0 +1,15 @@
+<settings>
+	<profiles>
+		<profile>
+			<id>bda</id>
+			<properties>
+				<jboss.home>@jboss.home@</jboss.home>
+				<schema.file>@db.po.schema.file@</schema.file>
+				<hbm2ddl.drop.table>false</hbm2ddl.drop.table>
+			</properties>
+		</profile>
+	</profiles>
+	<activeProfiles>
+		<activeProfile>bda</activeProfile>
+	</activeProfiles>
+</settings>
