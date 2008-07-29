@@ -1,0 +1,13 @@
+<settings>
+	<profiles>
+		<profile>
+			<id>bda</id>
+			<properties>
+				<jboss.home>@jboss.home@</jboss.home>
+			</properties>
+		</profile>
+	</profiles>
+	<activeProfiles>
+		<activeProfile>bda</activeProfile>
+	</activeProfiles>
+</settings>
