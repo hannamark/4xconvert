@@ -620,11 +620,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			target="retrieve-bda"
 			dir="${bda-download.dir}"
 			>
-			<property name="bda-utils.dir" value="${software.dir}/bda-utils" />
+			<property name="bda.version" value="${bda.version}" />
+			<property name="bda-utils.dir" value="${build.dir}/bda-utils" />
 			<property name="lib.dir" value="${lib.dir}" />
-			<property name="software.dir" value="${software.dir}" />
+			<property name="software.dir" value="${build.dir}" />
 		</ant>
-		<copy tofile="${software.dir}/db-integrate.xml" file="${bda-utils.dir}/resource/template-db-integrate.xml"/>
+		<copy tofile="${build.dir}/db-integrate.xml" file="${bda-utils.dir}/resource/template-db-integrate.xml"/>
 		<report-grand
 			build.file.location="build.xml"
 			output.file.dir="${grand.rpt.dir}"
@@ -636,17 +637,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			output.file.name="master-install.xml"
 			/>
 		<report-grand
-			build.file.location="${pa-ear.dist.relative.dir}/build.xml"
+			build.file.location="${pa-ear.base.dir}/build.xml"
 			output.file.dir="${grand.rpt.dir}"
 			output.file.name="pa-ear-build.xml"
 			/>
 		<report-grand
-			build.file.location="${pa-ejb.dist.relative.dir}/build.xml"
+			build.file.location="${pa-ejb.base.dir}/build.xml"
 			output.file.dir="${grand.rpt.dir}"
 			output.file.name="pa-ejb-build.xml"
 			/>
 		<report-grand
-			build.file.location="${pa-web.dist.relative.dir}/build.xml"
+			build.file.location="${pa-web.base.dir}/build.xml"
 			output.file.dir="${grand.rpt.dir}"
 			output.file.name="pa-web-build.xml"
 			/>
