@@ -120,7 +120,7 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure tests target                                                     -->
+    <!-- Configure tests target                                                 -->
     <!-- ====================================================================== -->
 
     <target name="configure.tests">
@@ -129,9 +129,13 @@
               overwrite="true">
             <filterset>
                 <filter token="test.java.security.login.config" 
-                	    value="${test.java.security.login.config}"/>
+                        value="${basedir}/target/test-classes/login.config"/>
             </filterset>
         </copy>
+        <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties"
+                       match="\\"
+                       replace="/"
+                       flags="g"/>
     </target>
     
     <!-- ====================================================================== -->

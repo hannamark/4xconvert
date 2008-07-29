@@ -7,4 +7,3 @@ jdbc.driver=org.postgresql.Driver
 jdbc.url=jdbc:postgresql://localhost:5432/ctods
 test.schema.showsql=false
 test.java.naming.provider=localhost
-test.java.security.login.config=D:/project/coppa/trunk/code/pa/pa-web/src/test/resources/login.config
