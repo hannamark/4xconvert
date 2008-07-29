@@ -36,19 +36,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<basename property="properties.file.name" file="${properties.file}"/>
 
 	<!-- BDA standard structure -->
-	<property name="software.dir" value="${basedir}" />
-	<property name="common.dir" value="${software.dir}/common" />
-	<property name="local.repo.dir" value="${software.dir}/local-ivy-repo" />
-	<property name="bda-download.dir" value="${common.dir}/bda-download" />
-	<property name="target.dir" value="${software.dir}/target" />
-	<property name="lib.dir" value="${target.dir}/lib" />
-	<property name="temp.dir" value="${target.dir}/temp" />
-	<property name="reports.dir" value="${target.dir}/reports" />
-	<property name="bda-utils.dir" value="${target.dir}/bda-utils" />
-	<property name="log.dir" value="${target.dir}/logs" />
-	<property name="dist.dir" value="${target.dir}/dist" />
-	<property name="download.dir" value="${target.dir}/download" />
-	<property name="pt.dir" value="${target.dir}/persistent-transient" />
+	<property name="build.dir" location="."/>
+	<property name="software.dir" location=".." />
+	<property name="common.dir" location="${build.dir}/common" />
+	<property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+	<property name="bda-download.dir" location="${common.dir}/bda-download" />
+	<property name="target.dir" location="${software.dir}/target" />
+	<property name="lib.dir" location="${target.dir}/lib" />
+	<property name="temp.dir" location="${target.dir}/temp" />
+	<property name="reports.dir" location="${target.dir}/reports" />
+	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />
+	<property name="log.dir" location="${target.dir}/logs" />
+	<property name="dist.dir" location="${target.dir}/dist" />
+	<property name="download.dir" location="${target.dir}/download" />
+	<property name="pt.dir" location="${target.dir}/persistent-transient" />
 
 
 	<!-- Ivy Related props -->
@@ -60,20 +61,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<!-- Used by dist:*:prep to determin list of files to use for incremental build process.
 		Directory and files must be in svn to work.
 	-->
-	<property name="pa.db-install.src.dir" value="pa/dbscripts/db-install"/>
-	<property name="pa.db-upgrade.src.dir" value="pa/dbscripts/db-upgrade"/>
-	<property name="po.db-install.src.dir" value="po/dbscripts/db-install"/>
-	<property name="po.db-upgrade.src.dir" value="po/dbscripts/db-upgrade"/>
+	<property name="db-install.src.dir" location="${software.dir}/pa/dbscripts/db-install"/>
+	<property name="db-upgrade.src.dir" location="${software.dir}/pa/dbscripts/db-upgrade"/>
 	
 	<!-- Properties that relate to how to call build targets from sub-projects-->
 	<!-- Working directory passed to Ant tasks -->
-	<property name="pa-ear.base.dir" value="${software.dir}/pa/pa-ear"/>
-	<property name="pa-ejb.base.dir" value="${software.dir}/pa/pa-ejb"/>
-	<property name="pa-web.base.dir" value="${software.dir}/pa/pa-web"/>
-	<property name="po.base.dir" value="${software.dir}/po"/>
-	<property name="po-ear.base.dir" value="${software.dir}/po/ear"/>
-	<property name="po-services.base.dir" value="${software.dir}/po/sevices"/>
-	<property name="po-web.base.dir" value="${software.dir}/po/web"/>
+	<property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
+	<property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
+	<property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
+	<property name="po.base.dir" location="${software.dir}/po"/>
+	<property name="po-ear.base.dir" location="${software.dir}/po/ear"/>
+	<property name="po-services.base.dir" location="${software.dir}/po/sevices"/>
+	<property name="po-web.base.dir" location="${software.dir}/po/web"/>
 
 	<!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
 	<property name="pa-ejb.build.file" value="build.xml"/>
@@ -87,33 +86,33 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     
 	<!-- Distribution Structure properties, used to copy files into the distribution area.
        		Use project.propertie relative dir names becasue they are used by install also-->
-	<property name="dist.exploded.dir" value="${dist.dir}/exploded" />
-	<property name="pa-ear.dist.dir" value="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
-	<property name="pa-ejb.dist.dir" value="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
-	<property name="pa-web.dist.dir" value="${dist.exploded.dir}/${pa-web.dist.relative.dir}" />
-	<property name="tools.dist.dir" value="${dist.exploded.dir}/${tools.dist.relative.dir}" />
-	<property name="common.dist.dir" value="${dist.exploded.dir}/${common.dist.relative.dir}" />
-	<property name="jboss-conf.dist.dir" value="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
-	<property name="pa.db-install.dist.dir" value="${dist.exploded.dir}/${pa.db-install.dist.relative.dir}" />
-	<property name="pa.db-upgrade.dist.dir" value="${dist.exploded.dir}/${pa.db-upgrade.dist.relative.dir}" />
-	<property name="po.db-install.dist.dir" value="${dist.exploded.dir}/${po.db-install.dist.relative.dir}" />
-	<property name="po.db-upgrade.dist.dir" value="${dist.exploded.dir}/${po.db-upgrade.dist.relative.dir}" />
+	<property name="dist.exploded.dir" location="${dist.dir}/exploded" />
+	<property name="pa-ear.dist.dir" location="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
+	<property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
+	<property name="pa-web.dist.dir" location="${dist.exploded.dir}/${pa-web.dist.relative.dir}" />
+	<property name="tools.dist.dir" location="${dist.exploded.dir}/${tools.dist.relative.dir}" />
+	<property name="common.dist.dir" location="${dist.exploded.dir}/${common.dist.relative.dir}" />
+	<property name="jboss-conf.dist.dir" location="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
+	<property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
+	<property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
+	<property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
+	<property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
 
 	<!-- Selenium settings -->
-	<property name="selenium.jar" value="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
+	<property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
 	<property name="selenium.browser" value="*firefox"/>
 	<!--  What you would need for a ci server, recommend setting in local.properties
 	<property name="selenium.browser" value="*firefox /usr/lib64/firefox-1.5.0.12/firefox-bin"/>
 	-->
 	<property name="selenium.proxy.port" value="4444"/>
-	<property name="selenium.report.dir" value="${reports.dir}/selenium"/>
+	<property name="selenium.report.dir" location="${reports.dir}/selenium"/>
 	<property name="selenium.report.file" value="selenium-rpt.html"/>
-	<property name="selenium.test.dir" value="${software.dir}/test/selenium"/>
+	<property name="selenium.test.dir" location="${software.dir}/test/selenium"/>
 	<property name="selenium.test.suite" value="${selenium.test.dir}/cai2TestSuite.html"/>
 	<property name="selenium.url" value="http://${jboss.server.hostname}:${jboss.server.port}"/>
 
 	<!-- Where to write files retrieved by get, into the distribution area.  The file names come from project.properties  -->
-	<property name="jboss.dest.file" value="${download.dir}/${jboss.binaries.file}"/>
+	<property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
 
 	<!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
 	<property name="install.target" value="install"/>
@@ -124,15 +123,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 	<!-- retrive ivy files then retrieve bda files and librarires -->
 	<mkdir dir="lib" />
+	<echo message="software.dir is ${software.dir}"/>
 	<ant inheritAll="false" inheritRefs="false"
 		antfile="bda-ivy-build.xml"
 		target="retrieve-bda"
 		dir="${bda-download.dir}"
 		>
 		<property name="bda.version" value="${bda.version}" />
-		<property name="bda-utils.dir" value="${bda-utils.dir}" />
-		<property name="lib.dir" value="${lib.dir}" />
-		<property name="software.dir" value="${software.dir}" />
+		<property name="bda-utils.dir" location="${bda-utils.dir}" />
+		<property name="lib.dir" location="${lib.dir}" />
+		<property name="software.dir" location="${software.dir}" />
 	</ant>
 
 
@@ -198,10 +198,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<if>
 			<isset property="rt.jboss.exists"/>
 			<then>
-				<property name="local.jboss.home" value="${jboss.home}"/>
+				<property name="local.jboss.home" location="${jboss.home}"/>
 			</then>
 			<else>
-				<property name="local.jboss.home" value="${pt.dir}/${jboss.binaries.relative.dir}"/>
+				<property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
 				<available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
 				<if>
 					<not>
@@ -225,9 +225,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			antfile="bda-ivy-build.xml"
 			target="ivy-cleancache"
 			dir="${bda-download.dir}">
-			<property name="bda-utils.dir" value="${bda-utils.dir}" />
-			<property name="lib.dir" value="${lib.dir}" />
-			<property name="software.dir" value="${software.dir}" />
+			<property name="bda-utils.dir" location="${bda-utils.dir}" />
+			<property name="lib.dir" location="${lib.dir}" />
+			<property name="software.dir" location="${software.dir}" />
 		</ant>
 		<ant inheritAll="false" inheritRefs="false" 
 			antfile="${pa-web.build.file}" 
@@ -247,7 +247,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<target name="build:po" depends="init">
 		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml">
 			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
+				<filter token="jboss.home" location="${local.jboss.home}"/>
 			</filterset>
 		</copy>
 			
@@ -264,7 +264,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
 			target="${pa-ear.build.target}"
 			dir="${pa-ear.base.dir}" >
-			<property name="pa-ear.build.dir" value="${pa-ear.dist.dir}" />
+			<property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
 		</ant>
 	</target>
 
@@ -329,13 +329,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		-->
 		
 		<!-- Copy pa database scripts -->
-		<copy todir="${pa.db-install.dist.dir}" overwrite="true">
-			<fileset dir="${pa.db-install.src.dir}">
+		<copy todir="${db-install.dist.dir}" overwrite="true">
+			<fileset dir="${db-install.src.dir}">
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
-		<copy todir="${pa.db-upgrade.dist.dir}" overwrite="true">
-			<fileset dir="${pa.db-upgrade.src.dir}">
+		<copy todir="${db-upgrade.dist.dir}" overwrite="true">
+			<fileset dir="${db-upgrade.src.dir}">
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
@@ -343,12 +343,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<database-build-filelist 
 			sqlfiles.list.file="${dist.exploded.dir}/${db-upgrade.postgresql.list.file}"
 			build.properties.file="${dist.exploded.dir}/${db-upgrade.postgresql.conf.file}"
-			incr.sql.dir="${pa.db-upgrade.src.dir}/postgresql" />
+			incr.sql.dir="${db-upgrade.src.dir}/postgresql" />
 		<copy tofile="${dist.exploded.dir}/db-integrate.xml" file="${bda-utils.dir}/resource/template-db-integrate.xml"/>
 
 		<!-- Copy install related xml and properties files -->
 		<copy todir="${dist.exploded.dir}" overwrite="true">
-			<fileset dir="${software.dir}">
+			<fileset dir="${build.dir}">
 				<include name="install.xml" />
 				<include name="install.properties" />
 				<include name="*properties.template" />
@@ -411,20 +411,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			install.xml and build.xml
 		-->
 		<!-- Copy pa database scripts -->
-		<copy todir="${pa.db-upgrade.dist.dir}" overwrite="true">
-			<fileset dir="${pa.db-upgrade.src.dir}">
+		<copy todir="${db-upgrade.dist.dir}" overwrite="true">
+			<fileset dir="${db-upgrade.src.dir}">
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
 		<database-build-filelist 
 			sqlfiles.list.file="${dist.exploded.dir}/${db-upgrade.postgresql.list.file}"
 			build.properties.file="${dist.exploded.dir}/${db-upgrade.postgresql.conf.file}"
-			incr.sql.dir="${pa.db-upgrade.src.dir}/postgresql" />
+			incr.sql.dir="${db-upgrade.src.dir}/postgresql" />
 		<copy tofile="${dist.exploded.dir}/db-integrate.xml" file="${bda-utils.dir}/resource/template-db-integrate.xml"/>
 
 		<!-- Copy install related xml and properties files -->
 		<copy todir="${dist.exploded.dir}" overwrite="true">
-			<fileset dir="${software.dir}">
+			<fileset dir="${build.dir}">
 				<include name="install.xml" />
 				<include name="upgrade.properties" />
 				<include name="*properties.template" />
@@ -473,7 +473,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 		<!-- Copies over all files so linux and windows properties are present -->
 		<copy todir="${dist.exploded.dir}">
-			<fileset dir="${basedir}">
+			<fileset dir="${build.dir}">
 				<include name="*.properties"/>
 			</fileset>
 		</copy>
@@ -502,7 +502,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 		<!-- Copies over all files so linux and windows properties are present -->
 		<copy todir="${dist.exploded.dir}">
-			<fileset dir="${basedir}">
+			<fileset dir="${build.dir}">
 				<include name="*.properties"/>
 			</fileset>
 		</copy>

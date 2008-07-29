@@ -35,8 +35,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 	<property name="jboss-conf.dir.dest" value="${working.dir}/${jboss-conf.dist.relative.dir}" />
 	<property name="db.dir.src" value="${basedir}/${db.dist.relative.dir}" />
 	<property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
-	<property name="pa.db-install.dir.dest" value="${working.dir}/${pa.db-install.dist.relative.dir}" />
-	<property name="pa.db-upgrade.dir.dest" value="${working.dir}/${pa.db-upgrade.dist.relative.dir}" />
+	<property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
+	<property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
 
 	<!-- Jboss configurtion related properties -->
 	<property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
@@ -245,7 +245,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 							database.password="${database.password}" 
 							sql.delimiter="/" 
 							sql.delimitertype="row"
-							sql.file="${pa.db-install.dir.dest}/${database.type}/@{db.install.oracle.file}"
+							sql.file="${db-install.dir.dest}/${database.type}/@{db.install.oracle.file}"
 							onerror="continue"/>
 					</sequential>
 				</for>
@@ -258,7 +258,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 							database.url="${database.url}"
 							database.user="${database.user}"
 							database.password="${database.password}"
-							sql.file="${pa.db-install.dir.dest}/${database.type}/@{db.install.mysql.file}"
+							sql.file="${db-install.dir.dest}/${database.type}/@{db.install.mysql.file}"
 							/>
 					</sequential>
 				</for>
@@ -267,14 +267,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 				<database-create/>
 				<for list="${db.install.postgresql.file.list}" param="db.install.postgresql.file">
 					<sequential>
-						<echo message="processing ${pa.db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
+						<echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
 						<run-sql-script
 							database.url="${database.url}"
 							database.user="${database.user}"
 							database.password="${database.password}"
 							sql.delimiter="/" 
 							sql.delimitertype="row"
-							sql.file="${pa.db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
+							sql.file="${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
 							/>
 					</sequential>
 				</for>
@@ -536,7 +536,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 							build.properties.file="${db-upgrade.conf.file}"
 							sql.delimiter="/" 
 							sql.delimitertype="row"
-							database.sql.dir="${pa.db-upgrade.dir.dest}"/>
+							database.sql.dir="${db-upgrade.dir.dest}"/>
 					</then>
 					<else>
 						<echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
@@ -556,7 +556,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 						<database-identify-scripts
 							sqlfiles.list.file="${db-upgrade.list.file}"
 							build.properties.file="${db-upgrade.conf.file}"
-							database.sql.dir="${pa.db-upgrade.dir.dest}"
+							database.sql.dir="${db-upgrade.dir.dest}"
 							/>
 					</then>
 					<else>
@@ -579,7 +579,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 							build.properties.file="${db-upgrade.conf.file}"
 							sql.delimiter="/" 
 							sql.delimitertype="row"
-							database.sql.dir="${pa.db-upgrade.dir.dest}"/>
+							database.sql.dir="${db-upgrade.dir.dest}"/>
 					</then>
 					<else>
 						<echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
