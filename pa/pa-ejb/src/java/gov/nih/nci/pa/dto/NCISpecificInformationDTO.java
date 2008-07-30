@@ -8,14 +8,14 @@ import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import java.io.Serializable;
 
 /**
- * NCISpecificInfoDTO for transferring NCI Specific information object .
+ * NCISpecificInformationDTO for transferring NCI Specific information object .
  * @author Gil Naveh
  * @since 06/2008
  
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class NCISpecificInfoDTO implements Serializable {
+public class NCISpecificInformationDTO implements Serializable {
 
  
     private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class NCISpecificInfoDTO implements Serializable {
     /**
      * Default constructor.
     */
-    public NCISpecificInfoDTO() {
+    public NCISpecificInformationDTO() {
         // empty constructor
     }
 
@@ -37,7 +37,7 @@ public class NCISpecificInfoDTO implements Serializable {
      * Constructor for creating a dto from a domain object.
      * @param sp domain object
      */
-    public NCISpecificInfoDTO(StudyProtocol sp) {
+    public NCISpecificInformationDTO(StudyProtocol sp) {
         this.studyProtocolID = sp.getId();
         this.monitorCode = sp.getMonitorCode();       
     }
