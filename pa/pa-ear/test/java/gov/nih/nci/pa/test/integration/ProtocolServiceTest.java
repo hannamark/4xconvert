@@ -40,6 +40,10 @@ public class ProtocolServiceTest {
     }
 
 
+    /**
+     * 
+     * @throws Exception
+     */
     //@Test
     public void serviceAvailableTest() throws Exception
     {
