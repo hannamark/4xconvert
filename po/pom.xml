@@ -32,6 +32,11 @@
         <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.2-507.jdbc3</jdbc.version>
+        
+        <ldap.host.url></ldap.host.url>
+        <ldap.searchable.base></ldap.searchable.base>
+        <ldap.user.id.label></ldap.user.id.label>
+        
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
     </properties>
 
