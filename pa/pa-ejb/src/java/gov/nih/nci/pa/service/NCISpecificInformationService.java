@@ -1,6 +1,6 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
+import gov.nih.nci.pa.dto.NCISpecificInformationDTO;
 import gov.nih.nci.pa.dto.NCISpecificInformationData;
 /**
  * 
@@ -12,16 +12,17 @@ public interface NCISpecificInformationService {
     /**
     * 
     * @param studyProtocolID studyProtocolID
-    * @return NCISpecificInfoDto   
+    * @return NCISpecificInformationDto   
     * @throws PAException on error 
     */
-    NCISpecificInfoDTO getNCISpecificInfo(Long studyProtocolID) throws PAException;
+    NCISpecificInformationDTO getNCISpecificInformation(Long studyProtocolID) throws PAException;
 
     /**
      * 
      * @param nciSpecificInformationData NCISpecificInformationData 
-     * @return NCISpecificInfoDto   
+     * @return NCISpecificInformationDto   
      * @throws PAException on error 
      */
-     NCISpecificInfoDTO updateNCISpecificInfo(NCISpecificInformationData nciSpecificInformationData) throws PAException;
+     NCISpecificInformationDTO updateNCISpecificInformation(
+                    NCISpecificInformationData nciSpecificInformationData) throws PAException;
 }

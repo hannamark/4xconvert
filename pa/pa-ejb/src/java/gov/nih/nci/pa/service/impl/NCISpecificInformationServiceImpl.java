@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.service.impl;
 
-import gov.nih.nci.pa.dao.NCISpecificInfoDAO;
-import gov.nih.nci.pa.dto.NCISpecificInfoDTO;
+import gov.nih.nci.pa.dao.NCISpecificInformationDAO;
+import gov.nih.nci.pa.dto.NCISpecificInformationDTO;
 import gov.nih.nci.pa.dto.NCISpecificInformationData;
 import gov.nih.nci.pa.service.PAException;
 
@@ -17,8 +17,9 @@ public class NCISpecificInformationServiceImpl {
      * @return TrialDesignDTO   
      * @throws PAException on error 
      */
-    public NCISpecificInfoDTO getNCISpecificInfo(Long studyProtocolID) throws PAException {                 
-       return new NCISpecificInfoDAO().getNCISpecificInfo(studyProtocolID);      
+    public NCISpecificInformationDTO getNCISpecificInformation(
+                                     Long studyProtocolID) throws PAException {                 
+       return new NCISpecificInformationDAO().getNCISpecificInformation(studyProtocolID);      
     }
     
     /**
@@ -26,9 +27,10 @@ public class NCISpecificInformationServiceImpl {
      * @return NCI Specific Info DTO object
      * @throws PAException on error
      */
-    public NCISpecificInfoDTO 
-       updateNCISpecificInfo(NCISpecificInformationData nciSpecificInformationData) throws PAException {               
-        return new NCISpecificInfoDAO().updateNCISpecificInfo(nciSpecificInformationData);      
+    public NCISpecificInformationDTO 
+       updateNCISpecificInformation(NCISpecificInformationData nciSpecificInformationData) 
+                                                                        throws PAException {               
+        return new NCISpecificInformationDAO().updateNCISpecificInformation(nciSpecificInformationData);      
      }
 
 }
