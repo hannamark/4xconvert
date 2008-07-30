@@ -62,17 +62,43 @@ function resetValues () {
                     
                 </td>
                 <td align=left>
-                    <s:select  name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
+                    <s:select  
+                        name="criteria.leadOrganizationId" 
+                        list="#protocolOrgs"  
+                        listKey="id" listValue="name" headerKey="" headerValue="All" />
                 </td>
 
             </tr>           
+
+            <tr>
+            <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
+             <tr>
+                <td align=right>
+                    <b><fmt:message key="studyProtocol.principalInvestigator"/></b> 
+                </td>
+
+                <td align=left>
+                    <s:select  name="criteria.principalInvestigatorId" list="#principalInvs"  listKey="id" listValue="fullName" headerKey="" headerValue="All" />
+                </td>                    
+                <td align=right>
+                    <b><fmt:message key="studyProtocol.trialType"/></b> 
+                    
+                </td>
+                <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+                <td align=left>
+                    <s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+                    value="criteria.primaryPurposeCode" />
+                </td>
+
+            </tr>           
+
             <tr>
                 <td align=right>
                     <b><fmt:message key="studyProtocol.studyPhase"/></b>                         
                 </td>
-                <s:set name="studyPhaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+                <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td align=left>
-                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#studyPhaseCodeValues"  value="criteria.studyPhaseCode" />
+                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" />
                 </td>      
                 
                 <td align=right>
