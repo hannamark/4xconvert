@@ -91,6 +91,7 @@ public abstract class Qty extends Any {
 
     private static final long serialVersionUID = 1L;
 
+    // TODO use EdText
     private Ed originalText;
     private Qty uncertainty;
     private UncertaintyType uncertaintyType;

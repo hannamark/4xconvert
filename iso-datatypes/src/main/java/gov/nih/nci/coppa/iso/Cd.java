@@ -91,12 +91,14 @@ public class Cd extends Any {
     private static final long serialVersionUID = 1L;
 
     private String code;
-    /* @TODO - determine if uid codeSystem can be a string */
-    private String codeSystem; // not sure if this should be string
+    private String codeSystem;
     private String codeSystemName;
     private String codeSystemVersion;
     private St displayName;
+
+    // TODO use EdText
     private Ed originalText;
+
     /**
      * @return the originalText
      */

@@ -94,7 +94,7 @@ public class Ii extends Any {
     private String extension;
     private String identifierName;
     private IdentifierReliability reliability;
-    private String root; // uid - okay to be string?
+    private String root;
     private IdentifierScope scope;
 
     /**

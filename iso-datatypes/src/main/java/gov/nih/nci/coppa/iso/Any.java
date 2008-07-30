@@ -93,7 +93,12 @@ public abstract class Any implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // TODO  Add Jira issue to search through the model for constraints we are not enforcing for all types.
+    // TODO Add issue to verify if all types that should be abstract are.
+
     private String flavorId;
+
+    // TODO  Enforce invariant related to nullflavor
     private NullFlavor nullFlavor;
 
     /**

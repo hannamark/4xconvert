@@ -97,7 +97,11 @@ public class Ed extends Any {
     private byte[] integrityCheck;
     private IntegrityCheckAlgorithm integrityCheckAlgorithm;
     private String mediaType = "text/plain";
+
+    // TODO Implement TelUrl and use.
     private Tel reference;
+
+    // TODO MAke Jira issue to complain about being impossible to register due to closure.
     private Ed thumbnail;
     private String value;
     private String xml;

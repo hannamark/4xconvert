@@ -94,6 +94,8 @@ public class Ad extends Any {
     private static final long serialVersionUID = 1L;
 
     private Boolean isNotOrdered;
+
+    // TODO Invariant must be applied - see COPPA ISO's from EA
     private Set<PostalAddressUse> use;
     private QSet<Ts> usablePeriod;
     private List<Adxp> part;

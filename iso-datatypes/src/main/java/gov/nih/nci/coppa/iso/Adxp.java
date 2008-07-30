@@ -89,6 +89,7 @@ package gov.nih.nci.coppa.iso;
 @SuppressWarnings("PMD.AbstractNaming")
 public abstract class Adxp {
 
+    // TODO  figure out what code* should be set to in each subtype (add jira issue)
     private String code;
     private String codeSystem;
     private String codeSystemVersion;
