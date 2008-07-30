@@ -181,6 +181,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<mkdir dir="${pt.dir}"/>
 		<available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
+		<condition property="mvn.cmd" value="mvn">
+			<or>
+				<os family="unix" />
+				<os family="mac" />
+			</or>
+		</condition>
+		<condition property="mvn.cmd" value="mvn.bat">
+			<os family="windows" />
+		</condition>
+	
 		<!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
 		<available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
 		<if>
@@ -252,13 +262,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			</filterset>
 		</copy>
 			
-		<exec executable="mvn" dir="${po.base.dir}" failonerror="true">
+		<exec executable="${mvn.cmd}" dir="${po.base.dir}" failonerror="true">
 			<arg line="-P ${po.maven.profile.list} ${po.maven.goal.list}"/>
 		</exec>
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
 	</target>
 	<target name="build:iso-datatypes" depends="init">
-		<exec executable="mvn" dir="${iso-datatypes.base.dir}" failonerror="true">
+		<exec executable="${mvn.cmd}" dir="${iso-datatypes.base.dir}" failonerror="true">
 			<arg line="${iso-datatypes.maven.goal.list}"/>
 		</exec>
 	</target>
