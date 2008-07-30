@@ -1,7 +1,7 @@
 package gov.nih.nci.po.service.organization;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.ISOUtils;
@@ -44,7 +44,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         long id = t.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(id);
-        assertEquals(org.getId(), result.getId());
+        assertEquals(org.getId(), ISOUtils.II.convertToLong(result.getId()));
         assertEquals(org.getName(), ISOUtils.EN.convertToString(result.getName()));
     }
 
@@ -55,11 +55,11 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     public void testCreateOrganization() {
         try {
             OrganizationDTO dto = new OrganizationDTO();
-            dto.setId(99L);
+            dto.setId(ISOUtils.ID_ORG.convertToIi(99L));
             dto.setName(ISOUtils.STRING.convertToEnOn("some name"));
             dto.setAbbreviationName(ISOUtils.STRING.convertToEnOn("short"));
             long id = remote.createOrganization(dto);
-            assertNull(dto.getId()); // make sure this id was not used
+            assertNotNull(dto.getId().getNullFlavor()); // make sure this id was not used
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
             assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviationName()), o.getAbbreviationName());

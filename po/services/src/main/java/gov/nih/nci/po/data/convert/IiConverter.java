@@ -80,41 +80,44 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+
 package gov.nih.nci.po.data.convert;
+
+import gov.nih.nci.coppa.iso.Ii;
 
 /**
  *
- * Converters mostly for use in test.
  * @author gax
  */
-public class ISOUtils {
+public class IiConverter extends AbstractXSnapshotConverter<Ii> {
+
+    /** {@inheritDoc} */
+    @Override
+    public <TO> TO convert(Class<TO> returnClass, Ii value) {
+        if (returnClass == Long.class) {
+            return (TO) convertToLong(value);
+        }
+        
+        throw new UnsupportedOperationException(returnClass.getName());
+    }
+
     /**
-     * Converts from iso ST.
+     * @param value an II used to identify PO entities.
+     * @return a long suitable for a hibernate entity Id
      */
-    public static final StConverter ST = new StConverter();
+    public Long convertToLong(Ii value) {
+        if (value == null || value.getNullFlavor() != null) {
+            return null;
+        }
+        
+        // todo https://jira.5amsolutions.com/browse/PO-411
+        String root = value.getRoot();
+        if (root == null) {
+            throw new IllegalArgumentException("root is required");
+        }
+        
+        return Long.valueOf(value.getExtension());
+    }
     
-    /**
-     * Converts from java String.
-     */
-    public static final StringConverter STRING = new StringConverter();
-    
-    /**
-     * Converts from iso EN.
-     */
-    public static final EnConverter EN = new EnConverter();
-    
-    /**
-     * Converts from iso II.
-     */
-    public static final IiConverter II = new IiConverter();
-    
-    /**
-     * Converts from hibernate ID.
-     */
-    public static final IdConverter ID_ORG = new IdConverter.OrgIdConverter();
-    
-    /**
-     * Converts from hibernate ID.
-     */
-    public static final IdConverter ID_PERSON = new IdConverter.PersonIdConverter();
 }

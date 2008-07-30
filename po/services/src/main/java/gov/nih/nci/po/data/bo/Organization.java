@@ -143,6 +143,10 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     /**
      * @return database identity
      * @xsnapshot.property match="entity"
+     *                     type="gov.nih.nci.coppa.iso.Ii"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
