@@ -3,6 +3,10 @@ package gov.nih.nci.pa.dao;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.enums.AssigningAuthorityCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.ResponsibilityCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -24,7 +28,8 @@ import org.hibernate.Session;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
+//@SuppressWarnings({ "PMD.ExcessiveMethodLength", "NPathComplexity" , "PMD.CyclomaticComplexity" })
+@SuppressWarnings("PMD") 
 public class StudyProtocolDAO {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolDAO.class);    
@@ -79,11 +84,24 @@ public class StudyProtocolDAO {
             hql.append(" select sp , sos , dws , di from StudyProtocol as sp  "
                     +  "left outer join sp.studyOverallStatuses as sos  "
                     +  "left outer join sp.documentWorkflowStatuses as dws  "
-                    +  "left outer join sp.documentIdentifications as di  ")
-            .append(generateWhereClause(studyProtocolQueryCriteria));
+                    +  "left outer join sp.documentIdentifications as di  ");
+            
+            // if org is selected add the related objects
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
+                 hql.append("left outer join sp.studyCoordinatingCenters as scc "  
+                     + "left outer join scc.organization as org "
+                     + "left outer join scc.studyCoordinatingCenterRoles as sccr ");
+            }
+            // if pi is selected add the related objects 
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
+                hql.append("left outer join sp.studyContacts as sc "
+                    + " left outer join sc.studyContactRoles as scr ");
+            }
+            
+            hql.append(generateWhereClause(studyProtocolQueryCriteria));
         } catch (Exception e) {
-            LOG.error("General error in while converting to DTO3", e);
-            throw new PAException("General error in while converting to DTO4", e);
+            LOG.error("General error in while executing Study Query protocol", e);
+            throw new PAException("General error in while executing Study Query protocol", e);
         } finally {
             LOG.debug("Leaving generateStudyProtocolQuery ");
         }
@@ -98,7 +116,8 @@ public class StudyProtocolDAO {
      * @return String String
      * @throws PAException paException
      */
-    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.InefficientStringBuffering", "PMD.ConsecutiveLiteralAppends" })
+    @SuppressWarnings({"PMD.InefficientStringBuffering", 
+        "PMD.ConsecutiveLiteralAppends"  , "PMD.ExcessiveMethodLength" , "NPathComplexity" })
     private String generateWhereClause(
             StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
         LOG.debug("Entering generateWhereClause ");
@@ -118,7 +137,7 @@ public class StudyProtocolDAO {
             
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPhaseCode())) {
                 where.append("and sp.phaseCode  = '" 
-                        + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getPhaseCode())
+                        + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode())
                         + "'");
             }
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
@@ -126,16 +145,46 @@ public class StudyProtocolDAO {
                 where.append(" and di.identifier = '").append(studyProtocolQueryCriteria.getNciIdentifier() + "'");
                 where.append(" and di.assigningAuthorityCode = '").append(AssigningAuthorityCode.NCI + "'");
             }
+/*
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
+                    .getLeadOrganizationTrialIdentifier())) {
+                where.append(" and di.identifier = '").
+                    append(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier() + "'");
+                where.append(" and di.assigningAuthorityCode = '").
+                    append(AssigningAuthorityCode.LEAD_ORGANIZATION_TRIAL_ID + "'");
+            }
+*/            
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
-                where.append("and sos.studyStatusCode  = '" 
+                where.append(" and sos.studyStatusCode  = '" 
                         + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getStudyStatusCode())
                         + "'");
+            } else {
+                // add the subquery to pick the latest record
+                where.append(" and sos.id in (select max(id) from StudyOverallStatus as sos1 " 
+                +  "                where sos.studyProtocol = sos1.studyProtocol )");
             }
+            
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
+                where.append(" and sp.primaryPurposeCode  = '" 
+                        + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria.getPrimaryPurposeCode())
+                        + "'");
+            }
+            
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
                 where.append("and dws.documentWorkflowStatusCode  = '" 
                         + DocumentWorkflowStatusCode.getByCode(
                                 studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())
                         + "'");
+            }
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
+                // if org is added, add the where clause
+                where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId()
+                        + " and sccr.responsibilityCode ='" + ResponsibilityCode.PROTOCOL_MANAGEMENT + "'");
+            }
+            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
+                where.append(" and sc.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId()
+                        + " and scr.studyContactRoleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+                
             }
             
         } catch (Exception e) {
