@@ -27,6 +27,12 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyCoordinatingCenterRole" />
         <mapping class="gov.nih.nci.pa.domain.StudyOverallStatus" />
         <mapping class="gov.nih.nci.pa.domain.DocumentWorkflowStatus" />
-	<mapping class="gov.nih.nci.pa.service.SessionEntry" />
+        <mapping class="gov.nih.nci.pa.domain.Person" />
+        <mapping class="gov.nih.nci.pa.domain.PersonIdentification" />
+        <mapping class="gov.nih.nci.pa.domain.HealthCareProvider" />
+        <mapping class="gov.nih.nci.pa.domain.StudyContact" />
+        <mapping class="gov.nih.nci.pa.domain.StudyContactRole" />
+	    <mapping class="gov.nih.nci.pa.service.SessionEntry" />
+	    
     </session-factory>
 </hibernate-configuration>
