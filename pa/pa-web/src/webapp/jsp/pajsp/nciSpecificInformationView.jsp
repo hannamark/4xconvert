@@ -8,16 +8,6 @@
 	<title><fmt:message key="nciSpecificInfo.title"/></title>
 	<s:head />
 </head>
-<SCRIPT LANGUAGE="JavaScript">
-function resetValues () {
-    document.forms.nciSpecificInformationData.monitorCode.value="";
-    document.forms.nciSpecificInformationData.reportingDataSetMethodCode.value="";
-    document.forms.nciSpecificInformationData.summaryFourFundingCategoryCode.value="";
-    document.forms.nciSpecificInformationData.summary4Name.value="";
- 
-
-}
-</SCRIPT>
 
 <body onload="setFocusToFirstControl();">
 <div id="contentwide">
@@ -26,10 +16,10 @@ function resetValues () {
 <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a>
   <div id="box">
-    <s:form action="viewNCISpecificInfo"><s:actionerror/>
+    <s:form action="viewNCISpecificInformation"><s:actionerror/>
     	<table width="480">
  			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInfoDTO.studyProtocolID}"/>
+			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationData.studyProtocolID}"/>
 			 	<tr>
 			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
 				</tr>
@@ -54,7 +44,7 @@ function resetValues () {
 			               <label for="summary4TypeCode"> <fmt:message key="nciSpecificInfo.summary4.funding.category"/></label>
 			          </td>
 			          <td align=left>
-			            ${nciSpecificInformationData.summaryFourFundingCategoryCode}
+			            ${nciSpecificInformationData.summaryFourFundingCategoryCode} 
 			          </td>          
 			     </tr>
 				<tr>

@@ -26,21 +26,20 @@ function resetValues () {
 <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a>
   <div id="box">
-    <s:form action="updateNCISpecificInfo"><s:actionerror/>
+    <s:form action="updateNCISpecificInformation"><s:actionerror/>
     	<table width="480">
  			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInfoDTO.studyProtocolID}"/>
+			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationDTO.studyProtocolID}"/>
 			 	<tr>
 			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
 				</tr>				  
 			    <tr>
 			          <td align=right>
 			               <label for="monitorCode"> <fmt:message key="nciSpecificInfo.nci.division"/></label>
-			          </td>
-			          			          			          			          
+			          </td>			    			          			          			          			         
 			          <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 	                  <td align=left>
-	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.monitorCode" list="#monitorCodeValues"  value="nciSpecificInfoDTO.monitorCode" />
+	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.monitorCode" list="#monitorCodeValues"  value="nciSpecificInformationDTO.monitorCode" />
 	                  </td>         
 			    </tr> 
 			    <tr>
@@ -49,7 +48,7 @@ function resetValues () {
 			          </td>
 			    	  <s:set name="reportingDataSetMethodCodeValues" value="@gov.nih.nci.pa.enums.ReportingDataSetMethodCode@getDisplayNames()" />
 	                  <td align=left>
-	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.reportingDataSetMethodCode" list="#reportingDataSetMethodCodeValues"  value="nciSpecificInfoDTO.reportingDataSetMethodCode" />
+	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.reportingDataSetMethodCode" list="#reportingDataSetMethodCodeValues"  value="nciSpecificInformationDTO.reportingDataSetMethodCode" />
 	                  </td>   			            
 			     </tr>           
 			     <tr>
@@ -58,7 +57,7 @@ function resetValues () {
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td align=left>
-                        <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues"  value="nciSpecificInfoDTO.summaryFourFundingCategoryCode" />
+                        <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues"  value="nciSpecificInformationDto.summaryFourFundingCategoryCode" />
                       </td>  			                    
 			     </tr>
 				<tr>
