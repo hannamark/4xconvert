@@ -6,6 +6,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -30,7 +31,7 @@ public class StudyOverallStatusTest {
     /**
      * 
      */
-    @Test
+    //@Test
     public void createStudyOverallStatusTest() {
         
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
@@ -58,6 +59,38 @@ public class StudyOverallStatusTest {
             e.printStackTrace();
         }
     }
+    
+    @Test
+    public void createStudyOverallStatusSubQueryTest() {
+    
+        Session session = TestSchema.getSession();
+
+        String hql = "from StudyOverallStatus as sos " 
+            + " where id in ( select max(id) from StudyOverallStatus as sos1 " 
+              + "                where sos.studyProtocol = sos1.studyProtocol) ";
+
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyOverallStatus create = createStudyOverallStatusobj(sp);
+
+        TestSchema.addUpdObject(sp);
+        Serializable spid = sp.getId();
+        StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
+        assertNotNull(spid);
+
+        TestSchema.addUpdObject(create);
+        Serializable id = create.getId();
+        
+        create = createStudyOverallStatusobj(sp);
+        TestSchema.addUpdObject(create);
+
+//        StudyOverallStatus saved = new StudyOverallStatus();
+//        saved = (StudyOverallStatus) session.load(StudyOverallStatus.class, id);
+        
+        List l = session.createQuery(hql).list();
+        System.out.println(" size "+l.size() );
+        
+    }
+    
     
     /**
      * 
