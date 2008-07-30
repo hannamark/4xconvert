@@ -52,7 +52,7 @@ public class StudyContactRole extends AbstractEntity {
      * 
      * @return responsibilityCode
      */
-    @Column(name = "STUDY_CONTACT_ROLE_CODE")
+    @Column(name = "ROLE_CODE")
     @Enumerated(EnumType.STRING)
     public StudyContactRoleCode getStudyContactRoleCode() {
         return studyContactRoleCode;

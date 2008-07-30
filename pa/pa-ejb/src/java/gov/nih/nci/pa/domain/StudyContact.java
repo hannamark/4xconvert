@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
@@ -23,6 +24,7 @@ import org.hibernate.validator.NotNull;
  * copyright holder, NCI.
  */
 @Entity
+@Table(name =  "STUDY_CONTACT")
 public class StudyContact extends AbstractEntity {
 
     private static final long serialVersionUID = 1234567890L;
@@ -30,7 +32,6 @@ public class StudyContact extends AbstractEntity {
     private HealthCareProvider healthCareProvider;
 
     private Boolean primaryIndicator;
-    private Person person;
     private List<StudyContactRole> studyContactRoles = 
         new ArrayList<StudyContactRole>();
     
@@ -89,23 +90,6 @@ public class StudyContact extends AbstractEntity {
      */
     public void setPrimaryIndicator(Boolean primaryIndicator) {
         this.primaryIndicator = primaryIndicator;
-    }
-
-    /**
-     * 
-     * @return person
-     */
-    
-    public Person getPerson() {
-        return person;
-    }
-
-    /**
-     * 
-     * @param person person
-     */
-    public void setPerson(Person person) {
-        this.person = person;
     }
 
 

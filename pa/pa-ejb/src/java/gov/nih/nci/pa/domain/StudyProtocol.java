@@ -8,6 +8,7 @@ import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.ReportingDataSetMethodCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
@@ -52,7 +53,7 @@ public class StudyProtocol extends Document {
     private InterventionTypeCode interventionTypeCode;
     private Integer numberOfInterventionGroups;
     private Boolean section801Indicator;
-    
+    private PrimaryPurposeCode primaryPurposeCode;
     private String biospecimenDescription;
     private BiospecimenRetentionCode biospecimenRetentionCode;
     private ReportingDataSetMethodCode reportingDataSetMethodCode;
@@ -72,6 +73,7 @@ public class StudyProtocol extends Document {
                         new ArrayList<DocumentWorkflowStatus>();
     private List<StudyCoordinatingCenter> studyCoordinatingCenters  =
                         new ArrayList<StudyCoordinatingCenter>(); 
+    private List<StudyContact> studyContacts  = new ArrayList<StudyContact>();
     
     /**
      * 
@@ -272,6 +274,22 @@ public class StudyProtocol extends Document {
     
     /**
      * 
+     * @return primaryPurposeCode
+     */
+    @Column(name = "PRIMARY_PURPOSE_CODE")
+    @Enumerated(EnumType.STRING)
+    public PrimaryPurposeCode getPrimaryPurposeCode() {
+        return primaryPurposeCode;
+    }
+    /**
+     * 
+     * @param primaryPurposeCode primaryPurposeCode
+     */
+    public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
+        this.primaryPurposeCode = primaryPurposeCode;
+    }
+    /**
+     * 
      * @return biospecimenDescription
      */
     @Column(name = "BIOSPECIMEN_DESCRIPTION")
@@ -450,6 +468,21 @@ public class StudyProtocol extends Document {
     public void setStudyCoordinatingCenters(
             List<StudyCoordinatingCenter> studyCoordinatingCenters) {
         this.studyCoordinatingCenters = studyCoordinatingCenters;
+    }
+    /**
+     * 
+     * @return studyContacts 
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<StudyContact> getStudyContacts() {
+        return studyContacts;
+    }
+    /**
+     * 
+     * @param studyContacts studyContacts
+     */
+    public void setStudyContacts(List<StudyContact> studyContacts) {
+        this.studyContacts = studyContacts;
     }
     
 }
