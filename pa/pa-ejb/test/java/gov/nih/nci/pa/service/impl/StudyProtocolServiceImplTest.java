@@ -1,6 +1,8 @@
 package gov.nih.nci.pa.service.impl;
 
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyOverallStatusTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -35,10 +37,14 @@ public class StudyProtocolServiceImplTest {
      * @throws PAException  PAException
      */
     @Test
-    public void getStudyProtocolByCriteriaTest() throws PAException {
+    public  void getStudyProtocolByCriteriaTest() throws PAException {
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         Long id = sp.getId();
+        
+        StudyOverallStatus sos = new StudyOverallStatusTest().createStudyOverallStatusobj(sp);
+        TestSchema.addUpdObject(sos);
+        Long sid = sp.getId();
         
         StudyProtocolServiceImpl spsImpl = new StudyProtocolServiceImpl();
         StudyProtocolQueryCriteria spqc = new StudyProtocolQueryCriteria();
