@@ -30,11 +30,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Long studyProtocolId;
     private String nciIdentifier;
     private String officialTitle;
-    private Long organizationId;
+    private Long leadOrganizationId;
     private String leadOrganizationTrialIdentifier;
     private String phaseCode;
     private String studyStatusCode;
     private String documentWorkflowStatusCode;
+    private Long principalInvestigatorId;
+    private String primaryPurposeCode;
     
     /**
      * 
@@ -80,17 +82,17 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
     /**
      * 
-     * @return organizationId
+     * @return leadOrganizationId
      */
-    public Long getOrganizationId() {
-        return organizationId;
+    public Long getLeadOrganizationId() {
+        return leadOrganizationId;
     }
     /**
      * 
-     * @param organizationId organizationId
+     * @param leadOrganizationId leadOrganizationId
      */
-    public void setOrganizationId(Long organizationId) {
-        this.organizationId = organizationId;
+    public void setLeadOrganizationId(Long leadOrganizationId) {
+        this.leadOrganizationId = leadOrganizationId;
     }
     /**
      * 
@@ -150,4 +152,35 @@ public class StudyProtocolQueryCriteria implements Serializable {
             String documentWorkflowStatusCode) {
         this.documentWorkflowStatusCode = documentWorkflowStatusCode;
     }
+    /**
+     * 
+     * @return principalInvestigatorId
+     */
+    public Long getPrincipalInvestigatorId() {
+        return principalInvestigatorId;
+    }
+    /**
+     * 
+     * @param principalInvestigatorId principalInvestigatorId
+     */
+    public void setPrincipalInvestigatorId(Long principalInvestigatorId) {
+        this.principalInvestigatorId = principalInvestigatorId;
+    }
+    /**
+     * 
+     * @return primaryPurposeCode
+     */
+    public String getPrimaryPurposeCode() {
+        return primaryPurposeCode;
+    }
+    /**
+     * 
+     * @param primaryPurposeCode primaryPurposeCode
+     */
+    public void setPrimaryPurposeCode(String primaryPurposeCode) {
+        this.primaryPurposeCode = primaryPurposeCode;
+    }
+    
+    
+    
 }
