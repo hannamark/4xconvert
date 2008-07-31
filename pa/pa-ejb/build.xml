@@ -6,6 +6,8 @@
 
 <project name="pa-ejb" default="jar" basedir=".">
     <property file="${basedir}/../build.properties"/>
+    <property name="jboss.server.jndi.port" value="1099" />
+	
 	<property name="pa.resourceDir" value="${basedir}/../resources"/>
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
     <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
@@ -84,10 +86,25 @@
     </target>
 
     <!-- ====================================================================== -->
+    <!-- Configure main compilation target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="configure-main">
+        <copy file="${pa.resourceDir}/jndi.properties" 
+              tofile="${pa-ejb.build.resourceDir.0}/jndi.properties"
+              overwrite="true">
+            <filterset>
+                <filter token="jboss.server.jndi.port" 
+                	    value="${jboss.server.jndi.port}" />
+            </filterset>
+        </copy>
+    </target>
+    
+    <!-- ====================================================================== -->
     <!-- Compilation target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="compile" description="Compile the code">
+    <target name="compile" depends="configure-main" description="Compile the code">
         <mkdir dir="${pa-ejb.build.outputDir}"/>
         <javac destdir="${pa-ejb.build.outputDir}" 
                nowarn="false" 
@@ -115,10 +132,10 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure tests target                                                     -->
+    <!-- Configure test compilation target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="configure.tests">
+    <target name="configure-tests">
     	<copy file="${pa.resourceDir}/test.properties.pa-ejb" 
     	      tofile="${pa-ejb.build.testResourceDir.0}/test.properties"
     		  overwrite="true">
@@ -133,7 +150,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile, configure.tests" 
+      depends="compile, configure-tests" 
       description="Compile the test code"> 
         <mkdir dir="${pa-ejb.build.testOutputDir}"/>
         <javac destdir="${pa-ejb.build.testOutputDir}" 
