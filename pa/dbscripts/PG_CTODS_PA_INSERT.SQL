@@ -12,6 +12,7 @@ delete from  study_protocol ;
 delete from  document ;
 delete from  organization ;
 delete from  conditions ;
+delete from  regulatory_authority;
 
 
 
@@ -100,4 +101,8 @@ insert into conditions (id,code,name,parent_code ) Values (2,'B','Breast Cancer'
 insert into study_conditions(id,lead_indicator,conditions_id,study_protocol_id) values (1,'YES',1,1);
 insert into study_conditions(id,lead_indicator,conditions_id,study_protocol_id) values (2,'NO',2,1);
 
+
+
+INSERT INTO public.regulatory_authority( id, authority_name, country_id) VALUES ( 1, 'FDA_US', 1518);
+INSERT INTO public.regulatory_authority( id, authority_name, country_id) VALUES ( 2, 'OSA_UK', 1496);
 commit ;
