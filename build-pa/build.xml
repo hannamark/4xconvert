@@ -69,10 +69,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
 	<property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
 	<property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
-	<property name="po.base.dir" location="${software.dir}/po"/>
-	<property name="po-ear.base.dir" location="${software.dir}/po/ear"/>
-	<property name="po-services.base.dir" location="${software.dir}/po/sevices"/>
-	<property name="po-web.base.dir" location="${software.dir}/po/web"/>
 
 	<!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
 	<property name="pa-ejb.build.file" value="build.xml"/>
@@ -241,22 +237,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		build:pa-ear
 		"/>
 
-	<!-- First Maven Target -->
-	<target name="build:po" depends="init">
-		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml">
-			<filterset>
-				<filter token="jboss.home" location="${local.jboss.home}"/>
-			</filterset>
-		</copy>
-			
-		<exec executable="mvn" dir="${po.base.dir}" failonerror="true">
-			<arg line="-P local,bda install"/>
-		</exec>
-		<!--
-		<copy todir="">
-			-->
-	</target>
-		
 	<!-- Build generic-query-grid sub-project produces project level artifact -->
 	<target name="build:pa-ear" depends="init,build:pa-ejb, build:pa-web">
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
@@ -653,10 +633,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			output.file.name="pa-web-build.xml"
 			/>
 
-		<delete dir="${software.dir}/bda-utils"/>
-		<delete dir="${software.dir}/logs"/>
-		<delete dir="${software.dir}/working"/>
-		<delete file="${software.dir}/db-integrate.xml"/>
+		<delete dir="${build.dir}/bda-utils"/>
+		<delete dir="${build.dir}/logs"/>
+		<delete dir="${build.dir}/working"/>
+		<delete file="${build.dir}/db-integrate.xml"/>
 
 	</target>
 
