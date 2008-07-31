@@ -186,9 +186,9 @@ insert into study_conditions(id,lead_indicator,conditions_id,study_protocol_id) 
 /
 
 
-INSERT INTO public.regulatory_authority( id, authority_name, country_id) VALUES ( 1, 'FDA_US', 1518)
+INSERT INTO public.regulatory_authority( id, authority_name, country_id) VALUES ( 1, 'FDA_US', 1026)
 /
-INSERT INTO public.regulatory_authority( id, authority_name, country_id) VALUES ( 2, 'OSA_UK', 1496)
+INSERT INTO public.regulatory_authority( id, authority_name, country_id) VALUES ( 2, 'OSA_UK', 1025)
 /
 commit 
 /
