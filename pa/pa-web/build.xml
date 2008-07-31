@@ -4,7 +4,9 @@
 <!-- pa-web ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="pa-web" default="war" basedir=".">
+<project name="pa-web" default="war" basedir="."
+	xmlns:ivy="antlib:org.apache.ivy.ant"
+	>
     <property file="${basedir}/../build.properties"/>
     <property name="pa.resourceDir" value="${basedir}/../resources"/>
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
@@ -28,6 +30,15 @@
     <property name="pa-web.lib.main.dir" value="${pa-web.lib.dir}/main"/>
     <property name="cobertura.lib.dir" value="${pa-web.lib.test.dir}/cobertura"/>
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
+
+    <property name="software.dir" value="../.."/>
+    <property name="lib.dir" value="${software.dir}/target/lib"/>
+    <property name="common.dir" value="${software.dir}/build-pa/common"/>
+    <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
+    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
+    <property name="ivy.def.file" location="ivy-pa-web.xml" />
+    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -68,6 +79,13 @@
     	    <include name="*.jar"/>
     	</fileset>
     </path>	
+    <path id="ivy.classpath">
+	    <fileset dir="${lib.dir}">
+		    <include name="${ivy.file}" />
+		    <include name="${ivy-core.file}" />
+	    </fileset>
+    </path>
+
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
@@ -80,6 +98,8 @@
     <taskdef resource="simiantask.properties" 
              classpath="${pa-web.lib.test.dir}/simian-2.2.24.jar"/>
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
+
     
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -368,4 +388,22 @@
                          totallinerate="10"
                          haltonfailure="false"/>
      </target>
+    <target name="init:ivy">
+	    <mkdir dir="${local.repo.dir}"/>
+	    <mkdir dir="${lib.dir}"/>
+	    <property name="ivy.dep.file" value="${ivy.def.file}"/>
+	    <ivy:settings file="${ivy.settings.file}" />
+    </target>
+    <target name="ivy-runtime" depends="init:ivy" description="Updates the local ivy repository">
+	    <ivy:resolve refresh="true" conf="runtime" />
+	    <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
+    </target>
+    <target name="ivy-compile" depends="init:ivy" description="Updates the local ivy repository">
+	    <ivy:resolve refresh="true" conf="compile" />
+	    <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+    </target>
+    <target name="ivy-test" depends="init:ivy" description="Updates the local ivy repository">
+	    <ivy:resolve refresh="true" conf="test" />
+	    <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
+    </target>
 </project>

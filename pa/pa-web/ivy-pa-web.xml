@@ -1,0 +1,22 @@
+<!--
+$Id: ivy-bda.xml 253 2008-07-17 01:29:14Z saksass $
+$HeadURL: https://gforge.nci.nih.gov/svnroot/automation/trunk/bda/ivy/ivy-bda.xml $
+
+This is the definition of a virtual module called bda-download that has a dependency of bda-utils.  This virtual project causes the download of bda-utils from the NCICB Ivy Repository.  This file currently points to the 1.0 version of bda-utils if you want to use another version change the rev="1.0" to the desired version.
+-->
+<ivy-module version="1.0">
+	<info organisation="cbiit" module="pa-web"
+		/>
+  <configurations>
+    <conf name="default" />          
+    <conf name="compile" />     
+    <conf name="runtime" />          
+    <conf name="test" />          
+  </configurations>
+  <publications>    
+  </publications>
+  <dependencies>
+	  <dependency org="junit" name="junit" rev="4.4" conf="test->master"/>
+	  <dependency org="ajax" name="ajaxtags" rev="1.3-beta-rc7" conf="runtime->master"/>
+  </dependencies>
+</ivy-module>
