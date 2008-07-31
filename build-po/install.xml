@@ -460,28 +460,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
 	<!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
 	<target name="install:jboss:po-ear:re-configure" unless="exclude.jboss">
-		<!-- 
 		<mkdir dir="${temp.dir}/po-ear"/>
 		<delete dir="${temp.dir}/po-ear"/>
 		<mkdir dir="${temp.dir}/po-ear"/>
 		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/po-ear"/>
-		<unzip src="${temp.dir}/po-ear/pa-ejb.jar" dest="${temp.dir}/pa-ejb-jar"/>
-		<copy todir="${temp.dir}/pa-ejb-jar/" file="${jboss-conf.dir.dest}/pa-ds.xml"/>
+		<copy todir="${temp.dir}/po-ear/" file="${jboss-conf.dir.dest}/po-ds.xml"/>
 
 		<move file="${po-ear.dir.dist}/${po-ear.ear.file}" tofile="${po-ear.dir.dist}/${po-ear.ear.file}.orig"/>
-		<move file="${temp.dir}/po-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar..orig"/>
-
-		<jar jarfile="${temp.dir}/po-ear/pa-ejb.jar" 
-			compress="true" 
-			index="false" 
-			basedir="${temp.dir}/pa-ejb-jar"/>
 
 		<ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}" 
 			basedir="${temp.dir}/po-ear" 
 			compress="false" 
 			appxml="${temp.dir}/po-ear/META-INF/application.xml"
 			/>
-		-->
 	</target>
 
 	<!-- Wrapper target to upgrade jboss container. Does not install or configure binaries -->

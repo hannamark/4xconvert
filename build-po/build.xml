@@ -73,8 +73,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 	<!-- Maven comamnd line arguments, bda profile is inside profiles.xml that gets copied to ear folder before build to override exiting properties -->
 	<property name="po.maven.profile.list" value="local,bda" />
-	<property name="po.maven.goal.list" value="install" />
-	<property name="iso-datatypes.maven.goal.list" value="install" />
+	<property name="po.maven.goal.list" value="clean install" />
+	<property name="iso-datatypes.maven.goal.list" value="clean install" />
     
 	<!-- Distribution Structure properties, used to copy files into the distribution area.
        		Use project.propertie relative dir names becasue they are used by install also-->
