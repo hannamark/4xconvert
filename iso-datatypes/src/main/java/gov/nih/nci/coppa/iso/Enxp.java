@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.iso;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Represents the iso datatype.
@@ -95,9 +96,7 @@ public class Enxp implements Serializable {
     private String code;
     private String codeSystem;
     private String codeSystemVersion;
-
-    // TODO Should be a Set of qualifiers
-    private EntityNamePartQualifier qualifier;
+    private Set<EntityNamePartQualifier> qualifier;
     private final EntityNamePartType type;
     private String value;
 
@@ -153,14 +152,14 @@ public class Enxp implements Serializable {
     /**
      * @return the qualifier
      */
-    public EntityNamePartQualifier getQualifier() {
+    public Set<EntityNamePartQualifier> getQualifier() {
         return qualifier;
     }
 
     /**
      * @param qualifier the qualifier to set
      */
-    public void setQualifier(EntityNamePartQualifier qualifier) {
+    public void setQualifier(Set<EntityNamePartQualifier> qualifier) {
         this.qualifier = qualifier;
     }
 

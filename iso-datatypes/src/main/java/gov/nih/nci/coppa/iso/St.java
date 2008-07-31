@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.iso;
 
 /**
  * Represents the iso ST data type.
+ * A ST SHALL have at least one character or else be NULL.
  * @author Scott Miller
  */
 public class St extends Any {

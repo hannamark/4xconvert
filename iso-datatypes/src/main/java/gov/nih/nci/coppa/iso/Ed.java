@@ -97,11 +97,7 @@ public class Ed extends Any {
     private byte[] integrityCheck;
     private IntegrityCheckAlgorithm integrityCheckAlgorithm;
     private String mediaType = "text/plain";
-
-    // TODO Implement TelUrl and use.
-    private Tel reference;
-
-    // TODO MAke Jira issue to complain about being impossible to register due to closure.
+    private TelUrl reference;
     private Ed thumbnail;
     private String value;
     private String xml;
@@ -212,14 +208,14 @@ public class Ed extends Any {
     /**
      * @return the reference
      */
-    public Tel getReference() {
+    public TelUrl getReference() {
         return reference;
     }
 
     /**
      * @param reference the reference to set
      */
-    public void setReference(Tel reference) {
+    public void setReference(TelUrl reference) {
         this.reference = reference;
     }
 

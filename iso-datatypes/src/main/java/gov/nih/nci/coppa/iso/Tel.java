@@ -92,8 +92,6 @@ public class Tel extends Any {
 
     private static final long serialVersionUID = 1L;
 
-
-    // TODO Implelement TelUrl where use is empty and the value starts with a valid URL prefix - see iso spec.
     private String value;
     private Set<TelecommunicationAddressUse> use;
     private QSet<Ts> useablePeriod;

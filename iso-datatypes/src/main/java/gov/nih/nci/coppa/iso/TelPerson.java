@@ -82,28 +82,37 @@
  */
 package gov.nih.nci.coppa.iso;
 
-import java.util.Set;
 
 /**
- * Represents the iso datatype DSET.
+ * Represents the iso TEL.PERSON data type.
+ * TEL.PERSON constrains TEL so that it must refer to a method of communication with a person.
+ * The URL scheme must be tel, x-text-fax, x-text-tel or mailto
  * @author lpower
- * @param <T> the type
  */
-public class DSet<T extends Any> {
+public class TelPerson extends Tel {
 
-    private Set<T> item;
+    private static final long serialVersionUID = 1L;
+    private String value;
 
     /**
-     * @return the item
+     * @param value the value to set
      */
-    public Set<T> getItem() {
-        return item;
+    public void setValue(String value) {
+        if (!((value.startsWith("tel:")) || (value.startsWith("x-text-fax:")) || (value.startsWith("x-text-tel:"))
+                || (value.startsWith("mailto:")))) {
+            throw new IllegalArgumentException("expecting URL scheme to be defined as "
+                    + "file:, tel: x-text-fax:, x-text-tel:, or mailto:");
+        }
+        this.value = value;
     }
 
     /**
-     * @param item the item to set
+     * @return the value
      */
-    public void setItem(Set<T> item) {
-        this.item = item;
+    public String getValue() {
+        return value;
     }
+
+    
+
 }

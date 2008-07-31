@@ -82,28 +82,34 @@
  */
 package gov.nih.nci.coppa.iso;
 
-import java.util.Set;
 
 /**
- * Represents the iso datatype DSET.
+ * Represents the iso TEL.EMAIL data type.
+ * TEL.EMAIL constrains the TEL.PERSON type to be an email address.
+ * The URL scheme must be mailto
  * @author lpower
- * @param <T> the type
  */
-public class DSet<T extends Any> {
+public class TelEmail extends TelPerson {
 
-    private Set<T> item;
+    private static final long serialVersionUID = 1L;
+    private String value;
 
     /**
-     * @return the item
+     * @param value the value to set
      */
-    public Set<T> getItem() {
-        return item;
+    public void setValue(String value) {
+        if (!(value.startsWith("mailto:"))) {
+            throw new IllegalArgumentException("expecting URL scheme to be defined as mailto:");
+        }
+        this.value = value;
     }
 
     /**
-     * @param item the item to set
+     * @return the value
      */
-    public void setItem(Set<T> item) {
-        this.item = item;
+    public String getValue() {
+        return value;
     }
+
+
 }

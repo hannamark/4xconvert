@@ -95,20 +95,18 @@ public class Cd extends Any {
     private String codeSystemName;
     private String codeSystemVersion;
     private St displayName;
-
-    // TODO use EdText
-    private Ed originalText;
+    private EdText originalText;
 
     /**
      * @return the originalText
      */
-    public Ed getOriginalText() {
+    public EdText getOriginalText() {
         return originalText;
     }
     /**
      * @param originalText the originalText to set
      */
-    public void setOriginalText(Ed originalText) {
+    public void setOriginalText(EdText originalText) {
         this.originalText = originalText;
     }
     /**

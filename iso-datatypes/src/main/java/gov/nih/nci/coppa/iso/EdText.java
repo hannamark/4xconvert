@@ -82,28 +82,95 @@
  */
 package gov.nih.nci.coppa.iso;
 
-import java.util.Set;
-
 /**
- * Represents the iso datatype DSET.
+ * Represents the iso ED.TEXT type.
+ * ED.TEXT constrains ED so that it may only contain plain text.
+ * The mediaType must be text/plain
+ * The content cannot be provided as a text or data – it must be text and/or reference
+ * integrity check, thumbnail, compression and translations are not allowed
  * @author lpower
- * @param <T> the type
  */
-public class DSet<T extends Any> {
+public class EdText extends Ed {
 
-    private Set<T> item;
+    private static final long serialVersionUID = 1L;
+
+    private static String mediaType = "text/plain";
 
     /**
-     * @return the item
+     * @return the compression - null for ED.TEXT
      */
-    public Set<T> getItem() {
-        return item;
+    public Compression getCompression() {
+        return null;
     }
 
     /**
-     * @param item the item to set
+     * @param compression the compression to set - not allowed for ED.TEXT
      */
-    public void setItem(Set<T> item) {
-        this.item = item;
+    public void setCompression(Compression compression) {
+        throw new IllegalArgumentException("compression not allowed in ED.TEXT");
     }
+
+    /**
+     * @return the integrityCheck - null for ED.TEXT
+     */
+    @SuppressWarnings({"PMD.MethodReturnsInternalArray", "PMD.ReturnEmptyArrayRatherThanNull" })
+    public byte[] getIntegrityCheck() {
+        return null;
+    }
+
+    /**
+     * @param integrityCheck the integrityCheck to set - not allowed for ED.TEXT
+     */
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
+    public void setIntegrityCheck(byte[] integrityCheck) {
+        throw new IllegalArgumentException("integrity check not allowed in ED.TEXT");
+    }
+
+    /**
+     * @return the integrityCheckAlgorithm - null for ED.TEXT
+     */
+    public IntegrityCheckAlgorithm getIntegrityCheckAlgorithm() {
+        return null;
+    }
+
+    /**
+     * @param integrityCheckAlgorithm the integrityCheckAlgorithm to set - not allowed for ED.TEXT
+     */
+    public void setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm integrityCheckAlgorithm) {
+        throw new IllegalArgumentException("integrity check algorithm not allowed in ED.TEXT");
+    }
+
+    /**
+     * @return the mediaType
+     */
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    /**
+     * @param mediaType the mediaType to set
+     */
+    public void setMediaType(String mediaType) {
+        if (!(mediaType.equalsIgnoreCase(this.mediaType))) {
+            throw new IllegalArgumentException("ED.TEXT media type constrained to 'text/plain");
+        }
+    }
+
+    /**
+     * @return the thumbnail - null for ED.TEXT
+     */
+    public Ed getThumbnail() {
+        return null;
+    }
+
+    /**
+     * @param thumbnail the thumbnail to set - not allowed for ED.TEXT
+     */
+    public void setThumbnail(Ed thumbnail) {
+        throw new IllegalArgumentException("thumbnail not allowed in ED.TEXT");
+    }
+
+
+
+
 }

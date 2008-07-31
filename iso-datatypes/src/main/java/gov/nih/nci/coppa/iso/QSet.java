@@ -92,20 +92,19 @@ public abstract class QSet<T extends Qty> extends Any {
 
     private static final long serialVersionUID = 1L;
 
-    // TODO Implement EdText and use here instead of just ED.
-    private Ed originalText;
+    private EdText originalText;
 
     /**
      * @return the originalText
      */
-    public Ed getOriginalText() {
+    public EdText getOriginalText() {
         return originalText;
     }
 
     /**
      * @param originalText the originalText to set
      */
-    public void setOriginalText(Ed originalText) {
+    public void setOriginalText(EdText originalText) {
         this.originalText = originalText;
     }
 }

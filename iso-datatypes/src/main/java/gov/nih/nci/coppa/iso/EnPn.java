@@ -82,28 +82,47 @@
  */
 package gov.nih.nci.coppa.iso;
 
-import java.util.Set;
+import java.io.Serializable;
+import org.apache.commons.collections.Predicate;
 
 /**
- * Represents the iso datatype DSET.
+ * Represents the iso datatype. EN.PN (Person Name)
  * @author lpower
- * @param <T> the type
  */
-public class DSet<T extends Any> {
+public class EnPn extends En {
 
-    private Set<T> item;
-
+    private static final long serialVersionUID = 1L;
+    
     /**
-     * @return the item
+     * serializable predicate that dissallows DEL part.
+     * given name or family name, prefix, suffix, etc.
      */
-    public Set<T> getItem() {
-        return item;
+    private static class EnPnPredicate implements Predicate, Serializable {
+        
+        private static final long serialVersionUID = 1L;
+
+        /** {@inheritDoc} */
+        public boolean evaluate(Object object) {
+            if (object == null) {
+                return false;
+            }
+            
+            Enxp e = (Enxp) object;
+            EntityNamePartType n = e.getType();
+            if (n == null) {
+                return true;
+            }
+            
+            return !(n.equals(EntityNamePartType.DEL));
+        }
     }
+    
+    private static final Predicate PN_PREDICATE = new EnPnPredicate();
 
     /**
-     * @param item the item to set
+     * Default ctor.
      */
-    public void setItem(Set<T> item) {
-        this.item = item;
+    public EnPn() {
+        super(PN_PREDICATE);
     }
 }

@@ -82,28 +82,56 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
- * Represents the iso datatype DSET.
+ * Represents the iso TEL.URL data type.
+ * No use codes
+ * TEL.URL constrains TEL so that it must point to a locatable resource that returns binary content.
+ * The URL scheme must be file, nfs, ftp, cid (for SOAP attachments), http, or https
  * @author lpower
- * @param <T> the type
  */
-public class DSet<T extends Any> {
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class TelUrl extends Tel {
 
-    private Set<T> item;
+    private static final long serialVersionUID = 1L;
+    private String value;
 
     /**
-     * @return the item
+     * @param value the value to set
      */
-    public Set<T> getItem() {
-        return item;
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public void setValue(String value) {
+        if (!((value.startsWith("file:")) || (value.startsWith("nfs:")) || (value.startsWith("ftp:"))
+                || (value.startsWith("cid:")) || (value.startsWith("http:")) || (value.startsWith("https:")))) {
+            throw new IllegalArgumentException("expecting URL scheme to be defined as "
+                    + "file:, nfd: ftp:, cid:, http:, or https:");
+        }
+        this.value = value;
     }
 
     /**
-     * @param item the item to set
+     * @return the value
      */
-    public void setItem(Set<T> item) {
-        this.item = item;
+    public String getValue() {
+        return value;
     }
+
+    /**
+     * @return the use
+     */
+    public Set<TelecommunicationAddressUse> getUse() {
+        return Collections.EMPTY_SET;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setUse(Set<TelecommunicationAddressUse> use) {
+        throw new IllegalArgumentException("TEL.URL does not allow use");
+    }
+    
+    
+
 }

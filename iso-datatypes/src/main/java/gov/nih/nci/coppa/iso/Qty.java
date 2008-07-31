@@ -91,22 +91,21 @@ public abstract class Qty extends Any {
 
     private static final long serialVersionUID = 1L;
 
-    // TODO use EdText
-    private Ed originalText;
+    private EdText originalText;
     private Qty uncertainty;
     private UncertaintyType uncertaintyType;
 
     /**
      * @return the originalText
      */
-    public Ed getOriginalText() {
+    public EdText getOriginalText() {
         return originalText;
     }
 
     /**
      * @param originalText the originalText to set
      */
-    public void setOriginalText(Ed originalText) {
+    public void setOriginalText(EdText originalText) {
         this.originalText = originalText;
     }
 
