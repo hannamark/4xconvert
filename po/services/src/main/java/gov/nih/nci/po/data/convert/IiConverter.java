@@ -92,13 +92,16 @@ import gov.nih.nci.coppa.iso.Ii;
  */
 public class IiConverter extends AbstractXSnapshotConverter<Ii> {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public <TO> TO convert(Class<TO> returnClass, Ii value) {
         if (returnClass == Long.class) {
             return (TO) convertToLong(value);
         }
-        
+
         throw new UnsupportedOperationException(returnClass.getName());
     }
 
@@ -110,14 +113,14 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (value == null || value.getNullFlavor() != null) {
             return null;
         }
-        
+
         // todo https://jira.5amsolutions.com/browse/PO-411
         String root = value.getRoot();
         if (root == null) {
             throw new IllegalArgumentException("root is required");
         }
-        
+
         return Long.valueOf(value.getExtension());
     }
-    
+
 }

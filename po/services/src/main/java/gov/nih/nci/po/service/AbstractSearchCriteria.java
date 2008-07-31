@@ -1,8 +1,5 @@
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.ContactInfo;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -300,47 +297,5 @@ public abstract class AbstractSearchCriteria {
         public String getType() {
             return type;
         }
-    }
-
-    /**
-     * @return select person.id(s) for matching Address or Country details associated to a person's ContactInfo(s)
-     */
-    /**
-     * @param namedParameters map to use to set named parameter values in the Query
-     * @param sc address criteria
-     * @param personOrOrganization enum to generalize return it
-     * @return person.id or organization.id
-     */
-    protected StringBuffer findMatchingAddressOrCountry(Map<String, Object> namedParameters, AddressSearchCriteria sc,
-            AddressQuery personOrOrganization) {
-        StringBuffer subselect = new StringBuffer();
-        if (sc.hasOneCriterionSpecified()) {
-            String addressAlias = "addr";
-            String countryAlias = "cntry";
-            String ciAlias = "ci";
-            String ciFKProperty = "ci." + personOrOrganization.getType() + ".id";
-            String joinAddress = ciAlias + ".mailingAddress as " + addressAlias;
-            String joinCountry = ciAlias + ".mailingAddress.country as " + countryAlias;
-
-            List<String> subselectWhereClause = new ArrayList<String>();
-            subselect.append(SELECT).append(ciFKProperty).append(FROM).append(tableAlias(ContactInfo.class, ciAlias))
-                    .append(JOIN).append(joinAddress).append(JOIN).append(joinCountry);
-
-            subselectWhereClause.add(addILike(addressAlias + ".cityOrMunicipality", "cityOrMunicipality", sc
-                    .getCityOrMunicipality(), namedParameters));
-            subselectWhereClause.add(addILike(addressAlias + ".stateOrProvince", "stateOrProvince", sc
-                    .getStateOrProvince(), namedParameters));
-            subselectWhereClause.add(addILike(addressAlias + ".postalCode", "postalCode", sc.getPostalCode(),
-                    namedParameters));
-            if (sc.getCountryId() != null) {
-                subselectWhereClause
-                        .add(addEqual(countryAlias + ".id", "countryId", sc.getCountryId(), namedParameters));
-            } else {
-                subselectWhereClause.add(addILike(countryAlias + ".name", "countryName", sc.getCountryName(),
-                        namedParameters));
-            }
-            subselect.append(buildWhereClause(subselectWhereClause, WhereClauseOperator.CONJUNCTION));
-        }
-        return subselect;
     }
 }

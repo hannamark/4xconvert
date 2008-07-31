@@ -18,7 +18,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_query_cache">false</property> 
 
         <mapping class="gov.nih.nci.po.data.bo.Address" />
-        <mapping class="gov.nih.nci.po.data.bo.ContactInfo" />
         <mapping class="gov.nih.nci.po.data.bo.Country" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
         <mapping class="gov.nih.nci.po.data.bo.Organization" />

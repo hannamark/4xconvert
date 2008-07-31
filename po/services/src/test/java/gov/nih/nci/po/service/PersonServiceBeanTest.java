@@ -88,8 +88,6 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
@@ -149,14 +147,12 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     public Person getBasicPerson() {
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
+        Person person = new Person();
         person.setCurationStatus(null);
         Date now = new Date();
         person.setDateOfBirth(now);
         person.setFirstName("fName");
         person.setLastName("lName");
-        ci.setPerson(person);
         return person;
     }
 
@@ -171,67 +167,21 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         // adjust the expected value to NEW
         person.setCurationStatus(CurationStatus.NEW);
         verifyEquals(person, savedPerson);
-        assertEquals(person.getContactInfos().size(), savedPerson.getContactInfos().size());
-        assertEquals(1, savedPerson.getContactInfos().size());
-        verifyEquals(person.getContactInfos().get(0).getMailingAddress(), savedPerson.getContactInfos().get(0)
-                .getMailingAddress());
-
-        assertEquals(new Long(id), savedPerson.getPreferredContactInfo().getPerson().getId());
         PoHibernateUtil.getCurrentSession().flush();
 
         List<AuditLogRecord> alr = find(Person.class, savedPerson.getId());
         assertDetail(alr, AuditType.INSERT, "firstName", null, "fName", false);
         assertDetail(alr, AuditType.INSERT, "lastName", null, "lName", false);
-        ContactInfo ci = savedPerson.getPreferredContactInfo();
-        assertDetail(alr, AuditType.INSERT, "preferred_contact_info_id", null, ci.getId().toString(), true);
-
-        alr = find(ContactInfo.class, ci.getId());
-        assertDetail(alr, null, "person_id", null, savedPerson.getId().toString(), true);
-        assertDetail(alr, null, "mailing_address_id", null, ci.getMailingAddress().getId().toString(), true);
-
-        alr = find(Address.class, ci.getMailingAddress().getId());
-        assertDetail(alr, AuditType.INSERT, "streetAddressLine", null, "123 abc ave", false);
-        assertDetail(alr, AuditType.INSERT, "country_id", null, defaultCountry.getId().toString(), true);
-    }
-
-    @Test
-    public void createPersonWithNonNullId() throws EntityValidationException {
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
-        person.setCurationStatus(null);
-        Date now = new Date();
-        person.setDateOfBirth(now);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        ci.setPerson(person);
-
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-
-        // adjust the expected value to NEW
-        person.setCurationStatus(CurationStatus.NEW);
-        verifyEquals(person, savedPerson);
-        assertEquals(person.getContactInfos().size(), savedPerson.getContactInfos().size());
-        verifyEquals(person.getContactInfos().get(0).getMailingAddress(), savedPerson.getContactInfos().get(0)
-                .getMailingAddress());
-
-        assertEquals(new Long(id), savedPerson.getPreferredContactInfo().getPerson().getId());
     }
 
     @Test
     public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
+        Person person = new Person();
         person.setCurationStatus(CurationStatus.CURATED);
         Date now = new Date();
         person.setDateOfBirth(now);
         person.setFirstName("fName");
         person.setLastName("lName");
-        ci.setPerson(person);
 
         long id = personServiceBean.create(person);
 
@@ -243,11 +193,6 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         // adjust the expected value to NEW
         person.setCurationStatus(CurationStatus.NEW);
         verifyEquals(person, savedPerson);
-        assertEquals(person.getContactInfos().size(), savedPerson.getContactInfos().size());
-        verifyEquals(person.getContactInfos().get(0).getMailingAddress(), savedPerson.getContactInfos().get(0)
-                .getMailingAddress());
-
-        assertEquals(person.getId(), savedPerson.getPreferredContactInfo().getPerson().getId());
     }
 
     private void verifyEquals(Person expected, Person found) {
@@ -256,87 +201,6 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(expected.getDateOfBirth().getTime(), found.getDateOfBirth().getTime());
         assertEquals(expected.getFirstName(), found.getFirstName());
         assertEquals(expected.getLastName(), found.getLastName());
-    }
-
-    private void verifyEquals(Address expected, Address found) {
-        assertEquals(expected.getId(), found.getId());
-        assertEquals(expected.getCityOrMunicipality(), found.getCityOrMunicipality());
-        assertEquals(expected.getStateOrProvince(), found.getStateOrProvince());
-        assertEquals(expected.getStreetAddressLine(), found.getStreetAddressLine());
-        assertEquals(expected.getPostalCode(), found.getPostalCode());
-        assertEquals(expected.getCountry().getId(), found.getCountry().getId());
-        assertEquals(expected.getCountry().getName(), found.getCountry().getName());
-    }
-
-    private ContactInfo createContactInfo(String streetAddressLine, String cityOrMunicipality, String postalCode,
-            String stateOrProvince, Country country) {
-        ContactInfo ci = new ContactInfo(createAddress(streetAddressLine, cityOrMunicipality, postalCode,
-                stateOrProvince, country));
-        return ci;
-    }
-
-    private Address createAddress(String streetAddressLine, String cityOrMunicipality, String postalCode,
-            String stateOrProvince, Country country) {
-        return new Address(streetAddressLine, cityOrMunicipality, stateOrProvince, postalCode, country);
-    }
-
-
-    @Test
-    public void createPersonWithMultipleContactInfos() throws EntityValidationException {
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
-        person.setCurationStatus(CurationStatus.NEW);
-        Date now = new Date();
-        person.setDateOfBirth(now);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        ci.setPerson(person);
-        ContactInfo ci2 = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        person.getContactInfos().add(ci2);
-        ci2.setPerson(person);
-
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-
-        assertEquals(person.getFirstName(), savedPerson.getFirstName());
-        assertEquals(person.getLastName(), savedPerson.getLastName());
-        assertNotNull(savedPerson.getContactInfos().get(0).getPerson());
-        assertNotNull(savedPerson.getContactInfos().get(1).getPerson());
-        assertEquals(new Long(id), savedPerson.getContactInfos().get(0).getPerson().getId());
-        assertEquals(new Long(id), savedPerson.getContactInfos().get(1).getPerson().getId());
-    }
-
-    @Test
-    public void createPersonWithMultipleContactInfosButPreferredCIIsNotAddedToCIList() throws EntityValidationException {
-        ContactInfo ci = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        Person person = new Person(ci);
-        person.setCurationStatus(CurationStatus.NEW);
-        Date now = new Date();
-        person.setDateOfBirth(now);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        ci.setPerson(person);
-        ContactInfo ci2 = createContactInfo("123 abc ave", "reston", "12345", "VA", defaultCountry);
-        person.getContactInfos().add(ci2);
-        ci2.setPerson(person);
-
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-
-        assertEquals(person.getFirstName(), savedPerson.getFirstName());
-        assertEquals(person.getLastName(), savedPerson.getLastName());
-        assertNotNull(savedPerson.getContactInfos().get(0).getPerson());
-        assertNotNull(savedPerson.getContactInfos().get(1).getPerson());
-        assertEquals(new Long(id), savedPerson.getContactInfos().get(0).getPerson().getId());
-        assertEquals(new Long(id), savedPerson.getContactInfos().get(1).getPerson().getId());
     }
 
     @SuppressWarnings("unchecked")
@@ -374,6 +238,4 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         }
         assertTrue(false);
     }
-
 }
-

@@ -38,6 +38,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
      * test get org behavior.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetOrganization() {
         OrganizationServiceBeanTest t = new OrganizationServiceBeanTest();
         t.setUpData();
@@ -52,6 +53,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
      * test create organization behavior.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void testCreateOrganization() {
         try {
             OrganizationDTO dto = new OrganizationDTO();
@@ -67,27 +69,18 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             // as the DTO to BO conversion gets more completem, we should not
             // have to catch this exception.
             Map<String, String[]> errors = e.getErrors();
-            assertEquals(4, errors.size()) ;
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.streetAddressLine"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.postalCode"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.cityOrMunicipality"));
-            assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
+            assertEquals(1, errors.size()) ;
+            assertTrue(errors.containsKey("postalAddress"));
         }
     }
 
     @Test
     public void validate() {
-
         OrganizationDTO dto = new OrganizationDTO();
         dto.setAbbreviationName(ISOUtils.STRING.convertToEnOn("short"));
         Map<String, String[]> errors = remote.validate(dto);
-        assertEquals(5, errors.size()) ;
+        assertEquals(2, errors.size()) ;
         assertTrue(errors.containsKey("name"));
-        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.streetAddressLine"));
-        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.postalCode"));
-        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.cityOrMunicipality"));
-        assertTrue(errors.containsKey("primaryContactInfo.mailingAddress.country"));
-
+        assertTrue(errors.containsKey("postalAddress"));
     }
-
 }

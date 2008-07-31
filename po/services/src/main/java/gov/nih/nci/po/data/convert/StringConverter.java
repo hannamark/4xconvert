@@ -93,25 +93,26 @@ import gov.nih.nci.coppa.iso.St;
  * @author gax
  */
 public class StringConverter extends AbstractXSnapshotConverter<String> {
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <TO> TO convert(Class<TO> returnClass, String value) {
         if (returnClass == St.class) {
             return (TO) convertToSt(value);
-        } 
+        }
         if (returnClass == EnOn.class) {
             return (TO) convertToEnOn(value);
-        } 
-        
+        }
+
         throw new UnsupportedOperationException(returnClass.getName());
     }
-    
-  
+
+
     /**
-     * 
+     *
      * @param value a string to parse.
      * @return an iso ST
      */
@@ -141,5 +142,5 @@ public class StringConverter extends AbstractXSnapshotConverter<String> {
         }
         return iso;
     }
-    
+
 }

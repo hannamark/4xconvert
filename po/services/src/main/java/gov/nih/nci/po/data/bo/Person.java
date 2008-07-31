@@ -85,9 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -99,7 +97,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -107,11 +104,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
@@ -136,25 +130,15 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private String suffix;
     private String prefix;
     private Date dateOfBirth;
-    private ContactInfo preferredContactInfo;
-    private List<ContactInfo> contactInfos = new ArrayList<ContactInfo>(1);
     private CurationStatus curationStatus;
     private CurationStatus priorCurationStatus;
     private Person duplicateOf;
 
     /**
-     * @param preferredContactInfo primary contact information
-     */
-    public Person(ContactInfo preferredContactInfo) {
-        this.preferredContactInfo = preferredContactInfo;
-        this.contactInfos.add(this.preferredContactInfo);
-    }
-
-    /**
      * Create a new, empty person.
      */
     public Person() {
-        this(new ContactInfo());
+        // default constructor
     }
 
     /**
@@ -269,39 +253,6 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      */
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
-    }
-
-    /**
-     * @return list of contact info
-     */
-    @OneToMany(mappedBy = "person")
-    @Sort(type = SortType.NATURAL)
-    public List<ContactInfo> getContactInfos() {
-        return contactInfos;
-    }
-
-    /**
-     * @return preferred contact info
-     */
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "preferred_contact_info_id")
-    @NotNull
-    @ForeignKey(name = "PERSON_CONTACT_INFO_FK")
-    @Valid
-    public ContactInfo getPreferredContactInfo() {
-        return preferredContactInfo;
-    }
-
-    /**
-     * @param preferredContactInfo preferred contact info
-     */
-    public void setPreferredContactInfo(ContactInfo preferredContactInfo) {
-        this.preferredContactInfo = preferredContactInfo;
-    }
-
-    @SuppressWarnings("unused")
-    private void setContactInfos(List<ContactInfo> contactInfos) {
-        this.contactInfos = contactInfos;
     }
 
     /**

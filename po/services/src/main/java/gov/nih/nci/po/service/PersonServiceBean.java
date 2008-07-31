@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -111,21 +110,7 @@ public class PersonServiceBean extends BaseServiceBean<Person> implements Person
         ensureValid(p);
 
         Session s = PoHibernateUtil.getCurrentSession();
-
-        if (!p.getContactInfos().contains(p.getPreferredContactInfo())) {
-            p.getContactInfos().add(p.getPreferredContactInfo());
-        }
-
-        for (ContactInfo contactInfo : p.getContactInfos()) {
-            if (contactInfo != null && contactInfo.getId() == null) {
-                contactInfo.setPerson(null);
-                s.saveOrUpdate(contactInfo);
-                contactInfo.setPerson(p);
-            }
-        }
-
         s.save(p);
-
         return p.getId();
     }
 

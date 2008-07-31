@@ -1,6 +1,5 @@
 package gov.nih.nci.po.data.audit;
 
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogInterceptor;
@@ -8,9 +7,10 @@ import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -42,23 +42,26 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         Country country = new Country("USA", "840", "US", "USA");
         PoHibernateUtil.getCurrentSession().save(country);
         Address address1 = new Address("a", "b", "c", "d", country);
-        ContactInfo ci = new ContactInfo(address1);
-        ci.getEmail().add(new Email("foo@zombo.com"));
-        PoHibernateUtil.getCurrentSession().save(ci);
+        Organization org = new Organization();
+        org.setCurationStatus(CurationStatus.NEW);
+        org.setPostalAddress(address1);
+        org.setName("tstName");
+        org.getEmail().add(new Email("foo@zombo.com"));
+        PoHibernateUtil.getCurrentSession().save(org);
         PoHibernateUtil.getCurrentSession().flush();
 
         // make a chage to a collection
-        ci.getEmail().add(new Email("zzz@example.com"));
+        org.getEmail().add(new Email("zzz@example.com"));
 
-        PoHibernateUtil.getCurrentSession().update(ci);
+        PoHibernateUtil.getCurrentSession().update(org);
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
 
-        List<AuditLogRecord> alr = find(ContactInfo.class, ci.getId());
-        assertDetail(alr, AuditType.UPDATE, "email", ci.getEmail().get(0).getId().toString(),
-            ci.getEmail().get(0).getId() + ", " + ci.getEmail().get(1).getId(), true);
+        List<AuditLogRecord> alr = find(Organization.class, org.getId());
+        assertDetail(alr, AuditType.UPDATE, "email", org.getEmail().get(0).getId().toString(),
+                org.getEmail().get(0).getId() + ", " + org.getEmail().get(1).getId(), true);
 
     }
 
@@ -112,28 +115,6 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         assertTrue(m==null || m.isEmpty());
     }
 
-    private static AuditLogRecord callGetOrCreateRecord(AuditLogInterceptor interceptor, Auditable entity, String entityName, Long id,  AuditType eventToLog) {
-        try {
-            Method m = AuditLogInterceptor.class.getDeclaredMethod("getOrCreateRecord", Auditable.class, String.class, Long.class, AuditType.class);
-            m.setAccessible(true);
-            return (AuditLogRecord) m.invoke(interceptor, entity, entityName, id, eventToLog);
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException(ex);
-        } catch (SecurityException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException(ex);
-        } catch (InvocationTargetException ex) {
-            Throwable t = ex.getTargetException();
-            if(t instanceof RuntimeException) {
-                throw (RuntimeException) t;
-            }
-            throw new RuntimeException(t);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     private static ThreadLocal<Map<Object, AuditLogRecord>> callGetRecords(AuditLogInterceptor interceptor) {
         try {
@@ -149,18 +130,6 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         } catch (IllegalArgumentException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    @Test
-    public void getOrCreateRecord() {
-        AuditLogInterceptor interceptor = new AuditLogInterceptor();
-        Auditable a = new ContactInfo();
-        String entityName = "ContactInfo";
-        Long id = null;
-        AuditType eventToLog = AuditType.UPDATE;
-        AuditLogRecord r = callGetOrCreateRecord(interceptor, a, entityName, id, eventToLog);
-        AuditLogRecord r2 = callGetOrCreateRecord(interceptor, a, entityName, id, eventToLog);
-        assertSame(r, r2);
     }
 
     private static String callGetValueString(Collection<? extends Auditable> value) {
@@ -212,6 +181,4 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         assertTrue(s.length() == 1024);
         assertTrue(s.endsWith("..."));
     }
-
-
 }

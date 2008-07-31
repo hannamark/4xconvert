@@ -85,6 +85,10 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -94,13 +98,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -110,8 +119,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class name="entity"
- *      class="gov.nih.nci.services.organization.OrganizationDTO"
+ * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.services.organization.OrganizationDTO"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
@@ -121,23 +129,28 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     private Long id;
     private String name;
     private String abbreviationName;
-    private ContactInfo primaryContactInfo;
+    private String description;
+    private Address postalAddress;
+
+    // TODO  PO-421 These may need to be changed to work with TEL:  add jira issue
+    private List<Email> email = new ArrayList<Email>();
+    private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
+    private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
+    private List<URL> url = new ArrayList<URL>(1);
+
     private CurationStatus curationStatus;
+    private Date curationStatusDate;
+
+    // PO-412 : add type code?
+
     private CurationStatus priorCurationStatus;
     private Organization duplicateOf;
-
-    /**
-     * @param primaryContactInfo primary contact information
-     */
-    public Organization(ContactInfo primaryContactInfo) {
-        this.primaryContactInfo = primaryContactInfo;
-    }
 
     /**
      * Default constructor.
      */
     public Organization() {
-        this(new ContactInfo());
+        // empty constructor.
     }
 
     /**
@@ -163,8 +176,7 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
 
     /**
      * @return name
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.EnOn"
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
@@ -183,40 +195,161 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
 
     /**
      * @return abbreviation name
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.EnOn"
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
-   @Length(max = LONG_COL_LENGTH)
-   public String getAbbreviationName() {
-       return abbreviationName;
-   }
-
-   /**
-    * @param abbreviationName abbreviation name
-    */
-   public void setAbbreviationName(String abbreviationName) {
-       this.abbreviationName = abbreviationName;
-   }
-
-    /**
-     * @return contact info
-     */
-    @OneToOne(cascade = javax.persistence.CascadeType.ALL)
-    @JoinColumn(name = "primary_contact_info_id")
-    @NotNull
-    @ForeignKey(name = "ORG_PRIMARY_CONTACT_FK")
-    @Valid
-    public ContactInfo getPrimaryContactInfo() {
-        return primaryContactInfo;
+    @Length(max = LONG_COL_LENGTH)
+    public String getAbbreviationName() {
+        return abbreviationName;
     }
 
     /**
-     * @param primaryContactInfo primary contact info
+     * @param abbreviationName abbreviation name
      */
-    public void setPrimaryContactInfo(ContactInfo primaryContactInfo) {
-        this.primaryContactInfo = primaryContactInfo;
+    public void setAbbreviationName(String abbreviationName) {
+        this.abbreviationName = abbreviationName;
+    }
+
+    /**
+     * @return the description
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.St"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
+     */
+    @Length(max = LONG_COL_LENGTH)
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return mail address
+     */
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "postal_address_id")
+    @ForeignKey(name = "ORG_POSTAL_ADDRESS_FK")
+    @Valid
+    public Address getPostalAddress() {
+        return postalAddress;
+    }
+
+    /**
+     * @param postalAddress new mailing address
+     */
+    public void setPostalAddress(Address postalAddress) {
+        this.postalAddress = postalAddress;
+    }
+
+    /**
+     * @return email list
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_email",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
+    @Valid
+    public List<Email> getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email new email address list
+     */
+    protected void setEmail(List<Email> email) {
+        this.email = email;
+    }
+
+    /**
+     * @return fax list
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_fax",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "fax")
+    @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
+    public List<PhoneNumber> getFax() {
+        return fax;
+    }
+
+    /**
+     * @param fax new fax
+     */
+    protected void setFax(List<PhoneNumber> fax) {
+        this.fax = fax;
+    }
+
+    /**
+     * @return phone list
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_phone",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "phone")
+    @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
+    public List<PhoneNumber> getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone new phone list
+     */
+    protected void setPhone(List<PhoneNumber> phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * @return list of urls
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_url",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "url")
+    @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
+    public List<URL> getUrl() {
+        return url;
+    }
+
+    /**
+     * @param url new url
+     */
+    protected void setUrl(List<URL> url) {
+        this.url = url;
     }
 
     /**
@@ -237,11 +370,29 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     }
 
     /**
+     * @return the curationStatusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getCurationStatusDate() {
+        return this.curationStatusDate;
+    }
+
+    /**
+     * @param curationStatusDate the curationStatusDate to set
+     */
+    public void setCurationStatusDate(Date curationStatusDate) {
+        this.curationStatusDate = curationStatusDate;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Formula("status")
     @SuppressWarnings("unused")
     private String getPriorAsString() {
+        if (this.priorCurationStatus != null) {
+            return this.priorCurationStatus.name();
+        }
         return null;
     }
 

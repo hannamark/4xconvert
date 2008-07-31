@@ -88,7 +88,7 @@ import gov.nih.nci.coppa.iso.Enxp;
 
 /**
  *
- * @param <ENXX> 
+ * @param <ENXX>
  * @author gax
  */
 public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<ENXX> {
@@ -97,14 +97,15 @@ public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<EN
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <TO> TO convert(Class<TO> returnClass, ENXX value) {
         if (returnClass == String.class) {
             return (TO) convertToString(value);
-        } 
-        
+        }
+
         throw new UnsupportedOperationException(returnClass.getName());
     }
-    
+
      /**
      * Convert an En to a String.
      * @param iso an En.
@@ -115,10 +116,10 @@ public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<EN
             // this should not happen, but we might be able to help convert
             return null;
         }
-        
+
         // todo https://jira.5amsolutions.com/browse/PO-406 .1
         iso.getFlavorId();
-        
+
         if (iso.getNullFlavor() != null) {
             return null;
         } else {

@@ -95,14 +95,15 @@ public class StConverter extends AbstractXSnapshotConverter<St> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <TO> TO convert(Class<TO> returnClass, St value) {
         if (returnClass == String.class) {
             return (TO) convertToString(value);
-        } 
-        
+        }
+
         throw new UnsupportedOperationException(returnClass.getName());
     }
-    
+
     /**
      * Convert an St to a String.
      * @param iso an ST.
@@ -115,7 +116,7 @@ public class StConverter extends AbstractXSnapshotConverter<St> {
         }
         // todo https://jira.5amsolutions.com/browse/PO-406 .1
         iso.getFlavorId();
-        
+
         if (iso.getNullFlavor() != null) {
             return null;
         } else {

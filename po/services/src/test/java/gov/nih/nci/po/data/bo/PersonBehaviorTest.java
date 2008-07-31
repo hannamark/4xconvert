@@ -23,7 +23,6 @@ public class PersonBehaviorTest {
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "suffix");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "prefix");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "dateOfBirth");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "preferredContactInfo");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "curationStatus");
     }
 

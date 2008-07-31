@@ -82,10 +82,11 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
+import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -94,7 +95,7 @@ import javax.ejb.TransactionAttributeType;
 import org.hibernate.Session;
 
 /**
- * 
+ *
  * @author gax
  */
 @Stateless
@@ -107,16 +108,11 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
     public long create(Organization org) throws EntityValidationException {
         org.setId(null);
         org.setCurationStatus(CurationStatus.NEW);
-        
+        org.setCurationStatusDate(new Date());
+
         ensureValid(org);
-        
+
         Session s = PoHibernateUtil.getCurrentSession();
-        ContactInfo ci = org.getPrimaryContactInfo();
-        if (ci != null && ci.getId() == null) {
-            ci.setOrganization(null);
-            s.saveOrUpdate(ci);
-            ci.setOrganization(org);
-        }
         s.save(org);
         return org.getId();
     }
@@ -129,5 +125,5 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
         Session s = PoHibernateUtil.getCurrentSession();
         return (Organization) s.get(Organization.class, id);
     }
-    
+
 }

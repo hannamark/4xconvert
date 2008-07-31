@@ -1,15 +1,11 @@
 package gov.nih.nci.po.service.person;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.CurationStatus;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -53,30 +49,14 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     private Person makePerson() {
         long now = System.currentTimeMillis();
         long longAgo = now - (DateUtils.MILLIS_PER_DAY * 365L * 50L);
-        ContactInfo ci = makeContactInfo();
-        Person p = new Person(ci);
-        ci.setPerson(p);
+        Person p = new Person();
         p.setDateOfBirth(new Date(longAgo));
         p.setCurationStatus(CurationStatus.NEW);
         p.setPrefix("Dr.");
         p.setFirstName("Dixie");
         p.setMiddleName("Dorothy");
         p.setLastName("Tavela");
-        p.setPreferredContactInfo(ci);
         return p;
-    }
-
-    private ContactInfo makeContactInfo() {
-        ContactInfo ci = new ContactInfo(makeAddress());
-        ci.setTitle("Chief of Staff Title");
-        ci.getUrl().add(new URL("http://www.example.com"));
-        ci.getEmail().add(new Email("test@example.com"));
-        return ci;
-    }
-
-    private Address makeAddress() {
-    	Address ad = new Address("1601 18th Street NW", "Washington", "DC", "20016", USA);
-        return ad;
     }
 
     @Test
@@ -89,7 +69,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
             dto.setLastName("McGillicutty");
             dto.setMiddleName("Andrew");
             long id = remote.createPerson(dto);
-            assertNull(dto.getId()); // make sure this id was not used
+            assertNotSame(id, dto.getId()); // make sure this id was not used
             Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, id);
             assertEquals(dto.getLastName(), p.getLastName());
             assertEquals(dto.getFirstName(), p.getFirstName());
@@ -113,11 +93,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         dto.setFirstName("Firsty");
         dto.setMiddleName("Andrew");
         Map<String, String[]> errors = remote.validate(dto);
-        assertEquals(5, errors.size()) ;
+        assertEquals(1, errors.size()) ;
         assertTrue(errors.containsKey("lastName"));
-        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.streetAddressLine"));
-        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.postalCode"));
-        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.cityOrMunicipality"));
-        assertTrue(errors.containsKey("preferredContactInfo.mailingAddress.country"));
     }
 }

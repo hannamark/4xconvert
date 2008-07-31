@@ -12,7 +12,7 @@ public class OrganizationBehaviorTest {
         Organization org = new Organization();
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "name");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "abbreviationName");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "primaryContactInfo");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "postalAddress");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "curationStatus");
     }
 

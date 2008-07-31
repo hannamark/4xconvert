@@ -2,7 +2,7 @@ package gov.nih.nci.po.util;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.ContactInfo;
+import gov.nih.nci.po.data.bo.Organization;
 
 import java.util.Map;
 
@@ -19,12 +19,11 @@ public class PoHibernateUtilTest {
 
         Address a = new Address();
         a.setStreetAddressLine("dummy street");
-        ContactInfo ci = new ContactInfo(a);
-        Map<String, String[]> result = PoHibernateUtil.validate(ci);
+        Organization org = new Organization();
+        Map<String, String[]> result = PoHibernateUtil.validate(org);
         assertEquals(3, result.size());
-        assertEquals("must be set", result.get("mailingAddress.postalCode")[0]);
-        assertEquals("must be set", result.get("mailingAddress.country")[0]);
-        assertEquals("must be set", result.get("mailingAddress.cityOrMunicipality")[0]);
+        assertEquals("must be set", result.get("postalAddress")[0]);
+        assertEquals("must be set", result.get("name")[0]);
+        assertEquals("must be set", result.get("curationStatus")[0]);
     }
-
 }

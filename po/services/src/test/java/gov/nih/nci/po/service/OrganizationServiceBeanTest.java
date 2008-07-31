@@ -83,9 +83,7 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.ContactInfo;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Organization;
@@ -110,12 +108,9 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
 
-
     private OrganizationServiceBean orgService;
     private Country defaultCountry;
     User user;
-
-
 
     @Before
     public void setUpData() {
@@ -150,12 +145,11 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     public long createOrganization(String oName, String cityOrMunicipality) {
         try {
             Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", defaultCountry);
-            ContactInfo contactInfo = new ContactInfo(mailingAddress);
-            Organization org = new Organization(contactInfo);
+            Organization org = new Organization();
+            org.setPostalAddress(mailingAddress);
             org.setName(oName);
             org.setAbbreviationName("defaultOrgCode");
             org.setCurationStatus(CurationStatus.NEW);
-            org.getPrimaryContactInfo().setOrganization(org);
             long orgId = orgService.create(org);
             PoHibernateUtil.getCurrentSession().flush();
             PoHibernateUtil.getCurrentSession().clear();
@@ -168,14 +162,9 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     /**
      * Test creating a Org with invalid input.
      */
-    @Test
-    public void testCreateOrgWithInvalidInput() {
-        try {
-            orgService.create(new Organization(new ContactInfo()));
-            fail("Expected illegal argument exception");
-        } catch (EntityValidationException e) {
-            // expected
-        }
+    @Test(expected = EntityValidationException.class)
+    public void testCreateOrgWithInvalidInput() throws Exception {
+        orgService.create(new Organization());
     }
 
     @Test
@@ -183,12 +172,11 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
 
-        Organization org = new Organization(new ContactInfo());
+        Organization org = new Organization();
         org.setName("testOrg");
         org.setAbbreviationName("abbr");
         Address mailingAddress = new Address("test", "test", "test", "test", country);
-        org.getPrimaryContactInfo().setMailingAddress(mailingAddress);
-        org.getPrimaryContactInfo().setOrganization(org);
+        org.setPostalAddress(mailingAddress);
         org.setCurationStatus(CurationStatus.REJECTED);
 
         long orgId = orgService.create(org);
