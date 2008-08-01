@@ -16,10 +16,13 @@
 <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a>
   <div id="box">
-    <s:form action="viewNCISpecificInformation"><s:actionerror/>
+    <s:form action="nciSpecificInformation"><s:actionerror/>
     	<table width="480">
  			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationData.studyProtocolID}"/>
+			<input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationDTO.studyProtocolID}"/>
+			<input type="hidden" name="nciSpecificInformationData.summaryFourFundingCategoryCode" value="${nciSpecificInformationDTO.summaryFourFundingCategoryCode}"/>
+			<input type="hidden" name="nciSpecificInformationData.monitorCode" value="${nciSpecificInformationDTO.monitorCode}"/>
+			<input type="hidden" name="nciSpecificInformationData.reportingDataSetMethodCode" value="${nciSpecificInformationDTO.reportingDataSetMethodCode}"/>
 			 	<tr>
 			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
 				</tr>
@@ -28,7 +31,7 @@
 			               <label for="monitorCode"> <fmt:message key="nciSpecificInfo.nci.division"/></label>
 			          </td>		
 	                <td align=left>
-	                    ${nciSpecificInformationData.monitorCode}
+	                    ${nciSpecificInformationDTO.monitorCode}
 	                </td>         
 			    </tr> 
 			    <tr>
@@ -36,7 +39,7 @@
 			               <label for="reportingDataSetMethodCode"> <fmt:message key="nciSpecificInfo.report.data.set.method"/></label>
 			          </td>			    	
 	                <td align=left>
-	                	${nciSpecificInformationData.reportingDataSetMethodCode}
+	                	${nciSpecificInformationDTO.reportingDataSetMethodCode}
 	                </td>   			            
 			     </tr>           
 			     <tr>
@@ -44,7 +47,7 @@
 			               <label for="summary4TypeCode"> <fmt:message key="nciSpecificInfo.summary4.funding.category"/></label>
 			          </td>
 			          <td align=left>
-			            ${nciSpecificInformationData.summaryFourFundingCategoryCode} 
+			            ${nciSpecificInformationDTO.summaryFourFundingCategoryCode} 
 			          </td>          
 			     </tr>
 				<tr>
@@ -54,7 +57,12 @@
 			          <td align=left>
 			              <s:textfield name="nciSpecificInformationData.summary4Name" size="30" maxlength="40" />
 			          </td>          
-			     </tr>  			     
+			     </tr> 
+			     <tr> 
+			         <td colspan="2">                        
+                       <INPUT TYPE="submit" NAME="submit"  value="Update" class="button"/>          
+                     </td>
+                 </tr> 			     
 		</table>            
   	</s:form>
    </div>
