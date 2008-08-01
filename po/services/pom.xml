@@ -27,7 +27,8 @@
         <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
         <admin.db.username>postgres</admin.db.username>
         <admin.db.password>postgres</admin.db.password>
-	<hbm2ddl.drop.table>true</hbm2ddl.drop.table>
+    	<hbm2ddl.drop.table>true</hbm2ddl.drop.table>
+        <hbm2ddl.create.table>true</hbm2ddl.create.table>
     </properties>
     
     <dependencies>
@@ -223,7 +224,7 @@
                     </components>
                     <componentProperties>
 			<drop>${hbm2ddl.drop.table}</drop>
-                        <create>true</create>
+                        <create>${hbm2ddl.create.table}</create>
                         <export>false</export>
                         <outputfilename>${schema.file}</outputfilename>
                         <console>false</console>
