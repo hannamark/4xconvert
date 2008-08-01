@@ -60,11 +60,20 @@ public class NCISpecificInformationDAO {
      public NCISpecificInformationDTO updateNCISpecificInformation(
                      NCISpecificInformationData nciSpecificInformationData)throws PAException {
         LOG.debug("Entering updateNCISpecificInformation ");        
-        NCISpecificInformationDTO nciSpecificInformationDto = null;
+        NCISpecificInformationDTO nciSpecificInformationDTO = new NCISpecificInformationDTO();
         Long studyProtocolId = Long.parseLong(nciSpecificInformationData.getStudyProtocolID());
         StudyProtocol studyProtocol = new StudyProtocol();
         List<StudyProtocol> queryList = new ArrayList<StudyProtocol>();
         Query query = null;
+        MonitorCode monitorCode = MonitorCode.getByCode(nciSpecificInformationData.getMonitorCode());
+        ReportingDataSetMethodCode reportingDataSetMethodCode = ReportingDataSetMethodCode.getByCode(
+                                         nciSpecificInformationData.getReportingDataSetMethodCode());
+        SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = 
+                  SummaryFourFundingCategoryCode.getByCode(
+                       nciSpecificInformationData.getSummaryFourFundingCategoryCode());
+        LOG.info("monitorCode is:" + monitorCode);
+        LOG.info("reportingDataSetMethodCode is:" + reportingDataSetMethodCode);
+
         try { 
           if (studyProtocolId > 0) {
               Session session = HibernateUtil.getCurrentSession();
@@ -78,23 +87,16 @@ public class NCISpecificInformationDAO {
               queryList = query.list();
               studyProtocol = (StudyProtocol) queryList.get(0);
   
-              studyProtocol.setMonitorCode(MonitorCode.getByCode(
-                nciSpecificInformationData.getMonitorCode()));
-              studyProtocol.setReportingDataSetMethodCode(ReportingDataSetMethodCode.getByCode(
-                  nciSpecificInformationData.getReportingDataSetMethodCode()));
-              studyProtocol.setSummaryFourFundingCategoryCode(SummaryFourFundingCategoryCode.getByCode(
-                  nciSpecificInformationData.getSummaryFourFundingCategoryCode()));          
+              studyProtocol.setMonitorCode((MonitorCode) monitorCode);
+              studyProtocol.setReportingDataSetMethodCode(reportingDataSetMethodCode);
+              studyProtocol.setSummaryFourFundingCategoryCode(summaryFourFundingCategoryCode);          
               session.saveOrUpdate(studyProtocol);
               transaction.commit();
-/*                                  
-              nciSpecificInformationDto.setStudyProtocolID(studyProtocolId);
-              nciSpecificInformationDto.setMonitorCode(
-                  studyProtocol.getMonitorCode());
-              nciSpecificInformationDto.setReportingDataSetMethodCode(
-                  studyProtocol.getReportingDataSetMethodCode());
-              nciSpecificInformationDto.setSummaryFourFundingCategoryCode(
-                  studyProtocol.getSummaryFourFundingCategoryCode());
-*/
+                                  
+              nciSpecificInformationDTO.setStudyProtocolID(studyProtocolId);
+              nciSpecificInformationDTO.setMonitorCode(monitorCode);
+              nciSpecificInformationDTO.setReportingDataSetMethodCode(reportingDataSetMethodCode);
+              nciSpecificInformationDTO.setSummaryFourFundingCategoryCode(summaryFourFundingCategoryCode);             
           } else {
              LOG.info("nciSpecificInformationData.getStudyProtocolID is null");
           }
@@ -107,7 +109,7 @@ public class NCISpecificInformationDAO {
             throw new PAException("Other exception in updateNCISpecificInformation ", ex);
         }
         LOG.debug("Leaving updateNCISpecificInformation ");
-        return nciSpecificInformationDto;              
+        return nciSpecificInformationDTO;              
     }     
  
    /**
