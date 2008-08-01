@@ -40,12 +40,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="software.dir" location=".." />
 	<property name="common.dir" location="${build.dir}/common" />
 	<property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-	<property name="bda-download.dir" location="${common.dir}/bda-download" />
 	<property name="target.dir" location="${software.dir}/target" />
 	<property name="lib.dir" location="${target.dir}/lib" />
 	<property name="temp.dir" location="${target.dir}/temp" />
 	<property name="reports.dir" location="${target.dir}/reports" />
 	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />
+	<property name="bda-download.dir" location="${target.dir}/bda-download" />
 	<property name="log.dir" location="${target.dir}/logs" />
 	<property name="dist.dir" location="${target.dir}/dist/pa" />
 	<property name="download.dir" location="${target.dir}/download" />
@@ -109,6 +109,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 	<!-- Where to write files retrieved by get, into the distribution area.  The file names come from project.properties  -->
 	<property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
+	<property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
 
 	<!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
 	<property name="install.target" value="install"/>
@@ -118,10 +119,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="grand.rpt.dir" value="${common.dir}/grand"/>
 
 	<!-- retrive ivy files then retrieve bda files and librarires -->
-	<mkdir dir="lib" />
-	<echo message="software.dir is ${software.dir}"/>
+	<mkdir dir="${bda-download.dir}" />
+	<property name="bda-download.file" value="bda-ivy-build.xml"/>
+	<property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}"/>
+	<get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}"/>
+
 	<ant inheritAll="false" inheritRefs="false"
-		antfile="bda-ivy-build.xml"
+		antfile="${bda-download.file}"
 		target="retrieve-bda"
 		dir="${bda-download.dir}"
 		>
