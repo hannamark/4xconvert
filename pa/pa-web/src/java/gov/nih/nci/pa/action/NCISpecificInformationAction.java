@@ -39,6 +39,18 @@ public class NCISpecificInformationAction  extends ActionSupport {
                                             + nciSpecificInformationDTO.getStudyProtocolID());
             LOG.info("2.) nciSpecificInformationDTO.getMonitorCode is: " 
                                             + nciSpecificInformationDTO.getMonitorCode());
+
+            if (nciSpecificInformationDTO.getMonitorCode() != null) {
+               nciSpecificInformationData.setMonitorCode(nciSpecificInformationDTO.getMonitorCode().getCode());
+            }
+            if (nciSpecificInformationDTO.getSummaryFourFundingCategoryCode() != null) {
+                nciSpecificInformationData.setSummaryFourFundingCategoryCode(
+                         nciSpecificInformationDTO.getSummaryFourFundingCategoryCode().getCode());
+            }
+            if (nciSpecificInformationDTO.getReportingDataSetMethodCode() != null) {
+                nciSpecificInformationData.setReportingDataSetMethodCode(
+                          nciSpecificInformationDTO.getReportingDataSetMethodCode().getCode());
+            }
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -80,7 +92,7 @@ public class NCISpecificInformationAction  extends ActionSupport {
   
   /**
    * 
-   * @return nciSpecificInfoData dto
+   * @return nciSpecificInformationData dto
    */
      public NCISpecificInformationData getNciSpecificInformationData() {
       return nciSpecificInformationData;
