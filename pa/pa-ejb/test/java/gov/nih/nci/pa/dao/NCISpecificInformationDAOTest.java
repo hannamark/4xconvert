@@ -68,19 +68,18 @@ public class NCISpecificInformationDAOTest {
         	nciData.setReportingDataSetMethodCode("ABBREVIATED");
         	nciData.setSummaryFourFundingCategoryCode("EXTERNALLY_PEER_REVIEWED");
 
-        	nciDAO.updateNCISpecificInformation(nciData);
-            nciSpecificInformationDTO = nciDAO.getNCISpecificInformation(studyProtocolId);
-        	LOG.info("nciSpecificInformationDTO.getMonitorCode() is:" 
-      		      + nciSpecificInformationDTO.getMonitorCode());
+        	nciSpecificInformationDTO = nciDAO.updateNCISpecificInformation(nciData);            
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }     
+        assertEquals("studyProtocolId does not match " , studyProtocolId.toString() , 
+                 nciData.getStudyProtocolID()    );
+        assertEquals("MonitorCode does not match " , nciSpecificInformationDTO.getMonitorCode().getName(), 
+                 nciData.getMonitorCode() );
 /*
-       assertEquals("MonitorCode does not match " , nciSpecificInformationDTO.getMonitorCode().getName() , 
-        		nciData.getMonitorCode()    );
         assertEquals("ReportingDataSetMethodCode does not match " , nciSpecificInformationDTO.getReportingDataSetMethodCode().getName() , 
-        		nciData.getReportingDataSetMethodCode()  );
+        		"ABBREVIATED"  );
         assertEquals("SummaryFourFundingCategoryCode does not match " , nciSpecificInformationDTO.getReportingDataSetMethodCode().getName() , 
         		nciData.getSummaryFourFundingCategoryCode() );
 */
