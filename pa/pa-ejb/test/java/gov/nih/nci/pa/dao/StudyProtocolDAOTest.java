@@ -1,21 +1,14 @@
 package gov.nih.nci.pa.dao;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.io.Serializable;
-import java.util.List;
-
-import gov.nih.nci.pa.domain.CommonTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.test.util.TestSchema;
-import gov.nih.nci.pa.util.HibernateUtil;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 /**
