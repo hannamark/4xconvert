@@ -32,7 +32,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.HealthCareProvider" />
         <mapping class="gov.nih.nci.pa.domain.StudyContact" />
         <mapping class="gov.nih.nci.pa.domain.StudyContactRole" />
-	    <mapping class="gov.nih.nci.pa.service.SessionEntry" />
+        <mapping class="gov.nih.nci.pa.domain.StudySite" />
+	<mapping class="gov.nih.nci.pa.service.SessionEntry" />
 	    
     </session-factory>
 </hibernate-configuration>
