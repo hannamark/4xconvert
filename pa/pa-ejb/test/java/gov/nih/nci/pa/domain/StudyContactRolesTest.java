@@ -53,7 +53,7 @@ public class StudyContactRolesTest {
         TestSchema.addUpdObject(sc);
         StudyContact savedsc = (StudyContact) session.load(StudyContact.class, sc.getId());
         
-        StudyContactRole create =  createStudyContactRoleObj(sc);
+        StudyContactRole create =  createStudyContactRoleObj(sc, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         TestSchema.addUpdObject(create);
         StudyContactRole saved = (StudyContactRole) session.load(StudyContactRole.class, create.getId());
         
@@ -66,13 +66,14 @@ public class StudyContactRolesTest {
     /**
      * 
      * @param sc StudyContact
+     * @param scrr scrr 
      * @return StudyContact
      */
-    public static StudyContactRole createStudyContactRoleObj(StudyContact sc) {
+    public  static StudyContactRole createStudyContactRoleObj(StudyContact sc , StudyContactRoleCode scrr) {
         
         StudyContactRole scr = new StudyContactRole();
         scr.setStudyContact(sc);
-        scr.setStudyContactRoleCode(StudyContactRoleCode.COORDINATING_INVESTIGATOR);
+        scr.setStudyContactRoleCode(scrr);
         return scr;
     }
     

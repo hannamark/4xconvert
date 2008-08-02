@@ -48,7 +48,7 @@ public class ConditionTest {
      * 
      * @return Condition
      */
-    public Condition createConditionObj() {
+    public static Condition createConditionObj() {
         Condition create = new Condition();
         create.setCode("1111");
         create.setParentCode(null);

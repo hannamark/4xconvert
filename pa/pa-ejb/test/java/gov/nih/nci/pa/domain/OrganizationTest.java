@@ -48,7 +48,7 @@ public class OrganizationTest  {
      * 
      * @return Organization
      */
-    public static Organization organizationObj() {
+    public  static Organization organizationObj() {
         Organization create = new Organization();
         create.setName("Mayo University");
         create.setNciInstituteCode("P001");

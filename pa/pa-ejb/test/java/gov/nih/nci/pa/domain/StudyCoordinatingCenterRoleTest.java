@@ -2,13 +2,10 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.ResponsibilityCode;
 import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -50,7 +47,8 @@ public class StudyCoordinatingCenterRoleTest {
         StudyCoordinatingCenter scc =  StudyCoordinatingCenterTest.createStudyCoordinatingCenterObj(sp, o);
         TestSchema.addUpdObject(scc);
         
-        StudyCoordinatingCenterRole create = new StudyCoordinatingCenterRole();
+        StudyCoordinatingCenterRole create = createStudyCoordinatingCenterRoleObj(scc , 
+                ResponsibilityCode.PROTOCOL_MANAGEMENT);
         create.setStudyCoordinatingCenter(scc);
         create.setResponsibilityCode(ResponsibilityCode.REGISTRATION_MANAGEMENT);
         
@@ -69,12 +67,14 @@ public class StudyCoordinatingCenterRoleTest {
     /**
      * 
      * @param scc StudyCoordinatingCenterRole
+     * @param rrc rrc
      * @return  StudyCoordinatingCenterRole
      */
-    public static StudyCoordinatingCenterRole createStudyCoordinatingCenterRoleObj(StudyCoordinatingCenter scc) {
+    public static StudyCoordinatingCenterRole createStudyCoordinatingCenterRoleObj(
+                StudyCoordinatingCenter scc , ResponsibilityCode rrc) {
         StudyCoordinatingCenterRole create = new StudyCoordinatingCenterRole();
         create.setStudyCoordinatingCenter(scc);
-        create.setResponsibilityCode(ResponsibilityCode.REGISTRATION_MANAGEMENT);
+        create.setResponsibilityCode(rrc);
         return create;
         
     }

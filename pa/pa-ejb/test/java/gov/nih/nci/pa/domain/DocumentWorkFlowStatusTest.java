@@ -63,7 +63,7 @@ public class DocumentWorkFlowStatusTest {
      * @param sp StudyProtocol
      * @return DocumentWorkflowStatus
      */
-    public static DocumentWorkflowStatus createDocumentWorkflowStatus(StudyProtocol sp) {
+    public  static DocumentWorkflowStatus createDocumentWorkflowStatus(StudyProtocol sp) {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);

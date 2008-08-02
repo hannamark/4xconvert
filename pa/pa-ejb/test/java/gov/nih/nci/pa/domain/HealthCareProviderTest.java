@@ -52,7 +52,7 @@ public class HealthCareProviderTest {
      * @param p Person
      * @return HealthCareProvider
      */
-    public static HealthCareProvider createHealthCareProviderObj(Person p) {
+    public static  HealthCareProvider createHealthCareProviderObj(Person p) {
         HealthCareProvider hc = new HealthCareProvider();
         hc.setPerson(p);
         return hc;

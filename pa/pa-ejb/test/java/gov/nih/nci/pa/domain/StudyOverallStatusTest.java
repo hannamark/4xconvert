@@ -59,7 +59,9 @@ public class StudyOverallStatusTest {
             e.printStackTrace();
         }
     }
-    
+    /**
+     * 
+     */
     @Test
     public void createStudyOverallStatusSubQueryTest() {
     
@@ -87,7 +89,7 @@ public class StudyOverallStatusTest {
 //        saved = (StudyOverallStatus) session.load(StudyOverallStatus.class, id);
         
         List l = session.createQuery(hql).list();
-        System.out.println(" size "+l.size() );
+        System.out.println(" size " + l.size());
         
     }
     
@@ -97,7 +99,7 @@ public class StudyOverallStatusTest {
      * @param sp StudyProtocol
      * @return StudyOverallStatus
      */
-    public StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
+    public static StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
         StudyOverallStatus create = new StudyOverallStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);

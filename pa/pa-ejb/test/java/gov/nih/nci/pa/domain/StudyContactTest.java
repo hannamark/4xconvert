@@ -68,7 +68,7 @@ public class StudyContactTest {
      * @param sp StudyProtocol
      * @return StudyContact
      */
-    public static StudyContact createStudyContactObj(HealthCareProvider hc , StudyProtocol sp) {
+    public static  StudyContact createStudyContactObj(HealthCareProvider hc , StudyProtocol sp) {
         StudyContact sc = new StudyContact();
         sc.setPrimaryIndicator(true);
         sc.setHealthCareProvider(hc);

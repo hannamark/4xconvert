@@ -19,6 +19,10 @@ import org.junit.Test;
 public class PersonTest {
     
 
+    /**
+     * 
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
