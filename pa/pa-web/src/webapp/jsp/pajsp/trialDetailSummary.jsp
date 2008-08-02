@@ -3,74 +3,72 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
-	   	<tr>
-  			<th colspan="2"><fmt:message key="trial.detail.summary.title"/></th>
-		</tr>
-		<tr>
-			<td scope="row" class="label" nowrap>
-				<label for="nciAccessionNumber"> 
-					<fmt:message key="trial.detail.summary.nci"/>
-				</label>
-			</td>
-			<td >
-				 Place Holder for session var
-			</td>
-        </tr>
-		<tr>
-			<td scope="row" class="label" nowrap>
-				<label for="officialTitle"> 
-					<fmt:message key="trial.detail.summary.official.title"/>
-				</label>
-			</td>
-			<td >
-				 Place Holder for session var
-			</td>
-        </tr>       
-        <tr>
-			<td scope="row" class="label" nowrap>
-				<label for="leadOrgTrialId"> 
-					<fmt:message key="trial.detail.summary.lead.organization.trial.identifier"/>
-				</label>
-			</td>
-			<td >
-				 Place Holder for session var
-			</td>
-			<td scope="row" class="label" nowrap>
-				<label for="leadOrg"> 
-					<fmt:message key="trial.detail.summary.lead.organization"/>
-				</label>
-			</td>
-			<td >
-				 Place Holder for session var
-			</td>
-        </tr>       
-        <tr>
-			<td scope="row" class="label" nowrap>
-				<label for="trialSubmitter"> 
-					<fmt:message key="trial.detail.summary.trial.submitter"/>
-				</label>
-			</td>
-			<td >
-				 Place Holder for session var
-			</td>
-        </tr>     
-		<tr>
-			<td scope="row" class="label" nowrap>
-				<label for="principalInvestigator"> 
-					<fmt:message key="trial.detail.summary.principal.investigator"/>
-				</label>
-			</td>			
-			<td >&nbsp;&nbsp;
-				<a href="PrincipalInv.html" target="popup" onClick="wopen('PrincipalInv.html', 'popup', 640, 200); return false;">Place holder for session.principal Name </a>
-			</td>
-		</tr>
-		<tr>
-			 <td scope="row" class="label" nowrap>
-				<label for="principalInvestigator"> 
-					<fmt:message key="trial.detail.summary.supporting.documents"/>
-				</label>
-			 </td>					 
-			  <td class="value">&nbsp;&nbsp;
-					<a href="SupportingDoc.html" target="popup" onClick="wopen('SupportingDoc.html', 'popup', 640, 200); return false;"> Click Here</a>
-			  </td>
-		</tr>
+<tr>
+<th colspan="2"><fmt:message key="trialSummary.title"/></th>
+</tr>
+<tr>
+<td scope="row" class="label" nowrap>
+    <label for="nciAccessionNumber"> 
+        <fmt:message key="studyProtocol.nciIdentifier"/>
+    </label>
+</td>
+<td >
+     <c:out value="${sessionScope.trialSummary.nciIdentifier }"/>
+</td>
+</tr>
+<tr>
+<td scope="row" class="label" nowrap>
+    <label for="officialTitle"> 
+        <fmt:message key="studyProtocol.officialTitle"/>
+    </label>
+</td>
+<td >
+    <c:out value="${sessionScope.trialSummary.officialTitle }"/>
+</td>
+</tr>       
+<tr>
+<td scope="row" class="label" nowrap>
+    <label for="leadOrg"> 
+        <fmt:message key="studyProtocol.leadOrganization"/>
+    </label>
+</td>
+<td >
+     <c:out value="${sessionScope.trialSummary.leadOrganizationName }"/>
+</td>
+</tr>       
+<tr>
+    <td scope="row" class="label" nowrap>
+        <label for="principalInvestigator"> 
+            <fmt:message key="studyProtocol.principalInvestigator"/>
+        </label>
+    </td>           
+    <td >
+        <c:out value="${sessionScope.trialSummary.piFullName }"/>
+    </td>
+
+
+</tr>
+<tr>
+    <td scope="row" class="label" nowrap>
+        <label for="principalInvestigator"> 
+            <fmt:message key="studyProtocol.studyStatus"/>
+        </label>
+    </td>           
+    <td >
+        <c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/>
+    </td>
+
+
+</tr>
+<tr>
+    <td scope="row" class="label" nowrap>
+        <label for="principalInvestigator"> 
+            <fmt:message key="studyProtocol.documentWorkflowStatus"/>
+        </label>
+    </td>           
+    <td >
+        <c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/>
+    </td>
+
+
+</tr>

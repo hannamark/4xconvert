@@ -47,7 +47,7 @@ function resetValues () {
              </tr>                                               
 
             <tr>
-            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getrotocolOrganizationService().getOrganizationsAssociatedWithProtocol()" />
+            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
              <tr>
                 <td align=right>
                     <b><fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></b> 
@@ -66,6 +66,7 @@ function resetValues () {
                         name="criteria.leadOrganizationId" 
                         list="#protocolOrgs"  
                         listKey="id" listValue="name" headerKey="" headerValue="All" />
+
                 </td>
 
             </tr>           
@@ -78,7 +79,15 @@ function resetValues () {
                 </td>
 
                 <td align=left>
-                    <s:select  name="criteria.principalInvestigatorId" list="#principalInvs"  listKey="id" listValue="fullName" headerKey="" headerValue="All" />
+                    <s:select  
+                        name="criteria.principalInvestigatorId" 
+                        list="#principalInvs"  
+                        listKey="id" 
+                        listValue="fullName" 
+                        headerKey="" 
+                        headerValue="All"
+                        />
+
                 </td>                    
                 <td align=right>
                     <b><fmt:message key="studyProtocol.trialType"/></b> 
