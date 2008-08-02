@@ -3,6 +3,8 @@ package gov.nih.nci.pa.service.impl;
 import gov.nih.nci.pa.dao.StudyProtocolDAO;
 import gov.nih.nci.pa.domain.DocumentIdentification;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -26,7 +28,8 @@ public class StudyProtocolServiceImpl implements StudyProtocolService {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceImpl.class);
     private static final int THREE = 3;
-
+    private static final int LEAD_ORG_5 = 4;
+    private static final int PI_PERSON_6 = 5;
     /**
      * @param spsc StudyProtocolSearchCriteria
      * @return List QueryStudyProtocolDTO   
@@ -34,10 +37,42 @@ public class StudyProtocolServiceImpl implements StudyProtocolService {
      */
     public List<StudyProtocolQueryDTO> 
         getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {      
-       LOG.debug("Entering getProtocol ");
+       LOG.debug("Entering getStudyProtocolByCriteria ");
        List<Object> queryList = new StudyProtocolDAO().getStudyProtocolByCriteria(spsc); 
        return convertToStudyProtocolDTO(queryList);
            
+    }
+    
+    /**
+     * 
+     * @param studyProtocolId studyProtocolId
+     * @return StudyProtocolQueryDTO
+     * @throws PAException PAException 
+     */
+    public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) 
+    throws PAException {
+        LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
+        if (studyProtocolId == null) {
+            LOG.error(" studyProtocolId cannot be null ");
+            throw new PAException(" studyProtocolId cannot be null ");
+        }
+        StudyProtocolQueryCriteria spqc = new StudyProtocolQueryCriteria();
+        spqc.setStudyProtocolId(studyProtocolId);
+        List<Object> queryList = new StudyProtocolDAO().getStudyProtocolByCriteria(spqc); 
+        if (queryList == null) {
+            // this will never happen is real scenario, as a practice throw exception
+            LOG.error(" Study protcol was not found for id " + studyProtocolId);
+            throw new PAException(" Study protcol was not found for id " + studyProtocolId);
+        }
+        List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTO(queryList);
+        if (trialSummarys == null || trialSummarys.size() <= 0) {
+            // this will never happen is real scenario, as a practice throw exception
+            LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
+            throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
+        }
+        StudyProtocolQueryDTO trialSummary = trialSummarys.get(0);
+        LOG.debug("Leaving getTrialSummaryByStudyProtocolId ");
+        return trialSummary;
     }
     
     /**
@@ -56,6 +91,8 @@ public class StudyProtocolServiceImpl implements StudyProtocolService {
        StudyOverallStatus studyOverallStatus = null;
        DocumentWorkflowStatus documentWorkflowStatus = null;
        DocumentIdentification documentIdentification = null;
+       Organization organization = null;
+       Person person = null;
        // array of objects for each row
        Object[] searchResult = null;
        try {
@@ -73,6 +110,10 @@ public class StudyProtocolServiceImpl implements StudyProtocolService {
                documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[2];
                // get documentIdentification    
                documentIdentification =  (DocumentIdentification) searchResult[THREE];
+               // get the organization 
+               organization = (Organization) searchResult[LEAD_ORG_5];
+               // get the person
+               person = (Person) searchResult[PI_PERSON_6];
                // transfer protocol to studyProtocolDto
                if (documentWorkflowStatus != null) {
                    studyProtocolDto.setDocumentWorkflowStatusCode(
@@ -90,6 +131,14 @@ public class StudyProtocolServiceImpl implements StudyProtocolService {
                if (studyOverallStatus != null) {
                    studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStudyStatusCode());
                    studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStudyStatusDate());
+               }
+               if (organization != null) {
+                   studyProtocolDto.setLeadOrganizationName(organization.getName());
+                   studyProtocolDto.setLeadOrganizationId(organization.getId());
+               }
+               if (person != null) {
+                   studyProtocolDto.setPiFullName(person.getFullName());
+                   studyProtocolDto.setPiId(person.getId());
                }
                // add to the list
                studyProtocolDtos.add(studyProtocolDto);

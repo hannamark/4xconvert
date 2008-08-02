@@ -30,13 +30,30 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceLocal, Stu
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> 
                 getStudyProtocolByCriteria(StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
-        LOG.debug("Entering getProtocol ");
+        LOG.debug("Entering getStudyProtocolByCriteria ");
         StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         pdtos = pImpl.getStudyProtocolByCriteria(studyProtocolQueryCriteria);
-        LOG.debug("Leaving getProtocol ");
+        LOG.debug("Leaving getStudyProtocolByCriteria ");
         return pdtos;
     }
+    
+    /**
+     * 
+     * @param studyProtocolId studyProtocolId
+     * @return StudyProtocolQueryDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) 
+    throws PAException {
+        LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
+        StudyProtocolQueryDTO trialSummary = (new StudyProtocolServiceImpl()).
+            getTrialSummaryByStudyProtocolId(studyProtocolId);
+        LOG.debug("Leaving getTrialSummaryByStudyProtocolId ");
+        return trialSummary;
+    }
+    
     
 
 }
