@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 
 /**
@@ -26,6 +27,7 @@ public class Person extends AbstractEntity {
     private String firstName;
     private String lastName;
     private String middleName;
+    private String fullName;
     private List<HealthCareProvider> healthCareProviders = new ArrayList<HealthCareProvider>();
     
     
@@ -90,4 +92,19 @@ public class Person extends AbstractEntity {
     public void setHealthCareProviders(List<HealthCareProvider> healthCareProviders) {
         this.healthCareProviders = healthCareProviders;
     }
+    /**
+     * 
+     * @return fullName
+     */
+    @Transient
+    public String getFullName() {
+        if (lastName != null) {
+            fullName = lastName;
+        }
+        if (firstName != null) {
+            fullName = lastName + "," + firstName;
+        }
+        return fullName;
+    }
+    
 }

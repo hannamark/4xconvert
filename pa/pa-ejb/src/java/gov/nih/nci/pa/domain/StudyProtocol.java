@@ -74,6 +74,7 @@ public class StudyProtocol extends Document {
     private List<StudyCoordinatingCenter> studyCoordinatingCenters  =
                         new ArrayList<StudyCoordinatingCenter>(); 
     private List<StudyContact> studyContacts  = new ArrayList<StudyContact>();
+    private List<StudySite> studySites = new ArrayList<StudySite>();
     
     /**
      * 
@@ -484,5 +485,21 @@ public class StudyProtocol extends Document {
     public void setStudyContacts(List<StudyContact> studyContacts) {
         this.studyContacts = studyContacts;
     }
+    /**
+     * 
+     * @return studySites
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<StudySite> getStudySites() {
+        return studySites;
+    }
+    /**
+     * 
+     * @param studySites studySites
+     */
+    public void setStudySites(List<StudySite> studySites) {
+        this.studySites = studySites;
+    }
+    
     
 }

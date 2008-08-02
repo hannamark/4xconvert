@@ -4,8 +4,12 @@
 package gov.nih.nci.pa.domain;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.Length;
@@ -24,6 +28,7 @@ public class Organization extends AbstractEntity {
     
     private String name;
     private String nciInstituteCode;
+    private List<StudySite> studySites = new ArrayList<StudySite>();
     
     /**
      * @return the name
@@ -57,5 +62,23 @@ public class Organization extends AbstractEntity {
     public void setNciInstituteCode(String nciInstituteCode) {
        this.nciInstituteCode = nciInstituteCode;
     }
+
+    /**
+     * 
+     * @return studySites
+     */
+    @OneToMany(mappedBy = "organization")
+    public List<StudySite> getStudySites() {
+        return studySites;
+    }
+
+    /**
+     * 
+     * @param studySites studySites
+     */
+    public void setStudySites(List<StudySite> studySites) {
+        this.studySites = studySites;
+    }
+    
     
 }

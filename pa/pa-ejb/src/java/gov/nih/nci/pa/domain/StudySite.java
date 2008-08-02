@@ -1,13 +1,14 @@
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.Column;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * StudySite bean for managing StudySite.
@@ -18,83 +19,63 @@ import javax.persistence.Table;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 @Entity
-@SuppressWarnings("PMD.UselessOverridingMethod")
 @Table(name = "STUDY_SITE")
 
 public class StudySite extends AbstractEntity {
     private static final long serialVersionUID = 1234567890L;
 
-    private Long id;
-    private String leadOrganizationProtocolId;
-    private StudyProtocol protocol;
-    private Organization healtcareSite;
+    private StudyProtocol studyProtocol;
+    private Organization organization;
+    private Boolean leadOrganizationIndicator; 
+
 
     /**
-     * set id.
-     * @param id id
-     */
-     public void setId(Long id) {
-        this.id = id;
+    * @return studyProtocol 
+    */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_ID", nullable = false)
+    public StudyProtocol getStudyProtocol() {
+       return studyProtocol;
     }
-
+    
     /**
-     * Get the id of the object.
-     * @return the id
+     * @param studyProtocol studyProtocol
      */
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)    
-    @Column(name = "ID")
-    public Long getId() {
-        return this.id;
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+       this.studyProtocol = studyProtocol;
     }
 
     /**
      * 
-     * @return localProtocolIdentifer Local StudyProtocol Identifier
+     * @return leadOrganizationIndicator
      */
-    @Column(name = "LOCAL_PROTOCOL_IDENTIFIER", length = LONG_TEXT_LENGTH)
-    public String getLeadOrganizationProtocolId() {
-        return leadOrganizationProtocolId;
+    @Column(name = "LEAD_ORGANIZATION_INDICATOR")
+    @NotNull
+    public Boolean getLeadOrganizationIndicator() {
+        return leadOrganizationIndicator;
     }
 
     /**
-     * set leadOrganizationProtocolId.
-     * @param leadOrganizationProtocolId leadOrganizationProtocolId
+     * 
+     * @param leadOrganizationIndicator leadOrganizationIndicator
      */
-    public void setLeadOrganizationProtocolId(String leadOrganizationProtocolId) {
-        this.leadOrganizationProtocolId = leadOrganizationProtocolId;
+    public void setLeadOrganizationIndicator(Boolean leadOrganizationIndicator) {
+        this.leadOrganizationIndicator = leadOrganizationIndicator;
     }
 
     /**
-    * @return protocol StudyProtocol
-    */
+     * @return organization
+     */
     @ManyToOne
-    @JoinColumn(name = "PROTOCOL_ID", nullable = false)
-    public StudyProtocol getProtocol() {
-       return protocol;
+    @JoinColumn(name = "ORGANIZATION_ID", nullable = false)
+    public Organization getOrganization() {
+       return organization;
     }
     
     /**
-     * @param protocol protocol
+     * @param organization organization
      */
-    public void setProtocol(StudyProtocol protocol) {
-       this.protocol = protocol;
-    }
-
-    /**
-     * @return healtcareSite
-     */
-    @ManyToOne
-    @JoinColumn(name = "HEALTHCARE_SITE_ID", nullable = false)
-    public Organization getHealtcareSite() {
-       return healtcareSite;
-    }
-    
-    /**
-     * @param healtcareSite healtcareSite
-     */
-    public void setHealtcareSite(Organization healtcareSite) {
-       this.healtcareSite = healtcareSite;
+    public void setOrganization(Organization organization) {
+       this.organization = organization;
     }
 }
