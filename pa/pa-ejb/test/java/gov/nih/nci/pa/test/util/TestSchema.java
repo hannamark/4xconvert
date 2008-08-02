@@ -15,6 +15,7 @@ import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.YesNoCode;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -28,9 +29,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
-
+/**
+ * 
+ * @author Hugh
+ *
+ */
 public class TestSchema {
+    /** . **/
         public static ArrayList<Long> protocolIds;
+        /** . **/
         public static ArrayList<Long> healthcareSiteIds;
 
         static {            
@@ -51,6 +58,7 @@ public class TestSchema {
             addAnnotatedClass(HealthCareProvider.class).
             addAnnotatedClass(StudyContact.class).
             addAnnotatedClass(StudyContactRole.class).
+            addAnnotatedClass(StudySite.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
@@ -66,6 +74,10 @@ public class TestSchema {
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
 
+        /**
+         * 
+         * @return Session
+         */
         public static Session getSession() {
             return HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
         }
@@ -76,6 +88,9 @@ public class TestSchema {
             HibernateUtil.getHibernateHelper().openTestSession();
         }
         
+        /**
+         * 
+         */
         public static void reset1() {
             // clean up HQLDB schema
             Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
@@ -89,24 +104,19 @@ public class TestSchema {
                         statement.executeUpdate("delete from CONDITIONS");
                         statement.executeUpdate("delete from Document_Identification");
                         connection.commit();
-                    }
-                    finally {
+                    } finally {
                         statement.close();
                     }
-                }
-                catch (HibernateException e) {
+                } catch (HibernateException e) {
+                    connection.rollback();
+                    throw new RuntimeException(e);
+                } catch (SQLException e) {
                     connection.rollback();
                     throw new RuntimeException(e);
                 }
-                catch (SQLException e) {
-                    connection.rollback();
-                    throw new RuntimeException(e);
-                }
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
-            }
-            finally {
+            } finally {
                 session.close();
             }
 
@@ -114,20 +124,33 @@ public class TestSchema {
             HibernateUtil.getHibernateHelper().openTestSession();
         }
 
-        public static <T> void addUpdObject (T obj) {
+        /**
+         * 
+         * @param <T> t
+         * @param obj o
+         */
+        public static <T> void addUpdObject(T obj) {
             Session session = HibernateUtil.getCurrentSession();
             Transaction transaction = session.beginTransaction();
             session.saveOrUpdate(obj);
             transaction.commit();
         }
 
-        public static <T> void addUpdObjects (ArrayList<T> oList) {
-            for(T obj : oList) {
+        /**
+         * 
+         * @param <T> t
+         * @param oList o
+         */
+        public static <T> void addUpdObjects(ArrayList<T> oList) {
+            for (T obj : oList) {
                 addUpdObject(obj);
             }
         }
         
-        public static void primeData(){
+        /**
+         * 
+         */
+        public static void primeData() {
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
             addUpdObject(sp); 
