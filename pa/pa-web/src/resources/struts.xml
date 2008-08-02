@@ -43,6 +43,11 @@
 			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
 			<result>/jsp/pajsp/nciSpecificInformationView.jsp</result>
 		</action>		 
+        <action name="studyProtocolView" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
+            <interceptor-ref name="nci-commonsParams" />                         
+            <result>/jsp/pajsp/studyProtocolView.jsp</result>
+        </action>   
+
 				
 	</package>
 </struts>
