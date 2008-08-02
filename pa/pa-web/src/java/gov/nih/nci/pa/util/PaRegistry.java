@@ -3,7 +3,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.PAPersonServiceRemote;
-import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
+import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 
@@ -55,10 +55,10 @@ public final class PaRegistry {
     
     /**
      * Gets the org service from the service locator.
-     * @return ProtocolOrganizationServiceRemote
+     * @return PAOrganizationServiceRemote
      */
-    public static ProtocolOrganizationServiceRemote getrotocolOrganizationService() {
-        return getInstance().getServiceLocator().getProtocolOrganizationService();
+    public static PAOrganizationServiceRemote getPAOrganizationService() {
+        return getInstance().getServiceLocator().getPAOrganizationService();
     }
     
     /**

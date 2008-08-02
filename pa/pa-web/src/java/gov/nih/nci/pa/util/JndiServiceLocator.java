@@ -2,7 +2,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.PAPersonServiceRemote;
-import gov.nih.nci.pa.service.ProtocolOrganizationServiceRemote;
+import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 
@@ -20,10 +20,10 @@ public class JndiServiceLocator implements ServiceLocator {
         return (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
     }
     /**
-     * @return ProtocolOrganizationServiceRemote remote interface
+     * @return PAOrganizationServiceRemote remote interface
      */
-    public ProtocolOrganizationServiceRemote getProtocolOrganizationService() {
-        return (ProtocolOrganizationServiceRemote) JNDIUtil.lookup("pa/ProtocolOrganizationServiceBean/remote");
+    public PAOrganizationServiceRemote getPAOrganizationService() {
+        return (PAOrganizationServiceRemote) JNDIUtil.lookup("pa/PAOrganizationServiceBean/remote");
     }
 
     /**

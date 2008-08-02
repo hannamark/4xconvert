@@ -17,4 +17,8 @@ public class Constants {
     
     /** logged user name is stored in session using loggerUserName variable . */
     public static final String LOGGED_USER_NAME = "loggedUserName";
+    
+    /** Trial Summary . */
+    public static final String TRIAL_SUMMARY = "trialSummary";
+    
 }
