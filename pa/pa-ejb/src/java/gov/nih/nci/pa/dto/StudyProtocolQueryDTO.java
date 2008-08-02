@@ -25,6 +25,11 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date studyStatusDate;
     private DocumentWorkflowStatusCode documentWorkflowStatusCode;
     private Date documentWorkflowStatusDate;
+    private String leadOrganizationName;
+    private Long leadOrganizationId;
+    private String piFullName;
+    private Long piId;
+    
     /**
      * 
      * @return studyProtocolId
@@ -124,4 +129,62 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setDocumentWorkflowStatusDate(Date documentWorkflowStatusDate) {
         this.documentWorkflowStatusDate = documentWorkflowStatusDate;
     }
+    /**
+     * 
+     * @return leadOrganizationName
+     */
+    public String getLeadOrganizationName() {
+        return leadOrganizationName;
+    }
+    /**
+     * 
+     * @param leadOrganizationName leadOrganizationName
+     */
+    public void setLeadOrganizationName(String leadOrganizationName) {
+        this.leadOrganizationName = leadOrganizationName;
+    }
+    /**
+     * 
+     * @return leadOrganizationId
+     */
+    public Long getLeadOrganizationId() {
+        return leadOrganizationId;
+    }
+    /**
+     * 
+     * @param leadOrganizationId leadOrganizationId
+     */
+    public void setLeadOrganizationId(Long leadOrganizationId) {
+        this.leadOrganizationId = leadOrganizationId;
+    }
+    /**
+     * 
+     * @return piFullName
+     */
+    public String getPiFullName() {
+        return piFullName;
+    }
+    /**
+     * 
+     * @param piFullName piFullName
+     */
+    public void setPiFullName(String piFullName) {
+        this.piFullName = piFullName;
+    }
+    /**
+     * 
+     * @return piId
+     */
+    public Long getPiId() {
+        return piId;
+    }
+    /**
+     * 
+     * @param piId piId
+     */
+    public void setPiId(Long piId) {
+        this.piId = piId;
+    }
+    
+    
 }
