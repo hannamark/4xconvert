@@ -5,7 +5,6 @@ import gov.nih.nci.pa.enums.AssigningAuthorityCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.ResponsibilityCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
@@ -24,7 +23,7 @@ import org.hibernate.Session;
  * Protocol DAO for accessing DAO.
  *
  * @author Naveen Amiruddin
- * @since 05/22/2007 copyright NCI 2007. All rights reserved. This code may not
+ * @since 05/22/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
@@ -81,23 +80,16 @@ public class StudyProtocolDAO {
         LOG.debug("Entering generateStudyProtocolQuery ");
         StringBuffer hql = new StringBuffer();
         try {
-            hql.append(" select sp , sos , dws , di from StudyProtocol as sp  "
-                    +  "left outer join sp.studyOverallStatuses as sos  "
-                    +  "left outer join sp.documentWorkflowStatuses as dws  "
-                    +  "left outer join sp.documentIdentifications as di  ");
-            
-            // if org is selected add the related objects
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
-                 hql.append("left outer join sp.studyCoordinatingCenters as scc "  
-                     + "left outer join scc.organization as org "
-                     + "left outer join scc.studyCoordinatingCenterRoles as sccr ");
-            }
-            // if pi is selected add the related objects 
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
-                hql.append("left outer join sp.studyContacts as sc "
-                    + " left outer join sc.studyContactRoles as scr ");
-            }
-            
+            hql.append(" select sp , sos , dws , di , org , per from StudyProtocol as sp  "
+                    + "left outer join sp.studyOverallStatuses as sos  "
+                    + "left outer join sp.documentWorkflowStatuses as dws  "
+                    + "left outer join sp.documentIdentifications as di  "
+                    + "left outer join sp.studySites as st "  
+                    + "left outer join st.organization as org "
+                    + "left outer join sp.studyContacts as sc "
+                    + "left outer join sc.studyContactRoles as scr " 
+                    + "left outer join sc.healthCareProvider as hcp " 
+                    + "left outer join hcp.person as per ");
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
         } catch (Exception e) {
             LOG.error("General error in while executing Study Query protocol", e);
@@ -178,9 +170,11 @@ public class StudyProtocolDAO {
             }
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
                 // if org is added, add the where clause
-                where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId()
-                        + " and sccr.responsibilityCode ='" + ResponsibilityCode.PROTOCOL_MANAGEMENT + "'");
+                where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
             }
+            // always append lead org to get one record
+            where.append(" and st.leadOrganizationIndicator ='" + Boolean.TRUE + "'");
+
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
                 where.append(" and sc.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId()
                         + " and scr.studyContactRoleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");

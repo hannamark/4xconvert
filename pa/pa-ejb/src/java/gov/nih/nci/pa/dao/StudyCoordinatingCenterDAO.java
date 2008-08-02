@@ -17,7 +17,7 @@ import gov.nih.nci.pa.util.HibernateUtil;
  * DAO for accessing StudyCoordinatingCenter.
  *
  * @author Naveen Amiruddin
- * @since 06/22/2007 copyright NCI 2007. All rights reserved. This code may not
+ * @since 06/22/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
