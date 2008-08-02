@@ -38,18 +38,11 @@
 	     
 	     <!-- main content begins-->  	
 		<div id="mainwide">
-            <div id="leftnav">
-               <jsp:include page="/WEB-INF/jsp/common/pamenu.jsp"/>     
+           		 <div id="leftnav">
+              			 <jsp:include page="/WEB-INF/jsp/common/pamenu.jsp"/>     
             	
-			 <!-- main menu ends -->
-	
-	         <!-- submenu begins -->
-	         <!--Quicklinks Menu-->
+				 <!-- main menu ends -->
 				<jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
-								
-			  <!--/Quicklinks Menu-->
-				
-			<!-- submenu ends -->
 			</div>                  		
        
 		
