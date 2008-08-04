@@ -8,16 +8,7 @@
 	<title><fmt:message key="nciSpecificInfo.title"/></title>
 	<s:head />
 </head>
-<SCRIPT LANGUAGE="JavaScript">
-function resetValues () {
-    document.forms.nciSpecificInformationData.monitorCode.value="";
-    document.forms.nciSpecificInformationData.reportingDataSetMethodCode.value="";
-    document.forms.nciSpecificInformationData.summaryFourFundingCategoryCode.value="";
-    document.forms.nciSpecificInformationData.summary4Name.value="";
- 
 
-}
-</SCRIPT>
 
 <body onload="setFocusToFirstControl();">
 <div id="contentwide">
@@ -70,8 +61,7 @@ function resetValues () {
 			     </tr>  
 			     <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Save" class="button"/>          
-                    <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td> 
+                 </td> 
 		</table>            
   	</s:form>
    </div>
