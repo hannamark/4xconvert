@@ -101,6 +101,7 @@ public class TelUrl extends Tel {
     /**
      * @param value the value to set
      */
+    @Override
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public void setValue(String value) {
         if (!((value.startsWith("file:")) || (value.startsWith("nfs:")) || (value.startsWith("ftp:"))
@@ -114,6 +115,7 @@ public class TelUrl extends Tel {
     /**
      * @return the value
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -121,17 +123,19 @@ public class TelUrl extends Tel {
     /**
      * @return the use
      */
+    @Override
     public Set<TelecommunicationAddressUse> getUse() {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
+    @Override
     public void setUse(Set<TelecommunicationAddressUse> use) {
         throw new IllegalArgumentException("TEL.URL does not allow use");
     }
-    
-    
+
+
 
 }

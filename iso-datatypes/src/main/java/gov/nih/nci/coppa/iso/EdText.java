@@ -99,6 +99,7 @@ public class EdText extends Ed {
     /**
      * @return the compression - null for ED.TEXT
      */
+    @Override
     public Compression getCompression() {
         return null;
     }
@@ -106,6 +107,7 @@ public class EdText extends Ed {
     /**
      * @param compression the compression to set - not allowed for ED.TEXT
      */
+    @Override
     public void setCompression(Compression compression) {
         throw new IllegalArgumentException("compression not allowed in ED.TEXT");
     }
@@ -113,6 +115,7 @@ public class EdText extends Ed {
     /**
      * @return the integrityCheck - null for ED.TEXT
      */
+    @Override
     @SuppressWarnings({"PMD.MethodReturnsInternalArray", "PMD.ReturnEmptyArrayRatherThanNull" })
     public byte[] getIntegrityCheck() {
         return null;
@@ -121,6 +124,7 @@ public class EdText extends Ed {
     /**
      * @param integrityCheck the integrityCheck to set - not allowed for ED.TEXT
      */
+    @Override
     @SuppressWarnings("PMD.ArrayIsStoredDirectly")
     public void setIntegrityCheck(byte[] integrityCheck) {
         throw new IllegalArgumentException("integrity check not allowed in ED.TEXT");
@@ -129,6 +133,7 @@ public class EdText extends Ed {
     /**
      * @return the integrityCheckAlgorithm - null for ED.TEXT
      */
+    @Override
     public IntegrityCheckAlgorithm getIntegrityCheckAlgorithm() {
         return null;
     }
@@ -136,6 +141,7 @@ public class EdText extends Ed {
     /**
      * @param integrityCheckAlgorithm the integrityCheckAlgorithm to set - not allowed for ED.TEXT
      */
+    @Override
     public void setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm integrityCheckAlgorithm) {
         throw new IllegalArgumentException("integrity check algorithm not allowed in ED.TEXT");
     }
@@ -143,6 +149,7 @@ public class EdText extends Ed {
     /**
      * @return the mediaType
      */
+    @Override
     public String getMediaType() {
         return mediaType;
     }
@@ -150,8 +157,9 @@ public class EdText extends Ed {
     /**
      * @param mediaType the mediaType to set
      */
+    @Override
     public void setMediaType(String mediaType) {
-        if (!(mediaType.equalsIgnoreCase(this.mediaType))) {
+        if (!(mediaType.equalsIgnoreCase(EdText.mediaType))) {
             throw new IllegalArgumentException("ED.TEXT media type constrained to 'text/plain");
         }
     }
@@ -159,6 +167,7 @@ public class EdText extends Ed {
     /**
      * @return the thumbnail - null for ED.TEXT
      */
+    @Override
     public Ed getThumbnail() {
         return null;
     }
@@ -166,6 +175,7 @@ public class EdText extends Ed {
     /**
      * @param thumbnail the thumbnail to set - not allowed for ED.TEXT
      */
+    @Override
     public void setThumbnail(Ed thumbnail) {
         throw new IllegalArgumentException("thumbnail not allowed in ED.TEXT");
     }
