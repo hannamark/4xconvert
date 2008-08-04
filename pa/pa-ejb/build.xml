@@ -275,7 +275,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-all" 
-            depends="test-cobertura,test-checkstyle,test-pmd,test-simian" 
+            depends="test-checkstyle,test-pmd,test-cobertura,test-simian" 
             description="Run all tests"/>
 
     <!-- ====================================================================== -->

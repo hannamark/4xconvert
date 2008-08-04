@@ -204,52 +204,6 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Run Cobertura and JUnit                                                -->
-    <!-- ====================================================================== -->
-
-    <target name="test-selenium-class" depends="compile-tests" 
-            description="Run JUnit and Cobertura tests">
-        
-        <delete file="${pa-web.build.dir}/cobertura.ser" />
-
-        <cobertura-instrument datafile="${pa-web.build.dir}/cobertura.ser"
-                              toDir="${pa-web.build.coberturaOutputDir}">
-            <fileset dir="${pa-web.build.outputDir}">
-                <include name="**/*.class" />
-            </fileset>
-        </cobertura-instrument>   
-        
-        <mkdir dir="${pa-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
-            <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${pa-web.build.dir}/cobertura.ser" />
-            <formatter type="xml"/>
-            <formatter type="plain" usefile="false"/>
-            <classpath location="${pa-web.build.coberturaOutputDir}"/>
-            <classpath location="${pa-web.build.outputDir}"/>
-            <classpath location="${pa-web.build.testOutputDir}"/>
-            <classpath refid="cobertura.classpath"/>
-            <classpath refid="build.test.classpath"/>
-            <batchtest todir="${pa-web.test.reports}">
-                <fileset dir="${pa-web.build.testDir.0}">
-                    <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>                	
-                </fileset>
-            </batchtest>
-        </junit>
-        
-        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          destdir="${pa-web.coverage.reports}" 
-                          srcdir="${pa-web.build.srcDir.0}" />
-        
-        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
-                         totalbranchrate="70" 
-                         totallinerate="70"
-                         haltonfailure="false"/>
-     </target>
-
-    <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
 
@@ -298,7 +252,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-all" 
-            depends="test-cobertura,test-checkstyle,test-pmd,test-simian" 
+            depends="test-checkstyle,test-pmd,test-cobertura,test-simian" 
             description="Run all tests"/>
 
     <!-- ====================================================================== -->
@@ -388,6 +342,11 @@
                          totallinerate="10"
                          haltonfailure="false"/>
      </target>
+     
+     
+    <!-- ====================================================================== -->
+    <!-- Ivy Targets                                                            -->
+    <!-- ====================================================================== -->
     <target name="init:ivy">
 	    <mkdir dir="${local.repo.dir}"/>
 	    <mkdir dir="${lib.dir}"/>
@@ -405,5 +364,9 @@
     <target name="ivy-test" depends="init:ivy" description="Updates the local ivy repository">
 	    <ivy:resolve refresh="true" conf="test" />
 	    <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
+    </target>
+    <target name="ivy-test-cobertura" depends="init:ivy" description="Updates the local ivy repository">
+	    <ivy:resolve refresh="true" conf="test-cobertura" />
+	    <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
     </target>
 </project>
