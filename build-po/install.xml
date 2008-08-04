@@ -239,7 +239,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 				<switch value="${database.type}">
 					<case value="postgresql">
 						<database-create/>
-						<property name="db.install.file.list" value="${db.install.create.postgresql.file.list}"/>
 					</case>
 					<default>
 						<echo message="Re-creation (drop and re-create) of ${database.type} databases is not supported, nothing done."/>
@@ -253,6 +252,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<if>
 			<equals arg1="${database.drop-schema}" arg2="true"/>
 			<then>
+				<echo message="Dropping database objects"/>
 				<switch value="${database.type}">
 					<case value="postgresql">
 						<for list="${db.install.drop.postgresql.file.list}" param="db.install.postgresql.file">
@@ -281,6 +281,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
 		<switch value="${database.type}">
 			<case value="postgresql">
+				<echo message="Creating database objects"/>
 				<for list="${db.install.create.postgresql.file.list}" param="db.install.postgresql.file">
 					<sequential>
 						<echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
