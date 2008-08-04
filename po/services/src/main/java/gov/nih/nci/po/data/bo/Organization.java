@@ -140,9 +140,6 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
 
     private CurationStatus curationStatus;
     private Date curationStatusDate;
-
-    // PO-412 : add type code?
-
     private CurationStatus priorCurationStatus;
     private Organization duplicateOf;
 
@@ -153,6 +150,7 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
         // empty constructor.
     }
 
+    // TODO Make field name identifier in the DTO
     /**
      * @return database identity
      * @xsnapshot.property match="entity"
