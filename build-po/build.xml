@@ -40,14 +40,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="software.dir" location=".." />
 	<property name="common.dir" location="${build.dir}/common" />
 	<property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-	<property name="target.dir" location="${software.dir}/target" />
+	<property name="target.dir" location="${software.dir}/target/po" />
 	<property name="lib.dir" location="${target.dir}/lib" />
 	<property name="temp.dir" location="${target.dir}/temp" />
 	<property name="reports.dir" location="${target.dir}/reports" />
 	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />
 	<property name="bda-download.dir" location="${target.dir}/bda-download" />
 	<property name="log.dir" location="${target.dir}/logs" />
-	<property name="dist.dir" location="${target.dir}/dist/po" />
+	<property name="dist.dir" location="${target.dir}/dist" />
 	<property name="download.dir" location="${target.dir}/download" />
 	<property name="pt.dir" location="${target.dir}/persistent-transient" />
 
@@ -184,16 +184,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<mkdir dir="${pt.dir}"/>
 		<available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
-		<condition property="mvn.cmd" value="mvn">
-			<or>
-				<os family="unix" />
-				<os family="mac" />
-			</or>
-		</condition>
-		<condition property="mvn.cmd" value="mvn.bat">
-			<os family="windows" />
-		</condition>
-	
 		<!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
 		<available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
 		<if>
@@ -241,41 +231,92 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
-		build:po
+		build:po,
+		build:po:gen-sql
 		"/>
 
 	<!-- First Maven Target -->
 	<target name="build:po" depends="init, build:iso-datatypes">
-		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml">
+		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
 			<filterset>
 				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.schema.file" value="${db.po.schema.file}"/>
-			</filterset>
-		</copy>
-		<copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.schema.file" value="${db.po.schema.file}"/>
-			</filterset>
-		</copy>
-		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.schema.file" value="${db.po.schema.file}"/>
+				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+				<filter token="db.po.generate.drop" value="false"/>
+				<filter token="db.po.generate.create" value="true"/>
 			</filterset>
 		</copy>
 			
-		<exec executable="${mvn.cmd}" dir="${po.base.dir}" failonerror="true">
-			<arg line="-P ${po.maven.profile.list} ${po.maven.goal.list}"/>
-		</exec>
+		<maven
+			maven.profile.list="-P ${po.maven.profile.list}"
+			maven.goal.list="${po.maven.goal.list}"
+			maven.dir="${po.base.dir}"
+			/>
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
 	</target>
-	<target name="build:iso-datatypes" depends="init">
-		<exec executable="${mvn.cmd}" dir="${iso-datatypes.base.dir}" failonerror="true">
-			<arg line="${iso-datatypes.maven.goal.list}"/>
-		</exec>
+	<target name="build:po:gen-sql" depends="init">
+		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+			<filterset>
+				<filter token="jboss.home" value="${local.jboss.home}"/>
+				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+				<filter token="db.po.generate.drop" value="false"/>
+				<filter token="db.po.generate.create" value="true"/>
+			</filterset>
+		</copy>
+		<maven
+			maven.profile.list="-P ${po.maven.profile.list}"
+			maven.goal.list="process-classes"
+			maven.dir="${po-services.base.dir}"
+			/>
+		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
+			<fileset dir="${db-install-dynamic.src.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</copy> 
+		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+			<filterset>
+				<filter token="jboss.home" value="${local.jboss.home}"/>
+				<filter token="db.po.file.name" value="${db.po.drop-schema.file}"/>
+				<filter token="db.po.generate.drop" value="true"/>
+				<filter token="db.po.generate.create" value="false"/>
+			</filterset>
+		</copy>
+		<maven
+			maven.profile.list="-P ${po.maven.profile.list}"
+			maven.goal.list="process-classes"
+			maven.dir="${po-services.base.dir}"
+			/>
+		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
+			<fileset dir="${db-install-dynamic.src.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</copy> 
 	</target>
-		
+	<target name="build:iso-datatypes" depends="init">
+		<maven
+			maven.profile.list=""
+			maven.goal.list="${iso-datatypes.maven.goal.list}"
+			maven.dir="${iso-datatypes.base.dir}"
+			/>
+	</target>
+	<macrodef name="maven">
+		<attribute name="maven.profile.list"/>
+		<attribute name="maven.goal.list"/>
+		<attribute name="maven.dir"/>
+		<sequential>
+			<condition property="mvn.cmd" value="mvn">
+				<or>
+					<os family="unix" />
+					<os family="mac" />
+				</or>
+			</condition>
+			<condition property="mvn.cmd" value="mvn.bat">
+				<os family="windows" />
+			</condition>
+			<exec executable="${mvn.cmd}" dir="@{maven.dir}" failonerror="true">
+				<arg line="@{maven.profile.list} @{maven.goal.list}"/>
+			</exec>
+		</sequential>
+	</macrodef>
 		
 	<!-- Produces all distributions: installer, upgrader and source -->
 	<target name="dist" description="Makes all distributions: installer, upgrader and source"
@@ -326,11 +367,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<!-- Copy pa database scripts -->
 		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
 			<fileset dir="${db-install.src.dir}">
-				<include name="**/*"/>
-			</fileset>
-		</copy> 
-		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
-			<fileset dir="${db-install-dynamic.src.dir}">
 				<include name="**/*"/>
 			</fileset>
 		</copy> 

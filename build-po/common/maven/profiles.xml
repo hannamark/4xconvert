@@ -4,8 +4,9 @@
 			<id>bda</id>
 			<properties>
 				<jboss.home>@jboss.home@</jboss.home>
-				<schema.file>@db.po.schema.file@</schema.file>
-				<hbm2ddl.drop.table>false</hbm2ddl.drop.table>
+				<schema.file>@db.po.file.name@</schema.file>
+				<hbm2ddl.drop.table>@db.po.generate.drop@</hbm2ddl.drop.table>
+				<hbm2ddl.create.table>@db.po.generate.create@</hbm2ddl.create.table>
 			</properties>
 		</profile>
 	</profiles>
