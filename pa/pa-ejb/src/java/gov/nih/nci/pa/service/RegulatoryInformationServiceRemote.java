@@ -11,6 +11,6 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface RegulatoryInformationServiceRemote extends RegulatoryInformationService{
+public interface RegulatoryInformationServiceRemote extends RegulatoryInformationService {
 
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.spi.ActionContext;
 
 import gov.nih.nci.pa.dto.RegulatoryInformationDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -23,21 +22,21 @@ import com.opensymphony.xwork2.ActionSupport;
  * 
  */
 public class RegulatoryInformationAction extends ActionSupport {
-	
-	private static final long serialVersionUID = 1L;		
-	private RegulatoryInformationDTO regulatoryDTO = new RegulatoryInformationDTO();	
-	private List countryList = new ArrayList();	
-	private String lst = null;	
-	private String selectedAuthOrg = null;
+        
+        private static final long serialVersionUID = 1L;                
+        private RegulatoryInformationDTO regulatoryDTO = new RegulatoryInformationDTO();        
+        private List countryList = new ArrayList();     
+        private String lst = null;      
+        private String selectedAuthOrg = null;
 
-	/**
-	 * Method to get a list of countries.
-	 * 
-	 * @return String list
-	 */
+        /**
+         * Method to get a list of countries.
+         * 
+         * @return String list
+         */
     public String getListofCountries() {
         try {       
-        	//Map parameters = ActionContext.getContext().getParameters();  
+                //Map parameters = ActionContext.getContext().getParameters();  
             //TODO the line below needs to be removed when this page is called from menubar
             HibernateUtil.getHibernateHelper().openAndBindSession(); 
             /**
@@ -58,106 +57,110 @@ public class RegulatoryInformationAction extends ActionSupport {
      * 
      * @return String success or failure
      */
-    public String saveRegulatoryAuthority(){
-    	/*
-    	 * Get the id of the study protocol from the session and stick it in the regulatoryDTO
-    	 */
-    	Long protocolID = (Long)ServletActionContext.getRequest().getSession().getAttribute("protocolId");
-    	if(protocolID == null)
-    		protocolID = 2L;
-    	regulatoryDTO.setProtocolID(protocolID.longValue());
-    	try {
-    		Long id = new Long(getLst());
-    		regulatoryDTO.setTrialOversgtAuthCountry(PaRegistry.getRegulatoryInformationService().getCountryName( id ));
-    		regulatoryDTO.setSelectedAuthOrgId(new Long(selectedAuthOrg).longValue());
-    		regulatoryDTO.setTrialOversgtAuthOrgName(PaRegistry.getRegulatoryInformationService().
-    				getRegulatoryAuthorityName(new Long(selectedAuthOrg).longValue()).get(0).toString());
-			PaRegistry.getRegulatoryInformationService().saveRegulatoryInformation(regulatoryDTO);
-		} catch (PAException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return SUCCESS;
-		}
-		return SUCCESS;    	
+    public String saveRegulatoryAuthority() {
+        /*
+         * Get the id of the study protocol from the session and stick it in the regulatoryDTO
+         */
+        Long protocolID = (Long) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
+        if (protocolID == null) {
+                protocolID = 2L;
+        }
+        regulatoryDTO.setProtocolID(protocolID.longValue());
+        try {
+            Long id = Long.valueOf(getLst());
+            regulatoryDTO.setTrialOversgtAuthCountry(
+                    PaRegistry.getRegulatoryInformationService().getCountryName(id));
+            regulatoryDTO.setSelectedAuthOrgId(Long.valueOf(selectedAuthOrg).longValue());
+            regulatoryDTO.setTrialOversgtAuthOrgName(PaRegistry.getRegulatoryInformationService().
+                            getRegulatoryAuthorityName(Long.valueOf(selectedAuthOrg).longValue()).get(0).toString());
+                    PaRegistry.getRegulatoryInformationService().saveRegulatoryInformation(regulatoryDTO);
+            } catch (PAException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return SUCCESS;
+            }
+            return SUCCESS;         
     }
     
     /**
      * 
      * @return String success or failure
      */
-    public String editRegulatoryAuthority(){
-    	 //TODO the line below needs to be removed when this page is called from menubar
-    	HibernateUtil.getHibernateHelper().openAndBindSession(); 
-    	try {
-    		countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
-			Long protocolID = (Long)ServletActionContext.getRequest().getSession().getAttribute("protocolId");
-			if(protocolID == null)
-				protocolID = 2L;
-			//regulatoryDTO.setProtocolID(protocolID.longValue());
-			regulatoryDTO = PaRegistry.getRegulatoryInformationService().getProtocolForEdit(protocolID);
-			setLst(new Long(regulatoryDTO.getCountryId()).toString());			
-		} catch (PAException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return SUCCESS;
-		}
-		return SUCCESS;
+    public String editRegulatoryAuthority() {
+         //TODO the line below needs to be removed when this page is called from menubar
+        HibernateUtil.getHibernateHelper().openAndBindSession(); 
+        try {
+                countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+                        Long protocolID = (Long) ServletActionContext.getRequest().
+                                getSession().getAttribute("protocolId");
+                        if (protocolID == null) {
+                                protocolID = 2L;
+                        }
+                        //regulatoryDTO.setProtocolID(protocolID.longValue());
+                        regulatoryDTO = PaRegistry.getRegulatoryInformationService().getProtocolForEdit(protocolID);
+                        setLst(Long.valueOf(regulatoryDTO.getCountryId()).toString());                      
+                } catch (PAException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return SUCCESS;
+                }
+                return SUCCESS;
     }
 
-	/**
-	 * @return the regulatoryDTO
-	 */
-	public RegulatoryInformationDTO getRegulatoryDTO() {
-		return regulatoryDTO;
-	}
+        /**
+         * @return the regulatoryDTO
+         */
+        public RegulatoryInformationDTO getRegulatoryDTO() {
+                return regulatoryDTO;
+        }
 
-	/**
-	 * @param regulatoryDTO the regulatoryDTO to set
-	 */
-	public void setRegulatoryDTO(RegulatoryInformationDTO regulatoryDTO) {
-		this.regulatoryDTO = regulatoryDTO;
-	}
+        /**
+         * @param regulatoryDTO the regulatoryDTO to set
+         */
+        public void setRegulatoryDTO(RegulatoryInformationDTO regulatoryDTO) {
+                this.regulatoryDTO = regulatoryDTO;
+        }
 
-	/**
-	 * @return the countryList
-	 */
-	public List getCountryList() {
-		return countryList;
-	}
+        /**
+         * @return the countryList
+         */
+        public List getCountryList() {
+                return countryList;
+        }
 
-	/**
-	 * @param countryList the countryList to set
-	 */
-	public void setCountryList(List countryList) {
-		this.countryList = countryList;
-	}
-	
-	/**
-	 * @return the lst
-	 */
-	public String getLst() {
-		return lst;
-	}
+        /**
+         * @param countryList the countryList to set
+         */
+        public void setCountryList(List countryList) {
+                this.countryList = countryList;
+        }
+        
+        /**
+         * @return the lst
+         */
+        public String getLst() {
+                return lst;
+        }
 
-	/**
-	 * @param lst the lst to set
-	 */
-	public void setLst(String lst) {
-		this.lst = lst;
-	}
-	
-	/**
-	 * @return the selectedAuthOrg
-	 */
-	public String getSelectedAuthOrg() {
-		return selectedAuthOrg;
-	}
+        /**
+         * @param lst the lst to set
+         */
+        public void setLst(String lst) {
+                this.lst = lst;
+        }
+        
+        /**
+         * @return the selectedAuthOrg
+         */
+        public String getSelectedAuthOrg() {
+                return selectedAuthOrg;
+        }
 
-	/**
-	 * @param selectedAuthOrg the selectedAuthOrg to set
-	 */
-	public void setSelectedAuthOrg(String selectedAuthOrg) {
-		this.selectedAuthOrg = selectedAuthOrg;
-	}	
+        /**
+         * @param selectedAuthOrg the selectedAuthOrg to set
+         */
+        public void setSelectedAuthOrg(String selectedAuthOrg) {
+                this.selectedAuthOrg = selectedAuthOrg;
+        }       
 }
 

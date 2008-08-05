@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.dao.RegulatoryInformationDAO;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.RegulatoryInformationDTO;
@@ -13,7 +12,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 /**
- * Stateless Enterprise Java Bean (EJB) 
+ * Stateless Enterprise Java Bean (EJB).
  * 
  * @author Harsha
  * @since 08/05/2008
@@ -22,53 +21,53 @@ import javax.ejb.TransactionAttributeType;
  * copyright holder, NCI.
  */
 @Stateless
-public class RegulatoryInformationBean implements RegulatoryInformationServiceRemote{
+public class RegulatoryInformationBean implements RegulatoryInformationServiceRemote {
 
     /**
      * Return a list of countries.
      * 
      * @return List CountryRegAuthorityDTO 
      */
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public List<CountryRegAuthorityDTO> getCountryList() {			
-		return new RegulatoryInformationServiceImpl().getCountryList();
-	}
+        @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+        public List<CountryRegAuthorityDTO> getCountryList() {                  
+                return new RegulatoryInformationServiceImpl().getCountryList();
+        }
 
-	/**
-	 * Method to save the Regulatory Information DTO.
-	 * 
-	 * @param RegulatoryInformationDTO containing regulatoryinfo
-	 * @throws PAException on error
-	 */
-	public void saveRegulatoryInformation(RegulatoryInformationDTO regulatoryDTO) throws PAException{
-    	new RegulatoryInformationServiceImpl().saveRegulatoryInformation(regulatoryDTO);
-	}
+        /**
+         * Method to save the Regulatory Information DTO.
+         * 
+         * @param regulatoryDTO containing regulatoryinfo
+         * @throws PAException on error
+         */
+        public void saveRegulatoryInformation(RegulatoryInformationDTO regulatoryDTO) throws PAException {
+        new RegulatoryInformationServiceImpl().saveRegulatoryInformation(regulatoryDTO);
+        }
 
     /**
      * Method to get a list of Authority Organization names.
      * 
      * @param regAuthID Regulatory authorization id
      * @return List of Authority name(s) as String
-	 * @throws PAException on error 
+         * @throws PAException on error 
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-	public List<String> getRegulatoryAuthorityName(Long regAuthID)
-			throws PAException {
-    	return new RegulatoryInformationServiceImpl().getRegulatoryAuthorityName(regAuthID);
-	}
+        public List<String> getRegulatoryAuthorityName(Long regAuthID)
+                        throws PAException {
+        return new RegulatoryInformationServiceImpl().getRegulatoryAuthorityName(regAuthID);
+        }
     
     /**
      * Method to get a Country name using the country id.
      * 
      * @param countryId as long
      * @return country name as String
-	 * @throws PAException on error 
+         * @throws PAException on error 
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)	
-	public String getCountryName(long countryId) throws PAException{
-    	return new RegulatoryInformationServiceImpl().getCountryName(countryId);
-	}
-	
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
+        public String getCountryName(long countryId) throws PAException {
+        return new RegulatoryInformationServiceImpl().getCountryName(countryId);
+        }
+        
     /**
      * Method to get a list of distinct country names only.
      *  
@@ -76,9 +75,9 @@ public class RegulatoryInformationBean implements RegulatoryInformationServiceRe
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-	public List getDistinctCountryNames() throws PAException {
-    	return new RegulatoryInformationServiceImpl().getDistinctCountryNames();
-	}
+        public List getDistinctCountryNames() throws PAException {
+        return new RegulatoryInformationServiceImpl().getDistinctCountryNames();
+        }
     
     /**
      * Method to get a list of Regulatory Authority organizations for a 
@@ -88,34 +87,34 @@ public class RegulatoryInformationBean implements RegulatoryInformationServiceRe
      * @return List of RegulatoryAuthOrgDTO(s)
      * @throws PAException on error
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)	
-	public List<RegulatoryAuthOrgDTO> getRegulatoryAuthorityNameId(Long regAuthID) throws PAException {
-    	return new RegulatoryInformationServiceImpl().getRegulatoryAuthorityNameId(regAuthID);
-	}
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
+        public List<RegulatoryAuthOrgDTO> getRegulatoryAuthorityNameId(Long regAuthID) throws PAException {
+        return new RegulatoryInformationServiceImpl().getRegulatoryAuthorityNameId(regAuthID);
+        }
 
     /**
      * Method to get the protocol for edit action.
      *       
-     * @param protocol Id
+     * @param protocolId for a given protocol
      * @return RegulatoryInformationDTO information
-     * @throws PAException
+     * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-	public RegulatoryInformationDTO getProtocolForEdit(long protocolId) throws PAException {
-    	return new RegulatoryInformationServiceImpl().getProtocolForEdit(protocolId);
-	}
+        public RegulatoryInformationDTO getProtocolForEdit(long protocolId) throws PAException {
+        return new RegulatoryInformationServiceImpl().getProtocolForEdit(protocolId);
+        }
 
     /**
      * Method to Regulatory Org DTO for a given protocol ID.
      * 
-     * @param protocol Id
+     * @param protocolId for a given protocol
      * @return RegulatoryAuthOrgDTO information
-     * @throws PAException
+     * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-	public RegulatoryAuthOrgDTO getRegulatoryAuthOrgForEdit(long protocolId)
-			throws PAException {
-    	return new RegulatoryInformationServiceImpl().getRegulatoryAuthOrgForEdit(protocolId);
-	}
+        public RegulatoryAuthOrgDTO getRegulatoryAuthOrgForEdit(long protocolId)
+                        throws PAException {
+        return new RegulatoryInformationServiceImpl().getRegulatoryAuthOrgForEdit(protocolId);
+        }
 }
 

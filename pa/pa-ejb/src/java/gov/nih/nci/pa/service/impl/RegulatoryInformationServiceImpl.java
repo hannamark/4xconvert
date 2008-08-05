@@ -25,83 +25,83 @@ public class RegulatoryInformationServiceImpl implements RegulatoryInformationSe
      * 
      * @return List CountryRegAuthorityDTO 
      */
-	public List<CountryRegAuthorityDTO> getCountryList() {
-		List<CountryRegAuthorityDTO> retList = null;	
-		try {
-			RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-			retList= informationDAO.getCountryList();
-		} catch (Exception e) {
-			//TODO DO NOT DO THIS
-			/*****************************
-			 * WILL BE REFACTORED*********
-			 *****************************/
-			e.printStackTrace();			
-		}
-		return retList;
+        public List<CountryRegAuthorityDTO> getCountryList() {
+                List<CountryRegAuthorityDTO> retList = null;    
+                try {
+                        RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                        retList = informationDAO.getCountryList();
+                } catch (Exception e) {
+                        //TODO DO NOT DO THIS
+                        /*****************************
+                         * WILL BE REFACTORED*********
+                         *****************************/
+                        e.printStackTrace();                    
+                }
+                return retList;
 
-	}
-	
+        }
+        
     /**
      * Method to get a Country name using the country id.
      *  
      * @param countryId as long
      * @return country name as String
-	 * @throws PAException on error 
+         * @throws PAException on error 
      */
-	public String getCountryName(long countryId) throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		return informationDAO.getCountryName(countryId);		
-	}
-	
+        public String getCountryName(long countryId) throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                return informationDAO.getCountryName(countryId);                
+        }
+        
     /**
      * Method to get a list of distinct country names only.
      * 
      * @return List of distinct country names
      * @throws PAException on error
      */
-	public List getDistinctCountryNames() throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		return informationDAO.getDistinctCountryList();
-	}
+        public List getDistinctCountryNames() throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                return informationDAO.getDistinctCountryList();
+        }
 
-	/**
-	 * Method to get the protocol for edit action.
-	 * 
-     * @param protocol Id
+    /**
+     * Method to get the protocol for edit action.
+     * 
+     * @param protocolId for a given protocol
      * @return RegulatoryInformationDTO information
-     * @throws PAException
-     */	
-	public RegulatoryInformationDTO getProtocolForEdit(long protocolId)
-			throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		return informationDAO.getProtocolForEdit(protocolId);
-	}
+     * @throws PAException on error
+     */ 
+        public RegulatoryInformationDTO getProtocolForEdit(long protocolId)
+                        throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                return informationDAO.getProtocolForEdit(protocolId);
+        }
 
     /**
      * Method to Regulatory Org DTO for a given protocol ID. 
      * 
-     * @param protocol Id
+     * @param protocolId for a given protocol
      * @return RegulatoryAuthOrgDTO information
-     * @throws PAException
-     */	
-	public RegulatoryAuthOrgDTO getRegulatoryAuthOrgForEdit(long protocolId)
-			throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		return informationDAO.getRegulatoryAuthOrgForEdit(protocolId);		
-	}
+     * @throws PAException on error
+     */ 
+        public RegulatoryAuthOrgDTO getRegulatoryAuthOrgForEdit(long protocolId)
+                        throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                return informationDAO.getRegulatoryAuthOrgForEdit(protocolId);          
+        }
 
     /**
-     * Method to get a list of Authority Organization names
+     * Method to get a list of Authority Organization names.
      *  
      * @param regAuthID Regulatory authorization id
      * @return List of Authority name(s) as String
-	 * @throws PAException on error 
+         * @throws PAException on error 
      */
-	public List<String> getRegulatoryAuthorityName(Long regAuthID)
-			throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		return informationDAO.getRegulatoryAuthorityName(regAuthID);
-	}
+        public List<String> getRegulatoryAuthorityName(Long regAuthID)
+                        throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                return informationDAO.getRegulatoryAuthorityName(regAuthID);
+        }
 
     /**
      * Method to get a list of Regulatory Authority organizations for a 
@@ -110,23 +110,23 @@ public class RegulatoryInformationServiceImpl implements RegulatoryInformationSe
      * @param regAuthID as Long
      * @return List of RegulatoryAuthOrgDTO(s)
      * @throws PAException on error
-     */	
-	public List<RegulatoryAuthOrgDTO> getRegulatoryAuthorityNameId(
-			Long regAuthID) throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		return informationDAO.getRegulatoryAuthorityNameId(regAuthID);
-	}
+     */ 
+        public List<RegulatoryAuthOrgDTO> getRegulatoryAuthorityNameId(
+                        Long regAuthID) throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                return informationDAO.getRegulatoryAuthorityNameId(regAuthID);
+        }
 
-	/**
-	 * Method to save the Regulatory Information DTO.
-	 * 
-	 * @param RegulatoryInformationDTO containing regulatoryinfo
-	 * @throws PAException on error
-	 */
-	public void saveRegulatoryInformation(RegulatoryInformationDTO regulatoryDTO)
-			throws PAException {
-		RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
-		informationDAO.saveRegulatoryInformation(regulatoryDTO);
-	}
+        /**
+         * Method to save the Regulatory Information DTO.
+         * 
+         * @param regulatoryDTO containing regulatoryinfo
+         * @throws PAException on error
+         */
+        public void saveRegulatoryInformation(RegulatoryInformationDTO regulatoryDTO)
+                        throws PAException {
+                RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
+                informationDAO.saveRegulatoryInformation(regulatoryDTO);
+        }
 
 }

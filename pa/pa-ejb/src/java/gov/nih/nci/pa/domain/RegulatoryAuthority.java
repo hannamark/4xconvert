@@ -1,17 +1,10 @@
 package gov.nih.nci.pa.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-
 
 /**
  * Governmental bodies that have the power to pass and enforce laws.
@@ -27,37 +20,38 @@ import javax.persistence.Table;
 @Entity
 @Table(name =  "regulatory_authority")
 public class RegulatoryAuthority extends AbstractEntity {
-	
-	private static final long serialVersionUID = 1L;
-	private String authorityName;
-	private Country country;
-	
-	/**
-	 * @return the authorityName
-	 */	
-	@Column(name = "authority_name")
-	public String getAuthorityName() {
-		return authorityName;
-	}
-	/**
-	 * @param authorityName the authorityName to set
-	 */
-	public void setAuthorityName(String authorityName) {
-		this.authorityName = authorityName;
-	}
-	/**
-	 * @return the countryId
-	 */
-	@ManyToOne
-	@JoinColumn(name = "country_id", nullable = false)
-	public Country getCountry() {
-		return country;
-	}
-	/**
-	 * @param countryId the countryId to set
-	 */
-	
-	public void setCountry(Country country) {
-		this.country = country;
-	}
+        
+        private static final long serialVersionUID = 1L;
+        private String authorityName;
+        private Country country;
+        
+        /**
+         * @return the authorityName
+         */     
+        @Column(name = "authority_name")
+        public String getAuthorityName() {
+                return authorityName;
+        }
+        /**
+         * @param authorityName the authorityName to set
+         */
+        public void setAuthorityName(String authorityName) {
+                this.authorityName = authorityName;
+        }
+        /**
+         * @return the countryId
+         */
+        @ManyToOne
+        @JoinColumn(name = "country_id", nullable = false)
+        public Country getCountry() {
+                return country;
+        }
+        
+        /**
+         * @param country the country to set
+         * 
+         */
+        public void setCountry(Country country) {
+                this.country = country;
+        }
 }

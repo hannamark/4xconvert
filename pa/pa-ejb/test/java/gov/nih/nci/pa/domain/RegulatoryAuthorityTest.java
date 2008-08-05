@@ -15,7 +15,8 @@ import static org.junit.Assert.assertEquals;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  * 
- */public class RegulatoryAuthorityTest {
+ */
+public class RegulatoryAuthorityTest {
     /**
      * 
      * @throws Exception e
@@ -25,24 +26,27 @@ import static org.junit.Assert.assertEquals;
         TestSchema.reset();
     }
 
+    /**
+     * Test Method.
+     */
     @Test
-    public void createRegulatoryAuthority(){    	
-    	Session session  = TestSchema.getSession();
-    	//
-    	Country c1 = new Country();
-    	c1.setAlpha2("CA");
-    	c1.setAlpha3("CAM");
-    	c1.setName("Cayman Islands");
-    	TestSchema.addUpdObject(c1);
-    	//
-    	RegulatoryAuthority authority = new RegulatoryAuthority();
-    	authority.setAuthorityName("BWI reg body");
-    	authority.setCountry(c1);
-    	TestSchema.addUpdObject(authority);
-    	//
-    	RegulatoryAuthority saved = (RegulatoryAuthority) session.load(RegulatoryAuthority.class, authority.getId());
-    	//
-    	assertEquals("BWI reg body", saved.getAuthorityName());
-    	assertEquals("Cayman Islands", saved.getCountry().getName());
+    public void createRegulatoryAuthority() {            
+        Session session  = TestSchema.getSession();
+        //
+        Country c1 = new Country();
+        c1.setAlpha2("CA");
+        c1.setAlpha3("CAM");
+        c1.setName("Cayman Islands");
+        TestSchema.addUpdObject(c1);
+        //
+        RegulatoryAuthority authority = new RegulatoryAuthority();
+        authority.setAuthorityName("BWI reg body");
+        authority.setCountry(c1);
+        TestSchema.addUpdObject(authority);
+        //
+        RegulatoryAuthority saved = (RegulatoryAuthority) session.load(RegulatoryAuthority.class, authority.getId());
+        //
+        assertEquals("BWI reg body", saved.getAuthorityName());
+        assertEquals("Cayman Islands", saved.getCountry().getName());
     }
 }
