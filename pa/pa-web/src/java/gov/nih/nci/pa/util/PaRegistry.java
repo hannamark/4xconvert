@@ -4,6 +4,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 
@@ -87,4 +88,12 @@ public final class PaRegistry {
     public static PAPersonServiceRemote getPAPersonService() {
         return getInstance().getServiceLocator().getPAPersonService();
     }    
+    
+    /**
+     * 
+     * @return RegulatoryInformationServiceRemote
+     */
+    public static RegulatoryInformationServiceRemote getRegulatoryInformationService() {
+    	return getInstance().getServiceLocator().getRegulatoryInformationService();
+    }
 }

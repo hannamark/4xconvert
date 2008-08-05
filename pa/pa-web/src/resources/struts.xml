@@ -30,6 +30,22 @@
 			<result name="error">/jsp/pajsp/login.jsp</result>
 			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
 		</action>		
+		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="getListofCountries">
+			<interceptor-ref name="nci-commonsParams" />				         
+			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
+		</action>	
+		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >
+			<interceptor-ref name="nci-commonsParams" />				         
+			<result>/jsp/pajsp/nodecorate/orgs.jsp</result>
+		</action>				
+		<action name="saveRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="saveRegulatoryAuthority">
+			<interceptor-ref name="nci-commonsParams" />				         
+			<result>/jsp/pajsp/regulatoryinformationview.jsp</result>
+		</action>		
+		<action name="editRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">
+			<interceptor-ref name="nci-commonsParams" />				         
+			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
+		</action>
 		
 		<action name="nciSpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />			

@@ -8,8 +8,8 @@ import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
+//import org.springframework.mock.web.MockHttpServletRequest;
+//import org.springframework.mock.web.MockHttpSession;
 import com.opensymphony.xwork2.ActionContext;
 
 /**
@@ -32,9 +32,9 @@ public class BasePaTest {
      */
     @Before
     public void initMockrequest() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        ServletActionContext.setRequest(request);
+        //MockHttpServletRequest request = new MockHttpServletRequest();
+        //request.setSession(new MockHttpSession());
+        //ServletActionContext.setRequest(request);
     }
 
     /**

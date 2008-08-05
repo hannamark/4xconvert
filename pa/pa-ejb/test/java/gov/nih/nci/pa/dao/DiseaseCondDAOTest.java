@@ -1,7 +1,10 @@
 package gov.nih.nci.pa.dao;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
+import gov.nih.nci.pa.dto.DiseaseConditionDTO;
 import gov.nih.nci.pa.test.util.TestSchema;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -21,6 +24,6 @@ public class DiseaseCondDAOTest {
     @Test
     public void getDiseaseCondition() throws Exception{
         List list =  diseaseCondDAO.getDiseaseCondition(1L);
-        String.valueOf(true);
+       assertEquals("1AV55FGSY44", ((DiseaseConditionDTO)list.get(0)).getDiseaseCode());
     }
 }

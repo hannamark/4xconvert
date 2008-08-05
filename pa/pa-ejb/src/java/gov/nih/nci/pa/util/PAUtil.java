@@ -1,5 +1,8 @@
 package gov.nih.nci.pa.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Protocol DAO for accessing DAO.
  *
@@ -31,7 +34,5 @@ public class PAUtil {
         }
         return false;
     }
-    
-    
 
 }
