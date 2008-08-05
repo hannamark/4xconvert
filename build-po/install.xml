@@ -234,6 +234,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			</filterset>
 		</copy>
 		<if>
+			<and>
+				<equals arg1="${database.re-create}" arg2="true"/>
+				<equals arg1="${database.drop-schema}" arg2="true"/>
+			</and>
+			<then>
+				<fail message="You cannot set both database.re-create and database.drop-schema at the same time.  database.re-create is used in local installs.  database.drop-schema is used in remote installs.  Either one can be set for external (Cancer Center) installs."/>
+			</then>
+		</if>
+
+		<if>
 			<equals arg1="${database.re-create}" arg2="true"/>
 			<then>
 				<switch value="${database.type}">
