@@ -1,9 +1,12 @@
 package gov.nih.nci.pa.action;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.pa.dto.NCISpecificInformationDTO;
 import gov.nih.nci.pa.dto.NCISpecificInformationData;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -31,8 +34,11 @@ public class NCISpecificInformationAction  extends ActionSupport {
      */
     public String query()  {
         try {
-            studyProtocolID = 2L; //get the protocol ID from session
-            this.nciSpecificInformationDTO = 
+            StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+
+            studyProtocolID = spDTO.getStudyProtocolId();
+            this.nciSpecificInformationDTO =
                       PaRegistry.getNCISpecificInformationService().getNCISpecificInformation(
                                                                          studyProtocolID);
             LOG.info("1.) nciSpecificInformationDTO.getStudyProtocolID is: " 
