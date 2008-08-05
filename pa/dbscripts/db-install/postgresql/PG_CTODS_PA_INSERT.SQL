@@ -14,6 +14,8 @@ delete from  study_conditions
 /
 delete from  study_overall_status 
 /
+delete from  study_site 
+/
 delete from  document_workflow_status 
 /
 delete from  study_regulatory_authority
@@ -105,6 +107,17 @@ insert into organization (id,name) Values(1,'21 Century Oncology-Lehigh Acres (F
 insert into organization (id,name) Values(2,'A. C. Camargo Hospital (08017)')
 /
 insert into organization (id,name) Values(3,'Andrew Love Cancer Center (03120)')
+/
+
+insert into study_site (id,lead_organization_indicator,study_protocol_id,organization_id) values (1,true,1,1)
+/
+insert into study_site (id,lead_organization_indicator,study_protocol_id,organization_id) values (2,true,2,2)
+/
+insert into study_site (id,lead_organization_indicator,study_protocol_id,organization_id) values (3,true,3,3)
+/
+insert into study_site (id,lead_organization_indicator,study_protocol_id,organization_id) values (4,true,3,3)
+/
+insert into study_site (id,lead_organization_indicator,study_protocol_id,organization_id) values (5,true,3,3)
 /
 
 insert into person (id,first_name,middle_name,last_name) Values(1,'John','d','Doe')
