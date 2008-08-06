@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.pa.dto.RegulatoryInformationDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -43,7 +45,9 @@ public class RegulatoryInformationAction extends ActionSupport {
              * You have the protocol Id; Get the study protocol from database and simply set the
              * regulatoryDTO object;
              */
-            regulatoryDTO.setSection801Indicator("No");
+            StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
+            ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+            regulatoryDTO.setProtocolID(spDTO.getStudyProtocolId());
             //countryList = PaRegistry.getRegulatoryInformationService().getCountryList();
             countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
             return SUCCESS;
@@ -57,15 +61,11 @@ public class RegulatoryInformationAction extends ActionSupport {
      * 
      * @return String success or failure
      */
-    public String saveRegulatoryAuthority() {
-        /*
-         * Get the id of the study protocol from the session and stick it in the regulatoryDTO
-         */
-        Long protocolID = (Long) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
-        if (protocolID == null) {
-                protocolID = 2L;
-        }
-        regulatoryDTO.setProtocolID(protocolID.longValue());
+    public String saveRegulatoryAuthority() { 
+        StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
+        ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        regulatoryDTO.setProtocolID(spDTO.getStudyProtocolId());
+        
         try {
             Long id = Long.valueOf(getLst());
             regulatoryDTO.setTrialOversgtAuthCountry(
@@ -91,13 +91,10 @@ public class RegulatoryInformationAction extends ActionSupport {
         HibernateUtil.getHibernateHelper().openAndBindSession(); 
         try {
                 countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
-                        Long protocolID = (Long) ServletActionContext.getRequest().
-                                getSession().getAttribute("protocolId");
-                        if (protocolID == null) {
-                                protocolID = 2L;
-                        }
-                        //regulatoryDTO.setProtocolID(protocolID.longValue());
-                        regulatoryDTO = PaRegistry.getRegulatoryInformationService().getProtocolForEdit(protocolID);
+                StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+                //regulatoryDTO.setProtocolID(spDTO.getStudyProtocolId());
+                        regulatoryDTO = PaRegistry.getRegulatoryInformationService().getProtocolForEdit(spDTO.getStudyProtocolId());
                         setLst(Long.valueOf(regulatoryDTO.getCountryId()).toString());                      
                 } catch (PAException e) {
                         // TODO Auto-generated catch block
