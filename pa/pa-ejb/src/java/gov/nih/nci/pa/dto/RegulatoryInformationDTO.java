@@ -10,6 +10,7 @@ import java.io.Serializable;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class RegulatoryInformationDTO implements Serializable {    
  
     private static final long serialVersionUID = 1L;

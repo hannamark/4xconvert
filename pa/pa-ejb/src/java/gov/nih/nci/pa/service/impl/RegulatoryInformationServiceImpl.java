@@ -2,6 +2,8 @@ package gov.nih.nci.pa.service.impl;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import gov.nih.nci.pa.dao.RegulatoryInformationDAO;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
@@ -19,6 +21,8 @@ import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
  * copyright holder, NCI.
  */
 public class RegulatoryInformationServiceImpl implements RegulatoryInformationServiceRemote {
+    
+    private static final Logger LOG  = Logger.getLogger(RegulatoryInformationDAO.class); 
 
     /**
      * Return a list of countries.
@@ -31,11 +35,12 @@ public class RegulatoryInformationServiceImpl implements RegulatoryInformationSe
                         RegulatoryInformationDAO informationDAO = new RegulatoryInformationDAO();
                         retList = informationDAO.getCountryList();
                 } catch (Exception e) {
+                    LOG.error(" Hibernate exception in getCountryList() method ", e);
                         //TODO DO NOT DO THIS
                         /*****************************
                          * WILL BE REFACTORED*********
                          *****************************/
-                        e.printStackTrace();                    
+                       // e.printStackTrace();                    
                 }
                 return retList;
 

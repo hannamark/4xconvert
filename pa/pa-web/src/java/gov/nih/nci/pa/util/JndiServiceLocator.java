@@ -47,12 +47,12 @@ public class JndiServiceLocator implements ServiceLocator {
     public PAPersonServiceRemote getPAPersonService() {
         return (PAPersonServiceRemote) JNDIUtil.lookup("pa/PAPersonServiceBean/remote");
     }
-    
     /**
      * @return RegulatoryInformationServiceRemote
      */
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-    	return (RegulatoryInformationServiceRemote) JNDIUtil.lookup("pa/RegulatoryInformationBean/remote");
+        return (RegulatoryInformationServiceRemote) JNDIUtil.lookup("pa/RegulatoryInformationBean/remote");
     }
+    
     
 }

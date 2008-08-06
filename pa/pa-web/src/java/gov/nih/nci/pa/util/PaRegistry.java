@@ -94,6 +94,6 @@ public final class PaRegistry {
      * @return RegulatoryInformationServiceRemote
      */
     public static RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-    	return getInstance().getServiceLocator().getRegulatoryInformationService();
+        return getInstance().getServiceLocator().getRegulatoryInformationService();
     }
 }

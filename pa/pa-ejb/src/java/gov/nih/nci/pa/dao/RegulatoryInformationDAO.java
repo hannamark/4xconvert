@@ -58,8 +58,8 @@ public class RegulatoryInformationDAO {
                   countryDtos.add(countryDTO);
           }
        } catch (HibernateException hbe) {
-                LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);
+                LOG.error(" Hibernate exception in getCountryList() method ", hbe);
+            throw new PAException("Exception at getCountryList() ", hbe);
        }
        LOG.debug("Leaving regulatory information dao ");
        return countryDtos;
@@ -96,7 +96,7 @@ public class RegulatoryInformationDAO {
                                      "select sra from StudyRegulatoryAuthority as sra where studyProtocolID =" 
                                          + informationDTO.getProtocolID()).list();
                          StudyRegulatoryAuthority studyRegulatoryAuth = null;
-                         if (results.size() > 0) {                           
+                         if (!results.isEmpty()) {                           
                                  for (int i = 0; i < results.size(); i++) {
                                      studyRegulatoryAuth = (StudyRegulatoryAuthority) results.get(i);
                                          break;
@@ -136,8 +136,8 @@ public class RegulatoryInformationDAO {
           results = session.createQuery(
                   "select authorityName from RegulatoryAuthority as ra where ra.id=" + regAuthID).list();           
         } catch (HibernateException hbe) {
-                LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);
+                LOG.error("Exception at getRegulatoryAuthorityName() method ", hbe);
+            throw new PAException(" Hibernate exception in getRegulatoryAuthorityName() method ", hbe);
         }        
         LOG.debug("Leaving  getRegulatoryAuthorityName()");
         return results;
@@ -162,8 +162,8 @@ public class RegulatoryInformationDAO {
                   countryName = (String) results.get(i);
           }          
         } catch (HibernateException hbe) {
-                LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);
+                LOG.error("Exception in Hibernate at getCountryName() method ", hbe);
+            throw new PAException(" Hibernate exception in getCountryName() method ", hbe);
         }       
         LOG.debug("Leaving  getCountryName()");
         return countryName;
@@ -196,8 +196,8 @@ public class RegulatoryInformationDAO {
                   countryDtos.add(countryDTO);
           }
        } catch (HibernateException hbe) {
-                LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);
+                LOG.error(" Hibernate exception in getDistinctCountryList() method ", hbe);
+            throw new PAException(" Hibernate exception in getDistinctCountryList()", hbe);
        }
        LOG.debug("Leaving regulatory information dao ");
        return countryDtos;
@@ -229,7 +229,7 @@ public class RegulatoryInformationDAO {
           }          
         } catch (HibernateException hbe) {
                 LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);
+            throw new PAException(" Hibernate exception in getRegulatoryAuthorityNameId() ", hbe);
         }        
         LOG.debug("Leaving  getRegulatoryAuthorityName()");
         return retResults;
@@ -248,8 +248,7 @@ public class RegulatoryInformationDAO {
                 List<Object> results = null;
                 StudyProtocol studyProtocol = null;
                 StudyRegulatoryAuthority authority = null;
-                RegulatoryAuthority authority1 = null;
-                Country country = null;
+                RegulatoryAuthority authority1 = null;                
                 try {                                            
                         results = session.createQuery(
                                 "select sp from StudyProtocol as sp where sp.id =" + protocolId).list();
@@ -273,7 +272,7 @@ public class RegulatoryInformationDAO {
                         }
          } catch (HibernateException hbe) {
                 LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);                  
+            throw new PAException(" Hibernate exception getProtocolForEdit() method ", hbe);                  
          }      
         LOG.debug("Leaving  getRegulatoryAuthorityName()");
         return convertProtocolToDTO(studyProtocol, authority1.getCountry().getId());
@@ -308,7 +307,6 @@ public class RegulatoryInformationDAO {
         Session session = HibernateUtil.getCurrentSession();            
                 List<Object> results = null;
                 StudyRegulatoryAuthority studyRegulatoryAuthority = null;
-                List regAuthorityResult = null;
                 RegulatoryAuthOrgDTO regulatoryAuthOrgDTO = null;
                 try {
                         results = session.createQuery(
@@ -326,8 +324,9 @@ public class RegulatoryInformationDAO {
                  regulatoryAuthOrgDTO.setId(studyRegulatoryAuthority.getRegulatoryAuthorityID());               
                  regulatoryAuthOrgDTO.setName(resultsList.get(0).toString());                    
                 } catch (HibernateException hbe) {
-                LOG.error(" Hibernate exception in regulatory information dao ", hbe);
-            throw new PAException(" Hibernate exception in regulatory information dao ", hbe);                  
+                LOG.error("Exception in getRegulatoryAuthOrgForEdit() method ", hbe);
+            throw new PAException(
+                    " Hibernate exception in getRegulatoryAuthOrgForEdit() method ", hbe);                  
                 }
         LOG.debug("Leaving  getRegulatoryAuthOrgForEdit()");
         return regulatoryAuthOrgDTO;
