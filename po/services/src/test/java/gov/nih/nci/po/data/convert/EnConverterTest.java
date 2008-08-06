@@ -7,10 +7,8 @@ import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Test;
+import java.util.Collections;
 
 /**
  *
@@ -34,9 +32,7 @@ public class EnConverterTest {
         iso.getPart().add(p);
         p = new Enxp(EntityNamePartType.SFX);// no effect
         p.setValue("Inc");
-        Set<EntityNamePartQualifier> qualifiers = new HashSet<EntityNamePartQualifier>();
-        qualifiers.add(EntityNamePartQualifier.LS);
-        p.setQualifier(qualifiers);// no effect
+        p.setQualifier(Collections.singleton(EntityNamePartQualifier.LS));// no effect
         iso.getPart().add(p);
 
         EnConverter<EnOn> instance = new EnConverter<EnOn>();

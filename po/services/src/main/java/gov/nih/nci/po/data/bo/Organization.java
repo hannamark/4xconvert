@@ -137,6 +137,7 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
     private List<URL> url = new ArrayList<URL>(1);
+    private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
 
     private CurationStatus curationStatus;
     private Date curationStatusDate;
@@ -348,6 +349,56 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
      */
     protected void setUrl(List<URL> url) {
         this.url = url;
+    }
+    /**
+     * @return list of urls
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_tty",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "tty")
+    @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
+    public List<PhoneNumber> getTty() {
+        return tty;
+    }
+
+    /**
+     * @param tty new text numbers
+     */
+    protected void setTty(List<PhoneNumber> tty) {
+        this.tty = tty;
+    }
+    
+    
+    /**
+     * does nothing. To help with DTO generation.
+     * @return null
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.DSet"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.ContactListConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.TelDSetConverter"
+     * @deprecated do not use.
+     */
+    @Deprecated
+    @Transient
+    public Object getTelecomAddress() {
+        return null;
+    }
+
+    /**
+     * does nothing. Only here to help xsnapshot.
+     * @param ignored whatever.
+     * @deprecated do not use.
+     */
+    @Deprecated
+    public void setTelecomAddress(Object ignored) {
+        // do nothing
     }
 
     /**

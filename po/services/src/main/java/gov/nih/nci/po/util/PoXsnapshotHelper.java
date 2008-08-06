@@ -1,5 +1,11 @@
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.convert.OrganizationDTOHelper;
+import gov.nih.nci.po.data.convert.PersonDTOHelper;
+import gov.nih.nci.po.services.person.PersonDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
 import java.net.URL;
 import net.sf.xsnapshot.SnapshotHelper;
 import net.sf.xsnapshot.XSnapshotRegistry;
@@ -17,7 +23,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
     /** Default xsnapshot name. */
     public static final String DEFAULT_NAME = "entity";
     /** configured XSnapshotUtil for all conversions. */
-    public static final XSnapshotUtils PO_XSNASHOTUTILS;
+    private static final XSnapshotUtils PO_XSNASHOTUTILS;
     private static final PoXsnapshotHelper REGISTRY = new PoXsnapshotHelper();
     
 
@@ -35,6 +41,10 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
         try {
             PropertiesConfiguration config = new PropertiesConfiguration(configResource);
             XSnapshotPropertiesConfigurator.configure(this, config);
+            Class snapshotClass = OrganizationDTO.class;
+            this.registerHelper(snapshotClass, new OrganizationDTOHelper());
+            snapshotClass = PersonDTO.class;
+            this.registerHelper(snapshotClass, new PersonDTOHelper());            
         } catch (ConfigurationException ex) {
             throw new RuntimeException("failed to init xsnapshot", ex);
         }
@@ -44,16 +54,32 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param model the model object to translate
      * @return a snapshotobject
      */
-    public static Object createSnapshot(Object model) {
-        return PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_NAME);
+    public static OrganizationDTO createSnapshot(Organization model) {
+        return (OrganizationDTO) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_NAME);
+    }
+    
+    /**
+     * @param model the model object to translate
+     * @return a snapshotobject
+     */
+    public static PersonDTO createSnapshot(Person model) {
+        return (PersonDTO) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_NAME);
     }
     
     /**
      * @param snapshot the snapshot to stranslate
      * @return a model object
      */
-    public static Object createModel(Object snapshot) {
-        return PO_XSNASHOTUTILS.createModel(snapshot);
+    public static Organization createModel(OrganizationDTO snapshot) {
+        return (Organization) PO_XSNASHOTUTILS.createModel(snapshot);
+    }
+
+    /**
+     * @param snapshot the snapshot to stranslate
+     * @return a model object
+     */
+    public static Person createModel(PersonDTO snapshot) {
+        return (Person) PO_XSNASHOTUTILS.createModel(snapshot);
     }
 
     /**
