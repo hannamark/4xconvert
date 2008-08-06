@@ -110,7 +110,7 @@ public class GenericServiceTest extends AbstractHibernateTestCase {
         Organization org = new Organization();
         org.setPostalAddress(new Address("test", "test", "test", "test", country));
         org.setName("testOrg");
-        org.setAbbreviationName("abbr");
+        org.setAbbreviatedName("abbr");
         org.setCurationStatus(CurationStatus.NEW);
 
         long orgId = (Long) PoHibernateUtil.getCurrentSession().save(org);

@@ -128,7 +128,7 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     private static final int LONG_COL_LENGTH = 100;
     private Long id;
     private String name;
-    private String abbreviationName;
+    private String abbreviatedName;
     private String description;
     private Address postalAddress;
 
@@ -155,7 +155,7 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     /**
      * @return database identity
      * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.Ii"
+     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
 
@@ -193,21 +193,21 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     }
 
     /**
-     * @return abbreviation name
+     * @return abbreviated name
      * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
     @Length(max = LONG_COL_LENGTH)
-    public String getAbbreviationName() {
-        return abbreviationName;
+    public String getAbbreviatedName() {
+        return abbreviatedName;
     }
 
     /**
-     * @param abbreviationName abbreviation name
+     * @param abbreviatedName abbreviation name
      */
-    public void setAbbreviationName(String abbreviationName) {
-        this.abbreviationName = abbreviationName;
+    public void setAbbreviatedName(String abbreviatedName) {
+        this.abbreviatedName = abbreviatedName;
     }
 
     /**

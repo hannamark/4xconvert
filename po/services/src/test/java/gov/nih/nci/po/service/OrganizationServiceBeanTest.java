@@ -148,7 +148,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
             Organization org = new Organization();
             org.setPostalAddress(mailingAddress);
             org.setName(oName);
-            org.setAbbreviationName("defaultOrgCode");
+            org.setAbbreviatedName("defaultOrgCode");
             org.setCurationStatus(CurationStatus.NEW);
             long orgId = orgService.create(org);
             PoHibernateUtil.getCurrentSession().flush();
@@ -174,7 +174,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
 
         Organization org = new Organization();
         org.setName("testOrg");
-        org.setAbbreviationName("abbr");
+        org.setAbbreviatedName("abbr");
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
         org.setCurationStatus(CurationStatus.REJECTED);

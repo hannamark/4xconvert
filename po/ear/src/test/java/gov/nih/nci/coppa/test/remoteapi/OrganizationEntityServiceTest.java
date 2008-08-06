@@ -129,7 +129,7 @@ public class OrganizationEntityServiceTest {
     public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
         dto1.setName(ISOUtils.STRING.convertToEnOn("Test Name"));
-        dto1.setAbbreviationName(ISOUtils.STRING.convertToEnOn("TST"));
+        dto1.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("TST"));
         long id = orgService.createOrganization(dto1);
         OrganizationDTO dto2 = orgService.getOrganization(id);
         assertEquals(dto1, dto2);
