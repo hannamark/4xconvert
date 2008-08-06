@@ -6,12 +6,10 @@
 	<classpathentry kind="src" path="pa-ear/test/java"/>
 	<classpathentry kind="src" path="pa-ejb/test/java"/>
 	<classpathentry kind="src" path="pa-web/test/java"/>
-
 	<classpathentry kind="src" path="pa-ejb/src/java"/>
 	<classpathentry kind="src" path="pa-ejb/src/resources"/>
 	<classpathentry kind="src" path="pa-web/src/resources"/>
 	<classpathentry kind="src" path="pa-web/src/java"/>
-
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/main/aopalliance-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/main/jstl-1.1.2.jar"/>
@@ -101,7 +99,6 @@
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/cglib.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/commons-logging.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/javax.servlet.jsp.jar"/>
-	<classpathentry kind="lib" path="lib/test/ant-contrib.jar"/>
 	<classpathentry kind="lib" path="lib/test/asm-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/test/checkstyle-all-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/test/jaxen-1.1.1.jar"/>
@@ -119,7 +116,5 @@
 	<classpathentry kind="lib" path="lib/main/jboss-annotations-ejb3.jar"/>
 	<classpathentry kind="lib" path="lib/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/test/hsqldb-1.8.0.7.jar"/>
-	<classpathentry kind="lib" path="lib/main/spring-mock.jar"/>
-	<classpathentry kind="lib" path="lib/main/mockrunner-0.3.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
