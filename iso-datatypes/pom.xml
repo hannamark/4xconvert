@@ -69,7 +69,7 @@
             <id>5AM-Snapshots</id>
             <name>5AM Snapshots</name>
             <url>dav:http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
-            <uniqueVersion>false</uniqueVersion>
+            <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
     
