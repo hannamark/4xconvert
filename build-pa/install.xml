@@ -45,8 +45,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 	<!-- *-ds.xml and WAR -->
 	<property name="pa-ear.dir.dist" value="${basedir}/${pa-ear.dist.relative.dir}" />
 	<property name="pa-ear.ds.file" value="pa-ds.xml" />
-	<property name="pa-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
-	<property name="pa-ear.hibernate.file" value="hibernate.cfg.xml" />
 	<property name="pa-ear.ear.file" value="pa.ear" />
 
 	<!-- Paths -->
@@ -81,20 +79,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 	<available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
 	<!-- pa-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
 	<switch value="${database.type}">
-		<case value="oracle">
-			<property name="database.dialect" value="org.hibernate.dialect.OracleDialect"/>
-			<property name="database.driver.file" value="${bda-utils.dir}/ojdbc14-10.2.0.3.0.jar"/>
-			<property name="database.driver" value="oracle.jdbc.driver.OracleDriver"/>
-			<property name="db-upgrade.list.file" value="${db-upgrade.oracle.list.file}"/>
-			<property name="db-upgrade.conf.file" value="${db-upgrade.oracle.conf.file}"/>
-		</case>
-		<case value="mysql">
-			<property name="database.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-			<property name="database.driver.file" value="${bda-utils.dir}/mysql-connector-java-5.0.5.jar"/>
-			<property name="database.driver" value="com.mysql.jdbc.Driver"/>
-			<property name="db-upgrade.list.file" value="${db-upgrade.mysql.list.file}"/>
-			<property name="db-upgrade.conf.file" value="${db-upgrade.mysql.conf.file}"/>
-		</case>
 		<case value="postgresql">
 			<property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 			<property name="database.driver.file" value="${bda-utils.dir}/postgresql-jdbc3-8.3-603.jar"/>
@@ -213,11 +197,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 		<delete dir="${resource.dir.temp}"/>
 	</target>
 
-	<!-- Wrapper install database target, depends on both MySQL and Oracle sub-targets, ifs should ensure only one is run.  Target path can be skipped by exlude.database also calls upgrade:database -->
-	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
-		depends="
-		install:init
-		">
+	<target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="install:init">
 		<property name="db.dir.temp" value="${working.dir}/tmp"/>
 		<mkdir dir="${db.dir.temp}"/>
 		<copy todir="${db.dir.temp}" filtering="true">
@@ -244,6 +224,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 				<fail message="You cannot set both database.re-create and database.drop-schema at the same time.  database.re-create is used in local installs.  database.drop-schema is used in remote installs.  Either one can be set for external (Cancer Center) installs."/>
 			</then>
 		</if>
+	</target>
+	<target name="install:database:re-create" description="Recreates database if database.re-create is true. Used on local installs" unless="exclude.database" depends="install:init">
 		<if> 
 			<equals arg1="${database.re-create}" arg2="true"/>
 			<then>
@@ -261,7 +243,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 				<echo message="Database.recreate flag not set, database not re-created."/>
 			</else>
 		</if>
+	</target>
 
+	<target name="install:database:drop" description="Runs database drop scripts if database.drop-schema is set. Used on Tier environments (dev, qa, stg, prod)." unless="exclude.database" depends="install:init">
 		<if>
 			<equals arg1="${database.drop-schema}" arg2="true"/>
 			<then>
@@ -291,6 +275,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 				<echo message="Database.drop-schema flag not set, database schema not dropped."/>
 			</else>
 		</if>
+	</target>
+
+	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
+		depends="
+		install:init,
+		install:database:prep,
+		install:database:re-create,
+		install:database:drop
+		">
 
 		<switch value="${database.type}">
 			<case value="postgresql">
@@ -317,12 +310,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 	</target>
 
 	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
-		<!--
-		<unzip dest="${application.base.path}" src="${tools.dir}/${jboss.binaries.file}" />
-		<java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
-			<arg value="${jboss-conf.dir.dest}/InstallConfigRecord.xml"/>
-		</java>
-		-->
 		<java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
 			<arg line="-installGroup ejb3 installpath=${jboss.home}"/>
 		</java>
@@ -341,18 +328,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 		<delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
 
 		<copy file="${pa-ear.dir.dist}/${pa-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+		<!--  Many NCI applications require clm for csm, so you can point this to where you have the version you want to use
 		<copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+		-->
 		<copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
 		
-		<!-- Replace this with file from ivy when project is ivy'fied -->
 	</target>
 
 	<target name="install:jboss:pa-ear:configure" description="Configure pa-ear application" unless="exclude.jboss">
-		<!--
 		<copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		<copy file="${jboss-conf.dir.dest}/${pa-ear.app-sec-conf.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		<copy file="${jboss-conf.dir.dest}/${pa-ear.hibernate.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		-->
 	</target>
 
 	<!-- Wrapper target to configure jboss container, not deployed application -->
@@ -502,7 +486,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 		<mkdir dir="${temp.dir}/pa-ear"/>
 		<unzip src="${pa-ear.dir.dist}/${pa-ear.ear.file}" dest="${temp.dir}/pa-ear"/>
 		<unzip src="${temp.dir}/pa-ear/pa-ejb.jar" dest="${temp.dir}/pa-ejb-jar"/>
-		<copy todir="${temp.dir}/pa-ejb-jar/" file="${jboss-conf.dir.dest}/pa-ds.xml"/>
+		<!--<copy todir="${temp.dir}/pa-ejb-jar/" file="${jboss-conf.dir.dest}/pa-ds.xml"/>-->
+		<delete file="${temp.dir}/pa-ejb-jar/pa-ds.xml"/>
+		<echo message="Fixing jndi.properties"/>
+		<replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.properties" byline="true"
+			match="^(java.naming.provider.url)=.*"
+			replace="# modified by installer ${line.separator}\1=jnp://localhost:${jboss.server.jndi.port}"/>
 
 		<move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
 		<move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar..orig"/>
