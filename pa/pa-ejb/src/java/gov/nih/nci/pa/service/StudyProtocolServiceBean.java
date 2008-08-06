@@ -21,16 +21,17 @@ import org.apache.log4j.Logger;
 public class StudyProtocolServiceBean  implements StudyProtocolServiceLocal, StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
-    
+  
     /**
+     * gets a list StudyProtocl by criteria.
      * @param studyProtocolQueryCriteria studyProtocolQueryCriteria
-     * @return List queryStudyProtocolCriteria
-     * @throws PAException on error
+     * @return pdtos
+     * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> 
                 getStudyProtocolByCriteria(StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
-        LOG.debug("Entering getStudyProtocolByCriteria ");
+            LOG.debug("Entering getStudyProtocolByCriteria ");
         StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         pdtos = pImpl.getStudyProtocolByCriteria(studyProtocolQueryCriteria);
