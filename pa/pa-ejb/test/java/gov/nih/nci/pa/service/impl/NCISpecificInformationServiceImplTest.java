@@ -40,7 +40,7 @@ public class NCISpecificInformationServiceImplTest {
         NCISpecificInformationDAO nciDAO = new NCISpecificInformationDAO();
         NCISpecificInformationDTO nciSpecificInformationDTO = null;
         try {
-        	nciSpecificInformationDTO = nciDAO.getNCISpecificInformation(studyProtocolId);
+            nciSpecificInformationDTO = nciDAO.getNCISpecificInformation(studyProtocolId);
         } catch (PAException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -62,12 +62,12 @@ public class NCISpecificInformationServiceImplTest {
         NCISpecificInformationDAO nciDAO = new NCISpecificInformationDAO();
         NCISpecificInformationDTO nciSpecificInformationDTO = null;
         try {
-        	nciData.setStudyProtocolID(studyProtocolId.toString());
-        	nciData.setMonitorCode("CTEP");
-        	nciData.setReportingDataSetMethodCode("ABBREVIATED");
-        	nciData.setSummaryFourFundingCategoryCode("EXTERNALLY_PEER_REVIEWED");
+            nciData.setStudyProtocolID(studyProtocolId.toString());
+            nciData.setMonitorCode("CTEP");
+            nciData.setReportingDataSetMethodCode("ABBREVIATED");
+            nciData.setSummaryFourFundingCategoryCode("EXTERNALLY_PEER_REVIEWED");
 
-        	nciSpecificInformationDTO = nciDAO.updateNCISpecificInformation(nciData);            
+            nciSpecificInformationDTO = nciDAO.updateNCISpecificInformation(nciData);            
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
