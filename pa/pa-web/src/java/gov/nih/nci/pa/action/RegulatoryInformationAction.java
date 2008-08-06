@@ -70,13 +70,13 @@ public class RegulatoryInformationAction extends ActionSupport {
             Long id = Long.valueOf(getLst());
             regulatoryDTO.setTrialOversgtAuthCountry(
                     PaRegistry.getRegulatoryInformationService().getCountryName(id));
-            regulatoryDTO.setSelectedAuthOrgId(Long.valueOf(selectedAuthOrg).longValue());
+            regulatoryDTO.setSelectedAuthOrgId(Long.valueOf(selectedAuthOrg));
             regulatoryDTO.setTrialOversgtAuthOrgName(PaRegistry.getRegulatoryInformationService().
-                            getRegulatoryAuthorityName(Long.valueOf(selectedAuthOrg).longValue()).get(0).toString());
+                            getRegulatoryAuthorityName(Long.valueOf(selectedAuthOrg)).get(0).toString());
                     PaRegistry.getRegulatoryInformationService().saveRegulatoryInformation(regulatoryDTO);
             } catch (PAException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     return SUCCESS;
             }
             return SUCCESS;         
@@ -101,7 +101,7 @@ public class RegulatoryInformationAction extends ActionSupport {
                         setLst(Long.valueOf(regulatoryDTO.getCountryId()).toString());                      
                 } catch (PAException e) {
                         // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        //e.printStackTrace();
                         return SUCCESS;
                 }
                 return SUCCESS;

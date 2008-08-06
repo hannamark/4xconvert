@@ -34,7 +34,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
         public String execute() {
                 try {
                         regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().
-                            getRegulatoryAuthorityNameId(Long.valueOf(getLst()).longValue());                        
+                            getRegulatoryAuthorityNameId(Long.valueOf(getLst()));                        
                         Long protocolID = (Long) ServletActionContext.getRequest().
                             getSession().getAttribute("protocolId");
                         if (protocolID == null) {
@@ -48,7 +48,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
                          * WILL BE REFACTORED*********
                          *****************************/                 
                         // TODO Auto-generated catch block
-                        e.printStackTrace();
+                       return SUCCESS;
                 }
                 return SUCCESS;
         }
