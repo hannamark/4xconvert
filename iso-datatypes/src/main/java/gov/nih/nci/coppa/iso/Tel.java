@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -92,10 +94,18 @@ public class Tel extends Any {
 
     private static final long serialVersionUID = 1L;
 
-    private String value;
+    private URI value;
     private Set<TelecommunicationAddressUse> use;
     private QSet<Ts> useablePeriod;
 
+    /**
+     * the schemes that this Tel will allow (null to allow any).
+     * @return null.
+     */
+    protected List<String> getAllowedSchemes() {
+        return null;
+    }
+    
     /**
      * @return the useablePeriod
      */
@@ -111,15 +121,32 @@ public class Tel extends Any {
     /**
      * @return the value
      */
-    public String getValue() {
+    public URI getValue() {
         return value;
     }
     /**
      * @param value the value to set
      */
-    public void setValue(String value) {
+    public void setValue(URI value) {
+        if (!isAllowed(value, getAllowedSchemes())) {
+            throw new IllegalArgumentException(value.getScheme()); 
+        }        
         this.value = value;
     }
+    
+    private static boolean isAllowed(URI uri, List<String> allowedSchemes) {
+        return uri != null && isAllowed(uri.getScheme(), allowedSchemes);
+    }
+    
+    /**
+     * @param scheme the scheme part of a URI.
+     * @param allowedSchemes the schemes that we consider to be valid.
+     * @return true if allowedSchemes is null or if it contains scheme.
+     */
+    protected static boolean isAllowed(String scheme, List<String> allowedSchemes) {
+        return allowedSchemes == null || allowedSchemes.contains(scheme);
+    }
+    
     /**
      * @return the use
      */

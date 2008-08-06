@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.iso;
 
+import java.net.URI;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
@@ -16,7 +17,7 @@ public class TelPersonTest {
     private String XTEL = "x-text-tel:";
     private String XFAX = "x-text-fax:";
     private String MAILTO = "mailto:";
-    private String phrase = "this is the way the world ends";
+    private String phrase = "this+is+the+way+the+world+ends";
 
     @Before
     public void init() {
@@ -25,31 +26,34 @@ public class TelPersonTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void testValueAny() {
-        t.setValue(phrase);
+        t.setValue(URI.create(phrase));
     }
 
     @Test
     public void testValueTel() {
-        t.setValue(TEL + phrase);
-        assertEquals(t.getValue(), (TEL + phrase));
+        String u = TEL + phrase;
+        t.setValue(URI.create(u));
+        assertEquals(u, t.getValue().toString());
     }
 
     @Test
     public void testValueXTel() {
-        t.setValue(XTEL + phrase);
-        assertEquals(t.getValue(), (XTEL + phrase));
+        String u = XTEL + phrase;
+        t.setValue(URI.create(u));
+        assertEquals(u, t.getValue().toString());
     }
 
     @Test
     public void testValueXFax() {
-        t.setValue(XFAX + phrase);
-        assertEquals(t.getValue(), (XFAX + phrase));
+        String u = XFAX + phrase;
+        t.setValue(URI.create(u));
+        assertEquals(u, t.getValue().toString());
     }
 
     @Test
     public void testValueMailto() {
-        t.setValue(MAILTO + "not with a bang, but a whimper");
-        assertEquals(t.getValue(), (MAILTO + "not with a bang, but a whimper"));
+        String u = MAILTO + phrase;
+        t.setValue(URI.create(u));
+        assertEquals(u, t.getValue().toString());
     }
-
 }

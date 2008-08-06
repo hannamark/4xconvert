@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents the iso TEL.EMAIL data type.
@@ -92,24 +95,16 @@ package gov.nih.nci.coppa.iso;
 public class TelEmail extends TelPerson {
 
     private static final long serialVersionUID = 1L;
-    private String value;
 
-    /**
-     * @param value the value to set
-     */
-    public void setValue(String value) {
-        if (!(value.startsWith("mailto:"))) {
-            throw new IllegalArgumentException("expecting URL scheme to be defined as mailto:");
-        }
-        this.value = value;
-    }
+    /** scheme. */
+    public static final String SCHEME_MAILTO = "mailto";
+    
+    /** set of allowed URI schemes. */
+    public static final List<String> SCHEMES = Collections.unmodifiableList(Arrays.asList(SCHEME_MAILTO));
 
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
-
-
+    /** {@inheritDoc} */
+    @Override
+    protected List<String> getAllowedSchemes() {
+        return SCHEMES;
+    }    
 }

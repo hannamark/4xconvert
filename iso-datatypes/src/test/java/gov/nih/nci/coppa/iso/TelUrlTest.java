@@ -1,7 +1,9 @@
 package gov.nih.nci.coppa.iso;
 
+import java.net.URI;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,7 +25,7 @@ public class TelUrlTest {
     private String CID = "cid:";
     private String HTTP = "http:";
     private String HTTPS = "https:";
-    private String phrase = "this is the way the world ends";
+    private String phrase = "this+is+the+way+the+world+ends";
 
     @Before
     public void init() {
@@ -32,7 +34,7 @@ public class TelUrlTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void testValueAny() {
-        t.setValue(phrase);
+        t.setValue(URI.create(phrase));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -47,40 +49,31 @@ public class TelUrlTest {
         assertEquals(t.getUse(), Collections.EMPTY_SET);
     }
 
+    public static void testAllowed(Tel t, String... allowed) {
+        for (String scheme : allowed) {
+            String u = scheme + "not+with+a+bang,+but+a+whimper";
+            t.setValue(URI.create(u));
+            assertEquals(u, t.getValue().toString());
+        }
+    }
+    
+    public static void testDisallowed(Tel t, String... disallowed) {
+        for (String scheme : disallowed) {
+            String u = scheme + "this+is+the+way+the+world+ends";
+            URI uri = URI.create(u);
+            try{
+                t.setValue(uri);
+                fail(scheme);
+            } catch (IllegalArgumentException i) {
+            }
+        }
+    }
+    
     @Test
-    public void testValueFile() {
-        t.setValue(FILE + phrase);
-        assertEquals(t.getValue(), (FILE + phrase));
+    public void testSchemes() {
+        testAllowed(t, FILE, NFS, FTP, CID, HTTP, HTTPS);
+        testDisallowed(t, "", "mailto:");
     }
 
-    @Test
-    public void testValueNfs() {
-        t.setValue(NFS + phrase);
-        assertEquals(t.getValue(), (NFS + phrase));
-    }
-
-    @Test
-    public void testValueFtp() {
-        t.setValue(FTP + phrase);
-        assertEquals(t.getValue(), (FTP + phrase));
-    }
-
-    @Test
-    public void testValueCid() {
-        t.setValue(CID + phrase);
-        assertEquals(t.getValue(), (CID + phrase));
-    }
-
-    @Test
-    public void testValueHttp() {
-        t.setValue(HTTP + phrase);
-        assertEquals(t.getValue(), (HTTP + phrase));
-    }
-
-    @Test
-    public void testValueHttps() {
-        t.setValue(HTTPS + "not with a bang, but a whimper");
-        assertEquals(t.getValue(), (HTTPS + "not with a bang, but a whimper"));
-    }
-
+    
 }

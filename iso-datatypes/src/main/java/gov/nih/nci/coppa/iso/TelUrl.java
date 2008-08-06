@@ -82,7 +82,9 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -96,28 +98,32 @@ import java.util.Set;
 public class TelUrl extends Tel {
 
     private static final long serialVersionUID = 1L;
-    private String value;
+    /** scheme. */
+    public static final String SCHEME_FILE = "file";
+    /** scheme. */
+    public static final String SCHEME_NFS = "nfs";
+    /** scheme. */
+    public static final String SCHEME_FTP = "ftp";
+    /** scheme. */
+    public static final String SCHEME_CID = "cid";
+    /** scheme. */
+    public static final String SCHEME_HTTP = "http";
+    /** scheme. */
+    public static final String SCHEME_HTTPS = "https";
+    
+    /** set of allowed URI schemes. */
+    public static final List<String> SCHEMES = Collections.unmodifiableList(Arrays.asList(
+        SCHEME_FILE, 
+        SCHEME_NFS, 
+        SCHEME_FTP, 
+        SCHEME_CID, 
+        SCHEME_HTTP, 
+        SCHEME_HTTPS));
 
-    /**
-     * @param value the value to set
-     */
+    /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("PMD.CyclomaticComplexity")
-    public void setValue(String value) {
-        if (!((value.startsWith("file:")) || (value.startsWith("nfs:")) || (value.startsWith("ftp:"))
-                || (value.startsWith("cid:")) || (value.startsWith("http:")) || (value.startsWith("https:")))) {
-            throw new IllegalArgumentException("expecting URL scheme to be defined as "
-                    + "file:, nfd: ftp:, cid:, http:, or https:");
-        }
-        this.value = value;
-    }
-
-    /**
-     * @return the value
-     */
-    @Override
-    public String getValue() {
-        return value;
+    protected List<String> getAllowedSchemes() {
+        return SCHEMES;
     }
 
     /**
@@ -135,7 +141,4 @@ public class TelUrl extends Tel {
     public void setUse(Set<TelecommunicationAddressUse> use) {
         throw new IllegalArgumentException("TEL.URL does not allow use");
     }
-
-
-
 }

@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.iso;
 
+import java.net.URI;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
@@ -12,7 +13,7 @@ import org.junit.Test;
 public class EdTextTest {
 
     private EdText t;
-    private String phrase = "this is the way the world ends";
+    private String phrase = "this+is+the=way+the+world+ends";
 
     @Before
     public void init() {
@@ -75,7 +76,7 @@ public class EdTextTest {
     @Test
     public void testReference() {
         TelUrl a = new TelUrl();
-        a.setValue("http:"+phrase);
+        a.setValue(URI.create("http:"+phrase));
         t.setReference(a);
         assertEquals(t.getReference(), a);
     }

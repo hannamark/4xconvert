@@ -82,6 +82,10 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 
 /**
  * Represents the iso TEL.PERSON data type.
@@ -92,27 +96,17 @@ package gov.nih.nci.coppa.iso;
 public class TelPerson extends Tel {
 
     private static final long serialVersionUID = 1L;
-    private String value;
-
-    /**
-     * @param value the value to set
-     */
-    public void setValue(String value) {
-        if (!((value.startsWith("tel:")) || (value.startsWith("x-text-fax:")) || (value.startsWith("x-text-tel:"))
-                || (value.startsWith("mailto:")))) {
-            throw new IllegalArgumentException("expecting URL scheme to be defined as "
-                    + "file:, tel: x-text-fax:, x-text-tel:, or mailto:");
-        }
-        this.value = value;
-    }
-
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
-
     
+    /** set of allowed URI schemes. */
+    public static final List<String> SCHEMES = Collections.unmodifiableList(Arrays.asList(
+        TelPhone.SCHEME_TEL,
+        TelPhone.SCHEME_X_TEXT_FAX,
+        TelPhone.SCHEME_X_TEXT_TEL,
+        TelEmail.SCHEME_MAILTO));
 
+    /** {@inheritDoc} */
+    @Override
+    protected List<String> getAllowedSchemes() {
+        return SCHEMES;
+    }
 }
