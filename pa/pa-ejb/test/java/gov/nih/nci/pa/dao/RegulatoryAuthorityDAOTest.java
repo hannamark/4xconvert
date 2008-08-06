@@ -28,16 +28,16 @@ import org.junit.Test;
  */
 public class RegulatoryAuthorityDAOTest {
    
-        private RegulatoryInformationDAO informationDAO; 
-        private Country country;
-        private RegulatoryAuthority authority;
-        private static final int THREE = 3;
-        private static final int EIGHT = 8;
+    private RegulatoryInformationDAO informationDAO; 
+    private Country country;
+    private RegulatoryAuthority authority;
+    private static final int THREE = 3;
+    private static final int EIGHT = 8;
         
-        /**
-         * 
-         * @throws Exception on error
-         */
+    /**
+     * 
+     * @throws Exception on error
+     */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();

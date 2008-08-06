@@ -2,23 +2,20 @@ package gov.nih.nci.pa.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-//import java.util.List;
-
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.NCISpecificInformationDTO;
 import gov.nih.nci.pa.dto.NCISpecificInformationData;
-//import gov.nih.nci.pa.enums.MonitorCode;
+
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.test.util.TestSchema;
 
-import org.apache.log4j.Logger;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public class NCISpecificInformationDAOTest {
-	private static final Logger LOG  = Logger.getLogger(NCISpecificInformationDAOTest.class);
+    
     /**
      * 
      * @throws Exception Exception
@@ -41,7 +38,7 @@ public class NCISpecificInformationDAOTest {
         NCISpecificInformationDAO nciDAO = new NCISpecificInformationDAO();
         NCISpecificInformationDTO nciSpecificInformationDTO = null;
         try {
-        	nciSpecificInformationDTO = nciDAO.getNCISpecificInformation(studyProtocolId);
+            nciSpecificInformationDTO = nciDAO.getNCISpecificInformation(studyProtocolId);
         } catch (PAException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -63,12 +60,12 @@ public class NCISpecificInformationDAOTest {
         NCISpecificInformationDAO nciDAO = new NCISpecificInformationDAO();
         NCISpecificInformationDTO nciSpecificInformationDTO = null;
         try {
-        	nciData.setStudyProtocolID(studyProtocolId.toString());
-        	nciData.setMonitorCode("CTEP");
-        	nciData.setReportingDataSetMethodCode("ABBREVIATED");
-        	nciData.setSummaryFourFundingCategoryCode("EXTERNALLY_PEER_REVIEWED");
+            nciData.setStudyProtocolID(studyProtocolId.toString());
+            nciData.setMonitorCode("CTEP");
+            nciData.setReportingDataSetMethodCode("ABBREVIATED");
+            nciData.setSummaryFourFundingCategoryCode("EXTERNALLY_PEER_REVIEWED");
 
-        	nciSpecificInformationDTO = nciDAO.updateNCISpecificInformation(nciData);            
+            nciSpecificInformationDTO = nciDAO.updateNCISpecificInformation(nciData);            
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -79,9 +76,9 @@ public class NCISpecificInformationDAOTest {
                  nciData.getMonitorCode() );
 /*
         assertEquals("ReportingDataSetMethodCode does not match " , nciSpecificInformationDTO.getReportingDataSetMethodCode().getName() , 
-        		"ABBREVIATED"  );
+                "ABBREVIATED"  );
         assertEquals("SummaryFourFundingCategoryCode does not match " , nciSpecificInformationDTO.getReportingDataSetMethodCode().getName() , 
-        		nciData.getSummaryFourFundingCategoryCode() );
+                nciData.getSummaryFourFundingCategoryCode() );
 */
     }
 }
