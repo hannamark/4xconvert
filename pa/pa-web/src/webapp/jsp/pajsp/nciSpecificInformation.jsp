@@ -20,7 +20,6 @@
     <s:form action="updateNCISpecificInformation"><s:actionerror/>
     	<table width="480">
  			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationDTO.studyProtocolID}"/>
 			 	<tr>
 			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
 				</tr>				  
