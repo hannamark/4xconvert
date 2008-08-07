@@ -66,7 +66,7 @@ Setting up the Eclipse IDE
 -Enter the following names and paths (note if the ivy download has not yet been done
  call "ant ivy-get" to force it before setting up eclipse build path variables):
     JBOSS_HOME  - Enter the path for the JBOSS_HOME directory
-    PA_WEB_HOME - Enter the path of <coppa>\code\target\lib\pa-web
+    PA_WEB_HOME - Enter the path of <coppa>\code\target\pa\lib\pa-web
 
 
 Build/Deployment Steps
