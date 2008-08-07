@@ -58,6 +58,16 @@ IDE - Eclipse
       check show print margin
       set print margin column as 80
       
+Setting up the Eclipse IDE
+--------------------------
+
+-Set up a variable in the Eclipse.Go to Preferences->Java->Build Path->Classpath Variables
+-Click New
+-Enter the following names and paths (note if the ivy download has not yet been done
+ call "ant ivy-get" to force it before setting up eclipse build path variables):
+    JBOSS_HOME  - Enter the path for the JBOSS_HOME directory
+    PA_WEB_HOME - Enter the path of <coppa>\code\target\lib\pa-web
+
 
 Build/Deployment Steps
 ----------------------
@@ -85,18 +95,6 @@ Build and deploy applications:
     6.  Point browser at http://localhost:8080/pa to test web application (userid/password = curator/pass)
     
     
-Setting up the Eclipse IDE
---------------------------
-
--Set up a variable in the Eclipse.Go to Preferences->Java->Build Path->Classpath Variables
--Click New
--Enter the following names and paths (note if the ivy download has not yet been done
- call "ant ivy-get" to force it before setting up eclipse build path variables):
-    JBOSS_HOME  - Enter the path for the JBOSS_HOME directory
-    PA_COMPILE         = <coppa>\code\target\lib\pa-web\compile
-    PA_TEST            = <coppa>\code\target\lib\pa-web\test
-    PA_TEST_JUNIT      = <coppa>\code\target\lib\pa-web\test-junit
-    PA_TEST_SELENIUM   = <coppa>\code\target\lib\pa-web\test-selenium
 
 
 To run selenium tests:
