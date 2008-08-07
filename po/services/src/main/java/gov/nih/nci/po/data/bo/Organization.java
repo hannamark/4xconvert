@@ -118,8 +118,9 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Organizations.
- *
+ * 
  * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.services.organization.OrganizationDTO"
+ *                           implements="gov.nih.nci.services.EntityDTO"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })

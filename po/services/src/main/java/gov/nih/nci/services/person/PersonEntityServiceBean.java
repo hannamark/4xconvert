@@ -128,7 +128,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public PersonDTO getPerson(long id) {
         Person perBO = perService.getPerson(id);
-        return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
+        return PoXsnapshotHelper.<Person, PersonDTO>createSnapshot(perBO);
     }
 
     /**

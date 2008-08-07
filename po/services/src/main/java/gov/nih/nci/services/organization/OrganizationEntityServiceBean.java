@@ -84,10 +84,12 @@ package gov.nih.nci.services.organization;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OrgEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
@@ -153,6 +155,18 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     public Map<String, String[]> validate(OrganizationDTO org) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
         return orgService.validate(orgBO);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<OrganizationDTO> search(OrganizationDTO organization) {
+        Organization orgBO = (Organization) PoXsnapshotHelper.createModel(organization);
+        OrgEntityServiceSearchCriteria criteria = new OrgEntityServiceSearchCriteria();
+        criteria.setOrganization(orgBO);
+        List<Organization> listBOs = getOrganizationServiceBean().search(criteria);
+        return PoXsnapshotHelper.createSnapshotList(listBOs);
     }
 
 }

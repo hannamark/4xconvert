@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -125,5 +126,32 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
         Session s = PoHibernateUtil.getCurrentSession();
         return (Organization) s.get(Organization.class, id);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Organization> search(SearchCriteria<Organization> criteria) {
+        return genericSearch(criteria, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Organization> search(SearchCriteria<Organization> criteria, 
+            PageSortParams<Organization> pageSortParams) {
+        return genericSearch(criteria, pageSortParams);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public int count(SearchCriteria<Organization> criteria) {
+        return genericCount(criteria);
+    }  
 
 }

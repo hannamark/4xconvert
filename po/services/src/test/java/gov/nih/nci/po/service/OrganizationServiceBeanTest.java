@@ -139,16 +139,17 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     public long createOrganization() {
-        return createOrganization("defaultName", "defaultCity");
+        return createOrganization("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
     }
 
-    public long createOrganization(String oName, String cityOrMunicipality) {
+    public long createOrganization(String oName, String cityOrMunicipality, String abbrvName, String desc) {
         try {
             Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", defaultCountry);
             Organization org = new Organization();
             org.setPostalAddress(mailingAddress);
             org.setName(oName);
-            org.setAbbreviatedName("defaultOrgCode");
+            org.setAbbreviatedName(abbrvName);
+            org.setDescription(desc);
             org.setCurationStatus(CurationStatus.NEW);
             long orgId = orgService.create(org);
             PoHibernateUtil.getCurrentSession().flush();
@@ -197,4 +198,54 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     private List<Organization> getAllOrganizations() {
         return PoHibernateUtil.getCurrentSession().createQuery("from " + Organization.class.getName()).list();
     }
+    
+    @Test
+    public void testFindOrgByName() {
+        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
+        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
+        Organization o = new Organization();
+        sc.setOrganization(o);
+        
+        
+        o.setName("%Nam%");
+        assertEquals(1, orgService.count(sc));
+        assertEquals(1, orgService.search(sc).size()); 
+        
+        o.setName("foobar");
+        assertEquals(0, orgService.count(sc));
+        assertEquals(0, orgService.search(sc).size());
+    }
+    
+    @Test
+    public void testFindOrgByDesc() {
+        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
+        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
+        Organization o = new Organization();
+        sc.setOrganization(o);
+        
+        o.setDescription("%Desc%");
+        assertEquals(1, orgService.count(sc));
+        assertEquals(1, orgService.search(sc).size()); 
+        
+        o.setDescription("foobar");
+        assertEquals(0, orgService.count(sc));
+        assertEquals(0, orgService.search(sc).size());
+    }
+    
+    @Test
+    public void testFindOrgByAbbrvName() {
+        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
+        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
+        Organization o = new Organization();
+        sc.setOrganization(o);
+        
+        o.setAbbreviatedName("%Org%");
+        assertEquals(1, orgService.count(sc));
+        assertEquals(1, orgService.search(sc).size()); 
+        
+        o.setAbbreviatedName("foobar");
+        assertEquals(0, orgService.count(sc));
+        assertEquals(0, orgService.search(sc).size());
+    }
+    
 }
