@@ -27,7 +27,7 @@
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
-    <property name="lib.dir" value="${software.dir}/target/lib"/>
+    <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
@@ -208,6 +208,7 @@
             <classpath>
                 <pathelement location="${pa-web.build.outputDir}"/> 
                 <path refid="test.classpath"/>
+                <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
                 <path refid="jboss.classpath"/>  
                 <path refid="ejb.package.classpath"/>           
@@ -389,8 +390,9 @@
             <classpath location="${pa-web.build.coberturaOutputDir}"/>
             <classpath location="${pa-web.build.outputDir}"/>
             <classpath location="${pa-web.build.testOutputDir}"/>
-            <classpath refid="test-cobertura.classpath"/>
             <classpath refid="test.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
             <classpath refid="jboss.client.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <batchtest todir="${pa-web.test.reports}">

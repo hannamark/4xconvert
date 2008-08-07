@@ -24,7 +24,7 @@
     <property name="serverName" value="default"/>
     
     <property name="software.dir" value="${basedir}/../.."/>
-    <property name="lib.dir" value="${software.dir}/target/lib"/>
+    <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
@@ -73,6 +73,7 @@
 
     <path id="build.test.classpath">
         <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${test-junit.jar.dir}"/>
         <fileset dir="${compile.jar.dir}"/>
         <fileset dir="${pa-ejb.output.dir}">
             <include name="pa-ejb.jar"/>
