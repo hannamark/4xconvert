@@ -4,52 +4,88 @@
 <!-- pa-ear ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="pa-ear" default="test-all" basedir=".">
+<project name="pa-ear" default="test-all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property file="${basedir}/../build.properties"/>
     <property name="pa.resourceDir" value="${basedir}/../resources"/>
-	
-    <property name="pa-ear.lib.dir" value="${basedir}/../lib"/>
-    <property name="pa-ear.lib.test.dir" value="${pa-ear.lib.dir}/test"/>
-    <property name="pa-ear.lib.main.dir" value="${pa-ear.lib.dir}/main"/>
+    
     <property name="pa-ear.build.dir" value="${basedir}/target"/>
-    <property name="pa-ear.build.outputDir" value="${pa-ear.build.dir}/classes"/>	
+    <property name="pa-ear.build.outputDir" value="${pa-ear.build.dir}/classes"/>   
     <property name="pa-ear.build.testOutputDir" value="${pa-ear.build.dir}/test-classes"/>
-    <property name="pa-ear.build.resourceDir.0" value="${basedir}/src/resources"/>	
+    <property name="pa-ear.build.resourceDir.0" value="${basedir}/src/resources"/>  
     <property name="pa-ear.test.reports" value="${pa-ear.build.dir}/test-reports"/>
     <property name="pa-ear.build.testDir.0" value="${basedir}/test/java"/>
     <property name="pa-ear.build.testResourceDir.0" value="${basedir}/test/resources"/>
-	<property name="pa-ear.build.finalName" value="pa"/>
-	<property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
-	<property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
-	<property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
-	<property name="pa-web.output.dir" value="${basedir}/../pa-web/target"/>
-    <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>	
-	<property name="serverName" value="default"/>
-	
+    <property name="pa-ear.build.finalName" value="pa"/>
+    <property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
+    <property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
+    <property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
+    <property name="pa-web.output.dir" value="${basedir}/../pa-web/target"/>
+    <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>   
+    <property name="serverName" value="default"/>
+    
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="lib.dir" value="${software.dir}/target/lib"/>
+    <property name="common.dir" value="${software.dir}/build-pa/common"/>
+    <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
+    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
+    <property name="ivy.def.file" location="ivy-pa-ear.xml" />
+    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+
+
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-	  <classpath>
-	    <pathelement location="${pa-ear.lib.dir}/test/ant-contrib.jar"/>
-	  </classpath>
-	</taskdef>
-	
-    <path id="build.test.classpath">
-        <fileset dir="${pa-ear.lib.test.dir}"/>
-        <fileset dir="${pa-ear.lib.main.dir}">
-            <include name="**/*"/>
+
+    <property name="compile.jar.dir" location="${lib.dir}/pa-ear/compile" />
+    <path id="compile.classpath">
+        <fileset dir="${compile.jar.dir}"/>
+    </path>
+
+    <property name="runtime.jar.dir" location="${lib.dir}/pa-ear/runtime" />
+    <path id="runtime.classpath">
+        <fileset dir="${runtime.jar.dir}"/>
+    </path>
+
+    <property name="test.jar.dir" location="${lib.dir}/pa-ear/test" />
+    <path id="test.classpath">
+        <fileset dir="${test.jar.dir}"/>
+    </path>
+
+    <property name="test-junit.jar.dir" location="${lib.dir}/pa-ear/test-junit" />
+    <path id="test-junit.classpath">
+        <fileset dir="${test-junit.jar.dir}"/>
+    </path>
+
+    <path id="jboss.client.classpath">       
+        <fileset dir="${jboss.deploy.directory}/../../../client">
+            <include name="*.jar"/>
         </fileset>
+    </path>
+
+    <path id="ivy.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="${ivy.file}" />
+            <include name="${ivy-core.file}" />
+        </fileset>
+    </path>
+
+
+    <path id="build.test.classpath">
+        <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${compile.jar.dir}"/>
         <fileset dir="${pa-ejb.output.dir}">
             <include name="pa-ejb.jar"/>
         </fileset>
     </path>
-    <path id="jboss.classpath">       
-    	<fileset dir="${jboss.deploy.directory}/../../../client">
-    	    <include name="**/*"/>
-    	</fileset>
-    </path>
-	
+    
+    <!-- ====================================================================== -->
+    <!-- Task definitions                                                       -->
+    <!-- ====================================================================== -->
+
+    <mkdir dir="${lib.dir}"/>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -64,10 +100,10 @@
 
     <target name="compile" description="Compile the code">
         <mkdir dir="${pa-ear.build.outputDir}"/>
-      	<copy todir="${pa-ear.build.outputDir}">
-      		<fileset dir="${pa-ear.build.resourceDir.0}"/>
-      	</copy>
-	</target>
+        <copy todir="${pa-ear.build.outputDir}">
+            <fileset dir="${pa-ear.build.resourceDir.0}"/>
+        </copy>
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Configure tests target                                                     -->
@@ -79,18 +115,18 @@
               overwrite="true">
             <filterset>
                 <filter token="test.java.naming.provider" 
-                	    value="${test.java.naming.provider}"/>
+                        value="${test.java.naming.provider}"/>
             </filterset>
         </copy>
     </target>
     
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
             depends="configure.tests" 
-    	    description="Compile the test code" >
+            description="Compile the test code" >
         <mkdir dir="${pa-ear.build.testOutputDir}"/>
         <javac destdir="${pa-ear.build.testOutputDir}" 
             nowarn="false" 
@@ -124,8 +160,8 @@
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>             
-        	<classpath location="${pa-ear.build.testOutputDir}"/>   
-        	<classpath refid="jboss.classpath"/>  
+            <classpath location="${pa-ear.build.testOutputDir}"/>   
+            <classpath refid="jboss.classpath"/>  
             <classpath refid="build.test.classpath"/>
             <batchtest todir="${pa-ear.test.reports}">
                 <fileset dir="${pa-ear.build.testDir.0}">
@@ -136,33 +172,31 @@
         </junit>
      </target>
 
-	  <!-- ====================================================================== -->
-	  <!-- Package target                                                         -->
-	  <!-- ====================================================================== -->
+    <!-- ====================================================================== -->
+    <!-- Package target                                                         -->
+    <!-- ====================================================================== -->
 
-	  <target name="package" depends="compile" description="Package the application">
+    <target name="package" depends="ivy-get,compile" description="Package the application">
         <available file="${pa-ejb.package}" property="pa-ejb.present"/>
         <fail unless="pa-ejb.present" message="EJB jar file not found."/>
         <available file="${pa-web.package}" property="pa-web.present"/>
         <fail unless="pa-web.present" message="War file not found."/>
-	    <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
-	    <copy file="${pa-ejb.package}" 
-	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
-	    <copy file="${pa-web.package}" 
-	         todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
-	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
-	  		 <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*" 
-	  		          excludes="**/application.xml"/>
-	    </copy>	  	
-	  	<copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
-            <fileset dir="${pa-ear.lib.main.dir}" includes="ehcache-1.2.3.jar"/>
-            <fileset dir="${pa-ear.lib.main.dir}" includes="security-4.0.1.jar"/>
-	  		<fileset dir="${pa-ear.lib.main.dir}" includes="postgresql-8.2-507.jdbc3.jar"/>            
-	    </copy>
-	    <ear destfile="${pa-ear.build.dir}/${pa-ear.build.finalName}.ear" 
-	         basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
-	         compress="false" 
-	         appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
+        <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <copy file="${pa-ejb.package}" 
+             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <copy file="${pa-web.package}" 
+             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
+             <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*" 
+                      excludes="**/application.xml"/>
+        </copy>     
+        <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
+            <fileset dir="${runtime.jar.dir}"/>
+        </copy>
+        <ear destfile="${pa-ear.build.dir}/${pa-ear.build.finalName}.ear" 
+             basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
+             compress="false" 
+             appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
         <copy todir="${pa-ear.build.dir}" overwrite="true">
             <filterset>
                 <filter token="jdbc.driver" value="${jdbc.driver}"/>
@@ -172,13 +206,13 @@
             </filterset>
             <fileset dir="${pa.resourceDir}" includes="login-config.upt"/>
             <fileset dir="${pa.resourceDir}" includes="login-config.pa"/>
-        </copy>	  	
-	  </target>
-	
+        </copy>     
+    </target>
+    
     <!-- ====================================================================== -->
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
-	
+    
     <target name="deploy" description="Deploys the ear for the application">
         <available file="${pa-ear.build.dir}/${pa-ear.ear}" property="pa-ear.ear.present"/>
         <fail unless="pa-ear.ear.present" message="Ear file not found."/>
@@ -189,28 +223,28 @@
     <!-- called only for selenium tests                                         -->
     <!-- ====================================================================== -->
 
-	<target name="start_jboss" depends="package, deploy, configure.tests" 
-		    description="starts the jboss to run selenium test">
-		<jboss-start-jboss jboss.home="${jboss.deploy.directory}/../../../" jboss.server.name="${serverName}"/>
-	</target>
-	
+    <target name="start_jboss" depends="package, deploy, configure.tests" 
+            description="starts the jboss to run selenium test">
+        <jboss-start-jboss jboss.home="${jboss.deploy.directory}/../../../" jboss.server.name="${serverName}"/>
+    </target>
+    
     <!-- 
     jboss-start-jboss macro will start the jboss instance
     usage: <jboss-start-jboss jboss.home="${jboss.home}"/>
                 jboss.home is the location where Jboss is installed                       
     -->
-    <macrodef name="jboss-start-jboss" description="Starts a local JBoss instance">    	
+    <macrodef name="jboss-start-jboss" description="Starts a local JBoss instance">     
          <attribute name="jboss.home" default="${jboss.home}" />
          <attribute name="jboss.server.name" default="${jboss.server.name}" />
               <sequential>
-                     <available file="@{jboss.home}/bin" property="jboss.bin.exists"/>              			
+                     <available file="@{jboss.home}/bin" property="jboss.bin.exists"/>                          
                          <if>
                              <isset property="jboss.bin.exists"/>
                                 <then>
                                     <echo message="Starting JBoss instance at @{jboss.home} and @{jboss.server.name} with start_jboss" />
                                     <exec os="Windows XP, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
                                            <env key="NOPAUSE" value="true" />
-                                           <arg line="/c run.bat" />                                    	   
+                                           <arg line="/c run.bat" />                                           
                                     </exec>
                                 </then>
                               <else>
@@ -226,15 +260,15 @@
                                     </exec>
                                     <exec os="Windows_NT, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
                                            <env key="NOPAUSE" value="true" />
-                                           <arg line="/c run.bat" />                                    	   
+                                           <arg line="/c run.bat" />                                           
                                     </exec>
                                     <sleep seconds="15" />
                               </else>
                          </if>
-              	<ant target="waitfor-jboss"/>
-              	<ant target="start-selenium-server"/>
-              	<ant target="test-selenium-class" dir="../pa-web"/>
-              	<ant target="stop-jboss"/>
+                <ant target="waitfor-jboss"/>
+                <ant target="start-selenium-server"/>
+                <ant target="test-selenium-class" dir="../pa-web"/>
+                <ant target="stop-jboss"/>
                 </sequential>
     </macrodef>
     <!-- ====================================================================== -->
@@ -243,11 +277,11 @@
 
     <target name="ear" depends="package,deploy" description="Builds and deploys the ear"/>
 
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
     <!-- Start the selenium server                                              -->
     <!-- ====================================================================== -->
   
-	<target name="start-selenium-server">
+    <target name="start-selenium-server">
         <java jar="${pa-ear.lib.dir}/main/selenium-server-1.0-beta-1-standalone.jar" fork="true" spawn="true">
             <arg line="-timeout 30"/>
             <jvmarg value="-Dhttp.proxyHost=proxy.corporate.com"/>
@@ -255,26 +289,61 @@
         </java>
     </target>
 
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
     <!-- Wait for jboss to start                                                -->
     <!-- ====================================================================== -->
     
-	<target name="waitfor-jboss">
-		<echo>JBOSS startup please wait..............................</echo>
+    <target name="waitfor-jboss">
+        <echo>JBOSS startup please wait..............................</echo>
         <waitfor maxwait="120" maxwaitunit="second" checkevery="20" checkeveryunit="second">
             <http url="http://localhost:${jboss.port}/pa"/>
         </waitfor>
     </target>
-	
-	<!-- ====================================================================== -->
+    
+    <!-- ====================================================================== -->
     <!-- Stop the jboss server                                                  -->
     <!-- ====================================================================== -->
-	
+    
     <target name="stop-jboss" description="Stop the JBoss server">       
         <exec dir="${jboss.deploy.directory}/../../../bin" executable="cmd.exe" os="Windows XP, Windows_NT">
             <arg line="/c shutdown.bat -S"/>
             <env key="NOPAUSE" value="true"/>
         </exec>
     </target>
-	
+
+    <!-- ====================================================================== -->
+    <!-- Ivy Targets                                                            -->
+    <!-- ====================================================================== -->
+    <target name="init:ivy">
+        <mkdir dir="${local.repo.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <property name="ivy.dep.file" value="${ivy.def.file}"/>
+        <ivy:settings file="${ivy.settings.file}" />
+    </target>
+    <target name="ivy-test-junit" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-junit" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
+    </target>
+    <target name="ivy-compile" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="compile" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+    </target>
+    <target name="ivy-test" 
+            depends="init:ivy,ivy-test-junit">
+            <ivy:resolve refresh="true" conf="test" />
+            <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="test" />
+    </target>
+    <target name="ivy-runtime" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="runtime" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
+    </target>
+    <target name="ivy-get" 
+            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime" 
+            description="Updates the local ivy repository">
+    </target>
+    <target name="ivy-clean" description="Delete jars.">
+        <delete dir="${lib.dir}/pa-ear"/>
+    </target>
+
+    
 </project>

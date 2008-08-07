@@ -14,6 +14,6 @@
     </web>
   </module>
   <module><java>lib/security-4.0.1.jar</java></module>
-  <module><java>lib/ehcache-1.2.3.jar</java></module>
-  <module><java>lib/postgresql-8.2-507.jdbc3.jar</java></module>
+  <module><java>lib/ehcache-1.2.4.jar</java></module>
+  <module><java>lib/postgresql-jdbc3-8.3-603.jar</java></module>
 </application>
