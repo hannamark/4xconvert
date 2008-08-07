@@ -15,9 +15,12 @@ public class CheckboxlistTag extends ActionSupport {
   private static final long serialVersionUID = 1L;
   private List trialStartDate;
   private List primaryCompletionDate; 
-/**
- * 
- */
+  
+  /**
+   * @return Action result.
+   * @throws Exception xxx.
+   */
+  @SuppressWarnings("PMD.SignatureDeclareThrowsException")
   public String execute()throws Exception {
     trialStartDate = new ArrayList();
     trialStartDate.add("Actual");
@@ -29,17 +32,17 @@ public class CheckboxlistTag extends ActionSupport {
 
     return SUCCESS;
   }
-/**
- * 
- * @return
- */
+
+  /**
+   * @return Trial start date.
+   */
   public List getTrialStartDate() {
     return trialStartDate;
   }
-/**
- * 
- * @return
- */
+
+  /**
+   * @return Trial completion date.
+   */
   public List getPrimaryCompletionDate() {
     return primaryCompletionDate;
   }

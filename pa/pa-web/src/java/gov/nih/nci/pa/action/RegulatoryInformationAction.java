@@ -90,18 +90,19 @@ public class RegulatoryInformationAction extends ActionSupport {
          //TODO the line below needs to be removed when this page is called from menubar
         HibernateUtil.getHibernateHelper().openAndBindSession(); 
         try {
-                countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
-                StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
-                ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-                //regulatoryDTO.setProtocolID(spDTO.getStudyProtocolId());
-                        regulatoryDTO = PaRegistry.getRegulatoryInformationService().getProtocolForEdit(spDTO.getStudyProtocolId());
-                        setLst(Long.valueOf(regulatoryDTO.getCountryId()).toString());                      
-                } catch (PAException e) {
-                        // TODO Auto-generated catch block
-                        //e.printStackTrace();
-                        return SUCCESS;
-                }
-                return SUCCESS;
+            countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+            StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
+            ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+            //regulatoryDTO.setProtocolID(spDTO.getStudyProtocolId());
+            regulatoryDTO = PaRegistry.getRegulatoryInformationService()
+                                      .getProtocolForEdit(spDTO.getStudyProtocolId());
+            setLst(Long.valueOf(regulatoryDTO.getCountryId()).toString());                      
+        } catch (PAException e) {
+        // TODO Auto-generated catch block
+            //e.printStackTrace();
+            return SUCCESS;
+        }
+        return SUCCESS;
     }
 
         /**
