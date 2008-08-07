@@ -3,10 +3,30 @@
 		<profile>
 			<id>bda</id>
 			<properties>
+				<!-- used in maven build process -->
 				<jboss.home>@jboss.home@</jboss.home>
 				<schema.file>@db.po.file.name@</schema.file>
 				<hbm2ddl.drop.table>@db.po.generate.drop@</hbm2ddl.drop.table>
 				<hbm2ddl.create.table>@db.po.generate.create@</hbm2ddl.create.table>
+
+				<!-- Maven uses these properties to maniuplate files, we are inserting tokens so that they can be de-tokenized by the install:jboss:po-ear:re-create target -->
+				<!-- po-ds.xml -->
+				<database.url.prefix>jdbc:postgresql://%%database.server%%:%%database.port%%</database.url.prefix>
+				<database.name>%%database.name%%</database.name>
+				<jdbc.username>%%database.user%%</jdbc.username>
+				<jdbc.password>%%database.password%%</jdbc.password>
+				<!-- security-config.xml -->
+				<!-- don't use these now since values in file are blank, have to add prop for userid
+				<ldap.host.url>%%ldap.url%%</ldap.host.url>
+				<ldap.searchable.base>%%ldap.basedn%%</ldap.searchable.base>
+				<ldap.user.id.label>%%ldap.user.field%%</ldap.user.id.label>
+				-->
+				<jdbc.driverClassName>%%database.driver%%</jdbc.driverClassName>
+				<!-- po-log4j.xml -->
+				<log.level.nci-commons>%%app.log.level%%</log.level.nci-commons>
+				<log.level.po>%%app.log.level%%</log.level.po>
+				<!-- jndi.properties -->
+				<jboss.naming.port>%%jboss.server.jndi.port%%</jboss.naming.port>
 			</properties>
 		</profile>
 	</profiles>

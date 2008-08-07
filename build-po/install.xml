@@ -497,9 +497,59 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<delete dir="${temp.dir}/po-ear"/>
 		<mkdir dir="${temp.dir}/po-ear"/>
 		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/po-ear"/>
-		<copy todir="${temp.dir}/po-ear/" file="${jboss-conf.dir.dest}/po-ds.xml"/>
+		<unzip src="${temp.dir}/po-ear/po-web.war" dest="${temp.dir}/po-web"/>
+		<property name="file.list" value="po-ear/po-ds.xml,po-ear/po-log4j.xml,po-ear/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties"/>
+
+		<for list="${file.list}" param="file.relative.name">
+			<sequential>
+				<propertyregex property="file.name"
+					input="@{file.relative.name}"
+					regexp="^.*\/(.*)"
+					select="\1"
+					override="true"
+					/>
+				<propertyregex property="relative.dir"
+					input="@{file.relative.name}"
+					regexp="^(.*)\/.*"
+					select="\1"
+					override="true"
+					/>
+				<echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+				<replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+				<copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+					<filterset>
+						<filter token="database.server" value="${database.server}"/>
+						<filter token="database.port" value="${database.port}"/>
+						<filter token="database.name" value="${database.name}"/>
+						<filter token="database.user" value="${database.user}"/>
+						<filter token="database.password" value="${database.user}"/>
+						<filter token="database.driver" value="${database.driver}"/>
+						<!-- not needed for now
+						<filter token="ldap.url" value="${ldap.url}"/>
+						<filter token="ldap.base.dn" value="${ldap.base.dn}"/>
+						<filter token="ldap.user.field" value="userid"/>
+						-->
+						<filter token="app.log.level" value="DEBUG"/>
+						<filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+					</filterset>
+				</copy>
+				<copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+			</sequential>
+		</for>
 
 		<move file="${po-ear.dir.dist}/${po-ear.ear.file}" tofile="${po-ear.dir.dist}/${po-ear.ear.file}.orig"/>
+
+		<unzip src="${temp.dir}/po-ear/po-web.war" dest="${temp.dir}/po-web"/>
+		
+		<war destfile="${temp.dir}/po-ear/po-web.war"
+			compress="false" 
+			webxml="${temp.dir}/po-web/WEB-INF/web.xml">
+
+			<lib dir="${temp.dir}/po-web/WEB-INF/lib"/>
+			<classes dir="${temp.dir}/po-web/WEB-INF/classes"/>
+			<webinf dir="${temp.dir}/po-web/WEB-INF" excludes="web.xml"/>
+			<fileset dir="${temp.dir}/po-web"/>
+		</war>
 
 		<ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}" 
 			basedir="${temp.dir}/po-ear" 
