@@ -20,33 +20,38 @@ public class AdxpCntTest {
     
     
     @Test(expected = IllegalArgumentException.class)
-    public void testAddressPartTypeCty() {
-        a.setType(AddressPartType.CTY);
+    public void testSetCodingSystemBad() {
+        a.setCodeSystem("foo");
+    }
+    
+    public void testSetCodingSystem() {
+        a.setCodeSystem(AdxpCnt.OID);
+    }
+
+    public void testCodingSystem() {
+        assertEquals(AdxpCnt.OID, a.getCodeSystem());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddressPartTypeAl() {
-        a.setType(AddressPartType.AL);
+    public void testCodeBad() {
+        a.setCode("China");
     }
-
+    
     @Test(expected = IllegalArgumentException.class)
-    public void testAddressPartTypeDal() {
-        a.setType(AddressPartType.DAL);
+    public void testCodeBad2() {
+        a.setCode("US");
     }
-
     @Test(expected = IllegalArgumentException.class)
-    public void testAddressPartTypeSta() {
-        a.setType(AddressPartType.STA);
+    public void testCodeBad3() {
+        a.setCode("USa");
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddressPartTypeZip() {
-        a.setType(AddressPartType.ZIP);
+    
+    public void testCode() {
+        a.setCode("USA");
     }
 
     @Test
     public void testAddressPartTypeCnt() {
-        a.setType(AddressPartType.CNT);
         assertEquals(a.getType(), AddressPartType.CNT);
     }
 

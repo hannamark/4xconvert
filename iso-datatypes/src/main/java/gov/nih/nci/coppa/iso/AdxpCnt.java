@@ -82,28 +82,81 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.Locale;
+
 /**
- * Represents the iso data type.
+ * The type CNT (Country) is bound to the 3 letter codes defined in ISO 3166.
  * @author lpower
  *
  */
 public class AdxpCnt extends Adxp {
+
+    /** HL7 OID for Country. {@value} */
+    public static final String OID = "2.16.840.1.113883.11.171";
+    
+    private static final int CODE_LENGTH = 3;
+    /**
+     *  always returns {@link #OID} = {@value #OID}.
+     *  @return {@link #OID}
+     */
+    @Override
+    public String getCodeSystem() {
+        return OID;
+    }
+
+    /**
+     * @param codeSystem no need to set it to {@code "2.16.840.1.113883.11.171"}.
+     * @deprecated read-only property
+     */
+    @Deprecated
+    @Override
+    public void setCodeSystem(String codeSystem) {
+        if (!codeSystem.equals(OID)) {
+            throw new IllegalArgumentException("codeSystem is fix to " + OID);
+        }
+    }
+
+    /**
+     * http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3.
+     * @param code 3 letter uppercase iso code.
+     */
+    @SuppressWarnings("PMD.UnnecessaryCaseChange")
+    @Override
+    public void setCode(String code) {
+        if (code.length() != CODE_LENGTH || !code.toUpperCase(Locale.ENGLISH).equals(code)) {
+            throw new IllegalArgumentException("must be ISO 3166-1 alpha-3 code");
+        }
+        super.setCode(code);
+    }
+
+    /**
+     * @param  value value.
+     * @deprecated use {@link #setCode(String)} instead.
+     */
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Deprecated
+    @Override    
+    public void setValue(String value) {
+        // not sure if this field is used at all.
+        super.setValue(value);
+    }
+
+    /**
+     * @return value.
+     * @deprecated use {@link #getCode()} instead.
+     */
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Deprecated
+    @Override
+    public String getValue() {
+        // not sure if this field is used at all.
+        return super.getValue();
+    }
     
     /**
-     * @return the type
+     * @return the type {@link AddressPartType#CNT}
      */
     public AddressPartType getType() {
         return AddressPartType.CNT;
     }
-
-    /**
-     * @param atype the type to set
-     */
-    public void setType(AddressPartType atype) {
-        if (!atype.equals(AddressPartType.CNT)) {
-            throw new IllegalArgumentException("Expecting AddressPartType.CNT");
-        }
-    }
-
-
 }
