@@ -5,28 +5,31 @@
 <!-- ====================================================================== -->
 
 <project name="pa-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property file="${basedir}/../build.properties"/>
-    
-    <property name="pa.resourceDir" value="${basedir}/../resources"/>
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property file="${software.dir}/pa/build.properties"/>
+    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
+
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
     <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
-    <property name="pa-ejb.build.dir" value="${basedir}/../pa-ejb/target"/>
+
+    <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
 
     <property name="pa-web.build.finalName" value="pa-web"/>
-    <property name="pa-web.build.dir" value="${basedir}/target"/>
+    <property name="pa-web.build.dir" value="${pa.dir}/pa-web/target"/>
     <property name="pa-web.build.outputDir" value="${pa-web.build.dir}/classes"/>
-    <property name="pa-web.build.srcDir.0" value="${basedir}/src/java"/>
-    <property name="pa-web.build.resourceDir.0" value="${basedir}/src/resources"/>
+    <property name="pa-web.build.srcDir.0" value="${pa.dir}/pa-web/src/java"/>
+    <property name="pa-web.build.resourceDir.0" value="${pa.dir}/pa-web/src/resources"/>
     <property name="pa-web.build.testOutputDir" value="${pa-web.build.dir}/test-classes"/>
-    <property name="pa-web.build.testDir.0" value="${basedir}/test/java"/>
-    <property name="pa-web.build.testResourceDir.0" value="${basedir}/test/resources"/>
-    <property name="pa-web.test.reports" value="${pa-web.build.dir}/test-reports"/>
-    <property name="pa-web.coverage.reports" value="${pa-web.build.dir}/coverage-reports"/>
-    <property name="pa-web.reporting.outputDirectory" value="${pa-web.build.dir}/site"/>
+    <property name="pa-web.build.testDir.0" value="${pa.dir}/pa-web/test/java"/>
+    <property name="pa-web.build.testResourceDir.0" value="${pa.dir}/pa-web/test/resources"/>
+    <property name="pa-web.test.reports" value="${pa.report.dir}/pa-web/test-reports"/>
+    <property name="pa-web.coverage.reports" value="${pa.report.dir}/pa-web/coverage-reports"/>
+    <property name="pa-web.reporting.outputDirectory" value="${pa.report.dir}/pa-web/site"/>
     <property name="pa-web.war" value="${pa-web.build.finalName}.war"/>
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
 
-    <property name="software.dir" value="${basedir}/../.."/>
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
@@ -96,7 +99,7 @@
         </fileset>
     </path>
     <path id="ejb.package.classpath">       
-        <fileset dir="${basedir}/../pa-ejb/target">
+        <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
         </fileset>
     </path> 
@@ -112,6 +115,7 @@
     <!-- ====================================================================== -->
     
     <mkdir dir="${lib.dir}"/>
+    <mkdir dir="${pa.report.dir}/pa-web"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     
@@ -121,6 +125,7 @@
 
     <target name="clean" description="Clean the output directory">
         <delete dir="${pa-web.build.dir}"/>
+        <delete dir="${pa.report.dir}/pa-web"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -163,7 +168,7 @@
               overwrite="true">
             <filterset>
                 <filter token="test.java.security.login.config" 
-                        value="${basedir}/target/test-classes/login.config"/>
+                        value="${pa-web.build.testOutputDir}/login.config"/>
             </filterset>
         </copy>
         <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties"
@@ -182,7 +187,7 @@
         <filter token="jdbc.url" value="${jdbc.url}"/> 
         <filter token="db.username" value="${db.username}"/>
         <filter token="db.password" value="${db.password}"/>                                            
-        <copy file="${basedir}/../resources/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />                             
+        <copy file="${pa.resourceDir}/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />                             
     </target>
     
     <!-- ====================================================================== -->
@@ -281,7 +286,7 @@
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
-            <formatter type="plain" toFile="${pa-web.build.dir}/checkstyle.txt"/>
+            <formatter type="plain" toFile="${pa.report.dir}/pa-web/checkstyle.txt"/>
         </checkstyle>
     </target>
 
@@ -297,8 +302,8 @@
         <pmd shortFilenames="true" failOnRuleViolation="true" 
                                    rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
-            <formatter type="text" toFile="${pa-web.build.dir}/pmd.txt"/>
-            <formatter type="xml"  toFile="${pa-web.build.dir}/pmd.xml"/>
+            <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
+            <formatter type="xml"  toFile="${pa.report.dir}/pa-web/pmd.xml"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
@@ -314,7 +319,7 @@
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
-            <formatter type="plain" toFile="${pa-web.build.dir}/simian.txt"/>
+            <formatter type="plain" toFile="${pa.report.dir}/pa-web/simian.txt"/>
             <formatter type="plain"/>
         </simian>
     </target>
@@ -339,12 +344,12 @@
 
         <war destfile="${pa-web.build.dir}/${pa-web.war}" 
              compress="false" 
-             webxml="${basedir}/src/webapp/WEB-INF/web.xml">
+             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">
             
             <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${pa-web.build.outputDir}"/>
-            <webinf dir="${basedir}/src/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${basedir}/src/webapp"/>
+            <webinf dir="${pa.dir}/pa-web/src/webapp/WEB-INF" excludes="web.xml"/>
+            <fileset dir="${pa.dir}/pa-web/src/webapp"/>
         </war>
     </target>
 

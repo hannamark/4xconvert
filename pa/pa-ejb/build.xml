@@ -5,28 +5,31 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property file="${basedir}/../build.properties"/>
-    <property name="jboss.server.jndi.port" value="1099" />
-    
-    <property name="pa.resourceDir" value="${basedir}/../resources"/>
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property file="${software.dir}/pa/build.properties"/>
+    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
+
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
     <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
 
+    <property name="jboss.server.jndi.port" value="1099" />
+
     <property name="pa-ejb.build.finalName" value="pa-ejb"/>
-    <property name="pa-ejb.build.dir" value="${basedir}/target"/>
+    <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
     <property name="pa-ejb.build.outputDir" value="${pa-ejb.build.dir}/classes"/>
-    <property name="pa-ejb.build.srcDir.0" value="${basedir}/src/java"/>
-    <property name="pa-ejb.build.resourceDir.0" value="${basedir}/src/resources"/>
+    <property name="pa-ejb.build.srcDir.0" value="${pa.dir}/pa-ejb/src/java"/>
+    <property name="pa-ejb.build.resourceDir.0" value="${pa.dir}/pa-ejb/src/resources"/>
     <property name="pa-ejb.build.testOutputDir" value="${pa-ejb.build.dir}/test-classes"/>
-    <property name="pa-ejb.build.testDir.0" value="${basedir}/test/java"/>
-    <property name="pa-ejb.build.testResourceDir.0" value="${basedir}/test/resources"/>
-    <property name="pa-ejb.test.reports" value="${pa-ejb.build.dir}/test-reports"/>
-    <property name="pa-ejb.coverage.reports" value="${pa-ejb.build.dir}/coverage-reports"/>
-    <property name="pa-ejb.reporting.outputDirectory" value="${pa-ejb.build.dir}/site"/>
+    <property name="pa-ejb.build.testDir.0" value="${pa.dir}/pa-ejb/test/java"/>
+    <property name="pa-ejb.build.testResourceDir.0" value="${pa.dir}/pa-ejb/test/resources"/>
+    <property name="pa-ejb.test.reports" value="${pa.report.dir}/pa-ejb/test-reports"/>
+    <property name="pa-ejb.coverage.reports" value="${pa.report.dir}/pa-ejb/coverage-reports"/>
+    <property name="pa-ejb.reporting.outputDirectory" value="${pa.report.dir}/pa-ejb/site"/>
     <property name="pa-ejb.jar" value="${pa-ejb.build.finalName}.jar"/>
     <property name="pa-ejb.build.coberturaOutputDir" value="${pa-ejb.build.dir}/generated-classes"/>
 
-    <property name="software.dir" value="${basedir}/../.."/>
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
@@ -106,6 +109,7 @@
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
     <mkdir dir="${lib.dir}"/>
+    <mkdir dir="${pa.report.dir}/pa-ejb"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     <!-- ====================================================================== -->
@@ -114,6 +118,7 @@
 
     <target name="clean" description="Clean the output directory">
         <delete dir="${pa-ejb.build.dir}"/>
+        <delete dir="${pa.report.dir}/pa-ejb"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -285,7 +290,7 @@
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
-            <formatter type="plain" toFile="${pa-ejb.build.dir}/checkstyle.txt"/>
+            <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/checkstyle.txt"/>
         </checkstyle>
     </target>
 
@@ -301,8 +306,8 @@
         <pmd shortFilenames="true" failOnRuleViolation="true" 
                                    rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
-            <formatter type="text" toFile="${pa-ejb.build.dir}/pmd.txt"/>
-            <formatter type="xml"  toFile="${pa-ejb.build.dir}/pmd.xml"/>
+            <formatter type="text" toFile="${pa.report.dir}/pa-ejb/pmd.txt"/>
+            <formatter type="xml"  toFile="${pa.report.dir}/pa-ejb/pmd.xml"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
@@ -319,7 +324,7 @@
 
         <simian>
             <fileset dir="src" includes="**/*.java"/>
-            <formatter type="plain" toFile="${pa-ejb.build.dir}/simian.txt"/>
+            <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/simian.txt"/>
             <formatter type="plain"/>
         </simian>
     </target>

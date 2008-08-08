@@ -5,25 +5,27 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ear" default="test-all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property file="${basedir}/../build.properties"/>
-    <property name="pa.resourceDir" value="${basedir}/../resources"/>
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property file="${software.dir}/pa/build.properties"/>
+    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
     
-    <property name="pa-ear.build.dir" value="${basedir}/target"/>
+    <property name="pa-ear.build.dir" value="${pa.dir}/pa-ear/target"/>
     <property name="pa-ear.build.outputDir" value="${pa-ear.build.dir}/classes"/>   
     <property name="pa-ear.build.testOutputDir" value="${pa-ear.build.dir}/test-classes"/>
-    <property name="pa-ear.build.resourceDir.0" value="${basedir}/src/resources"/>  
+    <property name="pa-ear.build.resourceDir.0" value="${pa.dir}/pa-ear/src/resources"/>  
     <property name="pa-ear.test.reports" value="${pa-ear.build.dir}/test-reports"/>
-    <property name="pa-ear.build.testDir.0" value="${basedir}/test/java"/>
-    <property name="pa-ear.build.testResourceDir.0" value="${basedir}/test/resources"/>
+    <property name="pa-ear.build.testDir.0" value="${pa.dir}/pa-ear/test/java"/>
+    <property name="pa-ear.build.testResourceDir.0" value="${pa.dir}/pa-ear/test/resources"/>
     <property name="pa-ear.build.finalName" value="pa"/>
     <property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
-    <property name="pa-ejb.output.dir" value="${basedir}/../pa-ejb/target"/>
+    <property name="pa-ejb.output.dir" value="${pa.dir}//pa-ejb/target"/>
     <property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
-    <property name="pa-web.output.dir" value="${basedir}/../pa-web/target"/>
+    <property name="pa-web.output.dir" value="${pa.dir}/pa-web/target"/>
     <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>   
     <property name="serverName" value="default"/>
     
-    <property name="software.dir" value="${basedir}/../.."/>
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
@@ -85,6 +87,7 @@
     <!-- ====================================================================== -->
 
     <mkdir dir="${lib.dir}"/>
+    <mkdir dir="${pa.report.dir}/pa-ear"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     <!-- ====================================================================== -->
@@ -93,6 +96,7 @@
 
     <target name="clean" description="Clean the output directory">
         <delete dir="${pa-ear.build.dir}"/>
+        <delete dir="${pa.report.dir}/pa-ear"/>
     </target>
 
     <!-- ====================================================================== -->
