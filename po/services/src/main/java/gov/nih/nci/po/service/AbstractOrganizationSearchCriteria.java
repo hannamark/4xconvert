@@ -24,22 +24,6 @@ public abstract class AbstractOrganizationSearchCriteria extends AbstractSearchC
     static final String ORGANIZATION_ID_PROPERTY = "id";
     static final String ORGANIZATION_NAME_PROPERTY = "name";
 
-    private boolean bJoinMailingAddress;
-    private boolean bJoinMailingAddressCountry;
-
-    /**
-     * Used to control whether the Organization.mailingAddress is available to getQueryWhereClause().
-     */
-    protected void joinMailingAddress() {
-        bJoinMailingAddress = true;
-    }
-
-    /**
-     * Used to control whether the Organization.mailingAddress.country is available to getQueryWhereClause().
-     */
-    protected void joinMailingAddressCountry() {
-        bJoinMailingAddressCountry = true;
-    }
     /**
      * {@inheritDoc}
      */
@@ -58,16 +42,6 @@ public abstract class AbstractOrganizationSearchCriteria extends AbstractSearchC
         }
         queryString.append(FROM);
         queryString.append(tableAlias(Organization.class, ORGANIZATION_ALIAS));
-        if (this.bJoinMailingAddress) {
-            String joinAddressStr = ORGANIZATION_ALIAS + ".primaryContactInfo.mailingAddress as "
-                    + ORGANIZATION_ADDRESS_ALIAS;
-            queryString.append(JOIN).append(joinAddressStr);
-        }
-        if (this.bJoinMailingAddressCountry) {
-            String joinCountryStr = ORGANIZATION_ALIAS + ".primaryContactInfo.mailingAddress.country as "
-                    + ORGANIZATION_COUNTRY_ALIAS;
-            queryString.append(JOIN).append(joinCountryStr);
-        }
 
         queryString.append(getQueryWhereClause(namedParameters, ORGANIZATION_ALIAS));
 
