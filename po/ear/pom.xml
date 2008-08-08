@@ -13,7 +13,6 @@
     <url>../../ear/target/site</url>
 
     <properties>
-        <!-- specify real path so cargo:deploy deploys for real -->
         <test.selenium.server.port>60001</test.selenium.server.port>
         <test.selenium.server.debug>true</test.selenium.server.debug>        
         <test.selenium.browser>*chrome</test.selenium.browser>
