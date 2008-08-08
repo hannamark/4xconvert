@@ -559,7 +559,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		build:all,
 		dist:installer
 		">
-		<!--
 		<if>
 			<not>   
 				<contains string="${properties.file}" substring="install"/>
@@ -568,7 +567,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<fail message="When calling install targets the properties.file property, '${properties.file}', must contain 'install' in the name."/>
 			</then> 
 		</if>   
-		-->
 		<deploy-files
 			dist.file="${pa-ear.install.zip.file}"
 			/>
