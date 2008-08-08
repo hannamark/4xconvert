@@ -14,7 +14,6 @@
 
     <properties>
         <!-- specify real path so cargo:deploy deploys for real -->
-        <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
         <test.selenium.server.port>60001</test.selenium.server.port>
         <test.selenium.server.debug>true</test.selenium.server.debug>        
         <test.selenium.browser>*chrome</test.selenium.browser>

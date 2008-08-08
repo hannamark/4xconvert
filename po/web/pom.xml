@@ -16,6 +16,7 @@
     <properties>
         <showErrorStackTraces>true</showErrorStackTraces>
         <defaultPageSize>20</defaultPageSize>
+        <jboss.home>target/jbossDeploy</jboss.home>
     </properties>
 
     <dependencies>

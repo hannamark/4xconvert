@@ -13,7 +13,7 @@
 
     <properties>
         <!-- defaulting to bogus so cargo:deploy works at root pom -->
-        <jboss.home>target/jbossDeploy</jboss.home>
+        <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
         <jboss.port>8080</jboss.port>
         <jboss.naming.port>1099</jboss.naming.port>
