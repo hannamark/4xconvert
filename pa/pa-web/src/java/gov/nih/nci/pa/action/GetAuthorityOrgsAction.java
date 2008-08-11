@@ -5,121 +5,125 @@ import java.util.List;
 import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.service.NoStudyProtocolFoundException;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Action class for getting a list of authority orgs for a selected country.
- *  
+ *
  * @author Harsha
- * @since 08/05/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- * 
+ * @since 08/05/2008 copyright NCI 2007. All rights reserved. This code may not
+ *        be used without the express written permission of the copyright
+ *        holder, NCI.
+ *
  */
-public class GetAuthorityOrgsAction extends ActionSupport {    
-        private static final long serialVersionUID = 1L;
-        private String lst = null;
-        private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = null;
-        private List<String> lstList = null;
-        private String trialOversgtAuthCountry = null;
-        private String selectedAuthOrg = null;
+public class GetAuthorityOrgsAction extends ActionSupport {
+    private static final long serialVersionUID = 1L;
+    private String lst = null;
+    private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = null;
+    private List<String> lstList = null;
+    private String trialOversgtAuthCountry = null;
+    private String selectedAuthOrg = null;
 
-        /**
-         * @return String success or failure
-         */
-        public String execute() {
-                try {
-                        regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().
-                            getRegulatoryAuthorityNameId(Long.valueOf(getLst()));                        
-                        Long protocolID = (Long) ServletActionContext.getRequest().
-                            getSession().getAttribute("protocolId");
-                        if (protocolID == null) {
-                                protocolID = 2L;
-                        }
-                        RegulatoryAuthOrgDTO regulatoryAuthOrgDTO = PaRegistry.getRegulatoryInformationService().
-                            getRegulatoryAuthOrgForEdit(protocolID);
-                        setSelectedAuthOrg(Long.valueOf(regulatoryAuthOrgDTO.getId()).toString());
-                } catch (PAException e) {
-                        /*****************************
-                         * WILL BE REFACTORED*********
-                         *****************************/                 
-                        // TODO Auto-generated catch block
-                       return SUCCESS;
-                }
-                return SUCCESS;
-        }
-        
-        /**
-         * @return the lst
-         */
-        public String getLst() {
-                return lst;
-        }
+    /**
+     * @return String success or failure
+     */
+    public String execute() {
+        try {
+            regIdAuthOrgList = PaRegistry.getRegulatoryInformationService()
+                    .getRegulatoryAuthorityNameId(Long.valueOf(getLst()));
+            StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.TRIAL_SUMMARY);
+            RegulatoryAuthOrgDTO regulatoryAuthOrgDTO = PaRegistry.getRegulatoryInformationService()
+                    .getRegulatoryAuthOrgForEdit(
+                    spDTO.getStudyProtocolId());
+            setSelectedAuthOrg(Long.valueOf(regulatoryAuthOrgDTO.getId()).toString());
+        } catch (NoStudyProtocolFoundException nspfe) {
+            return SUCCESS;
 
-        /**
-         * @param lst the lst to set
-         */
-        public void setLst(String lst) {
-                this.lst = lst;
+        } catch (PAException e) {
+            return SUCCESS;
         }
+        return SUCCESS;
+    }
 
-        /**
-         * @return the lstList
-         */
-        public List<String> getLstList() {
-                return lstList;
-        }
+    /**
+     * @return the lst
+     */
+    public String getLst() {
+        return lst;
+    }
 
-        /**
-         * @param lstList the lstList to set
-         */
-        public void setLstList(List<String> lstList) {
-                this.lstList = lstList;
-        }
+    /**
+     * @param lst
+     *            the lst to set
+     */
+    public void setLst(String lst) {
+        this.lst = lst;
+    }
 
-        /**
-         * @return the trialOversgtAuthCountry
-         */
-        public String getTrialOversgtAuthCountry() {
-                return trialOversgtAuthCountry;
-        }
+    /**
+     * @return the lstList
+     */
+    public List<String> getLstList() {
+        return lstList;
+    }
 
-        /**
-         * @param trialOversgtAuthCountry the trialOversgtAuthCountry to set
-         */
-        public void setTrialOversgtAuthCountry(String trialOversgtAuthCountry) {
-                this.trialOversgtAuthCountry = trialOversgtAuthCountry;
-        }
+    /**
+     * @param lstList
+     *            the lstList to set
+     */
+    public void setLstList(List<String> lstList) {
+        this.lstList = lstList;
+    }
 
-        /**
-         * @return the regIdAuthOrgList
-         */
-        public List<RegulatoryAuthOrgDTO> getRegIdAuthOrgList() {
-                return regIdAuthOrgList;
-        }
+    /**
+     * @return the trialOversgtAuthCountry
+     */
+    public String getTrialOversgtAuthCountry() {
+        return trialOversgtAuthCountry;
+    }
 
-        /**
-         * @param regIdAuthOrgList the regIdAuthOrgList to set
-         */
-        public void setRegIdAuthOrgList(List<RegulatoryAuthOrgDTO> regIdAuthOrgList) {
-                this.regIdAuthOrgList = regIdAuthOrgList;
-        }
+    /**
+     * @param trialOversgtAuthCountry
+     *            the trialOversgtAuthCountry to set
+     */
+    public void setTrialOversgtAuthCountry(String trialOversgtAuthCountry) {
+        this.trialOversgtAuthCountry = trialOversgtAuthCountry;
+    }
 
-        /**
-         * @return the selectedAuthOrg
-         */
-        public String getSelectedAuthOrg() {
-                return selectedAuthOrg;
-        }
+    /**
+     * @return the regIdAuthOrgList
+     */
+    public List<RegulatoryAuthOrgDTO> getRegIdAuthOrgList() {
+        return regIdAuthOrgList;
+    }
 
-        /**
-         * @param selectedAuthOrg the selectedAuthOrg to set
-         */
-        public void setSelectedAuthOrg(String selectedAuthOrg) {
-                this.selectedAuthOrg = selectedAuthOrg;
-        }
+    /**
+     * @param regIdAuthOrgList
+     *            the regIdAuthOrgList to set
+     */
+    public void setRegIdAuthOrgList(List<RegulatoryAuthOrgDTO> regIdAuthOrgList) {
+        this.regIdAuthOrgList = regIdAuthOrgList;
+    }
+
+    /**
+     * @return the selectedAuthOrg
+     */
+    public String getSelectedAuthOrg() {
+        return selectedAuthOrg;
+    }
+
+    /**
+     * @param selectedAuthOrg
+     *            the selectedAuthOrg to set
+     */
+    public void setSelectedAuthOrg(String selectedAuthOrg) {
+        this.selectedAuthOrg = selectedAuthOrg;
+    }
 }

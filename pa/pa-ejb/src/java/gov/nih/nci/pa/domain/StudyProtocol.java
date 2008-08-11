@@ -23,12 +23,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * An action plan and execution of a pre-clinical or clinical study including all 
- * activities to test a particular hypothesis that is the basis of the study regarding the 
- * effectiveness of a particular treatment, drug, device, procedure, or care plan. 
- * This includes prevention, observational, therapeutic, and other types of studies 
- * that involve subjects. 
- * 
+ * An action plan and execution of a pre-clinical or clinical study including all
+ * activities to test a particular hypothesis that is the basis of the study regarding the
+ * effectiveness of a particular treatment, drug, device, procedure, or care plan.
+ * This includes prevention, observational, therapeutic, and other types of studies
+ * that involve subjects.
+ *
  * @author Naveen Amiruddin
  * @since 07/07/2007
  * copyright NCI 2007.  All rights reserved.
@@ -40,7 +40,7 @@ import javax.persistence.Table;
 @Table(name =  "STUDY_PROTOCOL")
 public class StudyProtocol extends Document {
     private static final long serialVersionUID = 1234567890L;
-    
+
     private String acronym;
     private MonitorCode monitorCode;
     private PhaseCode phaseCode;
@@ -58,41 +58,43 @@ public class StudyProtocol extends Document {
     private BiospecimenRetentionCode biospecimenRetentionCode;
     private ReportingDataSetMethodCode reportingDataSetMethodCode;
     private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
-    
+
     /** Number of study groups/cohorts. Enter 1 for a single-group study. Many observational
      *  studies have one group/cohort; case control studies typically have two* */
     private Integer groupNumber;
     //@todo below two to be changed to enum, once we know the values
     private String studyModelCode;
     private String timePerspectiveCode;
+    private Boolean indIndeIndicator;
+    private Boolean dataMonitoringCommitteeIndicator;
 
-    
+
     private List<StudyCondition> studyConditions = new ArrayList<StudyCondition>();
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
-    private List<DocumentWorkflowStatus> documentWorkflowStatuses = 
+    private List<DocumentWorkflowStatus> documentWorkflowStatuses =
                         new ArrayList<DocumentWorkflowStatus>();
     private List<StudyCoordinatingCenter> studyCoordinatingCenters  =
-                        new ArrayList<StudyCoordinatingCenter>(); 
+                        new ArrayList<StudyCoordinatingCenter>();
     private List<StudyContact> studyContacts  = new ArrayList<StudyContact>();
     private List<StudySite> studySites = new ArrayList<StudySite>();
-    
+
     /**
-     * 
+     *
      * @return acronym
      */
     public String getAcronym() {
         return acronym;
     }
     /**
-     * 
+     *
      * @param acronym acronym
      */
     public void setAcronym(String acronym) {
         this.acronym = acronym;
     }
     /**
-     * 
-     * @return monitorCode 
+     *
+     * @return monitorCode
      */
     @Column(name = "MONITOR_CODE")
     @Enumerated(EnumType.STRING)
@@ -100,14 +102,14 @@ public class StudyProtocol extends Document {
         return monitorCode;
     }
     /**
-     * 
+     *
      * @param monitorCode monitorCode
      */
     public void setMonitorCode(MonitorCode monitorCode) {
         this.monitorCode = monitorCode;
     }
     /**
-     * 
+     *
      * @return phaseCode
      */
     @Column(name = "PHASE_CODE")
@@ -116,17 +118,17 @@ public class StudyProtocol extends Document {
         return phaseCode;
     }
     /**
-     * 
+     *
      * @param phaseCode phaseCode
      */
     public void setPhaseCode(PhaseCode phaseCode) {
         this.phaseCode = phaseCode;
     }
-    
-    
+
+
     /**
-     * 
-     * @return allocationCode 
+     *
+     * @return allocationCode
      */
     @Column(name = "ALLOCATION_CODE")
     @Enumerated(EnumType.STRING)
@@ -134,15 +136,15 @@ public class StudyProtocol extends Document {
         return allocationCode;
     }
     /**
-     * 
+     *
      * @param allocationCode allocation Code
      */
     public void setAllocationCode(AllocationCode allocationCode) {
         this.allocationCode = allocationCode;
     }
-    
+
     /**
-     * 
+     *
      * @return ControlConcurrencyTypeCode
      */
     @Column(name = "CONTROL_CONCURRENCY_TYPE_CODE")
@@ -150,9 +152,9 @@ public class StudyProtocol extends Document {
     public ControlConcurrencyTypeCode getControlConcurrencyTypeCode() {
         return controlConcurrencyTypeCode;
     }
-    
+
     /**
-     * 
+     *
      * @param controlConcurrencyTypeCode control ConcurrencyType Code
      */
     public void setControlConcurrencyTypeCode(
@@ -160,7 +162,7 @@ public class StudyProtocol extends Document {
         this.controlConcurrencyTypeCode = controlConcurrencyTypeCode;
     }
     /**
-     * 
+     *
      * @return ControlTypeCode
      */
     @Column(name = "CONTROL_TYPE_CODE")
@@ -169,15 +171,15 @@ public class StudyProtocol extends Document {
         return controlTypeCode;
     }
     /**
-     * 
+     *
      * @param controlTypeCode controlType Code
      */
     public void setControlTypeCode(ControlTypeCode controlTypeCode) {
         this.controlTypeCode = controlTypeCode;
     }
-    
+
     /**
-     * 
+     *
      * @return delayedpostingIndicator
      */
     @Column(name = "DELAYED_POSTING_INDICATOR")
@@ -185,14 +187,14 @@ public class StudyProtocol extends Document {
         return delayedpostingIndicator;
     }
     /**
-     * 
+     *
      * @param delayedpostingIndicator delayedposting Indicator
      */
     public void setDelayedpostingIndicator(Boolean delayedpostingIndicator) {
         this.delayedpostingIndicator = delayedpostingIndicator;
     }
     /**
-     * 
+     *
      * @return DesignConfigurationCode
      */
     @Column(name = "DESIGN_CONFIGURATION_CODE")
@@ -201,7 +203,7 @@ public class StudyProtocol extends Document {
         return designConfigurationCode;
     }
     /**
-     * 
+     *
      * @param designConfigurationCode designConfiguration Code
      */
     public void setDesignConfigurationCode(
@@ -209,7 +211,7 @@ public class StudyProtocol extends Document {
         this.designConfigurationCode = designConfigurationCode;
     }
     /**
-     * 
+     *
      * @return fdaRegulatedIndicator
      */
     @Column(name = "FDA_REGULATED_INDICATOR")
@@ -217,14 +219,14 @@ public class StudyProtocol extends Document {
         return fdaRegulatedIndicator;
     }
     /**
-     * 
+     *
      * @param fdaRegulatedIndicator fdaRegulatedIndicator
      */
     public void setFdaRegulatedIndicator(Boolean fdaRegulatedIndicator) {
         this.fdaRegulatedIndicator = fdaRegulatedIndicator;
     }
     /**
-     * 
+     *
      * @return InterventionTypeCode
      */
     @Column(name = "INTERVENTION_TYPE_CODE")
@@ -233,32 +235,32 @@ public class StudyProtocol extends Document {
         return interventionTypeCode;
     }
     /**
-     * 
+     *
      * @param interventionTypeCode interventionType Code
      */
     public void setInterventionTypeCode(InterventionTypeCode interventionTypeCode) {
         this.interventionTypeCode = interventionTypeCode;
     }
-    
+
     /**
-     * 
+     *
      * @return numberOfInterventionGroups
      */
     @Column(name = "NUMBER_OF_INTERVENTION_GROUPS")
     public Integer getNumberOfInterventionGroups() {
         return numberOfInterventionGroups;
     }
-    
+
     /**
-     * 
+     *
      * @param numberOfInterventionGroups numberOfInterventionGroups
      */
     public void setNumberOfInterventionGroups(Integer numberOfInterventionGroups) {
         this.numberOfInterventionGroups = numberOfInterventionGroups;
     }
-    
+
     /**
-     * 
+     *
      * @return section801Indicator
      */
     @Column(name = "SECTION801_INDICATOR")
@@ -266,15 +268,15 @@ public class StudyProtocol extends Document {
         return section801Indicator;
     }
     /**
-     * 
+     *
      * @param section801Indicator section801Indicator
      */
     public void setSection801Indicator(Boolean section801Indicator) {
         this.section801Indicator = section801Indicator;
-    }    
-    
+    }
+
     /**
-     * 
+     *
      * @return primaryPurposeCode
      */
     @Column(name = "PRIMARY_PURPOSE_CODE")
@@ -283,14 +285,14 @@ public class StudyProtocol extends Document {
         return primaryPurposeCode;
     }
     /**
-     * 
+     *
      * @param primaryPurposeCode primaryPurposeCode
      */
     public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
     /**
-     * 
+     *
      * @return biospecimenDescription
      */
     @Column(name = "BIOSPECIMEN_DESCRIPTION")
@@ -298,14 +300,14 @@ public class StudyProtocol extends Document {
         return biospecimenDescription;
     }
     /**
-     * 
+     *
      * @param biospecimenDescription biospecimenDescription
      */
     public void setBiospecimenDescription(String biospecimenDescription) {
         this.biospecimenDescription = biospecimenDescription;
     }
     /**
-     * 
+     *
      * @return biospecimenRetentionCode
      */
     @Column(name = "BIOSPECIMEN_RETENTION_CODE")
@@ -314,26 +316,26 @@ public class StudyProtocol extends Document {
         return biospecimenRetentionCode;
     }
     /**
-     * 
+     *
      * @param biospecimenRetentionCode biospecimenRetentionCode
      */
     public void setBiospecimenRetentionCode(
             BiospecimenRetentionCode biospecimenRetentionCode) {
         this.biospecimenRetentionCode = biospecimenRetentionCode;
     }
-    
+
     /**
-     * 
+     *
      * @return ReportingDataSetMethodCode reportingDataSetMethodCode
      */
     @Column(name = "REPORTING_DATASET_METHOD_CODE")
     @Enumerated(EnumType.STRING)
-    
+
     public ReportingDataSetMethodCode getReportingDataSetMethodCode() {
         return reportingDataSetMethodCode;
     }
     /**
-     * 
+     *
      * @param reportingDataSetMethodCode reportingDataSetMethodCode
      */
     public void setReportingDataSetMethodCode(
@@ -341,7 +343,7 @@ public class StudyProtocol extends Document {
         this.reportingDataSetMethodCode = reportingDataSetMethodCode;
     }
     /**
-     * 
+     *
      * @return SummaryFourFundingCategoryCode summaryFourFundingCategoryCode
      */
     @Column(name = "SUMMARY_FOUR_FUNDING_CATEGORY_CODE")
@@ -350,7 +352,7 @@ public class StudyProtocol extends Document {
       return summaryFourFundingCategoryCode;
     }
     /**
-     * 
+     *
      * @param summaryFourFundingCategoryCode summaryFourFundingCategoryCode
      */
     public void setSummaryFourFundingCategoryCode(
@@ -359,7 +361,7 @@ public class StudyProtocol extends Document {
     }
 
     /**
-     * 
+     *
      * @return groupNumber
      */
     @Column(name = "GROUP_NUMBER")
@@ -367,14 +369,14 @@ public class StudyProtocol extends Document {
         return groupNumber;
     }
     /**
-     * 
-     * @param groupNumber Number of study groups/cohorts. 
+     *
+     * @param groupNumber Number of study groups/cohorts.
      */
     public void setGroupNumber(Integer groupNumber) {
         this.groupNumber = groupNumber;
     }
     /**
-     * 
+     *
      * @return studyModelCode
      */
     @Column(name = "STUDY_MODEL_CODE")
@@ -382,14 +384,14 @@ public class StudyProtocol extends Document {
         return studyModelCode;
     }
     /**
-     * 
+     *
      * @param studyModelCode primary strategy for subject identification and follow-up
      */
     public void setStudyModelCode(String studyModelCode) {
         this.studyModelCode = studyModelCode;
     }
     /**
-     * 
+     *
      * @return timePerspectiveCode
      */
     @Column(name = "TIME_PRESPECTIVE_CODE")
@@ -397,7 +399,7 @@ public class StudyProtocol extends Document {
         return timePerspectiveCode;
     }
     /**
-     * 
+     *
      * @param timePerspectiveCode temporal relationship of observation period to time of subject enrollment
      */
     public void setTimePerspectiveCode(String timePerspectiveCode) {
@@ -405,7 +407,7 @@ public class StudyProtocol extends Document {
     }
 
     /**
-     * 
+     *
      * @return studyConditions
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -414,15 +416,15 @@ public class StudyProtocol extends Document {
     }
 
     /**
-     * 
+     *
      * @param studyConditions studyConditions
      */
     public void setStudyConditions(List<StudyCondition> studyConditions) {
         this.studyConditions = studyConditions;
     }
-    
+
     /**
-     * 
+     *
      * @return studyOverallStatuses
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -430,7 +432,7 @@ public class StudyProtocol extends Document {
         return studyOverallStatuses;
     }
     /**
-     * 
+     *
      * @param studyOverallStatuses studyOverallStatuses
      */
     public void setStudyOverallStatuses(
@@ -438,7 +440,7 @@ public class StudyProtocol extends Document {
         this.studyOverallStatuses = studyOverallStatuses;
     }
     /**
-     * 
+     *
      * @return documentWorkflowStatuses documentWorkflowStatuses
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -446,16 +448,16 @@ public class StudyProtocol extends Document {
         return documentWorkflowStatuses;
     }
     /**
-     * 
+     *
      * @param documentWorkflowStatuses documentWorkflowStatuses
      */
     public void setDocumentWorkflowStatuses(
             List<DocumentWorkflowStatus> documentWorkflowStatuses) {
         this.documentWorkflowStatuses = documentWorkflowStatuses;
     }
-    
+
     /**
-     * 
+     *
      * @return studyCoordinatingCenters
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -463,7 +465,7 @@ public class StudyProtocol extends Document {
         return studyCoordinatingCenters;
     }
     /**
-     * 
+     *
      * @param studyCoordinatingCenters studyCoordinatingCenters
      */
     public void setStudyCoordinatingCenters(
@@ -471,22 +473,22 @@ public class StudyProtocol extends Document {
         this.studyCoordinatingCenters = studyCoordinatingCenters;
     }
     /**
-     * 
-     * @return studyContacts 
+     *
+     * @return studyContacts
      */
     @OneToMany(mappedBy = "studyProtocol")
     public List<StudyContact> getStudyContacts() {
         return studyContacts;
     }
     /**
-     * 
+     *
      * @param studyContacts studyContacts
      */
     public void setStudyContacts(List<StudyContact> studyContacts) {
         this.studyContacts = studyContacts;
     }
     /**
-     * 
+     *
      * @return studySites
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -494,12 +496,36 @@ public class StudyProtocol extends Document {
         return studySites;
     }
     /**
-     * 
+     *
      * @param studySites studySites
      */
     public void setStudySites(List<StudySite> studySites) {
         this.studySites = studySites;
     }
-    
-    
+    /**
+     * @return the indIndeIndicator
+     */
+    @Column(name = "ide_ind_indicator")
+    public Boolean getIndIndeIndicator() {
+        return indIndeIndicator;
+    }
+    /**
+     * @param indIndeIndicator the indIndeIndicator to set
+     */
+    public void setIndIndeIndicator(Boolean indIndeIndicator) {
+        this.indIndeIndicator = indIndeIndicator;
+    }
+    /**
+     * @return the dataMonitoringCommitteeIndicator
+     */
+    @Column(name = "data_mon_comittee_indicator")
+    public Boolean getDataMonitoringCommitteeIndicator() {
+        return dataMonitoringCommitteeIndicator;
+    }
+    /**
+     * @param dataMonitoringCommitteeIndicator the dataMonitoringCommitteeIndicator to set
+     */
+    public void setDataMonitoringCommitteeIndicator(Boolean dataMonitoringCommitteeIndicator) {
+        this.dataMonitoringCommitteeIndicator = dataMonitoringCommitteeIndicator;
+    }
 }

@@ -17,15 +17,14 @@ public class RegulatoryInformationDTO implements Serializable {
     private String trialOversgtAuthCountry;  
     private String trialOversgtAuthOrgName;   
     
-    private String indTrialIndicator;  
+    private String indideTrialIndicator;  
     private String ideTrialIndicator; 
     private String fdaRegulatedInterventionIndicator;  
     private String section801Indicator;
     private String delayedPostingIndicator;  
     private String dataMonitoringIndicator;
     
-    private boolean indTrialIndicatorP;  
-    private boolean ideTrialIndicatorP; 
+    private boolean indideIndicatorP;
     private boolean fdaRegulatedInterventionIndicatorP;  
     private boolean section801IndicatorP;
     private boolean delayedPostingIndicatorP;  
@@ -81,18 +80,20 @@ public class RegulatoryInformationDTO implements Serializable {
         public void setTrialOversgtAuthOrgName(String trialOversgtAuthOrgName) {
                 this.trialOversgtAuthOrgName = trialOversgtAuthOrgName;
         }
+
         /**
-         * @return the indTrialIndicator
+         * @return the indideTrialIndicator
          */
-        public String getIndTrialIndicator() {
-                return indTrialIndicator;
+        public String getIndideTrialIndicator() {
+            return indideTrialIndicator;
+            
         }
         /**
-         * @param indTrialIndicator the indTrialIndicator to set
+         * @param indideTrialIndicator the indideTrialIndicator to set
          */
-        public void setIndTrialIndicator(String indTrialIndicator) {
-                this.indTrialIndicatorP = convertToboolean(indTrialIndicator);
-                this.indTrialIndicator = indTrialIndicator;
+        public void setIndideTrialIndicator(String indideTrialIndicator) {
+            this.indideIndicatorP = convertToboolean(indideTrialIndicator);
+            this.indideTrialIndicator = indideTrialIndicator;
         }
         /**
          * @return the ideTrialIndicator
@@ -100,13 +101,7 @@ public class RegulatoryInformationDTO implements Serializable {
         public String getIdeTrialIndicator() {
                 return ideTrialIndicator;
         }
-        /**
-         * @param ideTrialIndicator the ideTrialIndicator to set
-         */
-        public void setIdeTrialIndicator(String ideTrialIndicator) {
-                this.ideTrialIndicatorP = convertToboolean(ideTrialIndicator);
-                this.ideTrialIndicator = ideTrialIndicator;
-        }
+      
         /**
          * @return the fdaRegulatedInterventionIndicator
          */
@@ -160,30 +155,8 @@ public class RegulatoryInformationDTO implements Serializable {
                 this.dataMonitoringIndicatorP =  convertToboolean(dataMonitoringIndicator);
                 this.dataMonitoringIndicator = dataMonitoringIndicator;
         }
-        /**
-         * @return the indTrialIndicatorP
-         */
-        public boolean isIndTrialIndicatorP() {
-                return indTrialIndicatorP;
-        }
-        /**
-         * @param indTrialIndicatorP the indTrialIndicatorP to set
-         */
-        public void setIndTrialIndicatorP(boolean indTrialIndicatorP) { 
-                this.indTrialIndicatorP = indTrialIndicatorP;
-        }
-        /**
-         * @return the ideTrialIndicatorP
-         */
-        public boolean isIdeTrialIndicatorP() {
-                return ideTrialIndicatorP;
-        }
-        /**
-         * @param ideTrialIndicatorP the ideTrialIndicatorP to set
-         */
-        public void setIdeTrialIndicatorP(boolean ideTrialIndicatorP) {
-                this.ideTrialIndicatorP = ideTrialIndicatorP;
-        }
+       
+     
         /**
          * @return the fdaRegulatedInterventionIndicatorP
          */
@@ -245,8 +218,19 @@ public class RegulatoryInformationDTO implements Serializable {
         public void setProtocolID(long protocolID) {
                 this.protocolID = protocolID;
         }
-        
+        /**
+         * @return the indideIndicatorP
+         */
+        public boolean isIndideIndicatorP() {
+            return indideIndicatorP;
+        }
+        /**
+         * @param indideIndicatorP the indideIndicatorP to set
+         */
+        public void setIndideIndicatorP(boolean indideIndicatorP) {
+            this.indideIndicatorP = indideIndicatorP;
+        }       
         private static boolean convertToboolean(String string) {
             return string.equalsIgnoreCase("Yes") ? true : false; 
-        }       
+        }          
 }

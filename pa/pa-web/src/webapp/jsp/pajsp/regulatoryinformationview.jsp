@@ -13,59 +13,50 @@
 <s:form action="regulatoryInfo">
 <div id="contentwide">
 <h1><fmt:message key="regulatory.title" /></h1>
-<!--Help Content--> 
+<!--Help Content-->   <div id="box">
 <a href="#" class="helpbutton"onclick="Help.popHelp('query_protocol')">Help</a>
-<table cellspacing="2">
-	<tr><td align=right>NCI accession number:</td><td align=left>NCI-2008-0002</td></tr>
-	<tr><td align=right>Trial Title:</td><td align=left>A Phase I Trial of Taxol in refractory leukemia	in children</td></tr>
-	<tr><td align=right>Abstraction Status:</td><td align=left>Accepted</td></tr>
-	<tr><td align=right>Trial Submitter:</td><td align=left>Joe Smith</td></tr>
-	<tr><td align=right>Principal Investigator:</td><td align=left>Mike Sholch</td></tr>
-</table>
-<table cellspacing="8">	
+ 
+<table width="880">	
+<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/>
 	<tr>
 		<th colspan="2">Regulatory Information</th>
-	</tr>
-	<!--  IND Trial Indicator -->
-	<tr>
-		<td scope="row" class="label">IND Trial Indicator :</td>
-		<td><s:textfield name="regulatoryDTO.indTrialIndicator" disabled="true"/></td>
-	</tr>
-	<!--  IDE Trial Indicator-->
-	<tr>
-		<td scope="row" class="label">IDE Trial Indicator :</td>
-		<td><s:textfield name="regulatoryDTO.ideTrialIndicator" disabled="true"/></td>
 	</tr>
 	<!--  Trial Oversignt Authority Country -->	
 	<tr>
 		<td scope="row" class="label">Trial	Oversight Authority Country :</td>
-		<td><s:textfield name="regulatoryDTO.trialOversgtAuthCountry" disabled="true"/></td>
+		<td><s:label name="regulatoryDTO.trialOversgtAuthCountry" /></td>
                     
 	</tr>
 	<!--  Trial Oversignt Authority Organization Name -->
 	<tr>
 		<td scope="row" class="label">Trial	Oversight Authority Organization Name :</td>
-		<td><s:textfield name="regulatoryDTO.trialOversgtAuthOrgName" disabled="true"/></td>
+		<td><s:label name="regulatoryDTO.trialOversgtAuthOrgName" /></td>
 	</tr>
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
 		<td scope="row" class="label">FDA Regulated Intervention Indicator :</td>
-		<td><s:textfield name="regulatoryDTO.fdaRegulatedInterventionIndicator" disabled="true"/></td>
+		<td><s:label name="regulatoryDTO.fdaRegulatedInterventionIndicator" /></td>
 	</tr>
 	<!--   Section 801 Indicator-->
 	<tr>
 		<td scope="row" class="label"><label for="localtrialIdentifier">Section	801 Indicator :</td>
-		<td><s:textfield name="regulatoryDTO.section801Indicator" disabled="true"/></td>
+		<td><s:label name="regulatoryDTO.section801Indicator" /></td>
+	</tr>
+	<!-- IDE/IND indicator -->
+	<c:out value="${regulatoryDTO.indideTrialIndicator}" />
+	<tr>
+		<td scope="row" class="label">IND/IDE Indicator :</td>
+		<td><s:label name="regulatoryDTO.indideTrialIndicator" /></td>
 	</tr>
 	<!--   Delayed Posting Indicator-->
 	<tr>
 		<td scope="row" class="label"><label for="localtrialIdentifier">Delayed	Posting Indicator :</td>
-		<td><s:textfield name="regulatoryDTO.delayedPostingIndicator" disabled="true"/></td>	
+		<td><s:label name="regulatoryDTO.delayedPostingIndicator" /></td>	
 	</tr>
 	<!--   Data Monitoring Committee Appointed Indicator -->
 	<tr>
 		<td scope="row" class="label"><label for="localtrialIdentifier">Data Monitoring Committee Appointed Indicator :</td>
-		<td><s:textfield name="regulatoryDTO.dataMonitoringIndicator" disabled="true"/></td>	
+		<td><s:label name="regulatoryDTO.dataMonitoringIndicator" /></td>	
 	</tr>
 
 	<tr>
@@ -76,7 +67,7 @@
 	<tr>
 		<td colspan="2" class="centered"><input type="submit" value="Edit" class="button"></td>
 	</tr>
-</table>
+</table></div>
 </div>
 </s:form>
 </body>
