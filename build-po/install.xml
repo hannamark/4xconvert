@@ -211,11 +211,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<delete dir="${resource.dir.temp}"/>
 	</target>
 
-	<!-- Wrapper install database target, depends on both MySQL and Oracle sub-targets, ifs should ensure only one is run.  Target path can be skipped by exlude.database also calls upgrade:database -->
-	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
-		depends="
-		install:init
-		">
+	<target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="install:init">
+		<echoproperties prefix="database"/>
 		<property name="db.dir.temp" value="${working.dir}/tmp"/>
 		<mkdir dir="${db.dir.temp}"/>
 		<copy todir="${db.dir.temp}" filtering="true">
@@ -243,6 +240,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			</then>
 		</if>
 
+	</target>
+	<target name="install:database:re-create" description="Recreates database if database.re-create is true. Used on local installs" unless="exclude.database" depends="install:init">
 		<if>
 			<equals arg1="${database.re-create}" arg2="true"/>
 			<then>
@@ -259,6 +258,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 				<echo message="Database.recreate flag not set, database not re-created."/>
 			</else>
 		</if>
+	</target>
+	<target name="install:database:drop" description="Runs database drop scripts if database.drop-schema is set. Used on Tier environments (dev, qa, stg, prod)." unless="exclude.database" depends="install:init">
 		<if>
 			<equals arg1="${database.drop-schema}" arg2="true"/>
 			<then>
@@ -268,13 +269,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						<for list="${db.install.drop.postgresql.file.list}" param="db.install.postgresql.file">
 							<sequential>
 								<echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
+								<!-- get rid of delimeter
+									sql.delimiter="/" 
+									sql.delimitertype="row"
+									-->
+
 								<run-sql-script
 									database.url="${database.url}"
 									database.user="${database.user}"
 									database.password="${database.password}"
-									sql.delimiter="/" 
-									sql.delimitertype="row"
 									sql.file="${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
+									onerror="continue"
 									/>
 							</sequential>
 						</for>
@@ -288,19 +293,29 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 				<echo message="Database.drop-schema flag not set, database schema not dropped."/>
 			</else>
 		</if>
+	</target>
 
+	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
+		depends="
+		install:init,
+		install:database:prep,
+		install:database:re-create,
+		install:database:drop
+		">
 		<switch value="${database.type}">
 			<case value="postgresql">
 				<echo message="Creating database objects"/>
 				<for list="${db.install.create.postgresql.file.list}" param="db.install.postgresql.file">
 					<sequential>
 						<echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
+						<!-- Get rid of delimeter
+							sql.delimiter="/" 
+							sql.delimitertype="row"
+							-->
 						<run-sql-script
 							database.url="${database.url}"
 							database.user="${database.user}"
 							database.password="${database.password}"
-							sql.delimiter="/" 
-							sql.delimitertype="row"
 							sql.file="${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
 							/>
 					</sequential>
@@ -431,6 +446,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			</not>
 			<then>
 				<jboss-start-jboss />
+				<sleep seconds="15"/>
 			</then>
 		</if>
 	</target>
@@ -522,7 +538,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						<filter token="database.port" value="${database.port}"/>
 						<filter token="database.name" value="${database.name}"/>
 						<filter token="database.user" value="${database.user}"/>
-						<filter token="database.password" value="${database.user}"/>
+						<filter token="database.password" value="${database.password}"/>
 						<filter token="database.driver" value="${database.driver}"/>
 						<!-- not needed for now
 						<filter token="ldap.url" value="${ldap.url}"/>

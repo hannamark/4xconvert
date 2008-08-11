@@ -376,9 +376,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
-		<replaceregexp file="${db-install.dist.dir}/postgresql/${db.po.schema.file}" byline="true"
+		<!-- May no longer be needed because of changing postgresql to not use / a command delimeter
+		<replaceregexp file="${db-install.dist.dir}/postgresql/${db.po.create-schema.file}" byline="true"
 			match=";"
 			replace="${line.separator}\/${line.separator}"/>
+		<replaceregexp file="${db-install.dist.dir}/postgresql/${db.po.drop-schema.file}" byline="true"
+			match=";"
+			replace="${line.separator}\/${line.separator}"/>
+		-->
 
 		<!-- Copy install related xml and properties files -->
 		<copy todir="${dist.exploded.dir}" overwrite="true">

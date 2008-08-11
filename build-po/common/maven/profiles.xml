@@ -11,7 +11,7 @@
 
 				<!-- Maven uses these properties to maniuplate files, we are inserting tokens so that they can be de-tokenized by the install:jboss:po-ear:re-create target -->
 				<!-- po-ds.xml -->
-				<database.url.prefix>jdbc:postgresql://%%database.server%%:%%database.port%%</database.url.prefix>
+				<database.url.prefix>jdbc:postgresql://%%database.server%%:%%database.port%%/</database.url.prefix>
 				<database.name>%%database.name%%</database.name>
 				<jdbc.username>%%database.user%%</jdbc.username>
 				<jdbc.password>%%database.password%%</jdbc.password>
