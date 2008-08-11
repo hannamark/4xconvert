@@ -231,6 +231,9 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
 
     /**
      * @return mail address
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ad"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter"
      */
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull

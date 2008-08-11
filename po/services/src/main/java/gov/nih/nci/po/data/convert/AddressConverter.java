@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The caarray-app
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This caarray-app Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the caarray-app Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the caarray-app Software; (ii) distribute and
- * have distributed to and by third parties the caarray-app Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,165 +80,84 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.util.NotEmpty;
 
-import java.util.HashSet;
-import java.util.Set;
+package gov.nih.nci.po.data.convert;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.validator.Length;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import org.hibernate.annotations.Index;
-
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.po.data.bo.Address;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * Country represents <a
- * href="http://www.iso.org/iso/country_codes/iso_3166_code_lists/english_country_names_and_code_elements.htm">
- * ISO 3166-1</a> codes for the names of countries as published by ISO.  This class uses the English names.
+ *
+ * @author gax
  */
-@Entity
-@org.hibernate.annotations.Entity(mutable = false)
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class Country implements PersistentObject, Auditable {
-    private static final long serialVersionUID = 1L;
-    private static final int ALPHA2_LENGTH = 2;
-    private static final int ALPHA3_LENGTH = 3;
-    private static final int NUMERIC_LENGTH = 3;
-    private static final int NAME_LENGTH = 254;
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class AddressConverter extends AbstractXSnapshotConverter<Address> {
 
-    private Long id;
-    private String name;
-    private String numeric;
-    private String alpha2;
-    private String alpha3;
-    private Set<State> states = new HashSet<State>();
-
-    /**
-     * For unit tests only.
-     *
-     * @param name official country name per ISO 3166/MA
-     * @param numeric numeric-3 country code, per ISO 3166-1
-     * @param alpha2 two-letter country code, per ISO 3166-1
-     * @param alpha3 three-letter country code, per ISO 3166-1
-     */
-    public Country(String name, String numeric, String alpha2, String alpha3) {
-        this.name = name;
-        this.numeric = numeric;
-        this.alpha2 = alpha2;
-        this.alpha3 = alpha3;
+    /** {@inheritDoc}*/
+    @Override
+    public <TO> TO convert(Class<TO> returnClass, Address value) {
+        if (returnClass == Ad.class) {
+            return (TO) convertToAd(value);
+        }
+        throw new UnsupportedOperationException(returnClass.getName());
     }
 
     /**
-     * @deprecated Hibernate-only constructor
+     * @param a an address.
+     * @return best guess of a's ISO equivalent.
      */
-    @Deprecated
-    public Country() {
-        // for hibernate only - do nothing
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public static Ad convertToAd(Address a) {
+        Ad iso = new Ad();
+        if (a == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            List<Adxp> l = new ArrayList<Adxp>(/*6*/);
+            iso.setPart(l);
+            Adxp x;
+            String s = a.getStreetAddressLine();            
+            if (StringUtils.isNotBlank(s)) {
+                x = Adxp.createAddressPart(AddressPartType.AL);
+                x.setValue(s);
+                l.add(x);
+            }
+            s = a.getDeliveryAddressLine();
+            if (StringUtils.isNotBlank(s)) {
+                x = Adxp.createAddressPart(AddressPartType.DAL);
+                x.setValue(s);
+                l.add(x);
+            }
+            s = a.getCityOrMunicipality();
+            if (StringUtils.isNotBlank(s)) {
+                x = Adxp.createAddressPart(AddressPartType.CTY);
+                x.setValue(s);
+                l.add(x);
+            }
+            s = a.getStateOrProvince();
+            if (StringUtils.isNotBlank(s)) {
+                x = Adxp.createAddressPart(AddressPartType.STA);
+                x.setValue(s);
+                l.add(x);
+            }
+            s = a.getPostalCode();
+            if (StringUtils.isNotBlank(s)) {
+                x = Adxp.createAddressPart(AddressPartType.ZIP);
+                x.setValue(s);
+                l.add(x);
+            }
+            x = Adxp.createAddressPart(AddressPartType.CNT);
+            x.setCode(a.getCountry().getAlpha3());
+            l.add(x);
+            
+            a.getCountry();
+        }
+        return iso;
     }
-
-    /**
-     * @return database id
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return official country name per ISO 3166/MA
-     */
-    @Column(updatable = false, unique = true)
-    @Length(max = NAME_LENGTH)
-    @NotEmpty
-    public String getName() {
-        return name;
-    }
-
-    @SuppressWarnings("unused")
-    private void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return two-letter country code, per ISO 3166-1
-     */
-    @Column(updatable = false, unique = true)
-    @Length(min = NUMERIC_LENGTH, max = NUMERIC_LENGTH)
-    @NotEmpty
-    public String getNumeric() {
-        return numeric;
-    }
-
-    @SuppressWarnings("unused")
-    private void setNumeric(String numeric) {
-        this.numeric = numeric;
-    }
-
-    /**
-     * @return two-letter country code, per ISO 3166-1
-     */
-    @Column(updatable = false, unique = true)
-    @Length(min = ALPHA2_LENGTH, max = ALPHA2_LENGTH)
-    @NotEmpty
-    public String getAlpha2() {
-        return alpha2;
-    }
-
-    @SuppressWarnings("unused")
-    private void setAlpha2(String alpha2) {
-        this.alpha2 = alpha2;
-    }
-
-    /**
-     * @return three-letter country code, per ISO 3166-1
-     */
-    @Column(updatable = false, unique = true)
-    @Index(name = "alpha3_idx")
-    @Length(min = ALPHA3_LENGTH, max = ALPHA3_LENGTH)
-    @NotEmpty
-    public String getAlpha3() {
-        return alpha3;
-    }
-
-    @SuppressWarnings("unused")
-    private void setAlpha3(String alpha3) {
-        this.alpha3 = alpha3;
-    }
-
-    /**
-     * @return the states
-     */
-    @OneToMany(mappedBy = "country")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)  // Unit tests write, so cannot use read-only
-    public Set<State> getStates() {
-        return states;
-    }
-
-    @SuppressWarnings("unused")
-    private void setStates(Set<State> states) {
-        this.states = states;
-    }
-
-    // equals and hashcode intentionally not implemented - lookup class && hibernate can optimize this case
 }
