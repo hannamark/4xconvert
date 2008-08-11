@@ -90,20 +90,9 @@ package gov.nih.nci.coppa.iso;
 public class AdxpDal extends Adxp {
     
     /**
-     * @return the type
+     * default ctor.
      */
-    public AddressPartType getType() {
-        return AddressPartType.DAL;
+    public AdxpDal() {
+        super(AddressPartType.DAL);
     }
-
-    /**
-     * @param atype the type to set
-     */
-    public void setType(AddressPartType atype) {
-        if (!atype.equals(AddressPartType.DAL)) {
-            throw new IllegalArgumentException("Expecting AddressPartType.DAL");
-        }
-    }
-
-
 }

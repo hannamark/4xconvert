@@ -88,22 +88,11 @@ package gov.nih.nci.coppa.iso;
  *
  */
 public class AdxpAl extends Adxp {
-    
-    /**
-     * @return the type
-     */
-    public AddressPartType getType() {
-        return AddressPartType.AL;
-    }
 
     /**
-     * @param atype the type to set
+     * default ctor.
      */
-    public void setType(AddressPartType atype) {
-        if (!atype.equals(AddressPartType.AL)) {
-            throw new IllegalArgumentException("Expecting AddressPartType.AL");
-        }
+    public AdxpAl() {
+        super(AddressPartType.AL);
     }
-
-
 }

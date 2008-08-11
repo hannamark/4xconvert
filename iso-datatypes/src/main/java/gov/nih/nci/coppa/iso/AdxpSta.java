@@ -90,20 +90,9 @@ package gov.nih.nci.coppa.iso;
 public class AdxpSta extends Adxp {
     
     /**
-     * @return the type
+     * default ctor.
      */
-    public AddressPartType getType() {
-        return AddressPartType.STA;
+    public AdxpSta() {
+        super(AddressPartType.STA);
     }
-
-    /**
-     * @param atype the type to set
-     */
-    public void setType(AddressPartType atype) {
-        if (!atype.equals(AddressPartType.STA)) {
-            throw new IllegalArgumentException("Expecting AddressPartType.STA");
-        }
-    }
-
-
 }

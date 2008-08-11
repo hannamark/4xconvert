@@ -89,12 +89,19 @@ import java.util.Locale;
  * @author lpower
  *
  */
-public class AdxpCnt extends Adxp {
+public final class AdxpCnt extends Adxp {
 
     /** HL7 OID for Country. {@value} */
     public static final String OID = "2.16.840.1.113883.11.171";
     
     private static final int CODE_LENGTH = 3;
+
+    /** type is always {@link AddressPartType#CNT}. */
+    public AdxpCnt() {
+        super(AddressPartType.CNT);
+    }
+    
+    
     /**
      *  always returns {@link #OID} = {@value #OID}.
      *  @return {@link #OID}
@@ -151,12 +158,5 @@ public class AdxpCnt extends Adxp {
     public String getValue() {
         // not sure if this field is used at all.
         return super.getValue();
-    }
-    
-    /**
-     * @return the type {@link AddressPartType#CNT}
-     */
-    public AddressPartType getType() {
-        return AddressPartType.CNT;
     }
 }

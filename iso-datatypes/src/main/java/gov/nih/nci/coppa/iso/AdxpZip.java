@@ -90,20 +90,9 @@ package gov.nih.nci.coppa.iso;
 public class AdxpZip extends Adxp {
     
     /**
-     * @return the type
+     * default ctor.
      */
-    public AddressPartType getType() {
-        return AddressPartType.ZIP;
+    public AdxpZip() {
+        super(AddressPartType.ZIP);
     }
-
-    /**
-     * @param atype the type to set
-     */
-    public void setType(AddressPartType atype) {
-        if (!atype.equals(AddressPartType.ZIP)) {
-            throw new IllegalArgumentException("Expecting AddressPartType.ZIP");
-        }
-    }
-
-
 }

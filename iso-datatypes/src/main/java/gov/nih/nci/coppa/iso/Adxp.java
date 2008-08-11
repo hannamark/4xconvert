@@ -86,13 +86,27 @@ package gov.nih.nci.coppa.iso;
  * Represents the iso data type.
  * @author lpower
  */
-@SuppressWarnings("PMD.AbstractNaming")
-public abstract class Adxp {
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class Adxp {
 
     private String code;
     private String codeSystem;
     private String codeSystemVersion;
     private String value;
+    private final AddressPartType type;
+    
+    /** ctor with immutable type.
+     * @param type type
+     */
+    protected Adxp(AddressPartType type) {
+        this.type = type;
+    }
+
+    /** ctor default.
+     */
+    public Adxp() {
+        this(null);
+    }
 
     /**
      * @return the code
@@ -139,7 +153,9 @@ public abstract class Adxp {
     /**
      * @return the type
      */
-    public abstract AddressPartType getType();
+    public AddressPartType getType() {
+        return type;
+    }
 
 
     /**
@@ -156,4 +172,47 @@ public abstract class Adxp {
         this.value = value;
     }
 
+    /**
+     * factory method to create an address part.
+     * @param type the typeof the part to create.
+     * @return an address part with the 
+     */
+     public static Adxp createAddressPart(AddressPartType type) {
+        if (type == null) { return new Adxp(null); }
+        
+        switch (type) {
+            case ADL: return new AdxpAdl();
+            case AL : return new AdxpAl();
+            case BNN: return new AdxpBnn();
+            case BNR: return new AdxpBnr();
+            case BNS: return new AdxpBns();
+            case CAR: return new AdxpCar();
+            case CEN: return new AdxpCen();
+            case CNT: return new AdxpCnt();
+            case CPA: return new AdxpCpa();
+            case CTY: return new AdxpCty();
+            case DAL: return new AdxpDal();
+            case DEL: return new AdxpDel();
+            case DINST: return new AdxpDinst();
+            case DINSTA: return new AdxpDinsta();
+            case DINSTQ: return new AdxpDinstq();
+            case DIR: return new AdxpDir();
+            case DMOD: return new AdxpDmod();
+            case DMODID: return new AdxpDmodid();
+            case INT: return new AdxpInt();
+            case POB: return new AdxpPob();
+            case PRE: return new AdxpPre();
+            case SAL: return new AdxpSal();
+            case STA: return new AdxpSta();
+            case STB: return new AdxpStb();
+            case STR: return new AdxpStr();
+            case STTYP: return new AdxpSttyp();
+            case UNID: return new AdxpUnid();
+            case UNIT: return new AdxpUnit();
+            case ZIP: return new AdxpZip();
+            
+            // there must be a new type added
+            default: throw new UnsupportedOperationException(type.name()); 
+        }
+    }
 }
