@@ -56,8 +56,8 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
-        <ant target="package-notest" dir="pa-ejb" inheritAll="false"/>
-        <ant target="package-notest" dir="pa-web" inheritAll="false"/>
+        <ant target="package-notest-noivy" dir="pa-ejb" inheritAll="false"/>
+        <ant target="package-notest-noivy" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear"  inheritAll="false"/>
     </target>
 

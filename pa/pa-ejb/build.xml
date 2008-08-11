@@ -122,7 +122,7 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure main compilation target                                                     -->
+    <!-- Configure main compilation target                                      -->
     <!-- ====================================================================== -->
 
     <target name="configure-main">
@@ -222,8 +222,7 @@
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
-    <target name="test-cobertura" depends="compile-tests" 
-            description="Run JUnit and Cobertura tests">
+    <target name="test-cobertura" depends="compile-tests">
         
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
 
@@ -279,7 +278,7 @@
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="test-checkstyle" description="Run checkstyle">
+    <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" 
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
@@ -298,7 +297,7 @@
     <!-- Run PMD                                                                -->
     <!-- ====================================================================== -->
 
-    <target name="test-pmd" description="Run PMD checks">
+    <target name="test-pmd">
         <taskdef name="pmd" 
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
@@ -318,7 +317,7 @@
     <!-- Run Simian                                                             -->
     <!-- ====================================================================== -->
 
-    <target name="test-simian" description="Run Simian similarity analyzer checks">
+    <target name="test-simian">
         <taskdef resource="simiantask.properties" 
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
 
@@ -333,8 +332,16 @@
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="test-all" 
-            depends="test-checkstyle,test-pmd,test-cobertura,test-simian" 
+    <target name="test-dynamic-analysis" 
+            depends="ivy-get,compile,compile-tests,test-cobertura" 
+            description="Run dynamic analysis."/>
+    
+	<target name="test-static-analysis" 
+            depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian" 
+            description="Run static analysis."/>
+
+	<target name="test-all" 
+            depends="test-static-analysis,test-dynamic-analysis" 
             description="Run all tests"/>
 
     <!-- ====================================================================== -->
@@ -347,8 +354,11 @@
              index="false" 
              basedir="${pa-ejb.build.outputDir}"/>
     </target>
+	
+	<target name="package-notest-noivy" depends="compile,jar"/>
 
-    <target name="package-notest" depends="ivy-get,compile,jar"/>
+    <target name="package-notest" depends="ivy-get,compile,jar"
+    	    description="Package the application.  Do not run tests."/>
 
     <target name="package" depends="ivy-get,compile,test-all,jar" 
             description="Package the application"/>
