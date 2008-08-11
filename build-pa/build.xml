@@ -180,6 +180,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	</target>
 
 	<target name="init" >
+		<!-- work around missing dirs for first time build in sub-project build.xmls -->
+		<mkdir dir="${pa-ejb.base.dir}/lib"/>
+		<mkdir dir="${software.dir}/client"/>
+		<!-- end work around -->
 		<mkdir dir="${target.dir}"/>
 		<mkdir dir="${dist.dir}"/>
 		<mkdir dir="${dist.exploded.dir}"/>
@@ -197,20 +201,27 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			<isset property="rt.jboss.exists"/>
 			<then>
 				<property name="local.jboss.home" location="${jboss.home}"/>
+				<echo message="JBOSS_HOME exists ${jboss.home}"/>
 			</then>
 			<else>
 				<property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
 				<available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
+				<echo message="JBOSS_HOME does not exist checking for LOCAL_JBOSS_HOME ${local.jboss.home}"/>
 				<if>
 					<not>
 						<isset property="local.jboss.exists"/>
 					</not>
 					<then>
+						<echo message="LOCAL_JBOSS_HOME not found downloading."/>
 						<antcall target="dist:tools:retrieve:jboss"/>
-						<java jar="${tools.dir}/${jboss.binaries.file}" fork="true">
+						<java jar="${jboss.dest.file}" fork="true">
 							<arg line="-installGroup ejb3 installpath=${local.jboss.home}"/>
 						</java> 
 					</then>
+					<else>
+						<echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
+					</else>
+
 				</if>
 			</else>
 		</if>
@@ -247,6 +258,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			target="${pa-ear.build.target}"
 			dir="${pa-ear.base.dir}" >
 			<property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 
@@ -254,6 +266,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
 			target="${pa-web.build.target}"
 			dir="${pa-web.base.dir}" >
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 
@@ -261,7 +274,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
 			target="${pa-ejb.build.target}"
 			dir="${pa-ejb.base.dir}" >
-		  <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+			<property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 
