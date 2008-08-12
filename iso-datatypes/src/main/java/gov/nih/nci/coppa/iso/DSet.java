@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -89,8 +90,9 @@ import java.util.Set;
  * @author lpower
  * @param <T> the type
  */
-public class DSet<T extends Any> {
+public class DSet<T extends Any> implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private Set<T> item;
 
     /**
