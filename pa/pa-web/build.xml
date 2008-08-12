@@ -286,6 +286,7 @@
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-web/checkstyle.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/pa-web/checkstyle.xml"/>
         </checkstyle>
     </target>
 
@@ -319,6 +320,7 @@
        <simian>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-web/simian.txt"/>
+            <formatter type="xml" toFile="${pa.report.dir}/pa-web/simian.xml"/>
             <formatter type="plain"/>
         </simian>
     </target>
@@ -331,11 +333,11 @@
             depends="ivy-get,compile,compile-tests,test-cobertura" 
             description="Run dynamic analysis."/>
     
-	<target name="test-static-analysis" 
+    <target name="test-static-analysis" 
             depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian" 
             description="Run static analysis."/>
 
-	<target name="test-all" 
+    <target name="test-all" 
             depends="test-static-analysis,test-dynamic-analysis" 
             description="Run all tests"/>
 
@@ -361,14 +363,14 @@
         </war>
     </target>
 
-	<target name="package-notest-noivy" depends="compile,war"/>
+    <target name="package-notest-noivy" depends="compile,war"/>
 
     <target name="package-notest" depends="ivy-get,compile,war"
-    	    description="Package the application.  Do not run tests."/>
+            description="Package the application.  Do not run tests."/>
 
     <target name="package" depends="ivy-get,compile,test-all,war" 
             description="Package the application"/>
-	
+    
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
     <!-- ====================================================================== -->

@@ -290,6 +290,7 @@
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/checkstyle.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/pa-ejb/checkstyle.xml"/>
         </checkstyle>
     </target>
 
@@ -324,6 +325,7 @@
         <simian>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/simian.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/pa-ejb/simian.xml"/>
             <formatter type="plain"/>
         </simian>
     </target>
@@ -336,11 +338,11 @@
             depends="ivy-get,compile,compile-tests,test-cobertura" 
             description="Run dynamic analysis."/>
     
-	<target name="test-static-analysis" 
+    <target name="test-static-analysis" 
             depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian" 
             description="Run static analysis."/>
 
-	<target name="test-all" 
+    <target name="test-all" 
             depends="test-static-analysis,test-dynamic-analysis" 
             description="Run all tests"/>
 
@@ -354,11 +356,11 @@
              index="false" 
              basedir="${pa-ejb.build.outputDir}"/>
     </target>
-	
-	<target name="package-notest-noivy" depends="compile,jar"/>
+    
+    <target name="package-notest-noivy" depends="compile,jar"/>
 
     <target name="package-notest" depends="ivy-get,compile,jar"
-    	    description="Package the application.  Do not run tests."/>
+            description="Package the application.  Do not run tests."/>
 
     <target name="package" depends="ivy-get,compile,test-all,jar" 
             description="Package the application"/>
