@@ -118,6 +118,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<!-- Where grand stores it's outputed pdf reports of build files -->
 	<property name="grand.rpt.dir" value="${common.dir}/grand"/>
 
+	<!-- Hot deploy variables -->
+	<property name="jboss.deploy.dir"  value="${jboss.home}/server/${jboss.server.name}/deploy"/>
+	<property name="pa-ear.file.name"  value="pa.ear"/>
+	<property name="pa-web.src.dir" value="${pa-web.base.dir}/src/webapp"/>
+
 	<!-- retrive ivy files then retrieve bda files and librarires -->
 	<mkdir dir="${bda-download.dir}" />
 	<property name="bda-download.file" value="bda-ivy-build.xml"/>
@@ -464,7 +469,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 
 	<!-- Installs the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:install" depends="dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
+	<target name="deploy:local:install" depends="build:all,dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
 		<!-- deploy:local fails about basedirectory in real strange place macrodefs:319, this should fix it -->
 		<mkdir dir="${dist.exploded.dir}/lib"/>
 
@@ -493,7 +498,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	</target>
 
 	<!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:upgrade" depends="dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
+	<target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
 		<!-- deploy:local fails about basedirectory in real strange place macrodefs:319, this should fix it -->
 		<mkdir dir="${dist.exploded.dir}/lib"/>
 
@@ -667,32 +672,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
-		test:pa-ear,
 		test:pa-ejb,
 		test:pa-web
 		"/>
 
-	<!-- Build generic-query-grid sub-project produces project level artifact -->
-	<target name="test:pa-ear" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.test.file}"
-			target="test-all"
-			dir="${pa-ear.base.dir}" >
-			<property name="dist" value="${pa-ear.dist.dir}" />
-		</ant>
-	</target>
-
 	<target name="test:pa-web" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.test.file}"
-			target="test-all"
+		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
+			target="test-dynamic-analysis"
 			dir="${pa-web.base.dir}" >
-			<property name="dist.dir" value="${pa-web.dist.dir}" />
 		</ant>
 	</target>
 	<target name="test:pa-ejb" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.test.file}"
-			target="test-all"
+		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
+			target="test-dynamic-analysis"
 			dir="${pa-ejb.base.dir}" >
-			<property name="dist.dir" value="${pa-ejb.dist.dir}" />
 		</ant>
 	</target>
 
@@ -701,33 +694,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
-		static-analysis:pa-ear,
 		static-analysis:pa-ejb,
 		static-analysis:pa-web
 		"/>
 
-	<!-- Build generic-query-grid sub-project produces project level artifact -->
-	<target name="static-analysis:pa-ear" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
-			target="static-analysis"
-			dir="${pa-ear.base.dir}" >
-			<property name="dist" value="${pa-ear.dist.dir}" />
-		</ant>
-	</target>
-
 	<target name="static-analysis:pa-web" depends="init">
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
-			target="static-analysis"
+			target="test-static-analysis"
 			dir="${pa-web.base.dir}" >
-			<property name="dist.dir" value="${pa-web.dist.dir}" />
 		</ant>
 	</target>
 
 	<target name="static-analysis:pa-ejb" depends="init">
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
-			target="static-analysis"
+			target="test-static-analysis"
 			dir="${pa-ejb.base.dir}" >
-			<property name="dist.dir" value="${pa-ejb.dist.dir}" />
 		</ant>
 	</target>
 
@@ -837,4 +818,31 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			/>
 	</target>
 
+	<target name="deploy:hot" depends="build:all" description="Hot deploys the deployment artifact">
+		<copy file="${pa-ear.dist.dir}/${pa-ear.file.name}" todir="${jboss.deploy.dir}" />
+	</target>
+
+	<target name="deploy:hot:jsp" description="Copies all current JSP code to the deployed application for quick update">
+		<for param="toDir">
+			<path>
+				<dirset dir="${jboss.deploy.dir}/../tmp/deploy" includes="tmp*${pa-ear.file.name}*" />
+			</path>
+			<sequential>
+				<copy todir="@{toDir}/pa-web-exp.war/">
+					<fileset dir="${pa-web.src.dir}">
+						<include name="**/*.jsp" />
+						<include name="**/*.jspf" />
+						<include name="**/*.css" />
+						<include name="**/*.js" />
+						<include name="**/*.jpg" />
+						<include name="**/*.gif" />
+						<include name="**/*.png" />
+						<include name="**/*.faces" />
+						<include name="**/*.tag" />
+						<include name="**/*.tagf" />
+					</fileset>
+				</copy>
+			</sequential>
+		</for>
+	</target>
 </project>
