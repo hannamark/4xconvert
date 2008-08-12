@@ -187,6 +187,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<target name="init" >
 		<!-- work around missing dirs for first time build in sub-project build.xmls -->
 		<mkdir dir="${pa-ejb.base.dir}/lib"/>
+		<mkdir dir="${pa-web.base.dir}/lib"/>
 		<mkdir dir="${software.dir}/client"/>
 		<!-- end work around -->
 		<mkdir dir="${target.dir}"/>
