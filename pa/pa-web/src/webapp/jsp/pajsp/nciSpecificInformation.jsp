@@ -8,7 +8,16 @@
 	<title><fmt:message key="nciSpecificInfo.title"/></title>
 	<s:head />
 </head>
+<SCRIPT LANGUAGE="JavaScript">
+function resetValues () {
+    document.forms.nciSpecificInformationData.monitorCode.value="";
+    document.forms.nciSpecificInformationData.reportingDataSetMethodCode.value="";
+    document.forms.nciSpecificInformationData.summaryFourFundingCategoryCode.value="";
+    document.forms.nciSpecificInformationData.summary4Name.value="";
+ 
 
+}
+</SCRIPT>
 
 <body onload="setFocusToFirstControl();">
 <div id="contentwide">
@@ -20,6 +29,7 @@
     <s:form action="updateNCISpecificInformation"><s:actionerror/>
     	<table width="480">
  			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
+			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationDTO.studyProtocolID}"/>
 			 	<tr>
 			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
 				</tr>				  
@@ -60,7 +70,8 @@
 			     </tr>  
 			     <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Save" class="button"/>          
-                 </td> 
+                    <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
+                </td> 
 		</table>            
   	</s:form>
    </div>
