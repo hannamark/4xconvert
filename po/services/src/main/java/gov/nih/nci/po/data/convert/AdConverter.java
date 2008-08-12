@@ -89,11 +89,8 @@ import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.HashMap;
 import java.util.Map;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 
 
 
