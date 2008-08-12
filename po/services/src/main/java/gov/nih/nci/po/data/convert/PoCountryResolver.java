@@ -81,114 +81,27 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.convert.AdConverter.CountryResolver;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import java.util.HashMap;
-import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-
-
 /**
- *
- * @author gax
+ * a po hibernate resolver.
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class AdConverter extends AbstractXSnapshotConverter<Ad> {
-    
-    /** {@inheritDoc}*/
-    @Override
-    public <TO> TO convert(Class<TO> returnClass, Ad value) {
-        if (returnClass == Address.class) {
-            return (TO) convertToAddress(value, new PoCountryResolver());
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
-    
-    private static final Map<AddressPartType, String> PREFIX = new HashMap<AddressPartType, String>();
-    static {
-        PREFIX.put(AddressPartType.CAR, "c/o ");
-        PREFIX.put(AddressPartType.POB, "P.O.Box ");
-        PREFIX.put(AddressPartType.DAL, "");
-    }
+class PoCountryResolver implements CountryResolver {
 
-    /**
-     * @param iso the address to convert into a BO Address.
-     * @param resolver converts 3 letter iso country codes to a BO {@link Country}
-     * @return a BO address.
-     */
-    @SuppressWarnings({"PMD.NPathComplexity", "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
-    public static Address convertToAddress(Ad iso, CountryResolver resolver) {
-        if (iso == null || iso.getNullFlavor() != null) {
-            return null;
+    /** {@inheritDoc} */
+    public Country getCountryByAlpha3(String code) {
+        Criteria c = PoHibernateUtil.getCurrentSession().createCriteria(Country.class);
+        c.add(Restrictions.eq("alpha3", code));
+        Country cnt = (Country) c.uniqueResult();
+        if (cnt == null) {
+            throw new IllegalArgumentException("no country for code " + code);
         }
-        
-        Address a = new Address();
-        
-        StringBuffer street = new StringBuffer();
-        StringBuffer delivery = new StringBuffer();
-        String sdelimitor = "";
-        String ddelimitor = "";
-        
-        for (Adxp part : iso.getPart()) {
-            if (part.getType() == null) {
-                street.append(sdelimitor).append(part.getValue());
-            } else {
-                switch (part.getType()) {
-                    case DEL: 
-                        String del = part.getValue() == null ? "\n" : part.getValue();
-                        street.append(del);
-                        sdelimitor = "";
-                        continue;
-                    case CNT:
-                        a.setCountry(resolver.getCountryByAlpha3(part.getCode()));
-                        sdelimitor = "";
-                        continue;
-                    case STA:
-                        a.setStateOrProvince(part.getValue());
-                        sdelimitor = "";
-                        continue;
-                    case CTY:
-                        a.setCityOrMunicipality(part.getValue());
-                        sdelimitor = "";
-                        continue;
-                    case ZIP:
-                        a.setPostalCode(part.getValue());
-                        sdelimitor = "";
-                        continue;
-                    case POB:
-                    case CAR:
-                    case DAL: 
-                        delivery.append(ddelimitor).append(PREFIX.get(part.getType()) + part.getValue());
-                        break;
-                    default: street.append(sdelimitor).append(part.getValue());
-                }
-                sdelimitor = street.length() == 0 ? "" : " ";
-                ddelimitor = delivery.length() == 0 ? "" : " ";
-            }            
-        }
-        
-        a.setStreetAddressLine(street.toString());
-        a.setDeliveryAddressLine(delivery.toString());
-        return a;
-    }
-    
-    /**
-     * helps resolve countries. 
-     */
-    public static interface CountryResolver {
-        /**
-         * @param code http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
-         * @return a county
-         */
-        Country getCountryByAlpha3(String code);
+        return cnt;
     }
 }
