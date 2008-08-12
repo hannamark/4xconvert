@@ -673,6 +673,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
+		jboss:start,
 		test:pa-ejb,
 		test:pa-web
 		"/>
@@ -846,4 +847,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			</sequential>
 		</for>
 	</target>
+	<target name="jboss:check:running">
+		<jboss-check-if-jboss-is-running/>
+	</target>
+	<target name="jboss:start" unless="jboss.running" depends="jboss:check:running">
+		 <jboss-start-jboss />
+	 </target>
 </project>
