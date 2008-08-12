@@ -673,7 +673,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
-		jboss:start,
 		test:pa-ejb,
 		test:pa-web
 		"/>
@@ -682,12 +681,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
 			target="test-dynamic-analysis"
 			dir="${pa-web.base.dir}" >
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 	<target name="test:pa-ejb" depends="init">
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
 			target="test-dynamic-analysis"
 			dir="${pa-ejb.base.dir}" >
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 
@@ -704,6 +705,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
 			target="test-static-analysis"
 			dir="${pa-web.base.dir}" >
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 
@@ -711,6 +713,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
 			target="test-static-analysis"
 			dir="${pa-ejb.base.dir}" >
+			<property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
 		</ant>
 	</target>
 
@@ -847,10 +850,4 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			</sequential>
 		</for>
 	</target>
-	<target name="jboss:check:running">
-		<jboss-check-if-jboss-is-running/>
-	</target>
-	<target name="jboss:start" unless="jboss.running" depends="jboss:check:running">
-		 <jboss-start-jboss />
-	 </target>
 </project>
