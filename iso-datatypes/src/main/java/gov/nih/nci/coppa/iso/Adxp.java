@@ -82,13 +82,16 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.io.Serializable;
+
 /**
  * Represents the iso data type.
  * @author lpower
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class Adxp {
+public class Adxp implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private String code;
     private String codeSystem;
     private String codeSystemVersion;
