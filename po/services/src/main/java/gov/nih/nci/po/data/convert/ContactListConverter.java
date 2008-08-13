@@ -92,6 +92,7 @@ import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.iso.TelecommunicationAddressUse;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import java.net.URI;
@@ -110,11 +111,19 @@ import net.sf.xsnapshot.TransformerArgs;
 public class ContactListConverter implements Transformer {
 
     /**
-     * @param org the org whos contacts we want to collaps into a DSet.
+     * @param org the {@link Organization} who's contacts we want to collaps into a DSet.
      * @return all contacts converted to Tel.
      */
-    public static DSet<? extends Tel> convertToDSet(Organization org) {
+    public static DSet<Tel> convertToDSet(Organization org) {
         return convertToDSet(org.getEmail(), org.getFax(), org.getPhone(), org.getUrl(), org.getTty());
+    }
+    
+    /**
+     * @param per the {@link Person} who's contacts we want to collaps into a DSet.
+     * @return all contacts converted to Tel.
+     */
+    public static DSet<Tel> convertToDSet(Person per) {
+        return convertToDSet(per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
     }
     
     /**

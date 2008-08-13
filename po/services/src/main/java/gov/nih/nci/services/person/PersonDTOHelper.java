@@ -84,8 +84,11 @@
 package gov.nih.nci.services.person;
 
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.convert.ContactListConverter;
 import gov.nih.nci.po.data.convert.EnPnConverter;
 import gov.nih.nci.po.data.convert.PersonNameConverter;
+import gov.nih.nci.po.data.convert.TelDSetConverter;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import net.sf.xsnapshot.TransformContext;
 
 /**
@@ -106,12 +109,12 @@ public class PersonDTOHelper extends BasePersonDTOHelper {
             if (myClass.isInstance(model)) {
 
                 // check whether its already in the context map
-                Object existingSnapshot = context.getSnapshotInstance(model, "entity");
+                Object existingSnapshot = context.getSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME);
                 if (existingSnapshot != null) {
                     return existingSnapshot;
                 } else {
                     PersonDTO snapshot = new PersonDTO();
-                    context.setSnapshotInstance(model, "entity", snapshot);
+                    context.setSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME, snapshot);
                     copyIntoSnapshot(model, snapshot, context);
                     return snapshot;
                 }
@@ -133,7 +136,7 @@ public class PersonDTOHelper extends BasePersonDTOHelper {
         PersonDTO s = (PersonDTO) snapshot;
         Person m = (Person) model;
         EnPnConverter.convertToPersonName(s.getName(), m);
-        // TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
+        TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
     }
 
     /**
@@ -146,6 +149,6 @@ public class PersonDTOHelper extends BasePersonDTOHelper {
         PersonDTO s = (PersonDTO) snapshot;
         Person m = (Person) model;
         s.setName(PersonNameConverter.convertToEnPn(m));
-        // s.setTelecomAddress(ContactListConverter.convertToDSet(m));
+        s.setTelecomAddress(ContactListConverter.convertToDSet(m));
     }
 }

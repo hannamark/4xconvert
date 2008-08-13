@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.person;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 
 
@@ -93,6 +94,7 @@ public class PersonDTO extends BasePersonDTO {
     private static final long serialVersionUID = 1L;
 
     private EnPn name;
+    private DSet telecomAddress;
 
     /**
      * @return the name
@@ -106,5 +108,19 @@ public class PersonDTO extends BasePersonDTO {
      */
     public void setName(EnPn name) {
         this.name = name;
+    }
+    
+    /**
+     * @return the telecomAddress
+     */
+    public DSet getTelecomAddress() {
+        return this.telecomAddress;
+    }
+
+    /**
+     * @param telecomAddress the telecomAddress to set
+     */
+    public void setTelecomAddress(DSet telecomAddress) {
+        this.telecomAddress = telecomAddress;
     }
 }

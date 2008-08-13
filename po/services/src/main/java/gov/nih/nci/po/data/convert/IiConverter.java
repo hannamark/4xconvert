@@ -109,7 +109,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
      * @param value an II used to identify PO entities.
      * @return a long suitable for a hibernate entity Id
      */
-    public Long convertToLong(Ii value) {
+    public static Long convertToLong(Ii value) {
         if (value == null || value.getNullFlavor() != null) {
             return null;
         }

@@ -150,8 +150,7 @@ public class TelDSetConverter implements Transformer {
      * @param per the person who's contacts will be populated.
      */
     public static void convertToContactList(DSet<? extends Tel> value, Person per) {
-        throw new UnsupportedOperationException("not yet implemented");
-        // convertToContactList(value, per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
+        convertToContactList(value, per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
     }
 
 /**

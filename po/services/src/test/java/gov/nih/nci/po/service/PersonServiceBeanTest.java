@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Address;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -149,9 +150,12 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     public Person getBasicPerson() {
         Person person = new Person();
         person.setCurationStatus(null);
-        new Date();
         person.setFirstName("fName");
         person.setLastName("lName");
+        
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry);
+        person.setPostalAddress(a);
+        
         return person;
     }
 
@@ -175,9 +179,8 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
-        Person person = new Person();
+        Person person = getBasicPerson();
         person.setCurationStatus(CurationStatus.CURATED);
-        new Date();
         person.setFirstName("fName");
         person.setLastName("lName");
 

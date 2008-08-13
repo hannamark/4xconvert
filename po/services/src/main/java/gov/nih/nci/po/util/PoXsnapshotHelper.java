@@ -50,11 +50,11 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
             XSnapshotPropertiesConfigurator.configure(this, config);
 
             Class snapshotClass = OrganizationDTO.class;
-            this.registerSnapshotClass(Organization.class, "entity", snapshotClass);
+            this.registerSnapshotClass(Organization.class, DEFAULT_NAME, snapshotClass);
             this.registerHelper(snapshotClass, new OrganizationDTOHelper());
 
             snapshotClass = PersonDTO.class;
-            this.registerSnapshotClass(Person.class, "entity", snapshotClass);
+            this.registerSnapshotClass(Person.class, DEFAULT_NAME, snapshotClass);
             this.registerHelper(snapshotClass, new PersonDTOHelper());
         } catch (ConfigurationException ex) {
             throw new RuntimeException("failed to init xsnapshot", ex);

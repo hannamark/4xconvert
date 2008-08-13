@@ -86,6 +86,7 @@ package gov.nih.nci.services.organization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.ContactListConverter;
 import gov.nih.nci.po.data.convert.TelDSetConverter;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import net.sf.xsnapshot.TransformContext;
 
 /**
@@ -106,12 +107,12 @@ public class OrganizationDTOHelper extends BaseOrganizationDTOHelper {
             if (myClass.isInstance(model)) {
 
                 // check whether its already in the context map
-                Object existingSnapshot = context.getSnapshotInstance(model, "entity");
+                Object existingSnapshot = context.getSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME);
                 if (existingSnapshot != null) {
                     return existingSnapshot;
                 } else {
                     OrganizationDTO snapshot = new OrganizationDTO();
-                    context.setSnapshotInstance(model, "entity", snapshot);
+                    context.setSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME, snapshot);
                     copyIntoSnapshot(model, snapshot, context);
                     return snapshot;
                 }

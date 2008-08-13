@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
+import java.util.ArrayList;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -104,6 +105,12 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.util.List;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 
 /**
@@ -127,6 +134,13 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private CurationStatus curationStatus;
     private CurationStatus priorCurationStatus;
     private Person duplicateOf;
+    private Address postalAddress;
+    // TODO  PO-421 These may need to be changed to work with TEL:  add jira issue
+    private List<Email> email = new ArrayList<Email>();
+    private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
+    private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
+    private List<URL> url = new ArrayList<URL>(1);
+    private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
 
     /**
      * Create a new, empty person.
@@ -215,6 +229,157 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      */
     public void setSuffix(String suffix) {
         this.suffix = suffix;
+    }
+
+    /**
+     * @return mail address
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ad"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter"
+     */
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "postal_address_id")
+    @ForeignKey(name = "PER_POSTAL_ADDRESS_FK")
+    @Valid
+    public Address getPostalAddress() {
+        return postalAddress;
+    }
+
+    /**
+     * @param postalAddress new mailing address
+     */
+    public void setPostalAddress(Address postalAddress) {
+        this.postalAddress = postalAddress;
+    }
+
+    /**
+     * @return email list
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_email",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
+    @Valid
+    public List<Email> getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email new email address list
+     */
+    protected void setEmail(List<Email> email) {
+        this.email = email;
+    }
+
+    /**
+     * @return fax list
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_fax",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "fax")
+    @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
+    public List<PhoneNumber> getFax() {
+        return fax;
+    }
+
+    /**
+     * @param fax new fax
+     */
+    protected void setFax(List<PhoneNumber> fax) {
+        this.fax = fax;
+    }
+
+    /**
+     * @return phone list
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_phone",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "phone")
+    @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
+    public List<PhoneNumber> getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone new phone list
+     */
+    protected void setPhone(List<PhoneNumber> phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * @return list of urls
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_url",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "url")
+    @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
+    public List<URL> getUrl() {
+        return url;
+    }
+
+    /**
+     * @param url new url
+     */
+    protected void setUrl(List<URL> url) {
+        this.url = url;
+    }
+    /**
+     * @return list of urls
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_tty",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "tty")
+    @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
+    public List<PhoneNumber> getTty() {
+        return tty;
+    }
+
+    /**
+     * @param tty new text numbers
+     */
+    protected void setTty(List<PhoneNumber> tty) {
+        this.tty = tty;
     }
 
     /**

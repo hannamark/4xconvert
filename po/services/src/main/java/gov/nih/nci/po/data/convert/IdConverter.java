@@ -133,6 +133,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     
     /**
      * convert the Id of an org.
+     * @see ISOUtils#ID_ORG
      */
     public static class OrgIdConverter extends IdConverter {
         /** {@inheritDoc} */
@@ -147,6 +148,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
 
     /**
      * convert the Id of a person.
+     * @see ISOUtils#ID_PERSON
      */
     public static class PersonIdConverter extends IdConverter {
         /** {@inheritDoc} */

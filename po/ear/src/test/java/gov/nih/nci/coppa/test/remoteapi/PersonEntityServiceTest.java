@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
@@ -115,6 +116,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             part = new Enxp(EntityNamePartType.FAM);
             part.setValue("__");
             dto.getName().getPart().add(part);
+            dto.setPostalAddress(AddressConverterUtil.create("street", "delivery", "city", "state", "zip", "USA"));
             Ii id = getPersonService().createPerson(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());

@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
@@ -26,6 +27,8 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     private PersonDTO create(String fName, String lName, String prefix, String suffix) {
         PersonDTO p = new PersonDTO();
         p.setName(PersonNameConverterUtil.convertToEnPn(fName, lName, prefix, suffix));
+        
+        p.setPostalAddress(AddressConverterUtil.create("street", "delivery", "city", "state", "zip", "USA"));
         return p;
     }
 
