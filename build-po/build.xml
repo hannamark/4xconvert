@@ -151,6 +151,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		</classpath>
 	</taskdef>
 
+
 	<!-- Includes- include BDA marcos -->
 	<import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
 
@@ -237,13 +238,25 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
-		build:po,
-		build:po:gen-sql
+		build:po
 		"/>
 
 	<!-- First Maven Target -->
 	<target name="build:po" depends="init, build:iso-datatypes">
+		<delete>
+			<fileset dir="${po.base.dir}">
+				<include name="**/profiles.xml" />
+			</fileset>
+		</delete>
 		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+			<filterset>
+				<filter token="jboss.home" value="${local.jboss.home}"/>
+				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+				<filter token="db.po.generate.drop" value="false"/>
+				<filter token="db.po.generate.create" value="true"/>
+			</filterset>
+		</copy>
+		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
 			<filterset>
 				<filter token="jboss.home" value="${local.jboss.home}"/>
 				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
@@ -258,39 +271,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			maven.dir="${po.base.dir}"
 			/>
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
-	</target>
-	<target name="build:po:gen-sql" depends="init">
-		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
-				<filter token="db.po.generate.drop" value="false"/>
-				<filter token="db.po.generate.create" value="true"/>
-			</filterset>
-		</copy>
-		<maven
-			maven.profile.list="-P ${po.maven.profile.list}"
-			maven.goal.list="process-classes"
-			maven.dir="${po-services.base.dir}"
-			/>
-		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
-			<fileset dir="${db-install-dynamic.src.dir}">
-				<include name="**/*"/>
-			</fileset>
-		</copy> 
-		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-			<filterset>
-				<filter token="jboss.home" value="${local.jboss.home}"/>
-				<filter token="db.po.file.name" value="${db.po.drop-schema.file}"/>
-				<filter token="db.po.generate.drop" value="true"/>
-				<filter token="db.po.generate.create" value="false"/>
-			</filterset>
-		</copy>
-		<maven
-			maven.profile.list="-P ${po.maven.profile.list}"
-			maven.goal.list="process-classes"
-			maven.dir="${po-services.base.dir}"
-			/>
 		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
 			<fileset dir="${db-install-dynamic.src.dir}">
 				<include name="**/*"/>
@@ -376,14 +356,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
-		<!-- May no longer be needed because of changing postgresql to not use / a command delimeter
-		<replaceregexp file="${db-install.dist.dir}/postgresql/${db.po.create-schema.file}" byline="true"
-			match=";"
-			replace="${line.separator}\/${line.separator}"/>
-		<replaceregexp file="${db-install.dist.dir}/postgresql/${db.po.drop-schema.file}" byline="true"
-			match=";"
-			replace="${line.separator}\/${line.separator}"/>
-		-->
 
 		<!-- Copy install related xml and properties files -->
 		<copy todir="${dist.exploded.dir}" overwrite="true">
@@ -489,7 +461,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 
 	<!-- Installs the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:install" depends="dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
+	<target name="deploy:local:install" depends="build:all,dist:installer:prep" description="Installs the application and required binaries on the local machine, used for developer desktops and ci environments" >
 		<!-- deploy:local fails about basedirectory in real strange place macrodefs:319, this should fix it -->
 		<mkdir dir="${dist.exploded.dir}/lib"/>
 
@@ -518,7 +490,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	</target>
 
 	<!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-	<target name="deploy:local:upgrade" depends="dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
+	<target name="deploy:local:upgrade" depends="build:all,dist:upgrader:prep" description="Upgrades the application on the local machine, used for developer desktops and ci environments" >
 		<!-- deploy:local fails about basedirectory in real strange place macrodefs:319, this should fix it -->
 		<mkdir dir="${dist.exploded.dir}/lib"/>
 
@@ -676,69 +648,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		depends="
 		clean,
 		init,
-		test:po-ear,
-		test:pa-ejb,
-		test:pa-web
+		test:po
 		"/>
 
-	<!-- Build generic-query-grid sub-project produces project level artifact -->
-	<target name="test:po-ear" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${po-ear.test.file}"
-			target="test-all"
-			dir="${po-ear.base.dir}" >
-			<property name="dist" value="${po-ear.dist.dir}" />
-		</ant>
+	<target name="test:po" depends="init" description="Runs test targets on all sub-projects">
+		<maven
+			maven.profile.list="-P local"
+			maven.goal.list="stie verify"
+			maven.dir="${po.base.dir}"
+			/>
 	</target>
 
-	<target name="test:pa-web" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.test.file}"
-			target="test-all"
-			dir="${pa-web.base.dir}" >
-			<property name="dist.dir" value="${pa-web.dist.dir}" />
-		</ant>
-	</target>
-	<target name="test:pa-ejb" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.test.file}"
-			target="test-all"
-			dir="${pa-ejb.base.dir}" >
-			<property name="dist.dir" value="${pa-ejb.dist.dir}" />
-		</ant>
-	</target>
-
-	<!-- Wrapper test target, call appropriate test for sub-projects -->
-	<target name="static-analysis:all" description="Runs static-analysis target for all sub-projects"
-		depends="
-		clean,
-		init,
-		static-analysis:po-ear,
-		static-analysis:pa-ejb,
-		static-analysis:pa-web
-		"/>
-
-	<!-- Build generic-query-grid sub-project produces project level artifact -->
-	<target name="static-analysis:po-ear" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${po-ear.build.file}"
-			target="static-analysis"
-			dir="${po-ear.base.dir}" >
-			<property name="dist" value="${po-ear.dist.dir}" />
-		</ant>
-	</target>
-
-	<target name="static-analysis:pa-web" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
-			target="static-analysis"
-			dir="${pa-web.base.dir}" >
-			<property name="dist.dir" value="${pa-web.dist.dir}" />
-		</ant>
-	</target>
-
-	<target name="static-analysis:pa-ejb" depends="init">
-		<ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
-			target="static-analysis"
-			dir="${pa-ejb.base.dir}" >
-			<property name="dist.dir" value="${pa-ejb.dist.dir}" />
-		</ant>
-	</target>
+	<!-- Since static-analysis and testing cannot be called separately , just have SA depend on test. -->
+	<target name="static-analysis:all" description="Runs static-analysis target for all sub-projects" depends="test:all" />
 
 	<target name="continuous-integration" description="calls wrapper targets for continuous integration build"
 		depends="
