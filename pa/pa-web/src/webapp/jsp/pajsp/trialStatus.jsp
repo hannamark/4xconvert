@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC 
+5<!DOCTYPE html PUBLIC 
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
@@ -6,8 +6,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><fmt:message key="trialStatus.title"/></title>
-    <s:head />
-    <script type="text/javascript" src="/scripts/js/calendarpopup.js"></script>
+    <s:head /> 
+    <script type="text/javascript" src="scripts/js/calendarpopup.js"/>
+        <script type="text/javascript" src="scripts/js/prototype.js"></script>
+        <script type="text/javascript" src="scripts/js/scriptaculous.js"></script>    
 
     <script type="text/javascript">
             var cal = new CalendarPopup();
@@ -47,8 +49,8 @@
                            <label for="currentTrialStatusDate"> <fmt:message key="trialStatus.current.trial.status.date"/></label>
                       </td>
                       <td align=left>
-                           <s:textfield name="trialStatusData.currentTrialStatusDate"  maxlength="10" size="10" />
-                           <a href="javascript:;" onclick="cal.select(document.forms[0].currentTrialStatusDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton" >
+                           <s:textfield name="currentTrialStatusDate"  maxlength="10" size="10" value=""/>
+                           <a href="javascript:;"onclick="cal.select(document.forms[0].currentTrialStatusDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton" >
                             <img src="images/ico_calendar.gif" alt="select date" class="calendaricon" />
                           </a>                         
                       </td>                               
@@ -58,9 +60,9 @@
                            <label for="trialStartDate"> <fmt:message key="trialStatus.trial.start.date"/></label>
                       </td>
                       <td align=left>
-                           <s:textfield name="trialStatusData.trialStartDate"  maxlength="10" size="10" />
-                           <a href="javascript:;" onclick="cal1.select(document.forms[0].trialStatusData.trialStartDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton" >
-                            <img src="images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                           <s:textfield name="trialStartDate"  maxlength="10" size="10" value=""/>
+                             <a href="javascript:;"onclick="cal1.select(document.forms[0].trialStartDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton" >
+                         <img src="images/ico_calendar.gif" alt="select date" class="calendaricon" />
                           </a>                         
                       </td>  
                       <td>
@@ -72,8 +74,8 @@
                            <label for="trialStatusCompletionDate"> <fmt:message key="trialStatus.primary.completion.date"/></label>
                       </td>
                       <td align=left>
-                           <s:textfield name="trialStatusData.trialStatusCompletionDate"  maxlength="10" size="10" />
-                           <a href="javascript:;" onclick="cal2.select(document.forms[0].trialStatusData.trialStatusCompletionDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton" >
+                           <s:textfield name="trialStatusCompletionDate"  maxlength="10" size="10" value=""/>
+                            <a href="javascript:;"onclick="cal.select(document.forms[0].trialStatusCompletionDate,'calendarbutton','MM/dd/yyyy'); return false;" name="calendarbutton" id="calendarbutton" >
                             <img src="images/ico_calendar.gif" alt="select date" class="calendaricon" />
                           </a>                         
                       </td>
