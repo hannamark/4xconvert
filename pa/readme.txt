@@ -47,16 +47,25 @@ App Server - JBoss 4.0.5 w/ ejb3:
         or /Applications/jboss-4.0.5.GA (Mac).
         
 IDE - Eclipse
-    1. Plugins:
-              * Subclipse - http://subclipse.tigris.org/update_1.2.x
-              * PMD - http://pmd.sourceforge.net/eclipse
-              * Checkstyle - http://eclipse-cs.sourceforge.net/update
-    2. Disable tabs:
+    1. Install plugins:
+        * Subclipse - http://subclipse.tigris.org/update_1.4.x
+        * PMD - http://pmd.sourceforge.net/eclipse
+        * Checkstyle - http://eclipse-cs.sourceforge.net/update
+    2. Configure Plugins:
+        * Subclipse - in pa project pop-up menu select Team > Share project...
+        * PMD - in pa project pop-up menu select Properties
+                select PMD > Select a working set.. and configure a working set of only the src/java folders
+                Click "Use the ruleset configured in a project file" checkbox
+                Enter "resources/paPmd.xml" or browse to file
+                Click "Enable PMD" checkbox
+        * Checkstyle - none needed (.checkstyle file is in svn)
+                
+    3. Disable tabs:
         Select Windows > General > Editor > Text Editor > 
-      Displayed tab width = 4
-      check insert spaces for tab
-      check show print margin
-      set print margin column as 80
+            Displayed tab width = 4
+            check insert spaces for tab
+            check show print margin
+            set print margin column as 80
       
 Setting up the Eclipse IDE
 --------------------------
