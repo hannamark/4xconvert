@@ -80,212 +80,47 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.po.data.bo.Person;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
- * Organizations.
+ * @author Scott Miller
  *
- * @xsnapshot.snapshot-class name="entity"
- *      class="gov.nih.nci.services.person.BasePersonDTO" implements="gov.nih.nci.services.EntityDTO"
  */
-@Entity
-@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public class Person implements PersistentObject, Auditable, Curatable<Person> {
-    private static final long serialVersionUID = 1L;
-    private static final int SHORT_COL_LENGTH = 10;
-    private static final int LONG_COL_LENGTH = 50;
-
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String suffix;
-    private String prefix;
-    private CurationStatus curationStatus;
-    private CurationStatus priorCurationStatus;
-    private Person duplicateOf;
+public class PersonNameConverter  {
 
     /**
-     * Create a new, empty person.
+     * Convert the person's name info to an enpn.
+     * @param person the person.
+     * @return the enpn
      */
-    public Person() {
-        // default constructor
-    }
-
-    /**
-     * @return database id
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return first (given) name
-     */
-    @Length(max = LONG_COL_LENGTH)
-    @NotEmpty
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * @param firstName first name
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * @return last (family) name
-     */
-    @Length(max = LONG_COL_LENGTH)
-    @NotEmpty
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * @param lastName last name
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * @return name prefix
-     */
-    @Length(max = SHORT_COL_LENGTH)
-    public String getPrefix() {
-        return prefix;
-    }
-
-    /**
-     * @param prefix prefix
-     */
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    /**
-     * @return name suffix
-     */
-    @Length(max = SHORT_COL_LENGTH)
-    public String getSuffix() {
-        return suffix;
-    }
-
-    /**
-     * @param suffix suffix
-     */
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    /**
-     * @param newStatus the status of this person record
-     */
-    public void setCurationStatus(CurationStatus newStatus) {
-        this.curationStatus = newStatus;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(name = "STATUS")
-    public CurationStatus getCurationStatus() {
-        return this.curationStatus;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Formula("status")
-    @SuppressWarnings("unused")
-    private String getPriorAsString() {
-        return null;
-    }
-
-    @SuppressWarnings("unused")
-    private void setPriorAsString(String prior) {
-        if (prior != null) {
-            this.priorCurationStatus = CurationStatus.valueOf(prior);
+    public static final EnPn convertToEnPn(Person person) {
+        EnPn enpn = new EnPn();
+        if (person == null) {
+            enpn.setNullFlavor(NullFlavor.NI);
         } else {
-            this.priorCurationStatus = null;
+            addEnxp(enpn, person.getLastName(), EntityNamePartType.FAM);
+            addEnxp(enpn, person.getFirstName(), EntityNamePartType.GIV);
+            addEnxp(enpn, person.getPrefix(), EntityNamePartType.PFX);
+            addEnxp(enpn, person.getSuffix(), EntityNamePartType.SFX);
+        }
+        return enpn;
+    }
+
+    private static void addEnxp(EnPn enpn, String value, EntityNamePartType type) {
+        if (StringUtils.isNotEmpty(value)) {
+            Enxp part = new Enxp(type);
+            part.setValue(value);
+            enpn.getPart().add(part);
         }
     }
 
-    /**
-     * @return the prior curation status
-     */
-    @Transient
-    public CurationStatus getPriorCurationStatus() {
-       return priorCurationStatus;
-    }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
-    public void setDuplicateOfPerson(Person per) {
-        if (this.getCurationStatus().equals(CurationStatus.REJECTED)
-                || this.getCurationStatus().equals(CurationStatus.DEPRECATED)) {
-            this.duplicateOf = per;
-        }
-    }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(Person per) {
-        this.duplicateOf = per;
-    }
-
-    /**
-     * @return person
-     */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "person_duplicateof_idx")
-    @ForeignKey(name = "PERSON_DUPLICATE_PERSON_FK")
-    public Person getDuplicateOf() {
-        return this.duplicateOf;
-    }
 }

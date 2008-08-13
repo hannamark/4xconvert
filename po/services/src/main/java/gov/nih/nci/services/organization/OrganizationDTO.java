@@ -80,212 +80,28 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
-
-import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.util.NotEmpty;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-
+package gov.nih.nci.services.organization;
 
 /**
- * Organizations.
+ * @author Scott Miller
  *
- * @xsnapshot.snapshot-class name="entity"
- *      class="gov.nih.nci.services.person.BasePersonDTO" implements="gov.nih.nci.services.EntityDTO"
  */
-@Entity
-@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public class Person implements PersistentObject, Auditable, Curatable<Person> {
+public class OrganizationDTO extends BaseOrganizationDTO {
     private static final long serialVersionUID = 1L;
-    private static final int SHORT_COL_LENGTH = 10;
-    private static final int LONG_COL_LENGTH = 50;
 
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String suffix;
-    private String prefix;
-    private CurationStatus curationStatus;
-    private CurationStatus priorCurationStatus;
-    private Person duplicateOf;
+    private gov.nih.nci.coppa.iso.DSet telecomAddress;
 
     /**
-     * Create a new, empty person.
+     * @return the telecomAddress
      */
-    public Person() {
-        // default constructor
+    public gov.nih.nci.coppa.iso.DSet getTelecomAddress() {
+        return this.telecomAddress;
     }
 
     /**
-     * @return database id
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     * @param telecomAddress the telecomAddress to set
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return first (given) name
-     */
-    @Length(max = LONG_COL_LENGTH)
-    @NotEmpty
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * @param firstName first name
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * @return last (family) name
-     */
-    @Length(max = LONG_COL_LENGTH)
-    @NotEmpty
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * @param lastName last name
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * @return name prefix
-     */
-    @Length(max = SHORT_COL_LENGTH)
-    public String getPrefix() {
-        return prefix;
-    }
-
-    /**
-     * @param prefix prefix
-     */
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    /**
-     * @return name suffix
-     */
-    @Length(max = SHORT_COL_LENGTH)
-    public String getSuffix() {
-        return suffix;
-    }
-
-    /**
-     * @param suffix suffix
-     */
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    /**
-     * @param newStatus the status of this person record
-     */
-    public void setCurationStatus(CurationStatus newStatus) {
-        this.curationStatus = newStatus;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(name = "STATUS")
-    public CurationStatus getCurationStatus() {
-        return this.curationStatus;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Formula("status")
-    @SuppressWarnings("unused")
-    private String getPriorAsString() {
-        return null;
-    }
-
-    @SuppressWarnings("unused")
-    private void setPriorAsString(String prior) {
-        if (prior != null) {
-            this.priorCurationStatus = CurationStatus.valueOf(prior);
-        } else {
-            this.priorCurationStatus = null;
-        }
-    }
-
-    /**
-     * @return the prior curation status
-     */
-    @Transient
-    public CurationStatus getPriorCurationStatus() {
-       return priorCurationStatus;
-    }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
-    public void setDuplicateOfPerson(Person per) {
-        if (this.getCurationStatus().equals(CurationStatus.REJECTED)
-                || this.getCurationStatus().equals(CurationStatus.DEPRECATED)) {
-            this.duplicateOf = per;
-        }
-    }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(Person per) {
-        this.duplicateOf = per;
-    }
-
-    /**
-     * @return person
-     */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "person_duplicateof_idx")
-    @ForeignKey(name = "PERSON_DUPLICATE_PERSON_FK")
-    public Person getDuplicateOf() {
-        return this.duplicateOf;
+    public void setTelecomAddress(gov.nih.nci.coppa.iso.DSet telecomAddress) {
+        this.telecomAddress = telecomAddress;
     }
 }

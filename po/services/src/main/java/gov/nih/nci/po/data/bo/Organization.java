@@ -118,8 +118,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Organizations.
- * 
- * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.services.organization.OrganizationDTO"
+ *
+ * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.services.organization.BaseOrganizationDTO"
  *                           implements="gov.nih.nci.services.EntityDTO"
  */
 @Entity
@@ -152,7 +152,6 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
         // empty constructor.
     }
 
-    // TODO Make field name identifier in the DTO
     /**
      * @return database identity
      * @xsnapshot.property match="entity"
@@ -378,31 +377,6 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
      */
     protected void setTty(List<PhoneNumber> tty) {
         this.tty = tty;
-    }
-    
-    
-    /**
-     * does nothing. To help with DTO generation.
-     * @return null
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.DSet"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.ContactListConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.TelDSetConverter"
-     * @deprecated do not use.
-     */
-    @Deprecated
-    @Transient
-    public Object getTelecomAddress() {
-        return null;
-    }
-
-    /**
-     * does nothing. Only here to help xsnapshot.
-     * @param ignored whatever.
-     * @deprecated do not use.
-     */
-    @Deprecated
-    public void setTelecomAddress(Object ignored) {
-        // do nothing
     }
 
     /**

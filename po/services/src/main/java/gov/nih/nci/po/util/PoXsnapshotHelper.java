@@ -1,11 +1,13 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.convert.OrganizationDTOHelper;
-import gov.nih.nci.po.data.convert.PersonDTOHelper;
-import gov.nih.nci.po.services.person.PersonDTO;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.services.EntityDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationDTOHelper;
+import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonDTOHelper;
 
 import java.net.URL;
 import java.util.Collection;
@@ -20,7 +22,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
- * 
+ *
  * @author gax
  */
 public final class PoXsnapshotHelper extends XSnapshotRegistry {
@@ -46,9 +48,13 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
         try {
             PropertiesConfiguration config = new PropertiesConfiguration(configResource);
             XSnapshotPropertiesConfigurator.configure(this, config);
+
             Class snapshotClass = OrganizationDTO.class;
+            this.registerSnapshotClass(Organization.class, "entity", snapshotClass);
             this.registerHelper(snapshotClass, new OrganizationDTOHelper());
+
             snapshotClass = PersonDTO.class;
+            this.registerSnapshotClass(Person.class, "entity", snapshotClass);
             this.registerHelper(snapshotClass, new PersonDTOHelper());
         } catch (ConfigurationException ex) {
             throw new RuntimeException("failed to init xsnapshot", ex);
@@ -57,11 +63,11 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
 
     /**
      * Convert a collection of model objects into the corresponding snapshot objects.
-     * 
+     *
      * @param modelCollection the collection of model objects to convert
      * @param destCollection a collection into which to put the snapshot objects
      * @param <T> BO type
-     * @param <U> DTO type        * 
+     * @param <U> DTO type        *
      * @return the collection containing the snapshot objects
      */
     @SuppressWarnings(UNCHECKED)
@@ -72,11 +78,10 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
 
     /**
      * convert a collection of model objects into a collection of snapshot objects, putting them in a list.
-     * 
+     *
      * @param modelCollection the collection of model objects to convert
      * @return the list of snapshot objects
      */
-    @SuppressWarnings(UNCHECKED)
     public static List createSnapshotList(Collection modelCollection) {
         return PO_XSNASHOTUTILS.createSnapshotList(modelCollection, DEFAULT_NAME);
     }
@@ -84,20 +89,21 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
     /**
      * @param model the model to translate
      * @param <T> BO type
-     * @param <U> DTO type       * 
+     * @param <U> DTO type       *
      * @return a snapshot object
      */
+    @SuppressWarnings(UNCHECKED)
     public static <T extends Curatable, U extends EntityDTO> U createSnapshot(T model) {
         return (U) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_NAME);
     }
 
     /**
      * convert a collection of snapshot objects into a collection of model objects, putting them in a list.
-     * 
+     *
      * @param snapshotCollection the collection of snapshot objects to convert
      * @param destCollection the collection to populate
      * @param <T> BO type
-     * @param <U> DTO type     * 
+     * @param <U> DTO type     *
      * @return the list of model objects
      */
     @SuppressWarnings(UNCHECKED)
@@ -108,7 +114,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
 
     /**
      * convert a collection of snapshot objects into a collection of model objects, putting them in a list.
-     * 
+     *
      * @param snapshotCollection the collection of snapshot objects to convert
      * @param <T> BO type
      * @param <U> DTO type
@@ -121,19 +127,20 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
 
     /**
      * Returns the snapshot helper for a model class and snapshot name.
-     * 
+     *
      * @param snapshot the snapshot to translate
      * @param <T> BO type
-     * @param <U> DTO type     * 
+     * @param <U> DTO type     *
      * @return a model object
      */
+    @SuppressWarnings(UNCHECKED)
     public static <T extends Curatable, U extends EntityDTO> T createModel(U snapshot) {
         return (T) PO_XSNASHOTUTILS.createModel(snapshot);
     }
 
     /**
      * Returns the snapshot helper for a model class and snapshot name.
-     * 
+     *
      * @param modelClass the model class
      * @param snapshotName the snapshot name
      * @return the helper object, or null if no helper is registered for that combination of model class and snapshot

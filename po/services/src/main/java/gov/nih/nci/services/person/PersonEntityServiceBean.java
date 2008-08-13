@@ -85,7 +85,6 @@ package gov.nih.nci.services.person;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.services.person.PersonDTO;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 

@@ -149,8 +149,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     public Person getBasicPerson() {
         Person person = new Person();
         person.setCurationStatus(null);
-        Date now = new Date();
-        person.setDateOfBirth(now);
+        new Date();
         person.setFirstName("fName");
         person.setLastName("lName");
         return person;
@@ -178,8 +177,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
         Person person = new Person();
         person.setCurationStatus(CurationStatus.CURATED);
-        Date now = new Date();
-        person.setDateOfBirth(now);
+        new Date();
         person.setFirstName("fName");
         person.setLastName("lName");
 
@@ -198,7 +196,6 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     private void verifyEquals(Person expected, Person found) {
         assertEquals(expected.getId(), found.getId());
         assertEquals(expected.getCurationStatus(), found.getCurationStatus());
-        assertEquals(expected.getDateOfBirth().getTime(), found.getDateOfBirth().getTime());
         assertEquals(expected.getFirstName(), found.getFirstName());
         assertEquals(expected.getLastName(), found.getLastName());
     }

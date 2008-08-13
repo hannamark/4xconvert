@@ -83,7 +83,6 @@
 package gov.nih.nci.services.person;
 
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.services.person.PersonDTO;
 
 import java.util.Map;
 

@@ -88,8 +88,10 @@ import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -99,8 +101,11 @@ import org.apache.commons.lang.StringUtils;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public final class AddressConverter extends AbstractXSnapshotConverter<Address> {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @SuppressWarnings("unchecked")
     public <TO> TO convert(Class<TO> returnClass, Address value) {
         if (returnClass == Ad.class) {
             return (TO) convertToAd(value);

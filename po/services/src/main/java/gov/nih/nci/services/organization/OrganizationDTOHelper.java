@@ -81,37 +81,68 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.services.organization;
 
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.convert.ContactListConverter;
+import gov.nih.nci.po.data.convert.TelDSetConverter;
 import net.sf.xsnapshot.TransformContext;
 
 /**
  *
  * @author gax
  */
-public class PersonDTOHelper extends gov.nih.nci.po.services.person.PersonDTOHelper {
+public class OrganizationDTOHelper extends BaseOrganizationDTOHelper {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object createSnapshot(Object model, TransformContext context) {
+        if (model == null) {
+            return null;
+        } else {
+            Class myClass = gov.nih.nci.po.data.bo.Organization.class;
+            if (myClass.isInstance(model)) {
+
+                // check whether its already in the context map
+                Object existingSnapshot = context.getSnapshotInstance(model, "entity");
+                if (existingSnapshot != null) {
+                    return existingSnapshot;
+                } else {
+                    OrganizationDTO snapshot = new OrganizationDTO();
+                    context.setSnapshotInstance(model, "entity", snapshot);
+                    copyIntoSnapshot(model, snapshot, context);
+                    return snapshot;
+                }
+
+            } else {
+                throw new IllegalArgumentException("model object is of class " + model.getClass()
+                        + " which is not a subclass of gov.nih.nci.po.data.bo.Organization");
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
         super.copyIntoModel(snapshot, model, context);
-        
-        // todo uncomment when the Person model is ready
-        //PersonDTO s = (PersonDTO) snapshot;
-        //Person m = (Person) model;        
-        //TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
+        OrganizationDTO s = (OrganizationDTO) snapshot;
+        Organization m = (Organization) model;
+        TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void copyIntoSnapshot(Object model, Object snapshot, TransformContext context) {
         super.copyIntoSnapshot(model, snapshot, context);
-        
-        // todo uncomment when the Person model is ready        
-        //PersonDTO s = (PersonDTO) snapshot;
-        //Person m = (Person) model;
-        //s.setTelecomAddress(ContactListConverter.convertToDSet(m));
+        OrganizationDTO s = (OrganizationDTO) snapshot;
+        Organization m = (Organization) model;
+        s.setTelecomAddress(ContactListConverter.convertToDSet(m));
     }
-    
-    
 }

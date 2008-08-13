@@ -80,36 +80,31 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package gov.nih.nci.services.person;
 
-package gov.nih.nci.po.data.convert;
+import gov.nih.nci.coppa.iso.EnPn;
 
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import net.sf.xsnapshot.TransformContext;
 
 /**
+ * @author Scott Miller
  *
- * @author gax
  */
-public class OrganizationDTOHelper extends gov.nih.nci.services.organization.OrganizationDTOHelper {
+public class PersonDTO extends BasePersonDTO {
+    private static final long serialVersionUID = 1L;
 
-    /** {@inheritDoc} */
-    @Override
-    public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
-        super.copyIntoModel(snapshot, model, context);
-        OrganizationDTO s = (OrganizationDTO) snapshot;
-        Organization m = (Organization) model;
-        TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
+    private EnPn name;
+
+    /**
+     * @return the name
+     */
+    public EnPn getName() {
+        return this.name;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void copyIntoSnapshot(Object model, Object snapshot, TransformContext context) {
-        super.copyIntoSnapshot(model, snapshot, context);
-        OrganizationDTO s = (OrganizationDTO) snapshot;
-        Organization m = (Organization) model;
-        s.setTelecomAddress(ContactListConverter.convertToDSet(m));
+    /**
+     * @param name the name to set
+     */
+    public void setName(EnPn name) {
+        this.name = name;
     }
-    
-    
 }

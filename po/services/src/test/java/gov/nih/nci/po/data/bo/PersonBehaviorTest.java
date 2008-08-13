@@ -19,10 +19,8 @@ public class PersonBehaviorTest {
         Person person = new Person();
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "firstName");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "lastName");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "middleName");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "suffix");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "prefix");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "dateOfBirth");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "curationStatus");
     }
 

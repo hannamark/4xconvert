@@ -130,7 +130,6 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Organization> search(SearchCriteria<Organization> criteria) {
         return genericSearch(criteria, null);
@@ -139,9 +138,8 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Organization> search(SearchCriteria<Organization> criteria, 
+    public List<Organization> search(SearchCriteria<Organization> criteria,
             PageSortParams<Organization> pageSortParams) {
         return genericSearch(criteria, pageSortParams);
     }
@@ -152,6 +150,6 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public int count(SearchCriteria<Organization> criteria) {
         return genericCount(criteria);
-    }  
+    }
 
 }

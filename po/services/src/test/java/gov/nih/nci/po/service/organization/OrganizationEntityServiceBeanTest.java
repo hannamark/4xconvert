@@ -83,10 +83,11 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void createMinimalOrg() throws Exception {
         try {
             PoHibernateUtil.getCurrentSession().save(new Country("MyCountry", "123", "MC", "MYC"));
-            
+
             OrganizationDTO dto = new OrganizationDTO();
             dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
             dto.setName(ISOUtils.STRING.convertToEnOn("some name"));
@@ -98,7 +99,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             Country c = new Country(null, null, null, "MYC");
             a.setCountry(c);
             dto.setPostalAddress(AddressConverter.convertToAd(a));
-            
+
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
@@ -109,7 +110,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             fail(e.getErrorMessages());
         }
     }
-    
+
     @Test
     public void validate() {
         OrganizationDTO dto = new OrganizationDTO();
