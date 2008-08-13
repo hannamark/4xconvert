@@ -15,10 +15,13 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
- *
+ * @since 08/13/2008
+ * copyright NCI 2007.  All rights reserved.
+ * This code may not be used without the express written permission of the
+ * copyright holder, NCI.
  */
 @Stateless
-public class StudyProtocolServiceBean  implements StudyProtocolServiceLocal, StudyProtocolServiceRemote {
+public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
   
