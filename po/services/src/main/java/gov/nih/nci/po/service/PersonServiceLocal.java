@@ -93,7 +93,7 @@ import javax.ejb.Local;
  * @author lpower
  */
 @Local
-public interface PersonServiceLocal {
+public interface PersonServiceLocal extends GenericSearchService<Person, SearchCriteria<Person>> {
 
     /**
      * @param person new Person

@@ -83,44 +83,30 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Person;
-
-import org.apache.commons.lang.StringUtils;
-
+import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 
 /**
  * @author Scott Miller
- *
+ * 
  */
-public class PersonNameConverter  {
+public class PersonNameConverter {
 
     /**
      * Convert the person's name info to an enpn.
+     * 
      * @param person the person.
      * @return the enpn
      */
     public static final EnPn convertToEnPn(Person person) {
-        EnPn enpn = new EnPn();
         if (person == null) {
+            EnPn enpn = new EnPn();
             enpn.setNullFlavor(NullFlavor.NI);
+            return enpn;
         } else {
-            addEnxp(enpn, person.getLastName(), EntityNamePartType.FAM);
-            addEnxp(enpn, person.getFirstName(), EntityNamePartType.GIV);
-            addEnxp(enpn, person.getPrefix(), EntityNamePartType.PFX);
-            addEnxp(enpn, person.getSuffix(), EntityNamePartType.SFX);
-        }
-        return enpn;
-    }
-
-    private static void addEnxp(EnPn enpn, String value, EntityNamePartType type) {
-        if (StringUtils.isNotEmpty(value)) {
-            Enxp part = new Enxp(type);
-            part.setValue(value);
-            enpn.getPart().add(part);
+            return PersonNameConverterUtil.convertToEnPn(person.getFirstName(), person.getLastName(), person
+                    .getPrefix(), person.getSuffix());
         }
     }
-
 }

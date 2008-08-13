@@ -1,6 +1,7 @@
-package gov.nih.nci.po.service.person;
+package gov.nih.nci.po.services.person;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.EnPn;
@@ -10,12 +11,19 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
+import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.PersonEntityServiceSearchCriteria;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -49,7 +57,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().save(USA);
         Person per = makePerson();
         long id = (Long) PoHibernateUtil.getCurrentSession().save(per);
-        PersonDTO result = remote.getPerson(id);
+        PersonDTO result = remote.getPerson(new PersonIdConverter().convertToIi(id));
         assertEquals(per.getId().longValue(), Long.parseLong(result.getIdentifier().getExtension()));
         assertEquals(per.getFirstName(), findValueByType(result.getName(), EntityNamePartType.GIV));
         assertEquals(per.getLastName(), findValueByType(result.getName(), EntityNamePartType.FAM));
@@ -78,9 +86,11 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         part = new Enxp(EntityNamePartType.FAM);
         part.setValue("McGillicutty");
         dto.getName().getPart().add(part);
-        long id = remote.createPerson(dto);
-        assertNotSame(id, Long.valueOf(isoId.getExtension())); // make sure this id was not used
-        Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, id);
+        Ii id = remote.createPerson(dto);
+        assertNotNull(id);
+        assertNotNull(id.getExtension());
+        assertNotSame(id.getExtension(), Long.valueOf(isoId.getExtension())); // make sure this id was not used
+        Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, new IiConverter().convertToLong(id));
         assertEquals(findValueByType(dto.getName(), EntityNamePartType.FAM), p.getLastName());
         assertEquals(findValueByType(dto.getName(), EntityNamePartType.GIV), p.getFirstName());
     }
@@ -100,5 +110,28 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         Map<String, String[]> errors = remote.validate(dto);
         assertEquals(1, errors.size());
         assertTrue(errors.containsKey("lastName"));
+    }
+    
+    @Test
+    public void testFindByFirstName() throws EntityValidationException {
+        PersonDTO dto = new PersonDTO();
+        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "a", "c", "d"));
+        Person p = PoXsnapshotHelper.createModel(dto);
+        assertEquals("a", p.getLastName());
+        assertEquals("b", p.getFirstName());
+        assertEquals("c", p.getPrefix());
+        assertEquals("d", p.getSuffix());
+
+        Ii id = remote.createPerson(dto);
+        PersonDTO person = remote.getPerson(id);
+        
+        PersonDTO crit = new PersonDTO();
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, "a", null, null));
+        List<PersonDTO> result = remote.search(crit);
+        assertEquals(1, result.size());        
+        
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, "foobar", null, null));
+        result = remote.search(crit);
+        assertEquals(0, result.size());        
     }
 }

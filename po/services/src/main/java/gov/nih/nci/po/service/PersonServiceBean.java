@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
+import java.util.List;
+
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -121,5 +123,31 @@ public class PersonServiceBean extends BaseServiceBean<Person> implements Person
     public Person getPerson(long id) {
         Session s = PoHibernateUtil.getCurrentSession();
         return (Person) s.get(Person.class, id);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Person> search(SearchCriteria<Person> criteria) {
+        return super.genericSearch(criteria, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
+        return super.genericSearch(criteria, pageSortParams);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public int count(SearchCriteria<Person> criteria) {
+        return super.genericCount(criteria);
     }
 }

@@ -82,8 +82,10 @@
  */
 package gov.nih.nci.services.person;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Remote;
@@ -99,7 +101,7 @@ public interface PersonEntityServiceRemote {
      * @param id person id
      * @return Person
      */
-    PersonDTO getPerson(long id);
+    PersonDTO getPerson(Ii id);
 
     /**
      * Remote API to create a person.
@@ -107,7 +109,7 @@ public interface PersonEntityServiceRemote {
      * @return db id
      * @throws EntityValidationException if validation fails.
      */
-    long createPerson(PersonDTO person) throws EntityValidationException;
+    Ii createPerson(PersonDTO person) throws EntityValidationException;
 
     /**
      * Validate a person entity.
@@ -115,4 +117,11 @@ public interface PersonEntityServiceRemote {
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(PersonDTO person);
+    
+    
+    /**
+     * @param person data to find matching people
+     * @return list of matching people 
+     */
+    List<PersonDTO> search(PersonDTO person);
 }

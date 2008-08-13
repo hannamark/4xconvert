@@ -80,94 +80,49 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.person;
+package gov.nih.nci.coppa.test.remoteapi;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.PersonEntityServiceSearchCriteria;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.jboss.annotation.security.SecurityDomain;
+import org.junit.Test;
 
 /**
-*
-* @author lpower
-*/
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class })
-@SecurityDomain("po")
-public class PersonEntityServiceBean implements PersonEntityServiceRemote {
+ * @author Scott Miller
+ * 
+ */
+public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
 
-    private PersonServiceLocal perService;
-    private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
-
-    /**
-     * @param svc service, injected
-     */
-    @EJB
-    public void setPersonServiceBean(PersonServiceLocal svc) {
-        this.perService = svc;
+    @Test
+    public void createMinimal() throws Exception {
+        try {
+            PersonDTO dto = new PersonDTO();
+            Ii isoId = new Ii();
+            isoId.setRoot("test");
+            isoId.setExtension("99");
+            dto.setIdentifier(isoId);
+            dto.setName(new EnPn());
+            Enxp part = new Enxp(EntityNamePartType.GIV);
+            part.setValue("--");
+            dto.getName().getPart().add(part);
+            part = new Enxp(EntityNamePartType.FAM);
+            part.setValue("__");
+            dto.getName().getPart().add(part);
+            Ii id = getPersonService().createPerson(dto);
+            assertNotNull(id);
+            assertNotNull(id.getExtension());
+            assertNotSame("Ii.extension provided should not be persisted", id.getExtension(), Long.valueOf(isoId
+                    .getExtension()));
+        } catch (EntityValidationException e) {
+            fail(e.getErrorMessages());
+        }
     }
-
-    /**
-     * @return perService that was injected by container.
-     */
-    public PersonServiceLocal getPersonServiceBean() {
-        return this.perService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public PersonDTO getPerson(Ii id) {
-        Person perBO = perService.getPerson(new IiConverter().convertToLong(id));
-        return PoXsnapshotHelper.<Person, PersonDTO>createSnapshot(perBO);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public Ii createPerson(PersonDTO person) throws EntityValidationException {
-        Person perBO = (Person) PoXsnapshotHelper.createModel(person);
-        return new PersonIdConverter().convertToIi(perService.create(perBO));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, String[]> validate(PersonDTO person) {
-        Person perBO = (Person) PoXsnapshotHelper.createModel(person);
-        return perService.validate(perBO);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PersonDTO> search(PersonDTO person) {
-        Person personBO = (Person) PoXsnapshotHelper.createModel(person);
-        PersonEntityServiceSearchCriteria criteria = new PersonEntityServiceSearchCriteria();
-        criteria.setPerson(personBO);
-        List<Person> listBOs = getPersonServiceBean().search(criteria);
-        return PoXsnapshotHelper.createSnapshotList(listBOs);
-    }
-
 
 }

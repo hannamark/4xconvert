@@ -235,4 +235,22 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         }
         assertTrue(false);
     }
+    
+    @Test
+    public void testFindByFirstName() throws EntityValidationException {
+        PersonEntityServiceSearchCriteria sc = new PersonEntityServiceSearchCriteria();
+        createPerson();
+        createPerson();
+        Person p = new Person();
+        sc.setPerson(p);
+        
+        
+        p.setFirstName("%Nam%");
+        assertEquals(2, personServiceBean.count(sc));
+        assertEquals(2, personServiceBean.search(sc).size()); 
+        
+        p.setFirstName("foobar");
+        assertEquals(0, personServiceBean.count(sc));
+        assertEquals(0, personServiceBean.search(sc).size());
+    }
 }

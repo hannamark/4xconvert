@@ -1,4 +1,4 @@
-package gov.nih.nci.po.service.organization;
+package gov.nih.nci.po.services.organization;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -46,7 +46,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testGetOrganization() {
+    public void getOrganization() {
         OrganizationServiceBeanTest t = new OrganizationServiceBeanTest();
         t.setUpData();
         long id = t.createOrganization();
