@@ -74,6 +74,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 			<pathelement location="${bda-utils.dir}/ivy-1.3.1.jar"/>
 		</classpath>
 	</taskdef>
+	<taskdef resource="liquibasetasks.properties" classpathref="bda-utils.classpath"/>
 
 	<!-- Conditionals -->
 	<available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
@@ -225,7 +226,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 			</then>
 		</if>
 	</target>
-	<target name="install:database:re-create" description="Recreates database if database.re-create is true. Used on local installs" unless="exclude.database" depends="install:init">
+	<target name="install:database:re-create" description="Recreates database if database.re-create is true. Used on local installs" unless="exclude.database" depends="install:database:prep">
 		<if> 
 			<equals arg1="${database.re-create}" arg2="true"/>
 			<then>
@@ -245,31 +246,31 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 		</if>
 	</target>
 
-	<target name="install:database:drop" description="Runs database drop scripts if database.drop-schema is set. Used on Tier environments (dev, qa, stg, prod)." unless="exclude.database" depends="install:init">
+	<target name="install:database:drop" description="Runs database drop scripts if database.drop-schema is set. Used on Tier environments (dev, qa, stg, prod)." unless="exclude.database" depends="install:database:prep">
 		<if>
 			<equals arg1="${database.drop-schema}" arg2="true"/>
 			<then>
 				<echo message="Dropping database objects"/>
-				<switch value="${database.type}">
-					<case value="postgresql">
-						<for list="${db.install.drop.postgresql.file.list}" param="db.install.postgresql.file">
-							<sequential>
-								<echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
-								<run-sql-script
-									database.url="${database.url}"
-									database.user="${database.user}"
-									database.password="${database.password}"
-									sql.delimiter="/" 
-									sql.delimitertype="row"
-									sql.file="${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
-									/>
-							</sequential>
-						</for>
-					</case>
-					<default>
-						<fail message="Database type ${database.type} not supported for this project."/>
-					</default>
-				</switch>
+				<dropAllDatabaseObjects
+					driver="${database.driver}"
+					url="${database.url}"
+					username="${database.user}"
+					password="${database.password}"
+					promptOnNonLocalDatabase="${prompt.user.if.not.local.database}"
+					classpathref="bda-utils.classpath"
+					defaultSchemaName="public"
+					/>
+				<!-- Sequences don't seem to drop in first run second run cleans them up -->
+				<dropAllDatabaseObjects
+					driver="${database.driver}"
+					url="${database.url}"
+					username="${database.user}"
+					password="${database.password}"
+					promptOnNonLocalDatabase="${prompt.user.if.not.local.database}"
+					classpathref="bda-utils.classpath"
+					defaultSchemaName="public"
+					/>
+				<sleep seconds="5"/>
 			</then>
 			<else>
 				<echo message="Database.drop-schema flag not set, database schema not dropped."/>
