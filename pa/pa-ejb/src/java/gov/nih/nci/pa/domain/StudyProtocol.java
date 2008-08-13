@@ -12,6 +12,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.ReportingDataSetMethodCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ import javax.persistence.Table;
  * copyright holder, NCI.
  */
 @Entity
-@SuppressWarnings({"PMD.TooManyFields", "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
 @Table(name =  "STUDY_PROTOCOL")
 public class StudyProtocol extends Document {
     private static final long serialVersionUID = 1234567890L;
@@ -67,6 +68,10 @@ public class StudyProtocol extends Document {
     private String timePerspectiveCode;
     private Boolean indIndeIndicator;
     private Boolean dataMonitoringCommitteeIndicator;
+    private Timestamp startDate;
+    private Boolean startDateAnticipatedIndicator;
+    private Timestamp completionDate;
+    private Boolean completionDateAnticipatedIndicator;
 
 
     private List<StudyCondition> studyConditions = new ArrayList<StudyCondition>();
@@ -528,4 +533,72 @@ public class StudyProtocol extends Document {
     public void setDataMonitoringCommitteeIndicator(Boolean dataMonitoringCommitteeIndicator) {
         this.dataMonitoringCommitteeIndicator = dataMonitoringCommitteeIndicator;
     }
+    
+    /**
+     * 
+     * @return startDate
+     */
+    @Column(name = "START_DATE")
+    public Timestamp  getStartDate() {
+        return startDate;
+    }
+    
+    /**
+     * 
+     * @param startDate start Date
+     */
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+    
+    /**
+    *
+    * @return startDateAnticipatedIndicator
+    */
+    @Column(name = "START_DATE_ANTICIPATED_INDICATOR")
+    public Boolean getStartDateAnticipatedIndicator() {
+        return startDateAnticipatedIndicator;
+    }
+    /**
+     *
+     * @param startDateAnticipatedIndicator anticipated/acutal indicator
+     */
+    public void setStartDateAnticipatedIndicator(Boolean startDateAnticipatedIndicator) {
+        this.startDateAnticipatedIndicator = startDateAnticipatedIndicator;
+    }
+
+    /**
+     * 
+     * @return completionDate
+     */
+    @Column(name = "COMPLETION_DATE")
+    public Timestamp  getCompletionDate() {
+        return completionDate;
+    }
+    
+    /**
+     * 
+     * @param completionDate start Date
+     */
+    public void setCompletionDate(Timestamp completionDate) {
+        this.completionDate = completionDate;
+    }
+    
+    /**
+    *
+    * @return completionDateAnticipatedIndicator
+    */
+    @Column(name = "COMPLETION_DATE_ANTICIPATED_INDICATOR")
+    public Boolean getCompletionDateAnticipatedIndicator() {
+        return completionDateAnticipatedIndicator;
+    }
+    
+    /**
+     *
+     * @param completionDateAnticipatedIndicator anticipated/acutal indicator
+     */
+    public void setCompletionDateAnticipatedIndicator(Boolean completionDateAnticipatedIndicator) {
+        this.completionDateAnticipatedIndicator = completionDateAnticipatedIndicator;
+    }
+    
 }
