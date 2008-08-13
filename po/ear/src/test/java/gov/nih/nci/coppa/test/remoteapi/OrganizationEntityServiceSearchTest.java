@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -14,13 +15,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityServiceTest {
-    private Map<Long, OrganizationDTO> catalogOrgs = new HashMap<Long, OrganizationDTO>();
+    private Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
     
     
     
-    private long remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {
-        long id = orgService.createOrganization(org);
-        org.setIdentifier(ISOUtils.ID_ORG.convertToIi(id));
+    private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {
+        Ii id = orgService.createOrganization(org);
+        org.setIdentifier(id);
         catalogOrgs.put(id, org);
         return id;
     }

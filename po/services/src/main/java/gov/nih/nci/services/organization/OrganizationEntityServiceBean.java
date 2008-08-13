@@ -82,7 +82,9 @@
 */
 package gov.nih.nci.services.organization;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrgEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
@@ -135,8 +137,8 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
 
-    public OrganizationDTO getOrganization(long id) {
-        Organization org = orgService.getOrganization(id);
+    public OrganizationDTO getOrganization(Ii id) {
+        Organization org = orgService.getOrganization(new OrgIdConverter().convertToLong(id));
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
     }
 
@@ -144,9 +146,9 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public long createOrganization(OrganizationDTO org) throws EntityValidationException {
+    public Ii createOrganization(OrganizationDTO org) throws EntityValidationException {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
-        return orgService.create(orgBO);
+        return new OrgIdConverter().convertToIi(orgService.create(orgBO));
     }
 
     /**

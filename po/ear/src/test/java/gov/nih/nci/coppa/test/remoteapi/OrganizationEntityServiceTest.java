@@ -83,10 +83,13 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
+import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -107,7 +110,10 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         OrganizationDTO dto1 = new OrganizationDTO();
         dto1.setName(ISOUtils.STRING.convertToEnOn("Test Name"));
         dto1.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("TST"));
-        long id = orgService.createOrganization(dto1);
+        Ii id = orgService.createOrganization(dto1);
+        assertNotNull(id);
+        assertNotNull(id.getExtension());
+        assertTrue(new OrgIdConverter().convertToLong(id) > 0);
         OrganizationDTO dto2 = orgService.getOrganization(id);
         assertEquals(dto1, dto2);
     }
@@ -121,8 +127,10 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("_"));
             dto.setPostalAddress(AddressConverter.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
             
-            long id = orgService.createOrganization(dto);
-            assertTrue(id > 0);
+            Ii id = orgService.createOrganization(dto);
+            assertNotNull(id);
+            assertNotNull(id.getExtension());
+            assertTrue(new OrgIdConverter().convertToLong(id) > 0);
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }

@@ -4,13 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
+import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -50,7 +50,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         t.setUpData();
         long id = t.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
-        OrganizationDTO result = remote.getOrganization(id);
+        OrganizationDTO result = remote.getOrganization(new OrgIdConverter().convertToIi(id));
         assertEquals(org.getId(), ISOUtils.II.convertToLong(result.getIdentifier()));
         assertEquals(org.getName(), ISOUtils.EN.convertToString(result.getName()));
     }
@@ -60,13 +60,15 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testCreateOrganization() {
+    public void createOrganization() {
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
             dto.setName(ISOUtils.STRING.convertToEnOn("some name"));
             dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("short"));
-            long id = remote.createOrganization(dto);
+            Ii id = remote.createOrganization(dto);
+            assertNotNull(id);
+            assertNotNull(id.getExtension());
             assertNotNull(dto.getIdentifier().getNullFlavor()); // make sure this id was not used
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
@@ -97,8 +99,10 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             a.setCountry(c);
             dto.setPostalAddress(AddressConverter.convertToAd(a));
             
-            long id = remote.createOrganization(dto);
-            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
+            Ii id = remote.createOrganization(dto);
+            assertNotNull(id);
+            assertNotNull(id.getExtension());
+            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, new OrgIdConverter().convertToLong(id));
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
             assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
         } catch (EntityValidationException e) {

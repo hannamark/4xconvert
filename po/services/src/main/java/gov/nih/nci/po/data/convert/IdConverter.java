@@ -130,6 +130,20 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
 
         return iso;
     }
+    
+    /**
+     * @param value II to convert
+     * @return the Long value representing 
+     */
+    public Long convertToLong(Ii value) {
+        if (value == null) {
+            return null;
+        }
+        if (value.getExtension() == null) {
+            return null;
+        }
+        return Long.valueOf(value.getExtension());
+    }
 
     /**
      * convert the Id of an org.

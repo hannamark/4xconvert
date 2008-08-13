@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.organization;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.List;
@@ -97,10 +98,10 @@ import javax.ejb.Remote;
 public interface OrganizationEntityServiceRemote {
 
     /**
-     * @param id org id
+     * @param id org id (the Ii.extension must be populated with desired IdentifierReliability.ISS value) 
      * @return organization
      */
-    OrganizationDTO getOrganization(long id);
+    OrganizationDTO getOrganization(Ii id);
 
     /**
      * Remote API to create an Organization.
@@ -108,7 +109,7 @@ public interface OrganizationEntityServiceRemote {
      * @return db id
      * @throws EntityValidationException if validation fails
      */
-    long createOrganization(OrganizationDTO org) throws EntityValidationException;
+    Ii createOrganization(OrganizationDTO org) throws EntityValidationException;
 
     /**
      * Validate that an entity has acceptable values.
