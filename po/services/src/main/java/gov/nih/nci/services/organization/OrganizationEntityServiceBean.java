@@ -84,6 +84,7 @@ package gov.nih.nci.services.organization;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrgEntityServiceSearchCriteria;
@@ -138,7 +139,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
 
     public OrganizationDTO getOrganization(Ii id) {
-        Organization org = orgService.getOrganization(new OrgIdConverter().convertToLong(id));
+        Organization org = orgService.getOrganization(new IiConverter().convertToLong(id));
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
     }
 

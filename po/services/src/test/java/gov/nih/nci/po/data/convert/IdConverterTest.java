@@ -69,16 +69,4 @@ public class IdConverterTest {
         assertEquals(IdentifierScope.OBJ, result.getScope());
     }
     
-    @Test
-    public void convertToLong() {
-        assertNull(idConverter.convertToLong(null));
-        Ii ii = new Ii();
-        assertNull(idConverter.convertToLong(ii));
-        ii.setExtension("1");
-        Long id = idConverter.convertToLong(ii);
-        assertNotNull(id);
-        assertEquals(Long.valueOf(1l), id);
-    }
-    
-    
 }

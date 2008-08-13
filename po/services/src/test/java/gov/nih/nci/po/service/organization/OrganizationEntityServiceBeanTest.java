@@ -10,6 +10,7 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -103,7 +104,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
-            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, new OrgIdConverter().convertToLong(id));
+            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, new IiConverter().convertToLong(id));
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
             assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
         } catch (EntityValidationException e) {

@@ -89,7 +89,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -113,7 +113,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         Ii id = orgService.createOrganization(dto1);
         assertNotNull(id);
         assertNotNull(id.getExtension());
-        assertTrue(new OrgIdConverter().convertToLong(id) > 0);
+        assertTrue(new IiConverter().convertToLong(id) > 0);
         OrganizationDTO dto2 = orgService.getOrganization(id);
         assertEquals(dto1, dto2);
     }
@@ -130,7 +130,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             Ii id = orgService.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
-            assertTrue(new OrgIdConverter().convertToLong(id) > 0);
+            assertTrue(new IiConverter().convertToLong(id) > 0);
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
