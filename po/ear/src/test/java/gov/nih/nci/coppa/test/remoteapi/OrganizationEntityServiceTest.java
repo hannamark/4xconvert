@@ -83,45 +83,22 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
-import javax.naming.NamingException;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author Scott Miller
  *
  */
-public class OrganizationEntityServiceTest {
+public class OrganizationEntityServiceTest extends BaseOrganizationEntityServiceTest {
 
-    private OrganizationEntityServiceRemote orgService;
-
-    /**
-     * Init the test.
-     * @throws NamingException on error.
-     */
-    @Before
-    public void init() throws NamingException {
-        orgService = RemoteServiceHelper.getOrganizationEntityService();
-    }
-
-    /**
-     * cleanup after test is complete.
-     * @throws NamingException on error.
-     */
-    @After
-    public void cleanup() throws NamingException {
-        orgService = null;
-        RemoteServiceHelper.close();
-    }
-
-    /**
+    /*
      * Method to check that the remote service is working.
      * @throws Exception on error.
      */
@@ -134,4 +111,21 @@ public class OrganizationEntityServiceTest {
         OrganizationDTO dto2 = orgService.getOrganization(id);
         assertEquals(dto1, dto2);
     }
+    
+    @Test
+    public void createMinimal() throws Exception {
+        try {
+            OrganizationDTO dto = new OrganizationDTO();
+            dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
+            dto.setName(ISOUtils.STRING.convertToEnOn("_"));
+            dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("_"));
+            dto.setPostalAddress(AddressConverter.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
+            
+            long id = orgService.createOrganization(dto);
+            assertTrue(id > 0);
+        } catch (EntityValidationException e) {
+            fail(e.getErrorMessages());
+        }
+    }
+
 }

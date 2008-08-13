@@ -315,6 +315,16 @@
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
+			<plugin>
+				<!-- Disabled features w/in the 2.1 plugin to speed up the report generation -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+				</configuration>
+			</plugin>
         </plugins>
     </reporting>
 

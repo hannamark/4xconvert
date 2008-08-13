@@ -81,7 +81,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ad;
@@ -94,13 +93,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * Utility class for converting between BO and ISO types.
  * @author gax
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class AddressConverter extends AbstractXSnapshotConverter<Address> {
+public final class AddressConverter extends AbstractXSnapshotConverter<Address> {
 
-    /** {@inheritDoc}*/
+    /** {@inheritDoc} */
     @Override
     public <TO> TO convert(Class<TO> returnClass, Address value) {
         if (returnClass == Ad.class) {
@@ -115,49 +114,50 @@ public class AddressConverter extends AbstractXSnapshotConverter<Address> {
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public static Ad convertToAd(Address a) {
-        Ad iso = new Ad();
         if (a == null) {
+            Ad iso = new Ad();
             iso.setNullFlavor(NullFlavor.NI);
+            return iso;
         } else {
-            List<Adxp> l = new ArrayList<Adxp>(/*6*/);
-            iso.setPart(l);
-            Adxp x;
-            String s = a.getStreetAddressLine();            
-            if (StringUtils.isNotBlank(s)) {
-                x = Adxp.createAddressPart(AddressPartType.AL);
-                x.setValue(s);
-                l.add(x);
-            }
-            s = a.getDeliveryAddressLine();
-            if (StringUtils.isNotBlank(s)) {
-                x = Adxp.createAddressPart(AddressPartType.DAL);
-                x.setValue(s);
-                l.add(x);
-            }
-            s = a.getCityOrMunicipality();
-            if (StringUtils.isNotBlank(s)) {
-                x = Adxp.createAddressPart(AddressPartType.CTY);
-                x.setValue(s);
-                l.add(x);
-            }
-            s = a.getStateOrProvince();
-            if (StringUtils.isNotBlank(s)) {
-                x = Adxp.createAddressPart(AddressPartType.STA);
-                x.setValue(s);
-                l.add(x);
-            }
-            s = a.getPostalCode();
-            if (StringUtils.isNotBlank(s)) {
-                x = Adxp.createAddressPart(AddressPartType.ZIP);
-                x.setValue(s);
-                l.add(x);
-            }
-            x = Adxp.createAddressPart(AddressPartType.CNT);
-            x.setCode(a.getCountry().getAlpha3());
-            l.add(x);
-            
-            a.getCountry();
+            return create(a.getStreetAddressLine(), a.getDeliveryAddressLine(), a.getCityOrMunicipality(), a
+                    .getStateOrProvince(), a.getPostalCode(), a.getCountry().getAlpha3());
         }
+    }
+
+    private static void setValue(List<Adxp> l, String s, AddressPartType addressPartType) {
+        Adxp x;
+        if (StringUtils.isNotBlank(s)) {
+            x = Adxp.createAddressPart(addressPartType);
+            x.setValue(s);
+            l.add(x);
+        }
+    }
+
+    /**
+     * @param streetAddressLine street address
+     * @param deliveryAddressLine delivery address
+     * @param cityOrMunicipality city name
+     * @param stateOrProvince state or province
+     * @param postalCode postal code
+     * @param countryAlpha3 ISO-3316 3-letter country code
+     * @return simply ISO address
+     */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    public static Ad create(String streetAddressLine, String deliveryAddressLine, String cityOrMunicipality,
+            String stateOrProvince, String postalCode, String countryAlpha3) {
+        Ad iso = new Ad();
+        List<Adxp> l = new ArrayList<Adxp>(/* 6 */);
+        iso.setPart(l);
+        setValue(l, streetAddressLine, AddressPartType.AL);
+        setValue(l, deliveryAddressLine, AddressPartType.DAL);
+        setValue(l, cityOrMunicipality, AddressPartType.CTY);
+        setValue(l, stateOrProvince, AddressPartType.STA);
+        setValue(l, postalCode, AddressPartType.ZIP);
+
+        Adxp x;
+        x = Adxp.createAddressPart(AddressPartType.CNT);
+        x.setCode(countryAlpha3);
+        l.add(x);
         return iso;
     }
 }

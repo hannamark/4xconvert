@@ -83,7 +83,10 @@
 
 package gov.nih.nci.po.service;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  *
@@ -102,7 +105,6 @@ public class EntityValidationException extends Exception {
         this.errors = errors;
     }
 
-
     /**
      * @param msg the traditional error message.
      * @param errors validation messages
@@ -117,5 +119,25 @@ public class EntityValidationException extends Exception {
      */
     public Map<String, String[]> getErrors() {
         return errors;
+    }
+   
+    /**
+     * @return error messages
+     */
+    public String getErrorMessages() {
+        StringBuffer b = new StringBuffer();
+        if (errors != null) {
+            TreeSet<String> orderedKeys = new TreeSet<String>(errors.keySet());
+            for (Iterator<String> iterator = orderedKeys.iterator(); iterator.hasNext();) {
+                String key = (String) iterator.next();
+                b.append(key);
+                b.append('=');
+                b.append(Arrays.deepToString(errors.get(key)));
+                if (iterator.hasNext()) {
+                    b.append('\n');
+                }
+            }
+        } 
+        return b.toString();
     }
 }

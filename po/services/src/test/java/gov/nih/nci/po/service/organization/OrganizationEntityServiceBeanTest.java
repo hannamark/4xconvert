@@ -3,7 +3,13 @@ package gov.nih.nci.po.service.organization;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -66,7 +72,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
             assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
         } catch (EntityValidationException e) {
-            // as the DTO to BO conversion gets more completem, we should not
+            // as the DTO to BO conversion gets more complete, we should not
             // have to catch this exception.
             Map<String, String[]> errors = e.getErrors();
             assertEquals(1, errors.size()) ;
@@ -74,6 +80,32 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         }
     }
 
+    @Test
+    public void createMinimalOrg() throws Exception {
+        try {
+            PoHibernateUtil.getCurrentSession().save(new Country("MyCountry", "123", "MC", "MYC"));
+            
+            OrganizationDTO dto = new OrganizationDTO();
+            dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
+            dto.setName(ISOUtils.STRING.convertToEnOn("some name"));
+            dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("short"));
+            Address a = new Address();
+            a.setStreetAddressLine("123 abc ave.");
+            a.setCityOrMunicipality("mycity");
+            a.setPostalCode("12345");
+            Country c = new Country(null, null, null, "MYC");
+            a.setCountry(c);
+            dto.setPostalAddress(AddressConverter.convertToAd(a));
+            
+            long id = remote.createOrganization(dto);
+            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, id);
+            assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
+            assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
+        } catch (EntityValidationException e) {
+            fail(e.getErrorMessages());
+        }
+    }
+    
     @Test
     public void validate() {
         OrganizationDTO dto = new OrganizationDTO();
