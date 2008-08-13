@@ -2,6 +2,7 @@ package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
@@ -30,8 +31,8 @@ public class StringConverterTest {
 
         value = "";
         result = instance.convertToSt(value);
-        assertNull(result.getNullFlavor());
-        assertEquals(value, result.getValue());
+        assertNotNull(result.getNullFlavor());
+        assertNull(value, result.getValue());
     }
 
 

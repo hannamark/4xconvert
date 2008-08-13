@@ -118,7 +118,7 @@ public class StringConverter extends AbstractXSnapshotConverter<String> {
      */
     public St convertToSt(String value) {
         St iso = new St();
-        if (value == null) {
+        if (value == null || value.length() == 0) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
             iso.setValue(value);
