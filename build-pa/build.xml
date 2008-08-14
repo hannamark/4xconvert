@@ -428,6 +428,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             db-upgrade.* propertes are stored in project.properties because they are used in both
             install.xml and build.xml
         -->
+        
+        <!-- Copy pa database scripts, temporarily added to include installer scripts in upgrade path -->
+        <copy todir="${db-install.dist.dir}" overwrite="true">
+            <fileset dir="${db-install.src.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </copy> 
+        
         <!-- Copy pa database scripts -->
         <copy todir="${db-upgrade.dist.dir}" overwrite="true">
             <fileset dir="${db-upgrade.src.dir}">
