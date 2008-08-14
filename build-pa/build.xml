@@ -53,8 +53,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 
     <!-- Ivy Related props -->
-    <property name="ivy.bda.definition.file" location="ivy-bda.xml" />
-    <property name="ivy.bda.settings.file" location="ivy-bda-settings.xml" />
+    <property name="ivy.bda.definition.file" value="ivy-bda.xml" />
+    <property name="ivy.bda.settings.file" value="ivy-bda-settings.xml" />
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
 
