@@ -82,16 +82,15 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.convert.ISOUtils;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -99,16 +98,18 @@ import org.junit.Test;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
 
     private Ii personId;
-    
-    
+
+
     @Test
     public void createMinimal() throws Exception {
-        if (personId !=null ) return;//test already run from getById.
+        if (personId !=null ) {
+            return;//test already run from getById.
+        }
         try {
             PersonDTO dto = new PersonDTO();
             Ii isoId = new Ii();
@@ -128,12 +129,12 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             assertNotNull(personId.getExtension());
             assertNotSame("Ii.extension provided should not be persisted", personId.getExtension(), Long.valueOf(isoId
                     .getExtension()));
-            
+
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
     }
-    
+
     @Test
     public void getById() throws Exception {
         if (personId == null) {

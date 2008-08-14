@@ -127,7 +127,6 @@ public class OrganizationDTOHelper extends BaseOrganizationDTOHelper {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
         super.copyIntoModel(snapshot, model, context);

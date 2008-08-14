@@ -1,14 +1,13 @@
 package gov.nih.nci.po.services.organization;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.DSet;
-import java.net.URISyntaxException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
@@ -34,6 +33,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -132,11 +132,10 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         assertTrue(errors.containsKey("name"));
         assertTrue(errors.containsKey("postalAddress"));
     }
-    
+
     @Test
-    @SuppressWarnings("unchecked")
     public void getById() throws Exception {
-        
+
         Organization org = new Organization();
         org.setName("name");
         org.setAbbreviatedName("abbreviatedName");
@@ -148,11 +147,11 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         org.getPhone().add(new PhoneNumber("+1-201-555-0123;extension=4756"));
         org.getUrl().add(new URL("http://bla"));
         org.setCurationStatus(CurationStatus.CURATED);
-        Long id = (Long) PoHibernateUtil.getCurrentSession().save(org);      
+        Long id = (Long) PoHibernateUtil.getCurrentSession().save(org);
         PoHibernateUtil.getCurrentSession().flush();
-        
+
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
-        
+
         assertEquals(id.toString(), dto.getIdentifier().getExtension());
         assertEquals(org.getName(), dto.getName().getPart().get(0).getValue());
         assertEquals(org.getAbbreviatedName(), dto.getAbbreviatedName().getPart().get(0).getValue());
@@ -162,15 +161,25 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         assertEquals(country.getAlpha3(), getAddressPart(dto.getPostalAddress(), AddressPartType.CNT).getCode());
         assertEquals(5, dto.getTelecomAddress().getItem().size());
         for (Tel t : dto.getTelecomAddress().getItem()) {
-            if (t.getValue().toString().equals(TelEmail.SCHEME_MAILTO + ":foo@example.com")) continue;
-            if (t.getValue().toString().equals(TelEmail.SCHEME_MAILTO + ":bar@example.com")) continue;
-            if (t.getValue().toString().equals(TelPhone.SCHEME_X_TEXT_FAX + ":201-555-0123")) continue;
-            if (t.getValue().toString().equals(TelPhone.SCHEME_TEL+":+1-201-555-0123;extension=4756")) continue;
-            if (t.getValue().toString().equals(TelUrl.SCHEME_HTTP+"://bla")) continue;
+            if (t.getValue().toString().equals(TelEmail.SCHEME_MAILTO + ":foo@example.com")) {
+                continue;
+            }
+            if (t.getValue().toString().equals(TelEmail.SCHEME_MAILTO + ":bar@example.com")) {
+                continue;
+            }
+            if (t.getValue().toString().equals(TelPhone.SCHEME_X_TEXT_FAX + ":201-555-0123")) {
+                continue;
+            }
+            if (t.getValue().toString().equals(TelPhone.SCHEME_TEL+":+1-201-555-0123;extension=4756")) {
+                continue;
+            }
+            if (t.getValue().toString().equals(TelUrl.SCHEME_HTTP+"://bla")) {
+                continue;
+            }
             fail();
         }
     }
-    
+
     public static Adxp getAddressPart(Ad ad, AddressPartType addressPartType) {
         for(Adxp a : ad.getPart()) {
             if (a.getType() == addressPartType) {
