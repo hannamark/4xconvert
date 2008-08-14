@@ -7,6 +7,7 @@ import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.pa.dto.RegulatoryInformationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.service.NoStudyProtocolFoundException;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -37,8 +38,7 @@ public class RegulatoryInformationAction extends ActionSupport {
      */
     public String saveRegulatoryAuthority() {
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(Constants.TRIAL_SUMMARY);
-
+                .getAttribute(Constants.TRIAL_SUMMARY);       
         regulatoryDTO.setProtocolID(spDTO.getStudyProtocolId());
         try {
             Long id = Long.valueOf(getLst());
@@ -68,6 +68,8 @@ public class RegulatoryInformationAction extends ActionSupport {
                                               .getProtocolForEdit(spDTO.getStudyProtocolId());
             }
             setLst(Long.valueOf(regulatoryDTO.getCountryId()).toString());
+        } catch (NoStudyProtocolFoundException nspfe) {
+            return SUCCESS;
         } catch (PAException e) {
             return SUCCESS;
         }
