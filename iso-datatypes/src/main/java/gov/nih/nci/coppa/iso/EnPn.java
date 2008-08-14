@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.iso;
 
 import java.io.Serializable;
+
 import org.apache.commons.collections.Predicate;
 
 /**
@@ -92,13 +93,13 @@ import org.apache.commons.collections.Predicate;
 public class EnPn extends En {
 
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * serializable predicate that dissallows DEL part.
      * given name or family name, prefix, suffix, etc.
      */
     private static class EnPnPredicate implements Predicate, Serializable {
-        
+
         private static final long serialVersionUID = 1L;
 
         /** {@inheritDoc} */
@@ -106,17 +107,11 @@ public class EnPn extends En {
             if (object == null) {
                 return false;
             }
-            
-            Enxp e = (Enxp) object;
-            EntityNamePartType n = e.getType();
-            if (n == null) {
-                return true;
-            }
-            
-            return !(n.equals(EntityNamePartType.DEL));
+
+            return true;
         }
     }
-    
+
     private static final Predicate PN_PREDICATE = new EnPnPredicate();
 
     /**

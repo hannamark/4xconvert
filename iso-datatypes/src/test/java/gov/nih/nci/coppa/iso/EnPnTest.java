@@ -1,7 +1,8 @@
 package gov.nih.nci.coppa.iso;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -16,15 +17,11 @@ public class EnPnTest {
     public void testRestrictions() {
         EnPn enpn = new EnPn();
         Enxp e = new Enxp(EntityNamePartType.DEL);
-        try { 
-            enpn.getPart().add(e);
-            fail();
-        } catch (IllegalArgumentException ex) {
-        }
-        
+        enpn.getPart().add(e);
+
         e = new Enxp(EntityNamePartType.FAM);
         enpn.getPart().add(e);
-        
+
         e = new Enxp(EntityNamePartType.GIV);
         enpn.getPart().add(e);
 
@@ -36,7 +33,7 @@ public class EnPnTest {
 
         e = new Enxp(null);
         enpn.getPart().add(e);
-        assertEquals(5, enpn.getPart().size());
-        
+        assertEquals(6, enpn.getPart().size());
+
     }
 }
