@@ -249,7 +249,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="ivy:clean" description="Clean">
         <ivy:settings file="${ivy.settings.file}" />
         <ivy:cleancache />
-        <!--
         <ant inheritAll="false" inheritRefs="false"
             antfile="bda-ivy-build.xml"
             target="ivy-cleancache"
@@ -258,6 +257,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="lib.dir" location="${lib.dir}" />
             <property name="software.dir" location="${software.dir}" />
         </ant>
+        <!--
         <ant inheritAll="false" inheritRefs="false" 
             antfile="${pa-web.build.file}" 
             target="ivy-clean" 
