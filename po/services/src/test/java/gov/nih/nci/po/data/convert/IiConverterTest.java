@@ -50,10 +50,16 @@ public class IiConverterTest {
         assertEquals(expResult, result);
     }
 
-    @Test(expected = PoIsoConstraintException.class)
     public void testFlavorId() {
         Ii iso = new Ii();
-        iso.setFlavorId("flavorId");
         IiConverter.convertToLong(iso);
+        iso.setFlavorId("flavorId");
+        try {
+            IiConverter.convertToLong(iso);
+            fail();
+        } catch(PoIsoConstraintException ex) {
+            
+        }
+
     }
 }

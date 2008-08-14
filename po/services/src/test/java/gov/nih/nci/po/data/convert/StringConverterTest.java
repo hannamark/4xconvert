@@ -41,7 +41,6 @@ public class StringConverterTest {
         EnOn result = StringConverter.convertToEnOn(value);
         assertEquals(NullFlavor.NI, result.getNullFlavor());
 
-
         value = "5AM Soluctions, Inc";
         result = StringConverter.convertToEnOn(value);
         assertNull(result.getNullFlavor());

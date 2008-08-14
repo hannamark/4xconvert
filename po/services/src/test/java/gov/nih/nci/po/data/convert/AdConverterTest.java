@@ -339,10 +339,16 @@ useful in Germany, where many systems keep house number as a distinct field
         AdConverter.convertToAddress(iso, resolver);
     }
     
-    @Test(expected = PoIsoConstraintException.class)
     public void testFlavorId() {
         Ad iso = new Ad();
-        iso.setFlavorId("flavorId");
+        iso.setNullFlavor(NullFlavor.OTH);
         AdConverter.convertToAddress(iso, null);
+        iso.setFlavorId("flavorId");
+        try{
+            AdConverter.convertToAddress(iso, null);
+            fail();
+        } catch(PoIsoConstraintException ex) {
+            
+        }
     }
 }

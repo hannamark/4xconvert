@@ -2,6 +2,7 @@
 package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
@@ -51,13 +52,35 @@ public class EnConverterTest {
         assertEquals(expResult, result);
     }
     
-    @Test(expected = PoIsoConstraintException.class)
-    public void testFlavorId() {
+    @Test
+    public void testValidation() {
         EnOn iso = new EnOn();
-        iso.setNullFlavor(NullFlavor.OTH);
-        iso.setFlavorId("flavorId");
         EnConverter<EnOn> instance = new EnConverter<EnOn>();
-        instance.convertToString(iso);
+        try{
+            instance.convertToString(iso);
+            fail();
+        }catch(PoIsoConstraintException ex){
+            assertTrue(ex.getMessage().contains("is null or it has at least one part"));
+        }
+        
+        iso.setNullFlavor(NullFlavor.OTH);
+        Enxp p = new Enxp(null);
+        p.setValue("5AM Solutions, ");
+        iso.getPart().add(p);
+        try{
+            instance.convertToString(iso);
+            fail();
+        }catch(PoIsoConstraintException ex){
+            assertTrue(ex.getMessage().contains("is null or it has at least one part"));
+        }
+        
+        iso.setNullFlavor(null);
+        iso.setFlavorId("flavorId");
+        try{
+            instance.convertToString(iso);
+            fail();
+        }catch(PoIsoConstraintException ex){
+            assertTrue(ex.getMessage().contains("flavorId"));
+        }
     }
-    
 }

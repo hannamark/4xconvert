@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -277,8 +278,9 @@ public class EnPnConverterTest {
         assertEquals("M1 M2", p.getMiddleName());
     }
     
-    @Test(expected = PoIsoConstraintException.class)
+    
     public void testFlavorId() {
+        
         EnPn enpn = new EnPn();
         Enxp enxp = new Enxp(EntityNamePartType.FAM);
         enxp.setValue("test");
@@ -287,7 +289,12 @@ public class EnPnConverterTest {
         enxp = new Enxp(EntityNamePartType.FAM);
         enxp.setValue("name");
         enpn.getPart().add(enxp);
-        enpn.setFlavorId("flavorId");
         EnPnConverter.convertToPersonName(enpn, null);
+        enpn.setFlavorId("flavorId");
+        try{
+            EnPnConverter.convertToPersonName(enpn, null);
+            fail();
+        }catch(PoIsoConstraintException ex) {
+        }
     }
 }

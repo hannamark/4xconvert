@@ -4,7 +4,9 @@ import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.services.PoIsoConstraintException;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNull;
 
 /**
  *
@@ -39,16 +41,20 @@ public class StConverterTest {
         assertNull(value.getNullFlavor());
         assertNull(value.getValue());
 
-        StConverter instance = new StConverter();
-        instance.convertToString(value);
+        StConverter.convertToString(value);
     }
 
-    @Test(expected = PoIsoConstraintException.class)
     public void testFlavorId() {
         St iso = new St();
         iso.setNullFlavor(NullFlavor.NI);
-        iso.setFlavorId("flavorId");
         StConverter.convertToString(iso);
+        iso.setFlavorId("flavorId");
+        try {
+            StConverter.convertToString(iso);    
+            fail();
+        }catch(PoIsoConstraintException ex) {
+            
+        }
     }
     
 }
