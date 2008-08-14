@@ -77,6 +77,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
+    
     @Test
     public void findByGivenNameExact() {
         PersonDTO p = new PersonDTO();
@@ -107,6 +108,37 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         p.setName(PersonNameConverterUtil.convertToEnPn("E", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
+    }
+    @Test
+    public void findByGivenName2Exact() {
+        PersonDTO p = new PersonDTO();
+        p.setName(PersonNameConverterUtil.convertToEnPn("%", "Mid1", null, null, null));
+        List<PersonDTO> results = getPersonService().search(p);
+        assertEquals(1, results.size());
+    }
+    
+    @Test
+    public void findByGivenName2ExactInsensitive() {
+        PersonDTO p = new PersonDTO();
+        p.setName(PersonNameConverterUtil.convertToEnPn("%", "mid1", null, null, null));
+        List<PersonDTO> results = getPersonService().search(p);
+        assertEquals(1, results.size());
+    }
+    
+    @Test
+    public void findByGivenName2Substring() {
+        PersonDTO p = new PersonDTO();
+        p.setName(PersonNameConverterUtil.convertToEnPn("%", "id", null, null, null));
+        List<PersonDTO> results = getPersonService().search(p);
+        assertEquals(5, results.size());
+    }
+    
+    @Test
+    public void findByGivenName2InsensitiveSubstring() {
+        PersonDTO p = new PersonDTO();
+        p.setName(PersonNameConverterUtil.convertToEnPn("%", "ID1", null, null, null));
+        List<PersonDTO> results = getPersonService().search(p);
+        assertEquals(1, results.size());
     }
 
 }

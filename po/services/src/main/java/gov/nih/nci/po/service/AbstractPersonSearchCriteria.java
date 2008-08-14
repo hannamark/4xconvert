@@ -23,8 +23,7 @@ public abstract class AbstractPersonSearchCriteria extends AbstractSearchCriteri
 
     static final String PERSON_FIRST_NAME_PROPERTY = "firstName";
     static final String PERSON_LAST_NAME_PROPERTY = "lastName";
-    static final String PERSON_CURATION_STATUS_PROPERTY = "curationStatus";
-    static final String PERSON_INVESTIGATOR_PROPERTY = "investigator";
+    static final String PERSON_MIDDLE_NAME_PROPERTY = "middleName";
     static final String PERSON_SUFFIX_PROPERTY = "suffix";
     static final String PERSON_PREFIX_PROPERTY = "prefix";
     static final String PERSON_ID_PROPERTY = "id";

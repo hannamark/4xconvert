@@ -14,6 +14,7 @@ import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.AddressConverter;
@@ -164,6 +165,45 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(1, result.size());
 
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
+        result = remote.search(crit);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testFindByMiddleName() throws EntityValidationException {
+        PersonDTO dto = new PersonDTO();
+        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "m", "a", "c", "d"));
+        Person p = PoXsnapshotHelper.createModel(dto);
+        assertEquals("a", p.getLastName());
+        assertEquals("b", p.getFirstName());
+        assertEquals("m", p.getMiddleName());
+        assertEquals("c", p.getPrefix());
+        assertEquals("d", p.getSuffix());
+        Address a = makePerson().getPostalAddress();
+        PoHibernateUtil.getCurrentSession().save(a.getCountry());
+        dto.setPostalAddress(AddressConverter.convertToAd(a));
+        
+        Ii id = remote.createPerson(dto);
+        assertNotNull(id);
+        assertNotNull(id.getExtension());
+        p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, Long.parseLong(id.getExtension()));
+        assertNotNull(p);
+        PersonDTO personDTO = remote.getPerson(id);
+        Person p2 = PoXsnapshotHelper.createModel(personDTO);
+        assertEquals("a", p2.getLastName());
+        assertEquals("b", p2.getFirstName());
+        assertEquals("m", p2.getMiddleName());
+        assertEquals("c", p2.getPrefix());
+        assertEquals("d", p2.getSuffix());
+        assertNotNull(p2.getPostalAddress());
+        
+        PersonDTO crit = new PersonDTO();
+        /*This is a flaw in the ISO to BO Conversion process regarding GIVEN NAMES*/
+        crit.setName(PersonNameConverterUtil.convertToEnPn("%", "m", null, null, null));
+        List<PersonDTO> result = remote.search(crit);
+        assertEquals(1, result.size());
+        
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, "foobar", null, null, null));
         result = remote.search(crit);
         assertEquals(0, result.size());
     }

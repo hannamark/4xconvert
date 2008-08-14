@@ -35,7 +35,8 @@ public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCrite
     @Override
     public boolean hasOneCriterionSpecified() {
         return person != null
-                && (isValueSpecified(person.getFirstName()) || isValueSpecified(person.getLastName())
+                && (isValueSpecified(person.getFirstName())
+                        || isValueSpecified(person.getLastName()) || isValueSpecified(person.getMiddleName())
                         || isValueSpecified(person.getPrefix()) || isValueSpecified(person.getSuffix()));
     }
 
@@ -58,6 +59,8 @@ public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCrite
                 .getFirstName(), namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_LAST_NAME_PROPERTY, PERSON_LAST_NAME_PROPERTY, person
                 .getLastName(), namedParameters));
+        whereClause.add(addILike(personAliasDot + PERSON_MIDDLE_NAME_PROPERTY, PERSON_MIDDLE_NAME_PROPERTY, person
+                .getMiddleName(), namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_PREFIX_PROPERTY, PERSON_PREFIX_PROPERTY, person.getPrefix(),
                 namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_SUFFIX_PROPERTY, PERSON_SUFFIX_PROPERTY, person.getSuffix(),

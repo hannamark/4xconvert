@@ -3,6 +3,8 @@ package gov.nih.nci.po.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.GetterSetterTesterUtil;
 import gov.nih.nci.po.data.bo.Person;
 
@@ -12,7 +14,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PersonSearchCriteriaTest {
+public class PersonEntityServiceSearchCriteriaTest {
 
     private PersonEntityServiceSearchCriteria criteria;
     private Map<String, Object> namedParams;
@@ -40,6 +42,25 @@ public class PersonSearchCriteriaTest {
         yesCrit.setPerson(new Person());
         yesCrit.getPerson().setFirstName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setLastName("name");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setMiddleName("name");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPrefix("name");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setSuffix("name");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setCurationStatus(CurationStatus.CURATED);
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -65,7 +86,20 @@ public class PersonSearchCriteriaTest {
                 .remove(AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY));
         assertTrue(namedParams.isEmpty());
     }
-
+    
+    @Test
+    public void getQueryWhereClauseIfMiddleName() {
+        criteria.getPerson().setMiddleName("mName");
+        StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
+        String expected = AbstractSearchCriteria.WHERE
+        + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY,
+                AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY);
+        assertEquals(expected, queryWhereClause.toString());
+        assertEquals("%" + criteria.getPerson().getMiddleName().toLowerCase() + "%", namedParams
+                .remove(AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY));
+        assertTrue(namedParams.isEmpty());
+    }    
+    
     @Test
     public void getQueryWhereClauseIfLastName() {
         criteria.getPerson().setLastName("lName");
