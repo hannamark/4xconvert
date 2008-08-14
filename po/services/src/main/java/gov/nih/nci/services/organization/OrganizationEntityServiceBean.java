@@ -139,7 +139,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
 
     public OrganizationDTO getOrganization(Ii id) {
-        Organization org = orgService.getOrganization(new IiConverter().convertToLong(id));
+        Organization org = orgService.getOrganization(IiConverter.convertToLong(id));
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
     }
 

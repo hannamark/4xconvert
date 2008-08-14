@@ -86,6 +86,8 @@ import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -95,22 +97,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
+import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import java.util.List;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Valid;
 
 
 /**
@@ -128,6 +129,7 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
 
     private Long id;
     private String firstName;
+    private String middleName;
     private String lastName;
     private String suffix;
     private String prefix;
@@ -183,6 +185,21 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    /**
+     * @return the middleName
+     */
+    @Length(max = LONG_COL_LENGTH)
+    public String getMiddleName() {
+        return this.middleName;
+    }
+
+    /**
+     * @param middleName the middleName to set
+     */
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     /**

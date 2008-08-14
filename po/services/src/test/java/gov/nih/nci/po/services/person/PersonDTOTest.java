@@ -16,13 +16,14 @@ public class PersonDTOTest {
     public void convert() {
         PersonDTO dto = new PersonDTO();
         dto.setIdentifier(new PersonIdConverter().convertToIi(1l));
-        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "a", "c", "d"));
+        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "m", "a", "c", "d"));
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals("a", p.getLastName());
         assertEquals("b", p.getFirstName());
+        assertEquals("m", p.getMiddleName());
         assertEquals("c", p.getPrefix());
         assertEquals("d", p.getSuffix());
         assertEquals(new Long(1), p.getId());
     }
-    
+
 }

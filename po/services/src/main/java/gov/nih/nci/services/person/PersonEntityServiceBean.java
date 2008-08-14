@@ -137,7 +137,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public PersonDTO getPerson(Ii id) {
-        Person perBO = perService.getPerson(new IiConverter().convertToLong(id));
+        Person perBO = perService.getPerson(IiConverter.convertToLong(id));
         return PoXsnapshotHelper.<Person, PersonDTO>createSnapshot(perBO);
     }
 
@@ -161,6 +161,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public List<PersonDTO> search(PersonDTO person) {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
         PersonEntityServiceSearchCriteria criteria = new PersonEntityServiceSearchCriteria();
@@ -168,6 +169,4 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         List<Person> listBOs = getPersonServiceBean().search(criteria);
         return PoXsnapshotHelper.createSnapshotList(listBOs);
     }
-
-
 }

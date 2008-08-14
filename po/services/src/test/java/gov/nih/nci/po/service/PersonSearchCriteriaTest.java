@@ -41,7 +41,7 @@ public class PersonSearchCriteriaTest {
         yesCrit.getPerson().setFirstName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
     }
-    
+
     @Test(expected = UnsupportedOperationException.class)
     public void getCriteria() {
         criteria.getCriteria();
@@ -78,13 +78,9 @@ public class PersonSearchCriteriaTest {
                 .remove(AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY));
         assertTrue(namedParams.isEmpty());
     }
-    
+
     private String getExpectedILike(String propertyName, String paramName) {
         String eILike = "lower(" + propertyName + ") like :" + paramName;
         return eILike;
-    }
-    
-    private String getExpectedIn(final String lhs, final String rhs) {
-        return lhs + " in (" + rhs + ")";
     }
 }

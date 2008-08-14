@@ -113,11 +113,11 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         Ii id = getOrgService().createOrganization(dto1);
         assertNotNull(id);
         assertNotNull(id.getExtension());
-        assertTrue(new IiConverter().convertToLong(id) > 0);
+        assertTrue(IiConverter.convertToLong(id) > 0);
         OrganizationDTO dto2 = getOrgService().getOrganization(id);
         assertEquals(dto1, dto2);
     }
-    
+
     @Test
     public void createMinimal() throws Exception {
         try {
@@ -126,11 +126,11 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             dto.setName(ISOUtils.STRING.convertToEnOn("_"));
             dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("_"));
             dto.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
-            
+
             Ii id = getOrgService().createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
-            assertTrue(new IiConverter().convertToLong(id) > 0);
+            assertTrue(IiConverter.convertToLong(id) > 0);
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }

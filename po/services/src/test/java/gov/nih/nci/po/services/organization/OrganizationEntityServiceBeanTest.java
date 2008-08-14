@@ -52,7 +52,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         long id = t.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(new OrgIdConverter().convertToIi(id));
-        assertEquals(org.getId(), ISOUtils.II.convertToLong(result.getIdentifier()));
+        assertEquals(org.getId(), IiConverter.convertToLong(result.getIdentifier()));
         assertEquals(org.getName(), ISOUtils.EN.convertToString(result.getName()));
     }
 
@@ -104,7 +104,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
-            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, new IiConverter().convertToLong(id));
+            Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, IiConverter.convertToLong(id));
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
             assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
         } catch (EntityValidationException e) {

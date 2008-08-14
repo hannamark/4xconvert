@@ -8,10 +8,10 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Utility class to generate ISO EN.PN type.
- * <strong>Should not depend on BO classes</strong> 
+ * <strong>Should not depend on BO classes</strong>
  */
 public class PersonNameConverterUtil {
-    
+
     private static void addEnxp(EnPn enpn, String value, EntityNamePartType type) {
         if (StringUtils.isNotEmpty(value)) {
             Enxp part = new Enxp(type);
@@ -22,15 +22,18 @@ public class PersonNameConverterUtil {
 
     /**
      * @param firstName given name
+     * @param middleName middle name
      * @param lastName family name
      * @param prefix prefix
      * @param suffix suffix
      * @return ISO EN Person Name
      */
-    public static final EnPn convertToEnPn(String firstName, String lastName, String prefix, String suffix) {
+    public static final EnPn convertToEnPn(String firstName, String middleName,
+            String lastName, String prefix, String suffix) {
         EnPn enpn = new EnPn();
         addEnxp(enpn, lastName, EntityNamePartType.FAM);
         addEnxp(enpn, firstName, EntityNamePartType.GIV);
+        addEnxp(enpn, middleName, EntityNamePartType.GIV);
         addEnxp(enpn, prefix, EntityNamePartType.PFX);
         addEnxp(enpn, suffix, EntityNamePartType.SFX);
         return enpn;

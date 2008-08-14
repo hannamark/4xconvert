@@ -1,18 +1,18 @@
 package gov.nih.nci.po.services.person;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.po.data.bo.Address;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.CurationStatus;
 import gov.nih.nci.po.data.bo.Person;
@@ -75,10 +75,10 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         p.setPrefix("Dr.");
         p.setFirstName("Dixie");
         p.setLastName("Tavela");
-        
+
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", USA);
         p.setPostalAddress(a);
-        
+
         return p;
     }
 
@@ -124,7 +124,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(2, errors.size());
         assertTrue(errors.containsKey("lastName"));
         assertTrue(errors.containsKey("postalAddress"));
-        
+
         Ad add = new Ad();
         add.setPart(new ArrayList<Adxp>());
         Adxp apart = Adxp.createAddressPart(AddressPartType.STA);
@@ -139,32 +139,32 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         assertTrue(errors.containsKey("postalAddress.postalCode"));
         assertTrue(errors.containsKey("postalAddress.country"));
         assertFalse(errors.containsKey("postalAddress.stateOrProvince"));// for clarity
-        
+
     }
-    
+
     @Test
     public void testFindByFirstName() throws EntityValidationException {
         PersonDTO dto = new PersonDTO();
-        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "a", "c", "d"));
+        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "m", "a", "c", "d"));
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals("a", p.getLastName());
         assertEquals("b", p.getFirstName());
+        assertEquals("m", p.getMiddleName());
         assertEquals("c", p.getPrefix());
         assertEquals("d", p.getSuffix());
         Address a = makePerson().getPostalAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.convertToAd(a));
 
-        Ii id = remote.createPerson(dto);
-        PersonDTO person = remote.getPerson(id);
-        
+        remote.createPerson(dto);
+
         PersonDTO crit = new PersonDTO();
-        crit.setName(PersonNameConverterUtil.convertToEnPn(null, "a", null, null));
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "a", null, null));
         List<PersonDTO> result = remote.search(crit);
-        assertEquals(1, result.size());        
-        
-        crit.setName(PersonNameConverterUtil.convertToEnPn(null, "foobar", null, null));
+        assertEquals(1, result.size());
+
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
         result = remote.search(crit);
-        assertEquals(0, result.size());        
+        assertEquals(0, result.size());
     }
 }

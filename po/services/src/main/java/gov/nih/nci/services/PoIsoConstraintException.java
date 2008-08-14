@@ -80,101 +80,21 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
-
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.services.PoIsoConstraintException;
-
-import java.util.List;
+package gov.nih.nci.services;
 
 /**
+ * This exception is used to indicate that ISO data was provided that PO can not handle.
+ * The data likely complies to the ISO standard, but is not processable by PO.
  * @author Scott Miller
- *
  */
-public class EnPnConverter {
+public class PoIsoConstraintException extends IllegalArgumentException {
+    private static final long serialVersionUID = 1L;
 
     /**
-     * converts the given enpn to the data members on the given person.
-     * @param value the source iso person name.
-     * @param person the destination person.
+     * Constructor that takes the message.
+     * @param message the message.
      */
-    public static void convertToPersonName(EnPn value, Person person) {
-        // set all name values to null prior to parsing
-        person.setLastName(null);
-        person.setFirstName(null);
-        person.setMiddleName(null);
-        person.setPrefix(null);
-        person.setSuffix(null);
-
-        if (value != null && value.getNullFlavor() == null) {
-            processParts(value.getPart(), person);
-        }
-    }
-
-    private static void processParts(List<Enxp> parts, Person person) {
-        // for handling del we need to know the previous part in the list
-        Enxp previousPart = null;
-        // for handling del we need to know the type of the previous non-del part
-        EntityNamePartType previousType = null;
-
-        for (Enxp part : parts) {
-            validateCoppaConstraints(part);
-            String delimieter = extractDelimiter(previousPart, previousType, part);
-            processPart(part, person, delimieter);
-            if (previousPart != null) {
-                previousType = previousPart.getType();
-            }
-            previousPart = part;
-        }
-    }
-
-    private static void validateCoppaConstraints(Enxp part) {
-        if (part.getType() == null) {
-            throw new PoIsoConstraintException("PO will not provess EnPn's whose Enxp's have no type.");
-        }
-
-        if (part.getQualifier() != null && !part.getQualifier().isEmpty()) {
-            throw new PoIsoConstraintException("PO will not provess EnPn's whose Enxp's have qualifiers.");
-        }
-    }
-
-    private static String extractDelimiter(Enxp previousPart, EntityNamePartType previousType, Enxp part) {
-        String delimieter = " ";
-        if (previousPart != null && EntityNamePartType.DEL.equals(previousPart.getType())) {
-            if (previousType == null || !previousType.equals(part.getType())) {
-                throw new PoIsoConstraintException("A delimiter came between two parts of an ENPN that wer not "
-                        + "of the same type.");
-            } else {
-                delimieter = previousPart.getValue();
-            }
-        }
-        return delimieter;
-    }
-
-    private static void processPart(Enxp part, Person person, String delimiter) {
-        if (EntityNamePartType.FAM.equals(part.getType())) {
-            person.setLastName(produceNewValue(person.getLastName(), part.getValue(), delimiter));
-        } else if (EntityNamePartType.GIV.equals(part.getType())) {
-            if (person.getFirstName() == null) {
-                person.setFirstName(part.getValue());
-            } else {
-                person.setMiddleName(produceNewValue(person.getMiddleName(), part.getValue(), delimiter));
-            }
-        } else if (EntityNamePartType.PFX.equals(part.getType())) {
-            person.setPrefix(produceNewValue(person.getPrefix(), part.getValue(), delimiter));
-        } else if (EntityNamePartType.SFX.equals(part.getType())) {
-            person.setSuffix(produceNewValue(person.getSuffix(), part.getValue(), delimiter));
-        }
-    }
-
-    private static String produceNewValue(String oldValue, String addition, String del) {
-        if (oldValue == null) {
-            return addition;
-        } else {
-            return oldValue + del + addition;
-        }
+    public PoIsoConstraintException(String message) {
+        super(message);
     }
 }

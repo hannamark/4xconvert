@@ -89,13 +89,13 @@ import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 public class PersonNameConverter {
 
     /**
      * Convert the person's name info to an enpn.
-     * 
+     *
      * @param person the person.
      * @return the enpn
      */
@@ -105,8 +105,8 @@ public class PersonNameConverter {
             enpn.setNullFlavor(NullFlavor.NI);
             return enpn;
         } else {
-            return PersonNameConverterUtil.convertToEnPn(person.getFirstName(), person.getLastName(), person
-                    .getPrefix(), person.getSuffix());
+            return PersonNameConverterUtil.convertToEnPn(person.getFirstName(), person.getMiddleName(),
+                    person.getLastName(), person.getPrefix(), person.getSuffix());
         }
     }
 }
