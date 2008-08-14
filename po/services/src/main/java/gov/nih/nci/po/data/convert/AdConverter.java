@@ -89,6 +89,7 @@ import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +129,15 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
     public static Address convertToAddress(Ad iso, CountryResolver resolver) {
         if (iso == null || iso.getNullFlavor() != null) {
             return null;
+        }
+
+        if (iso.getUse() != null && !iso.getUse().isEmpty()) {
+            throw new PoIsoConstraintException("PO does not support the use of the 'use' field on AD at this time.");
+        }
+
+        if (iso.getUsablePeriod() != null) {
+            throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
+                    + " field on AD at this time.");
         }
 
         Address a = new Address();
