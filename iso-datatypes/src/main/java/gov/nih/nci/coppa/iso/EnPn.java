@@ -82,9 +82,7 @@
  */
 package gov.nih.nci.coppa.iso;
 
-import java.io.Serializable;
-
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.functors.NotNullPredicate;
 
 /**
  * Represents the iso datatype. EN.PN (Person Name)
@@ -95,29 +93,9 @@ public class EnPn extends En {
     private static final long serialVersionUID = 1L;
 
     /**
-     * serializable predicate that dissallows DEL part.
-     * given name or family name, prefix, suffix, etc.
-     */
-    private static class EnPnPredicate implements Predicate, Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        /** {@inheritDoc} */
-        public boolean evaluate(Object object) {
-            if (object == null) {
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    private static final Predicate PN_PREDICATE = new EnPnPredicate();
-
-    /**
      * Default ctor.
      */
     public EnPn() {
-        super(PN_PREDICATE);
+        super(NotNullPredicate.getInstance());
     }
 }

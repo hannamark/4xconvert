@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author lpower
  */
 public class AdxpCntTest {
@@ -17,13 +17,15 @@ public class AdxpCntTest {
     public void init() {
         a = new AdxpCnt();
     }
-    
-    
+
+
     @Test(expected = IllegalArgumentException.class)
+    @SuppressWarnings("deprecation")
     public void testSetCodingSystemBad() {
         a.setCodeSystem("foo");
     }
-    
+
+    @SuppressWarnings("deprecation")
     public void testSetCodingSystem() {
         a.setCodeSystem(AdxpCnt.OID);
     }
@@ -36,7 +38,7 @@ public class AdxpCntTest {
     public void testCodeBad() {
         a.setCode("China");
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testCodeBad2() {
         a.setCode("US");
@@ -45,7 +47,7 @@ public class AdxpCntTest {
     public void testCodeBad3() {
         a.setCode("USa");
     }
-    
+
     public void testCode() {
         a.setCode("USA");
     }

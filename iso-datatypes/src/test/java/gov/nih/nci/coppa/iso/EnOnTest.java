@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.iso;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -18,26 +18,26 @@ public class EnOnTest {
     public void testRestrictions() {
         EnOn enon = new EnOn();
         Enxp e = new Enxp(EntityNamePartType.FAM);
-        try { 
+        try {
             enon.getPart().add(e);
             fail();
         } catch (IllegalArgumentException ex) {
         }
-        
+
         e = new Enxp(EntityNamePartType.GIV);
-        try { 
+        try {
             enon.getPart().add(e);
             fail();
         } catch (IllegalArgumentException ex) {
         }
-        
+
         e = new Enxp(EntityNamePartType.DEL);
         enon.getPart().add(e);
-        
+
         e = new Enxp(null);
         enon.getPart().add(e);
 
         assertEquals(2, enon.getPart().size());
-        
+
     }
 }
