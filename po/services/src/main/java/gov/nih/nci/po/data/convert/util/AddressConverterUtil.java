@@ -39,7 +39,9 @@ public class AddressConverterUtil {
         List<Adxp> l = new ArrayList<Adxp>();
         iso.setPart(l);
         setValue(l, streetAddressLine, AddressPartType.AL);
-        setValue(l, deliveryAddressLine, AddressPartType.DAL);
+        if (StringUtils.isNotBlank(deliveryAddressLine)) {
+            setValue(l, deliveryAddressLine, AddressPartType.ADL);
+        }
         setValue(l, cityOrMunicipality, AddressPartType.CTY);
         setValue(l, stateOrProvince, AddressPartType.STA);
         setValue(l, postalCode, AddressPartType.ZIP);

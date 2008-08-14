@@ -85,14 +85,11 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.services.PoIsoConstraintException;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -113,24 +110,17 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
         throw new UnsupportedOperationException(returnClass.getName());
     }
 
-    private static final Map<AddressPartType, String> PREFIX = new HashMap<AddressPartType, String>();
-    static {
-        PREFIX.put(AddressPartType.CAR, "c/o ");
-        PREFIX.put(AddressPartType.POB, "P.O.Box ");
-        PREFIX.put(AddressPartType.DAL, "");
-    }
-
     /**
+     * https://jira.5amsolutions.com/browse/PO-429 .
      * @param iso the address to convert into a BO Address.
      * @param resolver converts 3 letter iso country codes to a BO {@link Country}
      * @return a BO address.
      */
-    @SuppressWarnings({"PMD.NPathComplexity", "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
     public static Address convertToAddress(Ad iso, CountryResolver resolver) {
         if (iso == null || iso.getNullFlavor() != null) {
             return null;
         }
-
+        
         if (iso.getUse() != null && !iso.getUse().isEmpty()) {
             throw new PoIsoConstraintException("PO does not support the use of the 'use' field on AD at this time.");
         }
@@ -140,6 +130,13 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
                     + " field on AD at this time.");
         }
 
+        return processParts(iso, resolver);
+
+    }
+
+    @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
+                        "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })    
+    private static Address processParts(Ad iso, CountryResolver resolver) {
         Address a = new Address();
 
         StringBuffer street = new StringBuffer();
@@ -152,6 +149,12 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
                 street.append(sdelimitor).append(part.getValue());
             } else {
                 switch (part.getType()) {
+                    case CAR:
+                        ddelimitor += "c/o ";
+                    case DAL:
+                    case ADL:
+                        delivery.append(ddelimitor).append(part.getValue());
+                        break;
                     case DEL:
                         String del = part.getValue() == null ? "\n" : part.getValue();
                         street.append(del);
@@ -174,22 +177,21 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
                         sdelimitor = "";
                         continue;
                     case POB:
-                    case CAR:
-                    case DAL:
-                        delivery.append(ddelimitor).append(PREFIX.get(part.getType()) + part.getValue());
-                        break;
-                    default: street.append(sdelimitor).append(part.getValue());
+                        sdelimitor += "P.O.Box ";
+                    default:
+                        street.append(sdelimitor).append(part.getValue());
                 }
                 sdelimitor = street.length() == 0 ? "" : " ";
                 ddelimitor = delivery.length() == 0 ? "" : " ";
             }
         }
-
         a.setStreetAddressLine(street.toString());
-        a.setDeliveryAddressLine(delivery.toString());
+        if (delivery.length() > 0) {
+            a.setDeliveryAddressLine(delivery.toString());
+        }
         return a;
     }
-
+    
     /**
      * helps resolve countries.
      */

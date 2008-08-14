@@ -192,7 +192,9 @@ This is the same address from a system that differentiates between different lin
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
 
-        assertEquals("1050 W Wishard Blvd RG 5th floor", result.getStreetAddressLine());
+        assertEquals("1050 W Wishard Blvd", result.getStreetAddressLine());
+        assertEquals("RG 5th floor", result.getDeliveryAddressLine());
+                 
     }
     /*
 7.7.3.5.4 Fully Typed Addresses
@@ -252,7 +254,8 @@ useful in Germany, where many systems keep house number as a distinct field
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
 
-        assertEquals("1050 W Wishard Blvd RG 5th floor", result.getStreetAddressLine());
+        assertEquals("1050 W Wishard Blvd", result.getStreetAddressLine());
+        assertEquals("RG 5th floor", result.getDeliveryAddressLine());
     }
 
     @Test
@@ -286,8 +289,7 @@ useful in Germany, where many systems keep house number as a distinct field
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
 
-        assertEquals("", result.getStreetAddressLine());
-        assertEquals("P.O.Box 909", result.getDeliveryAddressLine());
+        assertEquals("P.O.Box 909", result.getStreetAddressLine());        
     }
 
     /**

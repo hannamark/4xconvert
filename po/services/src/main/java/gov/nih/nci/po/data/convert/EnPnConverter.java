@@ -144,7 +144,7 @@ public class EnPnConverter {
     private static String extractDelimiter(Enxp previousPart, EntityNamePartType previousType, Enxp part) {
         String delimieter = " ";
         if (previousPart != null && EntityNamePartType.DEL.equals(previousPart.getType())) {
-            if (previousType == null || !previousType.equals(part.getType())) {
+            if (previousType == null || previousType != part.getType()) {
                 throw new PoIsoConstraintException("A delimiter came between two parts of an ENPN that wer not "
                         + "of the same type.");
             } else {
@@ -155,17 +155,17 @@ public class EnPnConverter {
     }
 
     private static void processPart(Enxp part, Person person, String delimiter) {
-        if (EntityNamePartType.FAM.equals(part.getType())) {
+        if (EntityNamePartType.FAM == part.getType()) {
             person.setLastName(produceNewValue(person.getLastName(), part.getValue(), delimiter));
-        } else if (EntityNamePartType.GIV.equals(part.getType())) {
+        } else if (EntityNamePartType.GIV == part.getType()) {
             if (person.getFirstName() == null) {
                 person.setFirstName(part.getValue());
             } else {
                 person.setMiddleName(produceNewValue(person.getMiddleName(), part.getValue(), delimiter));
             }
-        } else if (EntityNamePartType.PFX.equals(part.getType())) {
+        } else if (EntityNamePartType.PFX == part.getType()) {
             person.setPrefix(produceNewValue(person.getPrefix(), part.getValue(), delimiter));
-        } else if (EntityNamePartType.SFX.equals(part.getType())) {
+        } else if (EntityNamePartType.SFX == part.getType()) {
             person.setSuffix(produceNewValue(person.getSuffix(), part.getValue(), delimiter));
         }
     }
