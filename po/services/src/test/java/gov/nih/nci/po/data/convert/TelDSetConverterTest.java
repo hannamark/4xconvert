@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.services.PoIsoConstraintException;
 import java.net.URI;
 import java.util.List;
 import java.util.ArrayList;
@@ -83,5 +84,16 @@ public class TelDSetConverterTest {
         assertEquals("foo", text.get(0).getValue().toString());
     }
 
-    
+    @Test(expected = PoIsoConstraintException.class)
+    public void testFlavorId() {
+        DSet<Tel> value = new DSet<Tel>();
+        Set<Tel> set = new HashSet<Tel>();
+        value.setItem(set);
+        
+        Tel t = new TelEmail();
+        t.setValue(URI.create("mailto:foo"));
+        set.add(t);
+        t.setFlavorId("flavorId");
+        TelDSetConverter.convertToContactList(value, email, fax, phone, url, text);
+    }
 }

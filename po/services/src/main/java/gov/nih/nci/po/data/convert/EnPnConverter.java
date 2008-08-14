@@ -102,6 +102,9 @@ public class EnPnConverter {
      * @param person the destination person.
      */
     public static void convertToPersonName(EnPn value, Person person) {
+        if (value.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
         // set all name values to null prior to parsing
         person.setLastName(null);
         person.setFirstName(null);
@@ -109,10 +112,6 @@ public class EnPnConverter {
         person.setPrefix(null);
         person.setSuffix(null);
 
-        if (value.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-        
         if (value != null && value.getNullFlavor() == null) {
             processParts(value.getPart(), person);
         }

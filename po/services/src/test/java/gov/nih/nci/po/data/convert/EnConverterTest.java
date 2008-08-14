@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.services.PoIsoConstraintException;
 import org.junit.Test;
 import java.util.Collections;
@@ -48,6 +49,15 @@ public class EnConverterTest {
         String expResult = "5AM Solutions, Inc";
         String result = instance.convertToString(iso);
         assertEquals(expResult, result);
+    }
+    
+    @Test(expected = PoIsoConstraintException.class)
+    public void testFlavorId() {
+        EnOn iso = new EnOn();
+        iso.setNullFlavor(NullFlavor.OTH);
+        iso.setFlavorId("flavorId");
+        EnConverter<EnOn> instance = new EnConverter<EnOn>();
+        instance.convertToString(iso);
     }
     
 }

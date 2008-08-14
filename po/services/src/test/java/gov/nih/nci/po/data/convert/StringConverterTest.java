@@ -18,19 +18,18 @@ public class StringConverterTest {
     @Test
     public void testConvertToSt() {
         String value = null;
-        StringConverter instance = new StringConverter();
-        St result = instance.convertToSt(value);
+        St result = StringConverter.convertToSt(value);
         assertEquals(NullFlavor.NI, result.getNullFlavor());
 
 
         value = "foo";
-        result = instance.convertToSt(value);
+        result = StringConverter.convertToSt(value);
         assertNull(result.getNullFlavor());
         assertEquals(value, result.getValue());
 
 
         value = "";
-        result = instance.convertToSt(value);
+        result = StringConverter.convertToSt(value);
         assertNotNull(result.getNullFlavor());
         assertNull(value, result.getValue());
     }
@@ -39,13 +38,12 @@ public class StringConverterTest {
     @Test
     public void testConvertToEnOn() {
         String value = null;
-        StringConverter instance = new StringConverter();
-        EnOn result = instance.convertToEnOn(value);
+        EnOn result = StringConverter.convertToEnOn(value);
         assertEquals(NullFlavor.NI, result.getNullFlavor());
 
 
         value = "5AM Soluctions, Inc";
-        result = instance.convertToEnOn(value);
+        result = StringConverter.convertToEnOn(value);
         assertNull(result.getNullFlavor());
         assertEquals(1, result.getPart().size());
         assertNull(result.getPart().get(0).getType());
@@ -53,7 +51,7 @@ public class StringConverterTest {
 
 
         value = "";
-        result = instance.convertToEnOn(value);
+        result = StringConverter.convertToEnOn(value);
         assertNull(result.getNullFlavor());
         assertEquals(value, result.getPart().get(0).getValue());
     }

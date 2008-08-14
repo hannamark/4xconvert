@@ -1,5 +1,6 @@
 package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.services.PoIsoConstraintException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
@@ -49,4 +50,10 @@ public class IiConverterTest {
         assertEquals(expResult, result);
     }
 
+    @Test(expected = PoIsoConstraintException.class)
+    public void testFlavorId() {
+        Ii iso = new Ii();
+        iso.setFlavorId("flavorId");
+        IiConverter.convertToLong(iso);
+    }
 }

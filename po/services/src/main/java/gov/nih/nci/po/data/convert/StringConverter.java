@@ -116,7 +116,7 @@ public class StringConverter extends AbstractXSnapshotConverter<String> {
      * @param value a string to parse.
      * @return an iso ST
      */
-    public St convertToSt(String value) {
+    public static St convertToSt(String value) {
         St iso = new St();
         if (value == null || value.length() == 0) {
             iso.setNullFlavor(NullFlavor.NI);
@@ -130,7 +130,7 @@ public class StringConverter extends AbstractXSnapshotConverter<String> {
      * @param value string to parse.
      * @return a 1 part EnOn.
      */
-    public EnOn convertToEnOn(String value) {
+    public static EnOn convertToEnOn(String value) {
         EnOn iso = new EnOn();
         if (value == null) {
             iso.setNullFlavor(NullFlavor.NI);

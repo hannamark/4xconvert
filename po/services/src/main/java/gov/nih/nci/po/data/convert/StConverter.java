@@ -110,7 +110,7 @@ public class StConverter extends AbstractXSnapshotConverter<St> {
      * @param iso an ST.
      * @return a string.
      */
-    public String convertToString(St iso) {
+    public static String convertToString(St iso) {
         if (iso == null) {
             // this should not happen, but we might be able to help convert
             return null;

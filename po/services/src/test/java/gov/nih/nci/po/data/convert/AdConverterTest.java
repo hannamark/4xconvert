@@ -338,4 +338,11 @@ useful in Germany, where many systems keep house number as a distinct field
 
         AdConverter.convertToAddress(iso, resolver);
     }
+    
+    @Test(expected = PoIsoConstraintException.class)
+    public void testFlavorId() {
+        Ad iso = new Ad();
+        iso.setFlavorId("flavorId");
+        AdConverter.convertToAddress(iso, null);
+    }
 }
