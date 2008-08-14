@@ -36,7 +36,7 @@ public class AddressConverterUtil {
     public static Ad create(String streetAddressLine, String deliveryAddressLine, String cityOrMunicipality,
             String stateOrProvince, String postalCode, String countryAlpha3) {
         Ad iso = new Ad();
-        List<Adxp> l = new ArrayList<Adxp>(/* 6 */);
+        List<Adxp> l = new ArrayList<Adxp>();
         iso.setPart(l);
         setValue(l, streetAddressLine, AddressPartType.AL);
         setValue(l, deliveryAddressLine, AddressPartType.DAL);
