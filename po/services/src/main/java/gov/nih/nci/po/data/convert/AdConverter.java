@@ -121,6 +121,10 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
             return null;
         }
         
+        if (iso.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+        
         if (iso.getUse() != null && !iso.getUse().isEmpty()) {
             throw new PoIsoConstraintException("PO does not support the use of the 'use' field on AD at this time.");
         }

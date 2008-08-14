@@ -2,11 +2,13 @@
 package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 
+import gov.nih.nci.services.PoIsoConstraintException;
 import org.junit.Test;
 import java.util.Collections;
 
@@ -27,6 +29,14 @@ public class EnConverterTest {
     @Test
     public void testConvertToString() {
         EnOn iso = new EnOn();
+        EnConverter<EnOn> instance = new EnConverter<EnOn>();
+        try{
+            instance.convertToString(iso);
+            fail();
+        }catch (PoIsoConstraintException ex) {
+            // expected
+        }
+        
         Enxp p = new Enxp(null);
         p.setValue("5AM Solutions, ");
         iso.getPart().add(p);
@@ -35,10 +45,9 @@ public class EnConverterTest {
         p.setQualifier(Collections.singleton(EntityNamePartQualifier.LS));// no effect
         iso.getPart().add(p);
 
-        EnConverter<EnOn> instance = new EnConverter<EnOn>();
         String expResult = "5AM Solutions, Inc";
         String result = instance.convertToString(iso);
         assertEquals(expResult, result);
     }
-
+    
 }

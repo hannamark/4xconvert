@@ -135,7 +135,6 @@ public class StringConverter extends AbstractXSnapshotConverter<String> {
         if (value == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
-            // todo https://jira.5amsolutions.com/browse/PO-410
             Enxp e = new Enxp(null);
             e.setValue(value);
             iso.getPart().add(e);

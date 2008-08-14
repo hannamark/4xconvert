@@ -109,6 +109,10 @@ public class EnPnConverter {
         person.setPrefix(null);
         person.setSuffix(null);
 
+        if (value.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+        
         if (value != null && value.getNullFlavor() == null) {
             processParts(value.getPart(), person);
         }

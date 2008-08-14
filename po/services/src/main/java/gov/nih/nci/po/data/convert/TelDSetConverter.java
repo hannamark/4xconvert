@@ -90,6 +90,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.services.PoIsoConstraintException;
 import java.util.List;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
@@ -119,6 +120,9 @@ public class TelDSetConverter implements Transformer {
             List<Email> email, List<PhoneNumber> fax, List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
         if (value == null || value.getItem() == null) { return; }
         for (Tel t : value.getItem()) {
+            if (t.getFlavorId() != null) {
+                throw new PoIsoConstraintException("PO expects a null flavorId"); 
+            }
             if (t.getNullFlavor() != null) {
                 continue;
             }

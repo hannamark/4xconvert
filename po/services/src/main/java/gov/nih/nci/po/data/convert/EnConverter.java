@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.En;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.services.PoIsoConstraintException;
 
 /**
  *
@@ -117,8 +118,7 @@ public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<EN
             return null;
         }
 
-        // todo https://jira.5amsolutions.com/browse/PO-406 .1
-        iso.getFlavorId();
+        validate(iso);
 
         if (iso.getNullFlavor() != null) {
             return null;
@@ -131,4 +131,17 @@ public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<EN
         }
     }
 
+    private static void validate(En iso) {
+        if (iso.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+
+        if (iso.getNullFlavor() != null) {
+            if (iso.getPart() != null && !iso.getPart().isEmpty()) {
+                throw new PoIsoConstraintException("Either the EN is null or it has at least one part");
+            }
+        } else if (iso.getPart().isEmpty()) {
+            throw new PoIsoConstraintException("Either the EN is null or it has at least one part");
+        }
+    }
 }

@@ -85,6 +85,7 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.services.PoIsoConstraintException;
 
 /**
  *
@@ -112,6 +113,10 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
     public static Long convertToLong(Ii value) {
         if (value == null || value.getNullFlavor() != null) {
             return null;
+        }
+        
+        if (value.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
         }
 
         // todo https://jira.5amsolutions.com/browse/PO-411
