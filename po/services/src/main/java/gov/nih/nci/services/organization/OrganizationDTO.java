@@ -83,6 +83,7 @@
 package gov.nih.nci.services.organization;
 
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Tel;
 
 /**
  * @author Scott Miller
@@ -91,19 +92,19 @@ import gov.nih.nci.coppa.iso.DSet;
 public class OrganizationDTO extends BaseOrganizationDTO {
     private static final long serialVersionUID = 1L;
 
-    private DSet telecomAddress;
+    private DSet<Tel> telecomAddress;
 
     /**
      * @return the telecomAddress
      */
-    public DSet getTelecomAddress() {
+    public DSet<Tel> getTelecomAddress() {
         return this.telecomAddress;
     }
 
     /**
      * @param telecomAddress the telecomAddress to set
      */
-    public void setTelecomAddress(DSet telecomAddress) {
+    public void setTelecomAddress(DSet<Tel> telecomAddress) {
         this.telecomAddress = telecomAddress;
     }
 }

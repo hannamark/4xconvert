@@ -86,10 +86,12 @@ import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -101,8 +103,12 @@ import org.junit.Test;
  */
 public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
 
+    private Ii personId;
+    
+    
     @Test
     public void createMinimal() throws Exception {
+        if (personId !=null ) return;//test already run from getById.
         try {
             PersonDTO dto = new PersonDTO();
             Ii isoId = new Ii();
@@ -117,14 +123,25 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             part.setValue("__");
             dto.getName().getPart().add(part);
             dto.setPostalAddress(AddressConverterUtil.create("street", "delivery", "city", "state", "zip", "USA"));
-            Ii id = getPersonService().createPerson(dto);
-            assertNotNull(id);
-            assertNotNull(id.getExtension());
-            assertNotSame("Ii.extension provided should not be persisted", id.getExtension(), Long.valueOf(isoId
+            personId = getPersonService().createPerson(dto);
+            assertNotNull(personId);
+            assertNotNull(personId.getExtension());
+            assertNotSame("Ii.extension provided should not be persisted", personId.getExtension(), Long.valueOf(isoId
                     .getExtension()));
+            
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
     }
-
+    
+    @Test
+    public void getById() throws Exception {
+        if (personId == null) {
+            createMinimal();
+        }
+        PersonDTO dto = getPersonService().getPerson(personId);
+        assertNotNull(dto);
+        assertNotSame(personId, dto.getIdentifier());
+        assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
+    }
 }

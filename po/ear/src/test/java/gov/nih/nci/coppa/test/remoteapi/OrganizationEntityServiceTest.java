@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotSame;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
@@ -101,6 +102,7 @@ import org.junit.Test;
  */
 public class OrganizationEntityServiceTest extends BaseOrganizationEntityServiceTest {
 
+    private Ii orgId = null;
     /*
      * Method to check that the remote service is working.
      * @throws Exception on error.
@@ -120,6 +122,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
 
     @Test
     public void createMinimal() throws Exception {
+        if (orgId != null) return; // test already run from getGyId.
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
@@ -127,13 +130,24 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("_"));
             dto.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
 
-            Ii id = getOrgService().createOrganization(dto);
-            assertNotNull(id);
-            assertNotNull(id.getExtension());
-            assertTrue(IiConverter.convertToLong(id) > 0);
+            orgId = getOrgService().createOrganization(dto);
+            assertNotNull(orgId);
+            assertNotNull(orgId.getExtension());
+            assertTrue(IiConverter.convertToLong(orgId) > 0);
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
+    }
+    
+    @Test
+    public void getById() throws Exception {
+        if (orgId == null) {
+            createMinimal();
+        }
+        OrganizationDTO dto = getOrgService().getOrganization(orgId);
+        assertNotNull(dto);
+        assertNotSame(orgId, dto.getIdentifier());
+        assertEquals(orgId.getExtension(), dto.getIdentifier().getExtension());
     }
 
 }
