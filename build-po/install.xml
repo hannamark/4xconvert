@@ -596,7 +596,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		upgrade:jboss,
 		install:validation:post-install
 		"/>
-
+	<!-- temporary target to install a fresh db all DDL and DML -->
+	<target name="upgrade:install:db" description="Deploys application and runs full database install build" 
+		depends="
+		upgrade:check,
+		upgrade:init,
+		install:validation:pre-install,
+		install:jboss:stop,
+		install:init, install:database,
+		upgrade:jboss,
+		install:validation:post-install
+		"/>		
+		
 	<target name="upgrade:init">
 		<echo  message="Checking if database properties exist.  If they do not on an upgrade install then ${jboss.home}/server/${jboss.server.name}/deploy/${po-ear.ds.file} may not exist."/>
 		<property name="db.prop.list" value="database.url,database.user,database.password,database.name"/>

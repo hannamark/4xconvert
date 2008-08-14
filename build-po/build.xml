@@ -52,8 +52,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<property name="pt.dir" location="${target.dir}/persistent-transient" />
 
 	<!-- Ivy Related props -->
-	<property name="ivy.bda.definition.file" location="ivy-bda.xml" />
-	<property name="ivy.bda.settings.file" location="ivy-bda-settings.xml" />
+	<property name="ivy.bda.definition.file" value="ivy-bda.xml" />
+	<property name="ivy.bda.settings.file" value="ivy-bda-settings.xml" />
 	<property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
 	<property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
 
@@ -218,7 +218,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	</target>
 
 	<target name="ivy:clean" description="Clean">
-		<ivy:settings file="${ivy.settings.file}" />
+		<ivy:settings file="${bda-download.dir}/${ivy.bda.settings.file}" />
 		<ivy:cleancache />
 		<ant inheritAll="false" inheritRefs="false"
 			antfile="bda-ivy-build.xml"
@@ -228,10 +228,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			<property name="lib.dir" location="${lib.dir}" />
 			<property name="software.dir" location="${software.dir}" />
 		</ant>
+		<!-- NOT REALLY NEEDED FOR US, we're using MVN
 		<ant inheritAll="false" inheritRefs="false" 
 			antfile="${pa-web.build.file}" 
 			target="ivy-clean" 
-			dir="${pa-web.base.dir}" />
+			dir="${pa-web.base.dir}" /> -->
 	</target>
 
 	<!-- Wrapper build target, call appropriate builds for sub-projects -->
@@ -408,6 +409,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 	<!-- Copies install time resources into distribution tree -->
 	<target name="dist:upgrader:prep">
+			
+		<!-- Copy pa database scripts -->
+		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
+			<fileset dir="${db-install.src.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</copy> 
+	
 		<!-- Cleans up files copied by dist:*:prep targets to ensure only required files are present becaue this target is run after dist:installer:prep -->
 		<delete dir="${tools.dist.dir}"/>
 		<delete>
