@@ -84,18 +84,20 @@
 
 package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.services.PoIsoConstraintException;
+
 import java.util.List;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelUrl;
+
 import net.sf.xsnapshot.TransformContext;
 import net.sf.xsnapshot.Transformer;
 import net.sf.xsnapshot.TransformerArgs;
@@ -106,7 +108,7 @@ import net.sf.xsnapshot.TransformerArgs;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class TelDSetConverter implements Transformer {
-    
+
     /**
      * @param value the source of the info.
      * @param email where all emails in value will be added.
@@ -116,17 +118,18 @@ public class TelDSetConverter implements Transformer {
      * @param text where all x-text-tel in value will be added.
      */
     @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList" })
-    public static void convertToContactList(DSet<? extends Tel> value, 
+    public static void convertToContactList(DSet<? extends Tel> value,
             List<Email> email, List<PhoneNumber> fax, List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
         if (value == null || value.getItem() == null) { return; }
         for (Tel t : value.getItem()) {
-            if (t.getFlavorId() != null) {
-                throw new PoIsoConstraintException("PO expects a null flavorId"); 
-            }
+            enforcePoIsoConstraints(t);
+
             if (t.getNullFlavor() != null) {
                 continue;
             }
+
             String val = t.getValue().getScheme();
+
             if (val.equals(TelEmail.SCHEME_MAILTO)) {
                 email.add(new Email(t.getValue().getSchemeSpecificPart()));
             } else if (val.equals(TelPhone.SCHEME_X_TEXT_FAX)) {
@@ -140,7 +143,27 @@ public class TelDSetConverter implements Transformer {
             }
         }
     }
-    
+
+    /**
+     * Enforce the po iso constraints for tel.
+     * @param t the tel
+     */
+    private static void enforcePoIsoConstraints(Tel t) {
+        if (t.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+
+        if (t.getUse() != null && !t.getUse().isEmpty()) {
+            throw new PoIsoConstraintException("PO does not support the use of the 'use'"
+                    + " field on TEL at this time.");
+        }
+
+        if (t.getUseablePeriod() != null) {
+            throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
+                    + " field on Tel at this time.");
+        }
+    }
+
     /**
      * @param value the source of contact.
      * @param org the org who's contacts will be populated.
@@ -148,7 +171,7 @@ public class TelDSetConverter implements Transformer {
     public static void convertToContactList(DSet<? extends Tel> value, Organization org) {
         convertToContactList(value, org.getEmail(), org.getFax(), org.getPhone(), org.getUrl(), org.getTty());
     }
-    
+
     /**
      * @param value the source of contact.
      * @param per the person who's contacts will be populated.

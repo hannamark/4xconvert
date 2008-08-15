@@ -84,12 +84,13 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNotSame;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -110,8 +111,8 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
     @Test(expected = EntityValidationException.class)
     public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
-        dto1.setName(ISOUtils.STRING.convertToEnOn("Test Name"));
-        dto1.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("TST"));
+        dto1.setName(StringConverter.convertToEnOn("Test Name"));
+        dto1.setAbbreviatedName(StringConverter.convertToEnOn("TST"));
         Ii id = getOrgService().createOrganization(dto1);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -122,12 +123,14 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
 
     @Test
     public void createMinimal() throws Exception {
-        if (orgId != null) return; // test already run from getGyId.
+        if (orgId != null) {
+            return; // test already run from getGyId.
+        }
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
-            dto.setName(ISOUtils.STRING.convertToEnOn("_"));
-            dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("_"));
+            dto.setName(StringConverter.convertToEnOn("_"));
+            dto.setAbbreviatedName(StringConverter.convertToEnOn("_"));
             dto.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
 
             orgId = getOrgService().createOrganization(dto);
@@ -138,7 +141,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             fail(e.getErrorMessages());
         }
     }
-    
+
     @Test
     public void getById() throws Exception {
         if (orgId == null) {

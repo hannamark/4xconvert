@@ -22,6 +22,7 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
@@ -83,8 +84,8 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     public void createOrganization() throws EntityValidationException, URISyntaxException {
         OrganizationDTO dto = new OrganizationDTO();
         dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
-        dto.setName(ISOUtils.STRING.convertToEnOn("some name"));
-        dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("short"));
+        dto.setName(StringConverter.convertToEnOn("some name"));
+        dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country.getAlpha3()));
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
@@ -109,8 +110,8 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
-            dto.setName(ISOUtils.STRING.convertToEnOn("some name"));
-            dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("short"));
+            dto.setName(StringConverter.convertToEnOn("some name"));
+            dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
             dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country.getAlpha3()));
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
@@ -126,7 +127,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     @Test
     public void validate() {
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setAbbreviatedName(ISOUtils.STRING.convertToEnOn("short"));
+        dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         Map<String, String[]> errors = remote.validate(dto);
         assertEquals(2, errors.size()) ;
         assertTrue(errors.containsKey("name"));

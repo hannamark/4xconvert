@@ -120,11 +120,11 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
         if (iso == null || iso.getNullFlavor() != null) {
             return null;
         }
-        
+
         if (iso.getFlavorId() != null) {
             throw new PoIsoConstraintException("PO expects a null flavorId");
         }
-        
+
         if (iso.getUse() != null && !iso.getUse().isEmpty()) {
             throw new PoIsoConstraintException("PO does not support the use of the 'use' field on AD at this time.");
         }
@@ -134,12 +134,17 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
                     + " field on AD at this time.");
         }
 
+        if (iso.getIsNotOrdered() != null) {
+            throw new PoIsoConstraintException("PO does not support the use of the 'isNotOrdered' "
+                    + "field on AD at this time.");
+        }
+
         return processParts(iso, resolver);
 
     }
 
     @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
-                        "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })    
+                        "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
     private static Address processParts(Ad iso, CountryResolver resolver) {
         Address a = new Address();
 
@@ -195,7 +200,7 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
         }
         return a;
     }
-    
+
     /**
      * helps resolve countries.
      */

@@ -194,7 +194,7 @@ This is the same address from a system that differentiates between different lin
 
         assertEquals("1050 W Wishard Blvd", result.getStreetAddressLine());
         assertEquals("RG 5th floor", result.getDeliveryAddressLine());
-                 
+
     }
     /*
 7.7.3.5.4 Fully Typed Addresses
@@ -289,7 +289,7 @@ useful in Germany, where many systems keep house number as a distinct field
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
 
-        assertEquals("P.O.Box 909", result.getStreetAddressLine());        
+        assertEquals("P.O.Box 909", result.getStreetAddressLine());
     }
 
     /**
@@ -338,7 +338,10 @@ useful in Germany, where many systems keep house number as a distinct field
 
         AdConverter.convertToAddress(iso, resolver);
     }
-    
+
+    /**
+     * test that the constraing on flavor id is enforced.
+     */
     public void testFlavorId() {
         Ad iso = new Ad();
         iso.setNullFlavor(NullFlavor.OTH);
@@ -348,7 +351,19 @@ useful in Germany, where many systems keep house number as a distinct field
             AdConverter.convertToAddress(iso, null);
             fail();
         } catch(PoIsoConstraintException ex) {
-            
+
         }
     }
+
+    /**
+     * Verify that setting is NotOrdered causes an error.
+     */
+    @Test(expected = PoIsoConstraintException.class)
+    public void testUseOfIsNotOrdered() {
+        Ad iso = new Ad();
+        iso.setIsNotOrdered(Boolean.TRUE);
+        AdConverter.convertToAddress(iso, resolver);
+    }
+
+
 }

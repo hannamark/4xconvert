@@ -105,6 +105,11 @@ public class EnPnConverter {
         if (value.getFlavorId() != null) {
             throw new PoIsoConstraintException("PO expects a null flavorId");
         }
+
+        if (value.getUse() != null && !value.getUse().isEmpty()) {
+            throw new PoIsoConstraintException("PO expects an empty use set for EnPn.use");
+        }
+
         // set all name values to null prior to parsing
         person.setLastName(null);
         person.setFirstName(null);
