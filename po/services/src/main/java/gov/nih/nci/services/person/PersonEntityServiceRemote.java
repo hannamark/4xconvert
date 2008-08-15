@@ -91,7 +91,7 @@ import java.util.Map;
 import javax.ejb.Remote;
 
 /**
- *
+ * 
  * @author lpower
  */
 @Remote
@@ -105,6 +105,7 @@ public interface PersonEntityServiceRemote {
 
     /**
      * Remote API to create a person.
+     * 
      * @param person Person
      * @return db id
      * @throws EntityValidationException if validation fails.
@@ -113,15 +114,34 @@ public interface PersonEntityServiceRemote {
 
     /**
      * Validate a person entity.
+     * 
      * @param person the person to validate.
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(PersonDTO person);
-    
-    
+
     /**
-     * @param person data to find matching people
-     * @return list of matching people 
+     * Provides the ability to find people using conjunctional insensitive substring matching.   
+     * 
+     * <pre>
+     * You may search by specifying combinations of the following: 
+     * <li>Family name (last name)</li>
+     * <li>Given name (first name). The first given name provided corresponds to a person's 
+     * first name. The second given name will correspond to the person's middle name. Subsequent 
+     * given names will allow for If more than one given name is provided this will allow you to 
+     * search by middle name</li>
+     * <li>Given name (middle name). To only search by middle name you must provide two given 
+     * names with the first given name being set to "%"</li>
+     * <li>Prefix (prefix)</li>
+     * <li>Suffix (suffix)</li>
+     * 
+     * The following are unsupported:
+     * <li>PersonDTO.identifier</li>
+     * <li>PersonDTO.telecomAddress</li>
+     * <li>PersonDTO.postalAddress</li>
+     * </pre>
+     * @param person criteria used to find matching people
+     * @return list of matching people
      */
     List<PersonDTO> search(PersonDTO person);
 }

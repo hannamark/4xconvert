@@ -145,64 +145,96 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void testFindByFirstName() throws EntityValidationException {
-        PersonDTO dto = new PersonDTO();
-        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "m", "a", "c", "d"));
-        Person p = PoXsnapshotHelper.createModel(dto);
-        assertEquals("a", p.getLastName());
-        assertEquals("b", p.getFirstName());
-        assertEquals("m", p.getMiddleName());
-        assertEquals("c", p.getPrefix());
-        assertEquals("d", p.getSuffix());
-        Address a = makePerson().getPostalAddress();
-        PoHibernateUtil.getCurrentSession().save(a.getCountry());
-        dto.setPostalAddress(AddressConverter.convertToAd(a));
-
-        remote.createPerson(dto);
+        init();
 
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "a", null, null));
         List<PersonDTO> result = remote.search(crit);
         assertEquals(1, result.size());
+    }
 
-        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
-        result = remote.search(crit);
+    @Test
+    public void testFindByFirstNameWildcardAsFirstAndLast() throws EntityValidationException {
+        init();
+        PersonDTO crit = new PersonDTO();
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "%a%", null, null));
+        List<PersonDTO> result = remote.search(crit);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testFindByFirstNameWildcardsInSitu() throws EntityValidationException {
+        init();
+        PersonDTO crit = new PersonDTO();
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "b%b", null, null));
+        List<PersonDTO> result = remote.search(crit);
         assertEquals(0, result.size());
     }
-    
+
     @Test
-    public void testFindByMiddleName() throws EntityValidationException {
+    public void testFindByFirstNameWilcardAttempt1() throws EntityValidationException {
+        init();
+        PersonDTO crit = new PersonDTO();
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "?a?", null, null));
+        List<PersonDTO> result = remote.search(crit);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testFindByFirstNameWilcardAttempt2() throws EntityValidationException {
+        init();
+        PersonDTO crit = new PersonDTO();
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "_a_", null, null));
+        List<PersonDTO> result = remote.search(crit);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testFindByFirstNameNoMatches() throws EntityValidationException {
+        init();
+        PersonDTO crit = new PersonDTO();
+        crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
+        List<PersonDTO> result = remote.search(crit);
+        assertEquals(0, result.size());
+    }
+
+    private void init() throws EntityValidationException {
         PersonDTO dto = new PersonDTO();
-        dto.setName(PersonNameConverterUtil.convertToEnPn("b", "m", "a", "c", "d"));
+        dto.setName(PersonNameConverterUtil.convertToEnPn("bab", "m", "a", "c", "d"));
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals("a", p.getLastName());
-        assertEquals("b", p.getFirstName());
+        assertEquals("bab", p.getFirstName());
         assertEquals("m", p.getMiddleName());
         assertEquals("c", p.getPrefix());
         assertEquals("d", p.getSuffix());
         Address a = makePerson().getPostalAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.convertToAd(a));
-        
+
         Ii id = remote.createPerson(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
-        p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, Long.parseLong(id.getExtension()));
-        assertNotNull(p);
+        
         PersonDTO personDTO = remote.getPerson(id);
         Person p2 = PoXsnapshotHelper.createModel(personDTO);
         assertEquals("a", p2.getLastName());
-        assertEquals("b", p2.getFirstName());
+        assertEquals("bab", p2.getFirstName());
         assertEquals("m", p2.getMiddleName());
         assertEquals("c", p2.getPrefix());
         assertEquals("d", p2.getSuffix());
         assertNotNull(p2.getPostalAddress());
-        
+    }
+
+    @Test
+    public void testFindByMiddleName() throws EntityValidationException {
+        init();
+
         PersonDTO crit = new PersonDTO();
-        /*This is a flaw in the ISO to BO Conversion process regarding GIVEN NAMES*/
+        /* This is a flaw in the ISO to BO Conversion process regarding GIVEN NAMES */
         crit.setName(PersonNameConverterUtil.convertToEnPn("%", "m", null, null, null));
         List<PersonDTO> result = remote.search(crit);
         assertEquals(1, result.size());
-        
+
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, "foobar", null, null, null));
         result = remote.search(crit);
         assertEquals(0, result.size());

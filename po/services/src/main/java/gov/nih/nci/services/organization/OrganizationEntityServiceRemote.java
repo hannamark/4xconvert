@@ -119,8 +119,22 @@ public interface OrganizationEntityServiceRemote {
     Map<String, String[]> validate(OrganizationDTO org);
     
     /**
-     * @param organization data to find matching organizations
-     * @return list of matching organizations 
+     * Provides the ability to find organizations using conjunctional insensitive substring matching.   
+     * 
+     * <pre>
+     * You may search by specifying combinations of the following: 
+     * <li>EnOn name (name)</li>
+     * <li>EnOn abbreviatedName (abbreviatedName)</li>
+     * <li>St description (description).</li>
+     * <li></li>
+     * 
+     * The following are unsupported:
+     * <li>OrganizationDTO.identifier</li>
+     * <li>OrganizationDTO.telecomAddress</li>
+     * <li>OrganizationDTO.postalAddress</li>
+     * </pre>
+     * @param organization criteria used to find matching organizations
+     * @return list of matching organizations
      */
     List<OrganizationDTO> search(OrganizationDTO organization);
 }
