@@ -21,17 +21,6 @@ jboss.server.jndi.port=
 jboss.server.name=
 jboss.server.port=
 
-##############
-###  LDAP  ###
-##############
-ldap.url=
-ldap.basedn=
-
-########################
-###  MAIL  SETTINGS  ###
-########################
-mail.smtp.server=
-
 ###################################
 #  PRE-POST VALIDATION PROPERTIES #
 ###################################
