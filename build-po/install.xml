@@ -358,10 +358,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	</target>
 
 	<target name="install:jboss:po-ear:configure" description="Configure po-ear application" unless="exclude.jboss">
-		<!--
+		<!-- Not needed being done inside of ear
 		<copy file="${jboss-conf.dir.dest}/${po-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		<copy file="${jboss-conf.dir.dest}/${po-ear.app-sec-conf.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-		<copy file="${jboss-conf.dir.dest}/${po-ear.hibernate.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
 		-->
 	</target>
 
@@ -385,6 +383,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
 	<!-- Add custom login-config.xml content from snippet from po-ear/software/resources/deploy/login-config.${auth.type}-block.xml -->
 	<target name="-install:jboss:configure:login-conf" unless="exclude.jboss">
+		<!-- not needed being done inside ear
 		<if>    
 			<equals arg1="${authentication.type}" arg2="ldap"/>
 			<then>  
@@ -406,30 +405,24 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<xmlconfig in="${jboss.home}/server/${jboss.server.name}/conf/login-config.xml" verbose="false">
 			<insertbranch path="//policy" srcxmlfile="${login-config.block.file}" srcpath="//application-policy" />
 		</xmlconfig>
+		-->
 	</target>
 
 	<!-- Configure MQ settings based on contents of ncia/software/resrouces/deploy/jbossmq-destinations-service.block.xml -->
 	<target name="-install:jboss:configure:jbossmq-dest" unless="exclude.jboss">
+		<!--
 		<property name="jboss-mq.block.file" value="${resource.dir.target}/jbossmq-destinations-service.block.xml"/>
 		<xmlconfig in="${jboss.home}/server/${jboss.server.name}/deploy/jms/jbossmq-destinations-service.xml" verbose="false">
 			<insertbranch path="//server" srcxmlfile="${jboss-mq.block.file}" srcpath="//mbean[1]" />
 			<insertbranch path="//server" srcxmlfile="${jboss-mq.block.file}" srcpath="//mbean[2]" />
 		</xmlconfig>
+		-->
 	</target>
 
 
 	<!-- Configure log4j settings based on contents of po-ear/software/resrouces/deploy/log4j.block.xml -->
 	<target name="-install:jboss:configure:log4j" unless="exclude.jboss">
-        <!--
-		<property name="log4j.block.file" value="${resource.dir.target}/log4j.block.xml"/>
-		<loadfile 
-			property="xml.content"
-			srcFile="${log4j.block.file}"/>
-
-		<replaceregexp file="${jboss.home}/server/default/conf/log4j.xml" byline="true"
-			match="(^.*\/log4j:configuration.)"
-			replace="${xml.content}${line.separator}\1"/>
-		-->
+		<!-- Handled inside ear -->
 	</target>
 
 	<!-- Calls to bda macros for basic functionality -->
@@ -512,6 +505,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<mkdir dir="${temp.dir}/po-ear"/>
 		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/po-ear"/>
 		<unzip src="${temp.dir}/po-ear/po-web.war" dest="${temp.dir}/po-web"/>
+		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
 		<property name="file.list" value="po-ear/po-ds.xml,po-ear/po-log4j.xml,po-ear/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties"/>
 
 		<for list="${file.list}" param="file.relative.name">
