@@ -90,7 +90,7 @@ import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -149,7 +149,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
 
     public Person getBasicPerson() {
         Person person = new Person();
-        person.setCurationStatus(null);
+        person.setStatusCode(null);
         person.setFirstName("fName");
         person.setLastName("lName");
         
@@ -168,7 +168,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
 
         // adjust the expected value to NEW
-        person.setCurationStatus(CurationStatus.NEW);
+        person.setStatusCode(EntityStatus.NEW);
         verifyEquals(person, savedPerson);
         PoHibernateUtil.getCurrentSession().flush();
 
@@ -180,7 +180,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
         Person person = getBasicPerson();
-        person.setCurationStatus(CurationStatus.CURATED);
+        person.setStatusCode(EntityStatus.CURATED);
         person.setFirstName("fName");
         person.setLastName("lName");
 
@@ -192,13 +192,13 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         Person savedPerson = personServiceBean.getPerson(id);
 
         // adjust the expected value to NEW
-        person.setCurationStatus(CurationStatus.NEW);
+        person.setStatusCode(EntityStatus.NEW);
         verifyEquals(person, savedPerson);
     }
 
     private void verifyEquals(Person expected, Person found) {
         assertEquals(expected.getId(), found.getId());
-        assertEquals(expected.getCurationStatus(), found.getCurationStatus());
+        assertEquals(expected.getStatusCode(), found.getStatusCode());
         assertEquals(expected.getFirstName(), found.getFirstName());
         assertEquals(expected.getLastName(), found.getLastName());
     }

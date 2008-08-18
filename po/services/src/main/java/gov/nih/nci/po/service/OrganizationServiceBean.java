@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -108,8 +108,8 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
      */
     public long create(Organization org) throws EntityValidationException {
         org.setId(null);
-        org.setCurationStatus(CurationStatus.NEW);
-        org.setCurationStatusDate(new Date());
+        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusDate(new Date());
 
         ensureValid(org);
 

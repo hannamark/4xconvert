@@ -85,7 +85,7 @@ package gov.nih.nci.po.service;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -111,11 +111,11 @@ public class GenericServiceTest extends AbstractHibernateTestCase {
         org.setPostalAddress(new Address("test", "test", "test", "test", country));
         org.setName("testOrg");
         org.setAbbreviatedName("abbr");
-        org.setCurationStatus(CurationStatus.NEW);
+        org.setStatusCode(EntityStatus.NEW);
 
         long orgId = (Long) PoHibernateUtil.getCurrentSession().save(org);
         Organization retrievedOrg = genericService.getPersistentObject(Organization.class, orgId);
         assertEquals(org, retrievedOrg);
-        assertEquals(CurationStatus.NEW, retrievedOrg.getCurationStatus());
+        assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
     }
 }

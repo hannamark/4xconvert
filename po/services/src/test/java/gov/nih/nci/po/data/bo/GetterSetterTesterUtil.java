@@ -166,8 +166,8 @@ public class GetterSetterTesterUtil {
         DEFAULT_TYPES.add(Boolean.class);
         DEFAULT_ARGUMENTS.add(true);
 
-        DEFAULT_TYPES.add(CurationStatus.class);
-        CurationStatus cs = CurationStatus.REJECTED;
+        DEFAULT_TYPES.add(EntityStatus.class);
+        EntityStatus cs = EntityStatus.REJECTED;
         DEFAULT_ARGUMENTS.add(cs);
 
         DEFAULT_TYPES.add(Person.class);

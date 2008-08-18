@@ -21,7 +21,7 @@ public class PersonBehaviorTest {
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "lastName");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "suffix");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "prefix");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "curationStatus");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(person, "statusCode");
     }
 
     /**
@@ -31,10 +31,10 @@ public class PersonBehaviorTest {
     public void testDuplicateBehavior() {
         Person person = new Person();
         Person dupPerson = new Person();
-        person.setCurationStatus(CurationStatus.CURATED);
+        person.setStatusCode(EntityStatus.CURATED);
         person.setDuplicateOfPerson(dupPerson);
         assertNull(person.getDuplicateOf());
-        person.setCurationStatus(CurationStatus.REJECTED);
+        person.setStatusCode(EntityStatus.REJECTED);
         person.setDuplicateOfPerson(dupPerson);
         assertSame(dupPerson, person.getDuplicateOf());
     }

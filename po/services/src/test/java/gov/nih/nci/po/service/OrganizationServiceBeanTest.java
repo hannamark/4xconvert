@@ -85,7 +85,7 @@ package gov.nih.nci.po.service;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -150,7 +150,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
             org.setName(oName);
             org.setAbbreviatedName(abbrvName);
             org.setDescription(desc);
-            org.setCurationStatus(CurationStatus.NEW);
+            org.setStatusCode(EntityStatus.NEW);
             long orgId = orgService.create(org);
             PoHibernateUtil.getCurrentSession().flush();
             PoHibernateUtil.getCurrentSession().clear();
@@ -178,7 +178,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
         org.setAbbreviatedName("abbr");
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
-        org.setCurationStatus(CurationStatus.REJECTED);
+        org.setStatusCode(EntityStatus.REJECTED);
 
         long orgId = orgService.create(org);
 
@@ -187,7 +187,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
 
         Organization retrievedOrg = orgService.getOrganization(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
-        assertEquals(CurationStatus.NEW, retrievedOrg.getCurationStatus());
+        assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
 
         List<Organization> orgs = getAllOrganizations();
         assertEquals(1, orgs.size());

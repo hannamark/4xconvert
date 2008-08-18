@@ -15,7 +15,7 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
@@ -147,7 +147,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         org.getFax().add(new PhoneNumber("201-555-0123"));
         org.getPhone().add(new PhoneNumber("+1-201-555-0123;extension=4756"));
         org.getUrl().add(new URL("http://bla"));
-        org.setCurationStatus(CurationStatus.CURATED);
+        org.setStatusCode(EntityStatus.CURATED);
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(org);
         PoHibernateUtil.getCurrentSession().flush();
 

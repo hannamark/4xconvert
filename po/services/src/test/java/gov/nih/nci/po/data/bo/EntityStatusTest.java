@@ -9,19 +9,19 @@ import gov.nih.nci.po.data.CurationException;
 import org.junit.Test;
 
 
-public class CurationStatusTest {
+public class EntityStatusTest {
 
     /**
      * Test canTransitionTo() method
      */
     @Test
     public void testCanTransitionTo() {
-        CurationStatus cs = CurationStatus.NEW;
-        assertTrue(cs.canTransitionTo(CurationStatus.REJECTED));
-        assertFalse(cs.canTransitionTo(CurationStatus.DEPRECATED));
-        cs = CurationStatus.CURATED;
-        assertFalse(cs.canTransitionTo(CurationStatus.REJECTED));
-        assertTrue(cs.canTransitionTo(CurationStatus.DEPRECATED));
+        EntityStatus cs = EntityStatus.NEW;
+        assertTrue(cs.canTransitionTo(EntityStatus.REJECTED));
+        assertFalse(cs.canTransitionTo(EntityStatus.DEPRECATED));
+        cs = EntityStatus.CURATED;
+        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
+        assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
     }
 
     // STM:  Add test to actually test valid transistion statuses
@@ -31,7 +31,7 @@ public class CurationStatusTest {
      */
     @Test
     public void testCurationStatus() {
-        CurationStatus cs = CurationStatus.CURATED;
+        EntityStatus cs = EntityStatus.CURATED;
         cs.isSubmittable();
 
     }

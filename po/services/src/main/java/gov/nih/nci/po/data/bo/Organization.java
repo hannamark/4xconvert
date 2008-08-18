@@ -140,9 +140,9 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
 
-    private CurationStatus curationStatus;
-    private Date curationStatusDate;
-    private CurationStatus priorCurationStatus;
+    private EntityStatus statusCode;
+    private Date statusDate;
+    private EntityStatus priorEntityStatus;
     private Organization duplicateOf;
 
     /**
@@ -381,34 +381,37 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
 
     /**
      * {@inheritDoc}
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
      */
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "STATUS")
-    public CurationStatus getCurationStatus() {
-        return this.curationStatus;
+    public EntityStatus getStatusCode() {
+        return this.statusCode;
     }
 
     /**
      * @param status Curation Status
      */
-    public void setCurationStatus(CurationStatus status) {
-        this.curationStatus = status;
+    public void setStatusCode(EntityStatus status) {
+        this.statusCode = status;
     }
 
     /**
      * @return the curationStatusDate
      */
     @Temporal(TemporalType.TIMESTAMP)
-    public Date getCurationStatusDate() {
-        return this.curationStatusDate;
+    public Date getStatusDate() {
+        return this.statusDate;
     }
 
     /**
      * @param curationStatusDate the curationStatusDate to set
      */
-    public void setCurationStatusDate(Date curationStatusDate) {
-        this.curationStatusDate = curationStatusDate;
+    public void setStatusDate(Date curationStatusDate) {
+        this.statusDate = curationStatusDate;
     }
 
     /**
@@ -417,8 +420,8 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     @Formula("status")
     @SuppressWarnings("unused")
     private String getPriorAsString() {
-        if (this.priorCurationStatus != null) {
-            return this.priorCurationStatus.name();
+        if (this.priorEntityStatus != null) {
+            return this.priorEntityStatus.name();
         }
         return null;
     }
@@ -426,9 +429,9 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     @SuppressWarnings("unused")
     private void setPriorAsString(String prior) {
         if (prior != null) {
-            this.priorCurationStatus = CurationStatus.valueOf(prior);
+            this.priorEntityStatus = EntityStatus.valueOf(prior);
         } else {
-            this.priorCurationStatus = null;
+            this.priorEntityStatus = null;
         }
     }
 
@@ -436,16 +439,16 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
      * @return the prior curation status
      */
     @Transient
-    public CurationStatus getPriorCurationStatus() {
-        return priorCurationStatus;
+    public EntityStatus getPriorEntityStatus() {
+        return priorEntityStatus;
     }
 
     /**
      * @param org the organization for which this is a duplicate
      */
     public void setDuplicateOfOrg(Organization org) {
-        if (this.getCurationStatus().equals(CurationStatus.REJECTED)
-                || this.getCurationStatus().equals(CurationStatus.DEPRECATED)) {
+        if (this.getStatusCode().equals(EntityStatus.REJECTED)
+                || this.getStatusCode().equals(EntityStatus.DEPRECATED)) {
             this.duplicateOf = org;
         }
     }

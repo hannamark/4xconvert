@@ -86,6 +86,7 @@ import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -100,6 +101,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
@@ -133,8 +136,8 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private String lastName;
     private String suffix;
     private String prefix;
-    private CurationStatus curationStatus;
-    private CurationStatus priorCurationStatus;
+    private EntityStatus statusCode;
+    private EntityStatus priorStatusCode;
     private Person duplicateOf;
     private Address postalAddress;
     // TODO  PO-421 These may need to be changed to work with TEL:  add jira issue
@@ -143,6 +146,7 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
+    private Date statusDate;
 
     /**
      * Create a new, empty person.
@@ -402,18 +406,37 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     /**
      * @param newStatus the status of this person record
      */
-    public void setCurationStatus(CurationStatus newStatus) {
-        this.curationStatus = newStatus;
+    public void setStatusCode(EntityStatus newStatus) {
+        this.statusCode = newStatus;
     }
 
     /**
      * {@inheritDoc}
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
+
      */
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "STATUS")
-    public CurationStatus getCurationStatus() {
-        return this.curationStatus;
+    public EntityStatus getStatusCode() {
+        return this.statusCode;
+    }
+    
+    /**
+     * @return the curationStatusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param curationStatusDate the curationStatusDate to set
+     */
+    public void setStatusDate(Date curationStatusDate) {
+        this.statusDate = curationStatusDate;
     }
 
     /**
@@ -428,9 +451,9 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     @SuppressWarnings("unused")
     private void setPriorAsString(String prior) {
         if (prior != null) {
-            this.priorCurationStatus = CurationStatus.valueOf(prior);
+            this.priorStatusCode = EntityStatus.valueOf(prior);
         } else {
-            this.priorCurationStatus = null;
+            this.priorStatusCode = null;
         }
     }
 
@@ -438,16 +461,16 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      * @return the prior curation status
      */
     @Transient
-    public CurationStatus getPriorCurationStatus() {
-       return priorCurationStatus;
+    public EntityStatus getPriorEntityStatus() {
+       return priorStatusCode;
     }
 
     /**
      * @param per the Person for which this is a duplicate
      */
     public void setDuplicateOfPerson(Person per) {
-        if (this.getCurationStatus().equals(CurationStatus.REJECTED)
-                || this.getCurationStatus().equals(CurationStatus.DEPRECATED)) {
+        if (this.getStatusCode().equals(EntityStatus.REJECTED)
+                || this.getStatusCode().equals(EntityStatus.DEPRECATED)) {
             this.duplicateOf = per;
         }
     }

@@ -99,55 +99,50 @@ import java.util.Set;
  * <li>REJECTED: CURATED
  * <li>CURATED: DEPRECATED
  * <li>DEPRECATED: CURATED
- * <li>EXTERNAL: CURATED
  * <li>
  * </ul>
  */
-public enum CurationStatus  {
+public enum EntityStatus  {
     /** A new element that has not yet be curated. */
     NEW      (false),
     /** A curated element, found to be good data. */
     CURATED (true),
     /** A curated element, rejected for some reason. */
     REJECTED (false),
-    /** Indicates a curated element that is validated and controlled externally. */
-    EXTERNAL (true),
     /** Indicates a curated element that has been deprecated. */
     DEPRECATED (false);
 
-    private static final Map<CurationStatus, Set<CurationStatus>> TRANSITIONS;
+    private static final Map<EntityStatus, Set<EntityStatus>> TRANSITIONS;
 
     static {
-        Map<CurationStatus, Set<CurationStatus>> tmp = new HashMap<CurationStatus, Set<CurationStatus>>();
-        Set<CurationStatus> tmpSet = new HashSet<CurationStatus>();
+        Map<EntityStatus, Set<EntityStatus>> tmp = new HashMap<EntityStatus, Set<EntityStatus>>();
+        Set<EntityStatus> tmpSet = new HashSet<EntityStatus>();
 
         tmpSet.add(NEW);
         tmpSet.add(CURATED);
         tmpSet.add(REJECTED);
         tmp.put(NEW, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<CurationStatus>();
+        tmpSet = new HashSet<EntityStatus>();
         tmpSet.add(CURATED);
         tmpSet.add(REJECTED);
         tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<CurationStatus>();
+        tmpSet = new HashSet<EntityStatus>();
         tmpSet.add(CURATED);
         tmpSet.add(DEPRECATED);
         tmp.put(CURATED, Collections.unmodifiableSet(tmpSet));
         tmp.put(DEPRECATED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<CurationStatus>();
+        tmpSet = new HashSet<EntityStatus>();
         tmpSet.add(CURATED);
-        tmpSet.add(EXTERNAL);
-        tmp.put(EXTERNAL, Collections.unmodifiableSet(tmpSet));
 
         TRANSITIONS = Collections.unmodifiableMap(tmp);
     }
 
     private final boolean submittable;
 
-    CurationStatus(boolean submittable) {
+    EntityStatus(boolean submittable) {
         this.submittable = submittable;
     }
 
@@ -159,20 +154,20 @@ public enum CurationStatus  {
     }
 
     /**
-     * Helper method that indicates whether a transition to the new curation status
+     * Helper method that indicates whether a transition to the new entity status
      * is allowed.
      *
      * @param newStatus transition to status
      * @return whether the transition is allowed
      */
-    public boolean canTransitionTo(CurationStatus newStatus) {
+    public boolean canTransitionTo(EntityStatus newStatus) {
         return TRANSITIONS.get(this).contains(newStatus);
     }
 
     /**
-     * @return the permitted curation statuses from this curation state.  set cannot be modified.
+     * @return the permitted curation statuses from this entity state.  set cannot be modified.
      */
-    public Set<CurationStatus> getAllowedTransitions() {
+    public Set<EntityStatus> getAllowedTransitions() {
         return TRANSITIONS.get(this);
     }
 }

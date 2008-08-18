@@ -80,72 +80,121 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
 
+package gov.nih.nci.po.data.convert;
+
+
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.PoIsoConstraintException;
+import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
+import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.Session;
 
 /**
- *
- * @author lpower
+ * Utility class for converting between BO and ISO types.
+ * 
+ * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends BaseServiceBean<Person> implements PersonServiceLocal {
+public final class StatusCodeConverter {
 
     /**
-     * {@inheritDoc}
+     * Bidirectional map status codes.
+     * <table border="1">
+     * <tr><th>Key(String)</th><th>Value(EntityStatus)</th/></tr>
+     * <tr><td>"active"</td><td>{@link EntityStatus#CURATED}</td></tr>
+     * <tr><td>"inactive"</td><td>{@link EntityStatus#DEPRECATED}</td></tr>
+     * <tr><td>"pending"</td><td>{@link EntityStatus#NEW}</td></tr>
+     * <tr><td>"nullified"</td><td>{@link EntityStatus#REJECTED}</td></tr>
+     * </table>
      */
-    public long create(Person p) throws EntityValidationException {
-        p.setId(null);
-        p.setStatusCode(EntityStatus.NEW);
-
-        ensureValid(p);
-
-        Session s = PoHibernateUtil.getCurrentSession();
-        s.save(p);
-        return p.getId();
+    public static final BidiMap STATUS_MAP;
+    static {
+        DualHashBidiMap map = new DualHashBidiMap();
+        map.put("active", EntityStatus.CURATED);
+        map.put("inactive", EntityStatus.DEPRECATED);
+        map.put("pending", EntityStatus.NEW);
+        map.put("nullified", EntityStatus.REJECTED);
+        STATUS_MAP = UnmodifiableBidiMap.decorate(map);
     }
-
+    
     /**
-     * {@inheritDoc}
+     * convert {@link Cd} to other types.
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Person getPerson(long id) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        return (Person) s.get(Person.class, id);
+    public static class CdConverter extends AbstractXSnapshotConverter<Cd> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, Cd value) {
+            if (returnClass == EntityStatus.class) {
+                return (TO) convertToStatusEnum(value);
+            }
+            throw new UnsupportedOperationException(returnClass.getName());
+        }
     }
-
+    
     /**
-     * {@inheritDoc}
+     * convert {@link EntityStatus} to other types.
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria) {
-        return super.genericSearch(criteria, null);
+    public static class EnumConverter extends AbstractXSnapshotConverter<EntityStatus> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, EntityStatus value) {
+            if (returnClass == Cd.class) {
+                return (TO) convertToCd(value);
+            }
+            throw new UnsupportedOperationException(returnClass.getName());
+        }
     }
-
     /**
-     * {@inheritDoc}
+     * @param iso a status code
+     * @return best guess of <code>iso</code>'s ISO equivalent.
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
-        return super.genericSearch(criteria, pageSortParams);
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.UseLocaleWithCaseConversions" })
+    public static EntityStatus convertToStatusEnum(Cd iso) {
+        if (iso == null) {
+            return null;
+        }
+         
+        if (iso.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+        if (iso.getNullFlavor() != null) {            
+            return null;
+        }
+        String code = iso.getCode();
+        if (StringUtils.isBlank(code)) {
+            throw new PoIsoConstraintException("code must be set");
+        }
+        EntityStatus cs = (EntityStatus) STATUS_MAP.get(code.toLowerCase());
+        if (cs == null) {
+            throw new PoIsoConstraintException("unsupported code " + cs);
+        }
+        return cs;
     }
-
+    
     /**
-     * {@inheritDoc}
+     * @param cs PO entity status.
+     * @return best guess of <code>cs</code>'s ISO equivalent.
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<Person> criteria) {
-        return super.genericCount(criteria);
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public static Cd convertToCd(EntityStatus cs) {
+        Cd iso = new Cd();
+        if (cs == null) {            
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            String code = (String) STATUS_MAP.getKey(cs);
+            if (code == null) {
+                throw new UnsupportedOperationException(cs + " not yet handled");
+            }
+            iso.setCode(code);
+        }
+        return iso;
     }
 }

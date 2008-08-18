@@ -8,7 +8,7 @@ import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
@@ -43,7 +43,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().save(country);
         Address address1 = new Address("a", "b", "c", "d", country);
         Organization org = new Organization();
-        org.setCurationStatus(CurationStatus.NEW);
+        org.setStatusCode(EntityStatus.NEW);
         org.setPostalAddress(address1);
         org.setName("tstName");
         org.getEmail().add(new Email("foo@zombo.com"));

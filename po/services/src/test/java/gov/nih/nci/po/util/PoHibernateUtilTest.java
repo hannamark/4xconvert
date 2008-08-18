@@ -24,6 +24,6 @@ public class PoHibernateUtilTest {
         assertEquals(3, result.size());
         assertEquals("must be set", result.get("postalAddress")[0]);
         assertEquals("must be set", result.get("name")[0]);
-        assertEquals("must be set", result.get("curationStatus")[0]);
+        assertEquals("must be set", result.get("statusCode")[0]);
     }
 }

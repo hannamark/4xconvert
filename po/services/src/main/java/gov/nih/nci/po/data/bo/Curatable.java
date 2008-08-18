@@ -96,11 +96,11 @@ public interface Curatable<T extends Serializable> extends Serializable {
     /**
      * @return the curration status
      */
-    CurationStatus getCurationStatus();
+    EntityStatus getStatusCode();
 
     /**
      * @return the object this was curated to be a duplicate of, if curationStatus
-     * is CurationStatus.REJECTED, otherwise null
+     * is EntityStatus.REJECTED, otherwise null
      */
     T getDuplicateOf();
 

@@ -83,7 +83,7 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 
 import java.io.Serializable;
 
@@ -108,9 +108,9 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
             String[] propertyNames, Type[] types) {
         if (entity instanceof Curatable<?> && previousState != null) {
             for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof CurationStatus) {
-                    CurationStatus newStatus = (CurationStatus) currentState[i];
-                    CurationStatus oldStatus = (CurationStatus) previousState[i];
+                if (currentState[i] instanceof EntityStatus) {
+                    EntityStatus newStatus = (EntityStatus) currentState[i];
+                    EntityStatus oldStatus = (EntityStatus) previousState[i];
                     if (oldStatus == null) {
                         return false;
                     }

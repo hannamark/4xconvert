@@ -14,7 +14,7 @@ import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
@@ -71,7 +71,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     private Person makePerson() {
         Person p = new Person();
-        p.setCurationStatus(CurationStatus.NEW);
+        p.setStatusCode(EntityStatus.NEW);
         p.setPrefix("Dr.");
         p.setFirstName("Dixie");
         p.setLastName("Tavela");

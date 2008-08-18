@@ -144,5 +144,6 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertNotNull(dto);
         assertNotSame(personId, dto.getIdentifier());
         assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
+        assertEquals("pending", dto.getStatusCode().getCode());
     }
 }

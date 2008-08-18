@@ -223,7 +223,7 @@ public class BaseServiceBean<T extends PersistentObject> {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(T entity) {
          Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-         messages.remove("curationStatus");
+         messages.remove("statusCode");
          return messages;
     }
     

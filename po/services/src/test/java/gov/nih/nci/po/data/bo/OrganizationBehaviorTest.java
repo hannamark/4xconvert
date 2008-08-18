@@ -13,17 +13,17 @@ public class OrganizationBehaviorTest {
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "name");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "abbreviatedName");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "postalAddress");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "curationStatus");
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "statusCode");
     }
 
     @Test
     public void testDuplicateBehavior() {
         Organization org = new Organization();
         Organization dupOrg = new Organization();
-        org.setCurationStatus(CurationStatus.CURATED);
+        org.setStatusCode(EntityStatus.CURATED);
         org.setDuplicateOfOrg(dupOrg);
         assertNull(org.getDuplicateOf());
-        org.setCurationStatus(CurationStatus.REJECTED);
+        org.setStatusCode(EntityStatus.REJECTED);
         org.setDuplicateOfOrg(dupOrg);
         assertSame(dupOrg, org.getDuplicateOf());
     }

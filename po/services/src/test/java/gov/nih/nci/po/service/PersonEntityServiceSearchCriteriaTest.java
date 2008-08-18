@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.CurationStatus;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.GetterSetterTesterUtil;
 import gov.nih.nci.po.data.bo.Person;
 
@@ -56,7 +56,7 @@ public class PersonEntityServiceSearchCriteriaTest {
         assertTrue(yesCrit.hasOneCriterionSpecified());
         
         yesCrit.setPerson(new Person());
-        yesCrit.getPerson().setCurationStatus(CurationStatus.CURATED);
+        yesCrit.getPerson().setStatusCode(EntityStatus.CURATED);
         assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.setPerson(new Person());
         yesCrit.getPerson().setPostalAddress(new Address());

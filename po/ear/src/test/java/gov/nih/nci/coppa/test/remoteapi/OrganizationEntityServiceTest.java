@@ -151,6 +151,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         assertNotNull(dto);
         assertNotSame(orgId, dto.getIdentifier());
         assertEquals(orgId.getExtension(), dto.getIdentifier().getExtension());
+        assertEquals("pending", dto.getStatusCode().getCode());
     }
 
 }
