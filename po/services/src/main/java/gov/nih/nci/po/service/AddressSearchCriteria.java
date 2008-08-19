@@ -11,80 +11,33 @@ import org.hibernate.Query;
  */
 public class AddressSearchCriteria extends AbstractSearchCriteria implements SearchCriteria<Address> {
 
-    private String cityOrMunicipality;
-    private String stateOrProvince;
-    private String postalCode;
-    private String countryName;
-    private Long countryId;
-
+    private Address address;
+    
     /**
-     * @return city/municipality of the mailing address for the person
+     * No arg ctor.
      */
-    public String getCityOrMunicipality() {
-        return cityOrMunicipality;
+    public AddressSearchCriteria() {
+        //empty
+    }
+    /**
+     * @param postalAddress the address
+     */
+    public AddressSearchCriteria(Address postalAddress) {
+        address = postalAddress;
     }
 
     /**
-     * @param cityOrMunicipality city/municipality of the mailing address for the person
+     * @return address
      */
-    public void setCityOrMunicipality(String cityOrMunicipality) {
-        this.cityOrMunicipality = cityOrMunicipality;
+    public Address getAddress() {
+        return address;
     }
 
     /**
-     * @return state/province of the mailing address for the person
+     * @param address address
      */
-    public String getStateOrProvince() {
-        return stateOrProvince;
-    }
-
-    /**
-     * @param stateOrProvince state/province of the mailing address for the person
-     */
-    public void setStateOrProvince(String stateOrProvince) {
-        this.stateOrProvince = stateOrProvince;
-    }
-
-    /**
-     * @return zip/post code of the mailing address for the person
-     */
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    /**
-     * @param postalCode zip/post code of the mailing address for the person
-     */
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    /**
-     * @return country name of the mailing address for the person
-     */
-    public String getCountryName() {
-        return countryName;
-    }
-
-    /**
-     * @param countryName country name of the mailing address for the person
-     */
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    /**
-     * @return country system id
-     */
-    public Long getCountryId() {
-        return countryId;
-    }
-
-    /**
-     * @param countryId country system id
-     */
-    public void setCountryId(Long countryId) {
-        this.countryId = countryId;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     /**
@@ -92,10 +45,12 @@ public class AddressSearchCriteria extends AbstractSearchCriteria implements Sea
      */
     @Override
     public boolean hasOneCriterionSpecified() {
-        return (isValueSpecified(cityOrMunicipality)
-                || (isValueSpecified(countryName) || countryId != null)
-                || isValueSpecified(postalCode)
-                || isValueSpecified(stateOrProvince));
+        return address != null && (isValueSpecified(address.getCityOrMunicipality())
+                || isValueSpecified(address.getPostalCode())
+                || (address.getCountry() != null && isValueSpecified(address.getCountry().getAlpha3()))
+                || isValueSpecified(address.getStateOrProvince())
+                || isValueSpecified(address.getStreetAddressLine())
+                || isValueSpecified(address.getDeliveryAddressLine()));
     }
 
     /**

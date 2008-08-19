@@ -142,7 +142,7 @@ public abstract class AbstractSearchCriteria {
      * @return HQL table with alias
      */
     protected String tableAlias(Class<? extends PersistentObject> type, String alias) {
-        return type.getName() + " " + alias;
+        return " " + type.getName() + " " + alias;
     }
 
     /**

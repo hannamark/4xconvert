@@ -4,9 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.GetterSetterTesterUtil;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,25 +43,112 @@ public class PersonEntityServiceSearchCriteriaTest {
         assertFalse(noCrit.hasOneCriterionSpecified());
 
         PersonEntityServiceSearchCriteria yesCrit = new PersonEntityServiceSearchCriteria();
+
         yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getPerson().setFirstName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
+        
         yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getPerson().setLastName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
+        
         yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getPerson().setMiddleName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
+        
         yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getPerson().setPrefix("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
+        
         yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getPerson().setSuffix("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
         
         yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPhone().add(new PhoneNumber("123-123-1234"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getFax().add(new PhoneNumber("123-123-1234"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getTty().add(new PhoneNumber("123-123-1234"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getEmail().add(new Email("test@example.com"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getUrl().add(new URL("http://www.example.com/"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setCityOrMunicipality("a");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setDeliveryAddressLine("a");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setPostalCode("a");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setStateOrProvince("a");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setStreetAddressLine("a");
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setCountry(new Country());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setCountry(new Country(null, null, null, "a"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+        
+        yesCrit.setPerson(new Person());
+        yesCrit.getPerson().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getPerson().getPostalAddress().setCountry(new Country(null, null, null, null));
+        yesCrit.getPerson().getPostalAddress().getCountry().setId(new Long(1));
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        
+        
+        //Not used...
+        yesCrit.setPerson(new Person());
         yesCrit.getPerson().setStatusCode(EntityStatus.CURATED);
         assertFalse(yesCrit.hasOneCriterionSpecified());
+        
         yesCrit.setPerson(new Person());
         yesCrit.getPerson().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());

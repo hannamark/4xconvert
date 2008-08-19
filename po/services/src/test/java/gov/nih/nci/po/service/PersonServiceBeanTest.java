@@ -82,16 +82,19 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Address;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -114,9 +117,15 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
 
     private PersonServiceBean personServiceBean;
 
-    public Country defaultCountry;
-    //private Country defaultCountry2;
+    public PersonServiceBean getPersonServiceBean() {
+        return personServiceBean;
+    }
 
+    private Country defaultCountry;
+
+    public Country getDefaultCountry() {
+        return defaultCountry;
+    }
 
     User user;
 
@@ -124,10 +133,8 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     public void setup() {
         personServiceBean = EjbTestHelper.getPersonServiceBean();
 
-        defaultCountry = new Country("USA", "840", "US", "USA");
+        defaultCountry = new Country("United States", "840", "US", "USA");
         PoHibernateUtil.getCurrentSession().save(defaultCountry);
-
-
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
@@ -154,14 +161,32 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         person.setLastName("lName");
         
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry);
+        a.setDeliveryAddressLine("deliveryAddressLine");
         person.setPostalAddress(a);
         
+        person.getEmail().add(new Email("abc@example.com"));
+        person.getEmail().add(new Email("def@example.com"));
+        
+        person.getPhone().add(new PhoneNumber("111-111-1111"));
+        person.getPhone().add(new PhoneNumber("123-123-1234"));
+
+        person.getFax().add(new PhoneNumber("222-222-2222"));
+        person.getFax().add(new PhoneNumber("234-234-2345"));
+        
+        person.getTty().add(new PhoneNumber("333-333-3333"));
+        person.getTty().add(new PhoneNumber("345-345-3456"));
+        
+        person.getUrl().add(new URL("http://www.example.com/abc"));
+        person.getUrl().add(new URL("http://www.example.com/def"));
         return person;
     }
 
     @Test
     public void createPerson() throws EntityValidationException {
-        Person person = getBasicPerson();
+        createPerson(getBasicPerson());
+    }
+
+    protected void createPerson(Person person) throws EntityValidationException {
         long id = personServiceBean.create(person);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -201,6 +226,12 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(expected.getStatusCode(), found.getStatusCode());
         assertEquals(expected.getFirstName(), found.getFirstName());
         assertEquals(expected.getLastName(), found.getLastName());
+        
+        assertEquals(expected.getEmail().size(), found.getEmail().size());
+        assertEquals(expected.getPhone().size(), found.getPhone().size());
+        assertEquals(expected.getFax().size(), found.getFax().size());
+        assertEquals(expected.getTty().size(), found.getTty().size());
+        assertEquals(expected.getUrl().size(), found.getUrl().size());
     }
 
     @SuppressWarnings("unchecked")
@@ -239,21 +270,4 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         assertTrue(false);
     }
     
-    @Test
-    public void testFindByFirstName() throws EntityValidationException {
-        PersonEntityServiceSearchCriteria sc = new PersonEntityServiceSearchCriteria();
-        createPerson();
-        createPerson();
-        Person p = new Person();
-        sc.setPerson(p);
-        
-        
-        p.setFirstName("%Nam%");
-        assertEquals(2, personServiceBean.count(sc));
-        assertEquals(2, personServiceBean.search(sc).size()); 
-        
-        p.setFirstName("foobar");
-        assertEquals(0, personServiceBean.count(sc));
-        assertEquals(0, personServiceBean.search(sc).size());
-    }
 }

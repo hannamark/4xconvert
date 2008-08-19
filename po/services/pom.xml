@@ -134,6 +134,12 @@
             <version>1.8.0.7</version>
             <scope>test</scope>
         </dependency>
+		<dependency>
+		    <groupId>${jdbc.groupId}</groupId>
+		    <artifactId>${jdbc.artifactId}</artifactId>
+		    <version>${jdbc.version}</version>
+            <scope>test</scope>
+		</dependency>
         <dependency>
             <artifactId>jta</artifactId>
             <groupId>javax.transaction</groupId>

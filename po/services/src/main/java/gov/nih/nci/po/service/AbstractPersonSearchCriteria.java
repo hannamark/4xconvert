@@ -18,8 +18,6 @@ public abstract class AbstractPersonSearchCriteria extends AbstractSearchCriteri
 
     private static final Logger LOG = Logger.getLogger(AbstractPersonSearchCriteria.class);
     static final String PERSON_ALIAS = "p";
-    static final String PERSON_ADDRESS_ALIAS = "addr";
-    static final String PERSON_COUNTRY_ALIAS = "ctry";
 
     static final String PERSON_FIRST_NAME_PROPERTY = "firstName";
     static final String PERSON_LAST_NAME_PROPERTY = "lastName";
@@ -27,7 +25,11 @@ public abstract class AbstractPersonSearchCriteria extends AbstractSearchCriteri
     static final String PERSON_SUFFIX_PROPERTY = "suffix";
     static final String PERSON_PREFIX_PROPERTY = "prefix";
     static final String PERSON_ID_PROPERTY = "id";
-
+    static final String PERSON_EMAIL_PROPERTY_NAME = "email";
+    static final String PERSON_PHONE_PROPERTY_NAME = "phone";
+    static final String PERSON_FAX_PROPERTY_NAME = "fax";
+    static final String PERSON_TTY_PROPERTY_NAME = "tty";
+    static final String PERSON_URL_PROPERTY_NAME = "url";
     /**
      * {@inheritDoc}
      */
