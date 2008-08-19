@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -150,7 +151,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
         assertEquals("pending", dto.getStatusCode().getCode());
         Date result = dto.getStatusDateRange().getLow().getValue();
-        assertTrue(result.after(preCreate));
+        assertFalse(preCreate.after(result));
         assertTrue(result.before(new Date()));
 
     }

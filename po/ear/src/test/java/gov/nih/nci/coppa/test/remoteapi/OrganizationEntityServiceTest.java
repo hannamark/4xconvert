@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.convert.ISOUtils;
@@ -156,7 +157,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         assertEquals(orgId.getExtension(), dto.getIdentifier().getExtension());
         assertEquals("pending", dto.getStatusCode().getCode());
         Date result = dto.getStatusDateRange().getLow().getValue();
-        assertTrue(result.after(preCreate));
+        assertFalse(preCreate.after(result));
         assertTrue(result.before(new Date()));
     }
 
