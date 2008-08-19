@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.util.Date;
+
 /**
  * Represents iso data type TS.
  * @author lpower
@@ -90,19 +92,19 @@ public class Ts extends Qty {
 
     private static final long serialVersionUID = 1L;
 
-    private String value;
+    private Date value;
 
     /**
      * @return the value
      */
-    public String getValue() {
+    public Date getValue() {
         return value;
     }
 
     /**
      * @param value the value to set
      */
-    public void setValue(String value) {
+    public void setValue(Date value) {
         this.value = value;
     }
 
