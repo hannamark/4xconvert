@@ -19,7 +19,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     PersonEntityServiceSearchCriteria sc;
 
     @Before
-    public void init() {
+    public void initData2() {
         sc = new PersonEntityServiceSearchCriteria();
     }
 

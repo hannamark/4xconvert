@@ -13,7 +13,7 @@ import org.hibernate.Session;
 /**
  * Used to share Organization Search Criteria functionality.
  */
-public abstract class AbstractOrganizationSearchCriteria extends AbstractSearchCriteria {
+public abstract class AbstractOrganizationSearchCriteria extends AbstractEntitySearchCriteria {
 
     private static final Logger LOG = Logger.getLogger(AbstractOrganizationSearchCriteria.class);
 

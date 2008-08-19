@@ -14,7 +14,7 @@ import org.hibernate.Session;
 /**
  * Used to share Person Search Criteria functionality.
  */
-public abstract class AbstractPersonSearchCriteria extends AbstractSearchCriteria {
+public abstract class AbstractPersonSearchCriteria extends AbstractEntitySearchCriteria {
 
     private static final Logger LOG = Logger.getLogger(AbstractPersonSearchCriteria.class);
     static final String PERSON_ALIAS = "p";

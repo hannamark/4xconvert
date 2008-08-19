@@ -148,10 +148,6 @@ public class PersonEntityServiceSearchCriteriaTest {
         yesCrit.setPerson(new Person());
         yesCrit.getPerson().setStatusCode(EntityStatus.CURATED);
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        
-        yesCrit.setPerson(new Person());
-        yesCrit.getPerson().setPostalAddress(new Address());
-        assertFalse(yesCrit.hasOneCriterionSpecified());
     }
 
     @Test(expected = UnsupportedOperationException.class)

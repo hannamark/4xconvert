@@ -83,10 +83,16 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.audit.AuditLogRecord;
+import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -106,58 +112,100 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  *
  * @author Scott Miller
  */
-public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
+public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
-    private OrganizationServiceBean orgService;
-    private Country defaultCountry;
-    User user;
+    private OrganizationServiceBean orgServiceBean;
+    
+    public OrganizationServiceBean getOrgServiceBean() {
+        return orgServiceBean;
+    }
 
     @Before
     public void setUpData() {
-        orgService = EjbTestHelper.getOrganizationServiceBean();
-
-        Serializable countryId = PoHibernateUtil.getCurrentSession().save(
-                new Country("defaultCountryName", "997", "JJ", "JJI"));
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        defaultCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, countryId);
-
-        user = new User();
-        user.setLoginName("unittest" + new Random().nextLong());
-        user.setFirstName("first");
-        user.setLastName("last");
-        user.setUpdateDate(new Date());
-        PoHibernateUtil.getCurrentSession().save(user);
-        UsernameHolder.setUser(user.getLoginName());
+        orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
     }
 
     @After
     public void teardown() {
-        orgService = null;
+        orgServiceBean = null;
     }
 
-    public long createOrganization() {
+    public Organization getBasicOrganization() {
+        Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
+        Organization org = new Organization();
+        org.setPostalAddress(mailingAddress);
+        org.setName("oName");
+        org.setAbbreviatedName("abbrvName");
+        org.setDescription("oDesc");
+        org.setStatusCode(EntityStatus.NEW);
+        
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        a.setDeliveryAddressLine("deliveryAddressLine");
+        org.setPostalAddress(a);
+        
+        org.getEmail().add(new Email("abc@example.com"));
+        org.getEmail().add(new Email("def@example.com"));
+        
+        org.getPhone().add(new PhoneNumber("111-111-1111"));
+        org.getPhone().add(new PhoneNumber("123-123-1234"));
+
+        org.getFax().add(new PhoneNumber("222-222-2222"));
+        org.getFax().add(new PhoneNumber("234-234-2345"));
+        
+        org.getTty().add(new PhoneNumber("333-333-3333"));
+        org.getTty().add(new PhoneNumber("345-345-3456"));
+        
+        org.getUrl().add(new URL("http://www.example.com/abc"));
+        org.getUrl().add(new URL("http://www.example.com/def"));
+        return org;
+    }
+    
+    protected long createOrganization(Organization org) throws EntityValidationException {
+        long id = getOrgServiceBean().create(org);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        Organization saved = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
+
+        // adjust the expected value to NEW
+        org.setStatusCode(EntityStatus.NEW);
+        verifyEquals(org, saved);  
+        PoHibernateUtil.getCurrentSession().flush();
+
+        List<AuditLogRecord> alr = AuditTestUtil.find(Organization.class, saved.getId());
+        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "name", null, "oName", false);
+        return id;
+    }
+    
+    private void verifyEquals(Organization expected, Organization found) {
+        assertEquals(expected.getId(), found.getId());
+        assertEquals(expected.getStatusCode(), found.getStatusCode());
+        assertEquals(expected.getName(), found.getName());
+        assertEquals(expected.getDescription(), found.getDescription());
+        assertEquals(expected.getAbbreviatedName(), found.getAbbreviatedName());
+        
+        assertEquals(expected.getEmail().size(), found.getEmail().size());
+        assertEquals(expected.getPhone().size(), found.getPhone().size());
+        assertEquals(expected.getFax().size(), found.getFax().size());
+        assertEquals(expected.getTty().size(), found.getTty().size());
+        assertEquals(expected.getUrl().size(), found.getUrl().size());
+    }
+    
+    public long createOrganization() throws EntityValidationException {
         return createOrganization("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
     }
 
-    public long createOrganization(String oName, String cityOrMunicipality, String abbrvName, String desc) {
-        try {
-            Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", defaultCountry);
-            Organization org = new Organization();
-            org.setPostalAddress(mailingAddress);
-            org.setName(oName);
-            org.setAbbreviatedName(abbrvName);
-            org.setDescription(desc);
-            org.setStatusCode(EntityStatus.NEW);
-            long orgId = orgService.create(org);
-            PoHibernateUtil.getCurrentSession().flush();
-            PoHibernateUtil.getCurrentSession().clear();
-            return orgId;
-        } catch (EntityValidationException ex) {
-            throw new RuntimeException(ex);
-        }
+    public long createOrganization(String oName, String cityOrMunicipality, String abbrvName, String desc) throws EntityValidationException {
+        Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", getDefaultCountry());
+        Organization org = new Organization();
+        org.setPostalAddress(mailingAddress);
+        org.setName(oName);
+        org.setAbbreviatedName(abbrvName);
+        org.setDescription(desc);
+        org.setStatusCode(EntityStatus.NEW);
+        long orgId = orgServiceBean.create(org);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        return orgId;
     }
 
     /**
@@ -165,7 +213,7 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
      */
     @Test(expected = EntityValidationException.class)
     public void testCreateOrgWithInvalidInput() throws Exception {
-        orgService.create(new Organization());
+        orgServiceBean.create(new Organization());
     }
 
     @Test
@@ -180,12 +228,12 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
         org.setPostalAddress(mailingAddress);
         org.setStatusCode(EntityStatus.REJECTED);
 
-        long orgId = orgService.create(org);
+        long orgId = orgServiceBean.create(org);
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        Organization retrievedOrg = orgService.getOrganization(orgId);
+        Organization retrievedOrg = orgServiceBean.getOrganization(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
         assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
 
@@ -197,55 +245,6 @@ public class OrganizationServiceBeanTest extends AbstractHibernateTestCase {
     @SuppressWarnings("unchecked")
     private List<Organization> getAllOrganizations() {
         return PoHibernateUtil.getCurrentSession().createQuery("from " + Organization.class.getName()).list();
-    }
-    
-    @Test
-    public void testFindOrgByName() {
-        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
-        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-        Organization o = new Organization();
-        sc.setOrganization(o);
-        
-        
-        o.setName("%Nam%");
-        assertEquals(1, orgService.count(sc));
-        assertEquals(1, orgService.search(sc).size()); 
-        
-        o.setName("foobar");
-        assertEquals(0, orgService.count(sc));
-        assertEquals(0, orgService.search(sc).size());
-    }
-    
-    @Test
-    public void testFindOrgByDesc() {
-        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
-        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-        Organization o = new Organization();
-        sc.setOrganization(o);
-        
-        o.setDescription("%Desc%");
-        assertEquals(1, orgService.count(sc));
-        assertEquals(1, orgService.search(sc).size()); 
-        
-        o.setDescription("foobar");
-        assertEquals(0, orgService.count(sc));
-        assertEquals(0, orgService.search(sc).size());
-    }
-    
-    @Test
-    public void testFindOrgByAbbrvName() {
-        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
-        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-        Organization o = new Organization();
-        sc.setOrganization(o);
-        
-        o.setAbbreviatedName("%Org%");
-        assertEquals(1, orgService.count(sc));
-        assertEquals(1, orgService.search(sc).size()); 
-        
-        o.setAbbreviatedName("foobar");
-        assertEquals(0, orgService.count(sc));
-        assertEquals(0, orgService.search(sc).size());
     }
     
 }

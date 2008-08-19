@@ -83,35 +83,24 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-
-public class PersonServiceBeanTest extends AbstractHibernateTestCase {
+public class PersonServiceBeanTest extends AbstractBeanTest {
 
     private static final Logger LOG = Logger.getLogger(PersonServiceBeanTest.class);
 
@@ -120,35 +109,12 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
     public PersonServiceBean getPersonServiceBean() {
         return personServiceBean;
     }
-
-    private Country defaultCountry;
-
-    public Country getDefaultCountry() {
-        return defaultCountry;
-    }
-
-    User user;
-
+    
     @Before
-    public void setup() {
+    public void setUpData() {
         personServiceBean = EjbTestHelper.getPersonServiceBean();
-
-        defaultCountry = new Country("United States", "840", "US", "USA");
-        PoHibernateUtil.getCurrentSession().save(defaultCountry);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        assertNotNull(defaultCountry);
-
-        user = new User();
-        user.setLoginName("unittest" + new Random().nextLong());
-        user.setFirstName("first");
-        user.setLastName("last");
-        user.setUpdateDate(new Date());
-        PoHibernateUtil.getCurrentSession().save(user);
-        UsernameHolder.setUser(user.getLoginName());
     }
-
+    
     @After
     public void teardown() {
         personServiceBean = null;
@@ -160,7 +126,7 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         person.setFirstName("fName");
         person.setLastName("lName");
         
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry);
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         a.setDeliveryAddressLine("deliveryAddressLine");
         person.setPostalAddress(a);
         
@@ -197,9 +163,9 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         verifyEquals(person, savedPerson);
         PoHibernateUtil.getCurrentSession().flush();
 
-        List<AuditLogRecord> alr = find(Person.class, savedPerson.getId());
-        assertDetail(alr, AuditType.INSERT, "firstName", null, "fName", false);
-        assertDetail(alr, AuditType.INSERT, "lastName", null, "lName", false);
+        List<AuditLogRecord> alr = AuditTestUtil.find(Person.class, savedPerson.getId());
+        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "firstName", null, "fName", false);
+        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "lastName", null, "lName", false);
     }
 
     @Test
@@ -232,42 +198,6 @@ public class PersonServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(expected.getFax().size(), found.getFax().size());
         assertEquals(expected.getTty().size(), found.getTty().size());
         assertEquals(expected.getUrl().size(), found.getUrl().size());
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<AuditLogRecord> find(Class<?> type, Long entityId) {
-        String str = "FROM " + AuditLogRecord.class.getName() + " alr "
-                     + "WHERE alr.entityName = :entityName "
-                     + "  AND alr.entityId = :entityId";
-        Query q = PoHibernateUtil.getCurrentSession().createQuery(str);
-        q.setLong("entityId", entityId);
-        q.setString("entityName", type.getSimpleName());
-        List<AuditLogRecord> result = q.list();
-
-        assertTrue(!result.isEmpty());
-
-        return result;
-    }
-
-    private void assertDetail(List<AuditLogRecord> alr, AuditType auditType,
-            String attribute, String oldVal, String newVal, boolean foreignKey) {
-        LOG.debug(String.format("record scan: %s, %s, %s", attribute, oldVal, newVal));
-        for (AuditLogRecord r : alr) {
-            LOG.debug("examining record: " + r);
-            if (auditType == null || r.getType().equals(auditType)) {
-                LOG.debug("correct audit type found");
-                for (AuditLogDetail ald : r.getDetails()) {
-                    LOG.debug(ald.getAttribute() + " " + ald.getOldValue() + " " + ald.getNewValue());
-                    if (ald.getAttribute().equals(attribute)
-                            && ObjectUtils.equals(ald.getOldValue(), oldVal)
-                            && ObjectUtils.equals(ald.getNewValue(), newVal)) {
-                        LOG.debug("Correct details found");
-                        return;
-                    }
-                }
-            }
-        }
-        assertTrue(false);
     }
     
 }

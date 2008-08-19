@@ -13,16 +13,15 @@ import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
-import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.person.PersonDTO;
@@ -35,10 +34,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
+public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     private PersonEntityServiceRemote remote;
-    private static Country USA = new Country("United States", "001", "US", "USA");
 
     /**
      * setup the service.
@@ -59,8 +57,6 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void getPerson() {
-
-        PoHibernateUtil.getCurrentSession().save(USA);
         Person per = makePerson();
         long id = (Long) PoHibernateUtil.getCurrentSession().save(per);
         PersonDTO result = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
@@ -76,14 +72,14 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
         p.setFirstName("Dixie");
         p.setLastName("Tavela");
 
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", USA);
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         p.setPostalAddress(a);
-
         return p;
     }
 
     @Test
-    public void createPerson() throws Exception {
+    @Override
+    public void createPerson() throws EntityValidationException {
         PersonDTO dto = new PersonDTO();
         Ii isoId = new Ii();
         isoId.setRoot("test");
@@ -143,7 +139,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByFirstName() throws EntityValidationException {
+    public void findByFirstName() throws EntityValidationException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -153,7 +149,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByFirstNameWildcardAsFirstAndLast() throws EntityValidationException {
+    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "%a%", null, null));
@@ -162,7 +158,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByFirstNameWildcardsInSitu() throws EntityValidationException {
+    public void findByFirstNameWildcardsInSitu() throws EntityValidationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "b%b", null, null));
@@ -171,7 +167,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByFirstNameWilcardAttempt1() throws EntityValidationException {
+    public void findByFirstNameWilcardAttempt1() throws EntityValidationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "?a?", null, null));
@@ -180,7 +176,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByFirstNameWilcardAttempt2() throws EntityValidationException {
+    public void findByFirstNameWilcardAttempt2() throws EntityValidationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "_a_", null, null));
@@ -189,7 +185,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByFirstNameNoMatches() throws EntityValidationException {
+    public void findByFirstNameNoMatches() throws EntityValidationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
@@ -225,7 +221,7 @@ public class PersonEntityServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testFindByMiddleName() throws EntityValidationException {
+    public void findByMiddleName() throws EntityValidationException {
         init();
 
         PersonDTO crit = new PersonDTO();

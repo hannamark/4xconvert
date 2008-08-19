@@ -26,8 +26,9 @@ public class OrgEntityServiceSearchCriteriaTestDb extends AbstractHibernateTestC
     private Map<String, Object> namedParameters;
 
     @Before
-    public void setupData() {
+    public void setupData() throws EntityValidationException {
         ost = new OrganizationServiceBeanTest();
+        ost.loadData();
         ost.setUpData();
         orgId = ost.createOrganization("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
 

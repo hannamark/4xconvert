@@ -27,6 +27,15 @@ public abstract class AbstractSearchCriteria {
      * HQL from statement.
      */
     protected static final String FROM = " FROM ";
+    
+    /**
+     * HQL as keyword.
+     */
+    protected static final String AS = " as ";
+    /**
+     * HQL comma keyword.
+     */
+    protected static final String COMMA = " , ";
 
     /**
      * HQL JOIN statement.
@@ -90,7 +99,12 @@ public abstract class AbstractSearchCriteria {
             return and;
         }
     }
-
+    
+    /**
+     * PersistentObject property name.
+     */
+    protected static final String ID = "id";
+    
     /**
      * {@inheritDoc}
      */

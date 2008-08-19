@@ -14,9 +14,8 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -25,7 +24,7 @@ import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
-import gov.nih.nci.po.service.AbstractHibernateTestCase;
+import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
@@ -45,10 +44,9 @@ import org.junit.Test;
  *
  * @author gax
  */
-public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase {
+public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTest {
 
     private OrganizationEntityServiceRemote remote;
-    private Country country;
 
     /**
      * setup the service.
@@ -56,20 +54,16 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
     @Before
     public void setupService() {
         remote = EjbTestHelper.getOrganizationEntityServiceBeanAsRemote();
-        country = new Country("name", "123", "US", "USA");
-        PoHibernateUtil.getCurrentSession().save(country);
-        PoHibernateUtil.getCurrentSession().flush();
     }
 
     /**
      * test get org behavior.
+     * @throws EntityValidationException 
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void getOrganization() {
-        OrganizationServiceBeanTest t = new OrganizationServiceBeanTest();
-        t.setUpData();
-        long id = t.createOrganization();
+    public void getOrganization() throws EntityValidationException {
+        long id = super.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(new OrgIdConverter().convertToIi(id));
         assertEquals(org.getId(), IiConverter.convertToLong(result.getIdentifier()));
@@ -81,12 +75,12 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void createOrganization() throws EntityValidationException, URISyntaxException {
+    public void createOrg() throws EntityValidationException, URISyntaxException {
         OrganizationDTO dto = new OrganizationDTO();
         dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
         dto.setName(StringConverter.convertToEnOn("some name"));
         dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
-        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country.getAlpha3()));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         Tel t = new Tel();
@@ -112,7 +106,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
             dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
             dto.setName(StringConverter.convertToEnOn("some name"));
             dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
-            dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country.getAlpha3()));
+            dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
@@ -140,7 +134,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         Organization org = new Organization();
         org.setName("name");
         org.setAbbreviatedName("abbreviatedName");
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country);
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         org.setPostalAddress(a);
         org.getEmail().add(new Email("foo@example.com"));
         org.getEmail().add(new Email("bar@example.com"));
@@ -159,7 +153,7 @@ public class OrganizationEntityServiceBeanTest extends AbstractHibernateTestCase
         assertEquals(org.getPostalAddress().getCityOrMunicipality(), getAddressPart(dto.getPostalAddress(), AddressPartType.CTY).getValue());
         assertEquals(org.getPostalAddress().getStateOrProvince(), getAddressPart(dto.getPostalAddress(), AddressPartType.STA).getValue());
         assertEquals(org.getPostalAddress().getPostalCode(), getAddressPart(dto.getPostalAddress(), AddressPartType.ZIP).getValue());
-        assertEquals(country.getAlpha3(), getAddressPart(dto.getPostalAddress(), AddressPartType.CNT).getCode());
+        assertEquals(getDefaultCountry().getAlpha3(), getAddressPart(dto.getPostalAddress(), AddressPartType.CNT).getCode());
         assertEquals(5, dto.getTelecomAddress().getItem().size());
         for (Tel t : dto.getTelecomAddress().getItem()) {
             if (t.getValue().toString().equals(TelEmail.SCHEME_MAILTO + ":foo@example.com")) {
