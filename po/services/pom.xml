@@ -81,7 +81,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>iso-datatypes</artifactId>
-            <version>1.0-20080814.065943-15</version>
+            <version>1.0-20080819.174024-19</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

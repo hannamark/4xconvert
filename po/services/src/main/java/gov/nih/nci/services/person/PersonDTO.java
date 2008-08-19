@@ -84,7 +84,9 @@ package gov.nih.nci.services.person;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.Ts;
 
 
 /**
@@ -123,5 +125,15 @@ public class PersonDTO extends BasePersonDTO {
      */
     public void setTelecomAddress(DSet<Tel> telecomAddress) {
         this.telecomAddress = telecomAddress;
+    }
+    
+    /**
+     * @return statusDateRange
+     * @see gov.nih.nci.po.data.bo.Person#getStatusDate() 
+     */
+    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
+    @Override
+    public Ivl<Ts> getStatusDateRange() {
+        return super.getStatusDateRange();
     }
 }

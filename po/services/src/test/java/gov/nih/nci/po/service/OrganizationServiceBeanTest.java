@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
@@ -90,22 +91,16 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Tests the organization service.
@@ -236,6 +231,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization retrievedOrg = orgServiceBean.getOrganization(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
         assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
+        assertNotNull(retrievedOrg.getStatusDate());
 
         List<Organization> orgs = getAllOrganizations();
         assertEquals(1, orgs.size());

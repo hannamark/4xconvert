@@ -80,74 +80,53 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.util.PoHibernateUtil;
+package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.Ts;
 import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.Session;
 
 /**
- *
- * @author lpower
+ * Utility class for converting between BO and ISO types.
+ * 
+ * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends BaseServiceBean<Person> implements PersonServiceLocal {
-
+public final class StatusDateConverter extends AbstractXSnapshotConverter<Date> {
+    
     /**
      * {@inheritDoc}
      */
-    public long create(Person p) throws EntityValidationException {
-        p.setId(null);
-        p.setStatusCode(EntityStatus.NEW);
-        p.setStatusDate(new Date());
-
-        ensureValid(p);
-
-        Session s = PoHibernateUtil.getCurrentSession();
-        s.save(p);
-        return p.getId();
+    @Override
+    public <TO> TO convert(Class<TO> returnClass, Date value) {
+        if (returnClass == Ivl.class) {
+            return (TO) convertToDate(value);
+        }
+        throw new UnsupportedOperationException(returnClass.getName());
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Person getPerson(long id) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        return (Person) s.get(Person.class, id);
+     * 
+     * @param d date
+     * @return the interval [d, positive-infinity[
+     */    
+    public static Ivl<Ts> convertToDate(Date d) {
+        Ivl<Ts> iso = new Ivl<Ts>();
+        if (d == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            Ts ts = new Ts();
+            ts.setValue(new Date(d.getTime()));
+            iso.setLow(ts);
+            iso.setLowClosed(Boolean.TRUE);
+            
+            ts = new Ts();
+            ts.setNullFlavor(NullFlavor.PINF);
+            iso.setHigh(ts);
+            iso.setHighClosed(Boolean.FALSE);
+        }
+        return iso;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria) {
-        return super.genericSearch(criteria, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
-        return super.genericSearch(criteria, pageSortParams);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<Person> criteria) {
-        return super.genericCount(criteria);
-    }
 }

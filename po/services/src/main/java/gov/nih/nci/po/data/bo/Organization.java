@@ -401,6 +401,11 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
 
     /**
      * @return the curationStatusDate
+     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ivl"
+     *                     name="statusDateRange"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
+
      */
     @Temporal(TemporalType.TIMESTAMP)
     public Date getStatusDate() {

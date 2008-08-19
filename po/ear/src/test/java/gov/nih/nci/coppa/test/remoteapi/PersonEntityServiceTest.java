@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -94,6 +95,7 @@ import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.Date;
 import org.junit.Test;
 
 /**
@@ -103,6 +105,7 @@ import org.junit.Test;
 public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
 
     private Ii personId;
+    private Date preCreate;
 
 
     @Test
@@ -124,6 +127,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             part.setValue("__");
             dto.getName().getPart().add(part);
             dto.setPostalAddress(AddressConverterUtil.create("street", "delivery", "city", "state", "zip", "USA"));
+            preCreate = new Date();
             personId = getPersonService().createPerson(dto);
             assertNotNull(personId);
             assertNotNull(personId.getExtension());
@@ -145,5 +149,9 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertNotSame(personId, dto.getIdentifier());
         assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
         assertEquals("pending", dto.getStatusCode().getCode());
+        Date result = dto.getStatusDateRange().getLow().getValue();
+        assertTrue(result.after(preCreate));
+        assertTrue(result.before(new Date()));
+
     }
 }

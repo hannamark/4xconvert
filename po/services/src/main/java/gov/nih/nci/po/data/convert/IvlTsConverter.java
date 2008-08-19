@@ -80,74 +80,64 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.util.PoHibernateUtil;
 
+package gov.nih.nci.po.data.convert;
+
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.services.PoIsoConstraintException;
 import java.util.Date;
-import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.Session;
 
 /**
  *
- * @author lpower
+ * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends BaseServiceBean<Person> implements PersonServiceLocal {
+public class IvlTsConverter extends AbstractXSnapshotConverter<Ivl<Ts>> {
 
+    private static void validate(Ivl<Ts> iso) {
+        if (iso.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+        Ts low = iso.getLow();
+        if (low == null) {
+            return;
+        }
+        if (low.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+        if (low.getValue() == null) {
+            throw new PoIsoConstraintException("low.value cannot be null");
+        }
+    }
     /**
      * {@inheritDoc}
      */
-    public long create(Person p) throws EntityValidationException {
-        p.setId(null);
-        p.setStatusCode(EntityStatus.NEW);
-        p.setStatusDate(new Date());
-
-        ensureValid(p);
-
-        Session s = PoHibernateUtil.getCurrentSession();
-        s.save(p);
-        return p.getId();
+    @Override
+    @SuppressWarnings("unchecked")
+    public <TO> TO convert(Class<TO> returnClass, Ivl<Ts> value) {
+        if (returnClass == Date.class) {
+            return (TO) convertToIvlTs(value);
+        }
+        throw new UnsupportedOperationException(returnClass.getName());
     }
 
     /**
-     * {@inheritDoc}
+     * @param iso date range
+     * @return date value of iso.low.value
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Person getPerson(long id) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        return (Person) s.get(Person.class, id);
-    }
+    public static Date convertToIvlTs(Ivl<Ts> iso) {
+        if (iso == null || iso.getNullFlavor() != null) {
+            return null;
+        }
+        validate(iso);
 
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria) {
-        return super.genericSearch(criteria, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
-        return super.genericSearch(criteria, pageSortParams);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<Person> criteria) {
-        return super.genericCount(criteria);
+        Ts low = iso.getLow();
+        if (low == null || low.getNullFlavor() != null) {
+            return null;
+        }
+        
+        return new Date(low.getValue().getTime());
     }
 }

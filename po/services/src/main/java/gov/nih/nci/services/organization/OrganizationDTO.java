@@ -83,7 +83,9 @@
 package gov.nih.nci.services.organization;
 
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * @author Scott Miller
@@ -106,5 +108,15 @@ public class OrganizationDTO extends BaseOrganizationDTO {
      */
     public void setTelecomAddress(DSet<Tel> telecomAddress) {
         this.telecomAddress = telecomAddress;
+    }
+
+    /**
+     * @return statusDateRange
+     * @see gov.nih.nci.po.data.bo.Organization#getStatusDate() 
+     */
+    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
+    @Override
+    public Ivl<Ts> getStatusDateRange() {
+        return super.getStatusDateRange();
     }
 }

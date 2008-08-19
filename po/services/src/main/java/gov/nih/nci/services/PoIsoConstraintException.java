@@ -97,4 +97,13 @@ public class PoIsoConstraintException extends IllegalArgumentException {
     public PoIsoConstraintException(String message) {
         super(message);
     }
+    
+    /**
+     * Constructor that takes the message.
+     * @param message the message.
+     * @param cause root cause.
+     */
+    public PoIsoConstraintException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

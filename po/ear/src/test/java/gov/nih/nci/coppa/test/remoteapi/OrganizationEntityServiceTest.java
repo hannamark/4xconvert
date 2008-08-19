@@ -95,6 +95,7 @@ import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.Date;
 import org.junit.Test;
 
 /**
@@ -104,6 +105,7 @@ import org.junit.Test;
 public class OrganizationEntityServiceTest extends BaseOrganizationEntityServiceTest {
 
     private Ii orgId = null;
+    private Date preCreate;
     /*
      * Method to check that the remote service is working.
      * @throws Exception on error.
@@ -133,6 +135,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             dto.setAbbreviatedName(StringConverter.convertToEnOn("_"));
             dto.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
 
+            preCreate = new Date();
             orgId = getOrgService().createOrganization(dto);
             assertNotNull(orgId);
             assertNotNull(orgId.getExtension());
@@ -152,6 +155,9 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         assertNotSame(orgId, dto.getIdentifier());
         assertEquals(orgId.getExtension(), dto.getIdentifier().getExtension());
         assertEquals("pending", dto.getStatusCode().getCode());
+        Date result = dto.getStatusDateRange().getLow().getValue();
+        assertTrue(result.after(preCreate));
+        assertTrue(result.before(new Date()));
     }
 
 }
