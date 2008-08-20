@@ -1,0 +1,26 @@
+<?xml version='1.0'?>
+<!DOCTYPE policy PUBLIC
+"-//JBoss//DTD JBOSS Security Config 3.0//EN"
+"http://www.jboss.org/j2ee/dtd/security_config.dtd">
+
+<policy>
+     <application-policy name="pa">
+	<authentication>   
+            <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional">
+                <module-option name="driver">org.postgresql.Driver</module-option>
+                <module-option name="url">jdbc:postgresql://localhost:5432/ctods</module-option>
+                <module-option name="user">postgres</module-option>
+                <module-option name="passwd">postgres</module-option>
+                <module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
+                <module-option name="encryption-enabled">YES</module-option>
+            </login-module>
+		<login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="required">
+			<module-option name="password-stacking">useFirstPass</module-option>
+			<module-option name="dsJndiName">java:pa-ds</module-option>
+			<module-option name="rolesQuery">SELECT cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id AND cu.login_name = ?</module-option>
+		</login-module>
+	
+
+	</authentication>    
+    </application-policy>
+</policy>

@@ -5,31 +5,63 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<package name="myPackage" extends="struts-default">
+ <constant name="struts.devMode" value="true" />
+	<package name="default" extends="struts-default">
 		<interceptors>
-		     <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />		
-		</interceptors>
+		    <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />		
+		</interceptors>		
 		<action name="index" class="gov.nih.nci.IndexAction">
 			<result>/jsp/index.jsp</result>
-		</action>
-
+		</action>	
+		<action name="login">
+			<result>/jsp/pajsp/login.jsp</result>
+		</action>		       
+	</package>
+	<package name="protected" namespace="/protected" extends="default">
 		<action name="studyProtocolQuery" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
 		</action>
+		<action name="studyProtocolQueryHome" class="gov.nih.nci.pa.action.StudyProtocolQueryAction">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
+		</action>		
 		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/protocolDiseaseCondition.jsp</result>
 		</action>	
-		<action name="login">
-			<result>/jsp/pajsp/login.jsp</result>
-		</action>
 		<action name="authenticate" class="gov.nih.nci.pa.action.LoginAction">
 			<interceptor-ref name="nci-commonsParams" />
 			<result name="input">/jsp/pajsp/login.jsp</result>
 			<result name="error">/jsp/pajsp/login.jsp</result>
 			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
+		</action>	
+		<action name="nciSpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" >
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
+			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
+		</action>			
+		<action name="nciSpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="query">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
+			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
 		</action>		
+		<action name="updateNCISpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="update">
+		    <interceptor-ref name="nci-commonsParams" />
+			<result name="input">/jsp/pajsp/nciSpecificInformation.jsp</result>			
+			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
+			<result>/jsp/pajsp/nciSpecificInformationView.jsp</result>
+		</action>		 
+        <action name="studyProtocolView" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
+            <interceptor-ref name="nci-commonsParams" />                         
+            <result>/jsp/pajsp/studyProtocolView.jsp</result>
+        </action>  
+        <action name="status" class="gov.nih.nci.pa.util.CheckboxlistTag">
+            <result>/jsp/pajsp/trialStatus.jsp</result>
+        </action> 
+        <action name="statusHistory" >
+            <result>/jsp/pajsp/trialStatusHistory.jsp</result>
+        </action>	
 		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
@@ -45,30 +77,6 @@
 		<action name="editRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
-		</action>		
-		<action name="nciSpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
 		</action>
-		
-		<action name="updateNCISpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="update">
-		    <interceptor-ref name="nci-commonsParams" />
-			<result name="input">/jsp/pajsp/nciSpecificInformation.jsp</result>			
-			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result>/jsp/pajsp/nciSpecificInformationView.jsp</result>
-		</action>		 
-        <action name="studyProtocolView" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
-            <interceptor-ref name="nci-commonsParams" />                         
-            <result>/jsp/pajsp/studyProtocolView.jsp</result>
-        </action>  
-       <action name="status" class="gov.nih.nci.pa.util.CheckboxlistTag">
-            <result>/jsp/pajsp/trialStatus.jsp</result>
-       </action> 
-       <action name="statusHistory" >
-            <result>/jsp/pajsp/trialStatusHistory.jsp</result>
-       </action> 
-       
-		
 	</package>
 </struts>

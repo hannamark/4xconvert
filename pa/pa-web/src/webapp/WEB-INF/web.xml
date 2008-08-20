@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="starter" version="2.4" 
+<web-app id="PA" version="2.4" 
          xmlns="http://java.sun.com/xml/ns/j2ee" 
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
@@ -41,21 +41,27 @@
 	<filter-mapping>
         <filter-name>action2-cleanup</filter-name>
         <url-pattern>/*</url-pattern>
+                <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        
     </filter-mapping>
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>/*</url-pattern>
+ 
     </filter-mapping>
     <filter-mapping>
         <filter-name>action2</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher> 
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     <filter-mapping>
         <filter-name>hibernatebind</filter-name>
         <url-pattern>/*</url-pattern>
          <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>    
+    </filter-mapping>   
     
 	
 	<!-- Listeners -->
@@ -90,5 +96,26 @@
         <welcome-file>default.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>protected</web-resource-name>
+            <url-pattern>/protected/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>Curator</role-name>
+        </auth-constraint>
+    </security-constraint>
 
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+           <form-login-page>/index.action</form-login-page>
+            <form-error-page>/index.action?failedLogin=true</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role>
+        <description>Curators organize and oversee data quality in PO.</description>
+        <role-name>Curator</role-name>
+    </security-role>
 </web-app>
