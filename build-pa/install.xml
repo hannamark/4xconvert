@@ -325,8 +325,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <target name="install:jboss:pa-ear" description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries" unless="exclude.jboss">
         <!-- added to ensure working.dirs are fresh for our install -->
-        <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
-        <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
+        <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
+        <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
 
         <copy file="${pa-ear.dir.dist}/${pa-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
         <!--  Many NCI applications require clm for csm, so you can point this to where you have the version you want to use
