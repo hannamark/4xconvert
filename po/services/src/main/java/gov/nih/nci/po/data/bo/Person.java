@@ -87,7 +87,9 @@ import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -106,6 +108,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
@@ -147,6 +150,7 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private Date statusDate;
+    private Set<RaceCode> races = new HashSet<RaceCode>();
 
     /**
      * Create a new, empty person.
@@ -497,5 +501,31 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     @ForeignKey(name = "PERSON_DUPLICATE_PERSON_FK")
     public Person getDuplicateOf() {
         return this.duplicateOf;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @xsnapshot.property name="raceCode"
+     *                     match="entity" type="gov.nih.nci.coppa.iso.DSet"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$CdConverter"
+     *                     
+     *   @return a person's set of race code(s)
+     */
+    @CollectionOfElements 
+    @JoinTable(
+            name = "person_racecodes", 
+            joinColumns = { @JoinColumn(name = "person_id") }
+    )
+    @ForeignKey(name = "PER_RACE_PER_FK", inverseName = "PER_RACE_RACE_FK")
+    public Set<RaceCode> getRaces() {
+        return this.races;
+    }
+
+    /**
+     * @param races a person's set of race code(s)
+     */
+    public void setRaces(Set<RaceCode> races) {
+        this.races = races;
     }
 }
