@@ -8,57 +8,77 @@ package gov.nih.nci.po.data.bo;
 public enum RaceCode {
 
     /**
-     * 
+     * American Indian or Alaska Native.
      */
-    AI_AN("American Indian or Alaska Native",
+    AI_AN("06", "American Indian or Alaska Native", "C41259",
             "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C41259"),
     /**
-     * 
+     * Asian.
      */
-    AS("Asian", "http://ncimeta.nci.nih.gov/MetaServlet/ResultServlet?cui=CL106519"),
+    AS("05", "Asian", "CL106519", "http://ncimeta.nci.nih.gov/MetaServlet/ResultServlet?cui=CL106519"),
     /**
-     * 
+     * Black or African American.
      */
-    B_AA("Black or African American", null),
+    B_AA("03", "Black or African American", null, null),
     /**
-     * 
+     * Native Hawaiian or other Pacific Islander.
      */
-    NH_OPI("Native Hawaiian or other Pacific Islander",
+    NH_OPI("04", "Native Hawaiian or other Pacific Islander", "CL025744",
             "http://ncimeta.nci.nih.gov/MetaServlet/ResultServlet?cui=CL025744"),
 
     /**
-     * 
+     * Not Reported.
      */
-    NR("Not Reported", "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C43235"),
+    NR("98", "Not Reported", "C43235",
+            "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C43235"),
     /**
-     * 
+     * Unknown.
      */
-    UNK("Unknown", "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C17998"),
+    UNK("99", "Unknown", "C17998",
+            "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C17998"),
     /**
-     * 
+     * White.
      */
-    WH("White", "http://ncimeta.nci.nih.gov/MetaServlet/ResultServlet?cui=CL107068");
+    WH("01", "White", "CL107068", "http://ncimeta.nci.nih.gov/MetaServlet/ResultServlet?cui=CL107068");
 
-    private final String description;
+    private final String value;
 
+    private final String valueMeaning;
+    private final String valueConceptCode;
     private final String source;
 
-    private RaceCode(String description, String source) {
-        this.description = description;
+    private RaceCode(String value, String valueMeaning, String valueConceptCode, String source) {
+        this.value = value;
+        this.valueMeaning = valueMeaning;
+        this.valueConceptCode = valueConceptCode;
         this.source = source;
     }
 
     /**
-     * @return the source
+     * @return external value code
      */
-    public String getSource() {
-        return source;
+    public String getValue() {
+        return value;
     }
 
     /**
      * @return the description
      */
-    public String getDescription() {
-        return description;
+    public String getValueMeaning() {
+        return valueMeaning;
+    }
+
+    /**
+     * @return value meaning concept code from CDE Browser
+     */
+    public String getValueConceptCode() {
+        return valueConceptCode;
+    }
+    
+    /**
+     * @return the source
+     */
+    public String getSource() {
+        return source;
     }
 }

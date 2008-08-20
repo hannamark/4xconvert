@@ -15,46 +15,42 @@ import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Converter to translate between ISO & PPO race codes.
+ * Converter to translate between ISO & PO race codes.
  */
 public class RaceCodeConverter {
     /**
      * Bidirectional map race codes.
      * <table border="1">
      * <tr><th>Key(String)</th><th>Value(EntityStatus)</th/></tr>
-     * <tr><td>"01"</td><td>{@link RaceCode#WH}</td></tr>
-     * <tr><td>"03"</td><td>{@link RaceCode#B_AA}</td></tr>
-     * <tr><td>"04"</td><td>{@link RaceCode#NH_OPI}</td></tr>
-     * <tr><td>"05"</td><td>{@link RaceCode#AS}</td></tr>
-     * <tr><td>"06"</td><td>{@link RaceCode#AI_AN}</td></tr>
-     * <tr><td>"98"</td><td>{@link RaceCode#NR}</td></tr>
-     * <tr><td>"99"</td><td>{@link RaceCode#UNK}</td></tr>
+     * <tr><td>{@link RaceCode#WH#getValue()}</td><td>{@link RaceCode#WH}</td></tr>
+     * <tr><td>{@link RaceCode#B_AA#getValue()}</td><td>{@link RaceCode#B_AA}</td></tr>
+     * <tr><td>{@link RaceCode#NH_OPI#getValue()}</td><td>{@link RaceCode#NH_OPI}</td></tr>
+     * <tr><td>{@link RaceCode#AS#getValue()}</td><td>{@link RaceCode#AS}</td></tr>
+     * <tr><td>{@link RaceCode#AI_AN#getValue()}</td><td>{@link RaceCode#AI_AN}</td></tr>
+     * <tr><td>{@link RaceCode#NR#getValue()}</td><td>{@link RaceCode#NR}</td></tr>
+     * <tr><td>{@link RaceCode#UNK#getValue()}</td><td>{@link RaceCode#UNK}</td></tr>
      * </table>
      */
     public static final BidiMap STATUS_MAP;
     static {
         DualHashBidiMap map = new DualHashBidiMap();
-        map.put("01", RaceCode.WH);
-        map.put("03", RaceCode.B_AA);
-        map.put("04", RaceCode.NH_OPI);
-        map.put("05", RaceCode.AS);
-        map.put("06", RaceCode.AI_AN);
-        map.put("98", RaceCode.NR);
-        map.put("99", RaceCode.UNK);
+        for (RaceCode r : RaceCode.values()) {
+            map.put(r.getValue(), r);
+        }
         STATUS_MAP = UnmodifiableBidiMap.decorate(map);
     }
 
     /**
      * convert {@link Cd} to other types.
      */
-    public static class CdConverter extends AbstractXSnapshotConverter<DSet<Cd>> {
+    public static class DSetCdConverter extends AbstractXSnapshotConverter<DSet<Cd>> {
         /**
          * {@inheritDoc}
          */
         @Override
         public <TO> TO convert(Class<TO> returnClass, DSet<Cd> value) {
             if (returnClass == Set.class) {
-                return (TO) convertToStatusEnum(value);
+                return (TO) convertToRaceCodeSet(value);
             }
             throw new UnsupportedOperationException(returnClass.getName());
         }
@@ -70,7 +66,7 @@ public class RaceCodeConverter {
         @Override
         public <TO> TO convert(Class<TO> returnClass, Set<RaceCode> value) {
             if (returnClass == DSet.class) {
-                return (TO) convertToCd(value);
+                return (TO) convertToDsetOfCd(value);
             }
             throw new UnsupportedOperationException(returnClass.getName());
         }
@@ -81,7 +77,7 @@ public class RaceCodeConverter {
      * @return best guess of <code>iso</code>'s ISO equivalent.
      */
     @SuppressWarnings("PMD.UseLocaleWithCaseConversions")
-    public static Set<RaceCode> convertToStatusEnum(DSet<Cd> cds) {
+    public static Set<RaceCode> convertToRaceCodeSet(DSet<Cd> cds) {
         if (cds == null || cds.getItem() == null) {
             return null;
         }
@@ -98,7 +94,7 @@ public class RaceCodeConverter {
             String code = cd.getCode();
             checkBlank(code);
             RaceCode race = (RaceCode) STATUS_MAP.get(code.toLowerCase());
-            checkNull(race);
+            checkNull(race, code);
             races.add(race);
         }
         return races;
@@ -117,9 +113,9 @@ public class RaceCodeConverter {
         }
     }
 
-    private static void checkNull(RaceCode race) {
+    private static void checkNull(RaceCode race, String code) {
         if (race == null) {
-            throw new PoIsoConstraintException("unsupported code " + race);
+            throw new PoIsoConstraintException("unsupported code " + code);
         }
     }
 
@@ -127,7 +123,7 @@ public class RaceCodeConverter {
      * @param races PO entity status.
      * @return best guess of <code>DSet&lt;Cd&gt;</code>'s ISO equivalent.
      */
-    public static DSet<Cd> convertToCd(Set<RaceCode> races) {
+    public static DSet<Cd> convertToDsetOfCd(Set<RaceCode> races) {
         if (races == null || races.isEmpty()) { 
             return null; 
         }

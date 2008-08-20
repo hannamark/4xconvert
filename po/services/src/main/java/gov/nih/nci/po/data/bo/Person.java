@@ -151,6 +151,7 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private Date statusDate;
     private Set<RaceCode> races = new HashSet<RaceCode>();
+    private SexCode sex;
 
     /**
      * Create a new, empty person.
@@ -419,7 +420,6 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
-
      */
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -508,7 +508,7 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      * @xsnapshot.property name="raceCode"
      *                     match="entity" type="gov.nih.nci.coppa.iso.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$CdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$DSetCdConverter"
      *                     
      *   @return a person's set of race code(s)
      */
@@ -527,5 +527,24 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      */
     public void setRaces(Set<RaceCode> races) {
         this.races = races;
+    }
+    
+    /**
+     * @return person's sex code
+     * @xsnapshot.property name="sexCode" match="entity" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$CdConverter"
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SEX")
+    public SexCode getSex() {
+        return sex;
+    }
+
+    /**
+     * @param sex sex code
+     */
+    public void setSex(SexCode sex) {
+        this.sex = sex;
     }
 }

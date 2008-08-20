@@ -3,15 +3,18 @@ package gov.nih.nci.po.services.person;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RaceCode;
+import gov.nih.nci.po.data.bo.SexCode;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.PoIsoConstraintException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.HashSet;
@@ -186,5 +189,148 @@ public class PersonDTOTest {
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals(0, p.getRaces().size());
     }
+    
+    @Test
+    public void covertRaceCodeCdCodeEmpty() {
+        dto.setRaceCode(new DSet<Cd>());
+        dto.getRaceCode().setItem(new HashSet<Cd>());
+        Cd race = new Cd();
+        race.setCode("");
+        dto.getRaceCode().getItem().add(race);
+        Person p;
+        try {
+            p = PoXsnapshotHelper.createModel(dto);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            assertEquals("code must be set", e.getMessage());
+        }
+    }
+    @Test
+    public void covertRaceCodeCdCodeNull() {
+        dto.setRaceCode(new DSet<Cd>());
+        dto.getRaceCode().setItem(new HashSet<Cd>());
+        Cd race = new Cd();
+        race.setCode(null);
+        dto.getRaceCode().getItem().add(race);
+        Person p;
+        try {
+            p = PoXsnapshotHelper.createModel(dto);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            assertEquals("code must be set", e.getMessage());
+        }
+    }
+    @Test
+    public void covertRaceCodeCdHasNullFlavor() {
+        dto.setRaceCode(new DSet<Cd>());
+        dto.getRaceCode().setItem(new HashSet<Cd>());
+        Cd race = new Cd();
+        race.setNullFlavor(NullFlavor.ASKU);
+        dto.getRaceCode().getItem().add(race);
+        Person p;
+        p = PoXsnapshotHelper.createModel(dto);
+        assertTrue(p.getRaces().isEmpty());
+    }
+    
+    @Test
+    public void covertRaceCodeUnsupportedCode() {
+        dto.setRaceCode(new DSet<Cd>());
+        dto.getRaceCode().setItem(new HashSet<Cd>());
+        Cd race = new Cd();
+        race.setCode("Z");
+        dto.getRaceCode().getItem().add(race);
+        Person p;
+        try {
+            p = PoXsnapshotHelper.createModel(dto);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            assertEquals("unsupported code " + race.getCode(), e.getMessage());
+        }
+    }
 
+    @Test
+    public void covertSexCode1() {
+        Cd sex = new Cd();
+        sex.setCode("F");
+        dto.setSexCode(sex);
+        Person p = PoXsnapshotHelper.createModel(dto);
+        assertEquals(SexCode.F, p.getSex());
+    }
+    
+    @Test
+    public void covertSexCode2() {
+        Cd sex = new Cd();
+        sex.setCode("M");
+        dto.setSexCode(sex);
+        Person p = PoXsnapshotHelper.createModel(dto);
+        assertEquals(SexCode.M, p.getSex());
+    }
+    
+    @Test
+    public void covertSexCode3() {
+        Cd sex = new Cd();
+        sex.setCode("U");
+        dto.setSexCode(sex);
+        Person p = PoXsnapshotHelper.createModel(dto);
+        assertEquals(SexCode.U, p.getSex());
+    }
+    
+    @Test
+    public void covertSexCode4() {
+        Cd sex = new Cd();
+        sex.setCode("un");
+        dto.setSexCode(sex);
+        Person p = PoXsnapshotHelper.createModel(dto);
+        assertEquals(SexCode.UN, p.getSex());
+    }
+    
+    @Test
+    public void covertSexCodeCdCodeEmpty() {
+        Cd sex = new Cd();
+        sex.setCode("");
+        dto.setSexCode(sex);
+        Person p;
+        try {
+            p = PoXsnapshotHelper.createModel(dto);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            assertEquals("code must be set", e.getMessage());
+        }
+    }
+    @Test
+    public void covertSexCodeCdCodeNull() {
+        Cd sex = new Cd();
+        sex.setCode(null);
+        dto.setSexCode(sex);
+        Person p;
+        try {
+            p = PoXsnapshotHelper.createModel(dto);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            assertEquals("code must be set", e.getMessage());
+        }
+    }
+    @Test
+    public void covertSexCodeCdHasNullFlavor() {
+        Cd sex = new Cd();
+        sex.setNullFlavor(NullFlavor.ASKU);
+        dto.setSexCode(sex);
+        Person p;
+        p = PoXsnapshotHelper.createModel(dto);
+        assertNull(p.getSex());
+    }
+    
+    @Test
+    public void covertSexCodeUnsupportedCode() {
+        Cd sex = new Cd();
+        sex.setCode("Z");
+        dto.setSexCode(sex);
+        Person p;
+        try {
+            p = PoXsnapshotHelper.createModel(dto);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            assertEquals("unsupported code " + sex.getCode(), e.getMessage());
+        }
+    }
 }
