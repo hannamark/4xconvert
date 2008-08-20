@@ -1,6 +1,10 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -9,8 +13,10 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -346,5 +352,32 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getOrganization().setStatusCode(EntityStatus.NEW);
         assertEquals(3, getOrgServiceBean().count(sc));
         assertEquals(3, getOrgServiceBean().search(sc).size());
+    }
+    
+    @Test
+    public void findByStatusCodeEnsureDeprecatedAreNotReturned() throws EntityValidationException {
+        createOrgsWithAddresses();
+        Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
+        List<Organization> list = query.list();
+        Organization o = list.iterator().next();
+        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
+        assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
+        o.setStatusCode(EntityStatus.CURATED);
+        PoHibernateUtil.getCurrentSession().update(o);
+        PoHibernateUtil.getCurrentSession().flush();
+        o.setStatusCode(EntityStatus.DEPRECATED);
+        PoHibernateUtil.getCurrentSession().update(o);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        sc.setOrganization(new Organization());
+        sc.getOrganization().setStatusCode(EntityStatus.DEPRECATED);
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
+        
+        sc.setOrganization(new Organization());
+        sc.getOrganization().setStatusCode(EntityStatus.NEW);
+        assertEquals(2, getOrgServiceBean().count(sc));
+        assertEquals(2, getOrgServiceBean().search(sc).size());
     }
 }

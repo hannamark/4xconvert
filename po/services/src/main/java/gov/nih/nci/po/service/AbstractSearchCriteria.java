@@ -222,6 +222,22 @@ public abstract class AbstractSearchCriteria {
         }
         return "";
     }
+    /**
+     * 
+     * @param propertyName hibernate query property name
+     * @param parameterName hibernate named parameter name
+     * @param criteriaValue hibernate named paramter value
+     * @param namedParams map to use to set named parameter values in the Query
+     * @return HQL or empty
+     */
+    protected String addNotEqual(String propertyName, String parameterName, Object criteriaValue,
+            Map<String, Object> namedParams) {
+        if (criteriaValue != null) {
+            namedParams.put(parameterName, criteriaValue);
+            return propertyName + " <> " + ":" + parameterName;
+        }
+        return "";
+    }
 
     /**
      * @param propertyName hibernate query property name

@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -18,7 +19,7 @@ import org.hibernate.Criteria;
 public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCriteria implements SearchCriteria<Person> {
 
     private static final String PERSON_POSTAL_ADDRESS_PROPERTY_NAME = "postalAddress";
-    private static final String PERSON_STATUS_PROPERTY = "statusCode";
+    static final String PERSON_STATUS_PROPERTY = "statusCode";
     private Person person;
 
     /**
@@ -68,6 +69,8 @@ public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCrite
     protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String personAlias) {
         List<String> whereClause = new ArrayList<String>();
         String personAliasDot = personAlias + DOT;
+        whereClause.add(addNotEqual(personAliasDot + PERSON_STATUS_PROPERTY, PERSON_STATUS_PROPERTY + "1",
+                EntityStatus.DEPRECATED, namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_FIRST_NAME_PROPERTY, PERSON_FIRST_NAME_PROPERTY, person
                 .getFirstName(), namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_LAST_NAME_PROPERTY, PERSON_LAST_NAME_PROPERTY, person

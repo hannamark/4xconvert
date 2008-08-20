@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -74,6 +75,8 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
     protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String orgAlias) {
         List<String> whereClause = new ArrayList<String>();
         String orgAliasDot = orgAlias + DOT;
+        whereClause.add(addNotEqual(orgAliasDot + ORGANIZATION_STATUS_PROPERTY, ORGANIZATION_STATUS_PROPERTY + "1",
+                EntityStatus.DEPRECATED, namedParameters));
         whereClause.add(addEqual(orgAliasDot + ORGANIZATION_ID_PROPERTY, ORGANIZATION_ID_PROPERTY,
                 organization.getId(), namedParameters));
         whereClause.add(addILike(orgAliasDot + ORGANIZATION_NAME_PROPERTY, ORGANIZATION_NAME_PROPERTY, organization

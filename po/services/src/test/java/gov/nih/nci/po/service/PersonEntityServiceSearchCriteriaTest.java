@@ -25,6 +25,9 @@ public class PersonEntityServiceSearchCriteriaTest {
     private static final String personAlias = "abc";
     private static final String PERSONALIASDOT = personAlias + AbstractSearchCriteria.DOT;
 
+    String defaultWhereClause = AbstractSearchCriteria.WHERE + PERSONALIASDOT + PersonEntityServiceSearchCriteria.PERSON_STATUS_PROPERTY + " <> " + 
+    ":" + PersonEntityServiceSearchCriteria.PERSON_STATUS_PROPERTY + "1";
+    
     @Before
     public void setup() {
         criteria = new PersonEntityServiceSearchCriteria();
@@ -159,17 +162,17 @@ public class PersonEntityServiceSearchCriteriaTest {
     @Test
     public void getQueryWhereClause() {
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        assertEquals("", queryWhereClause.toString());
+        assertEquals(defaultWhereClause, queryWhereClause.toString());
     }
 
     @Test
     public void getQueryWhereClauseIfFirstName() {
         criteria.getPerson().setFirstName("fName");
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        String expected = AbstractSearchCriteria.WHERE
+        String expected = defaultWhereClause + AbstractEntitySearchCriteria.AND 
                 + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY,
                         AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY);
-        assertEquals(expected, queryWhereClause.toString());
+        verifyDefaults(queryWhereClause, expected);
         assertEquals("%" + criteria.getPerson().getFirstName().toLowerCase() + "%", namedParams
                 .remove(AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY));
         assertTrue(namedParams.isEmpty());
@@ -179,10 +182,10 @@ public class PersonEntityServiceSearchCriteriaTest {
     public void getQueryWhereClauseIfMiddleName() {
         criteria.getPerson().setMiddleName("mName");
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        String expected = AbstractSearchCriteria.WHERE
+        String expected = defaultWhereClause + AbstractEntitySearchCriteria.AND 
         + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY,
                 AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY);
-        assertEquals(expected, queryWhereClause.toString());
+        verifyDefaults(queryWhereClause, expected);
         assertEquals("%" + criteria.getPerson().getMiddleName().toLowerCase() + "%", namedParams
                 .remove(AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY));
         assertTrue(namedParams.isEmpty());
@@ -192,13 +195,18 @@ public class PersonEntityServiceSearchCriteriaTest {
     public void getQueryWhereClauseIfLastName() {
         criteria.getPerson().setLastName("lName");
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        String expected = AbstractSearchCriteria.WHERE
+        String expected = defaultWhereClause + AbstractEntitySearchCriteria.AND 
                 + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY,
                         AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY);
-        assertEquals(expected, queryWhereClause.toString());
+        verifyDefaults(queryWhereClause, expected);
         assertEquals("%" + criteria.getPerson().getLastName().toLowerCase() + "%", namedParams
                 .remove(AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY));
         assertTrue(namedParams.isEmpty());
+    }
+    private void verifyDefaults(StringBuffer queryWhereClause, String expected) {
+        assertEquals(expected, queryWhereClause.toString());
+        assertEquals(EntityStatus.DEPRECATED, namedParams
+                .remove(PersonEntityServiceSearchCriteria.PERSON_STATUS_PROPERTY + "1"));
     }
 
     private String getExpectedILike(String propertyName, String paramName) {

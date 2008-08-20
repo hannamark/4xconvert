@@ -1,15 +1,22 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -302,5 +309,31 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         assertEquals(3, getPersonServiceBean().count(sc));
         assertEquals(3, getPersonServiceBean().search(sc).size());
     }
-
+    
+    @Test
+    public void findByStatusCodeEnsureDeprecatedAreNotReturned() throws EntityValidationException {
+        createPeopleWithAddresses();
+        Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person p");
+        List<Person> list = query.list();
+        Person p = list.iterator().next();
+        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
+        assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
+        p.setStatusCode(EntityStatus.CURATED);
+        PoHibernateUtil.getCurrentSession().update(p);
+        PoHibernateUtil.getCurrentSession().flush();
+        p.setStatusCode(EntityStatus.DEPRECATED);
+        PoHibernateUtil.getCurrentSession().update(p);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        sc.setPerson(new Person());
+        sc.getPerson().setStatusCode(EntityStatus.DEPRECATED);
+        assertEquals(0, getPersonServiceBean().count(sc));
+        assertEquals(0, getPersonServiceBean().search(sc).size());
+        
+        sc.setPerson(new Person());
+        sc.getPerson().setStatusCode(EntityStatus.NEW);
+        assertEquals(2, getPersonServiceBean().count(sc));
+        assertEquals(2, getPersonServiceBean().search(sc).size());
+    }
 }
