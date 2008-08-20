@@ -28,6 +28,7 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
     static final String ORGANIZATION_TTY_PROPERTY_NAME = "tty";
     static final String ORGANIZATION_URL_PROPERTY_NAME = "url";
     static final String ORGANIZATION_POSTAL_ADDRESS_PROPERTY_NAME = "postalAddress";
+    static final String ORGANIZATION_STATUS_PROPERTY = "statusCode";
 
     private Organization organization;
 
@@ -57,7 +58,8 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
                         || CollectionUtils.isNotEmpty(organization.getFax())
                         || CollectionUtils.isNotEmpty(organization.getPhone())
                         || CollectionUtils.isNotEmpty(organization.getTty())
-                        || CollectionUtils.isNotEmpty(organization.getUrl()) || isAddressCriterionSpecified());
+                        || CollectionUtils.isNotEmpty(organization.getUrl()) || isAddressCriterionSpecified() 
+                        || organization.getStatusCode() != null);
     }
 
     private boolean isAddressCriterionSpecified() {
@@ -80,6 +82,8 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
                 .getAbbreviatedName(), namedParameters));
         whereClause.add(addILike(orgAliasDot + ORGANIZATION_DESC_PROPERTY, ORGANIZATION_DESC_PROPERTY, organization
                 .getDescription(), namedParameters));
+        whereClause.add(addEqual(orgAliasDot + ORGANIZATION_STATUS_PROPERTY, ORGANIZATION_STATUS_PROPERTY, organization
+                .getStatusCode(), namedParameters));
         String orgId = orgAliasDot + ORGANIZATION_ID_PROPERTY;
         whereClause.add(inIfRhs(orgId, findMatchingEmail(namedParameters).toString()));
         whereClause.add(inIfRhs(orgId, findMatchingPhone(namedParameters).toString()));

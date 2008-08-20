@@ -17,12 +17,7 @@ public abstract class AbstractOrganizationSearchCriteria extends AbstractEntityS
 
     private static final Logger LOG = Logger.getLogger(AbstractOrganizationSearchCriteria.class);
 
-    static final String ORGANIZATION_ADDRESS_ALIAS = "addr";
-    static final String ORGANIZATION_COUNTRY_ALIAS = "ctry";
     static final String ORGANIZATION_ALIAS = "org";
-
-    static final String ORGANIZATION_ID_PROPERTY = "id";
-    static final String ORGANIZATION_NAME_PROPERTY = "name";
 
     /**
      * {@inheritDoc}

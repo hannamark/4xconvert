@@ -116,11 +116,12 @@ public class OrgEntityServiceSearchCriteriaTest {
         yesCrit.getOrganization().getPostalAddress().getCountry().setId(new Long(1));
         assertFalse(yesCrit.hasOneCriterionSpecified());
         
+        yesCrit.setOrganization(new Organization());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getOrganization().setStatusCode(EntityStatus.CURATED);
+        assertTrue(yesCrit.hasOneCriterionSpecified());
         
         //Not used...
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setStatusCode(EntityStatus.CURATED);
-        assertFalse(yesCrit.hasOneCriterionSpecified());
     }
 
 }

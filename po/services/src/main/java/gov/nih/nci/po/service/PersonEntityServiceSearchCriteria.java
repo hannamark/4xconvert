@@ -18,6 +18,7 @@ import org.hibernate.Criteria;
 public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCriteria implements SearchCriteria<Person> {
 
     private static final String PERSON_POSTAL_ADDRESS_PROPERTY_NAME = "postalAddress";
+    private static final String PERSON_STATUS_PROPERTY = "statusCode";
     private Person person;
 
     /**
@@ -44,8 +45,8 @@ public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCrite
                         || isValueSpecified(person.getMiddleName()) || isValueSpecified(person.getPrefix())
                         || isValueSpecified(person.getSuffix()) || CollectionUtils.isNotEmpty(person.getEmail())
                         || CollectionUtils.isNotEmpty(person.getFax()) || CollectionUtils.isNotEmpty(person.getPhone())
-                        || CollectionUtils.isNotEmpty(person.getTty()) || CollectionUtils.isNotEmpty(person.getUrl()) 
-                        || isAddressCriterionSpecified());
+                        || CollectionUtils.isNotEmpty(person.getTty()) || CollectionUtils.isNotEmpty(person.getUrl())
+                        || isAddressCriterionSpecified() || person.getStatusCode() != null);
     }
 
     private boolean isAddressCriterionSpecified() {
@@ -77,6 +78,8 @@ public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCrite
                 namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_SUFFIX_PROPERTY, PERSON_SUFFIX_PROPERTY, person.getSuffix(),
                 namedParameters));
+        whereClause.add(addEqual(personAliasDot + PERSON_STATUS_PROPERTY, PERSON_STATUS_PROPERTY, person
+                .getStatusCode(), namedParameters));
         String personId = personAliasDot + PERSON_ID_PROPERTY;
         whereClause.add(inIfRhs(personId, findMatchingEmail(namedParameters).toString()));
         whereClause.add(inIfRhs(personId, findMatchingPhone(namedParameters).toString()));

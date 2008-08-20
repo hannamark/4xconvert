@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 
@@ -203,7 +205,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         assertEquals(0, getOrgServiceBean().search(sc).size());
     }
     
-    private void createPeopleWithAddresses() throws EntityValidationException {
+    private void createOrgsWithAddresses() throws EntityValidationException {
         Organization p = getBasicOrganization();
         Address pa = new Address("P.O. Box 12345", "New-City", "VA", "12345-6789", getDefaultCountry());
         pa.setDeliveryAddressLine("c/o Mark Wild");
@@ -224,7 +226,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByAddressStreetAddressLine() throws EntityValidationException {
-        createPeopleWithAddresses();
+        createOrgsWithAddresses();
 
         sc.setOrganization(new Organization());
         sc.getOrganization().setPostalAddress(new Address());
@@ -247,7 +249,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     
     @Test
     public void findByAddressDeliveryAddressLine() throws EntityValidationException {
-        createPeopleWithAddresses();
+        createOrgsWithAddresses();
         
         sc.setOrganization(new Organization());
         sc.getOrganization().setPostalAddress(new Address());
@@ -270,7 +272,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     
     @Test
     public void findByAddressCity() throws EntityValidationException {
-        createPeopleWithAddresses();
+        createOrgsWithAddresses();
         
         sc.setOrganization(new Organization());
         sc.getOrganization().setPostalAddress(new Address());
@@ -293,7 +295,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     
     @Test
     public void findByAddressPostalCode() throws EntityValidationException {
-        createPeopleWithAddresses();
+        createOrgsWithAddresses();
         
         sc.setOrganization(new Organization());
         sc.getOrganization().setPostalAddress(new Address());
@@ -316,7 +318,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     
     @Test
     public void findByAddressCountry() throws EntityValidationException {
-        createPeopleWithAddresses();
+        createOrgsWithAddresses();
         
         sc.setOrganization(new Organization());
         sc.getOrganization().setPostalAddress(new Address());
@@ -330,4 +332,19 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     }
 
+    
+    @Test
+    public void findByStatusCode() throws EntityValidationException {
+        createOrgsWithAddresses();
+        
+        sc.setOrganization(new Organization());
+        sc.getOrganization().setStatusCode(EntityStatus.CURATED);
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
+        
+        sc.setOrganization(new Organization());
+        sc.getOrganization().setStatusCode(EntityStatus.NEW);
+        assertEquals(3, getOrgServiceBean().count(sc));
+        assertEquals(3, getOrgServiceBean().search(sc).size());
+    }
 }
