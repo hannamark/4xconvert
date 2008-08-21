@@ -1,2 +1,2 @@
 
-<% response.sendRedirect("login.action"); %>
+<% response.sendRedirect("studyProtocolQueryHome.action"); %>
