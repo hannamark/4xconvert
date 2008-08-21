@@ -1,4 +1,4 @@
-5<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC   
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
@@ -26,7 +26,7 @@
 <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a>
   <div id="box">
-    <s:form action="updateTrialStatus"><s:actionerror/>
+    <s:form action="updateOverallStatus.action"><s:actionerror/>
         <table width="480">
             <jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
                 <tr>
@@ -36,12 +36,12 @@
                       <td align=right>
                            <label for="currentTrialStatus"> <fmt:message key="trialStatus.current.trial.status"/></label>
                       </td>                                                                                              
-                      <s:set name="currentTrialStatusValues" value="@gov.nih.nci.pa.enums.CurrentTrialStatus@getDisplayNames()" />
+                      <s:set name="currentTrialStatusValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                       <td align=left>
                         <s:select headerKey="" headerValue="All" name="trialStatusData.currentTrialStatus" list="#currentTrialStatusValues"  value="trialStatusData.currentTrialStatus" />
                       </td> 
                       <td>
-                        <button onclick=location.href='statusHistory.action' class="button">Status History</button>                       
+                        <button onclick=location.href='overallStatusHistory.action' class="button">Status History</button>                       
                       </td>        
                 </tr>                
                 <tr>
