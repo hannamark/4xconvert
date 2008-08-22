@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for viewing and editing the protocol status.
@@ -17,10 +18,27 @@ import com.opensymphony.xwork2.ActionSupport;
  *        holder, NCI.
  * 
  */
-public class OverallStatusAction extends ActionSupport {
+/**
+ * @author hreinhart
+ *
+ */
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
+public class OverallStatusAction extends ActionSupport implements Preparable {
+    /* (non-Javadoc)
+     * @see com.opensymphony.xwork2.Preparable#prepare()
+     */
     private static final long serialVersionUID = 1L;
     private List trialStartDate;
     private List primaryCompletionDate;
+
+    /** 
+     * @see com.opensymphony.xwork2.Preparable#prepare()
+     * @throws Exception e
+     */
+    public void prepare() throws Exception {
+        // TODO Auto-generated method stub
+    
+    }
 
     /**
      * @return Action result.
@@ -28,7 +46,6 @@ public class OverallStatusAction extends ActionSupport {
      *             xxx.
      */
     @Override
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public String execute() throws Exception {
         trialStartDate = new ArrayList();
         trialStartDate.add("Actual");
