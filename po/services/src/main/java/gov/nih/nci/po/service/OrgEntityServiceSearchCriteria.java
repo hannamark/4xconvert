@@ -29,8 +29,6 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
     static final String ORGANIZATION_TTY_PROPERTY_NAME = "tty";
     static final String ORGANIZATION_URL_PROPERTY_NAME = "url";
     static final String ORGANIZATION_POSTAL_ADDRESS_PROPERTY_NAME = "postalAddress";
-    static final String ORGANIZATION_STATUS_PROPERTY = "statusCode";
-
     private Organization organization;
 
     /**

@@ -25,8 +25,8 @@ public class PersonEntityServiceSearchCriteriaTest {
     private static final String personAlias = "abc";
     private static final String PERSONALIASDOT = personAlias + AbstractSearchCriteria.DOT;
 
-    String defaultWhereClause = AbstractSearchCriteria.WHERE + PERSONALIASDOT + PersonEntityServiceSearchCriteria.PERSON_STATUS_PROPERTY + " <> " + 
-    ":" + PersonEntityServiceSearchCriteria.PERSON_STATUS_PROPERTY + "1";
+    String defaultWhereClause = AbstractSearchCriteria.WHERE + PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_STATUS_PROPERTY + " <> " + 
+    ":" + AbstractPersonSearchCriteria.PERSON_STATUS_PROPERTY + "1";
     
     @Before
     public void setup() {
@@ -36,7 +36,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     }
     @Test
     public void testGettersAndSetters() throws Exception {
-        PersonEntityServiceSearchCriteria osc = new PersonEntityServiceSearchCriteria();
+        AbstractPersonSearchCriteria osc = new PersonEntityServiceSearchCriteria();
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(osc);
     }
 
@@ -206,7 +206,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     private void verifyDefaults(StringBuffer queryWhereClause, String expected) {
         assertEquals(expected, queryWhereClause.toString());
         assertEquals(EntityStatus.DEPRECATED, namedParams
-                .remove(PersonEntityServiceSearchCriteria.PERSON_STATUS_PROPERTY + "1"));
+                .remove(AbstractPersonSearchCriteria.PERSON_STATUS_PROPERTY + "1"));
     }
 
     private String getExpectedILike(String propertyName, String paramName) {

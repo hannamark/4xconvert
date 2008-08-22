@@ -78,8 +78,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    @Override
-    public void createPerson() throws EntityValidationException {
+    public void createPersonRemote() throws EntityValidationException {
         PersonDTO dto = new PersonDTO();
         Ii isoId = new Ii();
         isoId.setRoot("test");

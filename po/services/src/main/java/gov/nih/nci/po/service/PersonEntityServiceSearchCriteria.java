@@ -19,7 +19,6 @@ import org.hibernate.Criteria;
 public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCriteria implements SearchCriteria<Person> {
 
     private static final String PERSON_POSTAL_ADDRESS_PROPERTY_NAME = "postalAddress";
-    static final String PERSON_STATUS_PROPERTY = "statusCode";
     private Person person;
 
     /**

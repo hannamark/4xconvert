@@ -152,6 +152,7 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
     private Date statusDate;
     private Set<RaceCode> races = new HashSet<RaceCode>();
     private SexCode sex;
+    private Set<PersonCR> changeRequests = new HashSet<PersonCR>();
 
     /**
      * Create a new, empty person.
@@ -546,5 +547,22 @@ public class Person implements PersistentObject, Auditable, Curatable<Person> {
      */
     public void setSex(SexCode sex) {
         this.sex = sex;
+    }
+    
+    
+    
+    /**
+     * @return associated CRs
+     */
+    @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+    public Set<PersonCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<PersonCR> changeRequests) {
+        this.changeRequests = changeRequests;
     }
 }

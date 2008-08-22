@@ -30,6 +30,7 @@ public abstract class AbstractPersonSearchCriteria extends AbstractEntitySearchC
     static final String PERSON_FAX_PROPERTY_NAME = "fax";
     static final String PERSON_TTY_PROPERTY_NAME = "tty";
     static final String PERSON_URL_PROPERTY_NAME = "url";
+    static final String PERSON_STATUS_PROPERTY = "statusCode";
     /**
      * {@inheritDoc}
      */

@@ -19,6 +19,8 @@ public abstract class AbstractOrganizationSearchCriteria extends AbstractEntityS
 
     static final String ORGANIZATION_ALIAS = "org";
 
+    static final String ORGANIZATION_STATUS_PROPERTY = "statusCode";
+
     /**
      * {@inheritDoc}
      */

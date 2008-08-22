@@ -87,7 +87,9 @@ import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -144,6 +146,7 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     private Date statusDate;
     private EntityStatus priorEntityStatus;
     private Organization duplicateOf;
+    private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
 
     /**
      * Default constructor.
@@ -475,5 +478,20 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     @ForeignKey(name = "ORG_DUPLICATE_ORG_FK")
     public Organization getDuplicateOf() {
         return this.duplicateOf;
+    }
+    
+    /**
+     * @return associated CRs
+     */
+    @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+    public Set<OrganizationCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<OrganizationCR> changeRequests) {
+        this.changeRequests = changeRequests;
     }
 }

@@ -18,7 +18,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.Address" />
         <mapping class="gov.nih.nci.po.data.bo.Country" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
-        <mapping class="gov.nih.nci.po.data.bo.Organization" />
+        <mapping class="gov.nih.nci.po.data.bo.Organization" />      
         <mapping class="gov.nih.nci.po.data.bo.Person" />
         <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
         <mapping class="gov.nih.nci.po.data.bo.State" />
@@ -27,6 +27,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
         <mapping class="gov.nih.nci.po.audit.AuditLogDetail" />
         
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.PersonCR" />
         <event type="pre-update">
             <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
         </event>

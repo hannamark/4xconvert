@@ -80,131 +80,80 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.data.bo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.po.audit.AuditLogRecord;
-import gov.nih.nci.po.audit.AuditType;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PhoneNumber;
-import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.audit.Auditable;
 
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
-public class PersonServiceBeanTest extends AbstractBeanTest {
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
-    private static final Logger LOG = Logger.getLogger(PersonServiceBeanTest.class);
 
-    private PersonServiceBean personServiceBean;
+/**
+ *
+ * @author gax
+ */
+@Entity
+public class OrganizationCR implements PersistentObject, Auditable {
 
-    public PersonServiceBean getPersonServiceBean() {
-        return personServiceBean;
+    private Long id;
+    private Organization target;
+    
+    /**
+     * default ctor.
+     */
+    public OrganizationCR() {
+        super();
     }
     
-    @Before
-    public void setUpData() {
-        personServiceBean = EjbTestHelper.getPersonServiceBean();
+    /**
+     * default ctor.
+     * @param target the associated organization
+     */
+    public OrganizationCR(Organization target) {
+        super();
+        setTarget(target);
     }
     
-    @After
-    public void teardown() {
-        personServiceBean = null;
-    }
-
-    public Person getBasicPerson() {
-        Person person = new Person();
-        person.setStatusCode(null);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-        
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
-        a.setDeliveryAddressLine("deliveryAddressLine");
-        person.setPostalAddress(a);
-        
-        person.getEmail().add(new Email("abc@example.com"));
-        person.getEmail().add(new Email("def@example.com"));
-        
-        person.getPhone().add(new PhoneNumber("111-111-1111"));
-        person.getPhone().add(new PhoneNumber("123-123-1234"));
-
-        person.getFax().add(new PhoneNumber("222-222-2222"));
-        person.getFax().add(new PhoneNumber("234-234-2345"));
-        
-        person.getTty().add(new PhoneNumber("333-333-3333"));
-        person.getTty().add(new PhoneNumber("345-345-3456"));
-        
-        person.getUrl().add(new URL("http://www.example.com/abc"));
-        person.getUrl().add(new URL("http://www.example.com/def"));
-        return person;
-    }
-
-    @Test
-    public void create() throws EntityValidationException {
-        createPerson();
-    }
-
-    public long createPerson() throws EntityValidationException {
-        return createPerson(getBasicPerson());
-    }
-
-    protected long createPerson(Person person) throws EntityValidationException {
-        long id = personServiceBean.create(person);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
-
-        // adjust the expected value to NEW
-        person.setStatusCode(EntityStatus.NEW);
-        assertNotNull(savedPerson.getStatusDate());
-        verifyEquals(person, savedPerson);
-        PoHibernateUtil.getCurrentSession().flush();
-
-        List<AuditLogRecord> alr = AuditTestUtil.find(Person.class, savedPerson.getId());
-        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "firstName", null, "fName", false);
-        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "lastName", null, "lName", false);
+    /**
+     * {@inheritDoc}
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
         return id;
     }
-
-    @Test
-    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
-        Person person = getBasicPerson();
-        person.setStatusCode(EntityStatus.CURATED);
-        person.setFirstName("fName");
-        person.setLastName("lName");
-
-        long id = personServiceBean.create(person);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        Person savedPerson = personServiceBean.getPerson(id);
-
-        // adjust the expected value to NEW
-        person.setStatusCode(EntityStatus.NEW);
-        verifyEquals(person, savedPerson);
-    }
-
-    private void verifyEquals(Person expected, Person found) {
-        assertEquals(expected.getId(), found.getId());
-        assertEquals(expected.getStatusCode(), found.getStatusCode());
-        assertEquals(expected.getFirstName(), found.getFirstName());
-        assertEquals(expected.getLastName(), found.getLastName());
-        
-        assertEquals(expected.getEmail().size(), found.getEmail().size());
-        assertEquals(expected.getPhone().size(), found.getPhone().size());
-        assertEquals(expected.getFax().size(), found.getFax().size());
-        assertEquals(expected.getTty().size(), found.getTty().size());
-        assertEquals(expected.getUrl().size(), found.getUrl().size());
-    }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+    /**
+     * @return the org that should have this proposed state.
+     */
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JoinColumn(name = "target", nullable = false)
+    @Index(name = "org_target_idx")
+    @ForeignKey(name = "ORG_TARGET_PERSON_FK")
+    public Organization getTarget() {
+        return this.target;
+    }
+
+    /**
+     * @param target the associated organization
+     */
+    public final void setTarget(Organization target) {
+        this.target = target;
+    }
 }
