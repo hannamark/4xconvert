@@ -82,9 +82,15 @@
  */
 package gov.nih.nci.po.web.util;
 
+import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.util.JndiServiceLocator;
+import gov.nih.nci.po.util.ServiceLocator;
+
 
 /**
- * @author Scott Miller
+ * @author smatyas
  */
 public final class PoRegistry {
 
@@ -93,11 +99,13 @@ public final class PoRegistry {
      */
     public static final int DEFAULT_RECORDS_PER_PAGE = 20;
     private static final PoRegistry PO_REGISTRY = new PoRegistry();
-
+    private ServiceLocator serviceLocator;
+    
     /**
      * Constructor for the singleton instance.
      */
     private PoRegistry() {
+        this.serviceLocator = new JndiServiceLocator();
     }
 
     /**
@@ -105,5 +113,43 @@ public final class PoRegistry {
      */
     public static PoRegistry getInstance() {
         return PO_REGISTRY;
+    }
+
+    /**
+     * Gets the generic service from the service locator.
+     * @return the service.
+     */
+    public static GenericServiceLocal getGenericService() {
+        return getInstance().getServiceLocator().getGenericService();
+    }
+
+    /**
+     * Gets the org service from the service locator.
+     * @return the service.
+     */
+    public static OrganizationServiceLocal getOrganizationService() {
+        return getInstance().getServiceLocator().getOrganizationService();
+    }
+
+    /**
+     * Gets the person service from the service locator.
+     * @return the service.
+     */
+    public static PersonServiceLocal getPersonService() {
+        return getInstance().getServiceLocator().getPersonService();
+    }
+
+    /**
+     * @return the serviceLocator
+     */
+    public ServiceLocator getServiceLocator() {
+        return this.serviceLocator;
+    }
+
+    /**
+     * @param serviceLocator the serviceLocator to set
+     */
+    public void setServiceLocator(ServiceLocator serviceLocator) {
+        this.serviceLocator = serviceLocator;
     }
 }

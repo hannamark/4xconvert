@@ -84,6 +84,10 @@ package gov.nih.nci.po.audit;
 
 import gov.nih.nci.po.service.SortCriterion;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Criteria for audit log records.
  */
@@ -104,16 +108,33 @@ public enum AuditLogRecordSortCriterion implements SortCriterion<AuditLogRecord>
     /** Sort by transaction id. */
     TRANSACTION_ID("transactionId");
 
+    private final String orderField;
+    private final List<AuditLogRecordSortCriterion> fields;
+    
     private AuditLogRecordSortCriterion(String orderField) {
         this.orderField = orderField;
+        this.fields = null;
     }
-
-    private final String orderField;
+    
+    private AuditLogRecordSortCriterion(AuditLogRecordSortCriterion... fields) {
+        this.orderField = null;
+        this.fields = Arrays.asList(fields);
+    }
 
     /**
      * {@inheritDoc}
      */
     public String getOrderField() {
         return this.orderField;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<AuditLogRecordSortCriterion> getOrderByList() {
+        if (orderField != null) {
+            return Collections.singletonList(this);
+        }
+        return fields;
     }
 }

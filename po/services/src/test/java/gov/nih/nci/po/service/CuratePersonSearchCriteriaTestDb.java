@@ -56,7 +56,7 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
     }
     
     @Test
-    public void findByStatusNotNEWAndWithCRs() {
+    public void findByStatusNotNEWButHasCRs() {
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person o");
         List<Person> list = query.list();
         Person o = list.iterator().next();

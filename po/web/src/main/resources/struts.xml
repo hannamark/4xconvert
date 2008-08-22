@@ -130,5 +130,9 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="common">
+        <action name="**curate/search/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{2}">
+            <result name="success">/WEB-INF/jsp/curate/{2}.jsp</result>
+            <result name="list" type="redirect-action">listAll</result>
+        </action>
     </package>
 </struts>
