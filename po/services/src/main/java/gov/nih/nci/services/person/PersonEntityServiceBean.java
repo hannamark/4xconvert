@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.services.person;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
@@ -115,6 +119,7 @@ import org.jboss.annotation.security.SecurityDomain;
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
     private PersonServiceLocal perService;
+    private PersonCRServiceLocal perCRService;
     private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
 
     /**
@@ -123,6 +128,13 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @EJB
     public void setPersonServiceBean(PersonServiceLocal svc) {
         this.perService = svc;
+    }
+    /**
+     * @param svc service, injected
+     */
+    @EJB
+    public void setPersonCRServiceBean(PersonCRServiceLocal svc) {
+        this.perCRService = svc;
     }
 
     /**
@@ -168,5 +180,36 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         criteria.setPerson(personBO);
         List<Person> listBOs = getPersonServiceBean().search(criteria);
         return PoXsnapshotHelper.createSnapshotList(listBOs);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public void updatePerson(PersonDTO proposedState) throws EntityValidationException {
+        Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
+        Person target = perService.getPerson(pId);
+        PersonCR cr = new PersonCR(target);
+        proposedState.setIdentifier(null);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        cr.setStatusCode(target.getStatusCode()); // make sure status code is not changed
+        perCRService.addCR(cr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public void updatePersonStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
+        Long pId = IiConverter.convertToLong(targetOrg);
+        Person target = perService.getPerson(pId);
+        // lazy way to clone with stripped hibernate IDs.
+        PersonDTO tmp = PoXsnapshotHelper.createSnapshot(target);
+        PersonCR cr = new PersonCR(target);
+        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
+        cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
+        perCRService.addCR(cr);
     }
 }

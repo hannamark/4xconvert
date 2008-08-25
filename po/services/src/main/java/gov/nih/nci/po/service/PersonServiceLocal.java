@@ -113,5 +113,10 @@ public interface PersonServiceLocal extends GenericSearchService<Person, SearchC
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(Person entity);
+    
+     /**
+     * @param updatedEntity the entity to save.
+     */
+    void update(Person updatedEntity);
 
 }

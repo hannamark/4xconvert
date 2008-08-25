@@ -282,7 +282,6 @@
                                 <taskdef name="xsnapshotdoclet" classname="net.sf.xsnapshot.ant.XSnapshotDocletTask" classpathref="xsnapshot.classpath" />
                                 <mkdir dir="${output.dir}" />
                                 <fileset dir="${project.build.sourceDirectory}" id="model">
-                                    <include name="gov/nih/nci/po/data/common/*.java" />
                                     <include name="gov/nih/nci/po/data/bo/*.java" />
                                 </fileset>
                                 <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">

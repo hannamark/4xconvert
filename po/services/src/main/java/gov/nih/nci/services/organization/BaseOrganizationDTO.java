@@ -80,75 +80,44 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package gov.nih.nci.services.organization;
 
-package gov.nih.nci.services.person;
-
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.convert.ContactListConverter;
-import gov.nih.nci.po.data.convert.EnPnConverter;
-import gov.nih.nci.po.data.convert.PersonNameConverter;
-import gov.nih.nci.po.data.convert.TelDSetConverter;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
-import net.sf.xsnapshot.TransformContext;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.services.EntityDTO;
+import java.io.Serializable;
 
 /**
+ * @author Scott Miller
  *
- * @author gax
  */
-public class PersonDTOHelper extends BasePersonDTOHelper {
+public class BaseOrganizationDTO implements EntityDTO<Organization>, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private DSet<Tel> telecomAddress;
 
     /**
-     * {@inheritDoc}
+     * @return the telecomAddress
      */
-    @Override
-    public Object createSnapshot(Object model, TransformContext context) {
-        if (model == null) {
-            return null;
-        } else {
-            Class myClass = gov.nih.nci.po.data.bo.Person.class;
-            if (myClass.isInstance(model)) {
-
-                // check whether its already in the context map
-                Object existingSnapshot = context.getSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME);
-                if (existingSnapshot != null) {
-                    return existingSnapshot;
-                } else {
-                    PersonDTO snapshot = new PersonDTO();
-                    context.setSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME, snapshot);
-                    copyIntoSnapshot(model, snapshot, context);
-                    return snapshot;
-                }
-
-            } else {
-                throw new IllegalArgumentException("model object is of class " + model.getClass()
-                        + " which is not a subclass of gov.nih.nci.po.data.bo.Person");
-            }
-        }
+    public DSet<Tel> getTelecomAddress() {
+        return this.telecomAddress;
     }
 
     /**
-     * {@inheritDoc}
+     * @param telecomAddress the telecomAddress to set
      */
-    @Override
-    public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
-        super.copyIntoModel(snapshot, model, context);
-
-        PersonDTO s = (PersonDTO) snapshot;
-        Person m = (Person) model;
-        EnPnConverter.convertToPersonName(s.getName(), m);
-        TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
+    public void setTelecomAddress(DSet<Tel> telecomAddress) {
+        this.telecomAddress = telecomAddress;
     }
 
     /**
-     * {@inheritDoc}
+     * @return statusDateRange
+     * @see gov.nih.nci.po.data.bo.Organization#getStatusDate() 
      */
-    @Override
-    public void copyIntoSnapshot(Object model, Object snapshot, TransformContext context) {
-        super.copyIntoSnapshot(model, snapshot, context);
-
-        PersonDTO s = (PersonDTO) snapshot;
-        Person m = (Person) model;
-        s.setName(PersonNameConverter.convertToEnPn(m));
-        s.setTelecomAddress(ContactListConverter.convertToDSet(m));
-    }
+//    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
+//    @Override
+//    public Ivl<Ts> getStatusDateRange() {
+//        return super.getStatusDateRange();
+//    }
 }

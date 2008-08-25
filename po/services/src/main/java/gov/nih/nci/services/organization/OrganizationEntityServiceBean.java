@@ -82,12 +82,16 @@
 */
 package gov.nih.nci.services.organization;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrgEntityServiceSearchCriteria;
+import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -116,6 +120,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
 
     private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
     private OrganizationServiceLocal orgService;
+    private OrganizationCRServiceLocal orgCRService;
 
     /**
      * @param svc service, injected
@@ -123,6 +128,14 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @EJB
     public void setOrganizationServiceBean(OrganizationServiceLocal svc) {
         this.orgService = svc;
+    }
+    
+    /**
+     * @param svc service, injected
+     */
+    @EJB
+    public void setOrganizationCRServiceBean(OrganizationCRServiceLocal svc) {
+        this.orgCRService = svc;
     }
 
     /**
@@ -170,6 +183,37 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         criteria.setOrganization(orgBO);
         List<Organization> listBOs = getOrganizationServiceBean().search(criteria);
         return PoXsnapshotHelper.createSnapshotList(listBOs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
+        Long oId = IiConverter.convertToLong(proposedState.getIdentifier());
+        Organization target = orgService.getOrganization(oId);
+        OrganizationCR cr = new OrganizationCR(target);
+        proposedState.setIdentifier(null);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        cr.setStatusCode(target.getStatusCode()); // make sure status code is not changed
+        orgCRService.addCR(cr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
+        Long oId = IiConverter.convertToLong(targetOrg);
+        Organization target = orgService.getOrganization(oId);
+        // lazy way to clone with stripped hibernate IDs.
+        OrganizationDTO tmp = PoXsnapshotHelper.createSnapshot(target);
+        OrganizationCR cr = new OrganizationCR(target);
+        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
+        cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
+        orgCRService.addCR(cr);
     }
 
 }

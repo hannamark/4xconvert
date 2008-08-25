@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.person;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -144,4 +145,19 @@ public interface PersonEntityServiceRemote {
      * @return list of matching people
      */
     List<PersonDTO> search(PersonDTO person);
+    
+     /**
+     * Propose a new entity value to the curator.
+     * @param proposedState the CR containg the proposed stated.
+     * @throws EntityValidationException if the CR proposes an invalid state for the target.
+     */
+    void updatePerson(PersonDTO proposedState) throws EntityValidationException;
+    
+    /**
+     * Propose a new status code to the curator.
+     * @param targetPer the ID of the person to update.
+     * @param statusCode the new status code.
+     * @throws EntityValidationException if the CR proposes an invalid state for the target.
+     */
+    void updatePersonStatus(Ii targetPer, Cd statusCode) throws EntityValidationException;
 }

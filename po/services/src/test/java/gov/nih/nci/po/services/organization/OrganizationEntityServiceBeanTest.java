@@ -1,8 +1,10 @@
 package gov.nih.nci.po.services.organization;
 
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
@@ -17,14 +19,15 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
-import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
@@ -182,5 +185,21 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
             }
         }
         return null;
+    }
+    
+    @Test
+    public void updateOrganization() throws EntityValidationException {
+        long id = super.createOrganization();
+        OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
+        assertFalse("newName".equals(ISOUtils.EN.convertToString(dto.getName())));
+        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        dto.setName(StringConverter.convertToEnOn("newName"));
+        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
+        remote.updateOrganization(dto);
+        List<OrganizationCR> l = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
+        assertEquals(1, l.size());
+        OrganizationCR cr = l.get(0);
+        assertEquals("newName", cr.getName());
+        assertEquals(EntityStatus.NEW, cr.getStatusCode());
     }
 }

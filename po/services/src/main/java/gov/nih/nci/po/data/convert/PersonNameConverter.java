@@ -84,7 +84,7 @@ package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 
 /**
@@ -99,7 +99,7 @@ public class PersonNameConverter {
      * @param person the person.
      * @return the enpn
      */
-    public static final EnPn convertToEnPn(Person person) {
+    public static final EnPn convertToEnPn(AbstractPerson person) {
         if (person == null) {
             EnPn enpn = new EnPn();
             enpn.setNullFlavor(NullFlavor.NI);

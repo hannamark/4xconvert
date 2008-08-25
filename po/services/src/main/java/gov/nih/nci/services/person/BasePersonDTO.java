@@ -80,21 +80,39 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.organization;
+package gov.nih.nci.services.person;
 
 import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.services.EntityDTO;
+import java.io.Serializable;
+
 
 /**
  * @author Scott Miller
  *
  */
-public class OrganizationDTO extends BaseOrganizationDTO {
+public class BasePersonDTO implements EntityDTO<Person>, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private EnPn name;
     private DSet<Tel> telecomAddress;
+
+    /**
+     * @return the name
+     */
+    public EnPn getName() {
+        return this.name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(EnPn name) {
+        this.name = name;
+    }
 
     /**
      * @return the telecomAddress
@@ -109,14 +127,14 @@ public class OrganizationDTO extends BaseOrganizationDTO {
     public void setTelecomAddress(DSet<Tel> telecomAddress) {
         this.telecomAddress = telecomAddress;
     }
-
+    
     /**
      * @return statusDateRange
-     * @see gov.nih.nci.po.data.bo.Organization#getStatusDate() 
+     * @see gov.nih.nci.po.data.bo.Person#getStatusDate() 
      */
-    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
-    @Override
-    public Ivl<Ts> getStatusDateRange() {
-        return super.getStatusDateRange();
-    }
+//    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
+//    @Override
+//    public Ivl<Ts> getStatusDateRange() {
+//        return super.getStatusDateRange();
+//    }
 }

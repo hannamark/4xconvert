@@ -1,16 +1,16 @@
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.organization.OrganizationDTO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,8 +41,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     
     @Test
     public void findNoneByStatusNotNEW() {
-        Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
-        List<Organization> list = query.list();
+        List<Organization> list = PoHibernateUtil.getCurrentSession().createCriteria(Organization.class).list();
         Organization o = list.iterator().next();
         assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
         assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
@@ -56,9 +55,8 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     }
     
     @Test
-    public void findByStatusNotNEWButHasCRs() {
-        Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
-        List<Organization> list = query.list();
+    public void findByStatusNotNEWButHasCRs() throws EntityValidationException {
+        List<Organization> list = PoHibernateUtil.getCurrentSession().createCriteria(Organization.class).list();
         Organization o = list.iterator().next();
         assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
         assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
@@ -66,8 +64,8 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
         
-        OrganizationCR cr = new OrganizationCR(o);
-        PoHibernateUtil.getCurrentSession().save(cr);
+        OrganizationDTO cr = PoXsnapshotHelper.createSnapshot(o);
+        EjbTestHelper.getOrganizationEntityServiceBean().updateOrganization(cr);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         

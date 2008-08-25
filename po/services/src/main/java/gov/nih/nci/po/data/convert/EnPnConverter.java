@@ -85,7 +85,7 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.List;
@@ -101,7 +101,7 @@ public class EnPnConverter {
      * @param value the source iso person name.
      * @param person the destination person.
      */
-    public static void convertToPersonName(EnPn value, Person person) {
+    public static void convertToPersonName(EnPn value, AbstractPerson person) {
         if (value == null) {
             return;
         }
@@ -134,7 +134,7 @@ public class EnPnConverter {
         }
     }
 
-    private static void processParts(List<Enxp> parts, Person person) {
+    private static void processParts(List<Enxp> parts, AbstractPerson person) {
         // for handling del we need to know the previous part in the list
         Enxp previousPart = null;
         // for handling del we need to know the type of the previous non-del part
@@ -174,7 +174,7 @@ public class EnPnConverter {
         return delimieter;
     }
 
-    private static void processPart(Enxp part, Person person, String delimiter) {
+    private static void processPart(Enxp part, AbstractPerson person, String delimiter) {
         if (EntityNamePartType.FAM == part.getType()) {
             person.setLastName(produceNewValue(person.getLastName(), part.getValue(), delimiter));
         } else if (EntityNamePartType.GIV == part.getType()) {

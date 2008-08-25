@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.organization;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -137,4 +138,19 @@ public interface OrganizationEntityServiceRemote {
      * @return list of matching organizations
      */
     List<OrganizationDTO> search(OrganizationDTO organization);
+    
+    /**
+     * Propose a new entity value to the curator.
+     * @param proposedState the CR containg the proposed stated.
+     * @throws EntityValidationException if the CR proposes an invalid state for the target.
+     */
+    void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException;
+    
+    /**
+     * Propose a new status code to the curator.
+     * @param targetOrg the ID of the Org to update.
+     * @param statusCode the new Status Code.
+     * @throws EntityValidationException if the CR proposes an invalid state for the target.
+     */
+    void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException;
 }

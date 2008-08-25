@@ -80,60 +80,54 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.person;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.Ts;
+package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
- * @author Scott Miller
- *
+ * Change Request (CR) management interface.
+ * @author gax
  */
-public class PersonDTO extends BasePersonDTO {
-    private static final long serialVersionUID = 1L;
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class OrganizationCRServiceBean extends AbstractCRServiceBean<OrganizationCR, Organization>
+        implements OrganizationCRServiceLocal {
+    
+    private OrganizationServiceLocal orgService;
 
-    private EnPn name;
-    private DSet<Tel> telecomAddress;
-
-    /**
-     * @return the name
+    /** 
+     * @param svc injected.
      */
-    public EnPn getName() {
-        return this.name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(EnPn name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the telecomAddress
-     */
-    public DSet<Tel> getTelecomAddress() {
-        return this.telecomAddress;
-    }
-
-    /**
-     * @param telecomAddress the telecomAddress to set
-     */
-    public void setTelecomAddress(DSet<Tel> telecomAddress) {
-        this.telecomAddress = telecomAddress;
+    @EJB
+    void setOrganizationServiceBean(OrganizationServiceLocal svc) {
+        this.orgService = svc;
     }
     
-    /**
-     * @return statusDateRange
-     * @see gov.nih.nci.po.data.bo.Person#getStatusDate() 
+    /** 
+     * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
-    @Override
-    public Ivl<Ts> getStatusDateRange() {
-        return super.getStatusDateRange();
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public OrganizationCR getCR(long id) {
+        return (OrganizationCR) PoHibernateUtil.getCurrentSession().load(OrganizationCR.class, id);
     }
+    
+    /**{@inheritDoc}*/
+    @Override
+    protected Organization getTarget(OrganizationCR cr) {
+        return cr.getTarget();
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    protected void entityUpdate(Organization entity) {
+        orgService.update(entity);
+    }
+    
 }

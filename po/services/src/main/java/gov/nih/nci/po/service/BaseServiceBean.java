@@ -96,6 +96,7 @@ import org.hibernate.criterion.Order;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import java.util.Map;
+import org.hibernate.Session;
 
 /**
  * @author smatyas
@@ -236,5 +237,14 @@ public class BaseServiceBean<T extends PersistentObject> {
         if (errors != null && !errors.isEmpty()) {
             throw new EntityValidationException(errors);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void update(T updatedEntity) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        s.update(updatedEntity);
     }
 }

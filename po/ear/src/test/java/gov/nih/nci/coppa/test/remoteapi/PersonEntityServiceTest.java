@@ -92,6 +92,7 @@ import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -150,7 +151,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertNotSame(personId, dto.getIdentifier());
         assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
         assertEquals("pending", dto.getStatusCode().getCode());
-        Date result = dto.getStatusDateRange().getLow().getValue();
+        Date result = ((Ts)dto.getStatusDateRange().getLow()).getValue();
         assertFalse(preCreate.after(result));
         assertTrue(result.before(new Date()));
 

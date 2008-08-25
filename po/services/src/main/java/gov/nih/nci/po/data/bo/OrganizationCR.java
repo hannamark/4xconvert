@@ -82,20 +82,12 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 /**
@@ -103,9 +95,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @author gax
  */
 @Entity
-public class OrganizationCR implements PersistentObject, Auditable {
+public class OrganizationCR extends AbstractOrganization {
 
-    private Long id;
     private Organization target;
     
     /**
@@ -117,28 +108,13 @@ public class OrganizationCR implements PersistentObject, Auditable {
     
     /**
      * default ctor.
-     * @param target the associated organization
+     * @param target the targeted org.
      */
     public OrganizationCR(Organization target) {
-        super();
-        setTarget(target);
+        this();
+        this.target = target;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
     /**
      * @return the org that should have this proposed state.
      */
@@ -151,9 +127,9 @@ public class OrganizationCR implements PersistentObject, Auditable {
     }
 
     /**
-     * @param target the associated organization
+     * @param target the target org.
      */
-    public final void setTarget(Organization target) {
+    public void setTarget(Organization target) {
         this.target = target;
     }
 }

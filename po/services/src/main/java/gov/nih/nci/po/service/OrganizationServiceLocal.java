@@ -113,4 +113,10 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(Organization entity);
+    
+    /**
+     * @param updatedEntity the entity to save.
+     */
+    void update(Organization updatedEntity);
+
 }

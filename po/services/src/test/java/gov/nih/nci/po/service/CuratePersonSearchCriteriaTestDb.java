@@ -4,13 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.person.PersonDTO;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,8 +41,7 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
     
     @Test
     public void findNoneByStatusNotNEW() {
-        Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person p");
-        List<Person> list = query.list();
+        List<Person> list = PoHibernateUtil.getCurrentSession().createCriteria(Person.class).list();
         Person o = list.iterator().next();
         assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
         assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
@@ -56,9 +55,8 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
     }
     
     @Test
-    public void findByStatusNotNEWButHasCRs() {
-        Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person o");
-        List<Person> list = query.list();
+    public void findByStatusNotNEWButHasCRs() throws EntityValidationException {
+        List<Person> list = PoHibernateUtil.getCurrentSession().createCriteria(Person.class).list();
         Person o = list.iterator().next();
         assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
         assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
@@ -66,10 +64,8 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
         
-        PersonCR cr = new PersonCR(o);
-        PoHibernateUtil.getCurrentSession().save(cr);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
+        PersonDTO cr = PoXsnapshotHelper.createSnapshot(o);
+        EjbTestHelper.getPersonEntityServiceBean().updatePerson(cr);
         
         @SuppressWarnings("unchecked")
         List<Person> results = sc.getQuery("", false).list();

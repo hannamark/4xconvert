@@ -1,5 +1,6 @@
 package gov.nih.nci.po.services.person;
 
+import gov.nih.nci.services.person.PersonDTO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -15,7 +16,6 @@ import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.PoIsoConstraintException;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.HashSet;
 

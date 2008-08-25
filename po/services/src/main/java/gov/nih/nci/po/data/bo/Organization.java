@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The caarray-app
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This caarray-app Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the caarray-app Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the caarray-app Software; (ii) distribute and
- * have distributed to and by third parties the caarray-app Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -83,323 +83,42 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.util.NotEmpty;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class name="entity" class="gov.nih.nci.services.organization.BaseOrganizationDTO"
- *                           implements="gov.nih.nci.services.EntityDTO"
+ * @xsnapshot.snapshot-class name="entity"
+ *      class="gov.nih.nci.services.organization.OrganizationDTO" 
+ *      extends="gov.nih.nci.services.organization.AbstractOrganizationDTO"
+ *      snapshot-extends="gov.nih.nci.services.organization.AbstractOrganizationDTO"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganization"
+ *      
  */
 @Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
-public class Organization implements PersistentObject, Auditable, Curatable<Organization> {
-    private static final long serialVersionUID = 1L;
-    private static final int LONG_COL_LENGTH = 100;
-    private Long id;
-    private String name;
-    private String abbreviatedName;
-    private String description;
-    private Address postalAddress;
-
-    // TODO  PO-421 These may need to be changed to work with TEL:  add jira issue
-    private List<Email> email = new ArrayList<Email>();
-    private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
-    private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
-    private List<URL> url = new ArrayList<URL>(1);
-    private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
-
-    private EntityStatus statusCode;
+public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
+    
     private Date statusDate;
-    private EntityStatus priorEntityStatus;
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
 
     /**
-     * Default constructor.
+     * Create a new, empty org.
      */
     public Organization() {
-        // empty constructor.
-    }
-
-    /**
-     * @return database identity
-     * @xsnapshot.property match="entity"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return name
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
-     */
-    @NotEmpty
-    @Length(max = LONG_COL_LENGTH)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return abbreviated name
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
-     */
-    @Length(max = LONG_COL_LENGTH)
-    public String getAbbreviatedName() {
-        return abbreviatedName;
-    }
-
-    /**
-     * @param abbreviatedName abbreviation name
-     */
-    public void setAbbreviatedName(String abbreviatedName) {
-        this.abbreviatedName = abbreviatedName;
-    }
-
-    /**
-     * @return the description
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
-     */
-    @Length(max = LONG_COL_LENGTH)
-    public String getDescription() {
-        return this.description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * @return mail address
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ad"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter"
-     */
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "postal_address_id")
-    @ForeignKey(name = "ORG_POSTAL_ADDRESS_FK")
-    @Valid
-    public Address getPostalAddress() {
-        return postalAddress;
-    }
-
-    /**
-     * @param postalAddress new mailing address
-     */
-    public void setPostalAddress(Address postalAddress) {
-        this.postalAddress = postalAddress;
-    }
-
-    /**
-     * @return email list
-     */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_email",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "email_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
-    @Valid
-    public List<Email> getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email new email address list
-     */
-    protected void setEmail(List<Email> email) {
-        this.email = email;
-    }
-
-    /**
-     * @return fax list
-     */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_fax",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "fax_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "fax")
-    @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
-    public List<PhoneNumber> getFax() {
-        return fax;
-    }
-
-    /**
-     * @param fax new fax
-     */
-    protected void setFax(List<PhoneNumber> fax) {
-        this.fax = fax;
-    }
-
-    /**
-     * @return phone list
-     */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_phone",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "phone_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "phone")
-    @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
-    public List<PhoneNumber> getPhone() {
-        return phone;
-    }
-
-    /**
-     * @param phone new phone list
-     */
-    protected void setPhone(List<PhoneNumber> phone) {
-        this.phone = phone;
-    }
-
-    /**
-     * @return list of urls
-     */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_url",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "url_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "url")
-    @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
-    public List<URL> getUrl() {
-        return url;
-    }
-
-    /**
-     * @param url new url
-     */
-    protected void setUrl(List<URL> url) {
-        this.url = url;
-    }
-    /**
-     * @return list of urls
-     */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_tty",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "tty_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "tty")
-    @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
-    public List<PhoneNumber> getTty() {
-        return tty;
-    }
-
-    /**
-     * @param tty new text numbers
-     */
-    protected void setTty(List<PhoneNumber> tty) {
-        this.tty = tty;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(name = "STATUS")
-    public EntityStatus getStatusCode() {
-        return this.statusCode;
-    }
-
-    /**
-     * @param status Curation Status
-     */
-    public void setStatusCode(EntityStatus status) {
-        this.statusCode = status;
+        super();
     }
 
     /**
@@ -420,35 +139,6 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
      */
     public void setStatusDate(Date curationStatusDate) {
         this.statusDate = curationStatusDate;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Formula("status")
-    @SuppressWarnings("unused")
-    private String getPriorAsString() {
-        if (this.priorEntityStatus != null) {
-            return this.priorEntityStatus.name();
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unused")
-    private void setPriorAsString(String prior) {
-        if (prior != null) {
-            this.priorEntityStatus = EntityStatus.valueOf(prior);
-        } else {
-            this.priorEntityStatus = null;
-        }
-    }
-
-    /**
-     * @return the prior curation status
-     */
-    @Transient
-    public EntityStatus getPriorEntityStatus() {
-        return priorEntityStatus;
     }
 
     /**
@@ -494,4 +184,5 @@ public class Organization implements PersistentObject, Auditable, Curatable<Orga
     private void setChangeRequests(Set<OrganizationCR> changeRequests) {
         this.changeRequests = changeRequests;
     }
+    
 }

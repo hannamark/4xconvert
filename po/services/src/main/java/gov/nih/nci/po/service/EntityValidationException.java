@@ -83,6 +83,8 @@
 
 package gov.nih.nci.po.service;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -140,4 +142,27 @@ public class EntityValidationException extends Exception {
         } 
         return b.toString();
     }
+
+    /**
+     * messages followed by trace.
+     * @param s stream.
+     */
+    @Override
+    public void printStackTrace(PrintStream s) {
+        s.println(getErrorMessages());
+        super.printStackTrace(s);
+    }
+
+    /**
+     * messages followed by trace.
+     * @param s stream.
+     */
+    
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        s.println(getErrorMessages());
+        super.printStackTrace(s);
+    }
+    
+    
 }

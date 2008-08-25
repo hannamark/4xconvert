@@ -81,68 +81,67 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gov.nih.nci.services.organization;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.convert.ContactListConverter;
-import gov.nih.nci.po.data.convert.TelDSetConverter;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
-import net.sf.xsnapshot.TransformContext;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import java.util.List;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
- *
+ * Base for all entity change request (CR) services.
+ * @param <CR> the PersistentObject type.
+ * @param <ENTITY> the PersistentObject type.
  * @author gax
  */
-public class OrganizationDTOHelper extends BaseOrganizationDTOHelper {
-
+public abstract class AbstractCRServiceBean <CR extends PersistentObject, ENTITY extends PersistentObject>
+        extends BaseServiceBean<CR> {
+    /** 
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void addCR(CR proposedState) throws EntityValidationException {
+        ensureValid(proposedState);
+        PoHibernateUtil.getCurrentSession().save(proposedState);
+    }
+    
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Object createSnapshot(Object model, TransformContext context) {
-        if (model == null) {
-            return null;
-        } else {
-            Class myClass = gov.nih.nci.po.data.bo.Organization.class;
-            if (myClass.isInstance(model)) {
-
-                // check whether its already in the context map
-                Object existingSnapshot = context.getSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME);
-                if (existingSnapshot != null) {
-                    return existingSnapshot;
-                } else {
-                    OrganizationDTO snapshot = new OrganizationDTO();
-                    context.setSnapshotInstance(model, PoXsnapshotHelper.DEFAULT_NAME, snapshot);
-                    copyIntoSnapshot(model, snapshot, context);
-                    return snapshot;
-                }
-
-            } else {
-                throw new IllegalArgumentException("model object is of class " + model.getClass()
-                        + " which is not a subclass of gov.nih.nci.po.data.bo.Organization");
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void processCRs(List<CR> crs) {
+        ENTITY target = null;
+        for (CR ocr : crs) {
+            ENTITY crTarget = getTarget(ocr);
+            if (crTarget == null) {
+                throw new IllegalArgumentException("target cannot be null");
             }
+            if (target == null) {
+                target = crTarget;
+            } else {
+                if (target.equals(crTarget)) {
+                    throw new IllegalArgumentException("all crs mnust have the same target");
+                }
+            }
+            // TODO delete or mark as processed
+            PoHibernateUtil.getCurrentSession().delete(ocr);
+        }
+        if (target != null) {
+            entityUpdate(target);
         }
     }
-
+    
     /**
-     * {@inheritDoc}
+     * do return cr.getTarget().
+     * @param cr the change request.
+     * @return cr's target property.
      */
-    @Override
-    public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
-        super.copyIntoModel(snapshot, model, context);
-        OrganizationDTO s = (OrganizationDTO) snapshot;
-        Organization m = (Organization) model;
-        TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
-    }
-
+    protected abstract ENTITY getTarget(CR cr);
+    
     /**
-     * {@inheritDoc}
+     * @param entity the entity to update.
      */
-    @Override
-    public void copyIntoSnapshot(Object model, Object snapshot, TransformContext context) {
-        super.copyIntoSnapshot(model, snapshot, context);
-        OrganizationDTO s = (OrganizationDTO) snapshot;
-        Organization m = (Organization) model;
-        s.setTelecomAddress(ContactListConverter.convertToDSet(m));
-    }
+    protected abstract void entityUpdate(ENTITY entity);
+   
 }

@@ -81,115 +81,38 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package gov.nih.nci.services.organization;
 
-package gov.nih.nci.po.data.convert;
-
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
-import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
-import gov.nih.nci.po.data.bo.AbstractPerson;
-import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.PhoneNumber;
-import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.services.PoIsoConstraintException;
-
-import java.util.List;
-
+import gov.nih.nci.po.data.convert.ContactListConverter;
+import gov.nih.nci.po.data.convert.TelDSetConverter;
 import net.sf.xsnapshot.TransformContext;
-import net.sf.xsnapshot.Transformer;
-import net.sf.xsnapshot.TransformerArgs;
 
 /**
  *
  * @author gax
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class TelDSetConverter implements Transformer {
+public class ExtendedOrganizationDTOHelper extends AbstractOrganizationDTOHelper {
 
     /**
-     * @param value the source of the info.
-     * @param email where all emails in value will be added.
-     * @param fax where all faxs in value will be added.
-     * @param phone where all phones in value will be added.
-     * @param url where all urls in value will be added.
-     * @param text where all x-text-tel in value will be added.
+     * {@inheritDoc}
      */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList" })
-    public static void convertToContactList(DSet<? extends Tel> value,
-            List<Email> email, List<PhoneNumber> fax, List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
-        if (value == null || value.getItem() == null) { return; }
-        for (Tel t : value.getItem()) {
-            enforcePoIsoConstraints(t);
-
-            if (t.getNullFlavor() != null) {
-                continue;
-            }
-
-            String val = t.getValue().getScheme();
-
-            if (val.equals(TelEmail.SCHEME_MAILTO)) {
-                email.add(new Email(t.getValue().getSchemeSpecificPart()));
-            } else if (val.equals(TelPhone.SCHEME_X_TEXT_FAX)) {
-                fax.add(new PhoneNumber(t.getValue().getSchemeSpecificPart()));
-            } else if (val.startsWith(TelPhone.SCHEME_TEL)) {
-                phone.add(new PhoneNumber(t.getValue().getSchemeSpecificPart()));
-            } else if (TelUrl.SCHEMES.contains(val)) {
-                url.add(new URL(t.getValue().toString()));
-            } else if (val.startsWith(TelPhone.SCHEME_X_TEXT_TEL)) {
-                text.add(new PhoneNumber(t.getValue().getSchemeSpecificPart()));
-            }
-        }
+    @Override
+    public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
+        super.copyIntoModel(snapshot, model, context);
+        AbstractOrganizationDTO s = (AbstractOrganizationDTO) snapshot;
+        AbstractOrganization m = (AbstractOrganization) model;
+        TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
     }
 
     /**
-     * Enforce the po iso constraints for tel.
-     * @param t the tel
+     * {@inheritDoc}
      */
-    private static void enforcePoIsoConstraints(Tel t) {
-        if (t.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
-        if (t.getUse() != null && !t.getUse().isEmpty()) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'use'"
-                    + " field on TEL at this time.");
-        }
-
-        if (t.getUseablePeriod() != null) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
-                    + " field on Tel at this time.");
-        }
-    }
-
-    /**
-     * @param value the source of contact.
-     * @param org the org who's contacts will be populated.
-     */
-    public static void convertToContactList(DSet<? extends Tel> value, AbstractOrganization org) {
-        convertToContactList(value, org.getEmail(), org.getFax(), org.getPhone(), org.getUrl(), org.getTty());
-    }
-
-    /**
-     * @param value the source of contact.
-     * @param per the person who's contacts will be populated.
-     */
-    public static void convertToContactList(DSet<? extends Tel> value, AbstractPerson per) {
-        convertToContactList(value, per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
-    }
-
-/**
-     * no easy way to do this within xsnapshot.
-     * @see gov.nih.nci.po.util.PoXsnapshotHelper
-     * @param arg0 ignored
-     * @param arg1 ignored
-     * @param arg2 ignored
-     * @param arg3 ignored
-     * @return null
-     */
-    public Object transform(Class arg0, Object arg1, TransformerArgs arg2, TransformContext arg3) {
-        return null;
+    @Override
+    public void copyIntoSnapshot(Object model, Object snapshot, TransformContext context) {
+        super.copyIntoSnapshot(model, snapshot, context);
+        AbstractOrganizationDTO s = (AbstractOrganizationDTO) snapshot;
+        AbstractOrganization m = (AbstractOrganization) model;
+        s.setTelecomAddress(ContactListConverter.convertToDSet(m));
     }
 }

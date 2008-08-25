@@ -89,17 +89,15 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.coppa.iso.TelecommunicationAddressUse;
+import gov.nih.nci.po.data.bo.AbstractOrganization;
+import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.HashSet;
-import java.util.Collections;
 import net.sf.xsnapshot.TransformContext;
 import net.sf.xsnapshot.Transformer;
 import net.sf.xsnapshot.TransformerArgs;
@@ -111,18 +109,18 @@ import net.sf.xsnapshot.TransformerArgs;
 public class ContactListConverter implements Transformer {
 
     /**
-     * @param org the {@link Organization} who's contacts we want to collaps into a DSet.
+     * @param org the {@link AbstractOrganization} who's contacts we want to collaps into a DSet.
      * @return all contacts converted to Tel.
      */
-    public static DSet<Tel> convertToDSet(Organization org) {
+    public static DSet<Tel> convertToDSet(AbstractOrganization org) {
         return convertToDSet(org.getEmail(), org.getFax(), org.getPhone(), org.getUrl(), org.getTty());
     }
     
     /**
-     * @param per the {@link Person} who's contacts we want to collaps into a DSet.
+     * @param per the {@link AbstractOrganization} who's contacts we want to collaps into a DSet.
      * @return all contacts converted to Tel.
      */
-    public static DSet<Tel> convertToDSet(Person per) {
+    public static DSet<Tel> convertToDSet(AbstractPerson per) {
         return convertToDSet(per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
     }
     
@@ -142,19 +140,16 @@ public class ContactListConverter implements Transformer {
         for (Email c : email) {
             TelEmail t = new TelEmail();
             t.setValue(createURI(TelEmail.SCHEME_MAILTO, c.getValue()));
-            t.setUse(Collections.singleton(TelecommunicationAddressUse.DIR));
             set.add(t);
         }
         for (PhoneNumber c : fax) {
             TelPhone t = new TelPhone();
             t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c.getValue()));
-            t.setUse(Collections.singleton(TelecommunicationAddressUse.DIR));
             set.add(t);
         }
         for (PhoneNumber c : phone) {
             TelPhone t = new TelPhone();
             t.setValue(createURI(TelPhone.SCHEME_TEL, c.getValue()));
-            t.setUse(Collections.singleton(TelecommunicationAddressUse.DIR));
             set.add(t);
         }
         for (URL c : url) {
@@ -165,7 +160,6 @@ public class ContactListConverter implements Transformer {
         for (PhoneNumber c : text) {
             TelPhone t = new TelPhone();
             t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c.getValue()));
-            t.setUse(Collections.singleton(TelecommunicationAddressUse.DIR));
             set.add(t);
         }
         
