@@ -20,4 +20,5 @@
     </web>
   </module>
   <security-role><role-name>Curator</role-name></security-role>
+  <module><java>lib/iso-datatypes-0.1.jar</java></module>
 </application>

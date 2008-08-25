@@ -9,6 +9,10 @@ import java.util.List;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
+import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.util.PaRegistry;
+
 /**
  * Action class for viewing and editing the protocol status.
  * 
@@ -18,10 +22,6 @@ import com.opensymphony.xwork2.Preparable;
  *        holder, NCI.
  * 
  */
-/**
- * @author hreinhart
- *
- */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class OverallStatusAction extends ActionSupport implements Preparable {
     /* (non-Javadoc)
@@ -30,14 +30,25 @@ public class OverallStatusAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     private List trialStartDate;
     private List primaryCompletionDate;
+    StudyProtocolServiceRemote spService;
+    StudyOverallStatusServiceRemote sosService;
 
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws Exception e
      */
     public void prepare() throws Exception {
-        // TODO Auto-generated method stub
-    
+        spService = PaRegistry.getStudyProtocolService();
+        sosService = PaRegistry.getStudyOverallStatusService();
+        
+        
+        trialStartDate = new ArrayList();
+        trialStartDate.add("Actual");
+        trialStartDate.add("Anticipated");
+
+        primaryCompletionDate = new ArrayList();
+        primaryCompletionDate.add("Actual");
+        primaryCompletionDate.add("Anticipated");
     }
 
     /**
@@ -47,14 +58,6 @@ public class OverallStatusAction extends ActionSupport implements Preparable {
      */
     @Override
     public String execute() throws Exception {
-        trialStartDate = new ArrayList();
-        trialStartDate.add("Actual");
-        trialStartDate.add("Anticipated");
-
-        primaryCompletionDate = new ArrayList();
-        primaryCompletionDate.add("Actual");
-        primaryCompletionDate.add("Anticipated");
-
         return SUCCESS;
     }
 

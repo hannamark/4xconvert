@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -17,6 +18,7 @@ import gov.nih.nci.service.MockDiseaseConditionService;
  */
 public class MockServiceLocator implements ServiceLocator {
     
+
     private final DiseaseCondServiceLocal condServiceLocal = new MockDiseaseConditionService();
 
     /**
@@ -63,4 +65,12 @@ public class MockServiceLocator implements ServiceLocator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+   
+    /** 
+     * return StudyOverallStatusServiceRemote
+     */
+    public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
+        return null;
+    }
+
 }

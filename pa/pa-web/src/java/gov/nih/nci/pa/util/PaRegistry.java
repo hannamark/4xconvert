@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
 import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
 
@@ -95,5 +96,13 @@ public final class PaRegistry {
      */
     public static RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         return getInstance().getServiceLocator().getRegulatoryInformationService();
+    }
+
+    /**
+     * 
+     * @return StudyOverallStatusServiceRemote
+     */
+    public static StudyOverallStatusServiceRemote getStudyOverallStatusService() {
+        return getInstance().getServiceLocator().getStudyOverallStatusService();
     }
 }
