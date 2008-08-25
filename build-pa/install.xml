@@ -488,7 +488,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <unzip src="${pa-ear.dir.dist}/${pa-ear.ear.file}" dest="${temp.dir}/pa-ear"/>
         <unzip src="${temp.dir}/pa-ear/pa-ejb.jar" dest="${temp.dir}/pa-ejb-jar"/>
         <!--<copy todir="${temp.dir}/pa-ejb-jar/" file="${jboss-conf.dir.dest}/pa-ds.xml"/>-->
-        <delete file="${temp.dir}/pa-ejb-jar/pa-ds.xml"/>
+        <!--<delete file="${temp.dir}/pa-ejb-jar/pa-ds.xml"/>-->
         <echo message="Fixing jndi.properties"/>
         <replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.properties" byline="true"
             match="^(java.naming.provider.url)=.*"

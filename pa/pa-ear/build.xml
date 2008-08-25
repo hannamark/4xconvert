@@ -182,6 +182,7 @@
     <!-- ====================================================================== -->
 
     <target name="package" depends="ivy-get,compile" description="Package the application">
+        <!-- package pa.ear -->
         <available file="${pa-ejb.package}" property="pa-ejb.present"/>
         <fail unless="pa-ejb.present" message="EJB jar file not found."/>
         <available file="${pa-web.package}" property="pa-web.present"/>
@@ -192,16 +193,36 @@
         <copy file="${pa-web.package}" 
              todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
-             <fileset dir="${pa-ear.build.resourceDir.0}" includes="**/*" 
-                      excludes="**/application.xml"/>
+            <filterset>
+                <filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>
+            </filterset>
+            <fileset dir="${pa-ear.build.resourceDir.0}" 
+                     includes="**/*" 
+                     excludes="**/application.xml"/>
         </copy>     
-        <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}/lib">
+        <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
         <ear destfile="${pa-ear.build.dir}/${pa-ear.build.finalName}.ear" 
              basedir="${pa-ear.build.dir}/${pa-ear.build.finalName}" 
              compress="false" 
              appxml="${pa-ear.build.dir}/classes/META-INF/application.xml"/>
+
+        <!-- deploy pa-ds.xml -->
+        <copy todir="${jboss.deploy.directory}" overwrite="true">
+            <filterset>
+                <filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>
+            </filterset>
+            <fileset dir="${pa.resourceDir}" includes="pa-ds.xml"/>
+        </copy>     
+
+        <!-- generate login-config application-policies -->
         <copy todir="${pa-ear.build.dir}" overwrite="true">
             <filterset>
                 <filter token="jdbc.driver" value="${jdbc.driver}"/>

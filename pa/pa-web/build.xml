@@ -347,16 +347,9 @@
     <!-- ====================================================================== -->
 
     <target name="war">
-        <mkdir dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
-        <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
-            <fileset dir="${runtime.jar.dir}"/>
-        </copy>
-
         <war destfile="${pa-web.build.dir}/${pa-web.war}" 
              compress="false" 
-             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">
-            
-            <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
+             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">            
             <classes dir="${pa-web.build.outputDir}"/>
             <webinf dir="${pa.dir}/pa-web/src/webapp/WEB-INF" excludes="web.xml"/>
             <fileset dir="${pa.dir}/pa-web/src/webapp"/>

@@ -17,14 +17,13 @@ import javax.ejb.Stateless;
  *        holder, NCI.
  */
 @Stateless
-public class StudyOverallStatusServiceBean implements StudyOverallStatusService {
+public class StudyOverallStatusServiceBean implements
+        StudyOverallStatusServiceRemote {
 
     /**
-     * @param studyProtocolId
-     *            Primary key assigned to a StudyProtocl.
+     * @param studyProtocolId Primary key assigned to a StudyProtocl.
      * @return List.
-     * @throws PAException
-     *             Exception.
+     * @throws PAException Exception.
      */
     public List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocl(
             Ii studyProtocolId) throws PAException {
