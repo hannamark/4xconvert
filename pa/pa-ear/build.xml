@@ -45,9 +45,7 @@
     </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-ear/runtime" />
-    <path id="runtime.classpath">
-        <fileset dir="${runtime.jar.dir}"/>
-    </path>
+    <property name="container.jar.dir" location="${lib.dir}/pa-ear/container" />
 
     <property name="test.jar.dir" location="${lib.dir}/pa-ear/test" />
     <path id="test.classpath">
@@ -220,7 +218,12 @@
                 <filter token="db.password" value="${db.password}"/>
             </filterset>
             <fileset dir="${pa.resourceDir}" includes="pa-ds.xml"/>
-        </copy>     
+        </copy>  
+        
+        <!-- deploy jars to server lib -->
+        <copy todir="${jboss.deploy.directory}/../lib" overwrite="true">
+            <fileset dir="${container.jar.dir}"/>
+        </copy>  
 
         <!-- generate login-config application-policies -->
         <copy todir="${pa-ear.build.dir}" overwrite="true">
@@ -363,8 +366,12 @@
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
+    <target name="ivy-container" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="container" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="container" />
+    </target>
     <target name="ivy-get" 
-            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime" 
+            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime,ivy-container" 
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
