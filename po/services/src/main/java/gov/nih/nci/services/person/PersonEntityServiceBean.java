@@ -193,7 +193,9 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         PersonCR cr = new PersonCR(target);
         proposedState.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
-        cr.setStatusCode(target.getStatusCode()); // make sure status code is not changed
+        if (cr.getStatusCode() != target.getStatusCode()) {
+            throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
+        }
         perCRService.addCR(cr);
     }
 

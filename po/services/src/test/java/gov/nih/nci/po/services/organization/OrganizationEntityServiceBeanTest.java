@@ -1,5 +1,6 @@
 package gov.nih.nci.po.services.organization;
 
+import gov.nih.nci.coppa.iso.Cd;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -188,18 +189,46 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
     
     @Test
-    public void updateOrganization() throws EntityValidationException {
+    public void updateOrganization() throws EntityValidationException, URISyntaxException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
-        assertFalse("newName".equals(ISOUtils.EN.convertToString(dto.getName())));
         assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
         dto.setName(StringConverter.convertToEnOn("newName"));
-        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
+        Adxp adl = Adxp.createAddressPart(AddressPartType.ADL);
+        adl.setValue("additional ADL");
+        dto.getPostalAddress().getPart().add(adl);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
         remote.updateOrganization(dto);
         List<OrganizationCR> l = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
         assertEquals(1, l.size());
         OrganizationCR cr = l.get(0);
         assertEquals("newName", cr.getName());
+        assertEquals("additional ADL", cr.getPostalAddress().getDeliveryAddressLine());
+        assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
         assertEquals(EntityStatus.NEW, cr.getStatusCode());
     }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void updateOrganizationChangeCtatus() throws EntityValidationException {
+        long id = super.createOrganization();
+        OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
+        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
+        remote.updateOrganization(dto);
+    }
+    
+    @Test
+    public void updateOrganizationStatus() throws EntityValidationException {
+        long id = super.createOrganization();
+        Ii ii = ISOUtils.ID_ORG.convertToIi(id);
+        Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED);
+        remote.updateOrganizationStatus(ii, newStatus);
+        List<OrganizationCR> l = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
+        assertEquals(1, l.size());
+        OrganizationCR cr = l.get(0);
+        assertEquals(cr.getStatusCode(), EntityStatus.DEPRECATED);
+    }
+    
 }

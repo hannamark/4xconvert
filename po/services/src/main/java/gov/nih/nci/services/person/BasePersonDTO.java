@@ -127,14 +127,4 @@ public class BasePersonDTO implements EntityDTO<Person>, Serializable {
     public void setTelecomAddress(DSet<Tel> telecomAddress) {
         this.telecomAddress = telecomAddress;
     }
-    
-    /**
-     * @return statusDateRange
-     * @see gov.nih.nci.po.data.bo.Person#getStatusDate() 
-     */
-//    @SuppressWarnings("PMD.UselessOverridingMethod")//Ivl<Ts> is better typing that just Ivl
-//    @Override
-//    public Ivl<Ts> getStatusDateRange() {
-//        return super.getStatusDateRange();
-//    }
 }

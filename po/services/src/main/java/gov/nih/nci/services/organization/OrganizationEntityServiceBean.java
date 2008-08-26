@@ -196,7 +196,10 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         OrganizationCR cr = new OrganizationCR(target);
         proposedState.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
-        cr.setStatusCode(target.getStatusCode()); // make sure status code is not changed
+        if (cr.getStatusCode() != target.getStatusCode()) {
+            throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
+        }
+        cr.setStatusCode(target.getStatusCode()); 
         orgCRService.addCR(cr);
     }
 

@@ -1,5 +1,9 @@
 package gov.nih.nci.po.services.person;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.po.data.bo.PersonCR;
+import java.net.URI;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -13,11 +17,13 @@ import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -27,10 +33,13 @@ import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -232,5 +241,53 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, "foobar", null, null, null));
         result = remote.search(crit);
         assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void updatePerson() throws EntityValidationException, URISyntaxException {
+        long id = super.createPerson();
+        Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+        PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
+        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        //dto.setName(StringConverter.convertToEnOn("newName"));
+        Adxp adl = Adxp.createAddressPart(AddressPartType.ADL);
+        adl.setValue("additional ADL");
+        dto.getPostalAddress().getPart().add(adl);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
+        remote.updatePerson(dto);
+        List<PersonCR> l = PoHibernateUtil.getCurrentSession().createCriteria(PersonCR.class).list();
+        assertEquals(1, l.size());
+        PersonCR cr = l.get(0);
+//        assertEquals("newName", cr.getName());
+        assertEquals(p.getPostalAddress().getDeliveryAddressLine() + " additional ADL", cr.getPostalAddress().getDeliveryAddressLine());
+        assertTrue(CollectionUtils.exists(cr.getEmail(), new Predicate(){
+            public boolean evaluate(Object object) {
+                return ((Email)object).getValue().equals("another.email@example.com");
+            }
+        }));
+        assertEquals(EntityStatus.NEW, cr.getStatusCode());
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void updatePersonChangeCtatus() throws EntityValidationException {
+        long id = super.createPerson();
+        PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
+        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
+        remote.updatePerson(dto);
+    }
+    
+    @Test
+    public void updatePersonStatus() throws EntityValidationException {
+        long id = super.createPerson();
+        Ii ii = ISOUtils.ID_PERSON.convertToIi(id);
+        Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED);
+        remote.updatePersonStatus(ii, newStatus);
+        List<PersonCR> l = PoHibernateUtil.getCurrentSession().createCriteria(PersonCR.class).list();
+        assertEquals(1, l.size());
+        PersonCR cr = l.get(0);
+        assertEquals(cr.getStatusCode(), EntityStatus.DEPRECATED);
     }
 }
