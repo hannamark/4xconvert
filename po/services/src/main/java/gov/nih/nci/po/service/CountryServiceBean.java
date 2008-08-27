@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The caarray-app
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This caarray-app Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the caarray-app Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the caarray-app Software; (ii) distribute and
+ * have distributed to and by third parties the caarray-app Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,37 +80,95 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.State;
+import gov.nih.nci.po.util.PoHibernateUtil;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 /**
- * @author Scott Miller
  *
+ * @author gax
  */
-public interface ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+public class CountryServiceBean implements CountryServiceLocal {
+
+    private static final String FROM = "from ";
+    private static final String COUNTRY_CACHE_REGION = "country.cache.region";
 
     /**
-     * @return local service
+     * {@inheritDoc}
      */
-    GenericServiceLocal getGenericService();
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Country> getCountries() {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Query q = s.createQuery(FROM + Country.class.getName() + " c order by c.name");
+        q.setCacheable(true);
+        q.setCacheRegion(COUNTRY_CACHE_REGION);
+        return Collections.unmodifiableList(q.list());
+    }
 
     /**
-     * @return the org service
+     * {@inheritDoc}
      */
-    OrganizationServiceLocal getOrganizationService();
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void reloadCountries() {
+        SessionFactory sf = PoHibernateUtil.getCurrentSession().getSessionFactory();
+        sf.evictQueries(COUNTRY_CACHE_REGION);
+        sf.evict(Country.class);
+        sf.evict(State.class);
+        sf.evictCollection(Country.class.getName() + ".states");
+    }
 
     /**
-     * @return the person service
+     * {@inheritDoc}
      */
-    PersonServiceLocal getPersonService();
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Country getCountry(long id) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        return (Country) s.get(Country.class, id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Country getCountryByAlpha2(String alpha2) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Query q = s.createQuery(FROM + Country.class.getName() + " c where c.alpha2 = :alpha2");
+        q.setParameter("alpha2", alpha2);
+        q.setCacheable(true);
+        q.setCacheRegion(COUNTRY_CACHE_REGION);
+        return (Country) q.uniqueResult();
+    }
     
-    /**
-     * @return the PO country service
+    /** 
+     * {@inheritDoc} 
      */
-    CountryServiceLocal getCountryService();
-
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Country getCountryByAlpha3(String code) {
+        Criteria c = PoHibernateUtil.getCurrentSession().createCriteria(Country.class);
+        c.add(Restrictions.eq("alpha3", code));
+        Country cnt = (Country) c.uniqueResult();
+        if (cnt == null) {
+            throw new IllegalArgumentException("no country for code " + code);
+        }
+        return cnt;
+    }
 }

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.web.util;
 
+import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.CountryServiceStub;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.GenericServiceStub;
 import gov.nih.nci.po.service.MockOrganizationService;
@@ -98,6 +100,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final OrganizationServiceLocal organizationService = new MockOrganizationService();
     private final PersonServiceLocal personService = new MockPersonService();
     private final GenericServiceLocal genericService = new GenericServiceStub();
+    private final CountryServiceLocal cfgService = new CountryServiceStub();
 
 
     /**
@@ -119,6 +122,13 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public GenericServiceLocal getGenericService() {
         return genericService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CountryServiceLocal getCountryService() {
+        return cfgService;
     }
 
 }

@@ -101,7 +101,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
@@ -122,9 +121,9 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
-public abstract class AbstractOrganization implements PersistentObject {
+public abstract class AbstractOrganization implements PersistentObject, Contactable {
     private static final long serialVersionUID = 1L;
-    private static final int LONG_COL_LENGTH = 100;
+    private static final int DEFAULT_TEXT_COL_LENGTH = 100;
     private Long id;
     private String name;
     private String abbreviatedName;
@@ -168,7 +167,7 @@ public abstract class AbstractOrganization implements PersistentObject {
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
     @NotEmpty
-    @Length(max = LONG_COL_LENGTH)
+    @Length(max = DEFAULT_TEXT_COL_LENGTH)
     public String getName() {
         return name;
     }
@@ -186,7 +185,7 @@ public abstract class AbstractOrganization implements PersistentObject {
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
-    @Length(max = LONG_COL_LENGTH)
+    @Length(max = DEFAULT_TEXT_COL_LENGTH)
     public String getAbbreviatedName() {
         return abbreviatedName;
     }
@@ -204,7 +203,7 @@ public abstract class AbstractOrganization implements PersistentObject {
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
-    @Length(max = LONG_COL_LENGTH)
+    @Length(max = DEFAULT_TEXT_COL_LENGTH)
     public String getDescription() {
         return this.description;
     }

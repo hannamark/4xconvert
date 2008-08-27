@@ -84,33 +84,24 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  *
  */
 public class MockOrganizationService implements OrganizationServiceLocal {
 
-    private static final Queue<SearchPair<Organization>> QUEUE =
-        new LinkedList<SearchPair<Organization>>();
-
-    public static SearchPair<Organization> poll() {
-        return QUEUE.poll();
-    }
-
-    private final HashMap<Long, Organization> orgMap = new HashMap<Long, Organization>();
     private long currentId = 0;
 
     /**
      * {@inheritDoc}
      */
     public Organization getOrganization(long id) {
-        return orgMap.get(id);
+        Organization o = new Organization();
+        o.setId(id);
+        o.setName("name");
+        return o;
     }
 
     /**
@@ -121,7 +112,6 @@ public class MockOrganizationService implements OrganizationServiceLocal {
             currentId++;
             org.setId(currentId);
         }
-        orgMap.put(org.getId(), org);
         return currentId;
     }
 
@@ -129,29 +119,25 @@ public class MockOrganizationService implements OrganizationServiceLocal {
      * {@inheritDoc}
      */
     public void update(Organization org) {
-        orgMap.put(org.getId(), org);
     }
 
     /**
      * {@inheritDoc}
      */
     public int count(SearchCriteria<Organization> criteria) {
-        return orgMap.keySet().size();
+        return 0;
     }
 
     public List<Organization> search(SearchCriteria<Organization> criteria) {
-        return search(criteria, null);
+        return null;
     }
 
     @SuppressWarnings("deprecation")
     public List<Organization> search(SearchCriteria<Organization> criteria, PageSortParams<Organization> pageSortParams) {
-        QUEUE.add(new SearchPair<Organization>(criteria, pageSortParams));
-        ArrayList<Organization> list = new ArrayList<Organization>();
-        return list;
+        return null;
     }
 
     public Map<String, String[]> validate(Organization entity) {
-        // TODO Auto-generated method stub
         return null;
     }
     

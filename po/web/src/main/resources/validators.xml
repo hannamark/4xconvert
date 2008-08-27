@@ -16,4 +16,7 @@
     <validator name="conversion" class="com.opensymphony.xwork2.validator.validators.ConversionErrorFieldValidator" />
     <validator name="stringlength" class="com.opensymphony.xwork2.validator.validators.StringLengthFieldValidator" />
     <validator name="regex" class="com.opensymphony.xwork2.validator.validators.RegexFieldValidator" />
+
+    <!-- Custom validators -->
+    <validator name="hibernate" class="com.fiveamsolutions.nci.commons.web.struts2.validator.HibernateValidator" />    
 </validators>

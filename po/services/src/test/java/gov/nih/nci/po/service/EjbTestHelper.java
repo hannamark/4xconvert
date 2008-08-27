@@ -145,12 +145,15 @@ public class EjbTestHelper {
         return (PersonEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getPersonEntityServiceBean());
     }
 
-
     /**
      * Get a newly created and configured generic service.
      * @return the service
      */
     public static GenericServiceBean getGenericServiceBean() {
         return new GenericServiceBean();
+    }
+    
+    public static CountryServiceBean getConfigurationBean() {
+        return new CountryServiceBean();
     }
 }

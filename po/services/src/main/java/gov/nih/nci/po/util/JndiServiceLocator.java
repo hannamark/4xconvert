@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
@@ -111,6 +112,13 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public PersonServiceLocal getPersonService() {
         return (PersonServiceLocal) JNDIUtil.lookup("po/PersonServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CountryServiceLocal getCountryService() {
+        return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
     }
 
 }

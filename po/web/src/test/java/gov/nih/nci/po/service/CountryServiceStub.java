@@ -80,37 +80,48 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.Country;
+
+import java.util.List;
 
 /**
  * @author Scott Miller
  *
  */
-public interface ServiceLocator {
-
-    /**
-     * @return local service
-     */
-    GenericServiceLocal getGenericService();
-
-    /**
-     * @return the org service
-     */
-    OrganizationServiceLocal getOrganizationService();
-
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
+public class CountryServiceStub implements CountryServiceLocal {
     
     /**
-     * @return the PO country service
+     * {@inheritDoc}
      */
-    CountryServiceLocal getCountryService();
+    public void reloadCountries() {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Country> getCountries() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountry(long id) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountryByAlpha2(String alpha2) {
+        return null;
+    }
+
+    public Country getCountryByAlpha3(String code) {
+        return null;
+    }
 
 }

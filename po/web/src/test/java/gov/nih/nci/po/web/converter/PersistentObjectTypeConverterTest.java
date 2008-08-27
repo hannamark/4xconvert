@@ -80,37 +80,26 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.web.converter;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.service.GenericServiceStub;
+import gov.nih.nci.po.web.AbstractPoTest;
+
+import org.junit.Test;
 
 /**
  * @author Scott Miller
  *
  */
-public interface ServiceLocator {
+public class PersistentObjectTypeConverterTest extends AbstractPoTest {
 
     /**
-     * @return local service
+     * tests the converter.
      */
-    GenericServiceLocal getGenericService();
-
-    /**
-     * @return the org service
-     */
-    OrganizationServiceLocal getOrganizationService();
-
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
-    
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
-
+    @Test
+    public void testConverter() {
+        PersistentObjectTypeConverter converter = new PersistentObjectTypeConverter();
+        assertEquals(GenericServiceStub.class, converter.getGenericDataService().getClass());
+    }
 }

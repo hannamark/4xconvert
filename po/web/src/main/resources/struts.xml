@@ -134,5 +134,10 @@
             <result name="success">/WEB-INF/jsp/curate/{2}.jsp</result>
             <result name="list" type="redirect-action">listAll</result>
         </action>
+        <action name="**organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/curate/organization/{2}.jsp</result>
+            <result name="success">/WEB-INF/jsp/curate/organization/curate.jsp</result>
+        </action>        
     </package>
 </struts>

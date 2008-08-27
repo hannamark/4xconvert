@@ -80,37 +80,24 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.web.converter;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.web.util.PoRegistry;
+
+import com.fiveamsolutions.nci.commons.service.GenericDataService;
+import com.fiveamsolutions.nci.commons.web.struts2.converter.AbstractPersistentObjectTypeConverter;
 
 /**
  * @author Scott Miller
  *
  */
-public interface ServiceLocator {
+public class PersistentObjectTypeConverter extends AbstractPersistentObjectTypeConverter {
 
     /**
-     * @return local service
+     * {@inheritDoc}
      */
-    GenericServiceLocal getGenericService();
-
-    /**
-     * @return the org service
-     */
-    OrganizationServiceLocal getOrganizationService();
-
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
-    
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
-
+    @Override
+    protected GenericDataService getGenericDataService() {
+        return PoRegistry.getGenericService();
+    }
 }

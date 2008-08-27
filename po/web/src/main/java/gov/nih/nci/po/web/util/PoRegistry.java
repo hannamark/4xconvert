@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.web.util;
 
+import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
@@ -137,6 +138,14 @@ public final class PoRegistry {
      */
     public static PersonServiceLocal getPersonService() {
         return getInstance().getServiceLocator().getPersonService();
+    }
+    
+    /**
+     * Gets the country service from the service locator.
+     * @return the service.
+     */
+    public static CountryServiceLocal getCountryService() {
+        return getInstance().getServiceLocator().getCountryService();
     }
 
     /**
