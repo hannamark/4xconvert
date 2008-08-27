@@ -95,16 +95,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -120,7 +116,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *      extends="gov.nih.nci.services.organization.BaseOrganizationDTO"
  */
 @MappedSuperclass
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod", "PMD.UnusedPrivateMethod" })
+@SuppressWarnings({ "PMD.UnusedPrivateMethod" })
 public abstract class AbstractOrganization implements PersistentObject, Contactable {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 100;
@@ -238,48 +234,19 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     }
 
     /**
-     * @return email list
-     */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_email",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "email_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
-    @Valid
-    public List<Email> getEmail() {
-        return email;
-    }
-
-    /**
      * @param email new email address list
      */
     protected void setEmail(List<Email> email) {
         this.email = email;
     }
-
-    /**
-     * @return fax list
+    
+   /**
+     * Get the Organization's email property.
+     * @return email list
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_fax",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "fax_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "fax")
-    @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
-    public List<PhoneNumber> getFax() {
-        return fax;
+    @Transient
+    public List<Email> getEmail() {
+        return email;
     }
 
     /**
@@ -288,25 +255,16 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setFax(List<PhoneNumber> fax) {
         this.fax = fax;
     }
-
+    
     /**
-     * @return phone list
+     * Get the Organization's fax property.
+     * @return fax list
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_phone",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "phone_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "phone")
-    @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
-    public List<PhoneNumber> getPhone() {
-        return phone;
+    @Transient
+    public List<PhoneNumber> getFax() {
+        return fax;
     }
+
 
     /**
      * @param phone new phone list
@@ -314,24 +272,14 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setPhone(List<PhoneNumber> phone) {
         this.phone = phone;
     }
-
+    
     /**
-     * @return list of urls
+     * Get the Organization's phone property.
+     * @return phone list
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_url",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "url_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "url")
-    @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
-    public List<URL> getUrl() {
-        return url;
+    @Transient
+    public List<PhoneNumber> getPhone() {
+        return phone;
     }
 
     /**
@@ -340,23 +288,14 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setUrl(List<URL> url) {
         this.url = url;
     }
+    
     /**
+     * Get the Organization's url property.
      * @return list of urls
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "organization_tty",
-            joinColumns = @JoinColumn(name = "organization_id"),
-            inverseJoinColumns = @JoinColumn(name = "tty_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "tty")
-    @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
-    public List<PhoneNumber> getTty() {
-        return tty;
+    @Transient
+    public List<URL> getUrl() {
+        return url;
     }
 
     /**
@@ -366,6 +305,15 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
         this.tty = tty;
     }
 
+    /**
+     * Get the Organization's tty property.
+     * @return list of tty phone numbers.
+     */
+    @Transient
+    public List<PhoneNumber> getTty() {
+        return tty;
+    }
+   
     /**
      * {@inheritDoc}
      * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"

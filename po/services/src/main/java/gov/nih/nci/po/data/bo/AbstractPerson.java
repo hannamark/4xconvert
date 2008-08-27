@@ -97,18 +97,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -125,7 +120,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public class AbstractPerson implements PersistentObject, Contactable {
+public abstract class AbstractPerson implements PersistentObject, Contactable {
     private static final long serialVersionUID = 1L;
     private static final int SHORT_COL_LENGTH = 10;
     private static final int LONG_COL_LENGTH = 50;
@@ -270,20 +265,10 @@ public class AbstractPerson implements PersistentObject, Contactable {
     }
 
     /**
+     * Get the Person's email property.
      * @return email list
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_email",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "email_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
-    @Valid
+    @Transient
     public List<Email> getEmail() {
         return email;
     }
@@ -296,20 +281,10 @@ public class AbstractPerson implements PersistentObject, Contactable {
     }
 
     /**
+     * Get the Person's fax property.
      * @return fax list
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_fax",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "fax_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "fax")
-    @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
+    @Transient
     public List<PhoneNumber> getFax() {
         return fax;
     }
@@ -322,20 +297,10 @@ public class AbstractPerson implements PersistentObject, Contactable {
     }
 
     /**
+     * Get the Person's phone property.
      * @return phone list
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_phone",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "phone_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "phone")
-    @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
+    @Transient
     public List<PhoneNumber> getPhone() {
         return phone;
     }
@@ -348,20 +313,10 @@ public class AbstractPerson implements PersistentObject, Contactable {
     }
 
     /**
+     * Get the Person's url property.
      * @return list of urls
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_url",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "url_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "url")
-    @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
+    @Transient
     public List<URL> getUrl() {
         return url;
     }
@@ -373,24 +328,14 @@ public class AbstractPerson implements PersistentObject, Contactable {
         this.url = url;
     }
     /**
-     * @return list of urls
+     * Get the Person's tty property.
+     * @return list of tty phone numbers.
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_tty",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "tty_id")
-    )
-    @IndexColumn(name = "idx")
-    @Column(name = "tty")
-    @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
+    @Transient
     public List<PhoneNumber> getTty() {
         return tty;
     }
-
+   
     /**
      * @param tty new text numbers
      */
@@ -446,7 +391,7 @@ public class AbstractPerson implements PersistentObject, Contactable {
     }
     
     /**
-     * {@inheritDoc}
+     * Get race codes.
      * @xsnapshot.property name="raceCode"
      *                     match="entity" type="gov.nih.nci.coppa.iso.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
@@ -454,12 +399,7 @@ public class AbstractPerson implements PersistentObject, Contactable {
      *                     
      *   @return a person's set of race code(s)
      */
-    @CollectionOfElements 
-    @JoinTable(
-            name = "person_racecodes", 
-            joinColumns = { @JoinColumn(name = "person_id") }
-    )
-    @ForeignKey(name = "PER_RACE_PER_FK", inverseName = "PER_RACE_RACE_FK")
+    @Transient
     public Set<RaceCode> getRaces() {
         return this.races;
     }

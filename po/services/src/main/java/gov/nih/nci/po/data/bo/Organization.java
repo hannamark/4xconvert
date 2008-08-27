@@ -85,17 +85,23 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 /**
  * Organizations.
@@ -108,6 +114,7 @@ import org.hibernate.annotations.Index;
  *      
  */
 @Entity
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
     
     private Date statusDate;
@@ -119,6 +126,106 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
      */
     public Organization() {
         super();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_email",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
+    @Valid
+    @Override
+    public List<Email> getEmail() {
+        return super.getEmail();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_fax",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "fax")
+    @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
+    @Override
+    public List<PhoneNumber> getFax() {
+        return super.getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_phone",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "phone")
+    @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
+    @Override
+    public List<PhoneNumber> getPhone() {
+        return super.getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_url",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "url")
+    @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
+    @Override
+    public List<URL> getUrl() {
+        return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_tty",
+            joinColumns = @JoinColumn(name = "organization_id"),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "tty")
+    @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
+    @Override
+    public List<PhoneNumber> getTty() {
+        return super.getTty();
     }
 
     /**

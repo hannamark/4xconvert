@@ -82,12 +82,19 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 
 /**
@@ -95,6 +102,7 @@ import org.hibernate.annotations.Index;
  * @author gax
  */
 @Entity
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class OrganizationCR extends AbstractOrganization {
 
     private Organization target;
@@ -116,12 +124,112 @@ public class OrganizationCR extends AbstractOrganization {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "org_cr_email",
+            joinColumns = @JoinColumn(name = "org_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "ORGCR_EMAIL_FK", inverseName = "EMAIL_ORGCR_FK")
+    @Valid
+    @Override
+    public List<Email> getEmail() {
+        return super.getEmail();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "org_cr_fax",
+            joinColumns = @JoinColumn(name = "org_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "fax")
+    @ForeignKey(name = "ORGCR_FAX_FK", inverseName = "FAX_ORGCR_FK")
+    @Override
+    public List<PhoneNumber> getFax() {
+        return super.getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "org_cr_phone",
+            joinColumns = @JoinColumn(name = "org_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "phone")
+    @ForeignKey(name = "ORGCR_PHONE_FK", inverseName = "PHONE_ORGCR_FK")
+    @Override
+    public List<PhoneNumber> getPhone() {
+        return super.getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "org_cr_url",
+            joinColumns = @JoinColumn(name = "org_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "url")
+    @ForeignKey(name = "ORGCR_URL_FK", inverseName = "URL_ORGCR_FK")
+    @Override
+    public List<URL> getUrl() {
+        return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "org_cr_tty",
+            joinColumns = @JoinColumn(name = "org_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "tty")
+    @ForeignKey(name = "ORGCR_TTY_FK", inverseName = "TTY_ORGCR_FK")
+    @Override
+    public List<PhoneNumber> getTty() {
+        return super.getTty();
+    }
+    
+    /**
      * @return the org that should have this proposed state.
      */
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JoinColumn(name = "target", nullable = false)
     @Index(name = "org_target_idx")
-    @ForeignKey(name = "ORG_TARGET_PERSON_FK")
+    @ForeignKey(name = "ORGCR_TARGET_ORG_FK")
     public Organization getTarget() {
         return this.target;
     }

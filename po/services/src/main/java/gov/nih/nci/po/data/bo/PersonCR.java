@@ -82,12 +82,21 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 
 /**
@@ -95,6 +104,7 @@ import org.hibernate.annotations.Index;
  * @author gax
  */
 @Entity
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class PersonCR extends AbstractPerson {
 
     private Person target;
@@ -116,12 +126,126 @@ public class PersonCR extends AbstractPerson {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "per_cr_email",
+            joinColumns = @JoinColumn(name = "per_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "PERCR_EMAIL_FK", inverseName = "EMAIL_PERCR_FK")
+    @Valid
+    @Override
+    public List<Email> getEmail() {
+        return super.getEmail();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "per_cr_fax",
+            joinColumns = @JoinColumn(name = "per_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "fax")
+    @ForeignKey(name = "PERCR_FAX_FK", inverseName = "FAX_PERCR_FK")
+    @Override
+    public List<PhoneNumber> getFax() {
+        return super.getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "per_cr_phone",
+            joinColumns = @JoinColumn(name = "per_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "phone")
+    @ForeignKey(name = "PERCR_PHONE_FK", inverseName = "PHONE_PERCR_FK")
+    @Override
+    public List<PhoneNumber> getPhone() {
+        return super.getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "per_cr_url",
+            joinColumns = @JoinColumn(name = "per_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "url")
+    @ForeignKey(name = "PERCR_URL_FK", inverseName = "URL_PERCR_FK")
+    @Override
+    public List<URL> getUrl() {
+        return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "per_cr_tty",
+            joinColumns = @JoinColumn(name = "per_cr_id"),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "tty")
+    @ForeignKey(name = "PERCR_TTY_FK", inverseName = "TTY_PERCR_FK")
+    @Override
+    public List<PhoneNumber> getTty() {
+        return super.getTty();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @CollectionOfElements 
+    @JoinTable(
+            name = "per_cr_racecodes", 
+            joinColumns = { @JoinColumn(name = "per_cr_id") }
+    )
+    @ForeignKey(name = "PERCR_RACE_PER_FK", inverseName = "PERCR_RACE_RACE_FK")
+    @Override
+    public Set<RaceCode> getRaces() {
+        return super.getRaces();
+    }
+    
+    /**
      * @return the person that should have this proposed state
      */
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JoinColumn(name = "target", nullable = false)
-    @Index(name = "person_target_idx")
-    @ForeignKey(name = "PERSON_TARGET_PERSON_FK")
+    @Index(name = "per_cr_target_idx")
+    @ForeignKey(name = "PERCR_TARGET_PER_FK")
     public Person getTarget() {
         return this.target;
     }

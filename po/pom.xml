@@ -302,13 +302,6 @@
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
                         <totalBranchRate>61</totalBranchRate>
                         <totalLineRate>77</totalLineRate>
-                        <regexes>
-                            <regex>
-                                <pattern>gov.nih.nci.po.dto.*</pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                        </regexes>
                     </check>
                     <formats>
                         <format>html</format>

@@ -85,16 +85,23 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 /**
  * Persons.
@@ -106,6 +113,7 @@ import org.hibernate.annotations.Index;
  *      snapshot-extends="gov.nih.nci.services.person.AbstractPersonDTO"
  */
 @Entity
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
     private Date statusDate;
     private Person duplicateOf;
@@ -116,6 +124,120 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
      */
     public Person() {
         super();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_email",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
+    @Valid
+    @Override
+    public List<Email> getEmail() {
+        return super.getEmail();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_fax",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "fax_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "fax")
+    @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
+    @Override
+    public List<PhoneNumber> getFax() {
+        return super.getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_phone",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "phone")
+    @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
+    @Override
+    public List<PhoneNumber> getPhone() {
+        return super.getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_url",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "url_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "url")
+    @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
+    @Override
+    public List<URL> getUrl() {
+        return super.getUrl();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_tty",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "tty_id")
+    )
+    @IndexColumn(name = "idx")
+    @Column(name = "tty")
+    @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
+    @Override
+    public List<PhoneNumber> getTty() {
+        return super.getTty();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @CollectionOfElements 
+    @JoinTable(
+            name = "person_racecodes", 
+            joinColumns = { @JoinColumn(name = "person_id") }
+    )
+    @ForeignKey(name = "PER_RACE_PER_FK", inverseName = "PER_RACE_RACE_FK")
+    @Override
+    public Set<RaceCode> getRaces() {
+        return super.getRaces();
     }
     
     /**

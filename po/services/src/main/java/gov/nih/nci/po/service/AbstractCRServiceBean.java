@@ -119,12 +119,11 @@ public abstract class AbstractCRServiceBean <CR extends PersistentObject, ENTITY
             }
             if (target == null) {
                 target = crTarget;
-            } else {
-                if (target.equals(crTarget)) {
-                    throw new IllegalArgumentException("all crs mnust have the same target");
-                }
+            } else if (!target.equals(crTarget)) {
+                    throw new IllegalArgumentException("all crs must have the same target");
             }
             // TODO delete or mark as processed
+            // see https://jira.5amsolutions.com/browse/PO-492
             PoHibernateUtil.getCurrentSession().delete(ocr);
         }
         if (target != null) {
