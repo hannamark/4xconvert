@@ -17,7 +17,7 @@
 <!--Help Content-->
     <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a>
   <div id="box">
-    <s:form action="overallStatus"><s:actionerror/>
+    <s:form action="studyOverallStatus"><s:actionerror/>
         <table width="480">
             <tr>
                 <td colspan="2">                        

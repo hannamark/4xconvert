@@ -9,7 +9,7 @@
         <li class="liheader">Administrative Data </li>
         <li><a href="nciSpecificInformation.action" >NCI Specific Information</a></li>
         <li><a href="regulatoryInfo.action" >Regulatory Information</a></li>      
-        <li><a href="overallStatus.action" >Trial Status</a></li>
+        <li><a href="studyOverallStatus.action" >Trial Status</a></li>
     </c:if>
         
 </ul>

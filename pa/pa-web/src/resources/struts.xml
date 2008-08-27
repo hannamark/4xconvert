@@ -56,14 +56,14 @@
             <interceptor-ref name="nci-commonsParams" />                         
             <result>/jsp/pajsp/studyProtocolView.jsp</result>
         </action>  
-        <action name="overallStatus" class="gov.nih.nci.pa.action.OverallStatusAction">
-            <result>/jsp/pajsp/trialStatus.jsp</result>
+        <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
+            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
         </action> 
-        <action name="updateOverallStatus">
+        <action name="studyOverallStatusUpdate">
             <result>/error.jsp</result>
         </action> 
-        <action name="overallStatusHistory" >
-            <result>/jsp/pajsp/trialStatusHistory.jsp</result>
+        <action name="studyOverallStatusHistory" >
+            <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>
         </action>	
 		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">
 			<interceptor-ref name="nci-commonsParams" />				         

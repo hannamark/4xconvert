@@ -45,7 +45,7 @@
                 list="#currentTrialStatusValues"
                 value="trialStatusData.currentTrialStatus" /></td>
             <td><s:submit value="Status History"
-                action='overallStatusHistory' cssClass="button" /></td>
+                action='studyOverallStatusHistory' cssClass="button" /></td>
         </tr>
         <tr>
             <td align="right"><label for="currentTrialStatusDate"> <fmt:message
@@ -81,7 +81,7 @@
                 list="primaryCompletionDate" /></td>
         </tr>
         <td colspan="2">
-          <s:submit value="Save"  action='updateOverallStatus' cssClass="button" />
+          <s:submit value="Save"  action='studyOverallStatusUpdate' cssClass="button" />
           <s:submit value="Next" action='nciSpecificInformation' cssClass="button" />
         </td>
     </table>

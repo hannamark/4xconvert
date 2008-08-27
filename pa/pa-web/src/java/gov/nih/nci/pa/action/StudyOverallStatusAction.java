@@ -23,7 +23,7 @@ import gov.nih.nci.pa.util.PaRegistry;
  * 
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-public class OverallStatusAction extends ActionSupport implements Preparable {
+public class StudyOverallStatusAction extends ActionSupport implements Preparable {
     /* (non-Javadoc)
      * @see com.opensymphony.xwork2.Preparable#prepare()
      */
