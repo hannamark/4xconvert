@@ -3,15 +3,21 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.data.convert.IiConverter;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
-
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.util.PaRegistry;
 
 /**
  * Action class for viewing and editing the protocol status.
@@ -23,8 +29,11 @@ import gov.nih.nci.pa.util.PaRegistry;
  * 
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-public class StudyOverallStatusAction extends ActionSupport implements Preparable {
-    /* (non-Javadoc)
+public class StudyOverallStatusAction extends ActionSupport implements
+        Preparable {
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.opensymphony.xwork2.Preparable#prepare()
      */
     private static final long serialVersionUID = 1L;
@@ -32,6 +41,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private List primaryCompletionDate;
     StudyProtocolServiceRemote spService;
     StudyOverallStatusServiceRemote sosService;
+    Long spIdLong;
+    Ii spIdIi;
 
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -40,8 +51,13 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     public void prepare() throws Exception {
         spService = PaRegistry.getStudyProtocolService();
         sosService = PaRegistry.getStudyOverallStatusService();
-        
-        
+
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+                .getRequest().getSession()
+                .getAttribute(Constants.TRIAL_SUMMARY);
+        spIdLong = spDTO.getStudyProtocolId();
+        spIdIi = IiConverter.convertToIi(spIdLong);
+
         trialStartDate = new ArrayList();
         trialStartDate.add("Actual");
         trialStartDate.add("Anticipated");

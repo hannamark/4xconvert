@@ -19,8 +19,8 @@ import org.apache.log4j.Logger;
 /**
  * Modified for PA.
  * @author Hugh Reinhart
- * @since 05/22/2007
- * copyright NCI 2007.  All rights reserved.
+ * @since 05/22/2008
+ * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public final class JNDIUtil {
@@ -48,7 +48,8 @@ public final class JNDIUtil {
      */
     public static Properties getProperties() throws IOException {
         Properties props = new Properties();
-        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(
+                RESOURCE_NAME));
         return props;
     }
 
@@ -69,9 +70,12 @@ public final class JNDIUtil {
         try {
             return ctx.lookup(name);
         } catch (NamingException ex) {
-            LOG.error("------------------Here is what's in the context--(looking for " + name + ")----------");
+            LOG
+                    .error("------------------Here is what's in the context--(looking for "
+                            + name + ")----------");
             dump(ctx, 0);
-            LOG.error("-----------------------------------------------------------");
+            LOG
+                    .error("-----------------------------------------------------------");
             throw new IllegalStateException(ex);
         }
     }

@@ -210,6 +210,7 @@
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
+                <path refid="compile.classpath"/>  
                 <path refid="jboss.classpath"/>  
             </classpath>
         </javac>
