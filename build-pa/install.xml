@@ -337,9 +337,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         -->
 
         <!-- deploy jars to server lib -->
+        <!-- 
         <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
             <fileset dir="${container.jar.dir}"/>
         </copy>  
+        -->
     </target>
 
     <target name="install:jboss:pa-ear:configure" description="Configure pa-ear application" unless="exclude.jboss">
