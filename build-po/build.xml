@@ -266,7 +266,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<filter token="db.po.generate.create" value="true"/>
 			</filterset>
 		</copy>
-			
+        <copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+               <filterset>
+                       <filter token="jboss.home" value="${local.jboss.home}"/>
+                       <filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+                       <filter token="db.po.generate.drop" value="false"/>
+                       <filter token="db.po.generate.create" value="true"/>
+               </filterset>
+        </copy>			
 		<maven
 			maven.profile.list="-P ${po.maven.profile.list}"
 			maven.goal.list="${po.maven.goal.list}"
