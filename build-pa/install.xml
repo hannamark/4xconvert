@@ -29,7 +29,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Install Time properties -->
     <!-- Source and target directories -->
     <property name="bda-utils.dir" value="bda-utils" />
-    <property name="container.jar.dir" value="${basedir}/../../lib/pa-ear/container" />
+    <property name="pa-container-jar.dist.dir" value="${basedir}/${pa-container-jar.dist.relative.dir}" />
     <property name="tools.dir" value="${basedir}/${tools.dist.relative.dir}" />
     <property name="common.dir.src" value="${basedir}/${common.dist.relative.dir}" />
     <property name="common.dir.dest" value="${working.dir}/${common.dist.relative.dir}" />
@@ -337,11 +337,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         -->
 
         <!-- deploy jars to server lib -->
-        <!-- 
         <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
-            <fileset dir="${container.jar.dir}"/>
+            <fileset dir="${pa-container-jar.dist.dir}"/>
         </copy>  
-        -->
     </target>
 
     <target name="install:jboss:pa-ear:configure" description="Configure pa-ear application" unless="exclude.jboss">
