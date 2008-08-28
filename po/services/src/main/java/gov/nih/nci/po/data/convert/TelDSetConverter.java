@@ -89,8 +89,7 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.po.data.bo.AbstractOrganization;
-import gov.nih.nci.po.data.bo.AbstractPerson;
+import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -98,16 +97,13 @@ import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.List;
 
-import net.sf.xsnapshot.TransformContext;
-import net.sf.xsnapshot.Transformer;
-import net.sf.xsnapshot.TransformerArgs;
 
 /**
  *
  * @author gax
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class TelDSetConverter implements Transformer {
+public class TelDSetConverter {
 
     /**
      * @param value the source of the info.
@@ -166,30 +162,9 @@ public class TelDSetConverter implements Transformer {
 
     /**
      * @param value the source of contact.
-     * @param org the org who's contacts will be populated.
+     * @param e the entity who's contacts will be populated.
      */
-    public static void convertToContactList(DSet<? extends Tel> value, AbstractOrganization org) {
-        convertToContactList(value, org.getEmail(), org.getFax(), org.getPhone(), org.getUrl(), org.getTty());
-    }
-
-    /**
-     * @param value the source of contact.
-     * @param per the person who's contacts will be populated.
-     */
-    public static void convertToContactList(DSet<? extends Tel> value, AbstractPerson per) {
-        convertToContactList(value, per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
-    }
-
-/**
-     * no easy way to do this within xsnapshot.
-     * @see gov.nih.nci.po.util.PoXsnapshotHelper
-     * @param arg0 ignored
-     * @param arg1 ignored
-     * @param arg2 ignored
-     * @param arg3 ignored
-     * @return null
-     */
-    public Object transform(Class arg0, Object arg1, TransformerArgs arg2, TransformContext arg3) {
-        return null;
+    public static void convertToContactList(DSet<? extends Tel> value, Contactable e) {
+        convertToContactList(value, e.getEmail(), e.getFax(), e.getPhone(), e.getUrl(), e.getTty());
     }
 }

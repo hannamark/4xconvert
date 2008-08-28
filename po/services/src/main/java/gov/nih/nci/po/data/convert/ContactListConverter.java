@@ -89,39 +89,28 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.po.data.bo.AbstractOrganization;
-import gov.nih.nci.po.data.bo.AbstractPerson;
+import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.HashSet;
-import net.sf.xsnapshot.TransformContext;
-import net.sf.xsnapshot.Transformer;
-import net.sf.xsnapshot.TransformerArgs;
+import java.util.Set;
+import org.apache.commons.collections.set.ListOrderedSet;
 
 /**
  *
  * @author gax
  */
-public class ContactListConverter implements Transformer {
+public class ContactListConverter {
 
     /**
-     * @param org the {@link AbstractOrganization} who's contacts we want to collaps into a DSet.
+     * @param entity the entity who's contacts we want to collaps into a DSet.
      * @return all contacts converted to Tel.
      */
-    public static DSet<Tel> convertToDSet(AbstractOrganization org) {
-        return convertToDSet(org.getEmail(), org.getFax(), org.getPhone(), org.getUrl(), org.getTty());
-    }
-    
-    /**
-     * @param per the {@link AbstractOrganization} who's contacts we want to collaps into a DSet.
-     * @return all contacts converted to Tel.
-     */
-    public static DSet<Tel> convertToDSet(AbstractPerson per) {
-        return convertToDSet(per.getEmail(), per.getFax(), per.getPhone(), per.getUrl(), per.getTty());
+    public static DSet<Tel> convertToDSet(Contactable entity) {
+        return convertToDSet(entity.getEmail(), entity.getFax(), entity.getPhone(), entity.getUrl(), entity.getTty());
     }
     
     /**
@@ -135,7 +124,7 @@ public class ContactListConverter implements Transformer {
     public static DSet<Tel> convertToDSet(List<Email> email, List<PhoneNumber> fax,
             List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
         DSet<Tel> dset = new DSet<Tel>();
-        HashSet<Tel> set = new HashSet<Tel>();
+        Set<Tel> set = new ListOrderedSet();
         dset.setItem(set);
         for (Email c : email) {
             TelEmail t = new TelEmail();
@@ -173,18 +162,4 @@ public class ContactListConverter implements Transformer {
             throw new IllegalArgumentException(ex);
         }
     }
-
-    /**
-     * no easy way to do this within xsnapshot.
-     * @see gov.nih.nci.po.util.PoXsnapshotHelper
-     * @param arg0 ignored
-     * @param arg1 ignored
-     * @param arg2 ignored
-     * @param arg3 ignored
-     * @return null
-     */
-    public Object transform(Class arg0, Object arg1, TransformerArgs arg2, TransformContext arg3) {
-        return null;
-    }
-
 }

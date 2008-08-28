@@ -1,6 +1,9 @@
 package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.po.data.bo.Contact;
+import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.NullFlavor;
@@ -17,10 +20,13 @@ import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -137,5 +143,54 @@ public class TelDSetConverterTest {
         set.add(t);
 
         TelDSetConverter.convertToContactList(value, email, fax, phone, url, text);
+    }
+    
+    @Test
+    public void sameOrder() {
+        Comparator<Tel> tcomp = new Comparator<Tel>(){
+                public int compare(Tel o1, Tel o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            };
+        
+        DSet<Tel> value = new DSet<Tel>();
+        Set<Tel> set = new TreeSet<Tel>(tcomp);
+        value.setItem(set);
+        for (int i = 0; i<10; i++) {
+            Tel t = new TelEmail();
+            t.setValue(URI.create("mailto:foo"+i));
+            set.add(t);
+
+            t = new TelPhone();
+            t.setValue(URI.create("x-text-fax:foo"+i));
+            set.add(t);
+
+            t = new TelPhone();
+            t.setValue(URI.create("tel:foo"+i));
+            set.add(t);
+
+            t = new TelUrl();
+            t.setValue(URI.create("file:foo"+i));
+            set.add(t);
+
+            t = new TelPhone();
+            t.setValue(URI.create("x-text-tel:foo"+i));
+            set.add(t);
+        }
+        
+        List<List<? extends Contact>> all = (List<List<? extends Contact>>) Arrays.asList((List<? extends Contact>)email, fax, phone, url, text);
+        Comparator<Contact> ccomp = new Comparator<Contact>(){
+                public int compare(Contact o1, Contact o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            };
+       
+        TelDSetConverter.convertToContactList(value, email, fax, phone, url, text);
+        
+        for(List<? extends Contact> l : all){
+            ArrayList<Contact> tmp = new ArrayList<Contact>(l);
+            Collections.sort(tmp, ccomp);
+            assertEquals(l, tmp);
+        }
     }
 }
