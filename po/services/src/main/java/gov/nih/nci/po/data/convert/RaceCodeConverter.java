@@ -141,7 +141,7 @@ public class RaceCodeConverter {
         if (raceCode == null) {            
             iso.setNullFlavor(NullFlavor.NI);
         } else {
-            String code = (String) STATUS_MAP.getKey(races);
+            String code = (String) STATUS_MAP.getKey(raceCode);
             if (code == null) {
                 throw new UnsupportedOperationException(races + " not yet handled");
             }
