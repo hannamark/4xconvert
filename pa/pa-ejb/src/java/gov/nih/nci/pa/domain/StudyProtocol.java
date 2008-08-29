@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.ControlConcurrencyTypeCode;
@@ -9,7 +10,6 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.ReportingDataSetMethodCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import java.sql.Timestamp;
@@ -57,7 +57,7 @@ public class StudyProtocol extends Document {
     private PrimaryPurposeCode primaryPurposeCode;
     private String biospecimenDescription;
     private BiospecimenRetentionCode biospecimenRetentionCode;
-    private ReportingDataSetMethodCode reportingDataSetMethodCode;
+    private AccrualReportingMethodCode accrualReportingMethodCode;
     private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
 
     /** Number of study groups/cohorts. Enter 1 for a single-group study. Many observational
@@ -329,24 +329,28 @@ public class StudyProtocol extends Document {
         this.biospecimenRetentionCode = biospecimenRetentionCode;
     }
 
+
     /**
-     *
-     * @return ReportingDataSetMethodCode reportingDataSetMethodCode
+     * 
+     * @return accrualReportingMethodCode
      */
     @Column(name = "REPORTING_DATASET_METHOD_CODE")
     @Enumerated(EnumType.STRING)
-
-    public ReportingDataSetMethodCode getReportingDataSetMethodCode() {
-        return reportingDataSetMethodCode;
+    public AccrualReportingMethodCode getAccrualReportingMethodCode() {
+        return accrualReportingMethodCode;
     }
     /**
-     *
-     * @param reportingDataSetMethodCode reportingDataSetMethodCode
+     * 
+     * @param accrualReportingMethodCode accrualReportingMethodCode
      */
-    public void setReportingDataSetMethodCode(
-            ReportingDataSetMethodCode reportingDataSetMethodCode) {
-        this.reportingDataSetMethodCode = reportingDataSetMethodCode;
+    public void setAccrualReportingMethodCode(
+            AccrualReportingMethodCode accrualReportingMethodCode) {
+        this.accrualReportingMethodCode = accrualReportingMethodCode;
     }
+
+    
+
+    
     /**
      *
      * @return SummaryFourFundingCategoryCode summaryFourFundingCategoryCode
