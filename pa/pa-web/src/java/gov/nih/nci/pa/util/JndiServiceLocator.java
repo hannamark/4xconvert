@@ -6,7 +6,7 @@ import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.NCISpecificInformationServiceRemote;
+
 
 /**
  *
@@ -28,12 +28,6 @@ public class JndiServiceLocator implements ServiceLocator {
         return (PAOrganizationServiceRemote) JNDIUtil.lookup("pa/PAOrganizationServiceBean/remote");
     }
 
-    /**
-     * @return NCI Specific Information Service
-     */
-     public NCISpecificInformationServiceRemote getNCISpecificInformationService() {
-       return (NCISpecificInformationServiceRemote) JNDIUtil.lookup("pa/NCISpecificInformationServiceBean/remote");
-    }
 
     /**
      * @return DiseaseConditionService
