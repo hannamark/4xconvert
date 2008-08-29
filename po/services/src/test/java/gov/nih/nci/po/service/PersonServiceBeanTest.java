@@ -96,26 +96,23 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class PersonServiceBeanTest extends AbstractBeanTest {
 
-    private static final Logger LOG = Logger.getLogger(PersonServiceBeanTest.class);
-
     private PersonServiceBean personServiceBean;
 
     public PersonServiceBean getPersonServiceBean() {
         return personServiceBean;
     }
-    
+
     @Before
     public void setUpData() {
         personServiceBean = EjbTestHelper.getPersonServiceBean();
     }
-    
+
     @After
     public void teardown() {
         personServiceBean = null;
@@ -126,23 +123,23 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         person.setStatusCode(null);
         person.setFirstName("fName");
         person.setLastName("lName");
-        
+
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         a.setDeliveryAddressLine("deliveryAddressLine");
         person.setPostalAddress(a);
-        
+
         person.getEmail().add(new Email("abc@example.com"));
         person.getEmail().add(new Email("def@example.com"));
-        
+
         person.getPhone().add(new PhoneNumber("111-111-1111"));
         person.getPhone().add(new PhoneNumber("123-123-1234"));
 
         person.getFax().add(new PhoneNumber("222-222-2222"));
         person.getFax().add(new PhoneNumber("234-234-2345"));
-        
+
         person.getTty().add(new PhoneNumber("333-333-3333"));
         person.getTty().add(new PhoneNumber("345-345-3456"));
-        
+
         person.getUrl().add(new URL("http://www.example.com/abc"));
         person.getUrl().add(new URL("http://www.example.com/def"));
         return person;
@@ -199,12 +196,12 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         assertEquals(expected.getStatusCode(), found.getStatusCode());
         assertEquals(expected.getFirstName(), found.getFirstName());
         assertEquals(expected.getLastName(), found.getLastName());
-        
+
         assertEquals(expected.getEmail().size(), found.getEmail().size());
         assertEquals(expected.getPhone().size(), found.getPhone().size());
         assertEquals(expected.getFax().size(), found.getFax().size());
         assertEquals(expected.getTty().size(), found.getTty().size());
         assertEquals(expected.getUrl().size(), found.getUrl().size());
     }
-    
+
 }

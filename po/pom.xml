@@ -195,13 +195,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <instrumentation>
-                        <excludes>
-                            <exclude>**/dto/**</exclude>
-                        </excludes>
-                    </instrumentation>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.fiveamsolutions</groupId>
@@ -300,8 +293,8 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>61</totalBranchRate>
-                        <totalLineRate>77</totalLineRate>
+                        <totalBranchRate>78</totalBranchRate>
+                        <totalLineRate>84</totalLineRate>
                     </check>
                     <formats>
                         <format>html</format>

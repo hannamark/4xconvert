@@ -1,15 +1,13 @@
 package gov.nih.nci.po.services.organization;
 
-import gov.nih.nci.coppa.iso.Cd;
-import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
@@ -25,9 +23,9 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
-import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -39,6 +37,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -62,7 +61,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
 
     /**
      * test get org behavior.
-     * @throws EntityValidationException 
+     * @throws EntityValidationException
      */
     @Test
     @SuppressWarnings("unchecked")
@@ -187,7 +186,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         }
         return null;
     }
-    
+
     @Test
     public void updateOrganization() throws EntityValidationException, URISyntaxException {
         long id = super.createOrganization();
@@ -201,6 +200,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         email.setValue(new URI("mailto:another.email@example.com"));
         dto.getTelecomAddress().getItem().add(email);
         remote.updateOrganization(dto);
+        @SuppressWarnings("unchecked")
         List<OrganizationCR> l = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
         assertEquals(1, l.size());
         OrganizationCR cr = l.get(0);
@@ -209,7 +209,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
         assertEquals(EntityStatus.NEW, cr.getStatusCode());
     }
-    
+
     @Test(expected=IllegalArgumentException.class)
     public void updateOrganizationChangeCtatus() throws EntityValidationException {
         long id = super.createOrganization();
@@ -218,17 +218,18 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
         remote.updateOrganization(dto);
     }
-    
+
     @Test
     public void updateOrganizationStatus() throws EntityValidationException {
         long id = super.createOrganization();
         Ii ii = ISOUtils.ID_ORG.convertToIi(id);
         Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED);
         remote.updateOrganizationStatus(ii, newStatus);
+        @SuppressWarnings("unchecked")
         List<OrganizationCR> l = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
         assertEquals(1, l.size());
         OrganizationCR cr = l.get(0);
         assertEquals(cr.getStatusCode(), EntityStatus.DEPRECATED);
     }
-    
+
 }

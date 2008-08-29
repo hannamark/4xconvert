@@ -94,9 +94,8 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class CurateActionTest extends AbstractPoTest {
 
-    
-    
-    @SuppressWarnings("deprecation")
+
+
     @Test
     public void testIt() throws Exception {
         CurateAction ca = new CurateAction();

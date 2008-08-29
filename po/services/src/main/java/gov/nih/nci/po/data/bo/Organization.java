@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -97,6 +98,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -106,17 +108,18 @@ import org.hibernate.validator.Valid;
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class name="entity"
- *      class="gov.nih.nci.services.organization.OrganizationDTO" 
+ * @xsnapshot.snapshot-class name="iso" tostring="none"
+ *      class="gov.nih.nci.services.organization.OrganizationDTO"
  *      extends="gov.nih.nci.services.organization.AbstractOrganizationDTO"
  *      snapshot-extends="gov.nih.nci.services.organization.AbstractOrganizationDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganization"
- *      
+ *
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
-    
+
+    private static final long serialVersionUID = 1L;
     private Date statusDate;
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
@@ -127,7 +130,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     public Organization() {
         super();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -230,7 +233,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
 
     /**
      * @return the curationStatusDate
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ivl"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ivl"
      *                     name="statusDateRange"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
@@ -276,7 +279,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     public Organization getDuplicateOf() {
         return this.duplicateOf;
     }
-    
+
     /**
      * @return associated CRs
      */
@@ -285,11 +288,11 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
         return changeRequests;
     }
 
-    
+
 
     @SuppressWarnings("unused")
     private void setChangeRequests(Set<OrganizationCR> changeRequests) {
         this.changeRequests = changeRequests;
     }
-    
+
 }

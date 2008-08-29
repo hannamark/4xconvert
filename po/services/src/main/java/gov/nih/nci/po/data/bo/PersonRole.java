@@ -82,170 +82,299 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
-
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-/**
- * Persons.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none"
- *      class="gov.nih.nci.services.person.PersonDTO"
- *      extends="gov.nih.nci.services.person.AbstractPersonDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractPerson"
- *      snapshot-extends="gov.nih.nci.services.person.AbstractPersonDTO"
- */
-@Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
-    private static final long serialVersionUID = 1L;
-    private Date statusDate;
-    private Person duplicateOf;
-    private Set<PersonCR> changeRequests = new HashSet<PersonCR>();
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
-     /**
-     * Create a new, empty person.
+/**
+ * Base class for all person to org roles.
+ * @author Scott Miller
+ * @xsnapshot.snapshot-class name="iso" tostring="none"
+ *      class="gov.nih.nci.services.correlation.PersonRoleDTO"
+ *      extends="gov.nih.nci.services.correlation.BasePersonRoleDTO"
+ */
+@MappedSuperclass
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+public class PersonRole implements PersistentObject, Contactable {
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+
+    private Person person;
+    private Organization organization;
+
+    private Set<Address> postalAddresses;
+    private List<Email> email = new ArrayList<Email>();
+    private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
+    private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
+    private List<URL> url = new ArrayList<URL>(1);
+    private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
+    private RoleStatus status;
+    private Date statusDate;
+
+    /**
+     * @return the id
+     * @xsnapshot.property match="iso"
+     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public Person() {
-        super();
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return this.id;
     }
 
     /**
-     * {@inheritDoc}
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the person
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="personIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "person_id")
+    @ForeignKey(name = "personrole_per_fkey")
+    public Person getPerson() {
+        return this.person;
+    }
+
+    /**
+     * @param person the person to set
+     */
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    /**
+     * @return the organization
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="organizationIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "organization_id")
+    @ForeignKey(name = "personrole_org_fkey")
+    public Organization getOrganization() {
+        return this.organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the postalAddresses
+     * todo add xsnapshot tags
      */
     @OneToMany
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
                       org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(
-            name = "person_email",
-            joinColumns = @JoinColumn(name = "person_id"),
+            name = "person_role_address",
+            joinColumns = @JoinColumn(name = "person_role_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    @IndexColumn(name = "idx")
+    @ForeignKey(name = "PER_ROLE_ADDRESS_FK", inverseName = "ADDRESS_PER_ROLE_FK")
+    @Valid
+    public Set<Address> getPostalAddresses() {
+        return this.postalAddresses;
+    }
+
+    /**
+     * @param postalAddresses the postalAddresses to set
+     */
+    public void setPostalAddresses(Set<Address> postalAddresses) {
+        this.postalAddresses = postalAddresses;
+    }
+
+    /**
+     * @return the email
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_role_email",
+            joinColumns = @JoinColumn(name = "person_role_id"),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
     @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
+    @ForeignKey(name = "PER_ROLE_EMAIL_FK", inverseName = "EMAIL_PER_ROLE_FK")
     @Valid
-    @Override
     public List<Email> getEmail() {
-        return super.getEmail();
+        return this.email;
     }
 
     /**
-     * {@inheritDoc}
+     * @param email the email to set
+     */
+    public void setEmail(List<Email> email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the fax
      */
     @OneToMany
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(
-            name = "person_fax",
-            joinColumns = @JoinColumn(name = "person_id"),
+            name = "person_role_fax",
+            joinColumns = @JoinColumn(name = "person_role_id"),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
     @IndexColumn(name = "idx")
-    @Column(name = "fax")
-    @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
-    @Override
+    @ForeignKey(name = "PER_ROLE_FAX_FK", inverseName = "FAX_PER_ROLE_FK")
+    @Valid
     public List<PhoneNumber> getFax() {
-        return super.getFax();
+        return this.fax;
     }
 
     /**
-     * {@inheritDoc}
+     * @param fax the fax to set
+     */
+    public void setFax(List<PhoneNumber> fax) {
+        this.fax = fax;
+    }
+
+    /**
+     * @return the phone
      */
     @OneToMany
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(
-            name = "person_phone",
-            joinColumns = @JoinColumn(name = "person_id"),
+            name = "person_role_phone",
+            joinColumns = @JoinColumn(name = "person_role_id"),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
     @IndexColumn(name = "idx")
-    @Column(name = "phone")
-    @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
-    @Override
+    @ForeignKey(name = "PER_ROLE_PHONE_FK", inverseName = "PHONE_PER_ROLE_FK")
+    @Valid
     public List<PhoneNumber> getPhone() {
-        return super.getPhone();
+        return this.phone;
     }
 
     /**
-     * {@inheritDoc}
+     * @param phone the phone to set
+     */
+    public void setPhone(List<PhoneNumber> phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * @return the url
      */
     @OneToMany
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(
-            name = "person_url",
-            joinColumns = @JoinColumn(name = "person_id"),
+            name = "person_role_url",
+            joinColumns = @JoinColumn(name = "person_role_id"),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
     @IndexColumn(name = "idx")
-    @Column(name = "url")
-    @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
-    @Override
+    @ForeignKey(name = "PER_ROLE_URL_FK", inverseName = "URL_PER_ROLE_FK")
+    @Valid
     public List<URL> getUrl() {
-        return super.getUrl();
+        return this.url;
     }
 
     /**
-     * {@inheritDoc}
+     * @param url the url to set
+     */
+    public void setUrl(List<URL> url) {
+        this.url = url;
+    }
+
+    /**
+     * @return the tty
      */
     @OneToMany
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(
-            name = "person_tty",
-            joinColumns = @JoinColumn(name = "person_id"),
+            name = "person_role_tty",
+            joinColumns = @JoinColumn(name = "person_role_id"),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
     @IndexColumn(name = "idx")
-    @Column(name = "tty")
-    @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
-    @Override
+    @ForeignKey(name = "PER_ROLE_TTY_FK", inverseName = "TTY_PER_ROLE_FK")
+    @Valid
     public List<PhoneNumber> getTty() {
-        return super.getTty();
+        return this.tty;
     }
 
     /**
-     * {@inheritDoc}
+     * @param tty the tty to set
      */
-    @CollectionOfElements
-    @JoinTable(
-            name = "person_racecodes",
-            joinColumns = { @JoinColumn(name = "person_id") }
-    )
-    @ForeignKey(name = "PER_RACE_PER_FK", inverseName = "PER_RACE_RACE_FK")
-    @Override
-    public Set<RaceCode> getRaces() {
-        return super.getRaces();
+    public void setTty(List<PhoneNumber> tty) {
+        this.tty = tty;
     }
 
     /**
-     * @return the curationStatusDate
+     * @return the status
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
+     */
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public RoleStatus getStatus() {
+        return this.status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(RoleStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the statusDate
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ivl"
      *                     name="statusDateRange"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
@@ -257,52 +386,9 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     }
 
     /**
-     * @param curationStatusDate the curationStatusDate to set
+     * @param statusDate the statusDate to set
      */
-    public void setStatusDate(Date curationStatusDate) {
-        this.statusDate = curationStatusDate;
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
-    public void setDuplicateOfPerson(Person per) {
-        if (this.getStatusCode().equals(EntityStatus.REJECTED)
-                || this.getStatusCode().equals(EntityStatus.DEPRECATED)) {
-            this.duplicateOf = per;
-        }
-    }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(Person per) {
-        this.duplicateOf = per;
-    }
-
-    /**
-     * @return person
-     */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "person_duplicateof_idx")
-    @ForeignKey(name = "PERSON_DUPLICATE_PERSON_FK")
-    public Person getDuplicateOf() {
-        return this.duplicateOf;
-    }
-
-    /**
-     * @return associated CRs
-     */
-    @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
-    public Set<PersonCR> getChangeRequests() {
-        return changeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setChangeRequests(Set<PersonCR> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
 }

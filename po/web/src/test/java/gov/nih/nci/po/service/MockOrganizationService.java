@@ -132,7 +132,6 @@ public class MockOrganizationService implements OrganizationServiceLocal {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     public List<Organization> search(SearchCriteria<Organization> criteria, PageSortParams<Organization> pageSortParams) {
         return null;
     }
@@ -140,5 +139,5 @@ public class MockOrganizationService implements OrganizationServiceLocal {
     public Map<String, String[]> validate(Organization entity) {
         return null;
     }
-    
+
 }

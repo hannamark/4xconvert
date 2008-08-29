@@ -24,17 +24,7 @@ public class EntityStatusTest {
         assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
     }
 
-    // STM:  Add test to actually test valid transistion statuses
-
-   /**
-     * Test Curation status
-     */
-    @Test
-    public void testCurationStatus() {
-        EntityStatus cs = EntityStatus.CURATED;
-        cs.isSubmittable();
-
-    }
+    // todo stm  Add test to actually test valid transistion statuses
 
     /**
      * Test Curation Exceptions

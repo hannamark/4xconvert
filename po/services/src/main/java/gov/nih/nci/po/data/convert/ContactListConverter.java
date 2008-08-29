@@ -93,10 +93,12 @@ import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.collections.set.ListOrderedSet;
 
 /**
@@ -112,7 +114,7 @@ public class ContactListConverter {
     public static DSet<Tel> convertToDSet(Contactable entity) {
         return convertToDSet(entity.getEmail(), entity.getFax(), entity.getPhone(), entity.getUrl(), entity.getTty());
     }
-    
+
     /**
      * @param email email
      * @param fax fax
@@ -124,6 +126,7 @@ public class ContactListConverter {
     public static DSet<Tel> convertToDSet(List<Email> email, List<PhoneNumber> fax,
             List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
         DSet<Tel> dset = new DSet<Tel>();
+        @SuppressWarnings("unchecked")
         Set<Tel> set = new ListOrderedSet();
         dset.setItem(set);
         for (Email c : email) {
@@ -151,10 +154,10 @@ public class ContactListConverter {
             t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c.getValue()));
             set.add(t);
         }
-        
+
         return dset;
     }
-    
+
     private static URI createURI(String scheme, String schemeSpecificPart) {
         try {
             return new URI(scheme, schemeSpecificPart, null);

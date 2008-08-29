@@ -101,7 +101,7 @@ public class EjbTestHelper {
         OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
         return organizationServiceBean;
     }
-    
+
     public static OrganizationCRServiceBean getOrganizationCRServiceBean() {
         OrganizationCRServiceBean crService = new OrganizationCRServiceBean();
         crService.setOrganizationServiceBean(getOrganizationServiceBean());
@@ -127,7 +127,7 @@ public class EjbTestHelper {
         PersonServiceBean personServiceBean = new PersonServiceBean();
         return personServiceBean;
     }
-    
+
     public static PersonCRServiceBean getPersonCRServiceBean() {
         PersonCRServiceBean personCRServiceBean = new PersonCRServiceBean();
         personCRServiceBean.setPersonServiceBean(getPersonServiceBean());
@@ -152,8 +152,8 @@ public class EjbTestHelper {
     public static GenericServiceBean getGenericServiceBean() {
         return new GenericServiceBean();
     }
-    
-    public static CountryServiceBean getConfigurationBean() {
+
+    public static CountryServiceBean getCountryServiceBean() {
         return new CountryServiceBean();
     }
 }

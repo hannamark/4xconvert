@@ -85,13 +85,37 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.util.JndiServiceLocator;
+import gov.nih.nci.po.util.ServiceLocator;
 import gov.nih.nci.services.PoIsoConstraintException;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
  * @author gax
  */
 public class IiConverter extends AbstractXSnapshotConverter<Ii> {
+
+    private static ServiceLocator locator = new JndiServiceLocator();
+
+    /**
+     * Get the service locator.
+     * @return the service locator.
+     */
+    public static ServiceLocator getServiceLocator() {
+        return locator;
+    }
+
+    /**
+     * Change the store service locator.
+     * @param newLocator the new service locator.
+     */
+    public static void setServiceLocator(ServiceLocator newLocator) {
+        locator = newLocator;
+    }
 
     /**
      * {@inheritDoc}
@@ -101,6 +125,10 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
     public <TO> TO convert(Class<TO> returnClass, Ii value) {
         if (returnClass == Long.class) {
             return (TO) convertToLong(value);
+        } else if (returnClass == Person.class) {
+            return (TO) convertToPerson(value);
+        } else if (returnClass == Organization.class) {
+            return (TO) convertToOrg(value);
         }
 
         throw new UnsupportedOperationException(returnClass.getName());
@@ -114,10 +142,8 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (value == null || value.getNullFlavor() != null) {
             return null;
         }
-        
-        if (value.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
+
+        enforcePoIsoConstraints(value);
 
         // todo https://jira.5amsolutions.com/browse/PO-411
         String root = value.getRoot();
@@ -128,4 +154,57 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         return Long.valueOf(value.getExtension());
     }
 
+    private static void enforcePoIsoConstraints(Ii value) {
+        if (value.getFlavorId() != null) {
+            throw new PoIsoConstraintException("PO expects a null flavorId");
+        }
+
+        if (StringUtils.isEmpty(value.getExtension())) {
+            throw new PoIsoConstraintException("ii.extension is required if a null flavor is not provided.");
+        }
+    }
+
+    /**
+     * Convert the ii to a person by loading from the db.
+     * @param value the ii
+     * @return the person
+     */
+    public static Person convertToPerson(Ii value) {
+        if (value == null || value.getNullFlavor() != null) {
+            return null;
+        }
+
+        enforcePoIsoConstraints(value);
+
+        Long id = Long.valueOf(value.getExtension());
+        if (!IdConverter.PERSON_ROOT.equals(value.getRoot())) {
+            throw new PoIsoConstraintException("The ii.root value is not allowed.");
+        }
+        if (!IdConverter.PERSON_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
+            throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
+        }
+        return getServiceLocator().getPersonService().getPerson(id);
+    }
+
+    /**
+     * Cinver the ii to an org by loading from the db.
+     * @param value the ii
+     * @return the Org.
+     */
+    public static Organization convertToOrg(Ii value) {
+        if (value == null || value.getNullFlavor() != null) {
+            return null;
+        }
+
+        enforcePoIsoConstraints(value);
+
+        Long id = Long.valueOf(value.getExtension());
+        if (!IdConverter.ORG_ROOT.equals(value.getRoot())) {
+            throw new PoIsoConstraintException("The ii.root value is not allowed.");
+        }
+        if (!IdConverter.ORG_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
+            throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
+        }
+        return getServiceLocator().getOrganizationService().getOrganization(id);
+    }
 }

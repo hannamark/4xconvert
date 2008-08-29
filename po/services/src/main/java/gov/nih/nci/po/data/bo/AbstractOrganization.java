@@ -111,7 +111,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class name="entity"
+ * @xsnapshot.snapshot-class name="iso"
  *      class="gov.nih.nci.services.organization.AbstractOrganizationDTO"
  *      extends="gov.nih.nci.services.organization.BaseOrganizationDTO"
  */
@@ -126,7 +126,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     private String description;
     private Address postalAddress;
 
-    // TODO  PO-421 These may need to be changed to work with TEL:  add jira issue
     private List<Email> email = new ArrayList<Email>();
     private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
@@ -138,7 +137,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return database identity
-     * @xsnapshot.property match="entity"
+     * @xsnapshot.property match="iso"
      *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
@@ -158,7 +157,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return name
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
@@ -177,7 +176,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return abbreviated name
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.EnOn"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
@@ -195,7 +194,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return the description
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.St"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
@@ -213,7 +212,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return mail address
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ad"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ad"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter"
      */
@@ -239,7 +238,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setEmail(List<Email> email) {
         this.email = email;
     }
-    
+
    /**
      * Get the Organization's email property.
      * @return email list
@@ -255,7 +254,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setFax(List<PhoneNumber> fax) {
         this.fax = fax;
     }
-    
+
     /**
      * Get the Organization's fax property.
      * @return fax list
@@ -272,7 +271,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setPhone(List<PhoneNumber> phone) {
         this.phone = phone;
     }
-    
+
     /**
      * Get the Organization's phone property.
      * @return phone list
@@ -288,7 +287,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     protected void setUrl(List<URL> url) {
         this.url = url;
     }
-    
+
     /**
      * Get the Organization's url property.
      * @return list of urls
@@ -313,10 +312,10 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     public List<PhoneNumber> getTty() {
         return tty;
     }
-   
+
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
      */

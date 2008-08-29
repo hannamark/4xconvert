@@ -13,15 +13,14 @@ import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 
 /**
  * Helper class for invoking search methods on GenericSearchService based services.
- * 
+ *
  * @author smatyas
- * 
+ *
  */
 public final class GenericSearchServiceUtil {
     /**
      * Logger to log results for debugging purposes only.
      */
-    @SuppressWarnings("hiding")
     private static final Logger LOG = Logger.getLogger(GenericSearchServiceUtil.class);
 
     private GenericSearchServiceUtil() {
@@ -29,7 +28,7 @@ public final class GenericSearchServiceUtil {
     }
 
     /**
-     * @param <T> a 
+     * @param <T> a
      * @param <SC> b
      * @param s c
      * @param c d

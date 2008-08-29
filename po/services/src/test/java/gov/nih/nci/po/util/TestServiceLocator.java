@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The caarray-app
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This caarray-app Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the caarray-app Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the caarray-app Software; (ii) distribute and
- * have distributed to and by third parties the caarray-app Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,99 +80,47 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.util;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonServiceLocal;
 
 /**
- * For curation, the various statuses a Curatable element can be in.  This enum captures the notion
- * of allowed transitions via the canTransitionTo and getAllowedTransitions methods.  Each status
- * can 'transition' to itself, <em>and</em> as follows (Current state: list of allowed states):
+ * @author Scott Miller
  *
- * <ul>
- * <li>NEW: CURATED, REJECTED
- * <li>REJECTED: CURATED
- * <li>CURATED: DEPRECATED
- * <li>DEPRECATED: CURATED
- * <li>
- * </ul>
  */
-public enum EntityStatus  {
-    /**
-     * A new element that has not yet be curated.
-     */
-    NEW,
+public class TestServiceLocator implements ServiceLocator {
 
     /**
-     * A curated element, found to be good data.
+     * {@inheritDoc}
      */
-    CURATED,
-
-    /**
-     * A curated element, rejected for some reason.
-     */
-    REJECTED,
-
-    /**
-     * Indicates a curated element that has been deprecated.
-     */
-    DEPRECATED;
-
-    private static final Map<EntityStatus, Set<EntityStatus>> TRANSITIONS;
-
-    static {
-        Map<EntityStatus, Set<EntityStatus>> tmp = new HashMap<EntityStatus, Set<EntityStatus>>();
-        Set<EntityStatus> tmpSet = new HashSet<EntityStatus>();
-
-        tmpSet.add(NEW);
-        tmpSet.add(CURATED);
-        tmpSet.add(REJECTED);
-        tmp.put(NEW, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-        tmpSet.add(REJECTED);
-        tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-        tmpSet.add(DEPRECATED);
-        tmp.put(CURATED, Collections.unmodifiableSet(tmpSet));
-        tmp.put(DEPRECATED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-
-        TRANSITIONS = Collections.unmodifiableMap(tmp);
+    public GenericServiceLocal getGenericService() {
+        return EjbTestHelper.getGenericServiceBean();
     }
 
     /**
-     * default constructor.
+     * {@inheritDoc}
      */
-    EntityStatus() {
-        // do nothing
+    public OrganizationServiceLocal getOrganizationService() {
+        return EjbTestHelper.getOrganizationServiceBean();
     }
 
     /**
-     * Helper method that indicates whether a transition to the new entity status
-     * is allowed.
-     *
-     * @param newStatus transition to status
-     * @return whether the transition is allowed
+     * {@inheritDoc}
      */
-    public boolean canTransitionTo(EntityStatus newStatus) {
-        return TRANSITIONS.get(this).contains(newStatus);
+    public PersonServiceLocal getPersonService() {
+        return EjbTestHelper.getPersonServiceBean();
     }
 
     /**
-     * @return the permitted curation statuses from this entity state.  set cannot be modified.
+     * {@inheritDoc}
      */
-    public Set<EntityStatus> getAllowedTransitions() {
-        return TRANSITIONS.get(this);
+    public CountryServiceLocal getCountryService() {
+        return EjbTestHelper.getCountryServiceBean();
     }
+
+
 }

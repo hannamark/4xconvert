@@ -48,6 +48,7 @@ public class RaceCodeConverter {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("unchecked")
         public <TO> TO convert(Class<TO> returnClass, DSet<Cd> value) {
             if (returnClass == Set.class) {
                 return (TO) convertToRaceCodeSet(value);
@@ -64,6 +65,7 @@ public class RaceCodeConverter {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("unchecked")
         public <TO> TO convert(Class<TO> returnClass, Set<RaceCode> value) {
             if (returnClass == DSet.class) {
                 return (TO) convertToDsetOfCd(value);
@@ -124,8 +126,8 @@ public class RaceCodeConverter {
      * @return best guess of <code>DSet&lt;Cd&gt;</code>'s ISO equivalent.
      */
     public static DSet<Cd> convertToDsetOfCd(Set<RaceCode> races) {
-        if (races == null || races.isEmpty()) { 
-            return null; 
+        if (races == null || races.isEmpty()) {
+            return null;
         }
         DSet<Cd> cds = new DSet<Cd>();
         cds.setItem(new HashSet<Cd>());
@@ -138,7 +140,7 @@ public class RaceCodeConverter {
 
     private static Cd convertToCd(Set<RaceCode> races, RaceCode raceCode) {
         Cd iso = new Cd();
-        if (raceCode == null) {            
+        if (raceCode == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
             String code = (String) STATUS_MAP.getKey(raceCode);

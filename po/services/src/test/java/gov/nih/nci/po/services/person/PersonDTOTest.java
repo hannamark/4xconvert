@@ -82,7 +82,7 @@ public class PersonDTOTest {
         assertEquals(null, p.getPrefix());
         assertEquals(null, p.getSuffix());
     }
-    
+
     @Test
     public void convertEnPnOneGivenNameMeansFirstName() {
         dto.setName(PersonNameConverterUtil.convertToEnPn("b", "c", null, null, null));
@@ -139,7 +139,7 @@ public class PersonDTOTest {
         assertEquals(RaceCode.WH, p.getRaces().iterator().next());
         assertEquals(1, p.getRaces().size());
     }
-    
+
     @Test
     public void covertRaceCode2() {
         DSet<Cd> raceCode = new DSet<Cd>();
@@ -152,12 +152,12 @@ public class PersonDTOTest {
         raceCode.getItem().add(race2);
         dto.setRaceCode(raceCode);
         Person p = PoXsnapshotHelper.createModel(dto);
-        
+
         assertEquals(2, p.getRaces().size());
         assertTrue(p.getRaces().contains(RaceCode.WH));
         assertTrue(p.getRaces().contains(RaceCode.WH));
     }
-    
+
     @Test
     public void covertRaceCode3() {
         DSet<Cd> raceCode = new DSet<Cd>();
@@ -177,7 +177,7 @@ public class PersonDTOTest {
         assertTrue(p.getRaces().contains(RaceCode.WH));
         assertTrue(p.getRaces().contains(RaceCode.B_AA));
     }
-    
+
     @Test
     public void covertRaceCode4() {
         DSet<Cd> raceCode = new DSet<Cd>();
@@ -189,38 +189,40 @@ public class PersonDTOTest {
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals(0, p.getRaces().size());
     }
-    
+
     @Test
+    @SuppressWarnings("unchecked")
     public void covertRaceCodeCdCodeEmpty() {
         dto.setRaceCode(new DSet<Cd>());
         dto.getRaceCode().setItem(new HashSet<Cd>());
         Cd race = new Cd();
         race.setCode("");
         dto.getRaceCode().getItem().add(race);
-        Person p;
         try {
-            p = PoXsnapshotHelper.createModel(dto);
+            PoXsnapshotHelper.createModel(dto);
             fail();
         } catch (PoIsoConstraintException e) {
             assertEquals("code must be set", e.getMessage());
         }
     }
     @Test
+    @SuppressWarnings("unchecked")
     public void covertRaceCodeCdCodeNull() {
         dto.setRaceCode(new DSet<Cd>());
         dto.getRaceCode().setItem(new HashSet<Cd>());
         Cd race = new Cd();
         race.setCode(null);
         dto.getRaceCode().getItem().add(race);
-        Person p;
         try {
-            p = PoXsnapshotHelper.createModel(dto);
+            PoXsnapshotHelper.createModel(dto);
             fail();
         } catch (PoIsoConstraintException e) {
             assertEquals("code must be set", e.getMessage());
         }
     }
+
     @Test
+    @SuppressWarnings("unchecked")
     public void covertRaceCodeCdHasNullFlavor() {
         dto.setRaceCode(new DSet<Cd>());
         dto.getRaceCode().setItem(new HashSet<Cd>());
@@ -231,17 +233,17 @@ public class PersonDTOTest {
         p = PoXsnapshotHelper.createModel(dto);
         assertTrue(p.getRaces().isEmpty());
     }
-    
+
     @Test
+    @SuppressWarnings("unchecked")
     public void covertRaceCodeUnsupportedCode() {
         dto.setRaceCode(new DSet<Cd>());
         dto.getRaceCode().setItem(new HashSet<Cd>());
         Cd race = new Cd();
         race.setCode("Z");
         dto.getRaceCode().getItem().add(race);
-        Person p;
         try {
-            p = PoXsnapshotHelper.createModel(dto);
+            PoXsnapshotHelper.createModel(dto);
             fail();
         } catch (PoIsoConstraintException e) {
             assertEquals("unsupported code " + race.getCode(), e.getMessage());
@@ -256,7 +258,7 @@ public class PersonDTOTest {
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals(SexCode.F, p.getSex());
     }
-    
+
     @Test
     public void covertSexCode2() {
         Cd sex = new Cd();
@@ -265,7 +267,7 @@ public class PersonDTOTest {
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals(SexCode.M, p.getSex());
     }
-    
+
     @Test
     public void covertSexCode3() {
         Cd sex = new Cd();
@@ -274,7 +276,7 @@ public class PersonDTOTest {
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals(SexCode.U, p.getSex());
     }
-    
+
     @Test
     public void covertSexCode4() {
         Cd sex = new Cd();
@@ -283,15 +285,14 @@ public class PersonDTOTest {
         Person p = PoXsnapshotHelper.createModel(dto);
         assertEquals(SexCode.UN, p.getSex());
     }
-    
+
     @Test
     public void covertSexCodeCdCodeEmpty() {
         Cd sex = new Cd();
         sex.setCode("");
         dto.setSexCode(sex);
-        Person p;
         try {
-            p = PoXsnapshotHelper.createModel(dto);
+            PoXsnapshotHelper.createModel(dto);
             fail();
         } catch (PoIsoConstraintException e) {
             assertEquals("code must be set", e.getMessage());
@@ -302,9 +303,8 @@ public class PersonDTOTest {
         Cd sex = new Cd();
         sex.setCode(null);
         dto.setSexCode(sex);
-        Person p;
         try {
-            p = PoXsnapshotHelper.createModel(dto);
+            PoXsnapshotHelper.createModel(dto);
             fail();
         } catch (PoIsoConstraintException e) {
             assertEquals("code must be set", e.getMessage());
@@ -319,15 +319,14 @@ public class PersonDTOTest {
         p = PoXsnapshotHelper.createModel(dto);
         assertNull(p.getSex());
     }
-    
+
     @Test
     public void covertSexCodeUnsupportedCode() {
         Cd sex = new Cd();
         sex.setCode("Z");
         dto.setSexCode(sex);
-        Person p;
         try {
-            p = PoXsnapshotHelper.createModel(dto);
+            PoXsnapshotHelper.createModel(dto);
             fail();
         } catch (PoIsoConstraintException e) {
             assertEquals("unsupported code " + sex.getCode(), e.getMessage());

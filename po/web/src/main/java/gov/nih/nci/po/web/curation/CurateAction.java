@@ -104,11 +104,10 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class CurateAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
-    @SuppressWarnings("hiding")
     private static final Logger LOG = Logger.getLogger(CurateAction.class);
 
     private final PaginatedList<Person> persons = new PaginatedList<Person>(0, new ArrayList<Person>(),
-            PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(), 
+            PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(),
             SortOrderEnum.ASCENDING);
     private final PaginatedList<Organization> orgs = new PaginatedList<Organization>(0, new ArrayList<Organization>(),
             PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, OrganizationSortCriterion.ORGANIZATION_ID.name(),
@@ -116,7 +115,7 @@ public class CurateAction extends ActionSupport {
 
     /**
      * Initialize all lists.
-     * 
+     *
      * @return success
      */
     public String listAll() {

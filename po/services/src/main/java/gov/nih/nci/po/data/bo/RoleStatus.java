@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The caarray-app
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This caarray-app Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the caarray-app Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the caarray-app Software; (ii) distribute and
- * have distributed to and by third parties the caarray-app Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -82,97 +82,67 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 
 /**
- * For curation, the various statuses a Curatable element can be in.  This enum captures the notion
- * of allowed transitions via the canTransitionTo and getAllowedTransitions methods.  Each status
- * can 'transition' to itself, <em>and</em> as follows (Current state: list of allowed states):
+ * @author Scott Miller
  *
- * <ul>
- * <li>NEW: CURATED, REJECTED
- * <li>REJECTED: CURATED
- * <li>CURATED: DEPRECATED
- * <li>DEPRECATED: CURATED
- * <li>
- * </ul>
  */
-public enum EntityStatus  {
-    /**
-     * A new element that has not yet be curated.
-     */
-    NEW,
+public enum RoleStatus {
 
     /**
-     * A curated element, found to be good data.
+     * The status a role is initially in.
      */
-    CURATED,
+    PENDING(RoleStatus.CANCELED, RoleStatus.ACTIVE, RoleStatus.NULLIFIED),
 
     /**
-     * A curated element, rejected for some reason.
+     * Status a role goes to from pending if it is not accepted by the curator.
      */
-    REJECTED,
+    CANCELED(RoleStatus.NULLIFIED),
 
     /**
-     * Indicates a curated element that has been deprecated.
+     * Status a role goes to from pending if it is accepted by the curator.
      */
-    DEPRECATED;
+    ACTIVE(RoleStatus.SUSPENDED, RoleStatus.NULLIFIED),
 
-    private static final Map<EntityStatus, Set<EntityStatus>> TRANSITIONS;
+    /**
+     * Status a role goes in from active to suspend the role.
+     */
+    SUSPENDED(RoleStatus.ACTIVE, RoleStatus.NULLIFIED),
 
-    static {
-        Map<EntityStatus, Set<EntityStatus>> tmp = new HashMap<EntityStatus, Set<EntityStatus>>();
-        Set<EntityStatus> tmpSet = new HashSet<EntityStatus>();
+    /**
+     * Status a role goes to if it is no longer valid.
+     */
+    NULLIFIED;
 
-        tmpSet.add(NEW);
-        tmpSet.add(CURATED);
-        tmpSet.add(REJECTED);
-        tmp.put(NEW, Collections.unmodifiableSet(tmpSet));
+    private final Set<RoleStatus> allowedTransitions = new HashSet<RoleStatus>();
 
-        tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-        tmpSet.add(REJECTED);
-        tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-        tmpSet.add(DEPRECATED);
-        tmp.put(CURATED, Collections.unmodifiableSet(tmpSet));
-        tmp.put(DEPRECATED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-
-        TRANSITIONS = Collections.unmodifiableMap(tmp);
+    /**
+     * constructor.
+     * @param statuses the allowable state transitions.
+     */
+    RoleStatus(RoleStatus... statuses) {
+        for (RoleStatus status : statuses) {
+            allowedTransitions.add(status);
+        }
     }
 
     /**
-     * default constructor.
+     * determine if this state can transition to the given state.
+     * @param status the status to transition to.
+     * @return true if it can, false otherwise.
      */
-    EntityStatus() {
-        // do nothing
+    public boolean canTransitionTo(RoleStatus status) {
+        return allowedTransitions.contains(status);
     }
-
-    /**
-     * Helper method that indicates whether a transition to the new entity status
-     * is allowed.
-     *
-     * @param newStatus transition to status
-     * @return whether the transition is allowed
-     */
-    public boolean canTransitionTo(EntityStatus newStatus) {
-        return TRANSITIONS.get(this).contains(newStatus);
-    }
-
     /**
      * @return the permitted curation statuses from this entity state.  set cannot be modified.
      */
-    public Set<EntityStatus> getAllowedTransitions() {
-        return TRANSITIONS.get(this);
+    @SuppressWarnings("unchecked")
+    public Set<RoleStatus> getAllowedTransitions() {
+        return (Set<RoleStatus>) CollectionUtils.unmodifiableCollection(allowedTransitions);
     }
 }

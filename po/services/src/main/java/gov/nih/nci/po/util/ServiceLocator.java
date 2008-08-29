@@ -107,10 +107,9 @@ public interface ServiceLocator {
      * @return the person service
      */
     PersonServiceLocal getPersonService();
-    
+
     /**
      * @return the PO country service
      */
     CountryServiceLocal getCountryService();
-
 }

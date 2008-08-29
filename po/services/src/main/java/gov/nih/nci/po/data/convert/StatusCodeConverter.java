@@ -88,6 +88,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.services.PoIsoConstraintException;
+
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
@@ -96,7 +97,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Utility class for converting between BO and ISO types.
- * 
+ *
  * @author gax
  */
 public final class StatusCodeConverter {
@@ -120,10 +121,11 @@ public final class StatusCodeConverter {
         map.put("nullified", EntityStatus.REJECTED);
         STATUS_MAP = UnmodifiableBidiMap.decorate(map);
     }
-    
+
     /**
      * convert {@link Cd} to other types.
      */
+    @SuppressWarnings("unchecked")
     public static class CdConverter extends AbstractXSnapshotConverter<Cd> {
         /**
          * {@inheritDoc}
@@ -136,10 +138,11 @@ public final class StatusCodeConverter {
             throw new UnsupportedOperationException(returnClass.getName());
         }
     }
-    
+
     /**
      * convert {@link EntityStatus} to other types.
      */
+    @SuppressWarnings("unchecked")
     public static class EnumConverter extends AbstractXSnapshotConverter<EntityStatus> {
         /**
          * {@inheritDoc}
@@ -161,11 +164,11 @@ public final class StatusCodeConverter {
         if (iso == null) {
             return null;
         }
-         
+
         if (iso.getFlavorId() != null) {
             throw new PoIsoConstraintException("PO expects a null flavorId");
         }
-        if (iso.getNullFlavor() != null) {            
+        if (iso.getNullFlavor() != null) {
             return null;
         }
         String code = iso.getCode();
@@ -178,7 +181,7 @@ public final class StatusCodeConverter {
         }
         return cs;
     }
-    
+
     /**
      * @param cs PO entity status.
      * @return best guess of <code>cs</code>'s ISO equivalent.
@@ -186,7 +189,7 @@ public final class StatusCodeConverter {
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public static Cd convertToCd(EntityStatus cs) {
         Cd iso = new Cd();
-        if (cs == null) {            
+        if (cs == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
             String code = (String) STATUS_MAP.getKey(cs);

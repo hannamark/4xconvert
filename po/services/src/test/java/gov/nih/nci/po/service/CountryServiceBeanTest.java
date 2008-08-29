@@ -22,22 +22,22 @@ public class CountryServiceBeanTest extends AbstractHibernateTestCase {
 
     @Before
     public void init() {
-        countryService = EjbTestHelper.getConfigurationBean();
+        countryService = EjbTestHelper.getCountryServiceBean();
 
         List<Country> l = countryService.getCountries();
         assertTrue(l.isEmpty());
-        
+
         Session s = PoHibernateUtil.getCurrentSession();
         c = new Country("Super Country", "999", "ZZ", "ZZZ");
         s.save(c);
-        
+
         countryService.reloadCountries();
-        
+
         l = countryService.getCountries();
         assertEquals(1, l.size());
         assertEquals(c, l.get(0));
     }
-    
+
     @Test
     public void getCountries() {
 
@@ -51,18 +51,18 @@ public class CountryServiceBeanTest extends AbstractHibernateTestCase {
         retrievedCountry = countryService.getCountryByAlpha2("XX");
         assertEquals(null, retrievedCountry);
     }
-    
+
     @Test
     public void testGetCountryByAlpha3() {
         Country c = countryService.getCountryByAlpha3("ZZZ");
         assertEquals("ZZZ", c.getAlpha3());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testGetCountryByAlpha3BadCode() {
         countryService.getCountryByAlpha3("XXX");
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testGetCountryByAlpha3NullCode() {
         countryService.getCountryByAlpha3(null);

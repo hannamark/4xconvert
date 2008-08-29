@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,6 +92,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
@@ -106,25 +108,26 @@ import org.hibernate.validator.Valid;
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class PersonCR extends AbstractPerson {
+    private static final long serialVersionUID = 1L;
 
     private Person target;
-    
+
     /**
      * default ctor.
      */
     public PersonCR() {
         super();
     }
-    
+
     /**
      * default ctor.
-     * @param target the person that should 
+     * @param target the person that should
      */
     public PersonCR(Person target) {
         this();
         this.target = target;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -224,13 +227,13 @@ public class PersonCR extends AbstractPerson {
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    @CollectionOfElements 
+    @CollectionOfElements
     @JoinTable(
-            name = "per_cr_racecodes", 
+            name = "per_cr_racecodes",
             joinColumns = { @JoinColumn(name = "per_cr_id") }
     )
     @ForeignKey(name = "PERCR_RACE_PER_FK", inverseName = "PERCR_RACE_RACE_FK")
@@ -238,7 +241,7 @@ public class PersonCR extends AbstractPerson {
     public Set<RaceCode> getRaces() {
         return super.getRaces();
     }
-    
+
     /**
      * @return the person that should have this proposed state
      */

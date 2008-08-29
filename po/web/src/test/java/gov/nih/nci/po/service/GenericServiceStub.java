@@ -97,12 +97,11 @@ public class GenericServiceStub implements GenericServiceLocal {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public <T extends PersistentObject> T getPersistentObject(Class<T> toClass, Long id) {
         if (id == null) {
             return null;
         }
-        
+
         T newInstance;
         try {
             newInstance = toClass.newInstance();
@@ -118,7 +117,7 @@ public class GenericServiceStub implements GenericServiceLocal {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        
+
         return newInstance;
     }
 }

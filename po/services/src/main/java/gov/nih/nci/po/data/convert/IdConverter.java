@@ -95,6 +95,27 @@ import gov.nih.nci.coppa.iso.NullFlavor;
  * @author gax
  */
 public class IdConverter extends AbstractXSnapshotConverter<Long> {
+
+    /**
+     * The identifier name for org ii's.
+     */
+    public static final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
+
+    /**
+     * The ii root value for orgs.
+     */
+    public static final String ORG_ROOT = "UID.for.nci.entity.organization";
+
+    /**
+     * The identifier name for person ii's.
+     */
+    public static final String PERSON_IDENTIFIER_NAME = "NCI person entity identifier";
+
+    /**
+     * The ii root value for people.
+     */
+    public static final String PERSON_ROOT = "UID.for.nci.entity.person";
+
     /**
      * {@inheritDoc}
      */
@@ -130,7 +151,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
 
         return iso;
     }
-    
+
     /**
      * convert the Id of an org.
      * @see ISOUtils#ID_ORG
@@ -140,8 +161,8 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
         @Override
         public Ii convertToIi(Long value) {
             Ii iso = super.convertToIi(value);
-            iso.setIdentifierName("NCI organization entity identifier");
-            iso.setRoot("UID.for.nci.entity.organization");
+            iso.setIdentifierName(ORG_IDENTIFIER_NAME);
+            iso.setRoot(ORG_ROOT);
             return iso;
         }
     }
@@ -155,8 +176,8 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
         @Override
         public Ii convertToIi(Long value) {
             Ii iso = super.convertToIi(value);
-            iso.setIdentifierName("NCI person entity identifier");
-            iso.setRoot("UID.for.nci.entity.person");
+            iso.setIdentifierName(PERSON_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.PERSON_ROOT);
             return iso;
         }
     }

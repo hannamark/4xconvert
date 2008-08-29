@@ -228,7 +228,7 @@
                         </component>
                     </components>
                     <componentProperties>
-			<drop>${hbm2ddl.drop.table}</drop>
+                        <drop>${hbm2ddl.drop.table}</drop>
                         <create>${hbm2ddl.create.table}</create>
                         <export>false</export>
                         <outputfilename>${schema.file}</outputfilename>

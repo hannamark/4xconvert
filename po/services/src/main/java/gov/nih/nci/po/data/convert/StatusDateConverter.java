@@ -86,19 +86,21 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Ts;
+
 import java.util.Date;
 
 /**
  * Utility class for converting between BO and ISO types.
- * 
+ *
  * @author gax
  */
 public final class StatusDateConverter extends AbstractXSnapshotConverter<Date> {
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <TO> TO convert(Class<TO> returnClass, Date value) {
         if (returnClass == Ivl.class) {
             return (TO) convertToDate(value);
@@ -107,10 +109,10 @@ public final class StatusDateConverter extends AbstractXSnapshotConverter<Date> 
     }
 
     /**
-     * 
+     *
      * @param d date
      * @return the interval [d, positive-infinity[
-     */    
+     */
     public static Ivl<Ts> convertToDate(Date d) {
         Ivl<Ts> iso = new Ivl<Ts>();
         if (d == null) {
@@ -120,7 +122,7 @@ public final class StatusDateConverter extends AbstractXSnapshotConverter<Date> 
             ts.setValue(new Date(d.getTime()));
             iso.setLow(ts);
             iso.setLowClosed(Boolean.TRUE);
-            
+
             ts = new Ts();
             ts.setNullFlavor(NullFlavor.PINF);
             iso.setHigh(ts);

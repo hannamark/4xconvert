@@ -1,17 +1,19 @@
 package gov.nih.nci.po.data.convert;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.services.PoIsoConstraintException;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
 import org.junit.Test;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 
 /**
  *
@@ -20,6 +22,7 @@ import static org.junit.Assert.assertNotSame;
 public class IvlTsConverterTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testConvert() {
         Class returnClass = java.net.URI.class;
         Ivl<Ts> value = null;
@@ -29,7 +32,7 @@ public class IvlTsConverterTest {
             fail();
         } catch (UnsupportedOperationException x) {
         }
-        
+
         value = new Ivl<Ts>();
         Ts ts = new Ts();
         Date expResult = make(2008, 8, 19, 15, 17, 0, 0, "UTC");//Zulu
@@ -49,7 +52,7 @@ public class IvlTsConverterTest {
         iso.setNullFlavor(NullFlavor.NINF);
         result = IvlTsConverter.convertToIvlTs(iso);
         assertNull(result);
-        
+
         iso = new Ivl<Ts>();
         Ts ts = new Ts();
         Date expResult = make(1999, 12, 31, 23, 59, 59, 999, "EST");
@@ -58,14 +61,14 @@ public class IvlTsConverterTest {
         result = IvlTsConverter.convertToIvlTs(iso);
         assertNotSame(expResult, result);
         assertEquals(expResult, result);
-        
+
         iso.setFlavorId("flava");
         try {
             IvlTsConverter.convertToIvlTs(iso);
             fail();
         } catch(PoIsoConstraintException x) {
         }
-        
+
         iso.setFlavorId(null);
         ts.setFlavorId("flava");
         try {

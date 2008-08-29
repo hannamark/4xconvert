@@ -87,8 +87,8 @@ import gov.nih.nci.po.util.NotEmpty;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -103,7 +103,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
-
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -114,7 +113,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class name="entity"
+ * @xsnapshot.snapshot-class name="iso"
  *      class="gov.nih.nci.services.person.AbstractPersonDTO"
  *      extends="gov.nih.nci.services.person.BasePersonDTO"
  */
@@ -134,7 +133,6 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     private EntityStatus statusCode;
     private EntityStatus priorStatusCode;
     private Address postalAddress;
-    // TODO  PO-421 These may need to be changed to work with TEL:  add jira issue
     private List<Email> email = new ArrayList<Email>();
     private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
@@ -144,10 +142,10 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     private SexCode sex;
 
 
-   
+
     /**
      * @return database id
-     * @xsnapshot.property match="entity"
+     * @xsnapshot.property match="iso"
      *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
@@ -244,7 +242,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * @return mail address
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Ad"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ad"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter"
      */
@@ -335,7 +333,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public List<PhoneNumber> getTty() {
         return tty;
     }
-   
+
     /**
      * @param tty new text numbers
      */
@@ -352,10 +350,9 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="entity" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
-
      */
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -363,7 +360,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public EntityStatus getStatusCode() {
         return this.statusCode;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -389,14 +386,14 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public EntityStatus getPriorEntityStatus() {
        return priorStatusCode;
     }
-    
+
     /**
      * Get race codes.
      * @xsnapshot.property name="raceCode"
-     *                     match="entity" type="gov.nih.nci.coppa.iso.DSet"
+     *                     match="iso" type="gov.nih.nci.coppa.iso.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$DSetCdConverter"
-     *                     
+     *
      *   @return a person's set of race code(s)
      */
     @Transient
@@ -410,10 +407,10 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public void setRaces(Set<RaceCode> races) {
         this.races = races;
     }
-    
+
     /**
      * @return person's sex code
-     * @xsnapshot.property name="sexCode" match="entity" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property name="sexCode" match="iso" type="gov.nih.nci.coppa.iso.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$CdConverter"
      */

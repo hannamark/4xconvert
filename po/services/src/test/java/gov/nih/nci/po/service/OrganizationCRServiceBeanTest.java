@@ -1,5 +1,9 @@
 package gov.nih.nci.po.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -8,16 +12,13 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.hibernate.exception.GenericJDBCException;
+
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -27,13 +28,13 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
 
     OrganizationCRServiceBean instance;
     Country country = new Country("name", "123", "US", "USA");
-    
+
     @Before
     public void setup() {
         PoHibernateUtil.getCurrentSession().save(country);
         instance = EjbTestHelper.getOrganizationCRServiceBean();
     }
-    
+
     public static void fill(AbstractOrganization o, Country country) {
         o.setAbbreviatedName("abbreviatedName");
         o.setDescription("description");
@@ -43,7 +44,7 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         o.setPostalAddress(a);
         o.getEmail().add(new Email("foo@example.com"));
     }
-    
+
     private void fill(AbstractOrganization o) {
         fill(o, country);
     }
@@ -57,7 +58,7 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         OrganizationCR ocr = new OrganizationCR(o);
         fill(ocr);
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(ocr);
-        
+
         OrganizationCR cr = instance.getCR(id);
         assertSame(ocr, cr);
     }
@@ -71,7 +72,9 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void testEntityUpdate() {
-        class MyTracker extends RuntimeException {};
+        class MyTracker extends RuntimeException {
+            private static final long serialVersionUID = 1L;} {
+        };
         OrganizationServiceBean service = new OrganizationServiceBean(){
             @Override
             public void update(Organization updatedEntity) {
@@ -97,7 +100,7 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         }catch(IllegalArgumentException nb){
             // null target.
         }
-        
+
         OrganizationCR ocr1 = new OrganizationCR(new Organization());
         OrganizationCR ocr2 = new OrganizationCR(new Organization());
         fill(ocr1.getTarget());
@@ -119,8 +122,9 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
             // different target.
         }
     }
-    
+
     @Test
+    @SuppressWarnings("unchecked")
     public void processCRs() {
         Organization o = new Organization();
         o.setStatusDate(new Date());
@@ -148,5 +152,5 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         list = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
         assertEquals(0, list.size());
     }
-    
+
 }

@@ -120,5 +120,4 @@ public class JndiServiceLocator implements ServiceLocator {
     public CountryServiceLocal getCountryService() {
         return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
     }
-
 }

@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -90,6 +91,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -104,16 +106,17 @@ import org.hibernate.validator.Valid;
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class OrganizationCR extends AbstractOrganization {
+    private static final long serialVersionUID = 1L;
 
     private Organization target;
-    
+
     /**
      * default ctor.
      */
     public OrganizationCR() {
         super();
     }
-    
+
     /**
      * default ctor.
      * @param target the targeted org.
@@ -122,7 +125,7 @@ public class OrganizationCR extends AbstractOrganization {
         this();
         this.target = target;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -222,7 +225,7 @@ public class OrganizationCR extends AbstractOrganization {
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
-    
+
     /**
      * @return the org that should have this proposed state.
      */

@@ -41,6 +41,7 @@ public class SexCodeConverter {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("unchecked")
         public <TO> TO convert(Class<TO> returnClass, Cd value) {
             if (returnClass == SexCode.class) {
                 return (TO) convertToSexCode(value);
@@ -57,6 +58,7 @@ public class SexCodeConverter {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("unchecked")
         public <TO> TO convert(Class<TO> returnClass, SexCode value) {
             if (returnClass == Cd.class) {
                 return (TO) convertToCd(value);
@@ -111,7 +113,7 @@ public class SexCodeConverter {
      */
     public static Cd convertToCd(SexCode sex) {
         Cd iso1 = new Cd();
-        if (sex == null) {            
+        if (sex == null) {
             iso1.setNullFlavor(NullFlavor.NI);
         } else {
             String code = (String) STATUS_MAP.getKey(sex);
