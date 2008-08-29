@@ -11,7 +11,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolService;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  * @author Harsha, Naveen
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
-public class StudyProtocolServiceImpl implements StudyProtocolService {
+public class StudyProtocolServiceImpl  {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceImpl.class);
     private static final int THREE = 3;

@@ -1,8 +1,14 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dtoconvert.StudyProtocolDTOConverter;
 import gov.nih.nci.pa.service.impl.StudyProtocolServiceImpl;
+import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +18,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -58,6 +66,80 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         return trialSummary;
     }
     
+    /**
+     * 
+     * @param ii primary id of StudyProtocol
+     * @return StudyProtocolDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            LOG.error(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
+        }
+        LOG.info("Entering getStudyProtocol");
+        Session session = null;
+        StudyProtocol studyProtocol = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            studyProtocol = (StudyProtocol) 
+                session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
+            
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + ii.getExtension() , hbe);
+            throw new PAException(" Hibernate exception while retrieving " 
+                    + "StudyProtocol for id = " + ii.getExtension() , hbe);
+        }
+        StudyProtocolDTO studyProtocolDTO =  
+            StudyProtocolDTOConverter.convertFromDomainToDTO(studyProtocol);
+
+        LOG.info("Leaving getStudyProtocol");
+        return studyProtocolDTO;
+        
+    }
+    
+
+
+    /**
+     * 
+     * @param studyProtocolDTO studyProtocolDTO
+     * @return StudyProtocolDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        if (studyProtocolDTO == null) {
+            LOG.error(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null ");
+            
+        }
+        StudyProtocolDTO  spDTO = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+
+            StudyProtocol studyProtocol = StudyProtocolDTOConverter.convertFromDtoToDomain(studyProtocolDTO);
+            StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocol.getId());
+            if (studyProtocol.equals(sp)) {
+                sp = (StudyProtocol) session.merge(studyProtocol);
+            } else {
+                sp = studyProtocol;
+            }
+            session.update(sp);
+            session.flush();
+
+            spDTO =  StudyProtocolDTOConverter.convertFromDomainToDTO(sp);  
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while updating StudyProtocol for id = " 
+                    + studyProtocolDTO.getIi().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating StudyProtocol for id = " 
+                    + studyProtocolDTO.getIi().getExtension() , hbe);
+        }
+
+        return spDTO;
+        
+    }
     
 
 }
