@@ -4,11 +4,11 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.data.convert.IiConverter;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 .getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIdLong = spDTO.getStudyProtocolId();
-        spIdIi = IiConverter.convertToIi(spIdLong);
+        spIdIi = IsoConverter.convertIdToIsoIi(spIdLong);
 
         trialStartDate = new ArrayList();
         trialStartDate.add("Actual");
