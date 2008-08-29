@@ -1,2 +1,2 @@
 
-<% response.sendRedirect("studyProtocolQueryHome.action"); %>
+<% response.sendRedirect("/protected/studyProtocolQueryHome.action"); %>
