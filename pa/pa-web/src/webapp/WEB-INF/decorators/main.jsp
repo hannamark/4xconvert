@@ -20,6 +20,12 @@
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
     <script language="JavaScript" type="text/javascript" src="<s:url value='/struts/niftycorners/nifty.js'/>"></script>
 	<script type="text/javascript" src="/scripts/js/calendarpopup.js"></script>	  	
+	
+	<link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
+	<link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
+	<script type="text/javascript" language="javascript" src="/scripts/js/tooltip.js"></script>
+	<script type="text/javascript" language="javascript" src="/scripts/js/showhide.js"></script>
 	<script language="JavaScript" type="text/javascript">
         window.onload = function(){
             if(!NiftyCheck()) {
@@ -34,22 +40,30 @@
     <decorator:head/>
 </head>
 <body> 
+<div id="wrapper" class="curate">
     	<jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
     	<jsp:include page="/WEB-INF/jsp/common/paheader.jsp"/>
 	     
-	     <!-- main content begins-->  	
-		<div id="mainwide">
-           		 <div id="leftnav">
-              			 <jsp:include page="/WEB-INF/jsp/common/pamenu.jsp"/>     
-            	
-				 <!-- main menu ends -->
-				<jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
-			</div>                  		
-       
-		
-            
-            	<decorator:body/>
-        </div> 
+	     <div id="main">	
+			<div id="contentwrapper">
+					<div id="content">
+						<a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol');">Help</a>
+						<div class="box" id="filters">
+							<decorator:body/>
+						</div>
+					</div>
+							
+					<div class="clear"></div>
+					
+			</div>
+           	<div id="leftnav">
+           		<ul class="menu">
+              	 	<jsp:include page="/WEB-INF/jsp/common/pamenu.jsp"/> 
+					<jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
+				</ul>
+			</div> 
+         </div> 
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
+</div>
 </body>
 </html>
