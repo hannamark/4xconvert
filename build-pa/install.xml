@@ -227,88 +227,28 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             </then>
         </if>
     </target>
-    <target name="install:database:re-create" description="Recreates database if database.re-create is true. Used on local installs" unless="exclude.database" depends="install:database:prep">
-        <if> 
-            <equals arg1="${database.re-create}" arg2="true"/>
-            <then>
-                <switch value="${database.type}">
-                    <case value="postgresql">
-                        <database-create/>
-                    </case>
-                    <default>
-                        <echo message="Re-creation (drop and re-create) of ${database.type} databases is not supported, nothing done."/>
-                    </default>
-                </switch>
-                <property name="db.install.file.list" value="${db.install.postgresql.file.list}"/>
-            </then>
-            <else>
-                <echo message="Database.recreate flag not set, database not re-created."/>
-            </else>
-        </if>
-    </target>
 
-    <target name="install:database:drop" description="Runs database drop scripts if database.drop-schema is set. Used on Tier environments (dev, qa, stg, prod)." unless="exclude.database" depends="install:database:prep">
-        <if>
-            <equals arg1="${database.drop-schema}" arg2="true"/>
-            <then>
-                <echo message="Dropping database objects"/>
-                <dropAllDatabaseObjects
-                    driver="${database.driver}"
-                    url="${database.url}"
-                    username="${database.user}"
-                    password="${database.password}"
-                    promptOnNonLocalDatabase="${prompt.user.if.not.local.database}"
-                    classpathref="bda-utils.classpath"
-                    defaultSchemaName="public"
-                    />
-                <!-- Sequences don't seem to drop in first run second run cleans them up -->
-                <dropAllDatabaseObjects
-                    driver="${database.driver}"
-                    url="${database.url}"
-                    username="${database.user}"
-                    password="${database.password}"
-                    promptOnNonLocalDatabase="${prompt.user.if.not.local.database}"
-                    classpathref="bda-utils.classpath"
-                    defaultSchemaName="public"
-                    />
-                <sleep seconds="5"/>
-            </then>
-            <else>
-                <echo message="Database.drop-schema flag not set, database schema not dropped."/>
-            </else>
-        </if>
-    </target>
-
-    <target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
-        depends="
-        install:init,
-        install:database:prep,
-        install:database:re-create,
-        install:database:drop
-        ">
-
+    <target name="install:database" description="Runs datbase creation scripts then calls uprade database." unless="exclude.database"
+            depends="
+            install:init,
+            install:database:prep
+            ">
+        <!-- Drop all schema objects or re-create the db -->
+        <echo>preparing to run database clean</echo>
+        <database-clean/>
+        
+        <!-- Run baseline scripts stored in db.install.create.${database.type}.file.list variable -->
         <switch value="${database.type}">
             <case value="postgresql">
-                <echo message="Creating database objects"/>
-                <for list="${db.install.create.postgresql.file.list}" param="db.install.postgresql.file">
-                    <sequential>
-                        <echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
-                        <run-sql-script
-                            database.url="${database.url}"
-                            database.user="${database.user}"
-                            database.password="${database.password}"
-                            sql.delimiter="/" 
-                            sql.delimitertype="row"
-                            sql.file="${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
-                            />
-                    </sequential>
-                </for>
+                <database-install 
+                    db.install.create.file.list="${db.install.create.postgresql.file.list}"
+                    sql.delimiter="/"
+                    sql.delimitertype="row"/>
             </case>
-            <default>
-                <fail message="Database type ${database.type} not supported for this project."/>
-            </default>
         </switch>
-        <antcall target="upgrade:database" inheritAll="false"/>
+  
+        <database-upgrade/>
+        <database-tag/>
     </target>
 
     <target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
@@ -552,95 +492,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:validation:post-install
         "/>
 
-    <!-- Wrapper upgrade database target, depends on both MySQL and Oracle sub-targets, ifs should ensure only one is run.  Target path can be skipped by exlude.database. -->
-    <target name="upgrade:database" description="Apply incremental DB changes" unless="exclude.database"
-        depends="
-        install:init,
-        upgrade:init
-        ">
-        <!-- **figure out the changes/scripts based upon current version IN the database, if any ** -->
-        <switch value="${database.type}">
-            <case value="oracle">
-                <if>
-                    <available file="${db-upgrade.list.file}"/>
-                    <then>
-                        <property name="db.continue" value="true"/>
-                        <database-create-control-table
-                            database.url="${database.url}"
-                            database.user="${database.user}"
-                            database.password="${database.password}"
-                            />
-                        <!-- sql.delimiter=/ and sql.delimiter.type=row are required to allow jdbc to run programmatic sql like ceation of procedures or functions or triggers.  This means sql files must have all commands terminated with '/' on it's own line, not ;.   -->
-                        <database-identify-scripts
-                            sqlfiles.list.file="${db-upgrade.list.file}"
-                            build.properties.file="${db-upgrade.conf.file}"
-                            sql.delimiter="/" 
-                            sql.delimitertype="row"
-                            database.sql.dir="${db-upgrade.dir.dest}"/>
-                    </then>
-                    <else>
-                        <echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
-                    </else>
-                </if>
-            </case>
-            <case value="mysql">
-                <if>
-                    <available file="${db-upgrade.list.file}"/>
-                    <then>
-                        <property name="db.continue" value="true"/>
-                        <database-create-control-table
-                            database.url="${database.url}"
-                            database.user="${database.user}"
-                            database.password="${database.password}"
-                            />
-                        <database-identify-scripts
-                            sqlfiles.list.file="${db-upgrade.list.file}"
-                            build.properties.file="${db-upgrade.conf.file}"
-                            database.sql.dir="${db-upgrade.dir.dest}"
-                            />
-                    </then>
-                    <else>
-                        <echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
-                    </else>
-                </if>
-            </case>
-            <case value="postgresql">
-                <if>
-                    <available file="${db-upgrade.list.file}"/>
-                    <then>
-                        <property name="db.continue" value="true"/>
-                        <database-create-control-table
-                            database.url="${database.url}"
-                            database.user="${database.user}"
-                            database.password="${database.password}"
-                            />
-                        <database-identify-scripts
-                            sqlfiles.list.file="${db-upgrade.list.file}"
-                            build.properties.file="${db-upgrade.conf.file}"
-                            sql.delimiter="/" 
-                            sql.delimitertype="row"
-                            database.sql.dir="${db-upgrade.dir.dest}"/>
-                    </then>
-                    <else>
-                        <echo message="Could not find an incremental file list file ${db-upgrade.list.file}, there must not be any incrmental updates."/>
-                    </else>
-                </if>
-            </case>
-        </switch>
-        <echo  message="db.continue=${db.continue}"/>
-        <if>
-            <isset property="db.continue"/>
-            <then>
-                <!-- **make the changes to the db aka invoke the proper scripts ** -->
-                <antcall target="database-integrate" />
-                <!-- ** make sure the versioning information IN the database is updated to reflect what we just did ** -->
-                <database-update-version-table
-                    database.driver="${database.driver}"
-                    database.url="${database.url}"
-                    database.user="${database.user}"
-                    database.password="${database.password}"/>
-            </then>
-        </if>
+    <!-- Wrapper upgrade database target.  Target path can be skipped by exlude.database. -->
+    <target name="upgrade:database" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+            depends="
+            install:init,
+            install:database:prep,
+            upgrade:init
+            ">
+        <database-upgrade/>
+        <database-tag/>
     </target>
 
     <target name="upgrade:init">
@@ -668,4 +528,23 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             </then> 
         </if>   
     </target>
+    
+    <target name="upgrade:database:tag" description="Tags current state of database with a tag to allow for rollback of database to previous versions." unless="exclude.database"
+            depends="
+            install:init,
+            install:database:prep,
+            upgrade:init
+            ">
+        <database-tag/>
+    </target>
+  
+    <target name="upgrade:database:rollback" description="Rolls back database to previous tagged version using rollback scripts." unless="exclude.database"
+            depends="
+            install:init,
+            install:database:prep,
+            upgrade:init
+            ">
+        <database-rollback/>
+    </target>
+
 </project>
