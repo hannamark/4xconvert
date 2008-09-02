@@ -328,11 +328,13 @@ TABLE.form TD
 .value INPUT, .value SELECT, .value TEXTAREA
 { display:block; margin-top:-7px }
 .label
-{ text-align:right; font-weight:bold; width:29%; padding:5px 5px 5px 0 !important;}
+{ font-weight:bold; width:20%; white-space:nowrap; padding:5px 5px 5px 0 !important;}
 TD.space
 { padding:0 }
 TD.value
 { padding:7px 5px 5px 0 !important; }
+.value INPUT
+{ display:inline }
 TD.title
 { font-weight:bold }
 .hidethis
@@ -375,9 +377,9 @@ TABLE.data TH A
 TABLE.data TH A:hover
 { color:#000; text-decoration:underline !important; }
 TABLE.data TH.order1 A
-{ background: url("../images/arrow_descending.gif") no-repeat right; padding-right:16px; }
+{ background: url(../images/arrow_descending.gif) no-repeat right; padding-right:16px; }
 TABLE.data TH.order2 A
-{ background: url("../images/arrow_ascending.gif") no-repeat right; padding-right:16px; }
+{ background: url(../images/arrow_ascending.gif) no-repeat right; padding-right:16px; }
 TABLE.data TD.thumbcol
 { width:90px; }
 TABLE.data TD A IMG.thumbnail
