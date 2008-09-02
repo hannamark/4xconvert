@@ -19,13 +19,13 @@
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_controls.js"/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
     <script language="JavaScript" type="text/javascript" src="<s:url value='/struts/niftycorners/nifty.js'/>"></script>
-	<script type="text/javascript" src="/scripts/js/calendarpopup.js"></script>	  	
+	<script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>	  	
 	
 	<link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
 	<link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
-	<script type="text/javascript" language="javascript" src="/scripts/js/tooltip.js"></script>
-	<script type="text/javascript" language="javascript" src="/scripts/js/showhide.js"></script>
+	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
 	<script language="JavaScript" type="text/javascript">
         window.onload = function(){
             if(!NiftyCheck()) {
@@ -48,9 +48,9 @@
 			<div id="contentwrapper">
 					<div id="content">
 						<a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol');">Help</a>
-						<div class="box" id="filters">
+						
 							<decorator:body/>
-						</div>
+						
 					</div>
 							
 					<div class="clear"></div>
@@ -63,6 +63,8 @@
 				</ul>
 			</div> 
          </div> 
+         <div class="clear"><br /></div>
+         
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
 </div>
 </body>
