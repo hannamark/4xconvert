@@ -24,48 +24,49 @@ function resetValues () {
 <body>
 <!-- main content begins-->
 
-   <div id="contentwide">
+  <!--  <div id="contentwide"> -->
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
+    <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <!--Help Content-->
-    <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a>
- 
+   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
+ <div class="box" id="filters">
     <s:form action="studyProtocolQuery"><s:actionerror/>
-        <table cellspacing="2" >    
+        <table class="form">    
             <tr>
-                <td align=right>
+                <td scope="row" class="label">
                      <label for="nciIdentifier"> <fmt:message key="studyProtocol.nciIdentifier"/></label>
                 </td>
-                <td align=left>
-                    <s:textfield name="criteria.nciIdentifier" size="15" maxlength="20" />
+                <td>
+                    <s:textfield name="criteria.nciIdentifier"  maxlength="200" size="100" value="" cssStyle="width:200px" />
                 </td>
-                <td align=right>
-                    <b><fmt:message key="studyProtocol.officialTitle"/></b> 
+                <td  scope="row" class="label">
+                    <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label> 
                 </td>
-                <td align=left>                                             
-                    <s:textfield name="criteria.officialTitle"   size="50" maxlength="50"  />
+                <td>                                             
+                    <s:textfield name="criteria.officialTitle" maxlength="200" size="100" value="" cssStyle="width:200px"  />
                 </td>
              </tr>                                               
 
             <tr>
             <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
              <tr>
-                <td align=right>
-                    <b><fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></b> 
+                <td scope="row" class="label">
+                    <label for="localProtocolIdentifer"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></label>
                 </td>
 
-                <td align=left>
-                    <s:textfield name="criteria.leadOrganizationTrialIdentifier" size="15" maxlength="10" />
+                <td>
+                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100" value="" cssStyle="width:200px" />
                                                                                          
                 </td>                    
-                <td align=right>
-                    <b><fmt:message key="studyProtocol.leadOrganization"/></b> 
+                <td  scope="row" class="label">
+                    <label for="leadOrganization"> <fmt:message key="studyProtocol.leadOrganization"/></label> 
                     
                 </td>
-                <td align=left>
+                <td>
                     <s:select  
                         name="criteria.leadOrganizationId" 
                         list="#protocolOrgs"  
-                        listKey="id" listValue="name" headerKey="" headerValue="All" />
+                        listKey="id" listValue="name" headerKey="" headerValue="All" cssStyle="width:206px" />
 
                 </td>
 
@@ -74,74 +75,89 @@ function resetValues () {
             <tr>
             <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
              <tr>
-                <td align=right>
-                    <b><fmt:message key="studyProtocol.principalInvestigator"/></b> 
+                <td  scope="row" class="label">
+                    <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
                 </td>
 
-                <td align=left>
+                <td>
                     <s:select  
                         name="criteria.principalInvestigatorId" 
                         list="#principalInvs"  
                         listKey="id" 
                         listValue="fullName" 
                         headerKey="" 
-                        headerValue="All"
+                        headerValue="All" cssStyle="width:206px"
                         />
 
                 </td>                    
-                <td align=right>
-                    <b><fmt:message key="studyProtocol.trialType"/></b> 
+                <td  scope="row" class="label">
+                    <label for="trialType"> <fmt:message key="studyProtocol.trialType"/></label>
                     
                 </td>
                 <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
-                <td align=left>
+                <td>
                     <s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                    value="criteria.primaryPurposeCode" />
+                    value="criteria.primaryPurposeCode" cssStyle="width:206px" />
                 </td>
 
             </tr>           
 
             <tr>
-                <td align=right>
-                    <b><fmt:message key="studyProtocol.studyPhase"/></b>                         
+                <td scope="row" class="label">
+                    <label for="studyPhase"> <fmt:message key="studyProtocol.studyPhase"/></label>                        
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
-                <td align=left>
-                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" />
+                <td>
+                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
                 </td>      
                 
-                <td align=right>
-                    <b><fmt:message key="studyProtocol.studyStatus"/></b>                      
+                <td scope="row" class="label">
+                    <label for="studyStatus"> <fmt:message key="studyProtocol.studyStatus"/></label>                   
                 </td>
                <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                
-                <td align=left>
-                   <s:select headerKey="" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" />
+                <td>
+                   <s:select headerKey="" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
                 </td>                  
             </tr>                                        
             
-            <td align=right>
-                    <b><fmt:message key="studyProtocol.documentWorkflowStatus"/></b>    
+            <tr>
+            	<td scope="row" class="label">
+                    <label for="documentWorkflowStatus"> <fmt:message key="studyProtocol.documentWorkflowStatus"/></label>    
                 </td>
                 <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
-                <td align=left>
-                   <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" />
+                <td>
+                   <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
                 </td>                  
     
-                <td colspan="2">                        
+               <!--  <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td> 
+                </td>  -->
             </tr>
         </table>
-   <c:if test="${records != null}">
-   <jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
-        <jsp:param name="listName" value="records" />        
-   </jsp:include>
-   </c:if>
+		<div class="actionsrow">
+			<del class="btnwrapper">
+				<ul class="btnrow">			
+					<li><a href="studyProtocolQuery.action" class="btn"><span class="btn_img"><span class="search">Search</span></span></a></li>
+				</ul>	
+			</del>
+
+		</div>
+
+  
         
    </s:form>
 
  </div>
+ <div class="line"></div>
+							
+							<h2>Search Results</h2>
+ 
+  <c:if test="${records != null}">
+   <jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
+        <jsp:param name="listName" value="records" />        
+   </jsp:include>
+   </c:if>
 </body>
 </html>
