@@ -2,8 +2,6 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.convert.StringConverter;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -17,8 +15,6 @@ import org.junit.Test;
 public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityServiceTest {
     private final Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
 
-
-
     private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {
         Ii id = getOrgService().createOrganization(org);
         org.setIdentifier(id);
@@ -28,14 +24,15 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
 
     private OrganizationDTO create(String name, String abbrv, String desc) {
         OrganizationDTO org = new OrganizationDTO();
-        org.setName(StringConverter.convertToEnOn(name));
-        org.setAbbreviatedName(StringConverter.convertToEnOn(abbrv));
-        org.setDescription(StringConverter.convertToSt(desc));
-		org.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
+        org.setName(RemoteApiUtils.convertToEnOn(name));
+        org.setAbbreviatedName(RemoteApiUtils.convertToEnOn(abbrv));
+        org.setDescription(RemoteApiUtils.convertToSt(desc));
+        org.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
         return org;
     }
 
     private static boolean testDataLoaded = false;
+
     @Before
     public void initData() throws Exception {
         if (!testDataLoaded) {
@@ -53,7 +50,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
     @Test
     public void findOrgByNameExact() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(StringConverter.convertToEnOn("Z Inc."));
+        crit.setName(RemoteApiUtils.convertToEnOn("Z Inc."));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(1, results.size());
     }
@@ -61,7 +58,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
     @Test
     public void findOrgByNameInsensitiveExact() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(StringConverter.convertToEnOn("z inc."));
+        crit.setName(RemoteApiUtils.convertToEnOn("z inc."));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(1, results.size());
     }
@@ -69,7 +66,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
     @Test
     public void findOrgByNameSubstring() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(StringConverter.convertToEnOn("A"));
+        crit.setName(RemoteApiUtils.convertToEnOn("A"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(3, results.size());
     }
@@ -77,7 +74,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
     @Test
     public void findOrgByNameSubstringInsensitive() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(StringConverter.convertToEnOn("a"));
+        crit.setName(RemoteApiUtils.convertToEnOn("a"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(3, results.size());
     }
@@ -85,7 +82,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
     @Test
     public void findOrgByDescriptionExact() {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setDescription(StringConverter.convertToSt("Z org"));
+        crit.setDescription(RemoteApiUtils.convertToSt("Z org"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(1, results.size());
     }
@@ -93,7 +90,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
     @Test
     public void findOrgByAbbreviatedNameExact() {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setAbbreviatedName(StringConverter.convertToEnOn("Z"));
+        crit.setAbbreviatedName(RemoteApiUtils.convertToEnOn("Z"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(1, results.size());
     }

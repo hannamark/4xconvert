@@ -45,7 +45,8 @@ public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
 
     protected void waitForElementByXPath(String xpathExpression, int timeoutSeconds) {
         String cond = "var doc = selenium.browserbot.getCurrentWindow().document; "
-                + "doc.evaluate(" + toJSString(xpathExpression) + ", doc, null, XPathResult.BOOLEAN_TYPE, null).booleanValue;";
+                + "doc.evaluate("
+                + toJSString(xpathExpression) + ", doc, null, XPathResult.BOOLEAN_TYPE, null).booleanValue;";
         LOG.info(cond);
         selenium.waitForCondition(cond, toMillisecondsString(timeoutSeconds));
     }

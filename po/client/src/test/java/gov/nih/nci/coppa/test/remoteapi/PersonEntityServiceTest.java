@@ -83,65 +83,58 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.po.data.convert.ISOUtils;
-import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.data.convert.StringConverter;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Date;
+
 import org.junit.Test;
 
 /**
  * @author Scott Miller
  *
  */
-public class OrganizationEntityServiceTest extends BaseOrganizationEntityServiceTest {
+public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
 
-    private Ii orgId = null;
+    private Ii personId;
     private Date preCreate;
-    /*
-     * Method to check that the remote service is working.
-     * @throws Exception on error.
-     */
-    @Test(expected = EntityValidationException.class)
-    public void testCreateIncomplete() throws Exception {
-        OrganizationDTO dto1 = new OrganizationDTO();
-        dto1.setName(StringConverter.convertToEnOn("Test Name"));
-        dto1.setAbbreviatedName(StringConverter.convertToEnOn("TST"));
-        Ii id = getOrgService().createOrganization(dto1);
-        assertNotNull(id);
-        assertNotNull(id.getExtension());
-        assertTrue(IiConverter.convertToLong(id) > 0);
-        OrganizationDTO dto2 = getOrgService().getOrganization(id);
-        assertEquals(dto1, dto2);
-    }
 
     @Test
     public void createMinimal() throws Exception {
-        if (orgId != null) {
-            return; // test already run from getGyId.
+        if (personId != null) {
+            return; // test already run from getById.
         }
         try {
-            OrganizationDTO dto = new OrganizationDTO();
-            dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
-            dto.setName(StringConverter.convertToEnOn("_"));
-            dto.setAbbreviatedName(StringConverter.convertToEnOn("_"));
-            dto.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
-
+            PersonDTO dto = new PersonDTO();
+            Ii isoId = new Ii();
+            isoId.setRoot("test");
+            isoId.setExtension("99");
+            dto.setIdentifier(isoId);
+            dto.setName(new EnPn());
+            Enxp part = new Enxp(EntityNamePartType.GIV);
+            part.setValue("--");
+            dto.getName().getPart().add(part);
+            part = new Enxp(EntityNamePartType.FAM);
+            part.setValue("__");
+            dto.getName().getPart().add(part);
+            dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "state", "zip", "USA"));
             preCreate = new Date();
-            orgId = getOrgService().createOrganization(dto);
-            assertNotNull(orgId);
-            assertNotNull(orgId.getExtension());
-            assertTrue(IiConverter.convertToLong(orgId) > 0);
+            personId = getPersonService().createPerson(dto);
+            assertNotNull(personId);
+            assertNotNull(personId.getExtension());
+            assertNotSame("Ii.extension provided should not be persisted", personId.getExtension(), Long.valueOf(isoId
+                    .getExtension()));
+
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
@@ -149,17 +142,17 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
 
     @Test
     public void getById() throws Exception {
-        if (orgId == null) {
+        if (personId == null) {
             createMinimal();
         }
-        OrganizationDTO dto = getOrgService().getOrganization(orgId);
+        PersonDTO dto = getPersonService().getPerson(personId);
         assertNotNull(dto);
-        assertNotSame(orgId, dto.getIdentifier());
-        assertEquals(orgId.getExtension(), dto.getIdentifier().getExtension());
+        assertNotSame(personId, dto.getIdentifier());
+        assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
         assertEquals("pending", dto.getStatusCode().getCode());
-        Date result = ((Ts)dto.getStatusDateRange().getLow()).getValue();
+        Date result = ((Ts) dto.getStatusDateRange().getLow()).getValue();
         assertFalse(preCreate.after(result));
         assertTrue(result.before(new Date()));
-    }
 
+    }
 }

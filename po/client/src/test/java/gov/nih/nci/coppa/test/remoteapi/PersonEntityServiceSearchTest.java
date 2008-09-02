@@ -2,8 +2,6 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
-import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -26,9 +24,9 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
 
     private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix) {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn(fName, mName, lName, prefix, suffix));
+        p.setName(RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
 
-        p.setPostalAddress(AddressConverterUtil.create("street", "delivery", "city", "state", "zip", "USA"));
+        p.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "state", "zip", "USA"));
         return p;
     }
 
@@ -49,7 +47,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByFamilyNameExact() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn(null, null, "Klm", null, null));
+        p.setName(RemoteApiUtils.convertToEnPn(null, null, "Klm", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -57,7 +55,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByFamilyNameExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn(null, null, "klm", null, null));
+        p.setName(RemoteApiUtils.convertToEnPn(null, null, "klm", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -65,7 +63,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByFamilyNameSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn(null, null, "K", null, null));
+        p.setName(RemoteApiUtils.convertToEnPn(null, null, "K", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -73,15 +71,15 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByFamilyNameInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn(null, null, "L", null, null));
+        p.setName(RemoteApiUtils.convertToEnPn(null, null, "L", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
-    
+
     @Test
     public void findByGivenNameExact() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("Abc", null, null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("Abc", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -89,7 +87,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByGivenNameExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("abc", null, null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("abc", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -97,7 +95,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByGivenNameSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("b", null, null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("b", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -105,38 +103,38 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     @Test
     public void findByGivenNameInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("E", null, null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("E", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
     @Test
     public void findByGivenName2Exact() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("%", "Mid1", null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("%", "Mid1", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
-    
+
     @Test
     public void findByGivenName2ExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("%", "mid1", null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("%", "mid1", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
-    
+
     @Test
     public void findByGivenName2Substring() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("%", "id", null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("%", "id", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(5, results.size());
     }
-    
+
     @Test
     public void findByGivenName2InsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(PersonNameConverterUtil.convertToEnPn("%", "ID1", null, null, null));
+        p.setName(RemoteApiUtils.convertToEnPn("%", "ID1", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }

@@ -103,6 +103,7 @@
         <module>services</module>
         <module>web</module>
         <module>ear</module>
+        <module>client</module>
     </modules>
 
     <distributionManagement>

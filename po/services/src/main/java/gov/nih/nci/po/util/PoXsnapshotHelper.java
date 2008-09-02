@@ -3,7 +3,7 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.PersonRole;
-import gov.nih.nci.services.EntityDTO;
+import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.ExtendedPersonRoleDTOHelper;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
 import gov.nih.nci.services.organization.AbstractOrganizationDTO;
@@ -83,7 +83,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the collection containing the snapshot objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends EntityDTO<BO>> Collection<DTO> createSnapshotCollection(
+    public static <BO extends PersistentObject, DTO extends PoDto<BO>> Collection<DTO> createSnapshotCollection(
             Collection<BO> modelCollection, Collection<DTO> destCollection) {
         return PO_XSNASHOTUTILS.createSnapshotCollection(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME, destCollection);
     }
@@ -105,7 +105,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return a snapshot object
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends EntityDTO<BO>> DTO createSnapshot(BO model) {
+    public static <BO extends PersistentObject, DTO extends PoDto<BO>> DTO createSnapshot(BO model) {
         return (DTO) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_ISO_SNAPSHOT_NAME);
     }
 
@@ -119,7 +119,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the list of model objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends EntityDTO<BO>> Collection<DTO> createModelCollection(
+    public static <BO extends PersistentObject, DTO extends PoDto<BO>> Collection<DTO> createModelCollection(
             Collection<DTO> snapshotCollection, Collection<BO> destCollection) {
         return PO_XSNASHOTUTILS.createModelCollection(snapshotCollection, destCollection);
     }
@@ -133,7 +133,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the list of model objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static  <BO extends PersistentObject, DTO extends EntityDTO<BO>>
+    public static  <BO extends PersistentObject, DTO extends PoDto<BO>>
             List<BO> createModelList(Collection<DTO> snapshotCollection) {
         return PO_XSNASHOTUTILS.createModelList(snapshotCollection);
     }
@@ -147,7 +147,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return a model object
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends EntityDTO<BO>> BO createModel(DTO snapshot) {
+    public static <BO extends PersistentObject, DTO extends PoDto<BO>> BO createModel(DTO snapshot) {
         return (BO) PO_XSNASHOTUTILS.createModel(snapshot);
     }
 

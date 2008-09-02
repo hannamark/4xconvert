@@ -29,7 +29,7 @@ public final class TstProperties {
     private static Properties properties = new Properties();
     static {
         try {
-            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");;
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");
             properties.load(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);

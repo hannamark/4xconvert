@@ -197,8 +197,15 @@
                     </archive>
                     <generateClient>true</generateClient>
                     <clientIncludes>
-                        <clientInclude>gov/nih/nci/services/person/**</clientInclude>
-                        <clientInclude>gov/nih/nci/services/organization/**</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/AbstractOrganization.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/AbstractPerson.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/audit/Auditable.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/Curatable.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/Contactable.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/Organization.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/Person.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/PersonRole.class</clientInclude>
+                        <clientInclude>gov/nih/nci/services/**/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
                     </clientIncludes>
                     <clientExcludes>

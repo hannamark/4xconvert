@@ -2,9 +2,8 @@ package gov.nih.nci.coppa.test.integration.test;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
-import gov.nih.nci.po.data.convert.StringConverter;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -14,8 +13,8 @@ import java.util.Map;
 
 public class CurateOrganizationTest extends AbstractPoWebTest {
     private static final int DEFAULT_TEXT_COL_LENGTH = 100;
-    
-    
+
+
     private final Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
     private OrganizationEntityServiceRemote orgService;
 
@@ -72,10 +71,10 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
     private OrganizationDTO create(String name, String abbrv, String desc) {
         OrganizationDTO org = new OrganizationDTO();
-        org.setName(StringConverter.convertToEnOn(name));
-        org.setAbbreviatedName(StringConverter.convertToEnOn(abbrv));
-        org.setDescription(StringConverter.convertToSt(desc));
-        org.setPostalAddress(AddressConverterUtil.create("123 abc ave.", null, "mycity", null, "12345", "USA"));
+        org.setName(RemoteApiUtils.convertToEnOn(name));
+        org.setAbbreviatedName(RemoteApiUtils.convertToEnOn(abbrv));
+        org.setDescription(RemoteApiUtils.convertToSt(desc));
+        org.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
         return org;
     }
 }
