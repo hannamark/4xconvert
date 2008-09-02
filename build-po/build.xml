@@ -66,6 +66,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<!-- Properties that relate to how to call build targets from sub-projects-->
 	<!-- Working directory passed to Ant tasks -->
 	<property name="po.base.dir" location="${software.dir}/po"/>
+    <property name="po-client.base.dir" location="${software.dir}/po/client"/>
 	<property name="po-ear.base.dir" location="${software.dir}/po/ear"/>
 	<property name="po-services.base.dir" location="${software.dir}/po/services"/>
 	<property name="po-web.base.dir" location="${software.dir}/po/web"/>
@@ -250,6 +251,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<include name="**/profiles.xml" />
 			</fileset>
 		</delete>
+	    <copy todir="${po-client.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
+            <filterset>
+                <filter token="jboss.home" value="${local.jboss.home}"/>
+                <filter token="db.po.file.name" value="${db.po.create-schema.file}"/>
+                <filter token="db.po.generate.drop" value="false"/>
+                <filter token="db.po.generate.create" value="true"/>
+            </filterset>
+        </copy>
 		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
 			<filterset>
 				<filter token="jboss.home" value="${local.jboss.home}"/>
