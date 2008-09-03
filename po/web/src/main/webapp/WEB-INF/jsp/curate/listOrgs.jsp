@@ -11,10 +11,12 @@
 		<display:column titleKey="organization.abbreviatedName" property="abbreviatedName" />
 		<display:column titleKey="organization.description" property="description" />
         <display:column titleKey="organization.statusCode" sortable="false">
-            <c:if test="${fn:length(row.changeRequests) > 0}">
-                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
-            </c:if>
-            <c:if test="${fn:length(row.changeRequests) == 0}">${row.statusCode}</c:if>
+	        <c:choose>
+	        <c:when test="${fn:length(row.changeRequests) > 0}">
+	            <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
+	        </c:when>
+	        <c:otherwise>${row.statusCode}</c:otherwise>
+	        </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">
             <c:url var="curateUrl" value="/protected/organization/curate/start.action">
