@@ -18,17 +18,25 @@ import org.hibernate.validator.NotNull;
  * This class is an abstract concept that contains attributes common to all types of study documents.
  * 
  * @author Naveen Amiruddin
- * @since 07/07/2007
+ * @since 07/07/2008
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
 @Entity
 @Table(name =  "STUDY_CONTACT")
-public class StudyContact extends AbstractEntity {
+public class StudyContact extends PersonFunctionalRole {
 
     private static final long serialVersionUID = 1234567890L;
-    private StudyProtocol studyProtocol;
+    
+    private String addressLine;
+    private String deliveryAddressLine;
+    private String city;
+    private String state;
+    private String postalCode;
+    private Country country;
+    
+    
     private HealthCareProvider healthCareProvider;
 
     private Boolean primaryIndicator;
@@ -38,22 +46,105 @@ public class StudyContact extends AbstractEntity {
 
     /**
      * 
-     * @return studyProtocol
+     * @return addressLine
      */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
-    @NotNull
-    
-    public StudyProtocol getStudyProtocol() {
-        return studyProtocol;
+    @Column(name = "ADDRESS_LINE ")
+    public String getAddressLine() {
+        return addressLine;
     }
 
     /**
      * 
-     * @param studyProtocol studyProtocol
+     * @param addressLine  addressLine
      */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
+    
+    public void setAddressLine(String addressLine) {
+        this.addressLine = addressLine;
+    }
+
+    /**
+     * 
+     * @return deliveryAddressLine
+     */
+    @Column(name = "DELIVERY_ADDRESS_LINE")
+    public String getDeliveryAddressLine() {
+        return deliveryAddressLine;
+    }
+
+    /**
+     * 
+     * @param deliveryAddressLine deliveryAddressLine
+     */
+    public void setDeliveryAddressLine(String deliveryAddressLine) {
+        this.deliveryAddressLine = deliveryAddressLine;
+    }
+
+    /**
+     * 
+     * @return city
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * 
+     * @param city city
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * 
+     * @return state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * 
+     * @param state state
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * 
+     * @return postalCode
+     */
+    @Column(name = "POSTAL_CODE")
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    /**
+     * 
+     * @param postalCode postalCode
+     */
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     * 
+     * @return country
+     */
+    @ManyToOne
+    @JoinColumn(name = "COUNTRY_ID", updatable = false)
+    @NotNull    
+    public Country getCountry() {
+        return country;
+    }
+
+    /**
+     * 
+     * @param country country
+     */
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
     /**
@@ -97,15 +188,18 @@ public class StudyContact extends AbstractEntity {
      * 
      * @return studyContactRoles studyContactRoles
      */
+    
     @OneToMany(mappedBy = "studyContact")
     public List<StudyContactRole> getStudyContactRoles() {
         return studyContactRoles;
     }
+    
 
     /**
      * 
      * @param studyContactRoles studyContactRoles) {
      */
+    
     @OneToMany(mappedBy = "studyContact")
     public void setStudyContactRoles(List<StudyContactRole> studyContactRoles) {
         this.studyContactRoles = studyContactRoles;

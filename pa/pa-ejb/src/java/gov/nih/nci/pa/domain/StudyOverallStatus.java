@@ -18,7 +18,7 @@ import org.hibernate.validator.NotNull;
  * Describes the comprehensive state of the study.
  * 
  * @author Naveen Amiruddin
- * @since 07/22/2007
+ * @since 07/22/2008
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
@@ -29,8 +29,8 @@ public class StudyOverallStatus extends AbstractEntity {
     
     private static final long serialVersionUID = 1234567890L;
     
-    private StudyStatusCode studyStatusCode;
-    private Timestamp studyStatusDate;
+    private StudyStatusCode statusCode;
+    private Timestamp statusDate;
     private StudyProtocol studyProtocol;
     
     
@@ -39,15 +39,15 @@ public class StudyOverallStatus extends AbstractEntity {
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
-    public StudyStatusCode getStudyStatusCode() {
-        return studyStatusCode;
+    public StudyStatusCode getStatusCode() {
+        return statusCode;
     }
     /**
      * 
-     * @param studyStatusCode status code
+     * @param statusCode status code
      */
-    public void setStudyStatusCode(StudyStatusCode studyStatusCode) {
-       this.studyStatusCode = studyStatusCode;
+    public void setStatusCode(StudyStatusCode statusCode) {
+       this.statusCode = statusCode;
     }
 
     /**
@@ -55,16 +55,16 @@ public class StudyOverallStatus extends AbstractEntity {
      * @return statusDate
      */
     @Column(name = "STATUS_DATE")
-    public Timestamp  getStudyStatusDate() {
-        return studyStatusDate;
+    public Timestamp  getStatusDate() {
+        return statusDate;
     }
     
     /**
      * 
-     * @param studyStatusDate status Date
+     * @param statusDate status Date
      */
-    public void setStudyStatusDate(Timestamp studyStatusDate) {
-        this.studyStatusDate = studyStatusDate;
+    public void setStatusDate(Timestamp statusDate) {
+        this.statusDate = statusDate;
     }
 
     /**

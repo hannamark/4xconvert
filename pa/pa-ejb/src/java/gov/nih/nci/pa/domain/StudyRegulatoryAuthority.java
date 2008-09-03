@@ -1,8 +1,11 @@
 package gov.nih.nci.pa.domain;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * The participation of a Regulatory Authority in the governmental oversight of a
@@ -17,37 +20,46 @@ import javax.persistence.Table;
  * copyright holder, NCI.
  */
 @Entity
-@Table (name = "study_regulatory_authority")
+@Table (name = "STUDY_REGULATORY_AUTHORITY")
 public class StudyRegulatoryAuthority extends AbstractEntity {
         
-        private static final long serialVersionUID = 1L;
-        private long studyProtocolID;
-        private long regulatoryAuthorityID;
-        
-        /**
-         * @return the studyProtocolID
-         */
-        @Column(name = "study_protocol_id")
-        public long getStudyProtocolID() {
-                return studyProtocolID;
-        }
-        /**
-         * @param studyProtocolID the studyProtocolID to set
-         */     
-        public void setStudyProtocolID(long studyProtocolID) {
-                this.studyProtocolID = studyProtocolID;
-        }
-        /**
-         * @return the regulatoryAuthorityID
-         */
-        @Column(name = "regulatory_authority_id")
-        public long getRegulatoryAuthorityID() {
-                return regulatoryAuthorityID;
-        }
-        /**
-         * @param regulatoryAuthorityID the regulatoryAuthorityID to set
-         */
-        public void setRegulatoryAuthorityID(long regulatoryAuthorityID) {
-                this.regulatoryAuthorityID = regulatoryAuthorityID;
-        }
+    private static final long serialVersionUID = 1L;
+    private StudyProtocol studyProtocol;
+    private RegulatoryAuthority regulatoryAuthority;
+    
+    /**
+     * 
+     * @return regulatoryAuthority
+     */
+    @ManyToOne
+    @JoinColumn(name = "REGULATORY_AUTHORITY_ID", updatable = false)
+    @NotNull
+    public RegulatoryAuthority getRegulatoryAuthority() {
+        return regulatoryAuthority;
+    }
+    /**
+     * 
+     * @param regulatoryAuthority regulatoryAuthority
+     */
+    public void setRegulatoryAuthority(RegulatoryAuthority regulatoryAuthority) {
+        this.regulatoryAuthority = regulatoryAuthority;
+    }
+    /**
+     * 
+     * @return protocol
+     */
+    @OneToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
+    @NotNull
+    public StudyProtocol getStudyProtocol() {
+       return studyProtocol;
+    }
+    /**
+     * 
+     * @param studyProtocol studyProtocol
+     */
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+        this.studyProtocol = studyProtocol;
+    }
+
 }

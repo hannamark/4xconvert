@@ -18,40 +18,40 @@ import javax.persistence.Table;
  * copyright holder, NCI.
  */
 @Entity
-@Table(name =  "regulatory_authority")
+@Table(name =  "REGULATORY_AUTHORITY")
 public class RegulatoryAuthority extends AbstractEntity {
         
-        private static final long serialVersionUID = 1L;
-        private String authorityName;
-        private Country country;
-        
-        /**
-         * @return the authorityName
-         */     
-        @Column(name = "authority_name")
-        public String getAuthorityName() {
-                return authorityName;
-        }
-        /**
-         * @param authorityName the authorityName to set
-         */
-        public void setAuthorityName(String authorityName) {
-                this.authorityName = authorityName;
-        }
-        /**
-         * @return the countryId
-         */
-        @ManyToOne
-        @JoinColumn(name = "country_id", nullable = false)
-        public Country getCountry() {
-                return country;
-        }
-        
-        /**
-         * @param country the country to set
-         * 
-         */
-        public void setCountry(Country country) {
-                this.country = country;
-        }
+    private static final long serialVersionUID = 1L;
+    private String authorityName;
+    private Country country;
+    
+    /**
+     * @return the authorityName
+     */     
+    @Column(name = "AUTHORITY_NAME")
+    public String getAuthorityName() {
+            return authorityName;
+    }
+    /**
+     * @param authorityName the authorityName to set
+     */
+    public void setAuthorityName(String authorityName) {
+            this.authorityName = authorityName;
+    }
+    /**
+     * @return the countryId
+     */
+    @ManyToOne
+    @JoinColumn(name = "COUNTRY_ID", nullable = false)
+    public Country getCountry() {
+            return country;
+    }
+    
+    /**
+     * @param country the country to set
+     * 
+     */
+    public void setCountry(Country country) {
+            this.country = country;
+    }
 }

@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * The responsibility of the investigator on a particular study.. 
  * 
  * @author Naveen Amiruddin
- * @since 07/07/2007
+ * @since 07/07/2008
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
@@ -44,10 +44,7 @@ public class StudyContactRole extends AbstractEntity {
     public void setStudyContact(StudyContact studyContact) {
         this.studyContact = studyContact;
     }
-    /**
-     * 
-     * @return studyContactRoleCode
-     */
+
     /**
      * 
      * @return responsibilityCode
