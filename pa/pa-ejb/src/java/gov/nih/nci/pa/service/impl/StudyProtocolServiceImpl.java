@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.service.impl;
 
 import gov.nih.nci.pa.dao.StudyProtocolDAO;
-import gov.nih.nci.pa.domain.DocumentIdentification;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -23,7 +22,8 @@ import org.apache.log4j.Logger;
  * If need be, these methods can be exposed as web service
  * @author Harsha, Naveen
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
+//@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings("PMD")
 public class StudyProtocolServiceImpl  {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceImpl.class);
@@ -39,7 +39,8 @@ public class StudyProtocolServiceImpl  {
         getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {      
        LOG.debug("Entering getStudyProtocolByCriteria ");
        List<Object> queryList = new StudyProtocolDAO().getStudyProtocolByCriteria(spsc); 
-       return convertToStudyProtocolDTO(queryList);
+       //return convertToStudyProtocolDTO(queryList);
+       return convertToStudyProtocolDTOToBeDeleted(queryList);
            
     }
     
@@ -64,7 +65,9 @@ public class StudyProtocolServiceImpl  {
             LOG.error(" Study protcol was not found for id " + studyProtocolId);
             throw new PAException(" Study protcol was not found for id " + studyProtocolId);
         }
-        List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTO(queryList);
+        ////List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTO(queryList);
+        
+        List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTOToBeDeleted(queryList);
         if (trialSummarys == null || trialSummarys.size() <= 0) {
             // this will never happen is real scenario, as a practice throw exception
             LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
@@ -90,7 +93,6 @@ public class StudyProtocolServiceImpl  {
        StudyProtocol studyProtocol = null;
        StudyOverallStatus studyOverallStatus = null;
        DocumentWorkflowStatus documentWorkflowStatus = null;
-       DocumentIdentification documentIdentification = null;
        Organization organization = null;
        Person person = null;
        // array of objects for each row
@@ -108,8 +110,6 @@ public class StudyProtocolServiceImpl  {
                studyOverallStatus = (StudyOverallStatus) searchResult[1];
                // get documentWorkflowStatus
                documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[2];
-               // get documentIdentification    
-               documentIdentification =  (DocumentIdentification) searchResult[THREE];
                // get the organization 
                organization = (Organization) searchResult[LEAD_ORG_5];
                // get the person
@@ -117,20 +117,17 @@ public class StudyProtocolServiceImpl  {
                // transfer protocol to studyProtocolDto
                if (documentWorkflowStatus != null) {
                    studyProtocolDto.setDocumentWorkflowStatusCode(
-                           documentWorkflowStatus.getDocumentWorkflowStatusCode());
+                           documentWorkflowStatus.getStatusCode());
                    studyProtocolDto.setDocumentWorkflowStatusDate(
-                           documentWorkflowStatus.getDocumentWorkflowStatusDate());
-               }
-               if (documentIdentification != null) {
-                   studyProtocolDto.setNciIdentifier(documentIdentification.getIdentifier());
+                           documentWorkflowStatus.getStatusDateRangeLow());
                }
                if (studyProtocol != null) {
                    studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
                    studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
                }
                if (studyOverallStatus != null) {
-                   studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStudyStatusCode());
-                   studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStudyStatusDate());
+                   studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
+                   studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStatusDate());
                }
                if (organization != null) {
                    studyProtocolDto.setLeadOrganizationName(organization.getName());
@@ -152,5 +149,36 @@ public class StudyProtocolServiceImpl  {
        return studyProtocolDtos;
    }
     
+   private List<StudyProtocolQueryDTO> convertToStudyProtocolDTOToBeDeleted(
+           List<Object> protocolQueryResult) throws PAException {
+       LOG.debug("Entering convertToStudyProtocolDTO ");
+       List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
+       StudyProtocolQueryDTO studyProtocolDto = null;
+       StudyProtocol studyProtocol = null;
+       StudyOverallStatus studyOverallStatus = null;
+       DocumentWorkflowStatus documentWorkflowStatus = null;
+       Organization organization = null;
+       Person person = null;
+       // array of objects for each row
+       try {
+           for (int i = 0; i < protocolQueryResult.size(); i++) {
+               studyProtocol  = (StudyProtocol) protocolQueryResult.get(i);
+               studyProtocolDto = new StudyProtocolQueryDTO();
+               if (studyProtocol != null) {
+                   studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
+                   studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
+                   studyProtocolDto.setNciIdentifier(studyProtocol.getIdentifier());
+               }
+               // add to the list
+               studyProtocolDtos.add(studyProtocolDto);
+           } // for loop
+       } catch (Exception e) {
+           LOG.error("General error in while converting to DTO", e);
+           throw new PAException("General error in while converting to DTO2", e);
+       } finally {
+           LOG.debug("Leaving convertToStudyProtocolDTO ");
+       }
+       return studyProtocolDtos;
+   }
 
 }

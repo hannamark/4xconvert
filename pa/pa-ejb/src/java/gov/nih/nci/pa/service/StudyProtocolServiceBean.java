@@ -2,10 +2,11 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dtoconvert.StudyProtocolDTOConverter;
+
 import gov.nih.nci.pa.service.impl.StudyProtocolServiceImpl;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -92,7 +93,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
                     + "StudyProtocol for id = " + ii.getExtension() , hbe);
         }
         StudyProtocolDTO studyProtocolDTO =  
-            StudyProtocolDTOConverter.convertFromDomainToDTO(studyProtocol);
+            StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
 
         LOG.info("Leaving getStudyProtocol");
         return studyProtocolDTO;
@@ -119,7 +120,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         try {
             session = HibernateUtil.getCurrentSession();
 
-            StudyProtocol studyProtocol = StudyProtocolDTOConverter.convertFromDtoToDomain(studyProtocolDTO);
+            StudyProtocol studyProtocol = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
             StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocol.getId());
             if (studyProtocol.equals(sp)) {
                 sp = (StudyProtocol) session.merge(studyProtocol);
@@ -129,7 +130,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             session.update(sp);
             session.flush();
 
-            spDTO =  StudyProtocolDTOConverter.convertFromDomainToDTO(sp);  
+            spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);  
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while updating StudyProtocol for id = " 
                     + studyProtocolDTO.getIi().getExtension() , hbe);
