@@ -10,16 +10,23 @@
         	</ul>
         </li>
         <c:if test="${sessionScope.trialSummary  != null}">
-        <ul>
-        <li><a href="studyProtocolView.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >General Trial Details</a></li>
-        </ul>
-        <li class="stdnav"><div>Administrative Data</div>
+        <li class="sub"><div><c:out value="${sessionScope.trialSummary.nciIdentifier }"/></div>
         	<ul>
-		        <li><a href="nciSpecificInformation.action" >NCI Specific Information</a></li>
-		        <li><a href="regulatoryInfo.action" >Regulatory Information</a></li>      
-		        <li><a href="studyOverallStatus.action" >Trial Status</a></li>
-		     </ul>
-        </li>
+				<li><div>Protocol Overview</div>
+                	<ul>
+        				<li><a href="studyProtocolView.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Identification</a></li>
+        			</ul>
+        		</li>
+        		<li><div>Administrative Data</div>
+        			<ul>
+		        		<li><a href="nciSpecificInformation.action" >NCI Specific Information</a></li>
+		        		<li><a href="regulatoryInfo.action" >Regulatory Information</a></li>      
+		        		<li><a href="studyOverallStatus.action" >Trial Status</a></li>
+		     		</ul>
+        		</li>
+        	</ul>
+		</li>
+        		
     </c:if>
         
 
