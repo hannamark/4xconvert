@@ -48,7 +48,7 @@ function resetValues () {
              </tr>                                               
 
             <tr>
-            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
+
              <tr>
                 <td scope="row" class="label">
                     <label for="localProtocolIdentifer"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></label>
@@ -63,31 +63,19 @@ function resetValues () {
                     
                 </td>
                 <td>
-                    <s:select  
-                        name="criteria.leadOrganizationId" 
-                        list="#protocolOrgs"  
-                        listKey="id" listValue="name" headerKey="" headerValue="All" cssStyle="width:206px" />
 
                 </td>
 
             </tr>           
 
             <tr>
-            <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
+
              <tr>
                 <td  scope="row" class="label">
                     <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
                 </td>
 
                 <td>
-                    <s:select  
-                        name="criteria.principalInvestigatorId" 
-                        list="#principalInvs"  
-                        listKey="id" 
-                        listValue="fullName" 
-                        headerKey="" 
-                        headerValue="All" cssStyle="width:206px"
-                        />
 
                 </td>                    
                 <td  scope="row" class="label">
