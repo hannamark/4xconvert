@@ -18,76 +18,117 @@ function resetValues () {
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-<div id="contentwide">
+<!-- <div id="contentwide"> -->
  <h1><fmt:message key="nciSpecificInformation.title" /></h1>
 
 <!--Help Content-->
-    <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a>
-  <div id="box">
-    <s:form action="updateNCISpecificInformation">
-    	<table width="480">
- 			<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-			 	<tr>
-			  			<th colspan="2"><fmt:message key="nciSpecificInformation.title"/></th>
-				</tr>	
-                <tr>
-                          <td class=formErrorMsg colspan="2"> <s:actionerror/> </td>
-                </tr>   
-							  
+   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
+   <div class="summarybox">
+						
+			<div class="summarytitle">
+				<span class="value"><strong> <c:out value="${sessionScope.trialSummary.nciIdentifier }"/></strong>:
+				  <c:out value="${sessionScope.trialSummary.officialTitle }"/>
+				 </span>
+			</div>
+							
+			<div class="float33_first">
+				<div class="row">
+					<span class="label"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>:</span> 
+					<span class="value"></span>
+				</div>
+				<div class="row">
+					<span class="label"><fmt:message key="studyProtocol.leadOrganization"/>:</span> 
+					<span class="value"><c:out value="${sessionScope.trialSummary.leadOrganizationName }"/></span>
+				</div>
+			</div>
+							
+			<div class="float33">
+				<div class="row">
+					<span class="label"><fmt:message key="studyProtocol.principalInvestigator"/>:</span> 
+					<span class="value"> <c:out value="${sessionScope.trialSummary.piFullName }"/></span>
+				</div>
+				<div class="row">
+					<span class="label">Trial Submitter:</span> 
+					<span class="value"></span>
+				</div>
+			</div>
+							
+			<div class="float33">
+				<div class="row">
+					<span class="label"> <fmt:message key="studyProtocol.studyStatus"/>:</span> 
+					<span class="value"><c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/></span>
+				</div>
+				<div class="row">
+					<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/>:</span> 
+					<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
+				</div>
+			</div>
+				
+			<div class="clear"></div>
+							
+   </div>
+  <div id="box">  
+    <s:form action="updateNCISpecificInformation"><s:actionerror/>
+    <h2><fmt:message key="nciSpecificInformation.title" /></h2>
+    	<table class="form">
+ 			<%--  <jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> --%>
+
+			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationDTO.studyProtocolID}"/>
+			 	<!--  <tr>
+			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
+				</tr>	-->			  
 			    <tr>
-			          <td align=right>
-			               <label for="monitorCode"> <fmt:message key="studyProtocol.monitorCode"/></label>
+			          <td scope="row" class="label">
+			               <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.monitorCode"/></dfn></label>
 			          </td>			    			          			          			          			         
 			          <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
-	                  <td align=left>
-	                    <s:select headerKey="" headerValue="" 
-    	                    name="nciSpecificInformationWebDTO.monitorCode" 
-    	                    list="#monitorCodeValues"  
-    	                    value="nciSpecificInformationWebDTO.monitorCode" />
+	                  <td class="value">
+	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.monitorCode" list="#monitorCodeValues"  value="nciSpecificInformationData.monitorCode" cssStyle="width:206px"/>
 	                  </td>         
 			    </tr> 
 			    <tr>
-			    	  <td align=right>
-			               <label for="accrualReportingMethodCode"> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></label>
+			    	  <td scope="row" class="label">
+			               <label for="reportingDataSetMethodCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
 			          </td>
-			    	  <s:set name="accrualReportingMethodCodeValues" value="@gov.nih.nci.pa.enums.AccrualReportingMethodCode@getDisplayNames()" />
-	                  <td align=left>
-	                    <s:select headerKey="" headerValue="" 
-	                       name="nciSpecificInformationWebDTO.accrualReportingMethodCode" 
-	                       list="#accrualReportingMethodCodeValues"  
-	                       value="nciSpecificInformationWebDTO.accrualReportingMethodCode" />
+			    	  <s:set name="reportingDataSetMethodCodeValues" value="@gov.nih.nci.pa.enums.ReportingDataSetMethodCode@getDisplayNames()" />
+	                  <td class="value">
+	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.reportingDataSetMethodCode" list="#reportingDataSetMethodCodeValues"  value="nciSpecificInformationData.reportingDataSetMethodCode" cssStyle="width:206px" />
 	                  </td>   			            
 			     </tr>           
 			     <tr>
-			          <td align=right>
-			               <label for="summaryFourFundingCategoryCode"> 
-			               <fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>
+			          <td scope="row" class="label">
+			               <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></dfn></label>
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                      <td align=left>
-                        <s:select headerKey="" headerValue="" 
-                            name="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
-                            list="#summaryFourFundingCategoryCodeValues"  
-                            value="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" />
+                      <td class="value">
+                        <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues"  value="nciSpecificInformationData.summaryFourFundingCategoryCode" cssStyle="width:206px" />
                       </td>  			                    
 			     </tr>
 				<tr>
-			          <td align=right>
-			               <label for="organizationName"> 
-			               <fmt:message key="summaryFourFundingSource.organizationName"/></label>
+			          <td scope="row" class="label">
+			               <label for="summary4Name"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationName"/></dfn></label>
 			          </td>
-			          <td align=left>
-			              <s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30" maxlength="40" />
+			          <td class="value">
+			              <s:textfield name="nciSpecificInformationData.summary4Name" size="30" maxlength="40" />
 			          </td>          
 			     </tr>  
-			     <td colspan="2">                        
+			     <!-- <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Save" class="button"/>          
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td> 
-		</table>            
+                </td>  -->
+		</table> 
+		<div class="actionsrow">
+			<del class="btnwrapper">
+				<ul class="btnrow">
+					<li><a href="updateNCISpecificInformation.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+					<li><a href="studyProtocolView.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+					<li><a href="regulatoryInfo.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+				</ul>	
+			</del>
+		</div>
+		           
   	</s:form>
    </div>
- </div>
+<!--  </div> -->
  </body>
  </html>
- 
