@@ -33,6 +33,7 @@ public class StudyProtocolDAOTest {
      */
     @Test
     public void getStudyProtocolByCriteriaTest() {
+        /*
         List<Object> obj = null;
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
@@ -47,6 +48,25 @@ public class StudyProtocolDAOTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
+        StudyProtocolDAO spDAO = new StudyProtocolDAO();
+        StudyProtocolQueryCriteria qspc = new StudyProtocolQueryCriteria();
+        List<Object> obj = null;
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        Long id = sp.getId();
+
+         sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+         id = sp.getId();
+        
+        try {
+            obj = spDAO.getStudyProtocolByCriteria(qspc);
+       } catch (PAException e) {
+           // TODO Auto-generated catch block
+           e.printStackTrace();
+       }
+       //System.out.println(obj.size()); 
         assertNotNull(obj);
         
     }
