@@ -1,12 +1,12 @@
-/**
+/*
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The caarray-app
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This caarray-app Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the caarray-app Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the caarray-app Software; (ii) distribute and
- * have distributed to and by third parties the caarray-app Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,49 +80,94 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.web.util;
 
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 
-import java.util.Map;
-import javax.ejb.Local;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
- * 
+ * Manage things in session.
+ * TODO revisit this implementations if you plan to use session replication for failover.
  * @author gax
  */
-@Local
-public interface OrganizationServiceLocal extends GenericSearchService<Organization, SearchCriteria<Organization>> {
+public class PoHttpSessionUtil {
+
+    private static int sidCounter = Integer.MIN_VALUE;
+
+    private static synchronized String getNextSid(String prefix) {
+        return prefix + Integer.toHexString(sidCounter++);
+    }
 
     /**
-     * @param org new organization
-     * @return id
-     * @throws EntityValidationException if validation fails
+     * short for ServletActionContext.getRequest().getSession().
+     * @return current session
      */
-    long create(Organization org) throws EntityValidationException;
+    public static HttpSession getSession() {
+        return ServletActionContext.getRequest().getSession();
+    }
 
     /**
-     * @param id db id to get
-     * @return organization with matching id
+     * Adds an object to the http session with a unique key.
+     * @param prefix prefix of sessionkey to use.
+     * @param o the object to add to the session
+     * @return the key used to add the objects
      */
-    Organization getOrganization(long id);
+    private static String addUniqueAttribute(String prefix, Serializable o) {
+        HttpSession session = getSession();
+        // make sure this session id is unique
+        String sessionKey = getNextSid(prefix);
+        synchronized (session) {
+            while (session.getAttribute(sessionKey) != null) {
+                sessionKey = getNextSid(prefix);
+            }
+            getSession().setAttribute(sessionKey, o);
+        }
+        return sessionKey;
+    }
 
     /**
-     * @param entity the entity to validate
-     * @return return validation error messages per invalid field path.
+     * Adds an org to the http session with a unique key.
+     * @param o the org to add to the session
+     * @return the key used to add the objects
      */
-    Map<String, String[]> validate(Organization entity);
+    public static String addAttribute(Organization o) {
+        return addUniqueAttribute("o-", o);
+    }
 
     /**
-     * @param updatedEntity the entity to save.
+     * Adds a person to the http session with a unique key.
+     * @param p the org to add to the session
+     * @return the key used to add the objects
      */
-    void update(Organization updatedEntity);
+    public static String addAttribute(Person p) {
+        return addUniqueAttribute("p-", p);
+    }
 
     /**
-     * @param curatedOrg method to curate/accept Organization's w/ EntityStatus.NEW and transition to
-     *            EntityStatus.CURATED
+     * Remove an object and all it's children.
+     * @param key name of object to remove
      */
-    void accept(Organization curatedOrg);
-
+    public static void removeAttribute(String key) {
+        ArrayList<String> remove = new ArrayList<String>();
+        HttpSession session = getSession();
+        @SuppressWarnings("unchecked")
+        Enumeration<String> en = session.getAttributeNames();
+        while (en.hasMoreElements()) {
+            String n = en.nextElement();
+            if (n.startsWith(key)) {
+                remove.add(n);
+            }
+        }
+        for (String s : remove) {
+            session.removeAttribute(s);
+        }
+    }
 }

@@ -206,7 +206,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     }
     private void verifyDefaults(StringBuffer queryWhereClause, String expected) {
         assertEquals(expected, queryWhereClause.toString());
-        assertEquals(EntityStatus.DEPRECATED, namedParams
+        assertEquals(EntityStatus.REJECTED, namedParams
                 .remove(AbstractPersonSearchCriteria.PERSON_STATUS_PROPERTY + "1"));
     }
 

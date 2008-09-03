@@ -311,18 +311,14 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person p");
         List<Person> list = query.list();
         Person p = list.iterator().next();
-        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
-        p.setStatusCode(EntityStatus.CURATED);
-        PoHibernateUtil.getCurrentSession().update(p);
-        PoHibernateUtil.getCurrentSession().flush();
-        p.setStatusCode(EntityStatus.DEPRECATED);
+        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.REJECTED));
+        p.setStatusCode(EntityStatus.REJECTED);
         PoHibernateUtil.getCurrentSession().update(p);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
         sc.setPerson(new Person());
-        sc.getPerson().setStatusCode(EntityStatus.DEPRECATED);
+        sc.getPerson().setStatusCode(EntityStatus.REJECTED);
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 

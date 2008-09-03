@@ -127,6 +127,31 @@
     </package>
 
     <package name="common" extends="default" abstract="true">
+        <action name="**contactable/email/*" class="gov.nih.nci.po.web.contactable.AbstractEditContactListAction$EmailAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/contactable/email.jsp</result>
+            <result name="success">/WEB-INF/jsp/contactable/email.jsp</result>
+        </action>
+        <action name="**contactable/phone/*" class="gov.nih.nci.po.web.contactable.AbstractEditContactListAction$PhoneAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/contactable/phone.jsp</result>
+            <result name="success">/WEB-INF/jsp/contactable/phone.jsp</result>
+        </action>
+        <action name="**contactable/fax/*" class="gov.nih.nci.po.web.contactable.AbstractEditContactListAction$FaxAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/contactable/fax.jsp</result>
+            <result name="success">/WEB-INF/jsp/contactable/fax.jsp</result>
+        </action>
+        <action name="**contactable/tty/*" class="gov.nih.nci.po.web.contactable.AbstractEditContactListAction$TtyAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/contactable/tty.jsp</result>
+            <result name="success">/WEB-INF/jsp/contactable/tty.jsp</result>
+        </action>
+        <action name="**contactable/url/*" class="gov.nih.nci.po.web.contactable.AbstractEditContactListAction$UrlAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/contactable/url.jsp</result>
+            <result name="success" >/WEB-INF/jsp/contactable/url.jsp</result>
+        </action>    
     </package>
 
     <package name="protected" namespace="/protected" extends="common">
@@ -136,8 +161,15 @@
         </action>
         <action name="**organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{2}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/organization/{2}.jsp</result>
+            <result name="success" type="redirect-action">
+                <param name="namespace">/protected</param>
+                <param name="actionName">curate/search/listAll</param>
+            </result>
+            <!-- 
             <result name="success">/WEB-INF/jsp/curate/organization/curate.jsp</result>
+             -->
         </action>        
     </package>
 </struts>

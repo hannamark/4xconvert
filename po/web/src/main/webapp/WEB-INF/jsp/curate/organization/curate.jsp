@@ -15,11 +15,12 @@
 <c:url value="/notYetImplemented.jsp" var="urlNotYetImplemented"/>
 
 <s:form action="organization/curate/curate.action" id="curateOrgForm">
+	<s:hidden key="rootKey"/>
+    <s:hidden key="cr.id"/>
+    <s:hidden key="organization.id"/>
 <div class="boxouter">
 <h2>Basic Identifying Information</h2>
     <div class="box_white">
-        <s:hidden key="cr.id"/>
-        <s:hidden key="organization.id"/>
         
         <s:actionerror/>
         
@@ -27,7 +28,6 @@
 		<s:textfield key="organization.abbreviatedName" required="false" cssClass="required"/>
 		<s:textfield key="organization.description" required="false" cssClass="required"/>
         <div class="dotted_line"></div>
-        <%--@ include file="../../contactinfo/contacts.jsp" --%>        		
         <div class="clear"></div>
     </div>
 </div>
@@ -43,6 +43,7 @@
 <h2>Contact Information</h2>
     <div class="box_white">
         <div class="clear"></div>
+        <%@ include file="../../contactable/contacts.jsp" %>        		
     </div>
 </div>
 <div class="clearfloat"></div>

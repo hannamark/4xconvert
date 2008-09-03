@@ -3,6 +3,9 @@ package gov.nih.nci.po.web.curation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.util.PoRegistry;
@@ -20,37 +23,47 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     public void setUp() {
         action = new CurateOrganizationAction();
         mos = (MockOrganizationService) PoRegistry.getInstance().getServiceLocator().getOrganizationService();
+        assertNotNull(action.getOrganization());
     }
     
     @Test
-    public void testPrepare() throws Exception {
-        assertNotNull(action.getOrganization());
-        assertNull(action.getOrganization().getId());
-        //simulate request param for organization.id is provided
-        action.getOrganization().setId(1L);
-        //add org to stub's private map so that it may be found.. 
-        mos.update(action.getOrganization());
+    public void testPrepareNoRootKey() throws Exception {
+        Organization initial = action.getOrganization();
         action.prepare();
-        assertNotNull(action.getOrganization());
-        assertEquals(1l, action.getOrganization().getId().longValue());
-        assertEquals("name", action.getOrganization().getName());
+        assertSame(initial, action.getOrganization());
     }
     
     @Test
-    public void testPrepareNoOrgId() throws Exception {
-        assertNotNull(action.getOrganization());
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("a");
         action.prepare();
-        assertNotNull(action.getOrganization());
-        assertEquals(null, action.getOrganization().getId());
+        assertNull(action.getOrganization());
+    }
+    
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        Organization o = new Organization();
+        action.setRootKey("a");
+        getSession().setAttribute(action.getRootKey(), o);
+        action.prepare();
+        assertSame(o, action.getOrganization());
     }
 
     @Test
     public void testStart() {
-        assertEquals(Action.SUCCESS, action.start());
+        action.getOrganization().setId(1L);
+        assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
+        assertEquals(1l, action.getOrganization().getId().longValue());
+        assertEquals("name", action.getOrganization().getName());
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void testStartNoOrgId() {
+        assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
     }
 
     @Test
-    public void testCurate() {
+    public void testCurate() throws EntityValidationException {
         assertEquals(Action.SUCCESS, action.curate());
     }
 

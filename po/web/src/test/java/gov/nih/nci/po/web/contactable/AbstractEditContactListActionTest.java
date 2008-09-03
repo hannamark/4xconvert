@@ -1,4 +1,4 @@
-/**
+/*
  * The software subject to this notice and license includes both human readable
  * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
@@ -80,68 +80,188 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.web.contactable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.po.data.bo.Contactable;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.EmailAction;
+import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.FaxAction;
+import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.PhoneAction;
+import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.UrlAction;
 
-import java.util.List;
-import java.util.Map;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.Action;
+import com.sun.corba.se.pept.transport.ContactInfo;
 
 /**
  *
+ * @author gax
  */
-public class MockOrganizationService implements OrganizationServiceLocal {
+public class AbstractEditContactListActionTest extends AbstractPoTest {
 
-    private long currentId = 0;
-
-    /**
-     * {@inheritDoc}
-     */
-    public Organization getOrganization(long id) {
-        Organization o = new Organization();
-        o.setId(id);
-        o.setName("name");
-        return o;
+    @Test
+    public void simple() {
+        EmailAction instance = new EmailAction();
+        assertEquals(Action.SUCCESS, instance.edit());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public long create(Organization org) {
-        if (org.getId() == null) {
-            currentId++;
-            org.setId(currentId);
+    @Test
+    public void prepare() {
+        @SuppressWarnings("deprecation")
+        Contactable ci = new Organization();
+
+        String key = "foo"; 
+        getSession().setAttribute(key, ci);
+
+        EmailAction instance = new EmailAction();
+        assertNull(instance.getContactable());
+        assertNull(instance.getRootKey());
+        try{
+            instance.prepare();
+            fail("should no work w/o a ciKey");
+        }catch(IllegalArgumentException e){
+            // ok
         }
-        return currentId;
+        instance.setRootKey(key);
+        instance.prepare();
+        assertSame(ci, instance.getContactable());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void update(Organization org) {
+    @Test
+    public void addRemove() {
+        @SuppressWarnings("deprecation")
+        Contactable ci = new Organization();
+        EmailAction instance = new EmailAction();
+        String key = "foo"; 
+        getSession().setAttribute(key, ci);
+        instance.setRootKey(key);
+        instance.prepare();
+
+        String v = "foo@example.com";
+        assertNull(instance.find(v));
+        Email e = new Email(v);
+        ci.getEmail().add(e);
+        assertSame(e, instance.find(v));
+        assertNull(ActionHelper.getMessages());
+        instance.getEntry().setValue(v);
+        instance.add();
+        assertTrue(ActionHelper.getMessages().get(0).contains("Already "));
+
+        v = "bar@example.com";
+        ActionHelper.getMessages().clear();
+        instance.getEntry().setValue(v);
+        instance.add();
+        assertTrue(ActionHelper.getMessages().isEmpty());
+        assertEquals(2, ci.getEmail().size());
+        assertEquals(v, ci.getEmail().get(1).getValue());
+
+        instance.getEntry().setValue(v);
+        instance.remove();
+        assertEquals(1, ci.getEmail().size());
+        assertFalse(v.equals(ci.getEmail().get(0).getValue()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int count(SearchCriteria<Organization> criteria) {
-        return 0;
+    @Test
+    public void testEmail() {
+        @SuppressWarnings("deprecation")
+        Contactable ci = new Organization();
+        EmailAction instance = new EmailAction();
+        String key = "foo"; 
+        getSession().setAttribute(key, ci);
+        instance.setRootKey(key);
+
+        instance.prepare();
+
+        String v = "foo";
+        Email e = instance.getEntry();
+        e.setValue(v);
+        instance.add();
+        e = ci.getEmail().get(0);
+        assertEquals(v, e.getValue());
+
+        instance.setEmailEntry(e);
+        assertEquals(e,instance.getEmailEntry());
+
     }
 
-    public List<Organization> search(SearchCriteria<Organization> criteria) {
-        return null;
+    @Test
+    public void testPhone() {
+        @SuppressWarnings("deprecation")
+        Contactable ci = new Organization();
+        PhoneAction instance = new PhoneAction();
+        String key = "foo"; 
+        getSession().setAttribute(key, ci);
+        instance.setRootKey(key);
+
+        instance.prepare();
+
+        String v = "foo";
+        PhoneNumber e = instance.getEntry();
+
+        e.setValue(v);
+        instance.add();
+        e = ci.getPhone().get(0);
+        assertEquals(v, e.getValue());
+
+        instance.setPhoneEntry(e);
+        assertEquals(e,instance.getPhoneEntry());
+
     }
 
-    public List<Organization> search(SearchCriteria<Organization> criteria, PageSortParams<Organization> pageSortParams) {
-        return null;
+    @Test
+    public void testFax() {
+        @SuppressWarnings("deprecation")
+        Contactable ci = new Organization();
+        FaxAction instance = new FaxAction();
+        String key = "foo"; 
+        getSession().setAttribute(key, ci);
+        instance.setRootKey(key);
+
+        instance.prepare();
+
+        String v = "foo";
+        PhoneNumber e = instance.getEntry();
+        e.setValue(v);
+        instance.add();
+        e = ci.getFax().get(0);
+        assertEquals(v, e.getValue());
+
+        instance.setFaxEntry(e);
+        assertEquals(e,instance.getFaxEntry());
+
     }
 
-    public Map<String, String[]> validate(Organization entity) {
-        return null;
-    }
+    @Test
+    public void testUrl() {
+        @SuppressWarnings("deprecation")
+        Contactable ci = new Organization();
+        UrlAction instance = new UrlAction();
+        String key = "foo"; 
+        getSession().setAttribute(key, ci);
+        instance.setRootKey(key);
 
-    public void accept(Organization curatedOrg) {
-        
-    }
+        instance.prepare();
 
+        String v = "foo";
+        URL e = instance.getEntry();
+        e.setValue(v);
+        instance.add();
+        e = ci.getUrl().get(0);
+        assertEquals(v, e.getValue());
+
+        instance.setUrlEntry(e);
+        assertEquals(e,instance.getUrlEntry());
+    }
 }

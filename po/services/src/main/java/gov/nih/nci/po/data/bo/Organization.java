@@ -195,7 +195,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
      * {@inheritDoc}
      */
     @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, 
             org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(

@@ -492,6 +492,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     }
 
     private static String getValueString(Collection<?> value) {
+        if (value == null) {
+            return null;
+        }
         String sep = "";
         StringBuffer sb = new StringBuffer();
         for (Object a : value) {

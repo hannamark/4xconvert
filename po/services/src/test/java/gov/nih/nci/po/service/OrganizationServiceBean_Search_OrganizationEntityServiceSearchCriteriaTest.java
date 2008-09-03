@@ -351,23 +351,19 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     @SuppressWarnings("unchecked")
-    public void findByStatusCodeEnsureDeprecatedAreNotReturned() throws EntityValidationException {
+    public void findByStatusCodeEnsureRejectedAreNotReturned() throws EntityValidationException {
         createOrgsWithAddresses();
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
         List<Organization> list = query.list();
         Organization o = list.iterator().next();
-        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
-        o.setStatusCode(EntityStatus.CURATED);
-        PoHibernateUtil.getCurrentSession().update(o);
-        PoHibernateUtil.getCurrentSession().flush();
-        o.setStatusCode(EntityStatus.DEPRECATED);
+        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.REJECTED));
+        o.setStatusCode(EntityStatus.REJECTED);
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
         sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.DEPRECATED);
+        sc.getOrganization().setStatusCode(EntityStatus.REJECTED);
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 

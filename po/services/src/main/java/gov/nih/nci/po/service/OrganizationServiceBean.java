@@ -152,4 +152,22 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
         return genericCount(criteria);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws EntityValidationException 
+     */
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    public void accept(Organization org) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Organization o = (Organization) s.load(Organization.class, org.getId());
+        if (org != o) {
+            o = (Organization) s.merge(org);
+        } else {
+            o = org;
+        }
+        o.setStatusCode(EntityStatus.CURATED);
+        o.setStatusDate(new Date());
+        s.update(o);
+    }
+
 }

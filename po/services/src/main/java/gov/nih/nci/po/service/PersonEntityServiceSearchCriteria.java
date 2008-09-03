@@ -69,7 +69,7 @@ public class PersonEntityServiceSearchCriteria extends AbstractPersonSearchCrite
         List<String> whereClause = new ArrayList<String>();
         String personAliasDot = personAlias + DOT;
         whereClause.add(addNotEqual(personAliasDot + PERSON_STATUS_PROPERTY, PERSON_STATUS_PROPERTY + "1",
-                EntityStatus.DEPRECATED, namedParameters));
+                EntityStatus.REJECTED, namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_FIRST_NAME_PROPERTY, PERSON_FIRST_NAME_PROPERTY, person
                 .getFirstName(), namedParameters));
         whereClause.add(addILike(personAliasDot + PERSON_LAST_NAME_PROPERTY, PERSON_LAST_NAME_PROPERTY, person

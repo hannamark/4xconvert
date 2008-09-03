@@ -43,4 +43,18 @@ public abstract class AbstractPoTest {
     public void cleanUpActionContext() {
         ActionContext.setContext(null);
     }
+    
+    /**
+     * @return MockHttpServletRequest
+     */
+    protected MockHttpServletRequest getRequest() {
+        return (MockHttpServletRequest) ServletActionContext.getRequest();
+    }
+    
+    /**
+     * @return MockHttpSession
+     */
+    protected MockHttpSession getSession() {
+        return (MockHttpSession) ServletActionContext.getRequest().getSession();
+    }
 }

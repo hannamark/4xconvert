@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
@@ -95,6 +96,7 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -243,4 +245,42 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         return PoHibernateUtil.getCurrentSession().createQuery("from " + Organization.class.getName()).list();
     }
     
+    @Test
+    public void acceptWithNoChanges() throws EntityValidationException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        o = getOrgServiceBean().getOrganization(id);
+        getOrgServiceBean().accept(o);
+        Organization result = getOrgServiceBean().getOrganization(id);
+        assertEquals(EntityStatus.CURATED, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+    }
+
+    private void assertOnOrBefore(Date left, Date right) {
+        assertTrue(left.getTime() <= right.getTime());
+    }
+    
+    @Test
+    public void acceptWithChanges() throws EntityValidationException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        o = getOrgServiceBean().getOrganization(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence 
+        Email eRemoved = o.getEmail().remove(0);
+        PhoneNumber fRemoved = o.getFax().remove(0);
+        PhoneNumber pRemoved = o.getPhone().remove(0);
+        PhoneNumber tRemoved = o.getTty().remove(0);
+        URL uRemoved = o.getUrl().remove(0);
+        
+        getOrgServiceBean().accept(o);
+        
+        Organization result = getOrgServiceBean().getOrganization(id);
+        assertEquals(EntityStatus.CURATED, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+    }
 }

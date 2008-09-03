@@ -135,8 +135,6 @@ public enum EntityStatus  {
         tmp.put(NEW, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-        tmpSet.add(REJECTED);
         tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<EntityStatus>();
@@ -146,7 +144,6 @@ public enum EntityStatus  {
         tmp.put(DEPRECATED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
 
         TRANSITIONS = Collections.unmodifiableMap(tmp);
     }

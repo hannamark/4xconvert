@@ -1,6 +1,5 @@
 package gov.nih.nci.po.data.bo;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -8,23 +7,48 @@ import gov.nih.nci.po.data.CurationException;
 
 import org.junit.Test;
 
-
 public class EntityStatusTest {
 
     /**
      * Test canTransitionTo() method
      */
     @Test
-    public void testCanTransitionTo() {
+    public void testCanTransitionFromNEWTo() {
         EntityStatus cs = EntityStatus.NEW;
         assertTrue(cs.canTransitionTo(EntityStatus.REJECTED));
+        assertTrue(cs.canTransitionTo(EntityStatus.CURATED));
+        assertTrue(cs.canTransitionTo(EntityStatus.NEW));
         assertFalse(cs.canTransitionTo(EntityStatus.DEPRECATED));
-        cs = EntityStatus.CURATED;
-        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
-        assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
     }
 
-    // todo stm  Add test to actually test valid transistion statuses
+    @Test
+    public void testCanTransitionFromCURATEDTo() {
+        EntityStatus cs = EntityStatus.CURATED;
+        assertTrue(cs.canTransitionTo(EntityStatus.CURATED));
+        assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
+        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
+        assertFalse(cs.canTransitionTo(EntityStatus.NEW));
+    }
+    
+    @Test
+    public void testCanTransitionFromREJECTEDTo() {
+        EntityStatus cs = EntityStatus.REJECTED;
+        assertFalse(cs.canTransitionTo(EntityStatus.CURATED));
+        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
+        assertFalse(cs.canTransitionTo(EntityStatus.DEPRECATED));
+        assertFalse(cs.canTransitionTo(EntityStatus.NEW));
+    }
+    
+    @Test
+    public void testCanTransitionFromDEPRECATEDTo() {
+        EntityStatus cs = EntityStatus.DEPRECATED;
+        assertTrue(cs.canTransitionTo(EntityStatus.CURATED));
+        assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
+        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
+        assertFalse(cs.canTransitionTo(EntityStatus.NEW));
+    }
+
+    // todo stm Add test to actually test valid transistion statuses
 
     /**
      * Test Curation Exceptions
