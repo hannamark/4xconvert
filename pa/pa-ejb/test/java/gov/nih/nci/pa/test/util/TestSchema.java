@@ -2,13 +2,10 @@ package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Document;
-import gov.nih.nci.pa.domain.DocumentIdentification;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PersonIdentification;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -16,9 +13,9 @@ import gov.nih.nci.pa.domain.StudyContactRole;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.YesNoCode;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -46,8 +43,6 @@ public class TestSchema {
         static {            
             Configuration config = new AnnotationConfiguration().
 
-            addAnnotatedClass(Document.class).
-            addAnnotatedClass(DocumentIdentification.class).
             addAnnotatedClass(StudyProtocol.class).
             addAnnotatedClass(StudyCondition.class).
             addAnnotatedClass(Condition.class).
@@ -57,11 +52,10 @@ public class TestSchema {
             addAnnotatedClass(StudyOverallStatus.class).
             addAnnotatedClass(DocumentWorkflowStatus.class).
             addAnnotatedClass(Person.class).
-            addAnnotatedClass(PersonIdentification.class).
             addAnnotatedClass(HealthCareProvider.class).
             addAnnotatedClass(StudyContact.class).
+            addAnnotatedClass(StudyParticipation.class).
             addAnnotatedClass(StudyContactRole.class).
-            addAnnotatedClass(StudySite.class).
             addAnnotatedClass(Country.class).
             addAnnotatedClass(RegulatoryAuthority.class).
             addAnnotatedClass(StudyRegulatoryAuthority.class).            
