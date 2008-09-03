@@ -41,10 +41,10 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         selenium.open("/po-web/protected/curate/search/listAll.action");
         selenium.click("link=Inbox");
-        selenium.waitForPageToLoad("30000");
+        waitForPageToLoad();
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        selenium.waitForPageToLoad("30000");
+        waitForPageToLoad();
         assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
         assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
         assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
