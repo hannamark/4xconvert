@@ -2,11 +2,16 @@
 <!--<ul class="cactusmenu"> -->
 
 
-		<li class="stdnav"><div>Protocol Abstraction</div> 
-        	<ul>
+		<li class="stdnav"><div>Protocol Abstraction</div>
+			<ul>
+				<li><a href="#">Home</a></li>			
+							
         		<c:if test="${sessionScope.loggedUserName  != null}">
-        		<li><a href="studyProtocolQuery.action" >Search Trial</a></li>
+        		<li><a href="studyProtocolQuery.action" >Protocol Search</a></li>
         		</c:if>
+
+				<li><a href="#">Help</a></li>
+				<li><a href="#">Logout</a></li>
         	</ul>
         </li>
         <c:if test="${sessionScope.trialSummary  != null}">
