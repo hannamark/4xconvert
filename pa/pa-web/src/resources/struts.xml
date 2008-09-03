@@ -55,7 +55,11 @@
         <action name="studyProtocolView" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
             <interceptor-ref name="nci-commonsParams" />                         
             <result>/jsp/pajsp/studyProtocolView.jsp</result>
-        </action>  
+        </action> 
+        <action name="studyProtocolEdit" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
+            <interceptor-ref name="nci-commonsParams" />                         
+            <result>/jsp/pajsp/studyProtocolEdit.jsp</result>
+        </action> 
         <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
             <result>/jsp/pajsp/studyOverallStatus.jsp</result>
         </action> 
