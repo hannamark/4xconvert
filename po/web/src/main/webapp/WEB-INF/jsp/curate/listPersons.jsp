@@ -14,5 +14,11 @@
 		<display:column titleKey="person.middleName" property="middleName" sortable="true" sortProperty="PERSON_MIDDLENAME" />
 		<display:column titleKey="person.prefix" property="prefix" sortable="true" sortProperty="PERSON_PREFIX" />
 		<display:column titleKey="person.suffix" property="suffix" sortable="true" sortProperty="PERSON_SUFFIX" />
+        <display:column titleKey="person.statusCode" sortable="false">
+            <c:if test="${fn:length(row.changeRequests) > 0}">
+                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
+            </c:if>
+            <c:if test="${fn:length(row.changeRequests) == 0}">${row.statusCode}</c:if>
+        </display:column>
 	</display:table>
 </ajax:displayTag>

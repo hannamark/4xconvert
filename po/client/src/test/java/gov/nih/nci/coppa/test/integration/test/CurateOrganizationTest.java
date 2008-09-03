@@ -56,7 +56,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyFax();
         verifyTty();
         verifyUrl();
-
+        
+        clickAndWait("//a[@id='mark_as_accepted_button']/span/span");
+        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void verifyPostalAddress() {

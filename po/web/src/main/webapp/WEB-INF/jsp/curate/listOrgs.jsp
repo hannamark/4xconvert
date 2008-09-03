@@ -8,8 +8,14 @@
 
 		<display:column titleKey="organization.id" property="id" sortable="true" sortProperty="ORGANIZATION_ID" />
 		<display:column titleKey="organization.name" property="name" sortable="true" sortProperty="ORGANIZATION_NAME" />
-		<display:column titleKey="organization.abbreviatedName" property="abbreviatedName" sortable="true" sortProperty="ORGANIZATION_NAME" />
-		<display:column titleKey="organization.description" property="description" sortable="true" sortProperty="ORGANIZATION_NAME" />
+		<display:column titleKey="organization.abbreviatedName" property="abbreviatedName" />
+		<display:column titleKey="organization.description" property="description" />
+        <display:column titleKey="organization.statusCode" sortable="false">
+            <c:if test="${fn:length(row.changeRequests) > 0}">
+                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
+            </c:if>
+            <c:if test="${fn:length(row.changeRequests) == 0}">${row.statusCode}</c:if>
+        </display:column>
         <display:column titleKey="th.action" class="action">
             <c:url var="curateUrl" value="/protected/organization/curate/start.action">
                 <c:param name="organization.id" value="${row.id}"/>

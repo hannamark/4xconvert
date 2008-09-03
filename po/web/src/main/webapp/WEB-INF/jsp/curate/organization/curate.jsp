@@ -52,8 +52,8 @@
 <div class="btnwrapper">
     <po:buttonRow>
         <po:button href="${urlNotYetImplemented}" style="search" text="Search for Duplicates"/>
-        <po:button href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="confirm" text="Mark as Accepted"/>
-        <po:button href="${urlNotYetImplemented}" style="reject" text="Mark as Rejected"/>
+        <po:button id="mark_as_accepted_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="confirm" text="Mark as Accepted"/>
+        <po:button id="mark_as_rejected_button" href="${urlNotYetImplemented}" style="reject" text="Mark as Rejected"/>
     </po:buttonRow>
 </div>
 </body>
