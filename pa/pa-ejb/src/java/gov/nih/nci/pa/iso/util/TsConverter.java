@@ -1,8 +1,9 @@
 package gov.nih.nci.pa.iso.util;
 
-import java.sql.Timestamp;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Ts;
+
+import java.sql.Timestamp;
 
 /**
  * utility method for converting Ts and Timestamp.
@@ -30,5 +31,16 @@ public class TsConverter {
         return ts;
     }
     
+    /**
+     * @param tsIso iso Ts
+     * @return java Timestamp
+     */
+    public static Timestamp convertToTimestamp(Ts tsIso) {
+        if (tsIso == null) {
+            return null;
+        }
+        return Timestamp.valueOf(tsIso.getValue());
+    }
+
 
 }

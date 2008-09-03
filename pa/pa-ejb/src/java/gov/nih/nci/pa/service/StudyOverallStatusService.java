@@ -4,7 +4,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 
 import java.util.List;
 
@@ -23,5 +23,12 @@ public interface StudyOverallStatusService {
      * @return list StudyOverallStatusDTO   
      * @throws PAException on error 
      */
-    List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocl(Ii studyProtocolId) throws PAException;
+    List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(Ii studyProtocolId) throws PAException;
+    
+    /**
+     * @param studyProtocolId Primary key assigned to a StudyProtocl.
+     * @return StudyOverallStatusDTO Current status.
+     * @throws PAException Exception.
+     */
+    StudyOverallStatusDTO getCurrentStudyOverallStatusByStudyProtocol(Ii studyProtocolId) throws PAException;
 }

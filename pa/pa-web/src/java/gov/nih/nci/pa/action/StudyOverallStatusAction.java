@@ -5,14 +5,19 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.IsoConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -28,21 +33,21 @@ import com.opensymphony.xwork2.Preparable;
  *        holder, NCI.
  * 
  */
-@SuppressWarnings("PMD.SignatureDeclareThrowsException")
+@SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.SingularField", "PMD.UnusedLocalVariable" })
 public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.opensymphony.xwork2.Preparable#prepare()
-     */
     private static final long serialVersionUID = 1L;
-    private List trialStartDate;
-    private List primaryCompletionDate;
-    StudyProtocolServiceRemote spService;
-    StudyOverallStatusServiceRemote sosService;
-    Long spIdLong;
-    Ii spIdIi;
+    
+    private Map<String, String>  dateTypeList;
+    private StudyProtocolServiceRemote spService;
+    private StudyOverallStatusServiceRemote sosService;
+    
+    private Long spIdLong;
+    private Ii spIdIi;
+    private String startDate;
+    private String completionDate;
+    private String startDateType;
+    private String completionDateType;
 
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -55,22 +60,66 @@ public class StudyOverallStatusAction extends ActionSupport implements
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
+        
         spIdLong = spDTO.getStudyProtocolId();
         spIdIi = IsoConverter.convertIdToIsoIi(spIdLong);
 
-        trialStartDate = new ArrayList();
-        trialStartDate.add("Actual");
-        trialStartDate.add("Anticipated");
+        StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
+        StudyOverallStatusDTO sosDto = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi); 
+        
+        Timestamp tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
+        if (tsTemp != null) {
+            setStartDate(tsTemp.toString());            
+        } else {
+            setStartDate("");
+        }
+        
+        tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
+        if (tsTemp != null) {
+            setCompletionDate(tsTemp.toString());            
+        } else {
+            setCompletionDate("");
+        }
 
-        primaryCompletionDate = new ArrayList();
-        primaryCompletionDate.add("Actual");
-        primaryCompletionDate.add("Anticipated");
+        dateTypeList = new HashMap<String, String>();
+        dateTypeList.put("Actual", "Actual");
+        dateTypeList.put("Anticipated", "Anticipated");
+        
+        startDateType = "Actual";
+        completionDateType = "Anticipated";        
+    }
+
+    /**
+     * @return the startDateType
+     */
+    public String getStartDateType() {
+        return startDateType;
+    }
+
+    /**
+     * @param startDateType the startDateType to set
+     */
+    public void setStartDateType(String startDateType) {
+        this.startDateType = startDateType;
+    }
+
+    /**
+     * @return the completionDateType
+     */
+    public String getCompletionDateType() {
+        return completionDateType;
+    }
+
+    /**
+     * @param completionDateType the completionDateType to set
+     */
+    public void setCompletionDateType(String completionDateType) {
+        this.completionDateType = completionDateType;
     }
 
     /**
      * @return Action result.
-     * @throws Exception
-     *             xxx.
+     * @throws Exception exception.
      */
     @Override
     public String execute() throws Exception {
@@ -78,16 +127,44 @@ public class StudyOverallStatusAction extends ActionSupport implements
     }
 
     /**
-     * @return Trial start date.
+     * @return Trial completion date.
      */
-    public List getTrialStartDate() {
-        return trialStartDate;
+    public Map getPrimaryCompletionDate() {
+        return dateTypeList;
     }
 
     /**
-     * @return Trial completion date.
+     * @return the startDate
      */
-    public List getPrimaryCompletionDate() {
-        return primaryCompletionDate;
+    public String getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = PAUtil.normalizeDateString(startDate);
+    }
+
+    /**
+     * @return the completionDate
+     */
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = PAUtil.normalizeDateString(completionDate);
+    }
+
+    /**
+     * @return the dateTypeList
+     */
+    public Map<String, String> getDateTypeList() {
+        return dateTypeList;
     }
 }

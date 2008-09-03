@@ -66,14 +66,17 @@ public class PAUtil {
     private static class ValidDateFormat {
         String pattern;
         int endIndex;
+        boolean lenient;
 
         public ValidDateFormat(String pattern) {
             this.pattern = pattern;
             this.endIndex = pattern.length();
+            this.lenient = false;
         }
-        public ValidDateFormat(String pattern, Integer length) {
+        public ValidDateFormat(String pattern, Integer length, Boolean lenient) {
             this.pattern = pattern;
             this.endIndex = length;
+            this.lenient = lenient;
         }
     }
 
@@ -97,15 +100,21 @@ public class PAUtil {
      * @return normalized string
      */
     public static String normalizeDateString(String inDate) {
+        if (inDate == null) {
+            return null;
+        }
+        
         Date outDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat();
         for (ValidDateFormat fm : dateFormats) {
             if (outDate != null) {
-                continue; 
+                break; 
             }
             sdf.applyPattern(fm.pattern);
+            sdf.setLenient(fm.lenient);
             try {
-                outDate = sdf.parse(inDate.trim().substring(0, fm.endIndex));
+                int endIndex = (inDate.trim().length() < fm.endIndex) ? inDate.trim().length() : fm.endIndex;
+                outDate = sdf.parse(inDate.trim().substring(0, endIndex));
             } catch (ParseException e) {
                 outDate = null;
             }
