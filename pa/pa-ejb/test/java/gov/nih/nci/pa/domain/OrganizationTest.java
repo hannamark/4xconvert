@@ -2,11 +2,8 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import gov.nih.nci.pa.test.util.TestSchema;
-
 import java.io.Serializable;
-
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +13,7 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class OrganizationTest  {
+public class OrganizationTest   {
     
     /**
      * 
@@ -41,7 +38,9 @@ public class OrganizationTest  {
         assertNotNull(id);
         Organization saved = (Organization) session.load(Organization.class, id);
         assertEquals("Name does not match " , create.getName(), saved.getName());
-        assertEquals("Id does not match " , create.getNciInstituteCode(), saved.getNciInstituteCode());
+        assertEquals("Identifer does not match " , create.getIdentifier(), saved.getIdentifier());
+        assertEquals("User Id  does not match " , create.getUserLastUpdated(), saved.getUserLastUpdated());
+        assertEquals("Date updated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
     }
     
     /**
@@ -51,7 +50,11 @@ public class OrganizationTest  {
     public  static Organization organizationObj() {
         Organization create = new Organization();
         create.setName("Mayo University");
-        create.setNciInstituteCode("P001");
+        create.setIdentifier("P001");
+        create.setUserLastUpdated("abstractor");
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        create.setDateLastUpdated(now);
+        
         return create;
         
     }

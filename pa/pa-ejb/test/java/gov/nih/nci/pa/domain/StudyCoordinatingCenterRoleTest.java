@@ -17,7 +17,7 @@ import org.junit.Test;
  *
  */
 
-public class StudyCoordinatingCenterRoleTest {
+public class StudyCoordinatingCenterRoleTest  {
     
     /**
      * 
@@ -49,18 +49,21 @@ public class StudyCoordinatingCenterRoleTest {
         
         StudyCoordinatingCenterRole create = createStudyCoordinatingCenterRoleObj(scc , 
                 ResponsibilityCode.PROTOCOL_MANAGEMENT);
-        create.setStudyCoordinatingCenter(scc);
-        create.setResponsibilityCode(ResponsibilityCode.REGISTRATION_MANAGEMENT);
+        TestSchema.addUpdObject(create);
         
-        Serializable id = session.save(create);
-        
+        Serializable id = create.getId();
+        assertNotNull(id);
         
         StudyCoordinatingCenterRole saved = (StudyCoordinatingCenterRole) 
                     session.load(StudyCoordinatingCenterRole.class, id);
         assertEquals("Responsibility code does not match  " , 
                 create.getResponsibilityCode(), saved.getResponsibilityCode());
         assertEquals("Study Coordinating center does not match  " , 
-                create.getStudyCoordinatingCenter(), saved.getStudyCoordinatingCenter());
+                create.getStudyCoordinatingCenter().getId(), 
+                saved.getStudyCoordinatingCenter().getId());
+        assertEquals("User Id  does not match " , create.getUserLastUpdated(), saved.getUserLastUpdated());
+        assertEquals("Date updated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
+      
         
     }
     
@@ -75,6 +78,10 @@ public class StudyCoordinatingCenterRoleTest {
         StudyCoordinatingCenterRole create = new StudyCoordinatingCenterRole();
         create.setStudyCoordinatingCenter(scc);
         create.setResponsibilityCode(rrc);
+        create.setUserLastUpdated("abstractor");
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        create.setDateLastUpdated(now);
+
         return create;
         
     }

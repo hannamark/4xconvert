@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class StudyCoordinatingCenterTest {
+public class StudyCoordinatingCenterTest  {
     
     /**
      * 
@@ -25,7 +25,6 @@ public class StudyCoordinatingCenterTest {
     public void setUp() throws Exception {
         TestSchema.reset();
     }
-    
     /**
      * 
      */
@@ -35,7 +34,6 @@ public class StudyCoordinatingCenterTest {
 
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
-
         Serializable spid = sp.getId();
         assertNotNull(spid);
         
@@ -44,7 +42,6 @@ public class StudyCoordinatingCenterTest {
         assertNotNull(o.getId());
         
         StudyCoordinatingCenter create = createStudyCoordinatingCenterObj(sp , o);
-        
         TestSchema.addUpdObject(create);
         StudyCoordinatingCenter saved = (StudyCoordinatingCenter) 
             session.load(StudyCoordinatingCenter.class, create.getId());
@@ -53,6 +50,8 @@ public class StudyCoordinatingCenterTest {
                 saved.getOrganization().getName());
         assertEquals("Study Protocol Does not match  " , create.getStudyProtocol().getId(), 
                 saved.getStudyProtocol().getId());
+        assertEquals("User Id  does not match " , create.getUserLastUpdated(), saved.getUserLastUpdated());
+        assertEquals("Date updated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
         
         
     }
@@ -65,6 +64,9 @@ public class StudyCoordinatingCenterTest {
      */
     public static StudyCoordinatingCenter createStudyCoordinatingCenterObj(StudyProtocol sp , Organization o) {
         StudyCoordinatingCenter create = new StudyCoordinatingCenter();
+        create.setUserLastUpdated("abstractor");
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        create.setDateLastUpdated(now);
         create.setOrganization(o);
         create.setStudyProtocol(sp);
         return create;

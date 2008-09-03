@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Harsha
@@ -21,10 +22,12 @@ public class RegulatoryAuthorityTest {
      * 
      * @throws Exception e
      */
+    
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
     }
+    
 
     /**
      * Test Method.
@@ -32,21 +35,27 @@ public class RegulatoryAuthorityTest {
     @Test
     public void createRegulatoryAuthority() {            
         Session session  = TestSchema.getSession();
-        //
-        Country c1 = new Country();
-        c1.setAlpha2("CA");
-        c1.setAlpha3("CAM");
-        c1.setName("Cayman Islands");
+        Country c1 = CountryTest.createCountryObj();
         TestSchema.addUpdObject(c1);
-        //
-        RegulatoryAuthority authority = new RegulatoryAuthority();
-        authority.setAuthorityName("BWI reg body");
-        authority.setCountry(c1);
-        TestSchema.addUpdObject(authority);
-        //
-        RegulatoryAuthority saved = (RegulatoryAuthority) session.load(RegulatoryAuthority.class, authority.getId());
-        //
-        assertEquals("BWI reg body", saved.getAuthorityName());
-        assertEquals("Cayman Islands", saved.getCountry().getName());
+        assertNotNull(c1.getId());
+
+        RegulatoryAuthority create = createRegulatoryObj(c1);
+        TestSchema.addUpdObject(create);
+        RegulatoryAuthority saved = (RegulatoryAuthority) session.load(RegulatoryAuthority.class, create.getId());
+        assertEquals("Authoruty Name does not match", create.getAuthorityName() , saved.getAuthorityName());
+        assertEquals("Country Id does not match", create.getCountry().getId() , saved.getCountry().getId());
+        
+    }
+    
+    public static RegulatoryAuthority createRegulatoryObj(Country c){
+        RegulatoryAuthority ra = new RegulatoryAuthority();
+        ra.setAuthorityName("BWI reg body");
+        ra.setCountry(c);
+        ra.setUserLastUpdated("abstractor");
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        ra.setDateLastUpdated(now);
+        
+        return ra;
+        
     }
 }

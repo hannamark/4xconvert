@@ -16,7 +16,7 @@ import org.junit.Test;
  * copyright holder, NCI.
  * 
  */
-public class StudyRegulatoryAuthorityTest {
+public class StudyRegulatoryAuthorityTest  {
     /**
      * 
      * @throws Exception e
@@ -32,29 +32,41 @@ public class StudyRegulatoryAuthorityTest {
     @Test
     public void createRegulatoryAuthority() {
         Session session  = TestSchema.getSession();
-        StudyProtocol create = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+        //
+        Country c = CountryTest.createCountryObj();
+        TestSchema.addUpdObject(c);
+        assertNotNull(c.getId());
+        //
+        RegulatoryAuthority ra = RegulatoryAuthorityTest.createRegulatoryObj(c);
+        TestSchema.addUpdObject(ra);
+        assertNotNull(ra.getId());
+
+        StudyRegulatoryAuthority create = createStudyRegulatoryAuthorityObj(ra , sp);
         TestSchema.addUpdObject(create);
+        assertNotNull(create.getId());
+        StudyRegulatoryAuthority saved = 
+            (StudyRegulatoryAuthority) session.load(StudyRegulatoryAuthority.class , create.getId());
         //
-        Country c2 = new Country();
-        c2.setAlpha2("IN");
-        c2.setAlpha3("IND");
-        c2.setName("INDIA");
-        TestSchema.addUpdObject(c2);
-        //
-        RegulatoryAuthority authority0 = new RegulatoryAuthority();
-        authority0.setAuthorityName("AIMMS_IND_456XSD1QA34");
-        authority0.setCountry(c2);
-        TestSchema.addUpdObject(authority0);
-        //
-        StudyRegulatoryAuthority studyAuthority = new StudyRegulatoryAuthority();
-        studyAuthority.setRegulatoryAuthorityID(authority0.getId());
-        studyAuthority.setStudyProtocolID(create.getId());
-        TestSchema.addUpdObject(studyAuthority);
-        //
-        StudyRegulatoryAuthority saved = (StudyRegulatoryAuthority) session.load(
-                StudyRegulatoryAuthority.class, studyAuthority.getId());       
-        assertEquals(authority0.getId().longValue(), saved.getRegulatoryAuthorityID());
-        assertEquals(create.getId().longValue(), saved.getRegulatoryAuthorityID());     
+        assertEquals(" Id does not match " , create.getId(), saved.getId());
+        assertEquals(" Study Protocol Id does not match " , create.getStudyProtocol().getId() , 
+                    saved.getStudyProtocol().getId());
+        assertEquals(" Regulatory Authority Id does not match " , create.getRegulatoryAuthority().getId() , 
+                saved.getRegulatoryAuthority().getId());
+
+    }
+    
+    public static StudyRegulatoryAuthority
+        createStudyRegulatoryAuthorityObj(RegulatoryAuthority ra , StudyProtocol sp) {
+        StudyRegulatoryAuthority sra = new StudyRegulatoryAuthority();
+        sra.setRegulatoryAuthority(ra);
+        sra.setStudyProtocol(sp);
+        sra.setUserLastUpdated("abstractor");
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        sra.setDateLastUpdated(now);
+        return sra;
     }
 
 }

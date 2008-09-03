@@ -1,24 +1,17 @@
 package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.test.util.TestSchema;
 
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * 
- * @author Harsha
- * @since 08/05/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- * 
- */
+
 public class CountryTest {
-	
-    /**"
+    
+    /**
      * 
      * @throws Exception e
      */
@@ -28,18 +21,30 @@ public class CountryTest {
                
     }
     
+    /**
+     * 
+     */
     @Test
-    public void getCountryTest(){
-    	Session session = TestSchema.getSession();
-    	Country country = new Country();
-    	country.setAlpha2("GM");
-    	country.setAlpha3("BMW");
-    	country.setName("Munich");
-    	TestSchema.addUpdObject(country);
-    	Country c = (Country) session.load(Country.class, country.getId());
-        assertEquals("Munich" , c.getName());
-        assertEquals("GM", c.getAlpha2());
-        assertEquals("BMW", c.getAlpha3());
+    public void createCountryTest() {
+        Session session = TestSchema.getSession();
+        Country create = createCountryObj();
+        TestSchema.addUpdObject(create);
+        assertNotNull(create.getId());
+        Country saved = (Country) session.load(Country.class, create.getId());
+        assertNotNull(saved.getId());
+        assertEquals("Country id does not match " , create.getId(), saved.getId());
+        assertEquals("Country Name does not match " , create.getName(), saved.getName());
+        
     }
+    
+    public static Country createCountryObj() {
+        Country c1 = new Country();
+        c1.setAlpha2("CA");
+        c1.setAlpha3("CAM");
+        c1.setName("Cayman Islands");
+        return c1;
+        
+    }
+    
 
 }

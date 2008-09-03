@@ -1,10 +1,11 @@
 package gov.nih.nci.pa.domain;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.YesNoCode;
-
-import java.io.Serializable;
-
+import gov.nih.nci.pa.test.util.TestSchema;
+import org.hibernate.Session;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -12,33 +13,50 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class StudyCondtionTest extends CommonTest {
+public class StudyCondtionTest {
+
+    /**
+     * 
+     * @throws Exception e
+     */
+    
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset();
+    }
     
     /**
      * 
      */
     @Test
     public void createStudyCondition() {
-        StudyProtocol screate = new StudyProtocol();
-        screate.setOfficialTitle("Caner for kids ");
-        
-        Serializable sid =  session.save(screate);
-        assertNotNull(sid);
+        Session session  = TestSchema.getSession();
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();;
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
 
-        Condition condition = new Condition();
-        condition.setCode("11111");
-        Serializable cid =  session.save(condition);
-        assertNotNull(cid);
+        Condition c = ConditionTest.createConditionObj();
+        TestSchema.addUpdObject(c);
+        assertNotNull(c.getId());
         
+        StudyCondition create = createStudyConditionObj(sp , c);
+        TestSchema.addUpdObject(create);
+        assertNotNull(create.getId());
+        
+        StudyCondition saved = (StudyCondition) session.load(StudyCondition.class, create.getId());
+        assertEquals("Id does not match", create.getId() , saved.getId());
+        
+
+
+        
+    }
+    
+    public static StudyCondition createStudyConditionObj(StudyProtocol sp , Condition c) {
         StudyCondition create = new StudyCondition();
         create.setLeadIndicator(YesNoCode.YES);
-        create.setStudyProtocol(screate);
-        create.setCondition(condition);
-        
-        Serializable id =  session.save(create);
-        assertNotNull(sid);
-        System.out.println("end");
-
+        create.setStudyProtocol(sp);
+        create.setCondition(c);
+        return create;
         
     }
 

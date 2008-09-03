@@ -15,7 +15,7 @@ import org.junit.Test;
  *
  */
 
-public class StudyContactRolesTest {
+public class StudyContactRolesTest  {
 
     /**
      * 
@@ -49,7 +49,10 @@ public class StudyContactRolesTest {
         StudyProtocol savedsp = (StudyProtocol) session.load(StudyProtocol.class, sp.getId());
         assertEquals("Study Protocol does not match " , sp.getId(), savedsp.getId());
         
-        StudyContact sc = StudyContactTest.createStudyContactObj(hc, sp);
+        Country c = CountryTest.createCountryObj();
+        TestSchema.addUpdObject(c);
+        
+        StudyContact sc = StudyContactTest.createStudyContactObj(sp , c , hc );
         TestSchema.addUpdObject(sc);
         StudyContact savedsc = (StudyContact) session.load(StudyContact.class, sc.getId());
         
@@ -74,6 +77,10 @@ public class StudyContactRolesTest {
         StudyContactRole scr = new StudyContactRole();
         scr.setStudyContact(sc);
         scr.setStudyContactRoleCode(scrr);
+        scr.setUserLastUpdated("abstractor");
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        scr.setDateLastUpdated(now);
+        
         return scr;
     }
     

@@ -6,18 +6,18 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+
 
 /**
  * 
  * @author NAmiruddin
  *
  */
-public class StudyOverallStatusTest {
+public class StudyOverallStatusTest  {
 
     /**
      * 
@@ -31,68 +31,35 @@ public class StudyOverallStatusTest {
     /**
      * 
      */
-    //@Test
+    @Test
     public void createStudyOverallStatusTest() {
         
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         StudyOverallStatus create = createStudyOverallStatusobj(sp);
         Session session  = TestSchema.getSession();
         
-        try {
-
-            TestSchema.addUpdObject(sp);
-            Serializable spid = sp.getId();
-            StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
-            assertNotNull(spid);
-
-            TestSchema.addUpdObject(create);
-            Serializable id = create.getId();
-
-            StudyOverallStatus saved = new StudyOverallStatus();
-            saved = (StudyOverallStatus) session.load(StudyOverallStatus.class, id);
-            assertEquals("Study Status code does not match " , create.getStudyStatusCode() , 
-                    saved.getStudyStatusCode());
-            assertEquals("Study Status date does not match " , create.getStudyStatusDate() , 
-                    saved.getStudyStatusDate());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    /**
-     * 
-     */
-    @Test
-    public void createStudyOverallStatusSubQueryTest() {
-    
-        Session session = TestSchema.getSession();
-
-        String hql = "from StudyOverallStatus as sos " 
-            + " where id in ( select max(id) from StudyOverallStatus as sos1 " 
-              + "                where sos.studyProtocol = sos1.studyProtocol) ";
-
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-        StudyOverallStatus create = createStudyOverallStatusobj(sp);
-
         TestSchema.addUpdObject(sp);
+        assertNotNull(sp);
         Serializable spid = sp.getId();
         StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
         assertNotNull(spid);
 
         TestSchema.addUpdObject(create);
         Serializable id = create.getId();
-        
-        create = createStudyOverallStatusobj(sp);
-        TestSchema.addUpdObject(create);
+        assertNotNull(create);
 
-//        StudyOverallStatus saved = new StudyOverallStatus();
-//        saved = (StudyOverallStatus) session.load(StudyOverallStatus.class, id);
-        
-        List l = session.createQuery(hql).list();
-        System.out.println(" size " + l.size());
-        
+        StudyOverallStatus saved = new StudyOverallStatus();
+        saved = (StudyOverallStatus) session.load(StudyOverallStatus.class, id);
+        assertEquals("Study Status code does not match " , create.getStatusCode() , 
+                saved.getStatusCode());
+        assertEquals("Study Status date does not match " , create.getStatusDate() , 
+                saved.getStatusDate());
+        assertEquals("User Last updated does not match " , 
+                create.getUserLastUpdated() , saved.getUserLastUpdated());
+        assertEquals("Date Last updated does not match " , 
+                create.getDateLastUpdated() , saved.getDateLastUpdated());
+            
     }
-    
     
     /**
      * 
@@ -103,12 +70,13 @@ public class StudyOverallStatusTest {
         StudyOverallStatus create = new StudyOverallStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
-        create.setStudyStatusCode(StudyStatusCode.ACTIVE);
-        create.setStudyStatusDate(now);
+        create.setStatusCode(StudyStatusCode.ACTIVE);
+        create.setStatusDate(now);
+        create.setUserLastUpdated("Abstractor");
+        create.setDateLastUpdated(now);
         return create;
 
-    }
-    
+    }    
     
 
 }

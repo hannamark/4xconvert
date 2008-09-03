@@ -28,6 +28,7 @@ public class DocumentWorkFlowStatusTest {
                
     }
     
+    
     /**
      * 
      */
@@ -47,14 +48,15 @@ public class DocumentWorkFlowStatusTest {
         DocumentWorkflowStatus saved = 
                 (DocumentWorkflowStatus) session.load(DocumentWorkflowStatus.class, id);
         assertEquals("Document Workflow Status code does not match " , 
-                create.getDocumentWorkflowStatusCode() , 
-                saved.getDocumentWorkflowStatusCode());
-        assertEquals("Document Workflow Status date not match " , 
-                create.getDocumentWorkflowStatusDate() , 
-                saved.getDocumentWorkflowStatusDate());
-        assertEquals("Study Protocol not match " , 
-                create.getStudyProtocol() , 
-                saved.getStudyProtocol());
+                create.getStatusCode() , saved.getStatusCode());
+        assertEquals("Common text does not match " , 
+                create.getCommonText() , saved.getCommonText());
+        assertEquals("Document Workflow Status date not match " , create.getStatusDateRangeLow() , 
+                saved.getStatusDateRangeLow());
+        assertEquals("Study Protocol not match " , create.getStudyProtocol() , saved.getStudyProtocol());
+        assertEquals("User Last updated does not match " , create.getUserLastUpdated() , saved.getUserLastUpdated());
+        assertEquals("Date Last updated does not match " , create.getDateLastUpdated() , saved.getDateLastUpdated());
+        
 
     }
     
@@ -67,8 +69,11 @@ public class DocumentWorkFlowStatusTest {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
-        create.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
-        create.setDocumentWorkflowStatusDate(now);
+        create.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
+        create.setStatusDateRangeLow(now);
+        create.setCommonText("Common Text");
+        create.setUserLastUpdated("Abstractor");
+        create.setDateLastUpdated(now);
         return create;
     }
 }
