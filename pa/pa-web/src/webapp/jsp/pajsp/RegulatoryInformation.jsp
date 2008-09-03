@@ -95,7 +95,7 @@
 			<div class="clear"></div>
 							
    </div>
-<div id="box">
+<div class="box">
 
 <s:form action="saveRegAuthority" id="saveRegAuthority" theme="simple">
 <s:actionerror/>

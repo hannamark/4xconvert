@@ -69,7 +69,7 @@
 			<div class="clear"></div>
 							
    </div>
-<div id="box"><s:form>
+<div class="box"><s:form>
     <s:actionerror />
 <h2><fmt:message key="trialStatus.title" /></h2>
 	<table class="form">

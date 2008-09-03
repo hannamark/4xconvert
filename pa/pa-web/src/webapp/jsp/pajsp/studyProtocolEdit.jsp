@@ -60,7 +60,7 @@
 							
    </div>
 
-  <div id="box">
+  <div class="box">
     <s:form ><s:actionerror/>
 	<h2>Trial Identification</h2>
 

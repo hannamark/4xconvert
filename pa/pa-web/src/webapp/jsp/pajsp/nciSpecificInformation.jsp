@@ -67,7 +67,7 @@ function resetValues () {
 			<div class="clear"></div>
 							
    </div>
-  <div id="box">  
+  <div class="box">  
     <s:form action="updateNCISpecificInformation"><s:actionerror/>
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form">
