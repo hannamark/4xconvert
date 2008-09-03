@@ -1,14 +1,14 @@
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 //import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
-import gov.nih.nci.pa.dto.StudyProtocolDTO;
+//import gov.nih.nci.pa.domain.StudyProtocol;
+//import gov.nih.nci.pa.domain.StudyProtocolTest;
+//import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.test.util.TestSchema;
-import gov.nih.nci.pa.util.IsoConverter;
-import org.hibernate.Session;
+//import gov.nih.nci.pa.util.IsoConverter;
+//import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +59,7 @@ public class StudyProtocolServiceBeanTest {
             e.printStackTrace();
         }
         */
-        assertNotNull("StudyProtocolDTO");
+        assertNotNull("to be changed");
         
     }
 
