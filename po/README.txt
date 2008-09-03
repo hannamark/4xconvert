@@ -45,3 +45,11 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     mvn -Pci,local integration-test
     mvn -Plocal site verify 
 
+1.4 Power-Maven Usage
+    Deploy and run your integration tests to an already running container
+    mvn -Pci-nostart integration-test
+    
+    Run your integration tests against an already running container
+    mvn -Pci-nostart integration-test
+    OR 
+    mvn -Pci-nostart integration-test -Dtest=<testclass>  
