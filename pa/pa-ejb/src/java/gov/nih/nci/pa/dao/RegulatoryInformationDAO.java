@@ -27,12 +27,13 @@ import org.hibernate.Transaction;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+//@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings("PMD")
 public class RegulatoryInformationDAO {
 
     private static final Logger LOG = Logger.getLogger(RegulatoryInformationDAO.class);
-    private static final String YES = "Yes";
-    private static final String NO = "No";
+//    private static final String YES = "Yes";
+//    private static final String NO = "No";
 
     /**
      * 
@@ -90,12 +91,14 @@ public class RegulatoryInformationDAO {
             for (int i = 0; i < results.size(); i++) {
                 studyProtocol = (StudyProtocol) results.get(i);
             }
-            studyProtocol.setSection801Indicator(informationDTO.isSection801IndicatorP());
+/*****            studyProtocol.setSection801Indicator(informationDTO.isSection801IndicatorP());
             studyProtocol.setFdaRegulatedIndicator(informationDTO.isFdaRegulatedInterventionIndicatorP());
             studyProtocol.setIndIndeIndicator(informationDTO.isIndideIndicatorP());
             studyProtocol.setDataMonitoringCommitteeIndicator(informationDTO.isDataMonitoringIndicatorP());
             studyProtocol.setDelayedpostingIndicator(informationDTO.isDelayedPostingIndicatorP());
+*/            
             session.saveOrUpdate(studyProtocol);
+            
             // Now save in the 'study_requlatory_authority' table;
             // here if a record exists for one sp update it else create it.
             results = null;
@@ -107,13 +110,13 @@ public class RegulatoryInformationDAO {
                     studyRegulatoryAuth = (StudyRegulatoryAuthority) results.get(i);
                     break;
                 }
-                studyRegulatoryAuth.setRegulatoryAuthorityID(informationDTO.getSelectedAuthOrgId());
-                studyRegulatoryAuth.setStudyProtocolID(informationDTO.getProtocolID());                
+//                studyRegulatoryAuth.setRegulatoryAuthorityID(informationDTO.getSelectedAuthOrgId());
+//                studyRegulatoryAuth.setStudyProtocolID(informationDTO.getProtocolID());                
                 session.update(studyRegulatoryAuth);
             } else {
                 studyRegulatoryAuth = new StudyRegulatoryAuthority();
-                studyRegulatoryAuth.setRegulatoryAuthorityID(informationDTO.getSelectedAuthOrgId());
-                studyRegulatoryAuth.setStudyProtocolID(informationDTO.getProtocolID());
+//                studyRegulatoryAuth.setRegulatoryAuthorityID(informationDTO.getSelectedAuthOrgId());
+//                studyRegulatoryAuth.setStudyProtocolID(informationDTO.getProtocolID());
                 session.save(studyRegulatoryAuth);
             }
             transaction.commit();
@@ -281,8 +284,8 @@ public class RegulatoryInformationDAO {
             }
             if (!results.isEmpty()) {
                 results = null;            
-                results = session.createQuery("select ra from RegulatoryAuthority as ra where ra.id=" 
-                        + authority.getRegulatoryAuthorityID()).list();
+///                results = session.createQuery("select ra from RegulatoryAuthority as ra where ra.id=" 
+///                        + authority.getRegulatoryAuthorityID()).list();
                 for (int i = 0; i < results.size(); i++) {
                     authority1 = (RegulatoryAuthority) results.get(i);
                 }
@@ -299,6 +302,7 @@ public class RegulatoryInformationDAO {
 
     private RegulatoryInformationDTO convertProtocolToDTO(StudyProtocol protocol, long country) {
         RegulatoryInformationDTO informationDTO = new RegulatoryInformationDTO();
+/*
         if (protocol.getFdaRegulatedIndicator() != null && protocol.getFdaRegulatedIndicator()) {
             informationDTO.setFdaRegulatedInterventionIndicator(YES);
         } else {
@@ -328,6 +332,7 @@ public class RegulatoryInformationDAO {
         } else {
             informationDTO.setIndideTrialIndicator(NO);                
         }
+*/        
         informationDTO.setCountryId(country);
         return informationDTO;
     }
@@ -358,10 +363,10 @@ public class RegulatoryInformationDAO {
                 throw new NoStudyProtocolFoundException();
             }
             // get the reg authority
-            List resultsList = getRegulatoryAuthorityName(studyRegulatoryAuthority.getRegulatoryAuthorityID());
+//            List resultsList = getRegulatoryAuthorityName(studyRegulatoryAuthority.getRegulatoryAuthorityID());
             regulatoryAuthOrgDTO = new RegulatoryAuthOrgDTO();
-            regulatoryAuthOrgDTO.setId(studyRegulatoryAuthority.getRegulatoryAuthorityID());
-            regulatoryAuthOrgDTO.setName(resultsList.get(0).toString());
+//            regulatoryAuthOrgDTO.setId(studyRegulatoryAuthority.getRegulatoryAuthorityID());
+//            regulatoryAuthOrgDTO.setName(resultsList.get(0).toString());
         } catch (HibernateException hbe) {
             LOG.error("Exception in getRegulatoryAuthOrgForEdit() method ", hbe);
             throw new PAException(" Hibernate exception in getRegulatoryAuthOrgForEdit() method ", hbe);
