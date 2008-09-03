@@ -6,7 +6,7 @@ import org.apache.struts2.ServletActionContext;
 import gov.nih.nci.coppa.iso.Ii;
 
 
-import gov.nih.nci.pa.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 //import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAException;
@@ -14,7 +14,7 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+//import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -91,9 +91,9 @@ public class NCISpecificInformationAction  extends ActionSupport {
              spIsoDTO.setAccrualReportingMethodCode(IsoConverter.convertEnumCodeToIsoCd(
                      AccrualReportingMethodCode.getByCode(
                              nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
-             spIsoDTO.setSummaryFourFundingCategoryCode(IsoConverter.convertEnumCodeToIsoCd(
-                     SummaryFourFundingCategoryCode.getByCode(
-                             nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
+             ///spIsoDTO.setSummaryFourFundingCategoryCode(IsoConverter.convertEnumCodeToIsoCd(
+             ///        SummaryFourFundingCategoryCode.getByCode(
+             ///                nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
              //Step4: update studyprotocol 
              spIsoDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spIsoDTO);
         } catch (Exception e) {
@@ -150,10 +150,12 @@ public class NCISpecificInformationAction  extends ActionSupport {
         if (spIsoDTO.getMonitorCode() != null) {
             nciSpDTO.setMonitorCode(spIsoDTO.getMonitorCode().getCode());
         }
+        /*
         if (spIsoDTO.getSummaryFourFundingCategoryCode() != null) {
             nciSpDTO.setSummaryFourFundingCategoryCode(
                     spIsoDTO.getSummaryFourFundingCategoryCode().getCode());
         }
+        */
         
         return nciSpDTO;
         
