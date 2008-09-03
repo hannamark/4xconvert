@@ -122,7 +122,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
             StudyProtocol studyProtocol = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
             StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocol.getId());
-            if (studyProtocol.equals(sp)) {
+            if (!studyProtocol.equals(sp)) {
                 sp = (StudyProtocol) session.merge(studyProtocol);
             } else {
                 sp = studyProtocol;
