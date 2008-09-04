@@ -120,12 +120,6 @@ public class OrganizationCRServiceBean extends AbstractCRServiceBean<Organizatio
     
     /**{@inheritDoc}*/
     @Override
-    protected Organization getTarget(OrganizationCR cr) {
-        return cr.getTarget();
-    }
-
-    /**{@inheritDoc}*/
-    @Override
     protected void entityUpdate(Organization entity) {
         orgService.update(entity);
     }

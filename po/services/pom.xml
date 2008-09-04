@@ -109,7 +109,7 @@
         <dependency>
             <groupId>net.sf.xsnapshot</groupId>
             <artifactId>xsnapshot</artifactId>
-            <version>1.1-beta2</version>
+            <version>1.1-beta3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -179,7 +179,7 @@
         <dependency>
             <groupId>net.sf.xsnapshot</groupId>
             <artifactId>xdoclet-xsnapshot-module</artifactId>
-            <version>1.1-beta2</version>
+            <version>1.1-beta3-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -197,14 +197,6 @@
                     </archive>
                     <generateClient>true</generateClient>
                     <clientIncludes>
-                        <clientInclude>gov/nih/nci/po/data/bo/AbstractOrganization.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/data/bo/AbstractPerson.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/audit/Auditable.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/data/bo/Curatable.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/data/bo/Contactable.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/data/bo/Organization.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/data/bo/Person.class</clientInclude>
-                        <clientInclude>gov/nih/nci/po/data/bo/PersonRole.class</clientInclude>
                         <clientInclude>gov/nih/nci/services/**/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
                     </clientIncludes>
@@ -282,8 +274,8 @@
                                         <include name="xdoclet/xdoclet-xjavadoc/1.5.snapshot050611/xdoclet-xjavadoc-1.5.snapshot050611.jar" />
                                         <include name="xdoclet/xdoclet/1.2.3/xdoclet-1.2.3.jar" />
                                         <include name="xdoclet/xdoclet-xdoclet-module/1.2.3/xdoclet-xdoclet-module-1.2.3.jar" />
-                                        <include name="net/sf/xsnapshot/xdoclet-xsnapshot-module/1.1-beta2/xdoclet-xsnapshot-module-1.1-beta2.jar" />
-                                        <include name="net/sf/xsnapshot/xsnapshot/1.1-beta2/xsnapshot-1.1-beta2.jar" />
+                                        <include name="net/sf/xsnapshot/xdoclet-xsnapshot-module/1.1-beta3-SNAPSHOT/xdoclet-xsnapshot-module-1.1-beta3-SNAPSHOT.jar" />
+                                        <include name="net/sf/xsnapshot/xsnapshot/1.1-beta3-SNAPSHOT/xsnapshot-1.1-beta3-SNAPSHOT.jar" />
                                     </fileset>
                                 </path>
                                 <taskdef name="xsnapshotdoclet" classname="net.sf.xsnapshot.ant.XSnapshotDocletTask" classpathref="xsnapshot.classpath" />

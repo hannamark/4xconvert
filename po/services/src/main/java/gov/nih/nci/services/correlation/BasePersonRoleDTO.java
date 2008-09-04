@@ -84,14 +84,13 @@ package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.services.PoDto;
 
 /**
  * @author Scott Miller
  *
  */
-public class BasePersonRoleDTO implements PoDto<PersonRole> {
+public class BasePersonRoleDTO implements PoDto {
 
     private static final long serialVersionUID = 1L;
 

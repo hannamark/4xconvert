@@ -26,7 +26,7 @@ import net.sf.xsnapshot.cfg.XSnapshotPropertiesConfigurator;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.bo.Root;
 
 /**
  *
@@ -83,7 +83,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the collection containing the snapshot objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends PoDto<BO>> Collection<DTO> createSnapshotCollection(
+    public static <BO extends Root<?, DTO>, DTO extends PoDto> Collection<DTO> createSnapshotCollection(
             Collection<BO> modelCollection, Collection<DTO> destCollection) {
         return PO_XSNASHOTUTILS.createSnapshotCollection(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME, destCollection);
     }
@@ -105,7 +105,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return a snapshot object
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends PoDto<BO>> DTO createSnapshot(BO model) {
+    public static <BO extends Root<?, DTO>, DTO extends PoDto> DTO createSnapshot(BO model) {
         return (DTO) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_ISO_SNAPSHOT_NAME);
     }
 
@@ -119,7 +119,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the list of model objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends PoDto<BO>> Collection<DTO> createModelCollection(
+    public static <BO extends Root<?, DTO>, DTO extends PoDto> Collection<DTO> createModelCollection(
             Collection<DTO> snapshotCollection, Collection<BO> destCollection) {
         return PO_XSNASHOTUTILS.createModelCollection(snapshotCollection, destCollection);
     }
@@ -133,7 +133,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the list of model objects
      */
     @SuppressWarnings(UNCHECKED)
-    public static  <BO extends PersistentObject, DTO extends PoDto<BO>>
+    public static  <BO extends Root<?, DTO>, DTO extends PoDto>
             List<BO> createModelList(Collection<DTO> snapshotCollection) {
         return PO_XSNASHOTUTILS.createModelList(snapshotCollection);
     }
@@ -147,7 +147,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return a model object
      */
     @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends PoDto<BO>> BO createModel(DTO snapshot) {
+    public static <BO extends Root<?, DTO>, DTO extends PoDto> BO createModel(DTO snapshot) {
         return (BO) PO_XSNASHOTUTILS.createModel(snapshot);
     }
 

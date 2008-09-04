@@ -83,7 +83,8 @@
 
 package gov.nih.nci.po.service;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.bo.ChangeRequest;
+import gov.nih.nci.po.data.bo.Root;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.List;
 import javax.ejb.TransactionAttribute;
@@ -95,7 +96,7 @@ import javax.ejb.TransactionAttributeType;
  * @param <ENTITY> the PersistentObject type.
  * @author gax
  */
-public abstract class AbstractCRServiceBean <CR extends PersistentObject, ENTITY extends PersistentObject>
+public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Root<CR, ?>>
         extends BaseServiceBean<CR> {
     /** 
      * {@inheritDoc}
@@ -113,7 +114,7 @@ public abstract class AbstractCRServiceBean <CR extends PersistentObject, ENTITY
     public void processCRs(List<CR> crs) {
         ENTITY target = null;
         for (CR ocr : crs) {
-            ENTITY crTarget = getTarget(ocr);
+            ENTITY crTarget = ocr.getTarget();
             if (crTarget == null) {
                 throw new IllegalArgumentException("target cannot be null");
             }
@@ -130,13 +131,6 @@ public abstract class AbstractCRServiceBean <CR extends PersistentObject, ENTITY
             entityUpdate(target);
         }
     }
-    
-    /**
-     * do return cr.getTarget().
-     * @param cr the change request.
-     * @return cr's target property.
-     */
-    protected abstract ENTITY getTarget(CR cr);
     
     /**
      * @param entity the entity to update.

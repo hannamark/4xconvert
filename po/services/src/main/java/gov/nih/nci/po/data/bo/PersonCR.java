@@ -107,7 +107,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class PersonCR extends AbstractPerson {
+public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     private static final long serialVersionUID = 1L;
 
     private Person target;

@@ -65,14 +65,7 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
         PersonCR cr = instance.getCR(id);
         assertSame(ocr, cr);
     }
-
-    @Test
-    public void testGetTarget() {
-        Person o = new Person();
-        PersonCR ocr = new PersonCR(o);
-        assertSame(o, instance.getTarget(ocr));
-    }
-
+    
     @Test
     public void testEntityUpdate() {
         class MyTracker extends RuntimeException {

@@ -111,9 +111,10 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * Organizations.
  *
- * @xsnapshot.snapshot-class name="iso"
+ * @xsnapshot.snapshot-class name="iso" tostring="none"
  *      class="gov.nih.nci.services.organization.AbstractOrganizationDTO"
  *      extends="gov.nih.nci.services.organization.BaseOrganizationDTO"
+ *      generate-helper-methods="false"
  */
 @MappedSuperclass
 @SuppressWarnings({ "PMD.UnusedPrivateMethod" })

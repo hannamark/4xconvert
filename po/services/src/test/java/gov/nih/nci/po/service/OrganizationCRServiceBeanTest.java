@@ -64,13 +64,6 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testGetTarget() {
-        Organization o = new Organization();
-        OrganizationCR ocr = new OrganizationCR(o);
-        assertSame(o, instance.getTarget(ocr));
-    }
-
-    @Test
     public void testEntityUpdate() {
         class MyTracker extends RuntimeException {
             private static final long serialVersionUID = 1L;} {

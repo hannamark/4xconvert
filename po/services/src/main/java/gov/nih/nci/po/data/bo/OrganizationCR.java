@@ -105,7 +105,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class OrganizationCR extends AbstractOrganization {
+public class OrganizationCR extends AbstractOrganization implements ChangeRequest<Organization> {
     private static final long serialVersionUID = 1L;
 
     private Organization target;

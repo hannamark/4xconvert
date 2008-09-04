@@ -107,6 +107,7 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 /**
  * Base class for all person to org roles.
@@ -114,10 +115,11 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @xsnapshot.snapshot-class name="iso" tostring="none"
  *      class="gov.nih.nci.services.correlation.PersonRoleDTO"
  *      extends="gov.nih.nci.services.correlation.BasePersonRoleDTO"
+ *      generate-helper-methods="false"
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class PersonRole implements PersistentObject, Contactable {
+public class PersonRole implements PersistentObject, Contactable, Root<PersonRoleCR, PersonRoleDTO> {
 
     private static final long serialVersionUID = 1L;
 

@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 
+import gov.nih.nci.services.person.PersonDTO;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -112,10 +113,12 @@ import org.hibernate.validator.Valid;
  * @xsnapshot.snapshot-class name="iso" tostring="none"
  *      class="gov.nih.nci.services.person.PersonDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractPerson"
+ *      generate-helper-methods="false"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
+public class Person extends AbstractPerson 
+        implements Auditable, Curatable<Person>, Root<PersonCR, PersonDTO> {
     private static final long serialVersionUID = 1L;
     private Date statusDate;
     private Person duplicateOf;

@@ -80,47 +80,19 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package gov.nih.nci.po.data.bo;
 
-package gov.nih.nci.po.service;
-
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonCR;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Change Request (CR) management interface.
+ *
+ * @param <BO> the BO class associated to this CR.
  * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonCRServiceBean extends AbstractCRServiceBean<PersonCR, Person> implements PersonCRServiceLocal {
-    
-    private PersonServiceLocal orgService;
-
-    /** 
-     * @param svc injected.
+public interface ChangeRequest <BO extends Root> extends PersistentObject {
+    /**
+     * 
+     * @return the BO to change.
      */
-    @EJB
-    void setPersonServiceBean(PersonServiceLocal svc) {
-        this.orgService = svc;
-    }
-    
-    /** 
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public PersonCR getCR(long id) {
-        return (PersonCR) PoHibernateUtil.getCurrentSession().load(PersonCR.class, id);
-    }
-    
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(Person entity) {
-        orgService.update(entity);
-    }
-    
+    BO getTarget();
 }

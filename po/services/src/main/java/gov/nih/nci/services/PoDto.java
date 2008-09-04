@@ -1,11 +1,10 @@
 package gov.nih.nci.services;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.io.Serializable;
 
 /**
  * Marker interface for ceratin DTO classes.
- * @param <BO> the BO counterpart.
  */
-public interface PoDto <BO extends PersistentObject> {
+public interface PoDto extends Serializable {
 
 }
