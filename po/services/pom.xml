@@ -109,7 +109,7 @@
         <dependency>
             <groupId>net.sf.xsnapshot</groupId>
             <artifactId>xsnapshot</artifactId>
-            <version>1.1-beta3-SNAPSHOT</version>
+            <version>1.1-beta3-20080904.084716-3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
