@@ -64,10 +64,11 @@ table.inputRow  DIV.wwgrp {
     line-height: 1em;
     margin-top: 0px;
     margin-bottom: 0px;
+    
 }
 
 table.inputRow td {
-    vertical-align: bottom;
+    vertical-align: top;
 }
 
 a.formElementButton {
@@ -110,4 +111,11 @@ a.formElementButton {
     text-decoration: line-through;
     background: url("../images/ico_next.gif") no-repeat center right;
     padding-right: 20px
+}
+
+div#page {
+    border: 2px solid #bbb;
+    float:left;
+    max-width: 475px;
+    margin-right: 10px;
 }

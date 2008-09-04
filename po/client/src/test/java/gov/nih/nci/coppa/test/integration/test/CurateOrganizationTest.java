@@ -1,6 +1,8 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
@@ -8,6 +10,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,8 +60,59 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTty();
         verifyUrl();
         
+        markAsAccepted(id);
+    }
+
+    private void markAsAccepted(Ii id) {
         clickAndWait("//a[@id='mark_as_accepted_button']/span/span");
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
+    }
+    
+    public void testCurateOrgWithCRs() throws Exception {
+        // create a new org via remote API.
+        String name = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'Y');
+        String abbrv = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'X');
+        String desc = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'W');
+        Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
+        
+        OrganizationDTO orgDTO = getOrgService().getOrganization(id);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        orgDTO.getTelecomAddress().getItem().add(email);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI(TelPhone.SCHEME_TEL + ":123-456-7890"));
+        orgDTO.getTelecomAddress().getItem().add(phone);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone fax = new TelPhone();
+        fax.setValue(new URI(TelPhone.SCHEME_X_TEXT_FAX + ":234-567-8901"));
+        orgDTO.getTelecomAddress().getItem().add(fax);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone tty = new TelPhone();
+        tty.setValue(new URI(TelPhone.SCHEME_X_TEXT_TEL + ":345-678-9012"));
+        orgDTO.getTelecomAddress().getItem().add(tty);
+        getOrgService().updateOrganization(orgDTO);
+        
+        loginAsCurator();
+        
+        selenium.open("/po-web/protected/curate/search/listAll.action");
+        selenium.click("link=Inbox");
+        waitForPageToLoad();
+        // click on item to curate
+        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
+        waitForPageToLoad();
+        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
+        assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
+        assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
+        
+        verifyPostalAddress();
+        
+        verifyEmail();
+        verifyPhone();
+        verifyFax();
+        verifyTty();
+        verifyUrl();
+        
     }
 
     private void verifyPostalAddress() {
