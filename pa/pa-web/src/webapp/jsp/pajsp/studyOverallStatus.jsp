@@ -91,7 +91,7 @@
             <td scope="row" class="label"><label for="statusDate"><fmt:message
                 key="trialStatus.current.trial.status.date" /></label></td>
             <td class="value"><s:textfield name="statusDate"
-                maxlength="10" size="10" value="" cssStyle="width:70px;float:left"/> <a href="javascript:;"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/> <a href="javascript:;"
                 onclick="cal.select(document.forms[0].statusDate,'calendarbutton','MM/dd/yyyy'); return false;"
                 name="calendarbutton" id="calendarbutton"> <img
                 src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
@@ -101,7 +101,7 @@
             <td scope="row" class="label"><label for="startDate"><fmt:message
                 key="trialStatus.trial.start.date" /></label></td>
             <td class="value"><s:textfield name="startDate"
-                maxlength="10" size="10" value="" cssStyle="width:70px;float:left"/> <a href="javascript:;"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/> <a href="javascript:;"
                 onclick="cal1.select(document.forms[0].startDate,'calendarbutton','MM/dd/yyyy'); return false;"
                 name="calendarbutton" id="calendarbutton"> <img
                 src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
@@ -111,7 +111,7 @@
             <td scope="row" class="label"><label for="completionDate">
             <fmt:message key="trialStatus.primary.completion.date" /></label></td>
             <td class="value"><s:textfield name="completionDate"
-                maxlength="10" size="10" value="" cssStyle="width:70px;float:left"/> <a href="javascript:;"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/> <a href="javascript:;"
                 onclick="cal.select(document.forms[0].completionDate,'calendarbutton','MM/dd/yyyy'); return false;"
                 name="calendarbutton" id="calendarbutton"> <img
                 src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
