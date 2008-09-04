@@ -110,10 +110,7 @@ import org.hibernate.validator.Valid;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none"
  *      class="gov.nih.nci.services.organization.OrganizationDTO"
- *      extends="gov.nih.nci.services.organization.AbstractOrganizationDTO"
- *      snapshot-extends="gov.nih.nci.services.organization.AbstractOrganizationDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganization"
- *
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })

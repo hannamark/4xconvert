@@ -93,7 +93,7 @@ public class <XDtClass:classOf><XDtXSnapshot:helperClass/></XDtClass:classOf> im
   <XDtXSnapshot:ifExtendsFromSnapshot>
     // this class extends from a snapshot, so we also need to call the helper 
     // for the parent snapshot's copyIntoSnapshot. Do that first
-    SnapshotHelper parentSnapshotHelper = context.getRegistry().getHelperForModel (<XDtXSnapshot:modelExtendsFrom/>.class, "<XDtXSnapshot:snapshotName/>");
+    SnapshotHelper parentSnapshotHelper = context.getRegistry().getHelperForModel (<XDtXSnapshot:modelExtendsFrom/>.class, "<XDtXSnapshot:snapshotExtendsFrom/>");
     parentSnapshotHelper.copyIntoSnapshot (model, snapshot, context);
   </XDtXSnapshot:ifExtendsFromSnapshot>
     <XDtXSnapshot:snapshotClass/> snapshotCasted = (<XDtXSnapshot:snapshotClass/>) snapshot;
@@ -121,7 +121,7 @@ public class <XDtClass:classOf><XDtXSnapshot:helperClass/></XDtClass:classOf> im
   <XDtXSnapshot:ifExtendsFromSnapshot>
     // this class extends from a snapshot, so we also need to call the helper 
     // for the parent snapshot's copyIntoModel. Do that first
-    SnapshotHelper parentSnapshotHelper = context.getRegistry().getHelperForModel(<XDtXSnapshot:modelExtendsFrom/>.class, "<XDtXSnapshot:snapshotName/>");
+    SnapshotHelper parentSnapshotHelper = context.getRegistry().getHelperForModel(<XDtXSnapshot:modelExtendsFrom/>.class, "<XDtXSnapshot:snapshotExtendsFrom/>");
     parentSnapshotHelper.copyIntoModel (snapshot, model, context);
   </XDtXSnapshot:ifExtendsFromSnapshot>
 
