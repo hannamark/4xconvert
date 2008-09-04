@@ -33,7 +33,24 @@
             <artifactId>po-services</artifactId>
             <version>${pom.parent.version}</version>
             <type>ejb-client</type>
-            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.xsnapshot</groupId>
+                    <artifactId>xsnapshot</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>gov.nih.nci</groupId>
+                    <artifactId>security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fiveamsolutions</groupId>
+                    <artifactId>nci-commons-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     
         <!-- Selenium -->

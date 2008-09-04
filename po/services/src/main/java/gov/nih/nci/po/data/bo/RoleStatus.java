@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -132,10 +133,11 @@ public enum RoleStatus {
     public boolean canTransitionTo(RoleStatus status) {
         return allowedTransitions.contains(status);
     }
+
     /**
      * @return the permitted curation statuses from this entity state.  set cannot be modified.
      */
-    public Set<RoleStatus> getAllowedTransitions() {
-        return (Set<RoleStatus>) Collections.unmodifiableCollection(allowedTransitions);
+    public Collection<RoleStatus> getAllowedTransitions() {
+        return Collections.unmodifiableCollection(allowedTransitions);
     }
 }
