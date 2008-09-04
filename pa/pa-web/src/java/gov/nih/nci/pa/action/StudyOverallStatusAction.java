@@ -7,11 +7,11 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -44,6 +44,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     
     private Long spIdLong;
     private Ii spIdIi;
+    private String statusDate;
     private String startDate;
     private String completionDate;
     private String startDateType;
@@ -62,29 +63,50 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 .getAttribute(Constants.TRIAL_SUMMARY);
         
         spIdLong = spDTO.getStudyProtocolId();
-        spIdIi = IsoConverter.convertIdToIsoIi(spIdLong);
-
-        StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
-        StudyOverallStatusDTO sosDto = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi); 
-        
-        Timestamp tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
-        if (tsTemp != null) {
-            setStartDate(tsTemp.toString());            
-        } else {
-            setStartDate("");
-        }
-        
-        tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
-        if (tsTemp != null) {
-            setCompletionDate(tsTemp.toString());            
-        } else {
-            setCompletionDate("");
-        }
+        spIdIi = IiConverter.convertToIi(spIdLong);
 
         dateTypeList = new HashMap<String, String>();
         dateTypeList.put("Actual", "Actual");
         dateTypeList.put("Anticipated", "Anticipated");
         
+        loadForm();
+    }
+
+    private void loadForm() throws Exception {
+        StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
+        StudyOverallStatusDTO sosDto = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi); 
+
+        Timestamp tsTemp;
+        if (spDto != null) {
+            tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
+            if (tsTemp != null) {
+                setStartDate(tsTemp.toString());            
+            } else {
+                setStartDate("");
+            }
+            
+            tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
+            if (tsTemp != null) {
+                setCompletionDate(tsTemp.toString());            
+            } else {
+                setCompletionDate("");
+            }
+        } else {
+            setStartDate("");
+            setCompletionDate("");
+        }
+
+        if (sosDto != null) {
+            tsTemp = TsConverter.convertToTimestamp(sosDto.getStatusDate());
+            if (tsTemp != null) {
+                setStatusDate(tsTemp.toString());            
+            } else {
+                setStatusDate("");
+            }
+        } else {
+            setStatusDate("");
+        }
+
         startDateType = "Actual";
         completionDateType = "Anticipated";        
     }
@@ -166,5 +188,19 @@ public class StudyOverallStatusAction extends ActionSupport implements
      */
     public Map<String, String> getDateTypeList() {
         return dateTypeList;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
     }
 }

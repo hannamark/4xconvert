@@ -36,7 +36,7 @@ public class TsConverter {
      * @return java Timestamp
      */
     public static Timestamp convertToTimestamp(Ts tsIso) {
-        if (tsIso == null) {
+        if ((tsIso == null) || (tsIso.getValue() == null)) {
             return null;
         }
         return Timestamp.valueOf(tsIso.getValue());
