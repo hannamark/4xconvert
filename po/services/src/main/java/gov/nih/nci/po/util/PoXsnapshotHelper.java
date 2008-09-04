@@ -160,13 +160,13 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      *         name
      */
     @Override
-    public SnapshotHelper getHelperForModel(Class modelClass, String snapshotName) {
+    public SnapshotHelper getHelperForModelClass(Class modelClass, String snapshotName) {
         if (modelClass == null) {
             return null;
         }
-        SnapshotHelper helper = super.getHelperForModel(modelClass, snapshotName);
+        SnapshotHelper helper = super.getHelperForModelClass(modelClass, snapshotName);
         if (helper == null) {
-            helper = getHelperForModel(modelClass.getSuperclass(), snapshotName);
+            helper = getHelperForModelClass(modelClass.getSuperclass(), snapshotName);
         }
         return helper;
     }
@@ -178,7 +178,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param model the target.
      */
     public static void copyIntoAbstractModel(OrganizationDTO snapshot, AbstractOrganization model) {
-        SnapshotHelper helper = REGISTRY.getHelperForModel(AbstractOrganization.class, DEFAULT_ISO_SNAPSHOT_NAME);
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(AbstractOrganization.class, DEFAULT_ISO_SNAPSHOT_NAME);
         helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
     }
 
@@ -189,7 +189,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param model the target.
      */
     public static void copyIntoAbstractModel(PersonDTO snapshot, AbstractPerson model) {
-        SnapshotHelper helper = REGISTRY.getHelperForModel(AbstractPerson.class, DEFAULT_ISO_SNAPSHOT_NAME);
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(AbstractPerson.class, DEFAULT_ISO_SNAPSHOT_NAME);
         helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
 
     }
