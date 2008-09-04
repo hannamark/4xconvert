@@ -103,7 +103,6 @@ import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Action;
-import com.sun.corba.se.pept.transport.ContactInfo;
 
 /**
  *
@@ -119,10 +118,9 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
     @Test
     public void prepare() {
-        @SuppressWarnings("deprecation")
         Contactable ci = new Organization();
 
-        String key = "foo"; 
+        String key = "foo";
         getSession().setAttribute(key, ci);
 
         EmailAction instance = new EmailAction();
@@ -141,10 +139,9 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
     @Test
     public void addRemove() {
-        @SuppressWarnings("deprecation")
         Contactable ci = new Organization();
         EmailAction instance = new EmailAction();
-        String key = "foo"; 
+        String key = "foo";
         getSession().setAttribute(key, ci);
         instance.setRootKey(key);
         instance.prepare();
@@ -175,10 +172,9 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
     @Test
     public void testEmail() {
-        @SuppressWarnings("deprecation")
         Contactable ci = new Organization();
         EmailAction instance = new EmailAction();
-        String key = "foo"; 
+        String key = "foo";
         getSession().setAttribute(key, ci);
         instance.setRootKey(key);
 
@@ -198,10 +194,9 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
     @Test
     public void testPhone() {
-        @SuppressWarnings("deprecation")
         Contactable ci = new Organization();
         PhoneAction instance = new PhoneAction();
-        String key = "foo"; 
+        String key = "foo";
         getSession().setAttribute(key, ci);
         instance.setRootKey(key);
 
@@ -222,10 +217,9 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
     @Test
     public void testFax() {
-        @SuppressWarnings("deprecation")
         Contactable ci = new Organization();
         FaxAction instance = new FaxAction();
-        String key = "foo"; 
+        String key = "foo";
         getSession().setAttribute(key, ci);
         instance.setRootKey(key);
 
@@ -245,10 +239,9 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
     @Test
     public void testUrl() {
-        @SuppressWarnings("deprecation")
         Contactable ci = new Organization();
         UrlAction instance = new UrlAction();
-        String key = "foo"; 
+        String key = "foo";
         getSession().setAttribute(key, ci);
         instance.setRootKey(key);
 

@@ -112,7 +112,7 @@ import org.junit.Test;
 public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
     private OrganizationServiceBean orgServiceBean;
-    
+
     public OrganizationServiceBean getOrgServiceBean() {
         return orgServiceBean;
     }
@@ -135,28 +135,28 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         org.setAbbreviatedName("abbrvName");
         org.setDescription("oDesc");
         org.setStatusCode(EntityStatus.NEW);
-        
+
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         a.setDeliveryAddressLine("deliveryAddressLine");
         org.setPostalAddress(a);
-        
+
         org.getEmail().add(new Email("abc@example.com"));
         org.getEmail().add(new Email("def@example.com"));
-        
+
         org.getPhone().add(new PhoneNumber("111-111-1111"));
         org.getPhone().add(new PhoneNumber("123-123-1234"));
 
         org.getFax().add(new PhoneNumber("222-222-2222"));
         org.getFax().add(new PhoneNumber("234-234-2345"));
-        
+
         org.getTty().add(new PhoneNumber("333-333-3333"));
         org.getTty().add(new PhoneNumber("345-345-3456"));
-        
+
         org.getUrl().add(new URL("http://www.example.com/abc"));
         org.getUrl().add(new URL("http://www.example.com/def"));
         return org;
     }
-    
+
     protected long createOrganization(Organization org) throws EntityValidationException {
         long id = getOrgServiceBean().create(org);
         PoHibernateUtil.getCurrentSession().flush();
@@ -165,28 +165,28 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         // adjust the expected value to NEW
         org.setStatusCode(EntityStatus.NEW);
-        verifyEquals(org, saved);  
+        verifyEquals(org, saved);
         PoHibernateUtil.getCurrentSession().flush();
 
         List<AuditLogRecord> alr = AuditTestUtil.find(Organization.class, saved.getId());
         AuditTestUtil.assertDetail(alr, AuditType.INSERT, "name", null, "oName", false);
         return id;
     }
-    
+
     private void verifyEquals(Organization expected, Organization found) {
         assertEquals(expected.getId(), found.getId());
         assertEquals(expected.getStatusCode(), found.getStatusCode());
         assertEquals(expected.getName(), found.getName());
         assertEquals(expected.getDescription(), found.getDescription());
         assertEquals(expected.getAbbreviatedName(), found.getAbbreviatedName());
-        
+
         assertEquals(expected.getEmail().size(), found.getEmail().size());
         assertEquals(expected.getPhone().size(), found.getPhone().size());
         assertEquals(expected.getFax().size(), found.getFax().size());
         assertEquals(expected.getTty().size(), found.getTty().size());
         assertEquals(expected.getUrl().size(), found.getUrl().size());
     }
-    
+
     public long createOrganization() throws EntityValidationException {
         return createOrganization("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
     }
@@ -244,7 +244,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     private List<Organization> getAllOrganizations() {
         return PoHibernateUtil.getCurrentSession().createQuery("from " + Organization.class.getName()).list();
     }
-    
+
     @Test
     public void acceptWithNoChanges() throws EntityValidationException {
         Organization o = getBasicOrganization();
@@ -259,21 +259,21 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     private void assertOnOrBefore(Date left, Date right) {
         assertTrue(left.getTime() <= right.getTime());
     }
-    
+
     @Test
     public void acceptWithChanges() throws EntityValidationException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
         o = getOrgServiceBean().getOrganization(id);
-        //remove elements from the different CollectionType properties to ensure proper persistence 
-        Email eRemoved = o.getEmail().remove(0);
-        PhoneNumber fRemoved = o.getFax().remove(0);
-        PhoneNumber pRemoved = o.getPhone().remove(0);
-        PhoneNumber tRemoved = o.getTty().remove(0);
-        URL uRemoved = o.getUrl().remove(0);
-        
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+
         getOrgServiceBean().accept(o);
-        
+
         Organization result = getOrgServiceBean().getOrganization(id);
         assertEquals(EntityStatus.CURATED, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());

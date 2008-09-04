@@ -111,6 +111,8 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 public abstract class AbstractEditContactListAction<Entry extends Contact>
         extends ActionSupport implements Preparable {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Specifies the name of the hibernate validator.
      */
@@ -228,7 +230,6 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
     /**
      * @return entry entry to be added or removed
      */
-    @SuppressWarnings("deprecation")
     public Entry getEntry() {
         return entry;
     }
@@ -439,9 +440,9 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
      * @author gax
      */
     public static class TtyAction extends PhoneAction {
-        
+
         private static final long serialVersionUID = 1L;
-        
+
         /**
          * {@inheritDoc}
          */
@@ -449,7 +450,7 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
         protected List<PhoneNumber> getList() {
             return getContactable().getTty();
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -458,14 +459,14 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
         public String add() {
             return super.add();
         }
-        
+
         /**
          * {@inheritDoc}
          */
         public PhoneNumber getTtyEntry() {
             return super.getEntry();
         }
-        
+
         /**
          *@param tty fax to set.
          **/

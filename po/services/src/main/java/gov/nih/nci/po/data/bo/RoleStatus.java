@@ -82,10 +82,9 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @author Scott Miller
@@ -96,12 +95,7 @@ public enum RoleStatus {
     /**
      * The status a role is initially in.
      */
-    PENDING(RoleStatus.CANCELED, RoleStatus.ACTIVE, RoleStatus.NULLIFIED),
-
-    /**
-     * Status a role goes to from pending if it is not accepted by the curator.
-     */
-    CANCELED(RoleStatus.NULLIFIED),
+    PENDING(RoleStatus.ACTIVE, RoleStatus.NULLIFIED),
 
     /**
      * Status a role goes to from pending if it is accepted by the curator.
@@ -141,8 +135,7 @@ public enum RoleStatus {
     /**
      * @return the permitted curation statuses from this entity state.  set cannot be modified.
      */
-    @SuppressWarnings("unchecked")
     public Set<RoleStatus> getAllowedTransitions() {
-        return (Set<RoleStatus>) CollectionUtils.unmodifiableCollection(allowedTransitions);
+        return (Set<RoleStatus>) Collections.unmodifiableCollection(allowedTransitions);
     }
 }
