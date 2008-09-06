@@ -2,6 +2,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -92,14 +93,12 @@ public class PAUtil {
     }
 
     /**
-     * Convert an input string to a normalized date string.
-     * The output format is determined by the first element in
-     * the static dateFormats array.
+     * Convert an input string to a Date.
      * 
      * @param inDate string to be normalized
-     * @return normalized string
+     * @return Date
      */
-    public static String normalizeDateString(String inDate) {
+    private static Date dateStringToDate(String inDate) {
         if (inDate == null) {
             return null;
         }
@@ -119,11 +118,35 @@ public class PAUtil {
                 outDate = null;
             }
         }
-       
+        return outDate;
+    }
+
+    /**
+     * Convert an input string to a normalized date string.
+     * The output format is determined by the first element in
+     * the static dateFormats array.
+     * 
+     * @param inDate string to be normalized
+     * @return normalized string
+     */
+    public static String normalizeDateString(String inDate) {
+        Date outDate = dateStringToDate(inDate);
         if (outDate == null) {
             return null;
         }
+        SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern(dateFormats[0].pattern);
         return sdf.format(outDate);
+    }
+        
+    /**
+     * Convert an input string to a Timestamp.
+     * 
+     * @param inDate string to be normalized
+     * @return Timestamp
+     */
+    public static Timestamp dateStringToTimestamp(String inDate) {
+        Date dt = dateStringToDate(inDate);
+        return new Timestamp(dt.getTime());
     }
 }

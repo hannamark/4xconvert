@@ -80,10 +80,9 @@
                 key="trialStatus.current.trial.status" /></label></td>
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-            <td class="value"><s:select headerKey="" headerValue="All"
-                name="trialStatusData.currentTrialStatus"
-                list="#currentTrialStatusValues"
-                value="trialStatusData.currentTrialStatus" /></td>
+            <td class="value"><s:select headerKey="" headerValue=""
+                name="currentTrialStatus"
+                list="#currentTrialStatusValues" /></td>
             <td><s:submit value="Status History"
                 action='studyOverallStatusHistory' cssClass="button" /></td>
         </tr>
@@ -117,10 +116,10 @@
                 src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
             </a><s:radio name="completionDateType" list="dateTypeList" /></td>
         </tr>
-        <!-- <td colspan="2">
+        <td colspan="2">
           <s:submit value="Save"  action='studyOverallStatusUpdate' cssClass="button" />
           <s:submit value="Next" action='nciSpecificInformation' cssClass="button" />
-        </td> -->
+        </td> 
     </table>
 <div class="actionsrow">
     <del class="btnwrapper">

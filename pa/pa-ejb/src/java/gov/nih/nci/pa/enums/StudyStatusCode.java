@@ -4,6 +4,12 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Enumeration  for Trial Status codes.
  *
@@ -114,5 +120,93 @@ public enum StudyStatusCode implements CodedEnum<String> {
              codedNames[i] = studyStatusCodes[i].getCode();
          }
          return codedNames;
-     }        
+     }    
+     
+     private static final Map<StudyStatusCode, Set<StudyStatusCode>> TRANSITIONS;
+
+     static {
+         Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
+
+         Set<StudyStatusCode> tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(APPROVED);
+         tmpSet.add(ACTIVE);
+         tmpSet.add(WITHDRAWN);
+         tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(WITHDRAWN);
+         tmp.put(WITHDRAWN, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(ACTIVE);
+         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL);
+         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
+         tmpSet.add(CLOSED_TO_ACCRUAL);
+         tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL);
+         tmpSet.add(ACTIVE);
+         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
+         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+         tmpSet.add(ACTIVE);
+         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
+         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
+         tmp.put(ADMINISTRATIVELY_COMPLETE, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(CLOSED_TO_ACCRUAL);
+         tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
+         tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
+         tmpSet.add(COMPLETE);
+         tmp.put(CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(COMPLETE);
+         tmp.put(COMPLETE, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(DISAPPROVED);
+         tmp.put(DISAPPROVED, Collections.unmodifiableSet(tmpSet));
+
+         tmpSet = new HashSet<StudyStatusCode>();
+         tmpSet.add(IN_REVIEW);
+         tmpSet.add(APPROVED);
+         tmpSet.add(DISAPPROVED);
+         tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
+
+         TRANSITIONS = Collections.unmodifiableMap(tmp);
+     }
+
+     /**
+      * Helper method that indicates whether a transition to the new entity status
+      * is allowed.
+      *
+      * @param newStatus transition to status
+      * @return whether the transition is allowed
+      */
+     public boolean canTransitionTo(StudyStatusCode newStatus) {
+         return TRANSITIONS.get(this).contains(newStatus);
+     }
+
+     /**
+      * @return the permitted curation statuses from this entity state.  set cannot be modified.
+      */
+     public Set<StudyStatusCode> getAllowedTransitions() {
+         return TRANSITIONS.get(this);
+     }
+
 }

@@ -8,9 +8,9 @@
  <constant name="struts.devMode" value="true" />
 	<package name="default" extends="struts-default">
 		<interceptors>
-		    <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />		
+		    <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
 		</interceptors>		
-		<action name="index" class="gov.nih.nci.IndexAction">
+ 		<action name="index" class="gov.nih.nci.IndexAction">
 			<result>/jsp/index.jsp</result>
 		</action>	
 		<action name="login">
@@ -63,8 +63,8 @@
         <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
             <result>/jsp/pajsp/studyOverallStatus.jsp</result>
         </action> 
-        <action name="studyOverallStatusUpdate">
-            <result>/error.jsp</result>
+        <action name="studyOverallStatusUpdate" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="update">
+            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
         </action> 
         <action name="studyOverallStatusHistory" >
             <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>

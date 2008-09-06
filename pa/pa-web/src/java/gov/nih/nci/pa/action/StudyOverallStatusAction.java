@@ -5,6 +5,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -16,11 +17,13 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
 
+import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -33,28 +36,42 @@ import com.opensymphony.xwork2.Preparable;
  *        holder, NCI.
  * 
  */
-@SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.SingularField", "PMD.UnusedLocalVariable" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields" })
 public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
-    
+    private static String actualString = "Actual";
+    private static String anticipatedString = "Anticipated";
+
     private Map<String, String>  dateTypeList;
     private StudyProtocolServiceRemote spService;
     private StudyOverallStatusServiceRemote sosService;
-    
-    private Long spIdLong;
+
     private Ii spIdIi;
+    private String currentTrialStatus;
     private String statusDate;
     private String startDate;
     private String completionDate;
     private String startDateType;
     private String completionDateType;
 
+    private String ivCurrentTrialStatus;
+//    private String ivStatusDate;
+//    private String ivStartDate;
+//    private String ivCompletionDate;
+//    private String ivStartDateType;
+//    private String ivCompletionDateType;
+    
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws Exception e
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
     public void prepare() throws Exception {
+        dateTypeList = new HashMap<String, String>();
+        dateTypeList.put(actualString, actualString);
+        dateTypeList.put(anticipatedString, anticipatedString);
+        
         spService = PaRegistry.getStudyProtocolService();
         sosService = PaRegistry.getStudyOverallStatusService();
 
@@ -62,16 +79,22 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 .getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         
-        spIdLong = spDTO.getStudyProtocolId();
-        spIdIi = IiConverter.convertToIi(spIdLong);
-
-        dateTypeList = new HashMap<String, String>();
-        dateTypeList.put("Actual", "Actual");
-        dateTypeList.put("Anticipated", "Anticipated");
-        
-        loadForm();
+        spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
     }
 
+    /**
+     * @return Action result.
+     * @throws Exception exception.
+     */
+    @Override
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
+    public String execute() throws Exception {
+        loadForm();
+        storeInitialValues();
+        return SUCCESS;
+    }
+
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
     private void loadForm() throws Exception {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
         StudyOverallStatusDTO sosDto = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi); 
@@ -80,35 +103,115 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (spDto != null) {
             tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
             if (tsTemp != null) {
-                setStartDate(tsTemp.toString());            
+                setStartDate(tsTemp.toString());
             } else {
-                setStartDate("");
+                setStartDate(null);
             }
             
             tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
             if (tsTemp != null) {
-                setCompletionDate(tsTemp.toString());            
+                setCompletionDate(tsTemp.toString());
             } else {
-                setCompletionDate("");
+                setCompletionDate(null);
             }
+            setStartDateType(spDto.getStartDateTypeCode().getCode());
+            setCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
         } else {
-            setStartDate("");
-            setCompletionDate("");
+            setStartDate(null);
+            setCompletionDate(null);
+            setStartDateType(null);
+            setCompletionDateType(null);
         }
 
         if (sosDto != null) {
+            setCurrentTrialStatus(sosDto.getStatusCode().getCode());
             tsTemp = TsConverter.convertToTimestamp(sosDto.getStatusDate());
             if (tsTemp != null) {
-                setStatusDate(tsTemp.toString());            
+                setStatusDate(tsTemp.toString());
             } else {
-                setStatusDate("");
+                setStatusDate(null);
             }
         } else {
-            setStatusDate("");
+            setCurrentTrialStatus(null);
+            setStatusDate(null);
         }
+    }
+    
+    private void storeInitialValues() {
+        ivCurrentTrialStatus = currentTrialStatus;
+//        ivStatusDate = statusDate;
+//        ivStartDate = startDate;
+//        ivCompletionDate = completionDate;
+//        ivStartDateType = startDateType;
+//        ivCompletionDateType = completionDateType;
+    }
 
-        startDateType = "Actual";
-        completionDateType = "Anticipated";        
+    /**  
+     * @return res
+     */
+    public String update()  {
+        clearErrorsAndMessages();
+        enforceBusinessRules();
+        if (hasActionErrors()) {
+            return Action.SUCCESS;
+        }
+        
+        // add code here to 
+        return Action.SUCCESS;
+    }
+ 
+    @SuppressWarnings("PMD.NPathComplexity")
+    private void enforceBusinessRules() {
+        // check for status transition errors
+        StudyStatusCode oldCode = StudyStatusCode.getByCode(ivCurrentTrialStatus);
+        StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
+        if ((oldCode != null) && (newCode != null) && (!oldCode.canTransitionTo(newCode))) {
+            addActionError(getText("Illegal transition.  Status can not be changed from " 
+                    + oldCode.getCode() + " to " + newCode.getCode() + "."));
+        }
+        
+        // check all fields are not null unless status is withdrawn
+        if (newCode ==  null) {
+            addActionError("Current trial status must be set.");
+        }
+        if (statusDate == null) {
+            addActionError("Current trial status date must be set.");
+        }
+        if (!StudyStatusCode.WITHDRAWN.equals(newCode)) {
+            if (startDate == null) {
+                addActionError("Trial start date must be set.");
+            }
+            if (startDateType == null) {
+                addActionError("Trial start date type must be set.");
+            }
+            if (completionDate == null) {
+                addActionError("Primary completion date must be set.");
+            }
+            if (completionDateType == null) {
+                addActionError("Primary completion date type must be set.");
+            }
+        }
+        
+        // enforce date rules
+        Timestamp now = new Timestamp(new Date().getTime());
+        if (actualString.equals(startDateType)
+            && (now.before(PAUtil.dateStringToTimestamp(startDate)))) {
+                addActionError("Actual start dates must be past or current.");
+        }
+        if (actualString.equals(completionDateType) 
+            && (now.before(PAUtil.dateStringToTimestamp(completionDate)))) {
+                addActionError("Actual completion dates must be past or current.");
+         }
+    }
+    
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private boolean studyOverallStatusChanged() {
+        return true;
+    }
+    
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private boolean studyProtocolChanged() {
+        return true;
     }
 
     /**
@@ -137,15 +240,6 @@ public class StudyOverallStatusAction extends ActionSupport implements
      */
     public void setCompletionDateType(String completionDateType) {
         this.completionDateType = completionDateType;
-    }
-
-    /**
-     * @return Action result.
-     * @throws Exception exception.
-     */
-    @Override
-    public String execute() throws Exception {
-        return SUCCESS;
     }
 
     /**
@@ -201,6 +295,20 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * @param statusDate the statusDate to set
      */
     public void setStatusDate(String statusDate) {
-        this.statusDate = statusDate;
+        this.statusDate = PAUtil.normalizeDateString(statusDate);
+    }
+
+    /**
+     * @return the currentTrialStatus
+     */
+    public String getCurrentTrialStatus() {
+        return currentTrialStatus;
+    }
+
+    /**
+     * @param currentTrialStatus the currentTrialStatus to set
+     */
+    public void setCurrentTrialStatus(String currentTrialStatus) {
+        this.currentTrialStatus = currentTrialStatus;
     }
 }
