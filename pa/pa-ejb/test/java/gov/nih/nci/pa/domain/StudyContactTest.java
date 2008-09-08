@@ -2,8 +2,10 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.util.TestSchema;
-
+import java.util.List;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.HibernateUtil;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +57,7 @@ public class StudyContactTest  {
         StudyContact create = createStudyContactObj(sp , c , hc);
         TestSchema.addUpdObject(create);
         StudyContact saved = (StudyContact) session.load(StudyContact.class, create.getId());
+
         
         assertNotNull(saved.getId());
         assertEquals("Study contact does not match " , create.getId(), saved.getId());
@@ -72,8 +75,93 @@ public class StudyContactTest  {
                 create.getHealthCareProvider().getPerson().getId(), saved.getHealthCareProvider().getPerson().getId());
         
    
+
     }
     
+    @Test
+    public void getPersonsAssociatedWithProtcol() {
+        Session session = TestSchema.getSession();
+        Person p = PersonTest.createPersonObj();
+        TestSchema.addUpdObject(p);
+        Person savedP = (Person) session.load(Person.class, p.getId());
+        assertEquals("Person  id does not match " , p.getId(), savedP.getId());
+        
+        HealthCareProvider hc = HealthCareProviderTest.createHealthCareProviderObj(p);
+        TestSchema.addUpdObject(hc);
+        HealthCareProvider savedhc = (HealthCareProvider) session.load(HealthCareProvider.class, hc.getId());
+        assertEquals("Healtcare Provider does not match " , hc.getId(), savedhc.getId());
+
+
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+        StudyProtocol savedsp = (StudyProtocol) session.load(StudyProtocol.class, sp.getId());
+        assertEquals("Study Protocol does not match " , sp.getId(), savedsp.getId());
+        
+        Country c = CountryTest.createCountryObj();
+        TestSchema.addUpdObject(c);
+        assertNotNull(c.getId());
+        
+        StudyContact create = createStudyContactObj(sp , c , hc);
+        TestSchema.addUpdObject(create);
+        StudyContact saved = (StudyContact) session.load(StudyContact.class, create.getId());
+        
+        StudyContactRole scr = StudyContactRolesTest.createStudyContactRoleObj(create, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+        TestSchema.addUpdObject(scr);
+        
+        assertNotNull(saved.getId());
+        assertEquals("Study contact does not match " , create.getId(), saved.getId());
+        assertEquals("Address line  does not match " , create.getAddressLine(), saved.getAddressLine());
+        assertEquals("Delivery line  does not match " , 
+                create.getDeliveryAddressLine(), saved.getDeliveryAddressLine());
+        assertEquals("City  does not match " , create.getCity(), saved.getCity());
+        assertEquals("State  does not match " , create.getState(), saved.getState());
+        assertEquals("Country does not match " , create.getCountry().getId(), saved.getCountry().getId());
+        assertEquals("Study contact / Healthcare  not match " , 
+              create.getHealthCareProvider().getId(), saved.getHealthCareProvider().getId());
+        assertEquals("Study contact / Study Protocol  not match " , 
+                create.getStudyProtocol().getId(), saved.getStudyProtocol().getId());
+        assertEquals("Study contact / Healthcare /Person not match " , 
+                create.getHealthCareProvider().getPerson().getId(), saved.getHealthCareProvider().getPerson().getId());
+
+        // insert second person
+        Person p2 = PersonTest.createPersonObj();
+        TestSchema.addUpdObject(p2);
+        Person savedP2 = (Person) session.load(Person.class, p2.getId());
+        assertEquals("Person  id does not match " , p2.getId(), savedP2.getId());
+
+        HealthCareProvider hc2 = HealthCareProviderTest.createHealthCareProviderObj(p2);
+        TestSchema.addUpdObject(hc2);
+        HealthCareProvider savedhc2 = (HealthCareProvider) session.load(HealthCareProvider.class, hc2.getId());
+        assertEquals("Healtcare Provider does not match " , hc2.getId(), savedhc2.getId());
+
+        StudyProtocol sp2 = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp2);
+        assertNotNull(sp2.getId());
+        StudyProtocol savedsp2 = (StudyProtocol) session.load(StudyProtocol.class, sp2.getId());
+        assertEquals("Study Protocol does not match " , sp2.getId(), savedsp2.getId());
+
+        StudyContact create2 = createStudyContactObj(sp2 , c , hc2);
+        TestSchema.addUpdObject(create2);
+        StudyContact saved2 = (StudyContact) session.load(StudyContact.class, create2.getId());
+
+        StudyContactRole scr2 = StudyContactRolesTest.createStudyContactRoleObj(create2, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+        TestSchema.addUpdObject(scr2);
+        
+        List<Person> persons = null;
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select distinct p from Person  p " 
+        + " join p.healthCareProviders as hc "
+        + " join hc.studyContacts as sc" 
+        + " join sc.studyProtocol as sp" 
+        + " join sc.studyContactRoles as scr" 
+        + " where scr.studyContactRoleCode = '" 
+        + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+        session = HibernateUtil.getCurrentSession();
+        persons = session.createQuery(hql.toString()).list();
+        
+        assertEquals("Person count does not match " , persons.size() , 2);      
+    }
     /**
      * 
      * @param sp StudyProtocol
