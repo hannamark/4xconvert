@@ -20,19 +20,13 @@ function resetValues () {
 
 
 }
-function handleAction(){
-	 document.studyProtocolQuery.action="studyProtocolQuery.action";
-     document.studyProtocolQuery.submit();     
-}
 </SCRIPT>
 <body>
 <!-- main content begins-->
 
   <!--  <div id="contentwide"> -->
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
-    <c:if test="${records != null}">	
-	<div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
-	</c:if>	
+    <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
  <div class="box" id="filters">
@@ -43,7 +37,7 @@ function handleAction(){
                      <label for="nciIdentifier"> <fmt:message key="studyProtocol.nciIdentifier"/></label>
                 </td>
                 <td>
-                    <s:textfield name="criteria.nciIdentifier"  maxlength="200" size="100" cssStyle="width:200px" />
+                    <s:textfield name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>
                 <td  scope="row" class="label">
                     <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label> 
@@ -52,16 +46,15 @@ function handleAction(){
                     <s:textfield name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
                 </td>
              </tr>                                               
+            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
 
             <tr>
-
-             <tr>
                 <td scope="row" class="label">
                     <label for="localProtocolIdentifer"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></label>
                 </td>
 
                 <td>
-                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100" cssStyle="width:200px" />
+                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                                                                                          
                 </td>                    
                 <td  scope="row" class="label">
@@ -69,19 +62,30 @@ function handleAction(){
                     
                 </td>
                 <td>
-
+                     <s:select  
+                        name="criteria.leadOrganizationId" 
+                        list="#protocolOrgs"  
+                        listKey="id" listValue="name" headerKey="" headerValue="All" />
                 </td>
 
             </tr>           
 
             <tr>
-
+            <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
              <tr>
                 <td  scope="row" class="label">
                     <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
                 </td>
 
-                <td>
+                <td align=left>
+                    <s:select  
+                        name="criteria.principalInvestigatorId" 
+                        list="#principalInvs"  
+                        listKey="id" 
+                        listValue="fullName" 
+                        headerKey="" 
+                        headerValue="All"
+                        />
 
                 </td>                    
                 <td  scope="row" class="label">
@@ -124,34 +128,35 @@ function handleAction(){
                    <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
                 </td>                  
     
-               <!--  <td colspan="2">                        
+                 <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td>  -->
+                </td>  
             </tr>
         </table>
+        <!--
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">			
-					<li><li>			
-							<s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
-					    </li>
+					<li><a href="studyProtocolQuery.action" class="btn"><span class="btn_img"><span class="search">Search</span></span></a></li>
 				</ul>	
 			</del>
 
 		</div>
-
+        -->
   
         
    </s:form>
 
  </div>
  <div class="line"></div>
-	<c:if test="${records != null}">						
-		<h2>Search Results</h2>  
-   		<jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
-        	<jsp:param name="listName" value="records" />        
-   		</jsp:include>
+							
+							<h2>Search Results</h2>
+ 
+  <c:if test="${records != null}">
+   <jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
+        <jsp:param name="listName" value="records" />        
+   </jsp:include>
    </c:if>
 </body>
 </html>
