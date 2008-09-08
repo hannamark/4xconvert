@@ -4,7 +4,6 @@ package gov.nih.nci.pa.iso.convert;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -37,8 +36,6 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
-        studyProtocolDTO.setAllocationCode(
-                CdConverter.convertToCd(studyProtocol.getAllocationCode()));
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
         studyProtocolDTO.setIdentifier(IiConverter.convertToIi(studyProtocol.getIdentifier()));
@@ -68,9 +65,6 @@ public class StudyProtocolConverter {
                     AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
         }
         studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
-        if (studyProtocolDTO.getAllocationCode() != null) {
-            studyProtocol.setAllocationCode(AllocationCode.getByCode(studyProtocolDTO.getAllocationCode().getCode()));
-        }
         if (studyProtocolDTO.getIdentifier() != null) {
             studyProtocol.setIdentifier(studyProtocolDTO.getIdentifier().getExtension());
         }
