@@ -26,7 +26,7 @@ public final class TstProperties {
     public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
 
 
-    private static Properties properties = new Properties();
+    public static Properties properties = new Properties();
     static {
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");

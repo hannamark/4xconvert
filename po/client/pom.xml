@@ -65,7 +65,13 @@
             <artifactId>org.mortbay.jetty</artifactId>
             <version>5.1.10</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
+            <scope>test</scope>
+        </dependency>
         
         <!-- API tests -->
         <dependency>

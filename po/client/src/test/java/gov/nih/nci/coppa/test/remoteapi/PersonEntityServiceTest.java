@@ -82,6 +82,12 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.test.TstProperties;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -92,10 +98,12 @@ import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.net.URI;
 import java.util.Date;
 
 import org.junit.Test;
@@ -155,4 +163,79 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertTrue(result.before(new Date()));
 
     }
+    
+    
+    @Test
+    public void update() throws Exception {
+        if (personId == null) {
+            createMinimal();
+        }
+        
+        Properties config = TstProperties.properties;
+        Class.forName(config.getProperty("jdbc.driver-class"));
+        String url = config.getProperty("jdbc.connection-url");
+        String user = config.getProperty("jdbc.user-name");
+        String password = config.getProperty("jdbc.password");
+        Connection c = DriverManager.getConnection(url, user, password);
+        ResultSet rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension());
+        assertTrue(rs.next());
+        int count0 = rs.getInt(1);
+        rs.close();
+        
+        PersonDTO dto = getPersonService().getPerson(personId);
+        Enxp n = new Enxp(EntityNamePartType.SFX);
+        n.setValue("IV");
+        dto.getName().getPart().add(n);
+        TelPhone e = new TelPhone();
+        e.setValue(new URI("tel:+123-123-654"));
+        dto.getTelecomAddress().getItem().add(e);
+        getPersonService().updatePerson(dto);
+        
+        rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension());
+        assertTrue(rs.next());
+        int count1 = rs.getInt(1);
+        rs.close();
+        assertEquals(count0 + 1, count1);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void updateWithChangedStatus () throws Exception {
+        if (personId == null) {
+            createMinimal();
+        }
+        PersonDTO dto = getPersonService().getPerson(personId);
+        Cd cd = new Cd();
+        cd.setCode("nullified");
+        dto.setStatusCode(cd);
+        getPersonService().updatePerson(dto);
+    }
+    
+    @Test
+    public void updateStatus() throws Exception {
+        if (personId == null) {
+            createMinimal();
+        }
+        
+        Properties config = TstProperties.properties;
+        Class.forName(config.getProperty("jdbc.driver-class"));
+        String url = config.getProperty("jdbc.connection-url");
+        String user = config.getProperty("jdbc.user-name");
+        String password = config.getProperty("jdbc.password");
+        Connection c = DriverManager.getConnection(url, user, password);
+        ResultSet rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension()+" and status = 'DEPRECATED'");
+        assertTrue(rs.next());
+        int count0 = rs.getInt(1);
+        rs.close();
+        
+        Cd cd = new Cd();
+        cd.setCode("inactive"); // maps to DEPRECATED
+        getPersonService().updatePersonStatus(personId, cd);
+        
+        rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension()+" and status = 'DEPRECATED'");
+        assertTrue(rs.next());
+        int count1 = rs.getInt(1);
+        rs.close();
+        assertEquals(count0 + 1, count1);
+    }
+    
 }
