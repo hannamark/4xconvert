@@ -37,7 +37,7 @@ public class StudyCoordinatingCenterTest  {
         Serializable spid = sp.getId();
         assertNotNull(spid);
         
-        Organization o = OrganizationTest.organizationObj();
+        Organization o = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o);
         assertNotNull(o.getId());
         
