@@ -19,7 +19,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 public class StudyProtocolQueryAction extends ActionSupport {    
     
-    private List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
+    private List<StudyProtocolQueryDTO> records = null;//new ArrayList<StudyProtocolQueryDTO>();
     
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
 
@@ -34,7 +34,8 @@ public class StudyProtocolQueryAction extends ActionSupport {
      * @return res
      */
     public String query()  {
-        try {            
+        try { 
+            records = new ArrayList<StudyProtocolQueryDTO>();
             records = PaRegistry.getStudyProtocolService().getStudyProtocolByCriteria(criteria);       
             return SUCCESS;
         } catch (Exception e) {
