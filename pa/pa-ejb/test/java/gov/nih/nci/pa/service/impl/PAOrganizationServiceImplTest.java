@@ -1,21 +1,9 @@
 package gov.nih.nci.pa.service.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
-import gov.nih.nci.pa.domain.StudyParticipation;
-import gov.nih.nci.pa.domain.StudyParticipationTest;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
-import gov.nih.nci.pa.dto.OrganizationDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.TestSchema;
-
-import org.hibernate.Session;
+//import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
 import org.junit.Before;
 import org.junit.Test;
 
