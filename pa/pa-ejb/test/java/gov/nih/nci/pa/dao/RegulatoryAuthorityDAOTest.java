@@ -14,7 +14,7 @@ import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.RegulatoryInformationDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import org.hibernate.Session;
 import org.junit.Before;
