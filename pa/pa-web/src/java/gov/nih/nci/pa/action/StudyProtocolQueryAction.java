@@ -19,9 +19,10 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 public class StudyProtocolQueryAction extends ActionSupport {    
     
-    private List<StudyProtocolQueryDTO> records = null;//new ArrayList<StudyProtocolQueryDTO>();
+    private List<StudyProtocolQueryDTO> records = null;
     
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+
 
     /**  
      * @return res
@@ -66,5 +67,9 @@ public class StudyProtocolQueryAction extends ActionSupport {
     public void setCriteria(StudyProtocolQueryCriteria criteria) {
         this.criteria = criteria;
     }
+
+
+    
+    
 
 }
