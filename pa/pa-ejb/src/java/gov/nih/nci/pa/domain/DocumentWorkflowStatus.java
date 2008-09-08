@@ -37,6 +37,7 @@ public class DocumentWorkflowStatus extends AbstractEntity {
      * 
      * @return commonText
      */
+    @Column(name = "COMMON_TEXT")
     public String getCommonText() {
         return commonText;
     }
@@ -44,7 +45,6 @@ public class DocumentWorkflowStatus extends AbstractEntity {
      * 
      * @param commonText commonText
      */
-    @Column(name = "COMMON_TEXT")
     public void setCommonText(String commonText) {
         this.commonText = commonText;
     }
