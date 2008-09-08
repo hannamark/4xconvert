@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.services.person;
+package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -129,7 +129,7 @@ import org.junit.Test;
  * Test to verify the conversion to and from the person role is valid.
  * @author Scott Miller
  */
-public class PersonRoleDTOTest extends AbstractHibernateTestCase {
+public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCase {
 
     private ServiceLocator locator;
 
@@ -144,8 +144,7 @@ public class PersonRoleDTOTest extends AbstractHibernateTestCase {
         IiConverter.setServiceLocator(locator);
     }
 
-    private PersonRole getExamplePersonRole() {
-        PersonRole pr = new PersonRole();
+    protected PersonRole fillInExamplePersonRoleFields(PersonRole pr) {
         pr.setId(1L);
         pr.setPerson(new Person());
         pr.getPerson().setId(2L);
@@ -166,12 +165,16 @@ public class PersonRoleDTOTest extends AbstractHibernateTestCase {
         return pr;
     }
 
+    abstract protected PersonRole getExampleTestClass();
+
+    abstract protected void verifyTestClassFields(PersonRoleDTO dto);
+
     /**
      * Tests creating a snapshot from a model with every field populated.
      */
     @Test
     public void testCreateFullSnapshotFromModel() {
-        PersonRole perRole = getExamplePersonRole();
+        PersonRole perRole = getExampleTestClass();
         PersonRoleDTO dto = PoXsnapshotHelper.createSnapshot(perRole);
 
         // check id
@@ -234,11 +237,13 @@ public class PersonRoleDTOTest extends AbstractHibernateTestCase {
         assertTrue(urlFound);
 
         // test set of ad
+
+        // test instance specific fields
+        verifyTestClassFields(dto);
     }
 
-    private PersonRoleDTO getExamplePersonRoleDTO(Long personId, Long orgId) throws URISyntaxException {
-        PersonRoleDTO pr = new PersonRoleDTO();
-
+    protected PersonRoleDTO fillInPersonRoleDTOFields(PersonRoleDTO pr, Long personId, Long orgId)
+            throws URISyntaxException {
         Ii ii = new Ii();
         ii.setExtension("" + 1L);
         ii.setDisplayable(true);
@@ -300,6 +305,10 @@ public class PersonRoleDTOTest extends AbstractHibernateTestCase {
         return pr;
     }
 
+    abstract protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException;
+
+    abstract protected void verifyTestClassDTOFields(PersonRole pr);
+
     /**
      * Test creating the model from the snapshot.
      */
@@ -321,7 +330,7 @@ public class PersonRoleDTOTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().flush();
 
         // create bo from snapshot and verify values
-        PersonRoleDTO dto = getExamplePersonRoleDTO(personId, orgId);
+        PersonRoleDTO dto = getExampleTestClassDTO(personId, orgId);
         PersonRole bo = PoXsnapshotHelper.createModel(dto);
         assertEquals(1L, bo.getId().longValue());
         assertEquals(orgId, bo.getPerson().getId().longValue());
@@ -342,5 +351,13 @@ public class PersonRoleDTOTest extends AbstractHibernateTestCase {
         assertEquals("http://www.google.com", bo.getUrl().get(0).getValue());
 
         // test set of ad
+
+        // verify that the instance specific fields are correct
+        verifyTestClassDTOFields(bo);
+    }
+
+    @Test
+    public void testSnapshotToModelToSnapshot() {
+        // verify that moving from snapshot to model and back to snapshot results in original data.
     }
 }

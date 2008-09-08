@@ -80,41 +80,61 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
-import org.hibernate.validator.Length;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.PersonRoleDTO;
 
+import java.net.URISyntaxException;
 
 /**
- * Class that stores health care provider information.
  * @author Scott Miller
  *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.HealthCareProviderDTO"
- *      model-extends="gov.nih.nci.po.data.bo.PersonRole"
  */
-public class HealthCareProvider extends PersonRole {
-    private static final long serialVersionUID = 1L;
-
-    private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
-
-    private String certificateLicenseText;
+public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
 
     /**
-     * @return the certificateLicenseText
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
+     * {@inheritDoc}
      */
-    @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
-    public String getCertificateLicenseText() {
-        return this.certificateLicenseText;
+    @Override
+    protected PersonRole getExampleTestClass() {
+        HealthCareProvider hcp = new HealthCareProvider();
+        fillInExamplePersonRoleFields(hcp);
+        hcp.setCertificateLicenseText("testCertLicense");
+        return hcp;
     }
 
     /**
-     * @param certificateLicenseText the certificateLicenseText to set
+     * {@inheritDoc}
      */
-    public void setCertificateLicenseText(String certificateLicenseText) {
-        this.certificateLicenseText = certificateLicenseText;
+    @Override
+    protected void verifyTestClassFields(PersonRoleDTO dto) {
+        assertEquals("testCertLicense", ((HealthCareProviderDTO) dto).getCertificateLicenseText().getValue());
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+        HealthCareProviderDTO dto = new HealthCareProviderDTO();
+        fillInPersonRoleDTOFields(dto, personId, orgId);
+        St st = new St();
+        st.setValue("testCertLicense");
+        dto.setCertificateLicenseText(st);
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void verifyTestClassDTOFields(PersonRole pr) {
+        assertEquals("testCertLicense", ((HealthCareProvider) pr).getCertificateLicenseText());
     }
 }
