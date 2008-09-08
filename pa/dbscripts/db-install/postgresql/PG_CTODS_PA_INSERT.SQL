@@ -8,106 +8,106 @@ INSERT INTO study_protocol
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 1, 'Acronym 1', 'NA', 'ABBREVIATED', true, true,'NCI-2008-0001','CCR','Monitoring CA 15-3 Antigen in Patients During and After Adjuvant Therapy For Stage II, Node Positive Carcinoma of the Breast
+    )  values ( 1, 'Acronym 1', 'NA', 'ABBREVIATED', 'true', 'true','NCI-2008-0001','CCR','Monitoring CA 15-3 Antigen in Patients During and After Adjuvant Therapy For Stage II, Node Positive Carcinoma of the Breast
  ','I', 'TREATMENT', current_timestamp, 'ACTUAL', 
-    current_timestamp, 'ANTICIPATED', true , false, true , false , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    current_timestamp, 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 2, 'Acronym 2', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE',false,true, 'NCI-2008-0002','CTEP','A Phase I study of Taxol in refractory leukemia in children
+    )  values ( 2, 'Acronym 2', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE','false','true', 'NCI-2008-0002','CTEP','A Phase I study of Taxol in refractory leukemia in children
 ','II', 'TREATMENT','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', true , false, true , false , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    '2008-08-13', 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 3, 'Acronym 3', 'NON_RANDOMIZED_TRIAL', 'AE',true,true,'NCI-2008-0003','DEA','Phase III Study of Zoladex Adjuvant to Radiotherapy in Unfavorable Prognosis Carcinoma of the Prostate','III', 'PREVENTION','2008-01-13', 'ANTICIPATED', 
-    '2008-02-01', 'ACTUAL', true , false, true , false , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 3, 'Acronym 3', 'NON_RANDOMIZED_TRIAL', 'AE','true','true','NCI-2008-0003','DEA','Phase III Study of Zoladex Adjuvant to Radiotherapy in Unfavorable Prognosis Carcinoma of the Prostate','III', 'PREVENTION','2008-01-13', 'ANTICIPATED', 
+    '2008-02-01', 'ACTUAL', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 4, 'Acronym 4', 'NA', 'COMPLETE',false,true,'NCI-2008-0004','DCB','A Phase I trial of Ifosfamide and Taxol in refractory Pelvic Malignancies','I', 'DIAGNOSTIC','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', true , false, true , false , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 4, 'Acronym 4', 'NA', 'COMPLETE','false','true','NCI-2008-0004','DCB','A Phase I trial of Ifosfamide and Taxol in refractory Pelvic Malignancies','I', 'DIAGNOSTIC','2008-07-13', 'ACTUAL', 
+    '2008-08-13', 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 5, 'Acronym 5', 'NA', 'ABBREVIATED',true,true,'NCI-2008-0005','CCR','Randomized double-blind trial of G-CSF versus placebo at the time of chemotherapy-induced Neutropenia ','I', 'DIAGNOSTIC',current_timestamp, 'ACTUAL', 
-    current_timestamp, 'ANTICIPATED', true , false, true , false , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 5, 'Acronym 5', 'NA', 'ABBREVIATED','true','true','NCI-2008-0005','CCR','Randomized double-blind trial of G-CSF versus placebo at the time of chemotherapy-induced Neutropenia ','I', 'DIAGNOSTIC',current_timestamp, 'ACTUAL', 
+    current_timestamp, 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 6, 'Acronym 6', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE',false,false,'NCI-2008-0006','CTEP','Phase III study of priming with granulocyte-macrophage colony stimulating factor ','III', 'SUPPORTIVE_CARE','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', true , false, true , false , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 6, 'Acronym 6', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE','false','false','NCI-2008-0006','CTEP','Phase III study of priming with granulocyte-macrophage colony stimulating factor ','III', 'SUPPORTIVE_CARE','2008-07-13', 'ACTUAL', 
+    '2008-08-13', 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 7, 'Acronym 7', 'NON_RANDOMIZED_TRIAL', 'AE',true,false,'NCI-2008-0007','DEA','Phase III Comparison of Methotrexate, Vinblastine, Doxorubicin, and Cisplatin (MVAC) vs. Doxorubicin ','III','SUPPORTIVE_CARE', '2008-01-13', 'ANTICIPATED', 
-    '2008-02-01', 'ACTUAL', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 7, 'Acronym 7', 'NON_RANDOMIZED_TRIAL', 'AE','true','false','NCI-2008-0007','DEA','Phase III Comparison of Methotrexate, Vinblastine, Doxorubicin, and Cisplatin (MVAC) vs. Doxorubicin ','III','SUPPORTIVE_CARE', '2008-01-13', 'ANTICIPATED', 
+    '2008-02-01', 'ACTUAL', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 8, 'Acronym 8', 'NA', 'COMPLETE',false,false,'NCI-2008-0008','DCB','A Clinical Trial to Evaluate the Effect of Dose Intensification of Postoperative Adriamycin/CTX (AC) ','IV', 'SUPPORTIVE_CARE','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 8, 'Acronym 8', 'NA', 'COMPLETE','false','false','NCI-2008-0008','DCB','A Clinical Trial to Evaluate the Effect of Dose Intensification of Postoperative Adriamycin/CTX (AC) ','IV', 'SUPPORTIVE_CARE','2008-07-13', 'ACTUAL', 
+    '2008-08-13', 'ANTICIPATED', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 9, 'Acronym 9', 'NA', 'ABBREVIATED',true,false,'NCI-2008-0009','CCR','A Pilot Study of Chemotherapy Plus Radiotherapy for Selected Stage IIIB','III', 'SCREENING',current_timestamp, 'ACTUAL', 
-    current_timestamp, 'ANTICIPATED', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 9, 'Acronym 9', 'NA', 'ABBREVIATED','true','false','NCI-2008-0009','CCR','A Pilot Study of Chemotherapy Plus Radiotherapy for Selected Stage IIIB','III', 'SCREENING',current_timestamp, 'ACTUAL', 
+    current_timestamp, 'ANTICIPATED', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 10, 'Acronym 10', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE',false,false,'NCI-2008-0010','CTEP','Phase III Trial of Adjuvant Therapy with Tamoxifen Alone or Combined with Fluoxymesterone in Postmenopausal Women','III', 'SUPPORTIVE_CARE','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 10, 'Acronym 10', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE','false','false','NCI-2008-0010','CTEP','Phase III Trial of Adjuvant Therapy with Tamoxifen Alone or Combined with Fluoxymesterone in Postmenopausal Women','III', 'SUPPORTIVE_CARE','2008-07-13', 'ACTUAL', 
+    '2008-08-13', 'ANTICIPATED', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 11, 'Acronym 11', 'NON_RANDOMIZED_TRIAL', 'AE',true,true,'NCI-2008-0011','DEA','Randomized trial of adjuvant immunotherapy with an allogeneic melanoma vaccine for patients ','O', 'SCREENING','2008-01-13', 'ANTICIPATED', 
-    '2008-02-01', 'ACTUAL', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 11, 'Acronym 11', 'NON_RANDOMIZED_TRIAL', 'AE','true','true','NCI-2008-0011','DEA','Randomized trial of adjuvant immunotherapy with an allogeneic melanoma vaccine for patients ','O', 'SCREENING','2008-01-13', 'ANTICIPATED', 
+    '2008-02-01', 'ACTUAL', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 12, 'Acronym 12', 'NA', 'COMPLETE',false,true,'NCI-2008-0012','DCB','Phase II Study of Interleukin-4 (IL-4) in Patients with Previously Treated Measurable ','II', 'SCREENING','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 12, 'Acronym 12', 'NA', 'COMPLETE','false','true','NCI-2008-0012','DCB','Phase II Study of Interleukin-4 (IL-4) in Patients with Previously Treated Measurable ','II', 'SCREENING','2008-07-13', 'ACTUAL', 
+    '2008-08-13', 'ANTICIPATED', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 INSERT INTO study_protocol 
     (
          id, acronym,allocation_code,accr_rept_meth_code, data_monty_comty_apptn_indicator ,expd_access_indidicator,nci_identifier,monitor_code,official_title,phase_code,primary_purpose_code,pri_compl_date,pri_compl_date_type_code,
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
-    )  values ( 13, 'Acronym 13', 'NA', 'COMPLETE',false,true,'NCI-2008-0013','DCB','Phase II Study of Interleukin-4 (IL-4) in Patients with Previously Treated Measurable ','II', 'SCREENING','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', false , true, false , true , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    )  values ( 13, 'Acronym 13', 'NA', 'COMPLETE','false','true','NCI-2008-0013','DCB','Phase II Study of Interleukin-4 (IL-4) in Patients with Previously Treated Measurable ','II', 'SCREENING','2008-07-13', 'ACTUAL', 
+    '2008-08-13', 'ANTICIPATED', 'false' , 'true', 'false' , 'true' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
 /
 
 
@@ -354,62 +354,62 @@ insert into healthcare_provider (id, person_id, date_last_updated, user_last_upd
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(1, true,'2432','terra cot','herdon','de','11111',null,1,1,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(1, 'true','2432','terra cot','herdon','de','11111',null,1,1,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
  
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(2, true,'2432','terra cot','herdon','de','11111',null,2,2,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(2, 'true','2432','terra cot','herdon','de','11111',null,2,2,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(3, true,'2432','terra cot','herdon','de','11111',null,3,3,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(3, 'true','2432','terra cot','herdon','de','11111',null,3,3,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(4, true,'2432','terra cot','herdon','de','11111',null,4,4,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(4, 'true','2432','terra cot','herdon','de','11111',null,4,4,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(5, true,'2432','terra cot','herdon','de','11111',null,5,5,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(5, 'true','2432','terra cot','herdon','de','11111',null,5,5,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(6, true,'2432','terra cot','herdon','de','11111',null,1,6,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(6, 'true','2432','terra cot','herdon','de','11111',null,1,6,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
  
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(7, true,'2432','terra cot','herdon','de','11111',null,2,7,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(7, 'true','2432','terra cot','herdon','de','11111',null,2,7,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(8, true,'2432','terra cot','herdon','de','11111',null,3,8,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(8, 'true','2432','terra cot','herdon','de','11111',null,3,8,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(9, true,'2432','terra cot','herdon','de','11111',null,4,9,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(9, 'true','2432','terra cot','herdon','de','11111',null,4,9,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(10, true,'2432','terra cot','herdon','de','11111',null,5,10,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(10, 'true','2432','terra cot','herdon','de','11111',null,5,10,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(11, true,'2432','terra cot','herdon','de','11111',null,4,11,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(11, 'true','2432','terra cot','herdon','de','11111',null,4,11,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(12, true,'2432','terra cot','herdon','de','11111',null,5,12,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(12, 'true','2432','terra cot','herdon','de','11111',null,5,12,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 /
 
 ------------------ study contact rules
