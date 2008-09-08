@@ -40,7 +40,7 @@ public class StudyCoordinatingCenterRoleTest  {
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
         
-        Organization o = OrganizationTest.organizationObj();
+        Organization o = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o);
         assertNotNull(o.getId());
         
