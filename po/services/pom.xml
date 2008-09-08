@@ -199,6 +199,7 @@
                     <clientIncludes>
                         <clientInclude>gov/nih/nci/services/**/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/service/OneCriterionRequiredException.class</clientInclude>                        
                     </clientIncludes>
                     <clientExcludes>
                         <clientExclude>gov/nih/nci/services/**/*Helper*</clientExclude>
