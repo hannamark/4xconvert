@@ -3,7 +3,9 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
@@ -44,6 +46,7 @@ public class TestSchema {
             Configuration config = new AnnotationConfiguration().
 
             addAnnotatedClass(StudyProtocol.class).
+            addAnnotatedClass(InterventionalStudyProtocol.class).
             addAnnotatedClass(StudyCondition.class).
             addAnnotatedClass(Condition.class).
             addAnnotatedClass(Organization.class).
@@ -58,7 +61,8 @@ public class TestSchema {
             addAnnotatedClass(StudyContactRole.class).
             addAnnotatedClass(Country.class).
             addAnnotatedClass(RegulatoryAuthority.class).
-            addAnnotatedClass(StudyRegulatoryAuthority.class).            
+            addAnnotatedClass(StudyRegulatoryAuthority.class).
+            addAnnotatedClass(HealthCareFacility.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
