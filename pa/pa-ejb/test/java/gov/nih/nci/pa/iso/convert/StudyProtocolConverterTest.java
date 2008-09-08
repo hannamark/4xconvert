@@ -2,15 +2,11 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.util.TestSchema;
-
-import java.io.Serializable;
-
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.test.util.TestSchema;
 
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,9 +58,9 @@ public class StudyProtocolConverterTest  {
 
     private void assertStudyProtocol(StudyProtocol sp , StudyProtocolDTO spDTO) {
         assertEquals("Acronym does not match " , sp.getAcronym(), spDTO.getAcronym().getValue());
-        assertEquals("Allocation code does not match " , 
+/*        assertEquals("Allocation code does not match " , 
                 sp.getAllocationCode().getCode(), 
-                spDTO.getAllocationCode().getCode());
+                spDTO.getAllocationCode().getCode()); */
         assertEquals("Accrual Reporting Method code does not match " , 
                 sp.getAccrualReportingMethodCode().getCode(), 
                 spDTO.getAccrualReportingMethodCode().getCode());
