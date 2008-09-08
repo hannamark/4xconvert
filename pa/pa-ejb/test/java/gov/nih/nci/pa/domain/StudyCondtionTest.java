@@ -3,7 +3,8 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.YesNoCode;
-import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.TestSchema;
+
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;

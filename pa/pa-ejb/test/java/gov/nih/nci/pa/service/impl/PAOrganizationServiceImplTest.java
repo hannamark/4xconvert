@@ -13,7 +13,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.OrganizationDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
 import org.junit.Before;

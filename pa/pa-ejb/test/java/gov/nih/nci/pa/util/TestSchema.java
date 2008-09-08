@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.test.util;
+package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;

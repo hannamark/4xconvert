@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.test.util;
+package gov.nih.nci.pa.util;
 
 import java.io.IOException;
 import java.io.InputStream;
