@@ -1,10 +1,7 @@
 package gov.nih.nci.pa.dao;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.pa.dto.DiseaseConditionDTO;
-import gov.nih.nci.pa.util.TestSchema;
-
-import java.util.List;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import org.junit.Before;
 import org.junit.Test;
