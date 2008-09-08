@@ -20,13 +20,19 @@ function resetValues () {
 
 
 }
+function handleAction(){
+	 document.studyProtocolQuery.action="studyProtocolQuery.action";
+     document.studyProtocolQuery.submit();     
+}
 </SCRIPT>
 <body>
 <!-- main content begins-->
 
   <!--  <div id="contentwide"> -->
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
-    <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
+    <c:if test="${records != null}">	
+	<div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
+	</c:if>	
     <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
  <div class="box" id="filters">
@@ -37,13 +43,13 @@ function resetValues () {
                      <label for="nciIdentifier"> <fmt:message key="studyProtocol.nciIdentifier"/></label>
                 </td>
                 <td>
-                    <s:textfield name="criteria.nciIdentifier"  maxlength="200" size="100" value="" cssStyle="width:200px" />
+                    <s:textfield name="criteria.nciIdentifier"  maxlength="200" size="100" cssStyle="width:200px" />
                 </td>
                 <td  scope="row" class="label">
                     <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label> 
                 </td>
                 <td>                                             
-                    <s:textfield name="criteria.officialTitle" maxlength="200" size="100" value="" cssStyle="width:200px"  />
+                    <s:textfield name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
                 </td>
              </tr>                                               
 
@@ -55,7 +61,7 @@ function resetValues () {
                 </td>
 
                 <td>
-                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100" value="" cssStyle="width:200px" />
+                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100" cssStyle="width:200px" />
                                                                                          
                 </td>                    
                 <td  scope="row" class="label">
@@ -127,7 +133,9 @@ function resetValues () {
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">			
-					<li><a href="studyProtocolQuery.action" class="btn"><span class="btn_img"><span class="search">Search</span></span></a></li>
+					<li><li>			
+							<s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+					    </li>
 				</ul>	
 			</del>
 
@@ -139,13 +147,11 @@ function resetValues () {
 
  </div>
  <div class="line"></div>
-							
-							<h2>Search Results</h2>
- 
-  <c:if test="${records != null}">
-   <jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
-        <jsp:param name="listName" value="records" />        
-   </jsp:include>
+	<c:if test="${records != null}">						
+		<h2>Search Results</h2>  
+   		<jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
+        	<jsp:param name="listName" value="records" />        
+   		</jsp:include>
    </c:if>
 </body>
 </html>
