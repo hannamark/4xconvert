@@ -105,7 +105,7 @@ public class EnPnConverter {
         if (value == null) {
             return;
         }
-        
+
         checkFlavorId(value);
 
         checkUse(value);
@@ -117,7 +117,7 @@ public class EnPnConverter {
         person.setPrefix(null);
         person.setSuffix(null);
 
-        if (value != null && value.getNullFlavor() == null) {
+        if (value.getNullFlavor() == null) {
             processParts(value.getPart(), person);
         }
     }

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.convert;
 
+import gov.nih.nci.coppa.iso.En;
+
 /**
  *
  * Converters mostly for use in test.
@@ -92,27 +94,27 @@ public class ISOUtils {
      * Converts from iso ST.
      */
     public static final StConverter ST = new StConverter();
-    
+
     /**
      * Converts from java String.
      */
     public static final StringConverter STRING = new StringConverter();
-    
+
     /**
      * Converts from iso EN.
      */
-    public static final EnConverter EN = new EnConverter();
-    
+    public static final EnConverter<En> EN = new EnConverter<En>();
+
     /**
      * Converts from iso II.
      */
     public static final IiConverter II = new IiConverter();
-    
+
     /**
      * Converts from hibernate ID.
      */
     public static final IdConverter ID_ORG = new IdConverter.OrgIdConverter();
-    
+
     /**
      * Converts from hibernate ID.
      */

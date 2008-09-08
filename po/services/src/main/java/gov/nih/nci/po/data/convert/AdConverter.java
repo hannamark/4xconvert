@@ -144,7 +144,7 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
     }
 
     @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
-                        "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
+                        "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "fallthrough" })
     private static Address processParts(Ad iso, CountryResolver resolver) {
         Address a = new Address();
 

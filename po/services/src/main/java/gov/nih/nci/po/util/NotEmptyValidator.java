@@ -38,9 +38,9 @@ public class NotEmptyValidator implements Validator<NotEmpty>, PropertyConstrain
         if (value.getClass().isArray()) {
             return Array.getLength(value) > 0;
         } else if (value instanceof Collection) {
-            return ((Collection) value).size() > 0;
+            return ((Collection<?>) value).size() > 0;
         } else if (value instanceof Map) {
-            return ((Map) value).size() > 0;
+            return ((Map<?, ?>) value).size() > 0;
         } else {
             return ((String) value).length() > 0;
         }

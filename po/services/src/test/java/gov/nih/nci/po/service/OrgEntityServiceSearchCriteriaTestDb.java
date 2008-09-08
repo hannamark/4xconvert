@@ -36,10 +36,10 @@ public class OrgEntityServiceSearchCriteriaTestDb extends AbstractHibernateTestC
     }
 
 
-    private Query buildQuery(String queryString, Map<String, Object> namedParameters) {
+    private Query buildQuery(String queryString, Map<String, Object> namedParams) {
         LOG.debug(queryString);
         Query query = PoHibernateUtil.getCurrentSession().createQuery(queryString);
-        sc.setNamedParameters(namedParameters, query);
+        sc.setNamedParameters(namedParams, query);
         LOG.debug(query.toString());
         return query;
     }
@@ -59,11 +59,11 @@ public class OrgEntityServiceSearchCriteriaTestDb extends AbstractHibernateTestC
         queryString.append(AbstractSearchCriteria.FROM);
         queryString.append(sc.tableAlias(Organization.class, ORGANIZATION_ALIAS));
         queryString.append(sc.getQueryWhereClause(namedParameters, ORGANIZATION_ALIAS));
-        
+
         @SuppressWarnings("unchecked")
         List<Organization> results = buildQuery(queryString.toString(), namedParameters).list();
         assertEquals(1, results.size());
         assertEquals(orgId, results.get(0).getId().longValue());
     }
-    
+
 }

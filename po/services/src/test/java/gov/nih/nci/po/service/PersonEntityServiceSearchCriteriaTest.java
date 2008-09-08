@@ -170,7 +170,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     public void getQueryWhereClauseIfFirstName() {
         criteria.getPerson().setFirstName("fName");
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        String expected = defaultWhereClause + AbstractEntitySearchCriteria.AND
+        String expected = defaultWhereClause + AbstractSearchCriteria.AND
                 + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY,
                         AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY);
         verifyDefaults(queryWhereClause, expected);
@@ -183,7 +183,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     public void getQueryWhereClauseIfMiddleName() {
         criteria.getPerson().setMiddleName("mName");
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        String expected = defaultWhereClause + AbstractEntitySearchCriteria.AND
+        String expected = defaultWhereClause + AbstractSearchCriteria.AND
         + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY,
                 AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY);
         verifyDefaults(queryWhereClause, expected);
@@ -196,7 +196,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     public void getQueryWhereClauseIfLastName() {
         criteria.getPerson().setLastName("lName");
         StringBuffer queryWhereClause = criteria.getQueryWhereClause(namedParams, personAlias);
-        String expected = defaultWhereClause + AbstractEntitySearchCriteria.AND
+        String expected = defaultWhereClause + AbstractSearchCriteria.AND
                 + getExpectedILike(PERSONALIASDOT + AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY,
                         AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY);
         verifyDefaults(queryWhereClause, expected);

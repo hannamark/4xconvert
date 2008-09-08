@@ -27,11 +27,11 @@ public class SerializableTest {
     @Test
     public void ensureAllInstancesAreSerializable() throws ClassNotFoundException {
 
-        List<Class> classesForPackage = getClassesForPackage(PACKAGENAME);
+        List<Class<?>> classesForPackage = getClassesForPackage(PACKAGENAME);
         assertNotNull(classesForPackage);
         assertFalse(classesForPackage.isEmpty());
 
-        for (Class clz : classesForPackage) {
+        for (Class<?> clz : classesForPackage) {
             if (clz.getName().endsWith("Test")) {
                 continue;
             }
@@ -47,10 +47,10 @@ public class SerializableTest {
         }
     }
 
-    public static List<Class> getClassesForPackage(String pckgname) throws ClassNotFoundException {
+    public static List<Class<?>> getClassesForPackage(String pckgname) throws ClassNotFoundException {
         // This will hold a list of directories matching the pckgname.
         // There may be more than one if a package is split over multiple jars/paths
-        List<Class> classes = new ArrayList<Class>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
         ArrayList<File> directories = new ArrayList<File>();
         try {
             ClassLoader cld = Thread.currentThread().getContextClassLoader();
@@ -79,8 +79,9 @@ public class SerializableTest {
                             classes.add(Class.forName(className));
                         }
                     }
-                } else
+                } else {
                     directories.add(new File(URLDecoder.decode(res.getPath(), "UTF-8")));
+                }
             }
         } catch (NullPointerException x) {
             throw new ClassNotFoundException(pckgname + " does not appear to be "

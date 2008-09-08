@@ -17,7 +17,6 @@ import org.apache.commons.collections.CollectionUtils;
  */
 public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCriteria implements
         SearchCriteria<Organization> {
-    static final String ORGANIZATION_ALIAS = "org";
 
     static final String ORGANIZATION_ID_PROPERTY = "id";
     static final String ORGANIZATION_NAME_PROPERTY = "name";
@@ -57,7 +56,7 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
                         || CollectionUtils.isNotEmpty(organization.getFax())
                         || CollectionUtils.isNotEmpty(organization.getPhone())
                         || CollectionUtils.isNotEmpty(organization.getTty())
-                        || CollectionUtils.isNotEmpty(organization.getUrl()) || isAddressCriterionSpecified() 
+                        || CollectionUtils.isNotEmpty(organization.getUrl()) || isAddressCriterionSpecified()
                         || organization.getStatusCode() != null);
     }
 
@@ -70,6 +69,7 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
      * @param orgAlias Organization table alias
      * @return HQL-based where clause
      */
+    @Override
     protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String orgAlias) {
         List<String> whereClause = new ArrayList<String>();
         String orgAliasDot = orgAlias + DOT;

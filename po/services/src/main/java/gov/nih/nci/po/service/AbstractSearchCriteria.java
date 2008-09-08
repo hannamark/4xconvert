@@ -27,7 +27,7 @@ public abstract class AbstractSearchCriteria {
      * HQL from statement.
      */
     protected static final String FROM = " FROM ";
-    
+
     /**
      * HQL as keyword.
      */
@@ -69,11 +69,13 @@ public abstract class AbstractSearchCriteria {
         /**
          * conjunction.
          */
+        @SuppressWarnings("hiding")
         AND(true),
 
         /**
          * disjunction.
          */
+        @SuppressWarnings("hiding")
         OR(false),
 
         /**
@@ -99,12 +101,12 @@ public abstract class AbstractSearchCriteria {
             return and;
         }
     }
-    
+
     /**
      * PersistentObject property name.
      */
     protected static final String ID = "id";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -223,7 +225,7 @@ public abstract class AbstractSearchCriteria {
         return "";
     }
     /**
-     * 
+     *
      * @param propertyName hibernate query property name
      * @param parameterName hibernate named parameter name
      * @param criteriaValue hibernate named paramter value

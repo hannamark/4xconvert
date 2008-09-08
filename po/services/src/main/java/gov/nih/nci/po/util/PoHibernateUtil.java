@@ -124,7 +124,7 @@ public class PoHibernateUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static synchronized ClassValidator getClassValidator(Object o) {
+    private static synchronized <T> ClassValidator<T> getClassValidator(T o) {
         ClassValidator classValidator = CLASS_VALIDATOR_MAP.get(o.getClass());
         if (classValidator == null) {
             classValidator = new ClassValidator(o.getClass());
@@ -139,8 +139,7 @@ public class PoHibernateUtil {
      */
     public static Map<String, String[]> validate(PersistentObject entity) {
         Map<String, List<String>> messageMap = new HashMap<String, List<String>>();
-        ClassValidator classValidator = getClassValidator(entity);
-        @SuppressWarnings("unchecked")
+        ClassValidator<PersistentObject> classValidator = getClassValidator(entity);
         InvalidValue[] validationMessages = classValidator.getInvalidValues(entity);
         for (InvalidValue validationMessage : validationMessages) {
             String path = validationMessage.getPropertyPath();

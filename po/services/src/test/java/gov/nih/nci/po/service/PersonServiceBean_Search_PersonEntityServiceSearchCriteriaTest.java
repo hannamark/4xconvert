@@ -27,18 +27,18 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
 
     @Test
     public void findByFirstName() throws EntityValidationException {
-        PersonEntityServiceSearchCriteria sc = new PersonEntityServiceSearchCriteria();
+        PersonEntityServiceSearchCriteria sc2 = new PersonEntityServiceSearchCriteria();
         createPerson();
         createPerson();
-        sc.setPerson(new Person());
+        sc2.setPerson(new Person());
 
-        sc.getPerson().setFirstName("%Nam%");
-        assertEquals(2, getPersonServiceBean().count(sc));
-        assertEquals(2, getPersonServiceBean().search(sc).size());
+        sc2.getPerson().setFirstName("%Nam%");
+        assertEquals(2, getPersonServiceBean().count(sc2));
+        assertEquals(2, getPersonServiceBean().search(sc2).size());
 
-        sc.getPerson().setFirstName("foobar");
-        assertEquals(0, getPersonServiceBean().count(sc));
-        assertEquals(0, getPersonServiceBean().search(sc).size());
+        sc2.getPerson().setFirstName("foobar");
+        assertEquals(0, getPersonServiceBean().count(sc2));
+        assertEquals(0, getPersonServiceBean().search(sc2).size());
     }
 
     @Test

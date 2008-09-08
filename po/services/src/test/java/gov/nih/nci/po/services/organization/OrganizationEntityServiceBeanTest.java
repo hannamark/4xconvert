@@ -64,7 +64,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
      * @throws EntityValidationException
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void getOrganization() throws EntityValidationException {
         long id = super.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
@@ -77,7 +76,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
      * test create organization behavior.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void createOrg() throws EntityValidationException, URISyntaxException {
         OrganizationDTO dto = new OrganizationDTO();
         dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
@@ -102,7 +100,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void createMinimalOrg() throws Exception {
         try {
             OrganizationDTO dto = new OrganizationDTO();

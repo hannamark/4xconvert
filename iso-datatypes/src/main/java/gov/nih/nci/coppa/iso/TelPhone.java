@@ -101,18 +101,18 @@ public class TelPhone extends TelPerson {
     public static final String SCHEME_X_TEXT_FAX = "x-text-fax";
     /** scheme. */
     public static final String SCHEME_X_TEXT_TEL = "x-text-tel";
-    
+
     /** set of allowed URI schemes. */
-    public static final List<String> SCHEMES = Collections.unmodifiableList(Arrays.asList(
+    public static final List<String> TEL_PHONE_SCHEMES = Collections.unmodifiableList(Arrays.asList(
             SCHEME_TEL,
             SCHEME_X_TEXT_FAX,
             SCHEME_X_TEXT_TEL));
-    
+
     private static final long serialVersionUID = 1L;
 
     /** {@inheritDoc} */
     @Override
     protected List<String> getAllowedSchemes() {
-        return SCHEMES;
+        return TEL_PHONE_SCHEMES;
     }
 }

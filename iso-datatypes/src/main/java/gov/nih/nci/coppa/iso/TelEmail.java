@@ -98,13 +98,13 @@ public class TelEmail extends TelPerson {
 
     /** scheme. */
     public static final String SCHEME_MAILTO = "mailto";
-    
+
     /** set of allowed URI schemes. */
-    public static final List<String> SCHEMES = Collections.unmodifiableList(Arrays.asList(SCHEME_MAILTO));
+    public static final List<String> TEL_EMAIL_SCHEMES = Collections.unmodifiableList(Arrays.asList(SCHEME_MAILTO));
 
     /** {@inheritDoc} */
     @Override
     protected List<String> getAllowedSchemes() {
-        return SCHEMES;
-    }    
+        return TEL_EMAIL_SCHEMES;
+    }
 }

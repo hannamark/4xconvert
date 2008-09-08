@@ -87,8 +87,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrgEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
@@ -129,7 +129,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     public void setOrganizationServiceBean(OrganizationServiceLocal svc) {
         this.orgService = svc;
     }
-    
+
     /**
      * @param svc service, injected
      */
@@ -153,7 +153,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
 
     public OrganizationDTO getOrganization(Ii id) {
         Organization org = orgService.getOrganization(IiConverter.convertToLong(id));
-        return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
+        return PoXsnapshotHelper.createSnapshot(org);
     }
 
     /**
@@ -199,7 +199,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         if (cr.getStatusCode() != target.getStatusCode()) {
             throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
         }
-        cr.setStatusCode(target.getStatusCode()); 
+        cr.setStatusCode(target.getStatusCode());
         orgCRService.addCR(cr);
     }
 

@@ -87,8 +87,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonEntityServiceSearchCriteria;
@@ -181,7 +181,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         List<Person> listBOs = getPersonServiceBean().search(criteria);
         return PoXsnapshotHelper.createSnapshotList(listBOs);
     }
-    
+
     /**
      * {@inheritDoc}
      */

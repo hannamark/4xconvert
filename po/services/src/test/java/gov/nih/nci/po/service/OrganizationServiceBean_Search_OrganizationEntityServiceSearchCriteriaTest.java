@@ -33,56 +33,56 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByName() throws EntityValidationException {
-        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
+        OrgEntityServiceSearchCriteria sc2 = new OrgEntityServiceSearchCriteria();
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
         createOrganization("abc", "defaultCity", "defaultOrgCode", "defaultDescription");
         Organization o = new Organization();
-        sc.setOrganization(o);
+        sc2.setOrganization(o);
 
 
         o.setName("%Nam%");
-        assertEquals(1, getOrgServiceBean().count(sc));
-        assertEquals(1, getOrgServiceBean().search(sc).size());
+        assertEquals(1, getOrgServiceBean().count(sc2));
+        assertEquals(1, getOrgServiceBean().search(sc2).size());
 
         o.setName("%a%");
-        assertEquals(2, getOrgServiceBean().count(sc));
-        assertEquals(2, getOrgServiceBean().search(sc).size());
+        assertEquals(2, getOrgServiceBean().count(sc2));
+        assertEquals(2, getOrgServiceBean().search(sc2).size());
 
         o.setName("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(0, getOrgServiceBean().count(sc2));
+        assertEquals(0, getOrgServiceBean().search(sc2).size());
     }
 
     @Test
     public void findByDesc() throws EntityValidationException {
-        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
+        OrgEntityServiceSearchCriteria sc2 = new OrgEntityServiceSearchCriteria();
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
         Organization o = new Organization();
-        sc.setOrganization(o);
+        sc2.setOrganization(o);
 
         o.setDescription("%Desc%");
-        assertEquals(1, getOrgServiceBean().count(sc));
-        assertEquals(1, getOrgServiceBean().search(sc).size());
+        assertEquals(1, getOrgServiceBean().count(sc2));
+        assertEquals(1, getOrgServiceBean().search(sc2).size());
 
         o.setDescription("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(0, getOrgServiceBean().count(sc2));
+        assertEquals(0, getOrgServiceBean().search(sc2).size());
     }
 
     @Test
     public void findByAbbrvName() throws EntityValidationException {
-        OrgEntityServiceSearchCriteria sc = new OrgEntityServiceSearchCriteria();
+        OrgEntityServiceSearchCriteria sc2 = new OrgEntityServiceSearchCriteria();
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
         Organization o = new Organization();
-        sc.setOrganization(o);
+        sc2.setOrganization(o);
 
         o.setAbbreviatedName("%Org%");
-        assertEquals(1, getOrgServiceBean().count(sc));
-        assertEquals(1, getOrgServiceBean().search(sc).size());
+        assertEquals(1, getOrgServiceBean().count(sc2));
+        assertEquals(1, getOrgServiceBean().search(sc2).size());
 
         o.setAbbreviatedName("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        assertEquals(0, getOrgServiceBean().count(sc2));
+        assertEquals(0, getOrgServiceBean().search(sc2).size());
     }
 
     @Test

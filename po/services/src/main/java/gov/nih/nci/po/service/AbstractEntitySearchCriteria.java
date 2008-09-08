@@ -26,7 +26,7 @@ public abstract class AbstractEntitySearchCriteria extends AbstractSearchCriteri
      */
     @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AvoidDeeplyNestedIfStmts" })
     protected StringBuffer findMatchingContact(Map<String, Object> namedParameters, List<? extends Contact> values,
-            Class<? extends Contact> entityType, String inElementsProperty, 
+            Class<? extends Contact> entityType, String inElementsProperty,
             Class<? extends PersistentObject> rootType) {
         StringBuffer subselect = new StringBuffer();
         if (CollectionUtils.isNotEmpty(values)) {
@@ -38,7 +38,7 @@ public abstract class AbstractEntitySearchCriteria extends AbstractSearchCriteri
             List<String> subselectWhereClause = new ArrayList<String>();
             int j = 0;
             for (Iterator<? extends Contact> eAliasItr = values.iterator(); eAliasItr.hasNext();) {
-                Contact e = (Contact) eAliasItr.next();
+                Contact e = eAliasItr.next();
                 if (isValueSpecified(e.getValue())) {
                     String entityTableAlias = contactEntityAlias + j++;
                     subselect.append(tableAlias(entityType, entityTableAlias));

@@ -3,6 +3,7 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.bo.Root;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.ExtendedPersonRoleDTOHelper;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
@@ -25,8 +26,6 @@ import net.sf.xsnapshot.cfg.XSnapshotPropertiesConfigurator;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-
-import gov.nih.nci.po.data.bo.Root;
 
 /**
  *
@@ -57,7 +56,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
             PropertiesConfiguration config = new PropertiesConfiguration(configResource);
             XSnapshotPropertiesConfigurator.configure(this, config);
 
-            Class snapshotClass = AbstractOrganizationDTO.class;
+            Class<?> snapshotClass = AbstractOrganizationDTO.class;
             this.registerSnapshotClass(AbstractOrganization.class, DEFAULT_ISO_SNAPSHOT_NAME, snapshotClass);
             this.registerHelper(snapshotClass, new ExtendedOrganizationDTOHelper());
 
@@ -94,7 +93,8 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param modelCollection the collection of model objects to convert
      * @return the list of snapshot objects
      */
-    public static List createSnapshotList(Collection modelCollection) {
+    @SuppressWarnings("unchecked")
+    public static List createSnapshotList(Collection<?> modelCollection) {
         return PO_XSNASHOTUTILS.createSnapshotList(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME);
     }
 
@@ -159,6 +159,7 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the helper object, or null if no helper is registered for that combination of model class and snapshot
      *         name
      */
+    @SuppressWarnings("unchecked")
     @Override
     public SnapshotHelper getHelperForModelClass(Class modelClass, String snapshotName) {
         if (modelClass == null) {

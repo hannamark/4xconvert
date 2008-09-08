@@ -122,7 +122,7 @@ public class EntityValidationException extends Exception {
     public Map<String, String[]> getErrors() {
         return errors;
     }
-   
+
     /**
      * @return error messages
      */
@@ -131,7 +131,7 @@ public class EntityValidationException extends Exception {
         if (errors != null) {
             TreeSet<String> orderedKeys = new TreeSet<String>(errors.keySet());
             for (Iterator<String> iterator = orderedKeys.iterator(); iterator.hasNext();) {
-                String key = (String) iterator.next();
+                String key = iterator.next();
                 b.append(key);
                 b.append('=');
                 b.append(Arrays.deepToString(errors.get(key)));
@@ -139,7 +139,7 @@ public class EntityValidationException extends Exception {
                     b.append('\n');
                 }
             }
-        } 
+        }
         return b.toString();
     }
 
@@ -157,12 +157,12 @@ public class EntityValidationException extends Exception {
      * messages followed by trace.
      * @param s stream.
      */
-    
+
     @Override
     public void printStackTrace(PrintWriter s) {
         s.println(getErrorMessages());
         super.printStackTrace(s);
     }
-    
-    
+
+
 }

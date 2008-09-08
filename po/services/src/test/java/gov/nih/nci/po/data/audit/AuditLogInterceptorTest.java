@@ -105,7 +105,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
     public void onCollectionUpdate() {
         AuditLogInterceptor interceptor = new AuditLogInterceptor();
         interceptor.onCollectionUpdate(null, null);
-        Map m = callGetRecords(interceptor).get();
+        Map<?, ?> m = callGetRecords(interceptor).get();
         assertTrue(m==null || m.isEmpty());
 
         PersistentList dummy = new PersistentList();

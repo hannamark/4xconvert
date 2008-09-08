@@ -352,6 +352,7 @@ public class CompositeInterceptor implements Interceptor, Serializable {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void postFlush(Iterator arg0) {
         for (Interceptor i : children) {
             i.postFlush(arg0);
@@ -361,6 +362,7 @@ public class CompositeInterceptor implements Interceptor, Serializable {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void preFlush(Iterator arg0) {
         for (Interceptor i : children) {
             i.preFlush(arg0);

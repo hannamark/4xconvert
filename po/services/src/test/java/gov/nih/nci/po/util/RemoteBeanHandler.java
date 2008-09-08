@@ -53,7 +53,7 @@ public class RemoteBeanHandler implements InvocationHandler {
 
     public static Object makeRemoteProxy(Object bean) {
         Class<?>[] remoteInterfaces = ReflectionUtil.getMarkedInterfaces(bean.getClass(), Remote.class);
-        if (remoteInterfaces != null || remoteInterfaces.length > 0) {
+        if (remoteInterfaces != null && remoteInterfaces.length > 0) {
             RemoteBeanHandler remoteHandler = new RemoteBeanHandler(bean);
             // @todo bind name might be in annotation
             Object remotebean = Proxy.newProxyInstance(bean.getClass().getClassLoader(), remoteInterfaces, remoteHandler);

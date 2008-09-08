@@ -84,7 +84,9 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -92,11 +94,10 @@ import javax.ejb.TransactionAttributeType;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import java.util.Map;
-import org.hibernate.Session;
 
 /**
  * @author smatyas
@@ -120,7 +121,7 @@ public class BaseServiceBean<T extends PersistentObject> {
      * @param c Hibernate criteria to set pagination options
      * @param pageSortParams bean containing the options
      */
-    protected void setPagination(Criteria c, PageSortParams pageSortParams) {
+    protected void setPagination(Criteria c, PageSortParams<?> pageSortParams) {
         if (pageSortParams != null) {
             if (pageSortParams.getPageSize() > 0) {
                 c.setMaxResults(pageSortParams.getPageSize());
@@ -140,7 +141,7 @@ public class BaseServiceBean<T extends PersistentObject> {
         if (pageSortParams != null && pageSortParams.getSortCriterion() != null) {
 
             StringBuffer orderBy = new StringBuffer("");
-            if (pageSortParams != null && CollectionUtils.isNotEmpty(pageSortParams.getSortCriterion())) {
+            if (CollectionUtils.isNotEmpty(pageSortParams.getSortCriterion())) {
                 orderBy.append(" ORDER BY ");
                 boolean first = true;
                 for (SortCriterion<T> sc : pageSortParams.getSortCriterion()) {
@@ -214,9 +215,9 @@ public class BaseServiceBean<T extends PersistentObject> {
         Query q = criteria.getQuery("", true);
         return ((Number) q.uniqueResult()).intValue();
     }
-    
+
      /**
-      * 
+      *
       * @param entity the entity to validate
       * @return return validation error messages per invalid field path.
       * @see PoHibernateUtil.validate(entity)
@@ -227,7 +228,7 @@ public class BaseServiceBean<T extends PersistentObject> {
          messages.remove("statusCode");
          return messages;
     }
-    
+
     /**
      * @param entity the entity to validate
      * @throws EntityValidationException is validation fails
@@ -238,7 +239,7 @@ public class BaseServiceBean<T extends PersistentObject> {
             throw new EntityValidationException(errors);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
