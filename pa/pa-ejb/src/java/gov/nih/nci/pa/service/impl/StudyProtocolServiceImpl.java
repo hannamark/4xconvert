@@ -39,8 +39,7 @@ public class StudyProtocolServiceImpl  {
         getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {      
        LOG.debug("Entering getStudyProtocolByCriteria ");
        List<Object> queryList = new StudyProtocolDAO().getStudyProtocolByCriteria(spsc); 
-       //return convertToStudyProtocolDTO(queryList);
-       return convertToStudyProtocolDTOToBeDeleted(queryList);
+       return convertToStudyProtocolDTO(queryList);
            
     }
     
@@ -65,9 +64,8 @@ public class StudyProtocolServiceImpl  {
             LOG.error(" Study protcol was not found for id " + studyProtocolId);
             throw new PAException(" Study protcol was not found for id " + studyProtocolId);
         }
-        ////List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTO(queryList);
+        List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTO(queryList);
         
-        List<StudyProtocolQueryDTO>  trialSummarys = convertToStudyProtocolDTOToBeDeleted(queryList);
         if (trialSummarys == null || trialSummarys.size() <= 0) {
             // this will never happen is real scenario, as a practice throw exception
             LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
@@ -106,14 +104,15 @@ public class StudyProtocolServiceImpl  {
                studyProtocolDto = new StudyProtocolQueryDTO();
                // get study protocol
                studyProtocol = (StudyProtocol) searchResult[0];
-               // get studyOverallStatus
-               studyOverallStatus = (StudyOverallStatus) searchResult[1];
                // get documentWorkflowStatus
-               documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[2];
+               documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[1];
+               // get studyOverallStatus
+               studyOverallStatus = (StudyOverallStatus) searchResult[2];
+
                // get the organization 
-               organization = (Organization) searchResult[LEAD_ORG_5];
+               //organization = (Organization) searchResult[LEAD_ORG_5];
                // get the person
-               person = (Person) searchResult[PI_PERSON_6];
+               //person = (Person) searchResult[PI_PERSON_6];
                // transfer protocol to studyProtocolDto
                if (documentWorkflowStatus != null) {
                    studyProtocolDto.setDocumentWorkflowStatusCode(
@@ -124,6 +123,7 @@ public class StudyProtocolServiceImpl  {
                if (studyProtocol != null) {
                    studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
                    studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
+                   studyProtocolDto.setNciIdentifier(studyProtocol.getIdentifier());
                }
                if (studyOverallStatus != null) {
                    studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
@@ -149,36 +149,5 @@ public class StudyProtocolServiceImpl  {
        return studyProtocolDtos;
    }
     
-   private List<StudyProtocolQueryDTO> convertToStudyProtocolDTOToBeDeleted(
-           List<Object> protocolQueryResult) throws PAException {
-       LOG.debug("Entering convertToStudyProtocolDTO ");
-       List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
-       StudyProtocolQueryDTO studyProtocolDto = null;
-       StudyProtocol studyProtocol = null;
-       StudyOverallStatus studyOverallStatus = null;
-       DocumentWorkflowStatus documentWorkflowStatus = null;
-       Organization organization = null;
-       Person person = null;
-       // array of objects for each row
-       try {
-           for (int i = 0; i < protocolQueryResult.size(); i++) {
-               studyProtocol  = (StudyProtocol) protocolQueryResult.get(i);
-               studyProtocolDto = new StudyProtocolQueryDTO();
-               if (studyProtocol != null) {
-                   studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
-                   studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
-                   studyProtocolDto.setNciIdentifier(studyProtocol.getIdentifier());
-               }
-               // add to the list
-               studyProtocolDtos.add(studyProtocolDto);
-           } // for loop
-       } catch (Exception e) {
-           LOG.error("General error in while converting to DTO", e);
-           throw new PAException("General error in while converting to DTO2", e);
-       } finally {
-           LOG.debug("Leaving convertToStudyProtocolDTO ");
-       }
-       return studyProtocolDtos;
-   }
 
 }
