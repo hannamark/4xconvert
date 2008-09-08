@@ -2,7 +2,7 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import java.sql.Timestamp;
@@ -10,9 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -30,16 +34,22 @@ import javax.persistence.Table;
  * copyright holder, NCI.
  */
 @Entity
+
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+    name = "Study_Protocol_type",
+    discriminatorType = DiscriminatorType.STRING
+)
 @SuppressWarnings({"PMD.TooManyFields", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
 @Table(name =  "STUDY_PROTOCOL")
 public class StudyProtocol extends  AbstractEntity {
     private static final long serialVersionUID = 1234567890L;
 
     private String acronym;
-    private AllocationCode allocationCode;
     private AccrualReportingMethodCode accrualReportingMethodCode;
     private Boolean expandedAccessIndicator;
     private String identifier; // used to store nci-accession number
+    private Boolean dataMonitoringCommitteeAppointedIndicator;
     private MonitorCode monitorCode;
     private String officialTitle;
     private PhaseCode phaseCode;
@@ -47,9 +57,12 @@ public class StudyProtocol extends  AbstractEntity {
     private ActualAnticipatedTypeCode primaryCompletionDateTypeCode;
     private Timestamp startDate;
     private ActualAnticipatedTypeCode startDateTypeCode;
+    private PrimaryPurposeCode primaryPurposeCode;
     
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
-    
+    private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
+    private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
+    private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     /**
      *
      * @return acronym
@@ -63,22 +76,6 @@ public class StudyProtocol extends  AbstractEntity {
      */
     public void setAcronym(String acronym) {
         this.acronym = acronym;
-    }
-    /**
-    *
-    * @return allocationCode
-    */
-    @Column(name = "ALLOCATION_CODE")
-    @Enumerated(EnumType.STRING)
-    public AllocationCode getAllocationCode() {
-       return allocationCode;
-    }
-    /**
-     *
-     * @param allocationCode allocation Code
-     */
-    public void setAllocationCode(AllocationCode allocationCode) {
-        this.allocationCode = allocationCode;
     }
     /**
      * 
@@ -130,6 +127,22 @@ public class StudyProtocol extends  AbstractEntity {
      }
 
     
+     /**
+      * 
+      * @return dataMonitoringCommitteeAppointedIndicator
+      */
+     @Column(name = "DATA_MONTY_COMTY_APPTN_INDICATOR")
+     public Boolean getDataMonitoringCommitteeAppointedIndicator() {
+         return dataMonitoringCommitteeAppointedIndicator;
+     }
+     /**
+      * 
+      * @param dataMonitoringCommitteeAppointedIndicator ind
+      */
+     public void setDataMonitoringCommitteeAppointedIndicator(
+             Boolean dataMonitoringCommitteeAppointedIndicator) {
+         this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
+     }
     /**
      *
      * @return monitorCode
@@ -245,7 +258,25 @@ public class StudyProtocol extends  AbstractEntity {
     public void setStartDateTypeCode(ActualAnticipatedTypeCode startDateTypeCode) {
         this.startDateTypeCode = startDateTypeCode;
     }
-   
+
+    /**
+    *
+    * @return primaryPurposeCode
+    */
+   @Column(name = "PRIMARY_PURPOSE_CODE")
+   @Enumerated(EnumType.STRING)
+   public PrimaryPurposeCode getPrimaryPurposeCode() {
+       return primaryPurposeCode;
+   }
+   /**
+    *
+    * @param primaryPurposeCode primaryPurposeCode
+    */
+   public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
+       this.primaryPurposeCode = primaryPurposeCode;
+   }
+    
+    
     /**
     *
     * @return studyOverallStatuses
@@ -262,5 +293,55 @@ public class StudyProtocol extends  AbstractEntity {
            List<StudyOverallStatus> studyOverallStatuses) {
        this.studyOverallStatuses = studyOverallStatuses;
    }
-    
+   /**
+    * 
+    * @return documentWorkflowStatuses
+    */
+   @OneToMany(mappedBy = "studyProtocol")
+   public List<DocumentWorkflowStatus> getDocumentWorkflowStatuses() {
+       return documentWorkflowStatuses;
+   }
+   /**
+    * 
+    * @param documentWorkflowStatuses documentWorkflowStatuses
+    */
+   public void setDocumentWorkflowStatuses(
+           List<DocumentWorkflowStatus> documentWorkflowStatuses) {
+       this.documentWorkflowStatuses = documentWorkflowStatuses;
+   }
+   /**
+    * 
+    * @return studyParticipations
+    */
+   @OneToMany(mappedBy = "studyProtocol")
+   public List<StudyParticipation> getStudyParticipations() {
+        return studyParticipations;
+   }
+   
+   /**
+    * 
+    * @param studyParticipations studyParticipations
+    */
+    public void setStudyParticipations(List<StudyParticipation> studyParticipations) {
+       this.studyParticipations = studyParticipations;
+    }
+    /**
+     * 
+     * @return studyContacts
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<StudyContact> getStudyContacts() {
+        return studyContacts;
+    }
+    /**
+     * 
+     * @param studyContacts studyContacts
+     */
+    public void setStudyContacts(List<StudyContact> studyContacts) {
+        this.studyContacts = studyContacts;
+    }
+   
+   
+   
+   
 }
