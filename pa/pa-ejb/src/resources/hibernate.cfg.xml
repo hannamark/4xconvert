@@ -18,6 +18,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
      
 		<!-- mapping classes -->
         <mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
+        <mapping class="gov.nih.nci.pa.domain.InterventionalStudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.StudyOverallStatus" />
         <mapping class="gov.nih.nci.pa.domain.DocumentWorkflowStatus" />
         <mapping class="gov.nih.nci.pa.domain.Country" />
@@ -33,6 +34,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.Condition" />
         <mapping class="gov.nih.nci.pa.domain.Person" />
         <mapping class="gov.nih.nci.pa.domain.HealthCareProvider" />
+        <mapping class="gov.nih.nci.pa.domain.HealthCareFacility" />
     	<mapping class="gov.nih.nci.pa.service.SessionEntry" />
     </session-factory>
 </hibernate-configuration>
