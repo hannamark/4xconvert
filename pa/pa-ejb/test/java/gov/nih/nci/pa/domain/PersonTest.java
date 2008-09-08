@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.Serializable;
 
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import org.hibernate.Session;
 import org.junit.Before;
