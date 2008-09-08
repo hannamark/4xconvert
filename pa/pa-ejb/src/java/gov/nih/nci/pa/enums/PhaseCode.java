@@ -16,50 +16,22 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
  */
 public enum PhaseCode implements CodedEnum<String> {
     
-    /**
-    * NA.
-    */
-    N_A("N/A"), 
-    /**
-     * Phase 0.
-     */
-    PHASEO("Phase 0"), 
-    /**
-     * Phase I.
-     */
-    PHASEI("Phase I"), 
-    /**
-     * Phase 1/2.
-     */
-    PHASEI_PHASE2("Phase 1/Phase 2"), 
-    /**
-     * Phase 2.
-     */
-    PHASE2("Phase 2"), 
-    /**
-     * Phase 2/3.
-     */
-    PHASE2_PHASE3("Phase 2/Phase 3"), 
-    /**
-     * Phase 3.
-     */
-    PHASE3("Phase 3"), 
-    /**
-     * Phase 4.
-     */
-    PHASE4("Phase 4"),
-    /**
-     * I.
-     */
-    I("I"),
-    /**
-     * II.
-     */
+    /*** Other.  */
+    O("O"), 
+    /*** The first step in testing a new treatment in humans. */
+    I("I"), 
+    /*** A clinical research protocol designed to study the safety, dosage levels and response to new treatment.*/
+    I_II("I/II"),
+    /*** A study to test whether a new treatment has an anticancer effect . */
     II("II"),
-    /**
-     * III.
-     */
-    III("III");
+    /*** A trial to study response to a new treatment and the effectiveness . */
+    II_III("II/III"),
+    /*** A study to compare the results of people taking a new treatment . */
+    III("III"),
+    /*** Phase IV trial is a randomized, controlled trial that is designed . */
+    IV("IV"),
+    /*** Not Applicable . */
+    NA("NA");
     
     private String code;
     /**
