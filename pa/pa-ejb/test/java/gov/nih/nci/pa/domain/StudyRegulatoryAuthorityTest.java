@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.*;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import org.hibernate.Session;
 import org.junit.Before;

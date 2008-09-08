@@ -2,12 +2,9 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import gov.nih.nci.pa.test.util.TestSchema;
 
 import org.hibernate.Session;
 import org.junit.Before;
