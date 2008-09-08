@@ -1,7 +1,8 @@
 package gov.nih.nci.pa.dao;
 
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
+
 
 import org.junit.Before;
 import org.junit.Test;
