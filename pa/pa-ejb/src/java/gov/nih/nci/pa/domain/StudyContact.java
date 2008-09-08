@@ -199,8 +199,6 @@ public class StudyContact extends PersonFunctionalRole {
      * 
      * @param studyContactRoles studyContactRoles) {
      */
-    
-    @OneToMany(mappedBy = "studyContact")
     public void setStudyContactRoles(List<StudyContactRole> studyContactRoles) {
         this.studyContactRoles = studyContactRoles;
     }
