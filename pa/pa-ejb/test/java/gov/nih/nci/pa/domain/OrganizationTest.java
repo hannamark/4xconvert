@@ -2,7 +2,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.test.util.TestSchema;
 
 import java.io.Serializable;
 import org.hibernate.Session;
@@ -31,7 +31,7 @@ public class OrganizationTest   {
      */
     @Test
     public void createOrganization() {
-        Organization create = organizationObj();
+        Organization create = createOrganizationObj();
         TestSchema.addUpdObject(create);
         Session session  = TestSchema.getSession();
         
@@ -48,7 +48,7 @@ public class OrganizationTest   {
      * 
      * @return Organization
      */
-    public  static Organization organizationObj() {
+    public  static Organization createOrganizationObj() {
         Organization create = new Organization();
         create.setName("Mayo University");
         create.setIdentifier("P001");
