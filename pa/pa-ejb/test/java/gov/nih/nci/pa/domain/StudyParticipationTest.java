@@ -2,10 +2,10 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.test.util.TestSchema;
 
-import java.io.Serializable;
-import gov.nih.nci.pa.enums.FunctionalCode;
-import gov.nih.nci.pa.util.TestSchema;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -28,68 +28,112 @@ public class StudyParticipationTest  {
                
     }
     
-    /**
-     * 
-     */
-    /*
-    @Test
-    public void getOrganizationsAssociatedWithStudyProtocolTest() {
-        
-        Session session = TestSchema.getSession();
-        Organization org = OrganizationTest.organizationObj();
-        TestSchema.addUpdObject(org);
-        Long oid = org.getId();
-        
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-        TestSchema.addUpdObject(sp);
-        Long spid = sp.getId();
-        
-        StudySite create = createStudySiteObj(sp, org , Boolean.TRUE);
-        TestSchema.addUpdObject(create);
-        Long id = create.getId();
-        assertNotNull(id);
-        StudySite saved = (StudySite) session.load(StudySite.class, id);
-        assertNotNull(saved);
-        assertEquals("Study Site id does not match " , create.getId() , saved.getId());
-        assertEquals("Lead indicator does not match " , create.getLeadOrganizationIndicator() , 
-                    saved.getLeadOrganizationIndicator());
-        assertEquals("Orginzatiom id does not match " , 
-                create.getOrganization().getId() , saved.getOrganization().getId());
-        
-    }
-    */
+
     @Test
     public void createStudyParticipation() {
         Session session = TestSchema.getSession();
+
+        Organization o  = OrganizationTest.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        assertNotNull(o.getId());
+
+        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+        TestSchema.addUpdObject(hcf);
+        HealthCareFacility savedhc = (HealthCareFacility) session.load(HealthCareFacility.class, hcf.getId());
+        assertEquals("Healcare Provider does not match " , hcf.getId(), savedhc.getId());
+        
+        
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
-        Organization o  = OrganizationTest.organizationObj();
-        TestSchema.addUpdObject(o);
-        assertNotNull(o.getId());
-        StudyParticipation create = createStudyParticipationObj(sp, o , Boolean.TRUE);
+        
+        StudyParticipation create = createStudyParticipationObj(sp, hcf) ;
         TestSchema.addUpdObject(create);
         assertNotNull(create.getId());
         StudyParticipation saved = (StudyParticipation) session.load(StudyParticipation.class, create.getId());
         assertEquals("StudyParticipation id does not match " , create.getId() , saved.getId());
         assertEquals("Functional Code does not match " , create.getFunctionalCode() , saved.getFunctionalCode());
-        assertEquals("Lead Organization Indicator does not match " , create.getLeadOrganizationIndicator() , 
-                    saved.getLeadOrganizationIndicator());
         assertEquals("Local Study Protocol Identifier does not match " , create.getLocalStudyProtocolIdentifier() , 
                     saved.getLocalStudyProtocolIdentifier());        
     }
+    
+    @Test
+    public void getOrganizationAssociatedWithProtcol() {
+        Session session = TestSchema.getSession();
+        Organization o  = OrganizationTest.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        assertNotNull(o.getId());
 
-    public static StudyParticipation createStudyParticipationObj(StudyProtocol sp , Organization org , Boolean leadIndi) {
+
+        
+        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+        TestSchema.addUpdObject(hcf);
+        HealthCareFacility savedhc = (HealthCareFacility) session.load(HealthCareFacility.class, hcf.getId());
+        assertEquals("Healcare Provider does not match " , hcf.getId(), savedhc.getId());
+        
+        
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+
+        
+        StudyParticipation create = createStudyParticipationObj(sp, hcf) ;
+        TestSchema.addUpdObject(create);
+        assertNotNull(create.getId());
+        StudyParticipation saved = (StudyParticipation) session.load(StudyParticipation.class, create.getId());
+        assertEquals("StudyParticipation id does not match " , create.getId() , saved.getId());
+        assertEquals("Functional Code does not match " , create.getFunctionalCode() , saved.getFunctionalCode());
+        assertEquals("Local Study Protocol Identifier does not match " , create.getLocalStudyProtocolIdentifier() , 
+                    saved.getLocalStudyProtocolIdentifier());        
+
+        Organization o2  = OrganizationTest.createOrganizationObj();
+        TestSchema.addUpdObject(o2);
+        assertNotNull(o2.getId());
+
+        HealthCareFacility hcf2 = HealthCareFacilityTest.createHealthCareFacilityObj(o2);
+        TestSchema.addUpdObject(hcf2);
+        HealthCareFacility savedhc2 = (HealthCareFacility) session.load(HealthCareFacility.class, hcf2.getId());
+        assertEquals("Healcare Provider does not match " , hcf2.getId(), savedhc2.getId());
+
+        StudyProtocol sp2 = StudyProtocolTest.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp2);
+        assertNotNull(sp2.getId());
+        
+        StudyParticipation create2 = createStudyParticipationObj(sp2, hcf2) ;
+        TestSchema.addUpdObject(create2);
+        assertNotNull(create2.getId());
+        StudyParticipation saved2 = (StudyParticipation) session.load(StudyParticipation.class, create2.getId());
+        assertEquals("StudyParticipation id does not match " , create2.getId() , saved2.getId());
+        assertEquals("Functional Code does not match " , create2.getFunctionalCode() , saved2.getFunctionalCode());
+        assertEquals("Local Study Protocol Identifier does not match " , create2.getLocalStudyProtocolIdentifier() , 
+                    saved2.getLocalStudyProtocolIdentifier());        
+
+        
+        StringBuffer hql = new StringBuffer();
+        hql.append(
+                " Select distinct o from Organization o  " +
+                " join o.healthCareFacilities as hcfs " + 
+                " join hcfs.studyParticipations as sps " +
+                " join sps.studyProtocol as sp " +
+                "  where sps.functionalCode = '" +StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'");
+
+        
+        List<Organization> organizations = null;
+        organizations =  session.createQuery(hql.toString()).list();
+        assertEquals("Size  does not match " , organizations.size() , 3);
+        
+        
+    }
+    public static StudyParticipation createStudyParticipationObj(StudyProtocol sp , HealthCareFacility hcp ) {
         StudyParticipation create = new StudyParticipation();
-        create.setFunctionalCode(FunctionalCode.DATA_MANAGEMENT_CENTER);
-        create.setLeadOrganizationIndicator(leadIndi);
+        create.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
         create.setLocalStudyProtocolIdentifier("Ecog1");
         create.setUserLastUpdated("abstractor");
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
         create.setStudyProtocol(sp);
-        //create.set(sp);
+        create.setHealthCareFacility(hcp);
         return create;
     }
 
