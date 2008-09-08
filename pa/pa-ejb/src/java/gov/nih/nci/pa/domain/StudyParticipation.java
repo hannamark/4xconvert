@@ -1,12 +1,16 @@
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.FunctionalCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * StudySite bean for managing StudySite.
@@ -17,15 +21,15 @@ import javax.persistence.Table;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 @Entity
-@SuppressWarnings("PMD.UselessOverridingMethod")
+//@SuppressWarnings("PMD.UselessOverridingMethod")
 @Table(name = "STUDY_PARTICIPATION")
 
 public class StudyParticipation extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
 
-    private FunctionalCode functionalCode;
-    private Boolean leadOrganizationIndicator; 
+    private StudyParticipationFunctionalCode functionalCode;
     private String localStudyProtocolIdentifier;
+    private HealthCareFacility  healthCareFacility;
     
     /**
      * 
@@ -33,30 +37,15 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      */
     @Column(name = "FUNCTIONAL_CODE")
     @Enumerated(EnumType.STRING)    
-    public FunctionalCode getFunctionalCode() {
+    public StudyParticipationFunctionalCode getFunctionalCode() {
         return functionalCode;
     }
     /**
      * 
      * @param functionalCode functionalCode
      */
-    public void setFunctionalCode(FunctionalCode functionalCode) {
+    public void setFunctionalCode(StudyParticipationFunctionalCode functionalCode) {
         this.functionalCode = functionalCode;
-    }
-    /**
-     * 
-     * @return leadOrganizationIndicator
-     */
-    @Column(name = "LEAD_ORG_INDICATOR")
-    public Boolean getLeadOrganizationIndicator() {
-        return leadOrganizationIndicator;
-    }
-    /**
-     * 
-     * @param leadOrganizationIndicator leadOrganizationIndicator
-     */
-    public void setLeadOrganizationIndicator(Boolean leadOrganizationIndicator) {
-        this.leadOrganizationIndicator = leadOrganizationIndicator;
     }
     /**
      * 
@@ -73,4 +62,26 @@ public class StudyParticipation extends OrganizationFunctionalRole {
     public void setLocalStudyProtocolIdentifier(String localStudyProtocolIdentifier) {
         this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
+    /**
+     * 
+     * @return healthCareFacility
+     */
+    @ManyToOne
+    @JoinColumn(name = "HEALTHCARE_FACILITY_ID", updatable = false)
+    @NotNull
+    public HealthCareFacility getHealthCareFacility() {
+        return healthCareFacility;
+    }
+    /**
+     * 
+     * @param healthCareFacility healthCareFacility
+     */
+    public void setHealthCareFacility(HealthCareFacility healthCareFacility) {
+        this.healthCareFacility = healthCareFacility;
+    }
+    
+    
+
+    
+    
 }
