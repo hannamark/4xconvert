@@ -63,10 +63,7 @@ function handleAction(){
 			              <s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30" maxlength="40" />
 			          </td>          
 			     </tr>  
-			     <td colspan="2">                        
-                    <INPUT TYPE="submit" NAME="submit"  value="Save" class="button"/>          
-                    <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td>
+			    
 		</table> 
 		<div class="actionsrow">
 			<del class="btnwrapper">
