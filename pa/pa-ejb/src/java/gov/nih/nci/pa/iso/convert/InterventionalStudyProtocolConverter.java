@@ -103,9 +103,6 @@ public class InterventionalStudyProtocolConverter extends
         if (ispDTO.getSection801Indicator() != null) {
             isp.setSection801Indicator(BlConverter.covertToBoolean(ispDTO.getSection801Indicator()));
         }
-        
-        
-        
         //@todo: calculate TS convertion
         return isp;
     }
