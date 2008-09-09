@@ -9,6 +9,7 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 
 import gov.nih.nci.pa.service.PAException;
 
@@ -128,6 +129,8 @@ public class StudyProtocolServiceImpl  {
                    studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
                    studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
                    studyProtocolDto.setNciIdentifier(studyProtocol.getIdentifier());
+                   studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
+                   //@todo : hardcoded for interventional, its has to be derived
                }
                if (studyOverallStatus != null) {
                    studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
