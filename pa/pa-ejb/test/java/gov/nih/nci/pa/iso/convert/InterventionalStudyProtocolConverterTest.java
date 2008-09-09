@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocolTest;
-import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
 import org.junit.Test;

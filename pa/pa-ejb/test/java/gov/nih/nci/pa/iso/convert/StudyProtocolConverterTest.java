@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
 import org.junit.Test;
