@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.St;
 
 /**
  * BaseDTO for all common fields .
@@ -18,7 +19,8 @@ public class BaseDTO implements Serializable {
     private static final long serialVersionUID = 1234567890L;
     private Ii ii;
     private Ivl statusDateRange;
-
+    private St userLastUpdated;
+    
     /**
      * 
      * @return ii
@@ -51,6 +53,22 @@ public class BaseDTO implements Serializable {
         this.statusDateRange = statusDateRange;
     }
     
+    /**
+     * 
+     * @return userLastUpdated 
+     */
+    public St getUserLastUpdated() {
+        return userLastUpdated;
+    }
+
+
+    /**
+     * 
+     * @param userLastUpdated userLastUpdated
+     */
+    public void setUserLastUpdated(St userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
     
 
 }
