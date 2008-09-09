@@ -1,23 +1,20 @@
 package gov.nih.nci.pa.action;
 
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-
 import gov.nih.nci.coppa.iso.Ii;
-
-
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-//import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.MonitorCode;
-//import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
@@ -27,7 +24,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  */
 
 @Validation
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
 
 public class NCISpecificInformationAction  extends ActionSupport {
 
@@ -42,6 +39,7 @@ public class NCISpecificInformationAction  extends ActionSupport {
         LOG.info("Entering query");
         String ret = null;
         try {
+            
             nciSpecificInformationWebDTO = setNciSpDto(getStudyProtocol());
             ret = SUCCESS;    
             
@@ -58,11 +56,11 @@ public class NCISpecificInformationAction  extends ActionSupport {
      */
     public String update()  {
         boolean error = false;
+        
         //Step1 : check for any errors
         //@todo: perform this error only for Interventional trial type, currently trial type
         //is not yet added to the code
         
-        //if (true) {
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getMonitorCode())) {
             addActionError(getText("error.studyProtocol.monitorCode"));
             error = true;
@@ -71,20 +69,22 @@ public class NCISpecificInformationAction  extends ActionSupport {
             addActionError(getText("error.studyProtocol.accrualReportingMethodCode"));
             error = true;
         }
+        /*
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())) {
             addActionError(getText("error.studyProtocol.summaryFourFundingCategoryCode"));
             error = true;
         }
+        */
         if (error) {
             return ERROR;
         }
-         
-//        }
+
         
         //Step2 : retrieve the studyprotocol
         StudyProtocolDTO spIsoDTO = null;
         try {
              spIsoDTO = getStudyProtocol();
+
              //Step3: overwrite the new values
              spIsoDTO.setMonitorCode(IsoConverter.convertEnumCodeToIsoCd(
                      MonitorCode.getByCode(nciSpecificInformationWebDTO.getMonitorCode())));
