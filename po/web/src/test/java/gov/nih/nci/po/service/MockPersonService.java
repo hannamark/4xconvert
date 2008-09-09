@@ -92,7 +92,7 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
- * 
+ *
  */
 public class MockPersonService implements PersonServiceLocal {
 
@@ -132,7 +132,7 @@ public class MockPersonService implements PersonServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public Person getPerson(long id) {
+    public Person getById(long id) {
         return personMap.get(id);
     }
 
@@ -185,5 +185,5 @@ public class MockPersonService implements PersonServiceLocal {
         // TODO Auto-generated method stub
         return null;
     }
-        
+
 }

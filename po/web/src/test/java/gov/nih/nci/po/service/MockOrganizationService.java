@@ -97,7 +97,7 @@ public class MockOrganizationService implements OrganizationServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public Organization getOrganization(long id) {
+    public Organization getById(long id) {
         Organization o = new Organization();
         o.setId(id);
         o.setName("name");
@@ -141,7 +141,7 @@ public class MockOrganizationService implements OrganizationServiceLocal {
     }
 
     public void accept(Organization curatedOrg) {
-        
+
     }
 
 }

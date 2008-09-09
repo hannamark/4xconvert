@@ -62,10 +62,10 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
         fill(ocr);
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(ocr);
 
-        PersonCR cr = instance.getCR(id);
+        PersonCR cr = instance.getById(id);
         assertSame(ocr, cr);
     }
-    
+
     @Test
     public void testEntityUpdate() {
         class MyTracker extends RuntimeException {

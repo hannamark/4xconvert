@@ -85,7 +85,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
-import gov.nih.nci.po.util.PoHibernateUtil;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -98,29 +98,29 @@ import javax.ejb.TransactionAttributeType;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonCRServiceBean extends AbstractCRServiceBean<PersonCR, Person> implements PersonCRServiceLocal {
-    
+
     private PersonServiceLocal orgService;
 
-    /** 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<PersonCR> getTypeArgument() {
+        return PersonCR.class;
+    }
+
+    /**
      * @param svc injected.
      */
     @EJB
     void setPersonServiceBean(PersonServiceLocal svc) {
         this.orgService = svc;
     }
-    
-    /** 
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public PersonCR getCR(long id) {
-        return (PersonCR) PoHibernateUtil.getCurrentSession().load(PersonCR.class, id);
-    }
-    
+
     /**{@inheritDoc}*/
     @Override
     protected void entityUpdate(Person entity) {
         orgService.update(entity);
     }
-    
+
 }

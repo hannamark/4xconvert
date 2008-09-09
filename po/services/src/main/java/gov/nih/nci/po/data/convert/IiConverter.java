@@ -183,7 +183,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (!IdConverter.PERSON_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
             throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
         }
-        return getServiceLocator().getPersonService().getPerson(id);
+        return getServiceLocator().getPersonService().getById(id);
     }
 
     /**
@@ -205,6 +205,6 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (!IdConverter.ORG_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
             throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
         }
-        return getServiceLocator().getOrganizationService().getOrganization(id);
+        return getServiceLocator().getOrganizationService().getById(id);
     }
 }

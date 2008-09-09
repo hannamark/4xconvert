@@ -86,10 +86,11 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Organization;
 
 import java.util.Map;
+
 import javax.ejb.Local;
 
 /**
- * 
+ *
  * @author gax
  */
 @Local
@@ -106,7 +107,7 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @param id db id to get
      * @return organization with matching id
      */
-    Organization getOrganization(long id);
+    Organization getById(long id);
 
     /**
      * @param entity the entity to validate

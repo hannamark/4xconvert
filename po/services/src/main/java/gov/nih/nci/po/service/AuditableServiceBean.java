@@ -3,8 +3,6 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.audit.AuditLogRecord;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -14,30 +12,13 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public class AuditableServiceBean extends BaseServiceBean<AuditLogRecord> implements AuditableServiceLocal {
+public class AuditableServiceBean extends AbstractBaseServiceBean<AuditLogRecord> implements AuditableServiceLocal {
 
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<AuditLogRecord> search(SearchCriteria<AuditLogRecord> criteria) {
-        return super.genericSearch(criteria, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<AuditLogRecord> search(SearchCriteria<AuditLogRecord> criteria,
-            PageSortParams<AuditLogRecord> pageSortParams) {
-        return super.genericSearch(criteria, pageSortParams);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<AuditLogRecord> criteria) {
-        return super.genericCount(criteria);
+    @Override
+    protected Class<AuditLogRecord> getTypeArgument() {
+        return AuditLogRecord.class;
     }
 }

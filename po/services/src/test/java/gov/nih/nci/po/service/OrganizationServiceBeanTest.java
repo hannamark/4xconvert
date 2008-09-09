@@ -230,7 +230,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        Organization retrievedOrg = orgServiceBean.getOrganization(orgId);
+        Organization retrievedOrg = orgServiceBean.getById(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
         assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
         assertNotNull(retrievedOrg.getStatusDate());
@@ -249,9 +249,9 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     public void acceptWithNoChanges() throws EntityValidationException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
-        o = getOrgServiceBean().getOrganization(id);
+        o = getOrgServiceBean().getById(id);
         getOrgServiceBean().accept(o);
-        Organization result = getOrgServiceBean().getOrganization(id);
+        Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.CURATED, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
     }
@@ -264,7 +264,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     public void acceptWithChanges() throws EntityValidationException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
-        o = getOrgServiceBean().getOrganization(id);
+        o = getOrgServiceBean().getById(id);
         //remove elements from the different CollectionType properties to ensure proper persistence
         o.getEmail().remove(0);
         o.getFax().remove(0);
@@ -274,7 +274,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         getOrgServiceBean().accept(o);
 
-        Organization result = getOrgServiceBean().getOrganization(id);
+        Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.CURATED, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         assertEquals(1, result.getEmail().size());

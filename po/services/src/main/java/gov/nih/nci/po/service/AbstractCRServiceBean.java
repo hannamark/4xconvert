@@ -97,7 +97,7 @@ import javax.ejb.TransactionAttributeType;
  * @author gax
  */
 public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Root<CR, ?>>
-        extends BaseServiceBean<CR> {
+        extends AbstractBaseServiceBean<CR> {
     /** 
      * {@inheritDoc}
      */

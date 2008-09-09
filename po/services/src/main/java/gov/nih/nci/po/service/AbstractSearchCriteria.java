@@ -69,13 +69,11 @@ public abstract class AbstractSearchCriteria {
         /**
          * conjunction.
          */
-        @SuppressWarnings("hiding")
         AND(true),
 
         /**
          * disjunction.
          */
-        @SuppressWarnings("hiding")
         OR(false),
 
         /**

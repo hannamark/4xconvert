@@ -60,7 +60,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @return show start page
      */
     public String start() {
-        organization = PoRegistry.getOrganizationService().getOrganization(organization.getId());
+        organization = PoRegistry.getOrganizationService().getById(organization.getId());
         initializeCollections(organization);
         setRootKey(PoHttpSessionUtil.addAttribute(organization));
         if (!organization.getChangeRequests().isEmpty()) {
@@ -83,8 +83,8 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      * @throws EntityValidationException if a validation error is found when attempting to update
      */
     @Validations(customValidators = {
-                @CustomValidator(type = "hibernate", 
-                    fieldName = "organization", 
+                @CustomValidator(type = "hibernate",
+                    fieldName = "organization",
                     parameters = {
                             @ValidationParameter(name = "excludes", value = "statusCode")
                     }
@@ -110,7 +110,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -118,7 +118,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {

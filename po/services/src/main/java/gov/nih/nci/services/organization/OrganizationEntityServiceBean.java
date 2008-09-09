@@ -152,7 +152,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
 
     public OrganizationDTO getOrganization(Ii id) {
-        Organization org = orgService.getOrganization(IiConverter.convertToLong(id));
+        Organization org = orgService.getById(IiConverter.convertToLong(id));
         return PoXsnapshotHelper.createSnapshot(org);
     }
 
@@ -192,7 +192,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(proposedState.getIdentifier());
-        Organization target = orgService.getOrganization(oId);
+        Organization target = orgService.getById(oId);
         OrganizationCR cr = new OrganizationCR(target);
         proposedState.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
@@ -210,7 +210,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(targetOrg);
-        Organization target = orgService.getOrganization(oId);
+        Organization target = orgService.getById(oId);
         // lazy way to clone with stripped hibernate IDs.
         OrganizationDTO tmp = PoXsnapshotHelper.createSnapshot(target);
         OrganizationCR cr = new OrganizationCR(target);

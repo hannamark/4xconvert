@@ -84,8 +84,10 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.PersonCR;
+
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.Local;
 
 /**
@@ -94,28 +96,28 @@ import javax.ejb.Local;
  */
 @Local
 public interface PersonCRServiceLocal {
-    
+
     /**
      * get a PersonCR by its hibernate id.
      * @param id hibernate id of the PersonCR object.
      * @return the Cr identified by <code>id</code>.
      */
-    PersonCR getCR(long id);
-    
+    PersonCR getById(long id);
+
     /**
      * add a PersonCR for later processing.
      * @param proposedState the PersonCR containg the proposed stated.
      * @throws EntityValidationException if the PersonCR proposes an invalid state for the target.
      */
     void addCR(PersonCR proposedState) throws EntityValidationException;
-    
+
     /**
      * update the target Org, and delete processed CRs (whether applied or rejected).
      * @param crs the hibernate IDs of the CRs to delete. All crs must hahve the same target Org,
      */
     void processCRs(List<PersonCR> crs);
-    
-    
+
+
     /**
      * @param entity the PersonCR to validate
      * @return return validation error messages per invalid field path.

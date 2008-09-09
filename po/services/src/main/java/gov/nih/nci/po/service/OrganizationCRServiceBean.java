@@ -85,7 +85,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
-import gov.nih.nci.po.util.PoHibernateUtil;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -99,29 +99,29 @@ import javax.ejb.TransactionAttributeType;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationCRServiceBean extends AbstractCRServiceBean<OrganizationCR, Organization>
         implements OrganizationCRServiceLocal {
-    
+
     private OrganizationServiceLocal orgService;
 
-    /** 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<OrganizationCR> getTypeArgument() {
+        return OrganizationCR.class;
+    }
+
+    /**
      * @param svc injected.
      */
     @EJB
     void setOrganizationServiceBean(OrganizationServiceLocal svc) {
         this.orgService = svc;
     }
-    
-    /** 
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public OrganizationCR getCR(long id) {
-        return (OrganizationCR) PoHibernateUtil.getCurrentSession().load(OrganizationCR.class, id);
-    }
-    
+
     /**{@inheritDoc}*/
     @Override
     protected void entityUpdate(Organization entity) {
         orgService.update(entity);
     }
-    
+
 }

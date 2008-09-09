@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -101,7 +100,15 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends BaseServiceBean<Person> implements PersonServiceLocal {
+public class PersonServiceBean extends AbstractBaseServiceBean<Person> implements PersonServiceLocal {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<Person> getTypeArgument() {
+        return Person.class;
+    }
 
     /**
      * {@inheritDoc}
@@ -116,38 +123,5 @@ public class PersonServiceBean extends BaseServiceBean<Person> implements Person
         Session s = PoHibernateUtil.getCurrentSession();
         s.save(p);
         return p.getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Person getPerson(long id) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        return (Person) s.get(Person.class, id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria) {
-        return super.genericSearch(criteria, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
-        return super.genericSearch(criteria, pageSortParams);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<Person> criteria) {
-        return super.genericCount(criteria);
     }
 }

@@ -105,7 +105,24 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class BaseServiceBean<T extends PersistentObject> {
+public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
+
+    /**
+     * Get class of the implementation.
+     * @return the class
+     */
+    protected abstract Class<T> getTypeArgument();
+
+    /**
+     * Get the object of type T with the given ID.
+     * @param id the id
+     * @return the object
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public T getById(long id) {
+        return (T) PoHibernateUtil.getCurrentSession().get(getTypeArgument(), id);
+    }
 
     /**
      * @param sc criteria object to validate
@@ -167,8 +184,8 @@ public class BaseServiceBean<T extends PersistentObject> {
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<T> genericSearch(SearchCriteria<T> criteria) {
-        return genericSearch(criteria, null);
+    public List<T> search(SearchCriteria<T> criteria) {
+        return search(criteria, null);
     }
 
     /**
@@ -176,7 +193,7 @@ public class BaseServiceBean<T extends PersistentObject> {
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<T> genericSearch(SearchCriteria<T> criteria,
+    public List<T> search(SearchCriteria<T> criteria,
             PageSortParams<T> pageSortParams) {
         validateSearchCriteria(criteria);
         StringBuffer orderBy = new StringBuffer("");
@@ -210,7 +227,7 @@ public class BaseServiceBean<T extends PersistentObject> {
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int genericCount(SearchCriteria<T> criteria) {
+    public int count(SearchCriteria<T> criteria) {
         validateSearchCriteria(criteria);
         Query q = criteria.getQuery("", true);
         return ((Number) q.uniqueResult()).intValue();

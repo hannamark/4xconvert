@@ -93,7 +93,6 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @param modelCollection the collection of model objects to convert
      * @return the list of snapshot objects
      */
-    @SuppressWarnings("unchecked")
     public static List createSnapshotList(Collection<?> modelCollection) {
         return PO_XSNASHOTUTILS.createSnapshotList(modelCollection, DEFAULT_ISO_SNAPSHOT_NAME);
     }
@@ -159,7 +158,6 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * @return the helper object, or null if no helper is registered for that combination of model class and snapshot
      *         name
      */
-    @SuppressWarnings("unchecked")
     @Override
     public SnapshotHelper getHelperForModelClass(Class modelClass, String snapshotName) {
         if (modelClass == null) {

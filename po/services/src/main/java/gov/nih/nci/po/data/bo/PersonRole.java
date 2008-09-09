@@ -113,7 +113,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
  * Base class for all person to org roles.
  * @author Scott Miller
- * @xsnapshot.snapshot-class name="iso" tostring="none"
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.PersonRoleDTO"
  *      extends="gov.nih.nci.services.correlation.BasePersonRoleDTO"
  */

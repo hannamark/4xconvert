@@ -82,15 +82,13 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.coppa.iso.Cd;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.Ts;
@@ -99,16 +97,12 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.Date;
-
 import java.util.Properties;
-import javax.naming.spi.DirStateFactory.Result;
-import javax.sql.DataSource;
-import org.jboss.util.id.ID;
+
 import org.junit.Test;
 
 /**
@@ -178,7 +172,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         if (orgId == null) {
             createMinimal();
         }
-        
+
         Properties config = TstProperties.properties;
         Class.forName(config.getProperty("jdbc.driver-class"));
         String url = config.getProperty("jdbc.connection-url");
@@ -189,21 +183,21 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
-        
+
         OrganizationDTO dto = getOrgService().getOrganization(orgId);
         dto.setDescription(RemoteApiUtils.convertToSt("new Desc"));
         TelEmail e = new TelEmail();
         e.setValue(new URI("mailto:new.address@example.com"));
         dto.getTelecomAddress().getItem().add(e);
         getOrgService().updateOrganization(dto);
-        
+
         rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension());
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 1, count1);
     }
-    
+
     @Test(expected=IllegalArgumentException.class)
     public void updateWithChangedStatus () throws Exception {
         if (orgId == null) {
@@ -215,13 +209,13 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         dto.setStatusCode(cd);
         getOrgService().updateOrganization(dto);
     }
-    
+
     @Test
     public void updateStatus() throws Exception {
         if (orgId == null) {
             createMinimal();
         }
-        
+
         Properties config = TstProperties.properties;
         Class.forName(config.getProperty("jdbc.driver-class"));
         String url = config.getProperty("jdbc.connection-url");
@@ -232,16 +226,16 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
-        
+
         Cd cd = new Cd();
         cd.setCode("inactive"); // maps to DEPRECATED
         getOrgService().updateOrganizationStatus(orgId, cd);
-        
+
         rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension()+" and status = 'DEPRECATED'");
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 1, count1);
     }
-    
+
 }

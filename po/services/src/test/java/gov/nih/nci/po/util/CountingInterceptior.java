@@ -200,13 +200,11 @@ public class CountingInterceptior extends EmptyInterceptor {
         return super.onSave(arg0, arg1, arg2, arg3, arg4);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void postFlush(Iterator arg0) throws CallbackException {
         ++count;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void preFlush(Iterator arg0) throws CallbackException {
         ++count;

@@ -149,7 +149,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public PersonDTO getPerson(Ii id) {
-        Person perBO = perService.getPerson(IiConverter.convertToLong(id));
+        Person perBO = perService.getById(IiConverter.convertToLong(id));
         return PoXsnapshotHelper.<Person, PersonDTO>createSnapshot(perBO);
     }
 
@@ -189,7 +189,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updatePerson(PersonDTO proposedState) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
-        Person target = perService.getPerson(pId);
+        Person target = perService.getById(pId);
         PersonCR cr = new PersonCR(target);
         proposedState.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
@@ -206,7 +206,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updatePersonStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(targetOrg);
-        Person target = perService.getPerson(pId);
+        Person target = perService.getById(pId);
         // lazy way to clone with stripped hibernate IDs.
         PersonDTO tmp = PoXsnapshotHelper.createSnapshot(target);
         PersonCR cr = new PersonCR(target);

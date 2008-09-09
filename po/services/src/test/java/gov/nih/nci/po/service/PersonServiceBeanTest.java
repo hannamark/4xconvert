@@ -184,7 +184,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        Person savedPerson = personServiceBean.getPerson(id);
+        Person savedPerson = personServiceBean.getById(id);
 
         // adjust the expected value to NEW
         person.setStatusCode(EntityStatus.NEW);

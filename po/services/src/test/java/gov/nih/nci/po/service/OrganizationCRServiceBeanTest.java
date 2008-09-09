@@ -59,7 +59,7 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         fill(ocr);
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(ocr);
 
-        OrganizationCR cr = instance.getCR(id);
+        OrganizationCR cr = instance.getById(id);
         assertSame(ocr, cr);
     }
 

@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -101,7 +100,15 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationServiceBean extends BaseServiceBean<Organization> implements OrganizationServiceLocal {
+public class OrganizationServiceBean extends AbstractBaseServiceBean<Organization> implements OrganizationServiceLocal {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<Organization> getTypeArgument() {
+        return Organization.class;
+    }
 
     /**
      * {@inheritDoc}
@@ -120,41 +127,7 @@ public class OrganizationServiceBean extends BaseServiceBean<Organization> imple
 
     /**
      * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Organization getOrganization(long id) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        return (Organization) s.get(Organization.class, id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Organization> search(SearchCriteria<Organization> criteria) {
-        return genericSearch(criteria, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Organization> search(SearchCriteria<Organization> criteria,
-            PageSortParams<Organization> pageSortParams) {
-        return genericSearch(criteria, pageSortParams);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public int count(SearchCriteria<Organization> criteria) {
-        return genericCount(criteria);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @throws EntityValidationException 
+     * @throws EntityValidationException
      */
     @SuppressWarnings("PMD.CompareObjectsWithEquals")
     public void accept(Organization org) {
