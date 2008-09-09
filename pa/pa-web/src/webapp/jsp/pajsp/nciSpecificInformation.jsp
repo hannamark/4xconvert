@@ -28,28 +28,28 @@ function resetValues () {
     <s:form action="updateNCISpecificInformation"><s:actionerror/>
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form">
- 			<%--  <jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> --%>
-
-			 <input type="hidden" name="nciSpecificInformationData.studyProtocolID" value="${nciSpecificInformationDTO.studyProtocolID}"/>
-			 	<!--  <tr>
-			  			<th colspan="2"><fmt:message key="nciSpecificInfo.title"/></th>
-				</tr>	-->			  
 			    <tr>
 			          <td scope="row" class="label">
 			               <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.monitorCode"/></dfn></label>
 			          </td>			    			          			          			          			         
 			          <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 	                  <td class="value">
-	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.monitorCode" list="#monitorCodeValues"  value="nciSpecificInformationData.monitorCode" cssStyle="width:206px"/>
+	                    <s:select headerKey="" headerValue="All" 
+	                       name="nciSpecificInformationWebDTO.monitorCode" 
+	                       list="#monitorCodeValues"  
+	                       value="nciSpecificInformationWebDTO.monitorCode" cssStyle="width:206px"/>
 	                  </td>         
 			    </tr> 
 			    <tr>
 			    	  <td scope="row" class="label">
-			               <label for="reportingDataSetMethodCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
+			               <label for="accrualReportingMethodCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
 			          </td>
-			    	  <s:set name="reportingDataSetMethodCodeValues" value="@gov.nih.nci.pa.enums.ReportingDataSetMethodCode@getDisplayNames()" />
+			    	  <s:set name="accrualReportingMethodCodeValues" value="@gov.nih.nci.pa.enums.AccrualReportingMethodCode@getDisplayNames()" />
 	                  <td class="value">
-	                    <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.reportingDataSetMethodCode" list="#reportingDataSetMethodCodeValues"  value="nciSpecificInformationData.reportingDataSetMethodCode" cssStyle="width:206px" />
+	                    <s:select headerKey="" headerValue="All" 
+	                       name="nciSpecificInformationWebDTO.accrualReportingMethodCode" 
+	                       list="#accrualReportingMethodCodeValues"  
+	                       value="nciSpecificInformationWebDTO.accrualReportingMethodCode" cssStyle="width:206px" />
 	                  </td>   			            
 			     </tr>           
 			     <tr>
@@ -58,7 +58,7 @@ function resetValues () {
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
-                        <s:select headerKey="" headerValue="All" name="nciSpecificInformationData.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues"  value="nciSpecificInformationData.summaryFourFundingCategoryCode" cssStyle="width:206px" />
+                        <s:select headerKey="" headerValue="All" name="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues"  value="nciSpecificInformationData.summaryFourFundingCategoryCode" cssStyle="width:206px" />
                       </td>  			                    
 			     </tr>
 				<tr>
@@ -66,14 +66,15 @@ function resetValues () {
 			               <label for="summary4Name"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationName"/></dfn></label>
 			          </td>
 			          <td class="value">
-			              <s:textfield name="nciSpecificInformationData.summary4Name" size="30" maxlength="40" />
+			              <s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30" maxlength="40" />
 			          </td>          
 			     </tr>  
-			     <!-- <td colspan="2">                        
+			     <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Save" class="button"/>          
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
-                </td>  -->
+                </td>
 		</table> 
+		<!--
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
@@ -83,6 +84,7 @@ function resetValues () {
 				</ul>	
 			</del>
 		</div>
+		-->
 		           
   	</s:form>
    </div>
