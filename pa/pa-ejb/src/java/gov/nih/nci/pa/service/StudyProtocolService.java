@@ -1,9 +1,10 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.List;
 
@@ -46,5 +47,13 @@ public interface StudyProtocolService {
       * @throws PAException PAException
       */
      StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException;
+     
+     /**
+      * 
+      * @param ii ii
+      * @return InterventionalStudyProtocolDTO
+      * @throws PAException PAException
+      */
+     InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException;
      
 }
