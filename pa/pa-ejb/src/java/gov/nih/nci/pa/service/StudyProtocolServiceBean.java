@@ -89,8 +89,9 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         List<StudyProtocol> queryList = new ArrayList<StudyProtocol>();
         try {
             session = HibernateUtil.getCurrentSession();
-//            studyProtocol = (StudyProtocol) 
-//                session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
+            //@todo : session.load is not working, so using query to retrieve
+            // studyProtocol = (StudyProtocol) 
+            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
             //session.flush();
 
             Query query = null;
@@ -143,13 +144,10 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         
         try {
             session = HibernateUtil.getCurrentSession();
-//            StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, 
-//                    Long.valueOf(studyProtocolDTO.getIi().getExtension()));
-//
-//            sp.setId(sp.getId());
-//            sp.setOfficialTitle(sp.getOfficialTitle());
-//            System.out.println("sp "+sp.getAcronym());
-//            System.out.println("sp "+sp.getId());
+            //@todo : session.load is not working, so using query to retrieve
+            //StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, 
+            //        Long.valueOf(studyProtocolDTO.getIi().getExtension()));
+
             
             Query query = null;
             
@@ -166,6 +164,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             StudyProtocol sp = queryList.get(0);
 
             StudyProtocol studyProtocol = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
+            //@todo : merge is not working so using ind. update
             /*
             if (!studyProtocol.equals(sp)) {
                 sp = (StudyProtocol) session.merge(studyProtocol);
@@ -175,9 +174,9 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             */
             java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
             sp.setDateLastUpdated(now);
-            sp.setMonitorCode(studyProtocol.getMonitorCode());
+            //sp.setMonitorCode(studyProtocol.getMonitorCode());
             sp.setAccrualReportingMethodCode(studyProtocol.getAccrualReportingMethodCode());
-            
+            sp.setUserLastUpdated(studyProtocolDTO.getUserLastUpdated().getValue());
             session.update(sp);
             session.flush();
 
