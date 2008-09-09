@@ -5,6 +5,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import java.io.Serializable;
 import java.util.Date;
 
+
 /**
  * StudyProtocolQueryDTO for transferring Study Protocol object .
  * @author Naveen Amiruddin
@@ -29,6 +30,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Long leadOrganizationId;
     private String piFullName;
     private Long piId;
+    private String localStudyProtocolIdentifier;
     
     /**
      * 
@@ -184,6 +186,21 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setPiId(Long piId) {
         this.piId = piId;
+    }
+    
+    /**
+     * 
+     * @return localStudyProtocolIdentifier
+     */
+    public String getLocalStudyProtocolIdentifier() {
+        return localStudyProtocolIdentifier;
+    }
+    /**
+     * 
+     * @param localStudyProtocolIdentifier localStudyProtocolIdentifier
+     */
+    public void setLocalStudyProtocolIdentifier(String localStudyProtocolIdentifier) {
+        this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
     
     
