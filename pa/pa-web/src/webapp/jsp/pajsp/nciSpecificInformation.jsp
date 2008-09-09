@@ -15,10 +15,16 @@ function resetValues () {
     document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_organizationName.value="";
     document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_monitorCode.value="";
 }
+
+function handleAction(){
+     document.updateNCISpecificInformation.action="updateNCISpecificInformation.action";
+     document.updateNCISpecificInformation.submit();     
+}
+
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-<!-- <div id="contentwide"> -->
+
  <h1><fmt:message key="nciSpecificInformation.title" /></h1>
 
 <!--Help Content-->
@@ -28,18 +34,6 @@ function resetValues () {
     <s:form action="updateNCISpecificInformation"><s:actionerror/>
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form">
-			    <tr>
-			          <td scope="row" class="label">
-			               <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.monitorCode"/></dfn></label>
-			          </td>			    			          			          			          			         
-			          <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
-	                  <td class="value">
-	                    <s:select headerKey="" headerValue="All" 
-	                       name="nciSpecificInformationWebDTO.monitorCode" 
-	                       list="#monitorCodeValues"  
-	                       value="nciSpecificInformationWebDTO.monitorCode" cssStyle="width:206px"/>
-	                  </td>         
-			    </tr> 
 			    <tr>
 			    	  <td scope="row" class="label">
 			               <label for="accrualReportingMethodCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
@@ -74,17 +68,16 @@ function resetValues () {
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                 </td>
 		</table> 
-		<!--
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
-					<li><a href="updateNCISpecificInformation.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+					<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
 					<li><a href="studyProtocolView.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="regulatoryInfo.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				</ul>	
 			</del>
 		</div>
-		-->
+
 		           
   	</s:form>
    </div>
