@@ -31,7 +31,9 @@ function handleAction(){
 
   <!--  <div id="contentwide"> -->
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
-    <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
+    <c:if test="${records != null}">	
+	<div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
+	</c:if>	
     <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
  <div class="box" id="filters">
@@ -156,13 +158,13 @@ function handleAction(){
 
  </div>
  <div class="line"></div>
-							
-							<h2>Search Results</h2>
  
-  <c:if test="${records != null}">
-   <jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
-        <jsp:param name="listName" value="records" />        
-   </jsp:include>
+ <c:if test="${records != null}">						
+		<h2>Search Results</h2>  
+   		<jsp:include page="/jsp/pajsp/studyProtocolQueryResults.jsp">
+        	<jsp:param name="listName" value="records" />        
+   		</jsp:include>
    </c:if>
+   
 </body>
 </html>
