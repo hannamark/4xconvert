@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocolTest;
+import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.test.util.TestSchema;
 
@@ -72,7 +73,16 @@ public class InterventionalStudyProtocolConverterTest {
 //        assertEquals("StartDate Does not match ", sp.getStartDate() , spDTO.getStartDate());  
         assertEquals("StartDate Type code Does not match ", sp.getStartDateTypeCode().getCode() , 
                 spDTO.getStartDateTypeCode().getCode());  
-//        assertEquals("Status Date Does not match ", sp.getStatusDate() , spDTO.getStatusDate());  
+//        assertEquals("Status Date Does not match ", sp.getStatusDate() , spDTO.getStatusDate());
+        assertEquals("StartDate Type code Does not match ", sp.getStartDateTypeCode().getCode() , 
+                spDTO.getStartDateTypeCode().getCode());  
+        assertEquals("delayedpostingIndicator  Does not match ", sp.getDelayedpostingIndicator() , 
+                spDTO.getDelayedpostingIndicator().getValue());  
+        assertEquals("fdaRegulatedIndicator  Does not match ", sp.getFdaRegulatedIndicator() , 
+                spDTO.getFdaRegulatedIndicator().getValue());  
+        assertEquals("section801Indicator  Does not match ", sp.getSection801Indicator() , 
+                spDTO.getSection801Indicator().getValue());  
+        
         
     }
 
