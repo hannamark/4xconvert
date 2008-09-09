@@ -92,9 +92,5 @@ public class NCISpecificInformationWebDTO {
     public void setOrganizationIi(String organizationIi) {
         this.organizationIi = organizationIi;
     }
-    
-    
-
-
 
 }
