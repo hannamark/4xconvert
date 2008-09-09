@@ -36,7 +36,12 @@ function handleAction(){
 	</c:if>	
     <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
- <div class="box" id="filters">
+ 	<s:if test="records != null">	
+		<div class="box" id="filters" style="display:none">
+	</s:if>
+	<s:else>
+		<div class="box" id="filters">
+	</s:else>
     <s:form action="studyProtocolQuery"><s:actionerror/>
         <table class="form">    
             <tr>
