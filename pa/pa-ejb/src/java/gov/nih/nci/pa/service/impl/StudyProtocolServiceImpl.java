@@ -5,6 +5,7 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -27,9 +28,9 @@ import org.apache.log4j.Logger;
 public class StudyProtocolServiceImpl  {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceImpl.class);
-    private static final int THREE = 3;
-    private static final int LEAD_ORG_5 = 4;
-    private static final int PI_PERSON_6 = 5;
+    private static final int PI_PERSON_3 = 3;
+    private static final int LEAD_ORG_4 = 4;
+    private static final int ST_PARTY_5 = 5;
     /**
      * @param spsc StudyProtocolSearchCriteria
      * @return List QueryStudyProtocolDTO   
@@ -93,6 +94,7 @@ public class StudyProtocolServiceImpl  {
        DocumentWorkflowStatus documentWorkflowStatus = null;
        Organization organization = null;
        Person person = null;
+       StudyParticipation studyParticipation = null;
        // array of objects for each row
        Object[] searchResult = null;
        try {
@@ -108,11 +110,13 @@ public class StudyProtocolServiceImpl  {
                documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[1];
                // get studyOverallStatus
                studyOverallStatus = (StudyOverallStatus) searchResult[2];
-
-               // get the organization 
-               //organization = (Organization) searchResult[LEAD_ORG_5];
                // get the person
-               //person = (Person) searchResult[PI_PERSON_6];
+               person = (Person) searchResult[PI_PERSON_3];
+               // get the organization 
+               organization = (Organization) searchResult[LEAD_ORG_4];
+               // get the StudyParticipation 
+               studyParticipation = (StudyParticipation) searchResult[ST_PARTY_5];
+               
                // transfer protocol to studyProtocolDto
                if (documentWorkflowStatus != null) {
                    studyProtocolDto.setDocumentWorkflowStatusCode(
@@ -136,6 +140,10 @@ public class StudyProtocolServiceImpl  {
                if (person != null) {
                    studyProtocolDto.setPiFullName(person.getFullName());
                    studyProtocolDto.setPiId(person.getId());
+               }
+               if (studyParticipation != null) {
+                   studyProtocolDto.setLocalStudyProtocolIdentifier(
+                           studyParticipation.getLocalStudyProtocolIdentifier());
                }
                // add to the list
                studyProtocolDtos.add(studyProtocolDto);
