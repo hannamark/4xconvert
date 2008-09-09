@@ -458,6 +458,3 @@ values (13, 'STUDY_PRINCIPAL_INVESTIGATOR', 11, current_timestamp , 'abstractor'
 insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
 values (14, 'STUDY_PRINCIPAL_INVESTIGATOR', 12, current_timestamp , 'abstractor' ) 
 /
-  
-COMMIT
-/    
