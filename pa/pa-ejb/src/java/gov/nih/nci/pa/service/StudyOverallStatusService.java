@@ -31,4 +31,13 @@ public interface StudyOverallStatusService {
      * @throws PAException Exception.
      */
     StudyOverallStatusDTO getCurrentStudyOverallStatusByStudyProtocol(Ii studyProtocolId) throws PAException;
+    
+    /**
+     * @param studyOverallStatusDTO studyOverallStatusDTO
+     * @return StudyOverallStatusDTO
+     * @throws PAException PAException
+     */
+    StudyOverallStatusDTO updateStudyOverallStatus(StudyOverallStatusDTO studyOverallStatusDTO) throws PAException;
+    
+
 }

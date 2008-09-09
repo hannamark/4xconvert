@@ -3,7 +3,9 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 
 
 /**
@@ -36,5 +38,30 @@ public class CdConverter {
         }
         return cd;
     }
+    
+    /**
+     * converts a T to an enum.
+     * @param cd iso Cd class
+     * @return StudyStatusCode
+     */
+    public static StudyStatusCode convertToStudyStatusCode(Cd cd) {
+        StudyStatusCode result = null;
+        if (cd != null) {
+            result = StudyStatusCode.getByCode(cd.getCode());
+        }
+        return result;
+    }
 
+    /**
+     * converts a Cd to an enum.
+     * @param cd iso Cd class
+     * @return ActualAnticipatedTypeCode
+     */
+    public static ActualAnticipatedTypeCode convertToActualAnticipatedTypeCode(Cd cd) {
+        ActualAnticipatedTypeCode result = null;
+        if (cd != null) {
+            result = ActualAnticipatedTypeCode.getByCode(cd.getCode());
+        }
+        return result;
+    }
 }

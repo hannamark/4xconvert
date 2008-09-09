@@ -48,9 +48,10 @@ public class PAUtil {
         boolean isNull = false;
         if (ii == null || ii.getExtension() == null) {
             isNull = true;
-        }
-        if (ii.getExtension().trim().length() == 0) {
-            isNull = true;
+        } else {
+            if (ii.getExtension().trim().length() == 0) {
+                isNull = true;
+            }
         }
         try {
             new Long(ii.getExtension());

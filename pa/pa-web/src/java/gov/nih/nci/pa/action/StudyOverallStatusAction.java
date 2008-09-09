@@ -5,11 +5,14 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.Constants;
@@ -36,7 +39,7 @@ import com.opensymphony.xwork2.Preparable;
  *        holder, NCI.
  * 
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields", "PMD.SignatureDeclareThrowsException" })
 public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
@@ -54,19 +57,11 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private String completionDate;
     private String startDateType;
     private String completionDateType;
-
-    private String ivCurrentTrialStatus;
-//    private String ivStatusDate;
-//    private String ivStartDate;
-//    private String ivCompletionDate;
-//    private String ivStartDateType;
-//    private String ivCompletionDateType;
     
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws Exception e
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
     public void prepare() throws Exception {
         dateTypeList = new HashMap<String, String>();
         dateTypeList.put(actualString, actualString);
@@ -87,14 +82,61 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * @throws Exception exception.
      */
     @Override
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
     public String execute() throws Exception {
         loadForm();
-        storeInitialValues();
         return SUCCESS;
     }
 
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException") 
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String update() throws Exception {
+        clearErrorsAndMessages();
+        enforceBusinessRules();
+        if (hasActionErrors()) {
+            return Action.SUCCESS;
+        }
+        
+        insertStudyOverallStatus();
+        if (!hasActionErrors()) {
+           updateStudyProtocol();
+        }
+        if (!hasActionErrors()) {
+            addActionError("Update succeeded.");
+        }
+        loadForm();
+        return Action.SUCCESS;
+    }
+    
+    private void insertStudyOverallStatus() {
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setIi(IiConverter.convertToIi((Long) null));
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
+        dto.setStudyProtocolidentifier(spIdIi);
+        try {
+            sosService.updateStudyOverallStatus(dto);            
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+    }
+    
+    private void updateStudyProtocol() {
+        StudyProtocolDTO dto;
+        try {
+            dto = spService.getStudyProtocol(spIdIi);
+            dto.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(startDate)));
+            dto.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(completionDate)));
+            dto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(startDateType)));
+            dto.setPrimaryCompletionDateTypeCode(CdConverter
+                    .convertToCd(ActualAnticipatedTypeCode.getByCode(completionDateType)));
+            spService.updateStudyProtocol(dto);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+    }
+ 
     private void loadForm() throws Exception {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
         StudyOverallStatusDTO sosDto = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi); 
@@ -124,7 +166,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
         }
 
         if (sosDto != null) {
-            setCurrentTrialStatus(sosDto.getStatusCode().getCode());
+            setCurrentTrialStatus((sosDto.getStatusCode() != null)
+                    ? sosDto.getStatusCode().getCode() : null);
             tsTemp = TsConverter.convertToTimestamp(sosDto.getStatusDate());
             if (tsTemp != null) {
                 setStatusDate(tsTemp.toString());
@@ -136,41 +179,15 @@ public class StudyOverallStatusAction extends ActionSupport implements
             setStatusDate(null);
         }
     }
-    
-    private void storeInitialValues() {
-        ivCurrentTrialStatus = currentTrialStatus;
-//        ivStatusDate = statusDate;
-//        ivStartDate = startDate;
-//        ivCompletionDate = completionDate;
-//        ivStartDateType = startDateType;
-//        ivCompletionDateType = completionDateType;
-    }
 
-    /**  
-     * @return res
+    /**
+     * This method is used to enforce the business rules which are form specific or
+     * based on an interaction between services.
      */
-    public String update()  {
-        clearErrorsAndMessages();
-        enforceBusinessRules();
-        if (hasActionErrors()) {
-            return Action.SUCCESS;
-        }
-        
-        // add code here to 
-        return Action.SUCCESS;
-    }
- 
     @SuppressWarnings("PMD.NPathComplexity")
     private void enforceBusinessRules() {
-        // check for status transition errors
-        StudyStatusCode oldCode = StudyStatusCode.getByCode(ivCurrentTrialStatus);
-        StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
-        if ((oldCode != null) && (newCode != null) && (!oldCode.canTransitionTo(newCode))) {
-            addActionError(getText("Illegal transition.  Status can not be changed from " 
-                    + oldCode.getCode() + " to " + newCode.getCode() + "."));
-        }
-        
         // check all fields are not null unless status is withdrawn
+        StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
         if (newCode ==  null) {
             addActionError("Current trial status must be set.");
         }
@@ -202,16 +219,6 @@ public class StudyOverallStatusAction extends ActionSupport implements
             && (now.before(PAUtil.dateStringToTimestamp(completionDate)))) {
                 addActionError("Actual completion dates must be past or current.");
          }
-    }
-    
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private boolean studyOverallStatusChanged() {
-        return true;
-    }
-    
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private boolean studyProtocolChanged() {
-        return true;
     }
 
     /**

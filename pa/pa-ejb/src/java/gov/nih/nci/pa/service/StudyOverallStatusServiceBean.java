@@ -5,12 +5,16 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +34,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyOverallStatusServiceBean implements
         StudyOverallStatusServiceRemote {
 
@@ -96,6 +101,51 @@ public class StudyOverallStatusServiceBean implements
             return null;
         }
         return sosList.get(sosList.size() - 1);
+    }
+
+    /**
+     * @param dto studyOverallStatusDTO
+     * @return StudyOverallStatusDTO
+     * @throws PAException PAException
+     */
+    public StudyOverallStatusDTO updateStudyOverallStatus(
+            StudyOverallStatusDTO dto) throws PAException {
+        if (!PAUtil.isIiNull(dto.getIi())) {
+            LOG.error(" Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ");
+            throw new PAException(" Existing StudyOverallStatus objects cannot be modified. "
+                                + " Append new object instead. ");
+        }
+        
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.beginTransaction();
+            StudyOverallStatusDTO oldStatus = getCurrentStudyOverallStatusByStudyProtocol(
+                    dto.getStudyProtocolidentifier());
+            StudyStatusCode oldCode = CdConverter.convertToStudyStatusCode(oldStatus.getStatusCode());
+            StudyStatusCode newCode = CdConverter.convertToStudyStatusCode(dto.getStatusCode());
+            Timestamp oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
+            Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
+            if (newCode == null) {
+                throw new PAException(" Study status must be set ");
+            }
+            if (newDate == null) {
+                throw new PAException(" Study status date must be set ");
+            }
+            if (!oldCode.canTransitionTo(newCode)) {
+                throw new PAException(" Illegal study status transition from " + oldCode.getCode()
+                        + " to " + newCode.getCode());
+            }
+            if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
+                StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
+                session.saveOrUpdate(bo);
+                session.flush();
+            }
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception in updateStudyOverallStatus ", hbe);
+            throw new PAException(" Hibernate exception in updateStudyOverallStatus ", hbe);
+        }
+        return null;
     }
 
 

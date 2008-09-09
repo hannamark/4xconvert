@@ -25,50 +25,7 @@
 
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
-<div class="summarybox">
-                        
-            <div class="summarytitle">
-                <span class="value"><strong> <c:out value="${sessionScope.trialSummary.nciIdentifier }"/></strong>:
-                  <c:out value="${sessionScope.trialSummary.officialTitle }"/>
-                 </span>
-            </div>
-                            
-            <div class="float33_first">
-                <div class="row">
-                    <span class="label"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>:</span> 
-                    <span class="value"></span>
-                </div>
-                <div class="row">
-                    <span class="label"><fmt:message key="studyProtocol.leadOrganization"/>:</span> 
-                    <span class="value"><c:out value="${sessionScope.trialSummary.leadOrganizationName }"/></span>
-                </div>
-            </div>
-                            
-            <div class="float33">
-                <div class="row">
-                    <span class="label"><fmt:message key="studyProtocol.principalInvestigator"/>:</span> 
-                    <span class="value"> <c:out value="${sessionScope.trialSummary.piFullName }"/></span>
-                </div>
-                <div class="row">
-                    <span class="label">Trial Submitter:</span> 
-                    <span class="value"></span>
-                </div>
-            </div>
-                            
-            <div class="float33">
-                <div class="row">
-                    <span class="label"> <fmt:message key="studyProtocol.studyStatus"/>:</span> 
-                    <span class="value"><c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/></span>
-                </div>
-                <div class="row">
-                    <span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/>:</span> 
-                    <span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
-                </div>
-            </div>
-                
-            <div class="clear"></div>
-                            
-   </div>
+<jsp:include page="/jsp/pajsp/protocolDetailSummary.jsp"/>
 <div class="box"><s:form>
     <s:actionerror />
 <h2><fmt:message key="trialStatus.title" /></h2>

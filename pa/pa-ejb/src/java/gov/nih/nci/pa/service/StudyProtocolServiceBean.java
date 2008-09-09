@@ -5,15 +5,21 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.impl.StudyProtocolServiceImpl;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -33,7 +39,7 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals" , "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity" })
 public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
@@ -133,11 +139,27 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        // enforce business rules
         if (studyProtocolDTO == null) {
             LOG.error(" studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
             
         }
+        Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
+        Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
+        ActualAnticipatedTypeCode sCode = CdConverter.convertToActualAnticipatedTypeCode(
+                studyProtocolDTO.getStartDateTypeCode());
+        ActualAnticipatedTypeCode cCode = CdConverter.convertToActualAnticipatedTypeCode(
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+        Timestamp now = new Timestamp((new Date()).getTime());
+        if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
+            throw new PAException(" Actual start dates cannot be in the future. ");
+        }
+        if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(cDate)) {
+            throw new PAException(" Actual primary completion dates cannot be in the future. ");
+        }
+        
+        
         StudyProtocolDTO  spDTO = null;
         Session session = null;
         List<StudyProtocol> queryList = new ArrayList<StudyProtocol>();
@@ -172,11 +194,14 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
                 sp = studyProtocol;
             }
             */
-            java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
             sp.setDateLastUpdated(now);
             //sp.setMonitorCode(studyProtocol.getMonitorCode());
             sp.setAccrualReportingMethodCode(studyProtocol.getAccrualReportingMethodCode());
-            sp.setUserLastUpdated(studyProtocolDTO.getUserLastUpdated().getValue());
+            sp.setStartDate(sDate);
+            sp.setPrimaryCompletionDate(cDate);
+            sp.setStartDateTypeCode(sCode);
+            sp.setPrimaryCompletionDateTypeCode(cCode);
+            sp.setUserLastUpdated(StConverter.convertToString(studyProtocolDTO.getUserLastUpdated()));
             session.update(sp);
             session.flush();
 
