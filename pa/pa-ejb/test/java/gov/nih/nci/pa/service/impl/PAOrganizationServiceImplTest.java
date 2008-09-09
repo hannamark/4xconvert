@@ -2,8 +2,7 @@ package gov.nih.nci.pa.service.impl;
 
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.service.PAException;
-//import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.TestSchema;
 import org.junit.Before;
 import org.junit.Test;
 

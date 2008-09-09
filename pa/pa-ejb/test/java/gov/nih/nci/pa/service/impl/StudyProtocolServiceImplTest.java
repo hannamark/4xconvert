@@ -29,7 +29,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ResponsibilityCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.test.util.TestSchema;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
