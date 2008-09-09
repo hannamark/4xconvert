@@ -2,6 +2,8 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -31,6 +33,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String piFullName;
     private Long piId;
     private String localStudyProtocolIdentifier;
+    private StudyTypeCode studyTypeCode;
     
     /**
      * 
@@ -202,6 +205,21 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setLocalStudyProtocolIdentifier(String localStudyProtocolIdentifier) {
         this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
+    /**
+     * 
+     * @return studyTypeCode
+     */
+    public StudyTypeCode getStudyTypeCode() {
+        return studyTypeCode;
+    }
+    /**
+     * 
+     * @param studyTypeCode studyTypeCode
+     */
+    public void setStudyTypeCode(StudyTypeCode studyTypeCode) {
+        this.studyTypeCode = studyTypeCode;
+    }
+    
     
     
 }
