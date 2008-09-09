@@ -1,5 +1,8 @@
 package gov.nih.nci.po.util;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
@@ -11,7 +14,11 @@ import gov.nih.nci.po.service.PersonCRServiceBeanTest;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Date;
+
+import net.sf.xsnapshot.SnapshotHelper;
 
 import org.junit.Test;
 
@@ -55,6 +62,33 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         Person clone = PoXsnapshotHelper.createModel(dto);
 
         EqualsByValue.assertEquals(per, clone);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testHelperDirectly() throws Exception {
+        Field f = PoXsnapshotHelper.class.getDeclaredField("REGISTRY");
+        f.setAccessible(true);
+        Object o = f.get(null);
+        assertNotNull(o);
+        PoXsnapshotHelper instance = (PoXsnapshotHelper) f.get(null);
+        Collection<SnapshotHelper> values = instance.m_snapshotMap.values();
+        for (SnapshotHelper helper : values) {
+            assertNull(helper.createSnapshot(null, null));
+            try {
+                helper.createSnapshot(1L, null);
+                fail();
+            } catch (IllegalArgumentException iae) {
+                // expected
+            }
+            assertNull(helper.createModel(null, null));
+            try {
+                helper.createModel(1L, null);
+                fail();
+            } catch (IllegalArgumentException iae) {
+                // expected
+            }
+        }
     }
 
 }
