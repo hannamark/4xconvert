@@ -81,20 +81,7 @@ public class StudyProtocolDAO {
         LOG.debug("Entering generateStudyProtocolQuery ");
         StringBuffer hql = new StringBuffer();
         try {
-            /*
-            hql.append(" select sp , sos , dws , di , org , per from StudyProtocol as sp  "
-                    + "left outer join sp.studyOverallStatuses as sos  "
-                    + "left outer join sp.documentWorkflowStatuses as dws  "
-                    + "left outer join sp.documentIdentifications as di  "
-                    + "left outer join sp.studySites as st "  
-                    + "left outer join st.organization as org "
-                    + "left outer join sp.studyContacts as sc "
-                    + "left outer join sc.studyContactRoles as scr " 
-                    + "left outer join sc.healthCareProvider as hcp " 
-                    + "left outer join hcp.person as per ");
-            hql.append(generateWhereClause(studyProtocolQueryCriteria));
-            */
-            hql.append(" select sp , dws , sos , sps , sc , per from StudyProtocol as sp  "
+            hql.append(" select sp , dws , sos  , per , org , sps , sc from StudyProtocol as sp  "
                     + "left outer join sp.documentWorkflowStatuses as dws  "
                     + "left outer join sp.studyOverallStatuses as sos  "
                     + "left outer join sp.studyContacts as sc "
