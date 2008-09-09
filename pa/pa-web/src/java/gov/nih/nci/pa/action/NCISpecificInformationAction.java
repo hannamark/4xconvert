@@ -4,8 +4,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
-import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.IsoConverter;
@@ -61,10 +61,6 @@ public class NCISpecificInformationAction  extends ActionSupport {
         //@todo: perform this error only for Interventional trial type, currently trial type
         //is not yet added to the code
         
-        if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getMonitorCode())) {
-            addActionError(getText("error.studyProtocol.monitorCode"));
-            error = true;
-        }
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
             addActionError(getText("error.studyProtocol.accrualReportingMethodCode"));
             error = true;
@@ -85,9 +81,9 @@ public class NCISpecificInformationAction  extends ActionSupport {
         try {
              spIsoDTO = getStudyProtocol();
 
-             //Step3: overwrite the new values
-             spIsoDTO.setMonitorCode(IsoConverter.convertEnumCodeToIsoCd(
-                     MonitorCode.getByCode(nciSpecificInformationWebDTO.getMonitorCode())));
+             // set the user id 
+             spIsoDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+             
              spIsoDTO.setAccrualReportingMethodCode(IsoConverter.convertEnumCodeToIsoCd(
                      AccrualReportingMethodCode.getByCode(
                              nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
@@ -146,9 +142,6 @@ public class NCISpecificInformationAction  extends ActionSupport {
         if (spIsoDTO.getAccrualReportingMethodCode() != null) {
             nciSpDTO.setAccrualReportingMethodCode(
                 spIsoDTO.getAccrualReportingMethodCode().getCode());
-        }
-        if (spIsoDTO.getMonitorCode() != null) {
-            nciSpDTO.setMonitorCode(spIsoDTO.getMonitorCode().getCode());
         }
         /*
         if (spIsoDTO.getSummaryFourFundingCategoryCode() != null) {
