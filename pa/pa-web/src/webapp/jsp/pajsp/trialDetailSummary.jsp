@@ -4,9 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <%@ page import = "gov.nih.nci.pa.dto.StudyProtocolQueryDTO" %>
-<!-- <tr>
-<th colspan="2"><fmt:message key="trialSummary.title"/></th>
-</tr> -->
+
 <tr>
 <td scope="row" class="label">
     <label for="nciAccessionNumber">
@@ -69,45 +67,4 @@
 	<td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here.">Acronym:</dfn></label></td>
 	<td class="value"></td>
 </tr>
-<!--<tr>
-    <td scope="row" class="label">
-        <label for="principalInvestigator"> 
-        <dfn title="Context sensitive help text or tooltip here.">
-            <fmt:message key="studyProtocol.principalInvestigator"/>
-        </dfn>
-        </label>
-    </td>           
-    <td class="value">
-         <c:out value="${sessionScope.trialSummary.piFullName }"/> 
-    </td>
 
-
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="principalInvestigator"> 
-        <dfn title="Context sensitive help text or tooltip here.">
-            <fmt:message key="studyProtocol.studyStatus"/>
-   		</dfn>    
-        </label>
-    </td>           
-    <td class="value">
-         <c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/> /
-    </td>
-
-
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="principalInvestigator">
-        <dfn title="Context sensitive help text or tooltip here."> 
-            <fmt:message key="studyProtocol.documentWorkflowStatus"/>
-        </dfn>
-        </label>
-    </td>           
-    <td class="value">
-         <c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/> /
-    </td>
-
-
-</tr>-->

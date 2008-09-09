@@ -15,7 +15,7 @@
 			<div class="float33_first">
 				<div class="row">
 					<span class="label"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>:</span> 
-					<span class="value"></span>
+					<span class="value"><c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/></span>
 				</div>
 				<div class="row">
 					<span class="label"><fmt:message key="studyProtocol.leadOrganization"/>:</span> 
@@ -29,8 +29,8 @@
 					<span class="value"> <c:out value="${sessionScope.trialSummary.piFullName }"/></span>
 				</div>
 				<div class="row">
-					<span class="label">Trial Submitter:</span> 
-					<span class="value"></span>
+					<!-- <span class="label">Trial Submitter:</span> 
+					<span class="value"></span> -->
 				</div>
 			</div>
 							

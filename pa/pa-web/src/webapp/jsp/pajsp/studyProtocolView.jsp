@@ -5,13 +5,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="nciSpecificInformation.title"/></title>
+    <title><fmt:message key="studyProtocol.view.title"/></title>
     <s:head />
 </head>
 
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
- <h1><fmt:message key="nciSpecificInformation.title" /></h1>
+ <h1><fmt:message key="studyProtocol.view.title" /></h1>
 
 <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -23,25 +23,72 @@
 
         <table class="form">
          
-             <c:if test="${sessionScope.trialSummary  != null}">
-                <jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/> 
-            </c:if> 
+            <tr>
+            <td scope="row" class="label">
+                <label for="nciAccessionNumber">
+                <dfn title="Context sensitive help text or tooltip here."> 
+                    <fmt:message key="studyProtocol.nciIdentifier"/>
+                 </dfn>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
+            </td>
+            </tr>
+            <tr>
+            <td scope="row" class="label">
+                <label for="nct">
+                <dfn title="Context sensitive help text or tooltip here.">NCT Number:
+                </dfn></label>
+            </td>
+            <td class="value"></td>
+            </tr>
+            <tr>
+            <td scope="row" class="label">
+                <label for="localProtocolIdentifer"> 
+                <dfn title="Context sensitive help text or tooltip here.">
+                    <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
+                </dfn>
+                </label>
+            </td>
+            <td class="value"></td>
+            </tr>       
+            <tr>
+            <tr>
+                <td scope="row" class="label"><label for="sectrialid"><dfn title="Context sensitive help text or tooltip here.">Secondary Trial Identifier:</dfn></label></td>
+                <td class="value"></td>
+            </tr>
+            <tr>
+            <td scope="row" class="label">
+                <label for="leadOrg"> 
+                <dfn title="Context sensitive help text or tooltip here.">
+                    <fmt:message key="studyProtocol.leadOrganization"/>
+                </dfn>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${sessionScope.trialSummary.leadOrganizationName }"/> 
+            </td>
+            </tr>      
+            <td scope="row" class="label">
+                <label for="officialTitle">
+                <dfn title="Context sensitive help text or tooltip here."> 
+                    <fmt:message key="studyProtocol.officialTitle"/>
+                 </dfn>
+                </label>
+            </td>
+            <td class="value">
+                 <c:out value="${sessionScope.trialSummary.officialTitle }"/> 
+            </td>
+            </tr>       
+             <tr>
+                <td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here.">Acronym:</dfn></label></td>
+                <td class="value"></td>
+            </tr>
 
-<!-- <th colspan="2"><fmt:message key="studyProtocol.view.title"/></th>
-<tr>
-    <td scope="row" class="label" nowrap>
-        <label for="principalInvestigator"> 
-            <fmt:message key="studyProtocol.studyPhase"/>
-        </label>
-    </td>           
-    <td >
-        <c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/>
 
-    </td>
-
-
-</tr> -->
         </table>  
+<!--        
  <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">
@@ -49,10 +96,10 @@
 		</ul>	
 	</del>
 </div>
-
+-->
                   
     </s:form>
    </div>
-<!--  </div> -->
+
  </body>
  </html>

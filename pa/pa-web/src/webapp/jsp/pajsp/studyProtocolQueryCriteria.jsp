@@ -20,6 +20,11 @@ function resetValues () {
 
 
 }
+
+function handleAction(){
+     document.studyProtocolQuery.action="studyProtocolQuery.action";
+     document.studyProtocolQuery.submit();     
+}
 </SCRIPT>
 <body>
 <!-- main content begins-->
@@ -127,23 +132,24 @@ function resetValues () {
                 <td>
                    <s:select headerKey="" headerValue="All" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
                 </td>                  
-    
+<!--    
                  <td colspan="2">                        
                     <INPUT TYPE="submit" NAME="submit"  value="Search" class="button"/>          
                     <INPUT TYPE="button" NAME="reset"  class="button" value="Reset" onClick="resetValues()"/>
                 </td>  
+-->                
             </tr>
         </table>
-        <!--
-		<div class="actionsrow">
-			<del class="btnwrapper">
-				<ul class="btnrow">			
-					<li><a href="studyProtocolQuery.action" class="btn"><span class="btn_img"><span class="search">Search</span></span></a></li>
-				</ul>	
-			</del>
+        <div class="actionsrow">
+            <del class="btnwrapper">
+                <ul class="btnrow">         
+                    <li><li>            
+                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+                        </li>
+                </ul>   
+            </del>
 
-		</div>
-        -->
+        </div>
   
         
    </s:form>
