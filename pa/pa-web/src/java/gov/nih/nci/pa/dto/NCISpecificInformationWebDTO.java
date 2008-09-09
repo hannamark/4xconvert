@@ -12,25 +12,11 @@ package gov.nih.nci.pa.dto;
  */
 public class NCISpecificInformationWebDTO {    
   
-    private String monitorCode;
     private String accrualReportingMethodCode;
     private String summaryFourFundingCategoryCode;
     private String organizationName;
     private String organizationIi;
     
-    /**
-     * @return monitorCode 
-     */
-    public String getMonitorCode() {
-        return monitorCode;
-    }
-    
-    /**
-     * @param monitorCode monitorCode
-     */
-    public void setMonitorCode(String monitorCode) {
-        this.monitorCode = monitorCode;
-    }
 
     /**
      * 
