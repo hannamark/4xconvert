@@ -188,6 +188,14 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.2</version>
+                <configuration>
+                    <instrumentation>
+                        <excludes>
+                            <!-- XSnapshot *Helper classes have lots of branches that are codegened -->
+                            <exclude>gov/nih/nci/services/**/*Helper.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -294,7 +302,7 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>78</totalBranchRate>
+                        <totalBranchRate>80</totalBranchRate>
                         <totalLineRate>85</totalLineRate>
                     </check>
                     <formats>

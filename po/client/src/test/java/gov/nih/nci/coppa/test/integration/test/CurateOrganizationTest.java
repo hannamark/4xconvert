@@ -59,7 +59,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyFax();
         verifyTty();
         verifyUrl();
-        
+
         markAsAccepted(id);
     }
 
@@ -67,14 +67,14 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         clickAndWait("//a[@id='mark_as_accepted_button']/span/span");
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
-    
+
     public void testCurateOrgWithCRs() throws Exception {
         // create a new org via remote API.
         String name = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'Y');
         String abbrv = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'X');
         String desc = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'W');
         Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
-        
+
         OrganizationDTO orgDTO = getOrgService().getOrganization(id);
         TelEmail email = new TelEmail();
         email.setValue(new URI("mailto:another.email@example.com"));
@@ -92,9 +92,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         tty.setValue(new URI(TelPhone.SCHEME_X_TEXT_TEL + ":345-678-9012"));
         orgDTO.getTelecomAddress().getItem().add(tty);
         getOrgService().updateOrganization(orgDTO);
-        
+
         loginAsCurator();
-        
+
         selenium.open("/po-web/protected/curate/search/listAll.action");
         selenium.click("link=Inbox");
         waitForPageToLoad();
@@ -104,15 +104,15 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
         assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
         assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
-        
+
         verifyPostalAddress();
-        
+
         verifyEmail();
         verifyPhone();
         verifyFax();
         verifyTty();
         verifyUrl();
-        
+
     }
 
     private void verifyPostalAddress() {
