@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -110,6 +111,13 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
      * {@inheritDoc}
      */
     public Map<String, String[]> validate(HealthCareProvider entity) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<HealthCareProvider> getByIds(Long[] ids) {
         return null;
     }
 }

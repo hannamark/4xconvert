@@ -86,6 +86,7 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -107,12 +108,13 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
+    private static final String UNCHECKED = "unchecked";
     private final Class<T> typeArgument;
 
     /**
      * default constructor.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public AbstractBaseServiceBean() {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[0];
@@ -132,10 +134,27 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
      * @param id the id
      * @return the object
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public T getById(long id) {
         return (T) PoHibernateUtil.getCurrentSession().get(getTypeArgument(), id);
+    }
+
+    /**
+     * Get the object of type T with the given IDs.
+     * @param ids the ids
+     * @return the object
+     */
+    @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<T> getByIds(Long[] ids) {
+        if (ids == null || ids.length == 0) {
+            return Collections.EMPTY_LIST;
+        }
+        Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
+                + " obj where obj.id in (:ids_list)");
+        q.setParameterList("ids_list", ids);
+        return q.list();
     }
 
     /**
@@ -220,7 +239,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<T> search(SearchCriteria<T> criteria,
             PageSortParams<T> pageSortParams) {

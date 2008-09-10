@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Local;
@@ -107,6 +108,13 @@ public interface HealthCareProviderServiceLocal {
      * @return health care provider with matching id
      */
     HealthCareProvider getById(long id);
+
+    /**
+     * get all of the health care providers with the given ids.
+     * @param ids the ids.
+     * @return the health care providers
+     */
+    List<HealthCareProvider> getByIds(Long[] ids);
 
     /**
      * @param entity the entity to validate
