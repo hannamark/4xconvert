@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -20,8 +21,9 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
@@ -57,6 +59,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private String completionDate;
     private String startDateType;
     private String completionDateType;
+    private List<StudyOverallStatusWebDTO> overallStatusList;
     
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -106,6 +109,19 @@ public class StudyOverallStatusAction extends ActionSupport implements
             addActionError("Update succeeded.");
         }
         loadForm();
+        return Action.SUCCESS;
+    }
+    
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String history() throws Exception {
+        overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
+        List<StudyOverallStatusDTO> isoList = sosService.getStudyOverallStatusByStudyProtocol(spIdIi);
+        for (StudyOverallStatusDTO iso : isoList) {
+            overallStatusList.add(new StudyOverallStatusWebDTO(iso));
+        }
         return Action.SUCCESS;
     }
     
@@ -184,7 +200,6 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * This method is used to enforce the business rules which are form specific or
      * based on an interaction between services.
      */
-    @SuppressWarnings("PMD.NPathComplexity")
     private void enforceBusinessRules() {
         // check all fields are not null unless status is withdrawn
         StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
@@ -208,17 +223,6 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 addActionError("Primary completion date type must be set.");
             }
         }
-        
-        // enforce date rules
-        Timestamp now = new Timestamp(new Date().getTime());
-        if (actualString.equals(startDateType)
-            && (now.before(PAUtil.dateStringToTimestamp(startDate)))) {
-                addActionError("Actual start dates must be past or current.");
-        }
-        if (actualString.equals(completionDateType) 
-            && (now.before(PAUtil.dateStringToTimestamp(completionDate)))) {
-                addActionError("Actual completion dates must be past or current.");
-         }
     }
 
     /**
@@ -318,4 +322,19 @@ public class StudyOverallStatusAction extends ActionSupport implements
     public void setCurrentTrialStatus(String currentTrialStatus) {
         this.currentTrialStatus = currentTrialStatus;
     }
+
+    /**
+     * @return the overallStatusList
+     */
+    public List<StudyOverallStatusWebDTO> getOverallStatusList() {
+        return overallStatusList;
+    }
+
+    /**
+     * @param overallStatusList the overallStatusList to set
+     */
+    public void setOverallStatusList(List<StudyOverallStatusWebDTO> overallStatusList) {
+        this.overallStatusList = overallStatusList;
+    }
+
 }

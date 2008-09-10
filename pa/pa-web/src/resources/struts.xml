@@ -66,7 +66,7 @@
         <action name="studyOverallStatusUpdate" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="update">
             <result>/jsp/pajsp/studyOverallStatus.jsp</result>
         </action> 
-        <action name="studyOverallStatusHistory" >
+        <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
             <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>
         </action>	
 		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">

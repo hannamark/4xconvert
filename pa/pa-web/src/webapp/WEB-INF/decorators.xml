@@ -12,6 +12,9 @@
         <pattern>*Ajax.action*</pattern>        
     </excludes>
 
+    <decorator name="popup" page="popup.jsp">
+        <pattern>*studyOverallStatusHistory*</pattern>
+    </decorator>
     <decorator name="main" page="main.jsp">
         <pattern>/*</pattern>
     </decorator>

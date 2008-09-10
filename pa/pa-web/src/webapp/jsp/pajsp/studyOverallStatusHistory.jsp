@@ -19,14 +19,22 @@
   <div id="box">
     <s:form action="studyOverallStatus"><s:actionerror/>
         <table class="data">
+    <c:if test="${overallStatusList != null}">
+    <tr><td colspan="2">
+    <display:table name="overallStatusList">  
+        <display:column property="statusCode" titleKey="studyOverallStatus.statusCode" />
+        <display:column property="statusDate" titleKey="studyOverallStatus.statusDate" />
+    </display:table>
+    </td></tr>
+    </c:if> 
             <tr>
                 <td colspan="2" style="text-align"right;">                        
                     <INPUT TYPE="button" value="Close" class="button"  onclick="javascript: self.close ();" />           
-                </td> 				
+                </td>               
             </tr>
         </table>
     </s:form>
    </div>
  <!-- </div> -->
- </body>
- </html>
+</body>
+</html>

@@ -57,7 +57,7 @@ public class StudyOverallStatusConverter {
     public static StudyOverallStatus convertFromDtoToDomain(
             StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
-            String errmsg = " convertFromDtoToDomain has been implemented for new domain "
+            String errmsg = " convertFromDtoToDomain has been implemented for new domain"
                           + " objects only.  StudyOverallStatusDTO.ii must be null. ";
             LOG.error(errmsg);
             throw new PAException(errmsg);
