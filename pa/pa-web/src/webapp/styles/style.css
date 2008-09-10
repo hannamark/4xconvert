@@ -498,7 +498,8 @@ A.btn SPAN.delete
 { background:url("../images/ico_delete.gif") no-repeat; }
 A.btn SPAN.upload
 { background:url("../images/ico_upload.gif") no-repeat; }
-
+A.btn SPAN.history
+{ background:url("../images/ico_history.gif") no-repeat; }
 
 /* Footer */
 
