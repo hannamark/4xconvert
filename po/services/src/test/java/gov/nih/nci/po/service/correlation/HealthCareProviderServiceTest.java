@@ -209,4 +209,9 @@ public class HealthCareProviderServiceTest extends AbstractBeanTest {
         hcps = locator.getHealthCareProviderService().getByIds(new Long[0]);
         assertEquals(0, hcps.size());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetByTooManyIds () {
+        locator.getHealthCareProviderService().getByIds(new Long[501]);
+    }
 }
