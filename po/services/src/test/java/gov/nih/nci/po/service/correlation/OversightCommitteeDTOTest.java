@@ -83,142 +83,61 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRole;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.convert.CdConverter;
-import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.service.AbstractHibernateTestCase;
-import gov.nih.nci.po.service.OrganizationServiceBeanTest;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
+import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.services.correlation.OrganizationRoleDTO;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
 /**
- * Test to verify the conversion to and from the org role is valid.
+ * @author Todd Parnell
+ *
  */
-public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateTestCase {
+public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
 
-    private ServiceLocator iiLocator;
-    private ServiceLocator cdLocator;
-
-    @Before
-    public void setUpTest() {
-        iiLocator = IiConverter.getServiceLocator();
-        IiConverter.setServiceLocator(new TestServiceLocator());
-        cdLocator = CdConverter.getServiceLocator();
-        CdConverter.setServiceLocator(new TestServiceLocator());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected OrganizationRole getExampleTestClass() {
+        OversightCommittee oc = new OversightCommittee();
+        fillInExampleOrgRoleFields(oc);
+        OversightCommitteeType oct = new OversightCommitteeType("testcode");
+        oc.setType(oct);
+        return oc;
     }
 
-    @After
-    public void tearDownTest() {
-        IiConverter.setServiceLocator(iiLocator);
-        CdConverter.setServiceLocator(cdLocator);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
+        OversightCommitteeDTO dto = new OversightCommitteeDTO();
+        fillInOrgRoleDTOFields(dto, scoperId, playerId);
+        Cd type = new Cd();
+        type.setCode("testcode");
+        dto.setType(type);
+
+        return dto;
     }
 
-    protected OrganizationRole fillInExampleOrgRoleFields(OrganizationRole or) {
-        or.setId(1L);
-        or.setStatus(RoleStatus.ACTIVE);
-        or.setPlayer(new Organization());
-        or.getPlayer().setId(2L);
-        or.setScoper(new Organization());
-        or.getScoper().setId(3L);
-
-        return or;
-    }
-
-    abstract protected OrganizationRole getExampleTestClass();
-
-    abstract protected void verifyTestClassFields(OrganizationRoleDTO dto);
-
-    @Test
-    public void testCreateFullSnapshotFromModel() {
-        OrganizationRole orgRole = getExampleTestClass();
-        OrganizationRoleDTO dto = PoXsnapshotHelper.createSnapshot(orgRole);
-
-        Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 1);
-        expectedIi.setDisplayable(true);
-        expectedIi.setScope(IdentifierScope.OBJ);
-        expectedIi.setReliability(IdentifierReliability.ISS);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getIdentifier()));
-
-        expectedIi.setExtension("" + 2);
-        expectedIi.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        expectedIi.setRoot(IdConverter.ORG_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPlayerIdentifier()));
-
-        expectedIi.setExtension("" + 3);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
-
-        assertEquals("active", dto.getStatus().getCode());
-
-        verifyTestClassFields(dto);
-    }
-
-    protected OrganizationRoleDTO fillInOrgRoleDTOFields(OrganizationRoleDTO or, Long scoperId, Long playerId) {
-        Ii ii = new Ii();
-        ii.setExtension("" + 1L);
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot("tstroot");
-        or.setIdentifier(ii);
-
-        or.setScoperIdentifier(getPlayerScoperIi(scoperId));
-        or.setPlayerIdentifier(getPlayerScoperIi(playerId));
-
-        Cd status = new Cd();
-        status.setCode("active");
-        or.setStatus(status);
-
-        return or;
-    }
-
-    private Ii getPlayerScoperIi(Long id) {
-        Ii ii;
-        ii = new Ii();
-        ii.setExtension("" + id);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.ORG_ROOT);
-        return ii;
-    }
-
-    abstract protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId);
-
-    abstract protected void verifyTestClassDTOFields(OrganizationRole or);
-
-    @Test
-    public void testCreateFullModelFromSnapshot() throws Exception {
-        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
-        orgTest.loadData();
-        orgTest.setUpData();
-
-        long scoperId = orgTest.createOrganization();
-        long playerId = orgTest.createOrganization();
-        OrganizationRoleDTO dto = getExampleTestClassDTO(scoperId, playerId);
-        OrganizationRole bo = PoXsnapshotHelper.createModel(dto);
-
-        assertEquals(1L, bo.getId().longValue());
-        assertEquals(scoperId, bo.getScoper().getId().longValue());
-        assertEquals(playerId, bo.getPlayer().getId().longValue());
-        assertEquals(RoleStatus.ACTIVE, bo.getStatus());
-
-        verifyTestClassDTOFields(bo);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void verifyTestClassDTOFields(OrganizationRole or) {
+        assertEquals("testcode", ((OversightCommittee) or).getType().getCode());
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void verifyTestClassFields(OrganizationRoleDTO dto) {
+        assertEquals("testcode", ((OversightCommitteeDTO) dto).getType().getCode());
+
+    }
+
 }

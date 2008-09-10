@@ -83,55 +83,37 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.JndiServiceLocator;
-import gov.nih.nci.po.util.ServiceLocator;
 
 /**
- * @author Scott Miller
- *
+ * Oversight Committee Type xsnapshot converter.
  */
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
-
-    private static ServiceLocator serviceLocator = new JndiServiceLocator();
-
-    /**
-     * @return the serviceLocator
-     */
-    public static ServiceLocator getServiceLocator() {
-        return serviceLocator;
-    }
-
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public static void setServiceLocator(ServiceLocator serviceLocator) {
-        CdConverter.serviceLocator = serviceLocator;
-    }
+public class OversightCommitteeTypeConverter extends AbstractXSnapshotConverter<OversightCommitteeType> {
 
     /**
      * {@inheritDoc}
      */
-    @Override
     @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
-            return null;
-        }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) converToRoleStatus(value);
-        } else if (returnClass.equals(OversightCommitteeType.class)) {
-            return (TO) convertToOversightCommitteeType(value);
+    @Override
+    public <TO> TO convert(Class<TO> returnClass, OversightCommitteeType value) {
+        if (returnClass == Cd.class) {
+            return (TO) convertToCd(value);
         }
         throw new UnsupportedOperationException(returnClass.getName());
     }
 
-    private OversightCommitteeType convertToOversightCommitteeType(Cd value) {
-        return serviceLocator.getOversightCommitteeTypeService().getByCode(value.getCode());
-    }
-
-    private RoleStatus converToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
+    /**
+     * @param cs PO oversight committee type.
+     * @return local encoding of type
+     */
+    private Cd convertToCd(OversightCommitteeType type) {
+        Cd iso = new Cd();
+        if (type == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            iso.setCode(type.getCode());
+        }
+        return iso;
     }
 }

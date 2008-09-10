@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.util.RemoteBeanHandler;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -160,5 +161,17 @@ public class EjbTestHelper {
 
     public static CountryServiceBean getCountryServiceBean() {
         return new CountryServiceBean();
+    }
+
+    /**
+     * @return the service
+     */
+    public static OversightCommitteeTypeBean getOversightCommitteeServiceBean() {
+        return new OversightCommitteeTypeBean() {
+            @Override
+            public OversightCommitteeType getByCode(String code) {
+                return new OversightCommitteeType(code);
+            }
+        };
     }
 }

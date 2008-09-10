@@ -103,6 +103,7 @@ import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
@@ -131,17 +132,21 @@ import org.junit.Test;
  */
 public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCase {
 
-    private ServiceLocator locator;
+    private ServiceLocator iiLocator;
+    private ServiceLocator cdLocator;
 
     @Before
     public void setUpTest() {
-        locator = IiConverter.getServiceLocator();
+        iiLocator = IiConverter.getServiceLocator();
         IiConverter.setServiceLocator(new TestServiceLocator());
+        cdLocator = CdConverter.getServiceLocator();
+        CdConverter.setServiceLocator(new TestServiceLocator());
     }
 
     @After
     public void tearDownTest() {
-        IiConverter.setServiceLocator(locator);
+        IiConverter.setServiceLocator(iiLocator);
+        CdConverter.setServiceLocator(cdLocator);
     }
 
     protected PersonRole fillInExamplePersonRoleFields(PersonRole pr) {

@@ -87,7 +87,11 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.TestServiceLocator;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -96,12 +100,28 @@ import org.junit.Test;
  */
 public class CdConverterTest {
 
+    private ServiceLocator locator;
+
+    @Before
+    public void setUpTest() {
+        locator = CdConverter.getServiceLocator();
+        CdConverter.setServiceLocator(new TestServiceLocator());
+    }
+
+    @After
+    public void tearDownTest() {
+        CdConverter.setServiceLocator(locator);
+    }
+
     /**
-     * test that the correct exception is thrwon when a type is not supported.
+     * test that the correct exception is thrown when a type is not supported.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testUnsupportedType() {
-        new CdConverter().convert(EntityStatus.class, null);
+        // Need a real Cd to get back the initial null checks
+        Cd cd = new Cd();
+        cd.setCode("test");
+        new CdConverter().convert(EntityStatus.class, cd);
     }
 
     /**

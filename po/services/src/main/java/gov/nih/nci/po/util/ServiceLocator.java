@@ -86,6 +86,7 @@ import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 
 /**
@@ -113,6 +114,11 @@ public interface ServiceLocator {
      * @return the PO country service
      */
     CountryServiceLocal getCountryService();
+
+    /**
+     * @return the Oversight Committee Type service
+     */
+    OversightCommitteeTypeLocal getOversightCommitteeTypeService();
 
     /**
      * @return the health care provider service.
