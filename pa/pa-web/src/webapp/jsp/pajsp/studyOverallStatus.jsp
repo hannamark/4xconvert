@@ -16,8 +16,16 @@
             var cal1 = new CalendarPopup();
             var cal2 = new CalendarPopup();
      </script>
+     
 </head>
+<SCRIPT LANGUAGE="JavaScript">
 
+function handleAction(){
+     document.studyOverallStatus.action="studyOverallStatusUpdate.action";
+     document.studyOverallStatus.submit();     
+}
+
+</SCRIPT>
 
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
@@ -40,8 +48,13 @@
             <td class="value"><s:select headerKey="" headerValue=""
                 name="currentTrialStatus"
                 list="#currentTrialStatusValues" /></td>
-            <td><s:submit value="Status History"
-                action='studyOverallStatusHistory' cssClass="button" /></td>
+            <td>
+            	<ul class="btnrow">			
+					<li style="padding-left:0"><a href="#" class="btn" onclick="openPI('studyOverallStatusHistory.action', 'popup')"><span class="btn_img"><span class="history">History</span></span></a></li>
+				</ul>
+            <!--<s:submit value="Status History"
+                action='studyOverallStatusHistory' cssClass="button" />-->
+            </td>
         </tr>
         <tr>
             <td scope="row" class="label"><label for="statusDate"><fmt:message
@@ -73,15 +86,15 @@
                 src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
             </a><s:radio name="completionDateType" list="dateTypeList" /></td>
         </tr>
-        <td colspan="2">
+        <!--<td colspan="2">
           <s:submit value="Save"  action='studyOverallStatusUpdate' cssClass="button" />
           <s:submit value="Next" action='nciSpecificInformation' cssClass="button" />
-        </td> 
+        </td> -->
     </table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">
-            <li><a href="studyOverallStatusUpdate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+            <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
             <li><a href="regulatoryInfo.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="nciSpecificInformation.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
         </ul>   
