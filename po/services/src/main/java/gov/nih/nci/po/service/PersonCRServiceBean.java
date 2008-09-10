@@ -102,14 +102,6 @@ public class PersonCRServiceBean extends AbstractCRServiceBean<PersonCR, Person>
     private PersonServiceLocal orgService;
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Class<PersonCR> getTypeArgument() {
-        return PersonCR.class;
-    }
-
-    /**
      * @param svc injected.
      */
     @EJB

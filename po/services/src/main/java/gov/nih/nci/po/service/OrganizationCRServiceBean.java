@@ -103,14 +103,6 @@ public class OrganizationCRServiceBean extends AbstractCRServiceBean<Organizatio
     private OrganizationServiceLocal orgService;
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Class<OrganizationCR> getTypeArgument() {
-        return OrganizationCR.class;
-    }
-
-    /**
      * @param svc injected.
      */
     @EJB

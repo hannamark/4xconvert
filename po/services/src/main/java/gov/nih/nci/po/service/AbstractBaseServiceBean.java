@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 
@@ -106,12 +107,25 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
+    private final Class<T> typeArgument;
+
+    /**
+     * default constructor.
+     */
+    @SuppressWarnings("unchecked")
+    public AbstractBaseServiceBean() {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        typeArgument = (Class) parameterizedType.getActualTypeArguments()[0];
+    }
 
     /**
      * Get class of the implementation.
+     *
      * @return the class
      */
-    protected abstract Class<T> getTypeArgument();
+    protected Class<T> getTypeArgument() {
+        return typeArgument;
+    }
 
     /**
      * Get the object of type T with the given ID.

@@ -1,7 +1,6 @@
 package gov.nih.nci.po.service;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -60,31 +59,14 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().save(o);
         PersonCR ocr = new PersonCR(o);
         fill(ocr);
+        ocr.setLastName("test changed last name");
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(ocr);
 
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
         PersonCR cr = instance.getById(id);
-        assertSame(ocr, cr);
+        assertEquals(ocr.getLastName(), cr.getLastName());
+        assertEquals(1, cr.getTarget().getChangeRequests().size());
     }
-
-    @Test
-    public void testEntityUpdate() {
-        class MyTracker extends RuntimeException {
-            private static final long serialVersionUID = 1L;} {
-
-        };
-        PersonServiceBean service = new PersonServiceBean(){
-            @Override
-            public void update(Person updatedEntity) {
-                throw new MyTracker();
-            }
-        };
-        instance.setPersonServiceBean(service);
-        Person entity = new Person();
-        try{
-            instance.entityUpdate(entity);
-            fail();
-        }catch(MyTracker x) {
-        }
-    }
-
 }

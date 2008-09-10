@@ -13,12 +13,4 @@ import javax.ejb.TransactionAttributeType;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class AuditableServiceBean extends AbstractBaseServiceBean<AuditLogRecord> implements AuditableServiceLocal {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Class<AuditLogRecord> getTypeArgument() {
-        return AuditLogRecord.class;
-    }
 }

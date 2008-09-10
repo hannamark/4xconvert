@@ -103,14 +103,6 @@ public class HealthCareProviderServiceBean extends AbstractBaseServiceBean<Healt
      * {@inheritDoc}
      */
     @Override
-    protected Class<HealthCareProvider> getTypeArgument() {
-        return HealthCareProvider.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long create(HealthCareProvider obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
         obj.setStatusDate(new Date());

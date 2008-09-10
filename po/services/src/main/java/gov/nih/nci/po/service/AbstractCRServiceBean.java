@@ -100,6 +100,7 @@ import javax.ejb.TransactionAttributeType;
  */
 public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Root<CR, ?>>
         extends AbstractBaseServiceBean<CR> {
+
     /**
      * {@inheritDoc}
      */

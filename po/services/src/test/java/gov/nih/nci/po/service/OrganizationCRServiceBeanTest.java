@@ -2,7 +2,6 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
@@ -57,30 +56,15 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().save(o);
         OrganizationCR ocr = new OrganizationCR(o);
         fill(ocr);
+        ocr.setAbbreviatedName("changed abbr.");
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(ocr);
 
-        OrganizationCR cr = instance.getById(id);
-        assertSame(ocr, cr);
-    }
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
 
-    @Test
-    public void testEntityUpdate() {
-        class MyTracker extends RuntimeException {
-            private static final long serialVersionUID = 1L;} {
-        };
-        OrganizationServiceBean service = new OrganizationServiceBean(){
-            @Override
-            public void update(Organization updatedEntity) {
-                throw new MyTracker();
-            }
-        };
-        instance.setOrganizationServiceBean(service);
-        Organization entity = new Organization();
-        try{
-            instance.entityUpdate(entity);
-            fail();
-        }catch(MyTracker x) {
-        }
+        OrganizationCR cr = instance.getById(id);
+        assertEquals(ocr.getAbbreviatedName(), cr.getAbbreviatedName());
+        assertEquals(1, cr.getTarget().getChangeRequests().size());
     }
 
     @Test

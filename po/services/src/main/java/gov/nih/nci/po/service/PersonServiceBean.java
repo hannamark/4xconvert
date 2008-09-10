@@ -103,14 +103,6 @@ public class PersonServiceBean extends AbstractBaseServiceBean<Person> implement
      * {@inheritDoc}
      */
     @Override
-    protected Class<Person> getTypeArgument() {
-        return Person.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Person p) throws EntityValidationException {
         p.setStatusCode(EntityStatus.NEW);

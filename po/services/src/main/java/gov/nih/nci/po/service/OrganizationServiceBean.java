@@ -106,14 +106,6 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
      * {@inheritDoc}
      */
     @Override
-    protected Class<Organization> getTypeArgument() {
-        return Organization.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Organization org) throws EntityValidationException {
         org.setStatusCode(EntityStatus.NEW);
