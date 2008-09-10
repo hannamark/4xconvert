@@ -26,6 +26,7 @@
 	<link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
+	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 	<script language="JavaScript" type="text/javascript">
         window.onload = function(){
             if(!NiftyCheck()) {
