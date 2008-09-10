@@ -21,9 +21,13 @@
 <SCRIPT LANGUAGE="JavaScript">
 
 function handleAction(){
+    input_box=confirm("Click OK to save changes or Cancel to Abort.");
+    if (input_box==true){
      document.studyOverallStatus.action="studyOverallStatusUpdate.action";
      document.studyOverallStatus.submit();     
+    }
 }
+
 
 </SCRIPT>
 
