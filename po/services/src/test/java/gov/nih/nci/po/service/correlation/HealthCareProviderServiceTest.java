@@ -80,52 +80,101 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.service.PersonServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.TestServiceLocator;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+
+import org.junit.Test;
 
 /**
  * @author Scott Miller
- *
  */
-public class JndiServiceLocator implements ServiceLocator {
+public class HealthCareProviderServiceTest extends AbstractBeanTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService()  {
-        return (GenericServiceLocal) JNDIUtil.lookup("po/GenericServiceBean/local");
+    ServiceLocator locator = new TestServiceLocator();
+
+    private HealthCareProvider getSampleHcp() throws Exception {
+
+        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
+        orgTest.setDefaultCountry(getDefaultCountry());
+        orgTest.setUser(getUser());
+        orgTest.setUpData();
+        long orgId = orgTest.createOrganization();
+
+        // create person
+        PersonServiceBeanTest personTest = new PersonServiceBeanTest();
+        personTest.setDefaultCountry(getDefaultCountry());
+        personTest.setUser(getUser());
+        Person basicPerson = personTest.getBasicPerson();
+        basicPerson.setStatusCode(EntityStatus.NEW);
+        PoHibernateUtil.getCurrentSession().save(basicPerson);
+        PoHibernateUtil.getCurrentSession().flush();
+
+        HealthCareProvider hcp = new HealthCareProvider();
+        hcp.setPerson(basicPerson);
+        hcp.setOrganization((Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId));
+        hcp.setStatusDate(new Date());
+        hcp.setEmail(new ArrayList<Email>());
+        hcp.getEmail().add(new Email("me@test.com"));
+        hcp.setPhone(new ArrayList<PhoneNumber>());
+        hcp.getPhone().add(new PhoneNumber("123-456-7890"));
+        hcp.setFax(new ArrayList<PhoneNumber>());
+        hcp.getFax().add(new PhoneNumber("098-765-4321"));
+        hcp.setTty(new ArrayList<PhoneNumber>());
+        hcp.getTty().add(new PhoneNumber("111-222-3333"));
+        hcp.setUrl(new ArrayList<URL>());
+        hcp.getUrl().add(new URL("http://www.google.com"));
+        hcp.setCertificateLicenseText("test cert");
+        Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
+        hcp.setPostalAddresses(new HashSet<Address>());
+        hcp.getPostalAddresses().add(mailingAddress);
+        return hcp;
+    }
+
+    private void verifyRetrievedHcp(HealthCareProvider expected, HealthCareProvider actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getCertificateLicenseText(), actual.getCertificateLicenseText());
+        assertEquals(expected.getEmail().size(), actual.getEmail().size());
+        assertEquals(expected.getPerson().getId(), actual.getPerson().getId());
+        assertEquals(expected.getOrganization().getId(), actual.getOrganization().getId());
+        assertEquals(expected.getFax().size(), actual.getFax().size());
+        assertEquals(expected.getPhone().size(), actual.getPhone().size());
+        assertEquals(expected.getTty().size(), actual.getTty().size());
+        assertEquals(expected.getUrl().size(), actual.getUrl().size());
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
     }
 
     /**
-     * {@inheritDoc}
+     * Test a simple create and get.
      */
-    public OrganizationServiceLocal getOrganizationService() {
-        return (OrganizationServiceLocal) JNDIUtil.lookup("po/OrganizationServiceBean/local");
-    }
+    @Test
+    public void testSimpleCreateAndGet() throws Exception {
+        HealthCareProvider hcp = getSampleHcp();
+        locator.getHealthCareProviderService().create(hcp);
 
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return (PersonServiceLocal) JNDIUtil.lookup("po/PersonServiceBean/local");
-    }
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
 
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return (HealthCareProviderServiceLocal) JNDIUtil.lookup("po/HealthCareProviderServiceBean/local");
+        HealthCareProvider retrievedHcp = locator.getHealthCareProviderService().getById(hcp.getId());
+        verifyRetrievedHcp(hcp, retrievedHcp);
     }
 }

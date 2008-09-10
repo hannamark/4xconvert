@@ -80,52 +80,38 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+
+import java.util.Map;
+
+import javax.ejb.Local;
+
 
 /**
  * @author Scott Miller
- *
  */
-public class JndiServiceLocator implements ServiceLocator {
+@Local
+public interface HealthCareProviderServiceLocal {
 
     /**
-     * {@inheritDoc}
+     * @param hcp new health care provider
+     * @return id
+     * @throws EntityValidationException if validation fails
      */
-    public GenericServiceLocal getGenericService()  {
-        return (GenericServiceLocal) JNDIUtil.lookup("po/GenericServiceBean/local");
-    }
+    long create(HealthCareProvider hcp) throws EntityValidationException;
 
     /**
-     * {@inheritDoc}
+     * @param id db id to get
+     * @return health care provider with matching id
      */
-    public OrganizationServiceLocal getOrganizationService() {
-        return (OrganizationServiceLocal) JNDIUtil.lookup("po/OrganizationServiceBean/local");
-    }
+    HealthCareProvider getById(long id);
 
     /**
-     * {@inheritDoc}
+     * @param entity the entity to validate
+     * @return return validation error messages per invalid field path.
      */
-    public PersonServiceLocal getPersonService() {
-        return (PersonServiceLocal) JNDIUtil.lookup("po/PersonServiceBean/local");
-    }
+    Map<String, String[]> validate(HealthCareProvider entity);
 
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return (HealthCareProviderServiceLocal) JNDIUtil.lookup("po/HealthCareProviderServiceBean/local");
-    }
 }

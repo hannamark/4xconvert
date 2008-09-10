@@ -3,7 +3,6 @@ package gov.nih.nci.po.services.person;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
@@ -86,13 +85,19 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         return p;
     }
 
-    @Test
-    public void createPersonRemote() throws EntityValidationException {
+    @Test(expected = IllegalArgumentException.class)
+    public void createPersonRemoteException() throws EntityValidationException {
         PersonDTO dto = new PersonDTO();
         Ii isoId = new Ii();
         isoId.setRoot("test");
         isoId.setExtension("99");
         dto.setIdentifier(isoId);
+        remote.createPerson(dto);
+    }
+
+    @Test
+    public void createPersonRemote() throws EntityValidationException {
+        PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
         Enxp part = new Enxp(EntityNamePartType.GIV);
         part.setValue("Firsty");
@@ -106,7 +111,6 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         Ii id = remote.createPerson(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
-        assertNotSame(id.getExtension(), Long.valueOf(isoId.getExtension())); // make sure this id was not used
         Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, IiConverter.convertToLong(id));
         assertEquals(findValueByType(dto.getName(), EntityNamePartType.FAM), p.getLastName());
         assertEquals(findValueByType(dto.getName(), EntityNamePartType.GIV), p.getFirstName());

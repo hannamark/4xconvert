@@ -84,6 +84,7 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 
@@ -112,4 +113,9 @@ public interface ServiceLocator {
      * @return the PO country service
      */
     CountryServiceLocal getCountryService();
+
+    /**
+     * @return the health care provider service.
+     */
+    HealthCareProviderServiceLocal getHealthCareProviderService();
 }

@@ -106,10 +106,11 @@ public interface OrganizationCRServiceLocal {
 
     /**
      * add a OrganizationCR for later processing.
+     * @return the identifier
      * @param proposedState the OrganizationCR containg the proposed stated.
      * @throws EntityValidationException if the OrganizationCR proposes an invalid state for the target.
      */
-    void addCR(OrganizationCR proposedState) throws EntityValidationException;
+    long create(OrganizationCR proposedState) throws EntityValidationException;
 
     /**
      * update the target Org, and delete processed CRs (whether applied or rejected).

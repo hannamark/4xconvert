@@ -113,16 +113,12 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
     /**
      * {@inheritDoc}
      */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Organization org) throws EntityValidationException {
-        org.setId(null);
         org.setStatusCode(EntityStatus.NEW);
         org.setStatusDate(new Date());
-
-        ensureValid(org);
-
-        Session s = PoHibernateUtil.getCurrentSession();
-        s.save(org);
-        return org.getId();
+        return super.create(org);
     }
 
     /**
@@ -130,6 +126,7 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
      * @throws EntityValidationException
      */
     @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void accept(Organization org) {
         Session s = PoHibernateUtil.getCurrentSession();
         Organization o = (Organization) s.load(Organization.class, org.getId());

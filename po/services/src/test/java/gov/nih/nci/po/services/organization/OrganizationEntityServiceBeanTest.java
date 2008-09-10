@@ -78,7 +78,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     @Test
     public void createOrg() throws EntityValidationException, URISyntaxException {
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
         dto.setName(StringConverter.convertToEnOn("some name"));
         dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
@@ -103,7 +102,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     public void createMinimalOrg() throws Exception {
         try {
             OrganizationDTO dto = new OrganizationDTO();
-            dto.setIdentifier(ISOUtils.ID_ORG.convertToIi(99L));
             dto.setName(StringConverter.convertToEnOn("some name"));
             dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
             dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));

@@ -125,6 +125,21 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
     }
 
     /**
+     * Save the object.
+     * @param obj the object
+     * @return the id
+     * @throws EntityValidationException any validation errors.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public long create(T obj) throws EntityValidationException {
+        if (obj.getId() != null) {
+            throw new IllegalArgumentException("id must be null on calls to create!");
+        }
+        ensureValid(obj);
+        return ((Long) PoHibernateUtil.getCurrentSession().save(obj)).longValue();
+    }
+
+    /**
      * @param sc criteria object to validate
      */
     protected void validateSearchCriteria(SearchCriteria<T> sc) {
@@ -260,7 +275,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(T updatedEntity) {
         Session s = PoHibernateUtil.getCurrentSession();
         s.update(updatedEntity);

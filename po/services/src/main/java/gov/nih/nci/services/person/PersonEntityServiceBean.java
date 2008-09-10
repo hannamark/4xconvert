@@ -193,10 +193,11 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         PersonCR cr = new PersonCR(target);
         proposedState.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        cr.setId(null);
         if (cr.getStatusCode() != target.getStatusCode()) {
             throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
         }
-        perCRService.addCR(cr);
+        perCRService.create(cr);
     }
 
     /**
@@ -211,7 +212,8 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         PersonDTO tmp = PoXsnapshotHelper.createSnapshot(target);
         PersonCR cr = new PersonCR(target);
         PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
+        cr.setId(null);
         cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
-        perCRService.addCR(cr);
+        perCRService.create(cr);
     }
 }

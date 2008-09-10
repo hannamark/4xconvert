@@ -80,52 +80,40 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.RoleStatus;
+
+import java.util.Date;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  * @author Scott Miller
- *
  */
-public class JndiServiceLocator implements ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class HealthCareProviderServiceBean extends AbstractBaseServiceBean<HealthCareProvider>
+        implements HealthCareProviderServiceLocal {
 
     /**
      * {@inheritDoc}
      */
-    public GenericServiceLocal getGenericService()  {
-        return (GenericServiceLocal) JNDIUtil.lookup("po/GenericServiceBean/local");
+    @Override
+    protected Class<HealthCareProvider> getTypeArgument() {
+        return HealthCareProvider.class;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationServiceLocal getOrganizationService() {
-        return (OrganizationServiceLocal) JNDIUtil.lookup("po/OrganizationServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return (PersonServiceLocal) JNDIUtil.lookup("po/PersonServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return (HealthCareProviderServiceLocal) JNDIUtil.lookup("po/HealthCareProviderServiceBean/local");
+    @Override
+    public long create(HealthCareProvider obj) throws EntityValidationException {
+        obj.setStatus(RoleStatus.PENDING);
+        obj.setStatusDate(new Date());
+        return super.create(obj);
     }
 }

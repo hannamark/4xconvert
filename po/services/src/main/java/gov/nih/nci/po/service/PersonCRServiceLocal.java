@@ -106,10 +106,11 @@ public interface PersonCRServiceLocal {
 
     /**
      * add a PersonCR for later processing.
+     * @return the identifier
      * @param proposedState the PersonCR containg the proposed stated.
      * @throws EntityValidationException if the PersonCR proposes an invalid state for the target.
      */
-    void addCR(PersonCR proposedState) throws EntityValidationException;
+    long create(PersonCR proposedState) throws EntityValidationException;
 
     /**
      * update the target Org, and delete processed CRs (whether applied or rejected).

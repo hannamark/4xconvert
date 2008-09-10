@@ -80,52 +80,36 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+
+import java.util.Map;
 
 /**
  * @author Scott Miller
  *
  */
-public class JndiServiceLocator implements ServiceLocator {
+public class HealthCareProviderServiceStub implements HealthCareProviderServiceLocal {
 
     /**
      * {@inheritDoc}
      */
-    public GenericServiceLocal getGenericService()  {
-        return (GenericServiceLocal) JNDIUtil.lookup("po/GenericServiceBean/local");
+    public long create(HealthCareProvider hcp) throws EntityValidationException {
+        return 0;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationServiceLocal getOrganizationService() {
-        return (OrganizationServiceLocal) JNDIUtil.lookup("po/OrganizationServiceBean/local");
+    public HealthCareProvider getById(long id) {
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PersonServiceLocal getPersonService() {
-        return (PersonServiceLocal) JNDIUtil.lookup("po/PersonServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return (HealthCareProviderServiceLocal) JNDIUtil.lookup("po/HealthCareProviderServiceBean/local");
+    public Map<String, String[]> validate(HealthCareProvider entity) {
+        return null;
     }
 }

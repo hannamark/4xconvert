@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import javax.persistence.Entity;
+
 import org.hibernate.validator.Length;
 
 
@@ -93,6 +95,7 @@ import org.hibernate.validator.Length;
  *      class="gov.nih.nci.services.correlation.HealthCareProviderDTO"
  *      model-extends="gov.nih.nci.po.data.bo.PersonRole"
  */
+@Entity
 public class HealthCareProvider extends PersonRole {
     private static final long serialVersionUID = 1L;
 

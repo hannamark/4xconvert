@@ -86,7 +86,9 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Root;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import java.util.List;
+
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
@@ -98,19 +100,10 @@ import javax.ejb.TransactionAttributeType;
  */
 public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Root<CR, ?>>
         extends AbstractBaseServiceBean<CR> {
-    /** 
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void addCR(CR proposedState) throws EntityValidationException {
-        ensureValid(proposedState);
-        PoHibernateUtil.getCurrentSession().save(proposedState);
-    }
-    
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void processCRs(List<CR> crs) {
         ENTITY target = null;
         for (CR ocr : crs) {
@@ -131,10 +124,10 @@ public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, E
             entityUpdate(target);
         }
     }
-    
+
     /**
      * @param entity the entity to update.
      */
     protected abstract void entityUpdate(ENTITY entity);
-   
+
 }

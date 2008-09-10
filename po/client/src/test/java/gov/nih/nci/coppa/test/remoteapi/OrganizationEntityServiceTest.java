@@ -137,7 +137,6 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         }
         try {
             OrganizationDTO dto = new OrganizationDTO();
-            dto.setIdentifier(RemoteApiUtils.convertToOrgIi(99L));
             dto.setName(RemoteApiUtils.convertToEnOn("_"));
             dto.setAbbreviatedName(RemoteApiUtils.convertToEnOn("_"));
             dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));

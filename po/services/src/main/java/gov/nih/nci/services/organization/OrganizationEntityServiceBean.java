@@ -196,11 +196,12 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         OrganizationCR cr = new OrganizationCR(target);
         proposedState.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        cr.setId(null);
         if (cr.getStatusCode() != target.getStatusCode()) {
             throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
         }
         cr.setStatusCode(target.getStatusCode());
-        orgCRService.addCR(cr);
+        orgCRService.create(cr);
     }
 
     /**
@@ -215,8 +216,9 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         OrganizationDTO tmp = PoXsnapshotHelper.createSnapshot(target);
         OrganizationCR cr = new OrganizationCR(target);
         PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
+        cr.setId(null);
         cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
-        orgCRService.addCR(cr);
+        orgCRService.create(cr);
     }
 
 }

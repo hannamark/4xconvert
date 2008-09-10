@@ -84,15 +84,12 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.Session;
 
 /**
  *
@@ -113,15 +110,11 @@ public class PersonServiceBean extends AbstractBaseServiceBean<Person> implement
     /**
      * {@inheritDoc}
      */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Person p) throws EntityValidationException {
-        p.setId(null);
         p.setStatusCode(EntityStatus.NEW);
         p.setStatusDate(new Date());
-
-        ensureValid(p);
-
-        Session s = PoHibernateUtil.getCurrentSession();
-        s.save(p);
-        return p.getId();
+        return super.create(p);
     }
 }

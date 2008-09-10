@@ -82,29 +82,29 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.test.TstProperties;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.Date;
+import java.util.Properties;
 
 import org.junit.Test;
 
@@ -124,10 +124,6 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         }
         try {
             PersonDTO dto = new PersonDTO();
-            Ii isoId = new Ii();
-            isoId.setRoot("test");
-            isoId.setExtension("99");
-            dto.setIdentifier(isoId);
             dto.setName(new EnPn());
             Enxp part = new Enxp(EntityNamePartType.GIV);
             part.setValue("--");
@@ -140,9 +136,6 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             personId = getPersonService().createPerson(dto);
             assertNotNull(personId);
             assertNotNull(personId.getExtension());
-            assertNotSame("Ii.extension provided should not be persisted", personId.getExtension(), Long.valueOf(isoId
-                    .getExtension()));
-
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
@@ -163,14 +156,14 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertTrue(result.before(new Date()));
 
     }
-    
-    
+
+
     @Test
     public void update() throws Exception {
         if (personId == null) {
             createMinimal();
         }
-        
+
         Properties config = TstProperties.properties;
         Class.forName(config.getProperty("jdbc.driver-class"));
         String url = config.getProperty("jdbc.connection-url");
@@ -181,7 +174,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
-        
+
         PersonDTO dto = getPersonService().getPerson(personId);
         Enxp n = new Enxp(EntityNamePartType.SFX);
         n.setValue("IV");
@@ -190,14 +183,14 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         e.setValue(new URI("tel:+123-123-654"));
         dto.getTelecomAddress().getItem().add(e);
         getPersonService().updatePerson(dto);
-        
+
         rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension());
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 1, count1);
     }
-    
+
     @Test(expected=IllegalArgumentException.class)
     public void updateWithChangedStatus () throws Exception {
         if (personId == null) {
@@ -209,13 +202,13 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         dto.setStatusCode(cd);
         getPersonService().updatePerson(dto);
     }
-    
+
     @Test
     public void updateStatus() throws Exception {
         if (personId == null) {
             createMinimal();
         }
-        
+
         Properties config = TstProperties.properties;
         Class.forName(config.getProperty("jdbc.driver-class"));
         String url = config.getProperty("jdbc.connection-url");
@@ -226,16 +219,16 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
-        
+
         Cd cd = new Cd();
         cd.setCode("inactive"); // maps to DEPRECATED
         getPersonService().updatePersonStatus(personId, cd);
-        
+
         rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension()+" and status = 'DEPRECATED'");
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 1, count1);
     }
-    
+
 }
