@@ -52,7 +52,11 @@ function handleAction(){
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
-                        <s:select headerKey="" headerValue="All" name="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues"  value="nciSpecificInformationData.summaryFourFundingCategoryCode" cssStyle="width:206px" />
+                        <s:select headerKey="" headerValue="" 
+                            name="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
+                            list="#summaryFourFundingCategoryCodeValues"  
+                            value="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
+                            cssStyle="width:206px" />
                       </td>  			                    
 			     </tr>
 				<tr>
