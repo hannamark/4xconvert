@@ -113,6 +113,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             queryList = query.list();
             
             studyProtocol = queryList.get(0);
+            session.flush();
             
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + ii.getExtension() , hbe);
