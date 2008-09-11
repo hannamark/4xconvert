@@ -21,4 +21,6 @@ public class Constants {
     /** Trial Summary . */
     public static final String TRIAL_SUMMARY = "trialSummary";
     
+    /** Study Protocol II. */
+    public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
 }
