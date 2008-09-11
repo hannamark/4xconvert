@@ -80,43 +80,41 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.ForeignKey;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Oversight committee role class.
+ * Defines the generic methods we expect to implement for all structural role.
  *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * @param <T> structural role
  */
-@Entity
-public class OversightCommittee extends OrganizationRole {
-
-    private static final long serialVersionUID = 8832666500989835930L;
-
-    private OversightCommitteeType type;
+public interface GenericStructrualRoleServiceLocal<T> {
 
     /**
-     * @param type the type to set
+     * @param structuralRole new role
+     * @return id
+     * @throws EntityValidationException if validation fails
      */
-    @ManyToOne
-    @ForeignKey(name = "oversight_comm_type_fkey")
-    public void setType(OversightCommitteeType type) {
-        this.type = type;
-    }
+    long create(T structuralRole) throws EntityValidationException;
 
     /**
-     * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.OversightCommitteeTypeConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
+     * @param id db id to get
+     * @return structural role with matching id
      */
-    public OversightCommitteeType getType() {
-        return type;
-    }
+    T getById(long id);
+
+    /**
+     * get all of the structural roles with the given ids.
+     * @param ids the ids.
+     * @return the structural roles
+     */
+    List<T> getByIds(Long[] ids);
+
+    /**
+     * @param entity the entity to validate
+     * @return return validation error messages per invalid field path.
+     */
+    Map<String, String[]> validate(T entity);
 }

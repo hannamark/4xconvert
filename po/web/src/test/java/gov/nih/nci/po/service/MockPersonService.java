@@ -182,7 +182,6 @@ public class MockPersonService implements PersonServiceLocal {
     }
 
     public Map<String, String[]> validate(Person entity) {
-        // TODO Auto-generated method stub
         return null;
     }
 

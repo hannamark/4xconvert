@@ -84,9 +84,6 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.ejb.Local;
 
 
@@ -94,32 +91,7 @@ import javax.ejb.Local;
  * @author Scott Miller
  */
 @Local
-public interface HealthCareProviderServiceLocal {
+public interface HealthCareProviderServiceLocal extends GenericStructrualRoleServiceLocal<HealthCareProvider> {
 
-    /**
-     * @param hcp new health care provider
-     * @return id
-     * @throws EntityValidationException if validation fails
-     */
-    long create(HealthCareProvider hcp) throws EntityValidationException;
-
-    /**
-     * @param id db id to get
-     * @return health care provider with matching id
-     */
-    HealthCareProvider getById(long id);
-
-    /**
-     * get all of the health care providers with the given ids.
-     * @param ids the ids.
-     * @return the health care providers
-     */
-    List<HealthCareProvider> getByIds(Long[] ids);
-
-    /**
-     * @param entity the entity to validate
-     * @return return validation error messages per invalid field path.
-     */
-    Map<String, String[]> validate(HealthCareProvider entity);
-
+    // empty interface - all methods are defined by generic interface
 }

@@ -87,6 +87,7 @@ import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 
@@ -128,7 +129,7 @@ public class TestServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return EjbTestHelper.getOversightCommitteeServiceBean();
+        return EjbTestHelper.getOversightCommitteeTypeServiceBean();
     }
 
     /**
@@ -136,6 +137,13 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public HealthCareProviderServiceLocal getHealthCareProviderService() {
         return EjbTestHelper.getHealthCareProviderServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OversightCommitteeServiceLocal getOversightCommitteeService() {
+        return EjbTestHelper.getOversightCommitteeServiceBean();
     }
 
 }

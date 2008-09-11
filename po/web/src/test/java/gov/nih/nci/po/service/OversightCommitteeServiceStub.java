@@ -80,43 +80,34 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import gov.nih.nci.po.data.bo.OversightCommittee;
 
-import org.hibernate.annotations.ForeignKey;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Oversight committee role class.
+ * @author Todd Parnell
  *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
  */
-@Entity
-public class OversightCommittee extends OrganizationRole {
+public class OversightCommitteeServiceStub implements OversightCommitteeServiceLocal {
 
-    private static final long serialVersionUID = 8832666500989835930L;
-
-    private OversightCommitteeType type;
-
-    /**
-     * @param type the type to set
-     */
-    @ManyToOne
-    @ForeignKey(name = "oversight_comm_type_fkey")
-    public void setType(OversightCommitteeType type) {
-        this.type = type;
+    public long create(OversightCommittee structuralRole) throws EntityValidationException {
+        return 0;
     }
 
-    /**
-     * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.OversightCommitteeTypeConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    public OversightCommitteeType getType() {
-        return type;
+    public OversightCommittee getById(long id) {
+        return null;
     }
+
+    public List<OversightCommittee> getByIds(Long[] ids) {
+        return null;
+    }
+
+    public Map<String, String[]> validate(OversightCommittee entity) {
+        return null;
+    }
+
+
 }

@@ -85,57 +85,21 @@ package gov.nih.nci.po.service.correlation;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.service.AbstractBeanTest;
-import gov.nih.nci.po.service.OrganizationServiceBeanTest;
-import gov.nih.nci.po.service.PersonServiceBeanTest;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Scott Miller
  */
-public class HealthCareProviderServiceTest extends AbstractBeanTest {
+public class HealthCareProviderServiceTest extends AbstractStructrualRoleServiceTest<HealthCareProvider> {
 
-    ServiceLocator locator = new TestServiceLocator();
-
-    private Person basicPerson = null;
-    private Organization basicOrganization = null;
-
-    @Before
-    public void setUpData() throws Exception {
-        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
-        orgTest.setDefaultCountry(getDefaultCountry());
-        orgTest.setUser(getUser());
-        orgTest.setUpData();
-        long orgId = orgTest.createOrganization();
-        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
-
-        // create person
-        PersonServiceBeanTest personTest = new PersonServiceBeanTest();
-        personTest.setDefaultCountry(getDefaultCountry());
-        personTest.setUser(getUser());
-        basicPerson = personTest.getBasicPerson();
-        basicPerson.setStatusCode(EntityStatus.NEW);
-        PoHibernateUtil.getCurrentSession().save(basicPerson);
-        PoHibernateUtil.getCurrentSession().flush();
-    }
-
-    private HealthCareProvider getSampleHcp()  {
+    @Override
+    HealthCareProvider getSampleStructuralRole()  {
         HealthCareProvider hcp = new HealthCareProvider();
         hcp.setPerson(basicPerson);
         hcp.setOrganization(basicOrganization);
@@ -157,7 +121,8 @@ public class HealthCareProviderServiceTest extends AbstractBeanTest {
         return hcp;
     }
 
-    private void verifyRetrievedHcp(HealthCareProvider expected, HealthCareProvider actual) {
+    @Override
+    void verifyStructuralRole(HealthCareProvider expected, HealthCareProvider actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getCertificateLicenseText(), actual.getCertificateLicenseText());
         assertEquals(expected.getEmail().size(), actual.getEmail().size());
@@ -169,49 +134,5 @@ public class HealthCareProviderServiceTest extends AbstractBeanTest {
         assertEquals(expected.getUrl().size(), actual.getUrl().size());
         assertEquals(expected.getStatus(), actual.getStatus());
         assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
-    }
-
-    /**
-     * Test a simple create and get.
-     */
-    @Test
-    public void testSimpleCreateAndGet() throws Exception {
-        HealthCareProvider hcp = getSampleHcp();
-        locator.getHealthCareProviderService().create(hcp);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        HealthCareProvider retrievedHcp = locator.getHealthCareProviderService().getById(hcp.getId());
-        verifyRetrievedHcp(hcp, retrievedHcp);
-    }
-
-    @Test
-    public void testGetByIds() throws Exception {
-        HealthCareProvider hcp = getSampleHcp();
-        locator.getHealthCareProviderService().create(hcp);
-
-        HealthCareProvider hcp2 = getSampleHcp();
-        locator.getHealthCareProviderService().create(hcp2);
-
-        Long[] ids = {hcp.getId(), hcp2.getId()};
-        List<HealthCareProvider> hcps = locator.getHealthCareProviderService().getByIds(ids);
-        assertEquals(2, hcps.size());
-
-        ids = new Long[1];
-        ids[0] = hcp2.getId();
-        hcps = locator.getHealthCareProviderService().getByIds(ids);
-        assertEquals(1, hcps.size());
-
-        hcps = locator.getHealthCareProviderService().getByIds(null);
-        assertEquals(0, hcps.size());
-
-        hcps = locator.getHealthCareProviderService().getByIds(new Long[0]);
-        assertEquals(0, hcps.size());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetByTooManyIds () {
-        locator.getHealthCareProviderService().getByIds(new Long[501]);
     }
 }

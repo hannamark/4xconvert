@@ -80,43 +80,45 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import org.hibernate.annotations.ForeignKey;
+import org.junit.Before;
 
 /**
- * Oversight committee role class.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * Service test.
  */
-@Entity
-public class OversightCommittee extends OrganizationRole {
+public class OversightCommitteeServiceTest extends AbstractStructrualRoleServiceTest<OversightCommittee> {
 
-    private static final long serialVersionUID = 8832666500989835930L;
+    private OversightCommitteeType sampleType = null;
 
-    private OversightCommitteeType type;
-
-    /**
-     * @param type the type to set
-     */
-    @ManyToOne
-    @ForeignKey(name = "oversight_comm_type_fkey")
-    public void setType(OversightCommitteeType type) {
-        this.type = type;
+    @Before
+    public void setupType() throws Exception {
+        sampleType = new OversightCommitteeType("sampleType");
+        PoHibernateUtil.getCurrentSession().save(sampleType);
     }
 
-    /**
-     * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.OversightCommitteeTypeConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    public OversightCommitteeType getType() {
-        return type;
+    @Override
+    OversightCommittee getSampleStructuralRole() {
+        OversightCommittee oc = new OversightCommittee();
+        oc.setPlayer(basicOrganization);
+        oc.setScoper(basicOrganization);
+        oc.setType(sampleType);
+
+        return oc;
     }
+
+    @Override
+    void verifyStructuralRole(OversightCommittee expected, OversightCommittee actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(RoleStatus.PENDING, actual.getStatus());
+    }
+
+
 }

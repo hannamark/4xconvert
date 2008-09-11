@@ -80,43 +80,31 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.RoleStatus;
 
-import org.hibernate.annotations.ForeignKey;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
- * Oversight committee role class.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * Implementation of interface.
  */
-@Entity
-public class OversightCommittee extends OrganizationRole {
-
-    private static final long serialVersionUID = 8832666500989835930L;
-
-    private OversightCommitteeType type;
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class OversightCommitteeServiceBean extends AbstractBaseServiceBean<OversightCommittee>
+        implements OversightCommitteeServiceLocal {
 
     /**
-     * @param type the type to set
+     * {@inheritDoc}
      */
-    @ManyToOne
-    @ForeignKey(name = "oversight_comm_type_fkey")
-    public void setType(OversightCommitteeType type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.OversightCommitteeTypeConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    public OversightCommitteeType getType() {
-        return type;
+    @Override
+    public long create(OversightCommittee obj) throws EntityValidationException {
+        obj.setStatus(RoleStatus.PENDING);
+        // TODO PO-432 would add setStatusDate if/when OversightCommittee has that field.  otherwise remove this.
+        // see HealthCareProviderServiceBean.create for example
+        return super.create(obj);
     }
 }

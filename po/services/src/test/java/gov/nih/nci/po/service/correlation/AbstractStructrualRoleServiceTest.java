@@ -80,43 +80,144 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.AbstractBaseServiceBean;
+import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.service.PersonServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.TestServiceLocator;
 
-import org.hibernate.annotations.ForeignKey;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Oversight committee role class.
+ * Skeleton for testing structural role services.
  *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * @param <T> structural role under test
  */
-@Entity
-public class OversightCommittee extends OrganizationRole {
+public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObject> extends AbstractBeanTest {
 
-    private static final long serialVersionUID = 8832666500989835930L;
+    ServiceLocator locator = new TestServiceLocator();
+    protected Person basicPerson = null;
+    protected Organization basicOrganization = null;
 
-    private OversightCommitteeType type;
+    @Before
+    public void setUpData() throws Exception {
+        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
+        orgTest.setDefaultCountry(getDefaultCountry());
+        orgTest.setUser(getUser());
+        orgTest.setUpData();
+        long orgId = orgTest.createOrganization();
+        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
 
-    /**
-     * @param type the type to set
-     */
-    @ManyToOne
-    @ForeignKey(name = "oversight_comm_type_fkey")
-    public void setType(OversightCommitteeType type) {
-        this.type = type;
+        // create person
+        PersonServiceBeanTest personTest = new PersonServiceBeanTest();
+        personTest.setDefaultCountry(getDefaultCountry());
+        personTest.setUser(getUser());
+        basicPerson = personTest.getBasicPerson();
+        basicPerson.setStatusCode(EntityStatus.NEW);
+        PoHibernateUtil.getCurrentSession().save(basicPerson);
+        PoHibernateUtil.getCurrentSession().flush();
+    }
+
+    abstract T getSampleStructuralRole();
+
+    abstract void verifyStructuralRole(T expected, T actual);
+
+    @SuppressWarnings("unchecked")
+    private AbstractBaseServiceBean<T> getService() {
+        // find the correct service via reflection
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+
+        for (Method m : locator.getClass().getDeclaredMethods()) {
+            Class<?> serviceReturnClass = m.getReturnType();
+            if (serviceReturnClass == null) {
+                continue;
+            }
+            Type[] genericInterfaces = serviceReturnClass.getGenericInterfaces();
+            if (genericInterfaces == null || genericInterfaces.length == 0
+                    || !(genericInterfaces[0] instanceof ParameterizedType)) {
+                continue;
+            }
+            ParameterizedType pt = (ParameterizedType) genericInterfaces[0];
+            if (pt == null) {
+                continue;
+            }
+            Class<?> serviceType = (Class<?>) pt.getActualTypeArguments()[0];
+            if (myType.equals(serviceType)) {
+                try {
+                    return (AbstractBaseServiceBean<T>) m.invoke(locator);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        throw new RuntimeException("There doesn't appear to be a method on the "
+                + "service locator that returns the corret type!!");
     }
 
     /**
-     * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.OversightCommitteeTypeConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
+     * Test a simple create and get.
      */
-    public OversightCommitteeType getType() {
-        return type;
+    @Test
+    public void testSimpleCreateAndGet() throws Exception {
+        T structuralRole = getSampleStructuralRole();
+
+        AbstractBaseServiceBean<T> service = getService();
+
+        service.create(structuralRole);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        T retrievedRole = service.getById(structuralRole.getId());
+        verifyStructuralRole(structuralRole, retrievedRole);
+    }
+
+    @Test
+    public void testGetByIds() throws Exception {
+        AbstractBaseServiceBean<T> service = getService();
+
+        T sr1 = getSampleStructuralRole();
+        service.create(sr1);
+
+        T sr2 = getSampleStructuralRole();
+        service.create(sr2);
+
+        Long[] ids = {sr1.getId(), sr2.getId()};
+        List<T> srs = service.getByIds(ids);
+        assertEquals(2, srs.size());
+
+        ids = new Long[1];
+        ids[0] = sr2.getId();
+        srs = service.getByIds(ids);
+        assertEquals(1, srs.size());
+
+        srs = service.getByIds(null);
+        assertEquals(0, srs.size());
+
+        srs = service.getByIds(new Long[0]);
+        assertEquals(0, srs.size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetByTooManyIds () {
+        getService().getByIds(new Long[501]);
     }
 }

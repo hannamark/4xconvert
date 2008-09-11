@@ -26,6 +26,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
         <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>
+        <mapping class="gov.nih.nci.po.data.bo.OversightCommittee"/>
         <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeType"/>
 
         <mapping class="gov.nih.nci.po.audit.AuditLogRecord" />
