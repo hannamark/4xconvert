@@ -60,6 +60,9 @@ public class StudyProtocolConverter {
      */
     public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO) {
         StudyProtocol studyProtocol = new StudyProtocol();
+        if (studyProtocolDTO.getIi() != null) {
+            studyProtocol.setId(Long.valueOf(studyProtocolDTO.getIi().getExtension()));
+        }
         if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
             studyProtocol.setAccrualReportingMethodCode(
                     AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
