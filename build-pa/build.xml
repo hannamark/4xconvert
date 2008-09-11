@@ -85,7 +85,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
     <property name="pa-ear.dist.dir" location="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
     <property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
-    <property name="pa-web.dist.dir" location="${dist.exploded.dir}/container" />
+    <property name="pa-web.dist.dir" location="${dist.exploded.dir}/${pa-web.dist.relative.dir}" />
     <property name="pa-container-jar.dist.dir" location="${dist.exploded.dir}/${pa-container-jar.dist.relative.dir}" />
     <property name="tools.dist.dir" location="${dist.exploded.dir}/${tools.dist.relative.dir}" />
     <property name="common.dist.dir" location="${dist.exploded.dir}/${common.dist.relative.dir}" />
@@ -405,6 +405,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="**/*" />
             </fileset>
         </copy>
+        <!-- This copies container jars which for deployment to the <server>/lib directory -->
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
             <fileset dir="${lib.dir}/pa-ear/container" />
         </copy>
@@ -486,6 +487,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="**/*"/>
             </fileset>
         </copy> 
+        
+        <!-- This copies container jars which for deployment to the <server>/lib directory -->
+        <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
+            <fileset dir="${lib.dir}/pa-ear/container" />
+        </copy>
     </target>
 
     <!-- Creates upgrader distribution -->
