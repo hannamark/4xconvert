@@ -5,9 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.Serializable;
 import java.util.List;
-
-import gov.nih.nci.pa.enums.AllocationCode;
-
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
@@ -84,8 +81,7 @@ public class StudyProtocolTest  {
         Session session  = TestSchema.getSession();
 
         StudyProtocol sp = createStudyProtocolObj();
-        //TestSchema.addUpdObject(sp);
-        Serializable cid = session.save(sp);
+        TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
         DocumentWorkflowStatus dfs1 = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(sp);
