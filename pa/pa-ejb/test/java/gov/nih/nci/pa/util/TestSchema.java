@@ -18,6 +18,7 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
+import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.YesNoCode;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -63,6 +64,7 @@ public class TestSchema {
             addAnnotatedClass(RegulatoryAuthority.class).
             addAnnotatedClass(StudyRegulatoryAuthority.class).
             addAnnotatedClass(HealthCareFacility.class).
+            addAnnotatedClass(StudyResourcing.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
