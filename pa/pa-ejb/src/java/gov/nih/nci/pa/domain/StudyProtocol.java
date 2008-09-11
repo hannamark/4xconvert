@@ -63,6 +63,7 @@ public class StudyProtocol extends  AbstractEntity {
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
+    private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
     /**
      *
      * @return acronym
@@ -340,6 +341,23 @@ public class StudyProtocol extends  AbstractEntity {
     public void setStudyContacts(List<StudyContact> studyContacts) {
         this.studyContacts = studyContacts;
     }
+    /**
+     * 
+     * @return studyResourcings
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<StudyResourcing> getStudyResourcings() {
+        return studyResourcings;
+    }
+    /**
+     * 
+     * @param studyResourcings studyResourcings
+     */
+    public void setStudyResourcings(List<StudyResourcing> studyResourcings) {
+        this.studyResourcings = studyResourcings;
+    }
+    
+    
    
    
    
