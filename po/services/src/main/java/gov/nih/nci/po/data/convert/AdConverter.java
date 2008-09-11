@@ -98,6 +98,7 @@ import gov.nih.nci.services.PoIsoConstraintException;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class AdConverter extends AbstractXSnapshotConverter<Ad> {
 
+    private static final PoCountryResolver RESOLVER = new PoCountryResolver();
     /**
      * {@inheritDoc}
      */
@@ -105,7 +106,7 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
     @SuppressWarnings("unchecked")
     public <TO> TO convert(Class<TO> returnClass, Ad value) {
         if (returnClass == Address.class) {
-            return (TO) convertToAddress(value, new PoCountryResolver());
+            return (TO) convertToAddress(value, RESOLVER);
         }
         throw new UnsupportedOperationException(returnClass.getName());
     }
@@ -206,6 +207,7 @@ public class AdConverter extends AbstractXSnapshotConverter<Ad> {
      */
     public static interface CountryResolver {
         /**
+         * Must be thread safe.
          * @param code http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
          * @return a county
          */
