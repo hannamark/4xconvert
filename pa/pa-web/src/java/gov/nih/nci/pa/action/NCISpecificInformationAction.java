@@ -4,9 +4,12 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -37,18 +40,24 @@ public class NCISpecificInformationAction  extends ActionSupport {
      */
     public String query()  {
         LOG.info("Entering query");
-        String ret = null;
         try {
             
-            nciSpecificInformationWebDTO = setNciSpDto(getStudyProtocol());
-            ret = SUCCESS;    
+            // Step 1 : get from StudyProtocol
+            StudyProtocolDTO studyProtocolDTO = getStudyProtocol();
+            
+            // Step 2 : get from StudyResourcing
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+                getAttribute(Constants.STUDY_PROTOCOL_II);
+            StudyResourcingDTO studyResourcingDTO = 
+                    PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi);
+            
+            nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO , studyResourcingDTO);
+            return SUCCESS;    
             
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            ret = ERROR;
+            return ERROR;
         }
-        LOG.info("Leaving query");
-        return ret;
     }
     
     /**  
@@ -58,46 +67,73 @@ public class NCISpecificInformationAction  extends ActionSupport {
         boolean error = false;
         
         //Step1 : check for any errors
-        //@todo: perform this error only for Interventional trial type, currently trial type
-        //is not yet added to the code
         
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
             addActionError(getText("error.studyProtocol.accrualReportingMethodCode"));
             error = true;
         }
-        /*
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())) {
             addActionError(getText("error.studyProtocol.summaryFourFundingCategoryCode"));
             error = true;
         }
-        */
         if (error) {
             return ERROR;
         }
 
         
         //Step2 : retrieve the studyprotocol
-        StudyProtocolDTO spIsoDTO = null;
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        StudyResourcingDTO srDTO = new StudyResourcingDTO();
         try {
-             spIsoDTO = getStudyProtocol();
-
-             // set the user id 
-             spIsoDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
-             
-             spIsoDTO.setAccrualReportingMethodCode(IsoConverter.convertEnumCodeToIsoCd(
+            // Step 0 : get the studyprotocol from database
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+            getAttribute(Constants.STUDY_PROTOCOL_II);
+            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            // Step1 : update values to StudyProtocol
+            spDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+            spDTO.setAccrualReportingMethodCode(IsoConverter.convertEnumCodeToIsoCd(
                      AccrualReportingMethodCode.getByCode(
                              nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
-             ///spIsoDTO.setSummaryFourFundingCategoryCode(IsoConverter.convertEnumCodeToIsoCd(
-             ///        SummaryFourFundingCategoryCode.getByCode(
-             ///                nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-             //Step4: update studyprotocol 
-             spIsoDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spIsoDTO);
+            // Step2 : update values to StudyResourcing
+            srDTO.setTypeCode(IsoConverter.convertEnumCodeToIsoCd(
+                     SummaryFourFundingCategoryCode.getByCode(
+                             nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
+            srDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+
+            srDTO.setStudyProtocolIi(studyProtocolIi);
+            //Step3: update studyprotocol 
+            spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+
+            //Step4 : find out if summary 4 records already exists
+            StudyResourcingDTO summary4ResoureDTO = 
+                PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi);
+            if (summary4ResoureDTO == null) {
+                // summary 4 record does not exist,so create a new one
+                summary4ResoureDTO = new StudyResourcingDTO();
+                summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
+                summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));    
+                summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(
+                                            SummaryFourFundingCategoryCode.getByCode(
+                                                    nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
+                summary4ResoureDTO.setUserLastUpdated((StConverter.convertToSt(
+                        ServletActionContext.getRequest().getRemoteUser())));
+                
+                PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
+            } else {
+             // summary 4 record does exist,so so do an update
+                summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
+                summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(
+                        SummaryFourFundingCategoryCode.getByCode(
+                                nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
+                summary4ResoureDTO.setUserLastUpdated((StConverter.convertToSt(
+                    ServletActionContext.getRequest().getRemoteUser())));
+                PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
+            }
         } catch (Exception e) {
             addActionError(e.getMessage());
             return ERROR;
         }    
-        
-        nciSpecificInformationWebDTO = setNciSpDto(spIsoDTO);
+        nciSpecificInformationWebDTO = setNCISpecificDTO(spDTO , srDTO);
         return SUCCESS;
     }
 
@@ -119,7 +155,7 @@ public class NCISpecificInformationAction  extends ActionSupport {
     }
     
     //@todo : catch and throw paexception
-    private StudyProtocolDTO getStudyProtocol()  {
+    private StudyProtocolDTO getStudyProtocol() {
         StudyProtocolQueryDTO spDTO =  (StudyProtocolQueryDTO)
         ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         Long studyProtocolId = spDTO.getStudyProtocolId();
@@ -130,26 +166,22 @@ public class NCISpecificInformationAction  extends ActionSupport {
         // Step3 : get the StudyProtocol Remote interface and call getStudyProtocol
         try {
             return PaRegistry.getStudyProtocolService().getStudyProtocol(ii);
-        } catch (PAException e) {
+        } catch (Exception e) {
             return null;
         }
     }
     
-    private NCISpecificInformationWebDTO setNciSpDto(StudyProtocolDTO spIsoDTO) {
+    private NCISpecificInformationWebDTO setNCISpecificDTO(StudyProtocolDTO spDTO , StudyResourcingDTO srDTO) {
         NCISpecificInformationWebDTO nciSpDTO = new NCISpecificInformationWebDTO();
         
         // Step2 : Assign the values to the action form
-        if (spIsoDTO.getAccrualReportingMethodCode() != null) {
-            nciSpDTO.setAccrualReportingMethodCode(
-                spIsoDTO.getAccrualReportingMethodCode().getCode());
+        if (spDTO != null  && spDTO.getAccrualReportingMethodCode() != null) {
+            nciSpDTO.setAccrualReportingMethodCode(spDTO.getAccrualReportingMethodCode().getCode());
         }
-        /*
-        if (spIsoDTO.getSummaryFourFundingCategoryCode() != null) {
-            nciSpDTO.setSummaryFourFundingCategoryCode(
-                    spIsoDTO.getSummaryFourFundingCategoryCode().getCode());
+
+        if (srDTO != null && srDTO.getTypeCode() != null) {
+                nciSpDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
         }
-        */
-        
         return nciSpDTO;
         
     }
