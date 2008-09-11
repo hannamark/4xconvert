@@ -80,21 +80,28 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
-import javax.persistence.Entity;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 
 /**
- * Class that stores health care facility information.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * Service tests.
  */
-@Entity
-public class HealthCareFacility extends OrganizationRole {
+public class HealthCareFacilityServiceTest extends AbstractStructrualRoleServiceTest<HealthCareFacility> {
 
-    private static final long serialVersionUID = -5965985190603758915L;
+    @Override
+    HealthCareFacility getSampleStructuralRole() {
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setPlayer(basicOrganization);
+        hcf.setScoper(basicOrganization);
 
-    // There are no new fields in this class
+        return hcf;
+    }
+
+    @Override
+    void verifyStructuralRole(HealthCareFacility expected, HealthCareFacility actual) {
+        assertEquals(expected.getId(), actual.getId());
+    }
+
 }

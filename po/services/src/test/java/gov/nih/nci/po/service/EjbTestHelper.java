@@ -181,4 +181,11 @@ public class EjbTestHelper {
     public static OversightCommitteeServiceLocal getOversightCommitteeServiceBean() {
         return new OversightCommitteeServiceBean();
     }
+
+    /**
+     * @return the service
+     */
+    public static HealthCareFacilityServiceLocal getHealthCareFacilityServiceBean() {
+        return new HealthCareFacilityServiceBean();
+    }
 }

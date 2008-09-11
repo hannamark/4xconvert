@@ -80,21 +80,32 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import javax.persistence.Entity;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.RoleStatus;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
- * Class that stores health care facility information.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * Service implementation.
  */
-@Entity
-public class HealthCareFacility extends OrganizationRole {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class HealthCareFacilityServiceBean extends AbstractBaseServiceBean<HealthCareFacility>
+    implements HealthCareFacilityServiceLocal {
 
-    private static final long serialVersionUID = -5965985190603758915L;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long create(HealthCareFacility obj) throws EntityValidationException {
+        obj.setStatus(RoleStatus.PENDING);
+        // TODO PO-432 add setting of status date
+        return super.create(obj);
+    }
 
-    // There are no new fields in this class
+
 }

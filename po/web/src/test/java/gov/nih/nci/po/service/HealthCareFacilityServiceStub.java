@@ -80,21 +80,32 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import javax.persistence.Entity;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * Class that stores health care facility information.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * Mock implementation.
  */
-@Entity
-public class HealthCareFacility extends OrganizationRole {
+public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceLocal {
 
-    private static final long serialVersionUID = -5965985190603758915L;
+    public long create(HealthCareFacility structuralRole) throws EntityValidationException {
+        return 0;
+    }
 
-    // There are no new fields in this class
+    public HealthCareFacility getById(long id) {
+        return null;
+    }
+
+    public List<HealthCareFacility> getByIds(Long[] ids) {
+        return null;
+    }
+
+    public Map<String, String[]> validate(HealthCareFacility entity) {
+        return null;
+    }
+
 }

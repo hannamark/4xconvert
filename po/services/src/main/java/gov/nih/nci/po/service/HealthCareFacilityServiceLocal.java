@@ -80,21 +80,17 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import javax.persistence.Entity;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+
+import javax.ejb.Local;
 
 /**
- * Class that stores health care facility information.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ * Interface for health care facilities.
  */
-@Entity
-public class HealthCareFacility extends OrganizationRole {
+@Local
+public interface HealthCareFacilityServiceLocal extends GenericStructrualRoleServiceLocal<HealthCareFacility> {
 
-    private static final long serialVersionUID = -5965985190603758915L;
-
-    // There are no new fields in this class
+    // empty interface - all methods are defined by generic service
 }

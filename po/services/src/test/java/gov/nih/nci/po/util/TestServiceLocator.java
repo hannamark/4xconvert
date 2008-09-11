@@ -85,6 +85,7 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -144,6 +145,13 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
         return EjbTestHelper.getOversightCommitteeServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
+        return EjbTestHelper.getHealthCareFacilityServiceBean();
     }
 
 }
