@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
@@ -70,12 +71,12 @@ public class StudyProtocolConverterTest  {
         assertEquals("Monitor code does not match " , sp.getMonitorCode().getCode(), spDTO.getMonitorCode().getCode());
         assertEquals("Official Title does not match " , sp.getOfficialTitle() , spDTO.getOfficialTitle().getValue());
         assertEquals("Phase code does not match " , sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
-//        assertEquals("PrimaryCompletionDate  does not match " , 
-//                sp.getPrimaryCompletionDate(), spDTO.getPrimaryCompletionDate());
+        assertEquals("PrimaryCompletionDate  does not match " , 
+                sp.getPrimaryCompletionDate(), TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()));
         assertEquals("PrimaryCompletionDateTypeCode  does not match " , 
                 sp.getPrimaryCompletionDateTypeCode().getCode(), 
                 spDTO.getPrimaryCompletionDateTypeCode().getCode());
-//        assertEquals("StartDate Does not match ", sp.getStartDate() , spDTO.getStartDate());  
+        assertEquals("StartDate Does not match ", sp.getStartDate() , TsConverter.convertToTimestamp(spDTO.getStartDate()));  
         assertEquals("StartDate Type code Does not match ", sp.getStartDateTypeCode().getCode() , 
                 spDTO.getStartDateTypeCode().getCode());  
 //        assertEquals("Status Date Does not match ", sp.getStatusDate() , spDTO.getStatusDate());  

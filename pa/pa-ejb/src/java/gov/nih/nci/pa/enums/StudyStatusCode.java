@@ -201,12 +201,4 @@ public enum StudyStatusCode implements CodedEnum<String> {
      public boolean canTransitionTo(StudyStatusCode newStatus) {
          return TRANSITIONS.get(this).contains(newStatus);
      }
-
-     /**
-      * @return the permitted curation statuses from this entity state.  set cannot be modified.
-      */
-     public Set<StudyStatusCode> getAllowedTransitions() {
-         return TRANSITIONS.get(this);
-     }
-
 }

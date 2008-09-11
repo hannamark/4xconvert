@@ -19,8 +19,9 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.YesNoCode;
-import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,10 +39,8 @@ import org.hibernate.cfg.Configuration;
  *
  */
 public class TestSchema {
-    /** . **/
-        public static ArrayList<Long> protocolIds;
         /** . **/
-        public static ArrayList<Long> healthcareSiteIds;
+        public static ArrayList<Long> studyProtocolIds = new ArrayList<Long>();
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -105,10 +104,10 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
-                        statement.executeUpdate("delete from STUDY_PROTOCOL");
+                        statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                         statement.executeUpdate("delete from STUDY_CONDITIONS");
                         statement.executeUpdate("delete from CONDITIONS");
-                        statement.executeUpdate("delete from Document_Identification");
+                        statement.executeUpdate("delete from STUDY_PROTOCOL");
                         connection.commit();
                     } finally {
                         statement.close();
@@ -159,8 +158,25 @@ public class TestSchema {
         public static void primeData() {
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
+            sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+            sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+            sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+            sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
             addUpdObject(sp); 
-            sp.setId(sp.getId());           
+            sp.setId(sp.getId());
+            studyProtocolIds.add(sp.getId());
+            
+            StudyOverallStatus sos = new StudyOverallStatus();
+            sos.setStatusCode(StudyStatusCode.APPROVED);
+            sos.setStatusDate(PAUtil.dateStringToTimestamp("8/1/2008"));
+            sos.setStudyProtocol(sp);
+            addUpdObject(sos);
+            sos = new StudyOverallStatus();
+            sos.setStatusCode(StudyStatusCode.ACTIVE);
+            sos.setStatusDate(PAUtil.dateStringToTimestamp("8/15/2008"));
+            sos.setStudyProtocol(sp);
+            addUpdObject(sos);
+            
             //
             Condition co = new Condition();
             // co.setId(5L);
@@ -179,92 +195,4 @@ public class TestSchema {
             con.setId(con.getId());
             HibernateUtil.getCurrentSession().clear();
         }
-
-//        public static void primeData1() {
-//            ArrayList<HealthcareSite> hs = new ArrayList<HealthcareSite>();
-//            ArrayList<Investigator> i = new ArrayList<Investigator>();
-//            ArrayList<Protocol> p = new ArrayList<Protocol>();
-//            ArrayList<ProtocolStatus> ps = new ArrayList<ProtocolStatus>();
-//            ArrayList<StudySite> ss = new ArrayList<StudySite>();
-//            ArrayList<StudyInvestigator> si = new ArrayList<StudyInvestigator>();
-//
-//            hs.add(new HealthcareSite());
-//            hs.get(0).setName("name.1");
-//            hs.get(0).setNciInstituteCode("nciInstituteCode.1");
-//            hs.add(new HealthcareSite());
-//            hs.get(1).setName("name.2");
-//            hs.get(1).setNciInstituteCode("nciInstituteCode.2");
-//            addUpdObjects(hs);
-//            healthcareSiteIds = new ArrayList<Long>();
-//            healthcareSiteIds.add(hs.get(0).getId());
-//            healthcareSiteIds.add(hs.get(1).getId());
-//
-//            i.add(new Investigator());
-//            i.get(0).setLastName("lastName.0");
-//            i.add(new Investigator());
-//            i.get(1).setLastName("lastName.1");
-//            addUpdObjects(i);
-//
-//            p.add(new Protocol());
-//            p.get(0).setLongTitleText("longTitleText.0");
-//            p.get(0).setNciIdentifier("nciIdentifier.0");
-//            p.get(0).setShortTitleText("shortTitleText.0");
-//            p.get(0).setSponsorMonitorCode(SponsorMonitorCode.CTEP);
-//            p.get(0).setStudyPhaseCode(StudyPhaseCode.PHASE2);
-//            p.get(0).setStudyTypeCode(StudyTypeCode.DIAGNOSTIC);
-//            p.add(new Protocol());
-//            p.get(1).setLongTitleText("longTitleText.1");
-//            p.get(1).setNciIdentifier("nciIdentifier.1");
-//            p.get(1).setShortTitleText("shortTitleText.1");
-//            p.get(1).setSponsorMonitorCode(SponsorMonitorCode.DEA);
-//            p.get(1).setStudyPhaseCode(StudyPhaseCode.PHASE3);
-//            p.get(1).setStudyTypeCode(StudyTypeCode.TREATMENT);
-//            addUpdObjects(p);
-//            protocolIds = new ArrayList<Long>();
-//            protocolIds.add(p.get(0).getId());
-//            protocolIds.add(p.get(1).getId());
-//
-//            ps.add(new ProtocolStatus());
-//            ps.get(0).setProtocol(p.get(0));
-//            ps.get(0).setStudyStatusCode(StudyStatusCode.ACTIVE);
-//            ps.get(0).setStudyStatusDate(new Date());
-//            ps.add(new ProtocolStatus());
-//            ps.get(1).setProtocol(p.get(1));
-//            ps.get(1).setStudyStatusCode(StudyStatusCode.COMPLETE);
-//            ps.get(1).setStudyStatusDate(new Date());
-//            addUpdObjects(ps);
-//            p.get(0).getProtocolStatuses().add(ps.get(0));
-//            p.get(1).getProtocolStatuses().add(ps.get(1));
-//            addUpdObjects(p);
-//
-//            ss.add(new StudySite());
-//            ss.get(0).setHealtcareSite(hs.get(0));
-//            ss.get(0).setLeadOrganizationProtocolId("1");
-//            ss.get(0).setProtocol(p.get(0));
-//            ss.get(0).setLeadOrganizationProtocolId("leadOrganizationProtocolId.0");
-//            ss.add(new StudySite());
-//            ss.get(1).setHealtcareSite(hs.get(1));
-//            ss.get(1).setLeadOrganizationProtocolId("2");
-//            ss.get(1).setProtocol(p.get(1));
-//            ss.get(1).setLeadOrganizationProtocolId("leadOrganizationProtocolId.1");
-//            addUpdObjects(ss);
-//            p.get(0).getStudySites().add(ss.get(0));
-//            p.get(1).getStudySites().add(ss.get(1));
-//            addUpdObjects(p);
-//
-//
-//            si.add(new StudyInvestigator());
-//            si.get(0).setInvestigator(i.get(0));
-//            si.get(0).setProtocol(p.get(0));
-//            si.get(0).setResponsibilityRoleCode("responsibilityRoleCode.0");
-//            si.add(new StudyInvestigator());
-//            si.get(1).setInvestigator(i.get(1));
-//            si.get(1).setProtocol(p.get(1));
-//            si.get(1).setResponsibilityRoleCode("responsibilityRoleCode.1");
-//            addUpdObjects(si);
-//
-//            HibernateUtil.getCurrentSession().clear();
-//        }
-        
-
 }
