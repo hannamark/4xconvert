@@ -27,7 +27,7 @@ public class TsConverter {
             ts.setNullFlavor(NullFlavor.NI);
             return ts;
         }
-        ts.setValue(timeStamp.toString());
+        ts.setValue(timeStamp);
         return ts;
     }
     
@@ -39,7 +39,7 @@ public class TsConverter {
         if ((tsIso == null) || (tsIso.getValue() == null)) {
             return null;
         }
-        return Timestamp.valueOf(tsIso.getValue());
+        return new Timestamp(tsIso.getValue().getTime());
     }
 
 

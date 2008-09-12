@@ -148,6 +148,6 @@ public class PAUtil {
      */
     public static Timestamp dateStringToTimestamp(String inDate) {
         Date dt = dateStringToDate(inDate);
-        return new Timestamp(dt.getTime());
+        return (dt == null) ? null : new Timestamp(dt.getTime());
     }
 }

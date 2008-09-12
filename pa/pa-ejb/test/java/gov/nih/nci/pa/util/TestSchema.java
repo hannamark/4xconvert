@@ -40,7 +40,7 @@ import org.hibernate.cfg.Configuration;
  */
 public class TestSchema {
         /** . **/
-        public static ArrayList<Long> studyProtocolIds = new ArrayList<Long>();
+        public static ArrayList<Long> studyProtocolIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -156,6 +156,8 @@ public class TestSchema {
          * 
          */
         public static void primeData() {
+            studyProtocolIds = new ArrayList<Long>();
+
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
             sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));

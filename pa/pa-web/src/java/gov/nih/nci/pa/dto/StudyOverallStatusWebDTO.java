@@ -29,7 +29,8 @@ public class StudyOverallStatusWebDTO {
         super();
         this.id = IiConverter.convertToLong(dto.getIi());
         this.statusCode = CdConverter.convertToStudyStatusCode(dto.getStatusCode()).getDisplayName();
-        this.statusDate = PAUtil.normalizeDateString(TsConverter.convertToTimestamp(dto.getStatusDate()).toString());
+        this.statusDate = PAUtil.normalizeDateString(
+                TsConverter.convertToTimestamp(dto.getStatusDate()).toString());
     }
 
     /**
