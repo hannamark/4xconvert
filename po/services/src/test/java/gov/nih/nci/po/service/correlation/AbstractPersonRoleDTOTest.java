@@ -199,7 +199,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
     @Test
     public void testCreateFullSnapshotFromModel() {
         PersonRole perRole = getExampleTestClass();
-        PersonRoleDTO dto = PoXsnapshotHelper.createSnapshot(perRole);
+        PersonRoleDTO dto = (PersonRoleDTO) PoXsnapshotHelper.createSnapshot(perRole);
 
         // check id
         Ii expectedIi = new Ii();
@@ -371,7 +371,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
 
         // create bo from snapshot and verify values
         PersonRoleDTO dto = getExampleTestClassDTO(personId, orgId);
-        PersonRole bo = PoXsnapshotHelper.createModel(dto);
+        PersonRole bo = (PersonRole) PoXsnapshotHelper.createModel(dto);
         assertEquals(1L, bo.getId().longValue());
         assertEquals(orgId, bo.getPerson().getId().longValue());
         assertEquals(personId, bo.getOrganization().getId());

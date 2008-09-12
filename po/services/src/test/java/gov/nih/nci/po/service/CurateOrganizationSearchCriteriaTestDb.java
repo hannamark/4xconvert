@@ -63,7 +63,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
 
-        OrganizationDTO cr = PoXsnapshotHelper.createSnapshot(o);
+        OrganizationDTO cr = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o);
         EjbTestHelper.getOrganizationEntityServiceBean().updateOrganization(cr);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();

@@ -63,7 +63,7 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
 
-        PersonDTO cr = PoXsnapshotHelper.createSnapshot(o);
+        PersonDTO cr = (PersonDTO) PoXsnapshotHelper.createSnapshot(o);
         EjbTestHelper.getPersonEntityServiceBean().updatePerson(cr);
 
         @SuppressWarnings("unchecked")

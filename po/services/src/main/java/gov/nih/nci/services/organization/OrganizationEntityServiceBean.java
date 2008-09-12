@@ -153,7 +153,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
 
     public OrganizationDTO getOrganization(Ii id) {
         Organization org = orgService.getById(IiConverter.convertToLong(id));
-        return PoXsnapshotHelper.createSnapshot(org);
+        return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
     }
 
     /**
@@ -213,7 +213,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         Long oId = IiConverter.convertToLong(targetOrg);
         Organization target = orgService.getById(oId);
         // lazy way to clone with stripped hibernate IDs.
-        OrganizationDTO tmp = PoXsnapshotHelper.createSnapshot(target);
+        OrganizationDTO tmp = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(target);
         OrganizationCR cr = new OrganizationCR(target);
         PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
         cr.setId(null);

@@ -40,8 +40,8 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         org.getTty().add(new PhoneNumber("123-123-1234"));
         org.getUrl().add(new URL("http://example.com/"));
 
-        OrganizationDTO dto = PoXsnapshotHelper.createSnapshot(org);
-        Organization clone = PoXsnapshotHelper.createModel(dto);
+        OrganizationDTO dto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
+        Organization clone = (Organization) PoXsnapshotHelper.createModel(dto);
 
         EqualsByValue.assertEquals(org, clone);
     }
@@ -58,8 +58,8 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         per.getTty().add(new PhoneNumber("123-123-1234"));
         per.getUrl().add(new URL("http://example.com/"));
 
-        PersonDTO dto = PoXsnapshotHelper.createSnapshot(per);
-        Person clone = PoXsnapshotHelper.createModel(dto);
+        PersonDTO dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(per);
+        Person clone = (Person) PoXsnapshotHelper.createModel(dto);
 
         EqualsByValue.assertEquals(per, clone);
     }

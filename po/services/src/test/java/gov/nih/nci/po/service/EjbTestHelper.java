@@ -84,8 +84,12 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.util.RemoteBeanHandler;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
+import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -157,6 +161,18 @@ public class EjbTestHelper {
         HealthCareProviderCorrelationServiceBean hcpService = new HealthCareProviderCorrelationServiceBean();
         hcpService.setHcpService(EjbTestHelper.getHealthCareProviderServiceBean());
         return (HealthCareProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(hcpService);
+    }
+
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationServiceRemote() {
+        HealthCareFacilityCorrelationServiceBean hcfService = new HealthCareFacilityCorrelationServiceBean();
+        hcfService.setHcfService(EjbTestHelper.getHealthCareFacilityServiceBean());
+        return (HealthCareFacilityCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(hcfService);
+    }
+
+    public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationServiceRemote() {
+        OversightCommitteeCorrelationServiceBean ocService = new OversightCommitteeCorrelationServiceBean();
+        ocService.setOcService(EjbTestHelper.getOversightCommitteeServiceBean());
+        return (OversightCommitteeCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(ocService);
     }
 
     /**

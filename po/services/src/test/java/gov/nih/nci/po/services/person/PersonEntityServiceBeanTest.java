@@ -208,7 +208,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     private void init() throws EntityValidationException {
         PersonDTO dto = new PersonDTO();
         dto.setName(PersonNameConverterUtil.convertToEnPn("bab", "m", "a", "c", "d"));
-        Person p = PoXsnapshotHelper.createModel(dto);
+        Person p = (Person) PoXsnapshotHelper.createModel(dto);
         assertEquals("a", p.getLastName());
         assertEquals("bab", p.getFirstName());
         assertEquals("m", p.getMiddleName());
@@ -223,7 +223,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertNotNull(id.getExtension());
 
         PersonDTO personDTO = remote.getPerson(id);
-        Person p2 = PoXsnapshotHelper.createModel(personDTO);
+        Person p2 = (Person) PoXsnapshotHelper.createModel(personDTO);
         assertEquals("a", p2.getLastName());
         assertEquals("bab", p2.getFirstName());
         assertEquals("m", p2.getMiddleName());

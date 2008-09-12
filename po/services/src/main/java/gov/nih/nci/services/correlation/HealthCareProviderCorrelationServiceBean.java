@@ -82,19 +82,11 @@
  */
 package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -111,7 +103,9 @@ import org.jboss.annotation.security.SecurityDomain;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors({ PoHibernateSessionInterceptor.class })
 @SecurityDomain("po")
-public class HealthCareProviderCorrelationServiceBean implements HealthCareProviderCorrelationServiceRemote {
+public class HealthCareProviderCorrelationServiceBean
+    extends AbstractCorrelationServiceBean<HealthCareProvider, HealthCareProviderDTO>
+    implements HealthCareProviderCorrelationServiceRemote {
 
     private HealthCareProviderServiceLocal hcpService;
 
@@ -123,40 +117,13 @@ public class HealthCareProviderCorrelationServiceBean implements HealthCareProvi
         this.hcpService = hcpService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Ii createCorrelation(HealthCareProviderDTO dto) throws EntityValidationException {
-        HealthCareProvider hcpBo = (HealthCareProvider) PoXsnapshotHelper.createModel(dto);
-        return new PersonIdConverter().convertToIi(hcpService.create(hcpBo));
+    @Override
+    HealthCareProviderServiceLocal getLocalService() {
+        return hcpService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderDTO getCorrelation(Ii id) {
-        HealthCareProvider hcpBo = hcpService.getById(IiConverter.convertToLong(id));
-        return PoXsnapshotHelper.createSnapshot(hcpBo);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public List<HealthCareProviderDTO> getCorrelations(Ii[] ids) {
-        Set<Long> longIds = new HashSet<Long>();
-        for (Ii id : ids) {
-            longIds.add(IiConverter.convertToLong(id));
-        }
-        List<HealthCareProvider> hcps = hcpService.getByIds(longIds.toArray(new Long[longIds.size()]));
-        return PoXsnapshotHelper.createSnapshotList(hcps);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, String[]> validate(HealthCareProviderDTO healthCareProviderDTO) {
-        HealthCareProvider hcpBo = (HealthCareProvider) PoXsnapshotHelper.createModel(healthCareProviderDTO);
-        return hcpService.validate(hcpBo);
+    @Override
+    IdConverter getIdConverter() {
+        return new PersonIdConverter();
     }
 }

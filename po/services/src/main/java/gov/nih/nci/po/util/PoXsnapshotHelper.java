@@ -100,13 +100,10 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
 
     /**
      * @param model the model to translate
-     * @param <BO> BO type
-     * @param <DTO> DTO type
      * @return a snapshot object
      */
-    @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends PoDto> DTO createSnapshot(BO model) {
-        return (DTO) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_ISO_SNAPSHOT_NAME);
+    public static PoDto createSnapshot(PersistentObject model) {
+        return (PoDto) PO_XSNASHOTUTILS.createSnapshot(model, DEFAULT_ISO_SNAPSHOT_NAME);
     }
 
     /**
@@ -142,13 +139,10 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
      * Returns the snapshot helper for a model class and snapshot name.
      *
      * @param snapshot the snapshot to translate
-     * @param <BO> BO type
-     * @param <DTO> DTO type
      * @return a model object
      */
-    @SuppressWarnings(UNCHECKED)
-    public static <BO extends PersistentObject, DTO extends PoDto> BO createModel(DTO snapshot) {
-        return (BO) PO_XSNASHOTUTILS.createModel(snapshot);
+    public static PersistentObject createModel(PoDto snapshot) {
+        return (PersistentObject) PO_XSNASHOTUTILS.createModel(snapshot);
     }
 
     /**

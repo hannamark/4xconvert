@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
@@ -112,17 +113,22 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> e
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
 
-    private ServiceLocator oldLocator = null;
+    private ServiceLocator oldIiLocator = null;
+    private ServiceLocator oldCdLocator = null;
 
     @Before
     public void setUpLocators() {
-        oldLocator = IiConverter.getServiceLocator();
-        IiConverter.setServiceLocator(new TestServiceLocator());
+        oldIiLocator = IiConverter.getServiceLocator();
+        oldCdLocator = CdConverter.getServiceLocator();
+        TestServiceLocator newLocator = new TestServiceLocator();
+        IiConverter.setServiceLocator(newLocator);
+        CdConverter.setServiceLocator(newLocator);
     }
 
     @After
     public void relaceLocators() {
-        IiConverter.setServiceLocator(oldLocator);
+        IiConverter.setServiceLocator(oldIiLocator);
+        CdConverter.setServiceLocator(oldCdLocator);
     }
 
     @Before

@@ -150,7 +150,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public PersonDTO getPerson(Ii id) {
         Person perBO = perService.getById(IiConverter.convertToLong(id));
-        return PoXsnapshotHelper.<Person, PersonDTO>createSnapshot(perBO);
+        return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
     }
 
     /**
@@ -209,7 +209,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         Long pId = IiConverter.convertToLong(targetOrg);
         Person target = perService.getById(pId);
         // lazy way to clone with stripped hibernate IDs.
-        PersonDTO tmp = PoXsnapshotHelper.createSnapshot(target);
+        PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
         PersonCR cr = new PersonCR(target);
         PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
         cr.setId(null);

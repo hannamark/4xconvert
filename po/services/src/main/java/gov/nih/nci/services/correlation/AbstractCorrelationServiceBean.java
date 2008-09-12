@@ -80,145 +80,77 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.services.correlation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationRole;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.service.AbstractHibernateTestCase;
-import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
-import gov.nih.nci.services.correlation.OrganizationRoleDTO;
+import gov.nih.nci.services.PoDto;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Test to verify the conversion to and from the org role is valid.
+ * Generic superclass for correlation services.
+ * @param <T> type
+ * @param <DTO> the dto type
  */
-public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateTestCase {
+public abstract class AbstractCorrelationServiceBean<T extends PersistentObject, DTO extends PoDto> {
 
-    private ServiceLocator iiLocator;
-    private ServiceLocator cdLocator;
+    private static final String UNCHECKED = "unchecked";
+    abstract GenericStructrualRoleServiceLocal<T> getLocalService();
+    abstract IdConverter getIdConverter();
 
-    @Before
-    public void setUpTest() {
-        iiLocator = IiConverter.getServiceLocator();
-        IiConverter.setServiceLocator(new TestServiceLocator());
-        cdLocator = CdConverter.getServiceLocator();
-        CdConverter.setServiceLocator(new TestServiceLocator());
+    /**
+     * TODO.
+     * @param dto dto
+     * @return identifier
+     * @throws EntityValidationException on error
+     */
+    @SuppressWarnings(UNCHECKED)
+    public Ii createCorrelation(DTO dto) throws EntityValidationException {
+        T po = (T) PoXsnapshotHelper.createModel(dto);
+        return getIdConverter().convertToIi(getLocalService().create(po));
     }
 
-    @After
-    public void tearDownTest() {
-        IiConverter.setServiceLocator(iiLocator);
-        CdConverter.setServiceLocator(cdLocator);
+    /**
+     * @param id identifier
+     * @return dto
+     */
+    @SuppressWarnings(UNCHECKED)
+    public DTO getCorrelation(Ii id) {
+        T bo = getLocalService().getById(IiConverter.convertToLong(id));
+        return (DTO) PoXsnapshotHelper.createSnapshot(bo);
     }
 
-    protected OrganizationRole fillInExampleOrgRoleFields(OrganizationRole or) {
-        or.setId(1L);
-        or.setStatus(RoleStatus.ACTIVE);
-        or.setPlayer(new Organization());
-        or.getPlayer().setId(2L);
-        or.setScoper(new Organization());
-        or.getScoper().setId(3L);
-
-        return or;
+    /**
+     * @param ids list of ids
+     * @return list of dtos
+     */
+    @SuppressWarnings(UNCHECKED)
+    public List<DTO> getCorrelations(Ii[] ids) {
+        Set<Long> longIds = new HashSet<Long>();
+        for (Ii id : ids) {
+            longIds.add(IiConverter.convertToLong(id));
+        }
+        List<T> hcps = getLocalService().getByIds(longIds.toArray(new Long[longIds.size()]));
+        return PoXsnapshotHelper.createSnapshotList(hcps);
     }
 
-    abstract protected OrganizationRole getExampleTestClass();
-
-    abstract protected void verifyTestClassFields(OrganizationRoleDTO dto);
-
-    @Test
-    public void testCreateFullSnapshotFromModel() {
-        OrganizationRole orgRole = getExampleTestClass();
-        OrganizationRoleDTO dto = (OrganizationRoleDTO) PoXsnapshotHelper.createSnapshot(orgRole);
-
-        Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 1);
-        expectedIi.setDisplayable(true);
-        expectedIi.setScope(IdentifierScope.OBJ);
-        expectedIi.setReliability(IdentifierReliability.ISS);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getIdentifier()));
-
-        expectedIi.setExtension("" + 2);
-        expectedIi.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        expectedIi.setRoot(IdConverter.ORG_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPlayerIdentifier()));
-
-        expectedIi.setExtension("" + 3);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
-
-        assertEquals("active", dto.getStatus().getCode());
-
-        verifyTestClassFields(dto);
-    }
-
-    protected OrganizationRoleDTO fillInOrgRoleDTOFields(OrganizationRoleDTO or, Long scoperId, Long playerId) {
-        Ii ii = new Ii();
-        ii.setExtension("" + 1L);
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot("tstroot");
-        or.setIdentifier(ii);
-
-        or.setScoperIdentifier(getPlayerScoperIi(scoperId));
-        or.setPlayerIdentifier(getPlayerScoperIi(playerId));
-
-        Cd status = new Cd();
-        status.setCode("active");
-        or.setStatus(status);
-
-        return or;
-    }
-
-    private Ii getPlayerScoperIi(Long id) {
-        Ii ii;
-        ii = new Ii();
-        ii.setExtension("" + id);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.ORG_ROOT);
-        return ii;
-    }
-
-    abstract protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId);
-
-    abstract protected void verifyTestClassDTOFields(OrganizationRole or);
-
-    @Test
-    public void testCreateFullModelFromSnapshot() throws Exception {
-        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
-        orgTest.loadData();
-        orgTest.setUpData();
-
-        long scoperId = orgTest.createOrganization();
-        long playerId = orgTest.createOrganization();
-        OrganizationRoleDTO dto = getExampleTestClassDTO(scoperId, playerId);
-        OrganizationRole bo = (OrganizationRole) PoXsnapshotHelper.createModel(dto);
-
-        assertEquals(1L, bo.getId().longValue());
-        assertEquals(scoperId, bo.getScoper().getId().longValue());
-        assertEquals(playerId, bo.getPlayer().getId().longValue());
-        assertEquals(RoleStatus.ACTIVE, bo.getStatus());
-
-        verifyTestClassDTOFields(bo);
-
+    /**
+     * @param dto dto to convert
+     * @return validation errors
+     */
+    @SuppressWarnings(UNCHECKED)
+    public Map<String, String[]> validate(DTO dto) {
+        T hcpBo = (T) PoXsnapshotHelper.createModel(dto);
+        return getLocalService().validate(hcpBo);
     }
 }
