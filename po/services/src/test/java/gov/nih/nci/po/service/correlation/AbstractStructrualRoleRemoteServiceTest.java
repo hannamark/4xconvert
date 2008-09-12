@@ -80,120 +80,106 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.util.RemoteBeanHandler;
-import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean;
-import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
-import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.person.PersonEntityServiceBean;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.service.PersonServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.TestServiceLocator;
+import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.PoDto;
+
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Scott Miller
+ *
  */
-public class EjbTestHelper {
+public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> extends AbstractBeanTest {
 
-    /**
-     * Get a newly created org service.
-     * @return the service
-     */
-    public static OrganizationServiceBean getOrganizationServiceBean() {
-        OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
-        return organizationServiceBean;
+    protected Person basicPerson = null;
+    protected Organization basicOrganization = null;
+
+    private ServiceLocator oldLocator = null;
+
+    @Before
+    public void setUpLocators() {
+        oldLocator = IiConverter.getServiceLocator();
+        IiConverter.setServiceLocator(new TestServiceLocator());
     }
 
-    public static OrganizationCRServiceBean getOrganizationCRServiceBean() {
-        OrganizationCRServiceBean crService = new OrganizationCRServiceBean();
-        crService.setOrganizationServiceBean(getOrganizationServiceBean());
-        return crService;
+    @After
+    public void relaceLocators() {
+        IiConverter.setServiceLocator(oldLocator);
     }
 
-    public static OrganizationEntityServiceBean getOrganizationEntityServiceBean() {
-        OrganizationEntityServiceBean organizationServiceBean = new OrganizationEntityServiceBean();
-        organizationServiceBean.setOrganizationServiceBean(getOrganizationServiceBean());
-        organizationServiceBean.setOrganizationCRServiceBean(getOrganizationCRServiceBean());
-        return organizationServiceBean;
+    @Before
+    public void setUpData() throws Exception {
+        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
+        orgTest.setDefaultCountry(getDefaultCountry());
+        orgTest.setUser(getUser());
+        orgTest.setUpData();
+        long orgId = orgTest.createOrganization();
+        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
+
+        // create person
+        PersonServiceBeanTest personTest = new PersonServiceBeanTest();
+        personTest.setDefaultCountry(getDefaultCountry());
+        personTest.setUser(getUser());
+        basicPerson = personTest.getBasicPerson();
+        basicPerson.setStatusCode(EntityStatus.NEW);
+        PoHibernateUtil.getCurrentSession().save(basicPerson);
+        PoHibernateUtil.getCurrentSession().flush();
     }
 
-    public static OrganizationEntityServiceRemote getOrganizationEntityServiceBeanAsRemote () {
-        return (OrganizationEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getOrganizationEntityServiceBean());
+    abstract protected T getSampleDto() throws Exception;
+
+    abstract void verifyDto(T expected, T actual);
+
+    abstract CorrelationService<T> getCorrelationService();
+
+    @Test
+    public void testSimpleCreateAndGet() throws Exception {
+        T dto = getSampleDto();
+        CorrelationService<T> service = getCorrelationService();
+        Ii id1 = service.createCorrelation(dto);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        T retrievedRole = service.getCorrelation(id1);
+        verifyDto(dto, retrievedRole);
     }
 
-    /**
-     * Get a newly created person service.
-     * @return the service
-     */
-    public static PersonServiceBean getPersonServiceBean() {
-        PersonServiceBean personServiceBean = new PersonServiceBean();
-        return personServiceBean;
-    }
+    @Test
+    public void testGetByIds() throws Exception {
+        CorrelationService<T> service = getCorrelationService();
 
-    public static PersonCRServiceBean getPersonCRServiceBean() {
-        PersonCRServiceBean personCRServiceBean = new PersonCRServiceBean();
-        personCRServiceBean.setPersonServiceBean(getPersonServiceBean());
-        return personCRServiceBean;
-    }
+        Ii id1 = service.createCorrelation(getSampleDto());
+        Ii id2 = service.createCorrelation(getSampleDto());
 
-    public static PersonEntityServiceBean getPersonEntityServiceBean() {
-    	PersonEntityServiceBean personServiceBean = new PersonEntityServiceBean();
-    	personServiceBean.setPersonServiceBean(getPersonServiceBean());
-        personServiceBean.setPersonCRServiceBean(getPersonCRServiceBean());
-        return personServiceBean;
-    }
+        Ii[] ids = {id1, id2};
+        List<T> srs = service.getCorrelations(ids);
+        assertEquals(2, srs.size());
 
-    public static PersonEntityServiceRemote getPersonEntityServiceBeanAsRemote () {
-        return (PersonEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getPersonEntityServiceBean());
-    }
+        ids = new Ii[1];
+        ids[0] = id2;
+        srs = service.getCorrelations(ids);
+        assertEquals(1, srs.size());
 
-    public static HealthCareProviderServiceBean getHealthCareProviderServiceBean() {
-        HealthCareProviderServiceBean hcpsb = new HealthCareProviderServiceBean();
-        return hcpsb;
-    }
-
-    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationServiceRemote() {
-        HealthCareProviderCorrelationServiceBean hcpService = new HealthCareProviderCorrelationServiceBean();
-        hcpService.setHcpService(EjbTestHelper.getHealthCareProviderServiceBean());
-        return (HealthCareProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(hcpService);
-    }
-
-    /**
-     * Get a newly created and configured generic service.
-     * @return the service
-     */
-    public static GenericServiceBean getGenericServiceBean() {
-        return new GenericServiceBean();
-    }
-
-    public static CountryServiceBean getCountryServiceBean() {
-        return new CountryServiceBean();
-    }
-
-    /**
-     * @return the service
-     */
-    public static OversightCommitteeTypeBean getOversightCommitteeTypeServiceBean() {
-        return new OversightCommitteeTypeBean() {
-            @Override
-            public OversightCommitteeType getByCode(String code) {
-                return new OversightCommitteeType(code);
-            }
-        };
-    }
-
-    /**
-     * @return the service
-     */
-    public static OversightCommitteeServiceLocal getOversightCommitteeServiceBean() {
-        return new OversightCommitteeServiceBean();
-    }
-
-    /**
-     * @return the service
-     */
-    public static HealthCareFacilityServiceLocal getHealthCareFacilityServiceBean() {
-        return new HealthCareFacilityServiceBean();
+        srs = service.getCorrelations(new Ii[0]);
+        assertEquals(0, srs.size());
     }
 }

@@ -23,10 +23,6 @@ public final class GenericSearchServiceUtil {
      */
     private static final Logger LOG = Logger.getLogger(GenericSearchServiceUtil.class);
 
-    private GenericSearchServiceUtil() {
-        //noop
-    }
-
     /**
      * @param <T> a
      * @param <SC> b

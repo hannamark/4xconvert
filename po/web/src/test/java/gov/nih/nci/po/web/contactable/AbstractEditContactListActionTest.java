@@ -97,6 +97,7 @@ import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.EmailAction;
 import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.FaxAction;
 import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.PhoneAction;
+import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.TtyAction;
 import gov.nih.nci.po.web.contactable.AbstractEditContactListAction.UrlAction;
 
 import org.junit.Test;
@@ -171,6 +172,16 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testRemoveOnEmptyList() {
+        Contactable ci = new Organization();
+        EmailAction instance = new EmailAction();
+        instance.setContactable(ci);
+        instance.setEntry(new Email());
+        instance.remove();
+        assertTrue(ActionHelper.getMessages().get(0).contains("was not found"));
+    }
+
+    @Test
     public void testEmail() {
         Contactable ci = new Organization();
         EmailAction instance = new EmailAction();
@@ -234,6 +245,28 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
         instance.setFaxEntry(e);
         assertEquals(e,instance.getFaxEntry());
+
+    }
+
+    @Test
+    public void testTty() {
+        Contactable ci = new Organization();
+        TtyAction instance = new TtyAction();
+        String key = "foo";
+        getSession().setAttribute(key, ci);
+        instance.setRootKey(key);
+
+        instance.prepare();
+
+        String v = "foo";
+        PhoneNumber e = instance.getEntry();
+        e.setValue(v);
+        instance.add();
+        e = ci.getTty().get(0);
+        assertEquals(v, e.getValue());
+
+        instance.setTtyEntry(e);
+        assertEquals(e,instance.getTtyEntry());
 
     }
 

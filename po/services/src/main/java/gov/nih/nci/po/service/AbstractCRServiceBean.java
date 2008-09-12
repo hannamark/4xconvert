@@ -84,7 +84,6 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
-import gov.nih.nci.po.data.bo.Root;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
@@ -98,7 +97,7 @@ import javax.ejb.TransactionAttributeType;
  * @param <ENTITY> the PersistentObject type.
  * @author gax
  */
-public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Root<CR, ?>>
+public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY>
         extends AbstractBaseServiceBean<CR> {
 
     /**

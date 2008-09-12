@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 
-import gov.nih.nci.services.person.PersonDTO;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -117,8 +116,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson 
-        implements Auditable, Curatable<Person>, Root<PersonCR, PersonDTO> {
+public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
     private static final long serialVersionUID = 1L;
     private Date statusDate;
     private Person duplicateOf;

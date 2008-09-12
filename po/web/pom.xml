@@ -186,6 +186,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <instrumentation>
+                        <excludes>
+                            <exclude>gov/nih/nci/po/web/session/PoOpenSessionInViewFilter.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>

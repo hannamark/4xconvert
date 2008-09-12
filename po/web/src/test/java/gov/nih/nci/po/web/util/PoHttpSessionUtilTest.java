@@ -23,6 +23,7 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
 
     @Test
     public void testAddAttribute_Organization() {
+        new PoHttpSessionUtil();
         Organization o1 = new Organization();
         Organization o2 = new Organization();
         String result1 = PoHttpSessionUtil.addAttribute(o1);

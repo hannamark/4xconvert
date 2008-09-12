@@ -20,11 +20,12 @@ public class GenericSearchServiceUtilTest extends AbstractPoTest {
     @SuppressWarnings("static-access")
     @Test
     public void search() {
+        new GenericSearchServiceUtil();
         PaginatedList<Person> persons = new PaginatedList<Person>(0, new ArrayList<Person>(),
-                PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(), 
+                PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(),
                 SortOrderEnum.ASCENDING);
         PersonServiceLocal personService = PoRegistry.getInstance().getPersonService();
-        
+
         GenericSearchServiceUtil.search(personService, new CuratePersonSearchCriteria(), persons, PersonSortCriterion.class);
     }
 }

@@ -82,22 +82,16 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.AdxpAdl;
 import gov.nih.nci.coppa.iso.AdxpAl;
 import gov.nih.nci.coppa.iso.AdxpCnt;
 import gov.nih.nci.coppa.iso.AdxpCty;
 import gov.nih.nci.coppa.iso.AdxpSta;
 import gov.nih.nci.coppa.iso.AdxpZip;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.AbstractBeanTest;
-import gov.nih.nci.po.service.CountryTestUtil;
-import java.util.Collections;
-import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -110,6 +104,7 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
@@ -123,6 +118,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
+import gov.nih.nci.po.service.CountryTestUtil;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -134,8 +130,10 @@ import gov.nih.nci.services.correlation.PersonRoleDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.After;
@@ -158,8 +156,8 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         IiConverter.setServiceLocator(new TestServiceLocator());
         cdLocator = CdConverter.getServiceLocator();
         CdConverter.setServiceLocator(new TestServiceLocator());
-        
-        defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG")); 	
+
+        defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG"));
     }
 
     @After
@@ -271,8 +269,9 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
             else if (a instanceof AdxpZip) { assertEquals("postalCode", a.getValue());}
             else if (a instanceof AdxpSta) { assertEquals("stateOrProvince", a.getValue());}
             else if (a instanceof AdxpCty) { assertEquals("cityOrMunicipality", a.getValue());}
-            else if (a instanceof AdxpAl) { assertEquals("streetAddressLine", a.getValue());}
-            else fail(a.getClass().getName());
+            else if (a instanceof AdxpAl) { assertEquals("streetAddressLine", a.getValue());} else {
+                fail(a.getClass().getName());
+            }
         }
 
         // test instance specific fields
@@ -339,10 +338,10 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         tels.getItem().add(url);
 
         pr.setTelecomAddress(tels);
-        
+
         Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry.getAlpha3());
         pr.setPostalAddresses(Collections.singleton(ad));
-        
+
         return pr;
     }
 

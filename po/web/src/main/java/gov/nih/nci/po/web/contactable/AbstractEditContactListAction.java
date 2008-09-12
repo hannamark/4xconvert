@@ -136,8 +136,6 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
         this.rootKey = rootKey;
     }
 
-
-
     /**
      * @return SUCCESS.
      */
@@ -470,7 +468,7 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
         /**
          *@param tty fax to set.
          **/
-        public void setFaxEntry(PhoneNumber tty) {
+        public void setTtyEntry(PhoneNumber tty) {
             setEntry(tty);
         }
     }

@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 
-import gov.nih.nci.services.organization.OrganizationDTO;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -116,8 +115,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class Organization extends AbstractOrganization 
-        implements Auditable, Curatable<Organization>, Root<OrganizationCR, OrganizationDTO> {
+public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
 
     private static final long serialVersionUID = 1L;
     private Date statusDate;
@@ -195,7 +193,7 @@ public class Organization extends AbstractOrganization
      * {@inheritDoc}
      */
     @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, 
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
             org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
     )
     @JoinTable(

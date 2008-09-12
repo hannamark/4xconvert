@@ -80,16 +80,130 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.services.PoDto;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+
+import org.junit.Test;
 
 /**
+ * @author Scott Miller
  *
- * @param <CR> the CR class paied with theis root class.
- * @param <DTO> the DTO used to transmit this root.
- * @author gax
  */
-public interface Root <CR , DTO extends PoDto> {
+public class HealthCareProviderRemoteServiceTest
+    extends AbstractStructrualRoleRemoteServiceTest<HealthCareProviderDTO> {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    CorrelationService<HealthCareProviderDTO> getCorrelationService() {
+       return EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected HealthCareProviderDTO getSampleDto() throws Exception {
+        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        Ii ii = new Ii();
+        ii.setExtension("" + basicPerson.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.PERSON_ROOT);
+        pr.setPersonIdentifier(ii);
+
+        ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        pr.setOrganizationIdentifier(ii);
+
+        DSet<Tel> tels = new DSet<Tel>();
+        tels.setItem(new HashSet<Tel>());
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:me@test.com"));
+        tels.getItem().add(email);
+
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI("tel:111-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-fax:222-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-tel:333-222-3333"));
+        tels.getItem().add(phone);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://www.google.com"));
+        tels.getItem().add(url);
+
+        pr.setTelecomAddress(tels);
+
+        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+                "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3());
+        pr.setPostalAddresses(Collections.singleton(ad));
+
+        St st = new St();
+        st.setValue("testCertLicense");
+        pr.setCertificateLicenseText(st);
+
+        return pr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void verifyDto(HealthCareProviderDTO e, HealthCareProviderDTO a) {
+        assertEquals(e.getCertificateLicenseText().getValue(), a.getCertificateLicenseText().getValue());
+        assertEquals(e.getOrganizationIdentifier().getExtension(), a.getOrganizationIdentifier().getExtension());
+        assertEquals(e.getPersonIdentifier().getExtension(), a.getPersonIdentifier().getExtension());
+        assertEquals("pending", a.getStatus().getCode());
+        assertEquals(e.getPostalAddresses().size(), a.getPostalAddresses().size());
+        assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
+    }
+
+    @Test(expected = EntityValidationException.class)
+    public void testCreateWithException() throws Exception {
+        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        getCorrelationService().createCorrelation(pr);
+    }
+
+    @Test
+    public void testValidate() throws Exception {
+        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        Map<String, String[]> errors = getCorrelationService().validate(pr);
+        assertEquals(3, errors.keySet().size());
+    }
 }

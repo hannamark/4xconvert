@@ -95,5 +95,6 @@ public class PoRegistryTest {
     @Test
     public void testRegistry() {
         assertNotNull(PoRegistry.getInstance());
+        assertNotNull(PoRegistry.getCountryService());
     }
 }

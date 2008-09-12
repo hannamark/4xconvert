@@ -89,9 +89,9 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @param <BO> the BO class associated to this CR.
  * @author gax
  */
-public interface ChangeRequest <BO extends Root<?, ?>> extends PersistentObject {
+public interface ChangeRequest <BO> extends PersistentObject {
     /**
-     * 
+     *
      * @return the BO to change.
      */
     BO getTarget();

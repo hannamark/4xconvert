@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.services.correlation.OrganizationRoleDTO;
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -105,7 +103,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *      implements="gov.nih.nci.services.PoDto"
  */
 @MappedSuperclass
-public class OrganizationRole implements PersistentObject, Root<OrganizationRoleCR, OrganizationRoleDTO> {
+public class OrganizationRole implements PersistentObject {
 
     private static final long serialVersionUID = -8983758513489261005L;
 

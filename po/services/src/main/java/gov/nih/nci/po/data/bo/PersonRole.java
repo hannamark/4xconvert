@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.services.correlation.PersonRoleDTO;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,7 +117,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.AbstractNaming" })
-public abstract class PersonRole implements PersistentObject, Contactable, Root<PersonRoleCR, PersonRoleDTO> {
+public abstract class PersonRole implements PersistentObject, Contactable {
 
     private static final long serialVersionUID = 1L;
 
@@ -202,13 +200,13 @@ public abstract class PersonRole implements PersistentObject, Contactable, Root<
     /**
      * @return the postalAddresses
      * todo add xsnapshot tags
-     * 
+     *
      * @xsnapshot.collection match="iso"
      * snapshot-element-type="gov.nih.nci.coppa.iso.Ad"
      * snapshot-element-transformer="gov.nih.nci.po.data.convert.AddressConverter"
      * model-element-type="gov.nih.nci.po.data.bo.Address"
      * model-element-transformer="gov.nih.nci.po.data.convert.AdConverter"
-     * copy-to-model="true" 
+     * copy-to-model="true"
      */
     @OneToMany
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
