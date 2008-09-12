@@ -22,7 +22,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.NPathComplexity" , "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
 public class InterventionalStudyProtocolConverter extends
         StudyProtocolConverter {
     
@@ -52,6 +52,9 @@ public class InterventionalStudyProtocolConverter extends
         ispDTO.setDelayedpostingIndicator(BlConverter.convertToBl(isp.getDelayedpostingIndicator()));
         ispDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(isp.getFdaRegulatedIndicator()));
         ispDTO.setSection801Indicator(BlConverter.convertToBl(isp.getSection801Indicator()));
+        ispDTO.setDataMonitoringCommitteInd(BlConverter.convertToBl(
+                isp.getDataMonitoringCommitteeAppointedIndicator()));
+        ispDTO.setIndIdeIndicator(BlConverter.convertToBl(isp.getIndIdeIndicator()));
         //@todo: convert iso timestamp
         return ispDTO;
     }
@@ -103,6 +106,13 @@ public class InterventionalStudyProtocolConverter extends
         if (ispDTO.getSection801Indicator() != null) {
             isp.setSection801Indicator(BlConverter.covertToBoolean(ispDTO.getSection801Indicator()));
         }
+        if (ispDTO.getDataMonitoringCommitteInd() != null) {
+            isp.setDataMonitoringCommitteeAppointedIndicator((
+                    BlConverter.covertToBoolean(ispDTO.getDataMonitoringCommitteInd())));
+        }
+        if (ispDTO.getIndIdeIndicator() != null) {
+            isp.setIndIdeIndicator(BlConverter.covertToBoolean(ispDTO.getIndIdeIndicator()));
+        }        
         //@todo: calculate TS convertion
         return isp;
     }

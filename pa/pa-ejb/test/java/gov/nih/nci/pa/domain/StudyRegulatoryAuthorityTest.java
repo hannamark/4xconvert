@@ -63,6 +63,8 @@ public class StudyRegulatoryAuthorityTest  {
         StudyRegulatoryAuthority sra = new StudyRegulatoryAuthority();
         sra.setRegulatoryAuthority(ra);
         sra.setStudyProtocol(sp);
+        //sra.setRegulatoryAuthorityID(ra.getId());
+        //sra.setStudyProtocolID(sp.getId());
         sra.setUserLastUpdated("abstractor");
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sra.setDateLastUpdated(now);

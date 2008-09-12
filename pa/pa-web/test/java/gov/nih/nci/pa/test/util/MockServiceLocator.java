@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -73,5 +74,12 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
+    /**
+     * return StudyRegulatoryAuthorityServiceRemote
+     */
+    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
 }

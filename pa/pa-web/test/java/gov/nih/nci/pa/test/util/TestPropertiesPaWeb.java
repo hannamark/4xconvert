@@ -6,14 +6,14 @@ import java.util.Properties;
 
 public class TestPropertiesPaWeb {
     public static final String TEST_LOGIN_CONFIG = "test.java.security.login.config";
-
+    @SuppressWarnings("AvoidThrowingRawExceptionTypes")
     private static Properties properties = new Properties();
     static {
         try {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");;
             properties.load(stream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
     }
     

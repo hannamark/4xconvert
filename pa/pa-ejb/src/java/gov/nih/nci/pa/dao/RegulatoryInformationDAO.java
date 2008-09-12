@@ -102,7 +102,7 @@ public class RegulatoryInformationDAO {
             // Now save in the 'study_requlatory_authority' table;
             // here if a record exists for one sp update it else create it.
             results = null;
-            results = session.createQuery("select sra from StudyRegulatoryAuthority as sra where studyProtocolID =" 
+            results = session.createQuery("select sra from StudyRegulatoryAuthority as sra where study_Protocol_ID =" 
                     + informationDTO.getProtocolID()).list();
             StudyRegulatoryAuthority studyRegulatoryAuth = null;
             if (!results.isEmpty()) {
@@ -277,7 +277,7 @@ public class RegulatoryInformationDAO {
                 throw new NoStudyProtocolFoundException();
             }
             results = null;
-            results = session.createQuery("select sra from StudyRegulatoryAuthority as sra where studyProtocolID =" 
+            results = session.createQuery("select sra from StudyRegulatoryAuthority as sra where study_Protocol_ID =" 
                     + protocolId).list();
             for (int i = 0; i < results.size(); i++) {
                 authority = (StudyRegulatoryAuthority) results.get(i);
@@ -353,7 +353,7 @@ public class RegulatoryInformationDAO {
         StudyRegulatoryAuthority studyRegulatoryAuthority = null;
         RegulatoryAuthOrgDTO regulatoryAuthOrgDTO = null;
         try {
-            results = session.createQuery("select sra from StudyRegulatoryAuthority as sra where studyProtocolID =" 
+            results = session.createQuery("select sra from StudyRegulatoryAuthority as sra where study_Protocol_ID =" 
                     + protocolId).list();
             for (int i = 0; i < results.size(); i++) {
                 studyRegulatoryAuthority = (StudyRegulatoryAuthority) results.get(i);

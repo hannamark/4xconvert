@@ -6,6 +6,7 @@ import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 
@@ -62,6 +63,11 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudyResourcingServiceRemote getStudyResoucringService() {
         return (StudyResourcingServiceRemote) JNDIUtil.lookup("pa/StudyResourcingServiceBean/remote");
     }
-
+    /** 
+     * @return StudyResourcingServiceRemote
+     */
+    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
+        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+    }
 
 }

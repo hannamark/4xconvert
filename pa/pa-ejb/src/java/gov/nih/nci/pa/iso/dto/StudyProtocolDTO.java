@@ -30,8 +30,24 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd primaryCompletionDateTypeCode;
     private Ts startDate;
     private Cd startDateTypeCode;
+    private Bl dataMonitoringCommitteInd;
+    private Bl indIdeIndicator;
     
     
+    /**
+     * @return the indIdeIndicator
+     */
+    public Bl getIndIdeIndicator() {
+        return indIdeIndicator;
+    }
+
+    /**
+     * @param indIdeIndicator the indIdeIndicator to set
+     */
+    public void setIndIdeIndicator(Bl indIdeIndicator) {
+        this.indIdeIndicator = indIdeIndicator;
+    }
+
     /**
      * 
      * @return monitorCode
@@ -223,6 +239,20 @@ public class StudyProtocolDTO extends BaseDTO {
      */
     public void setStartDateTypeCode(Cd startDateTypeCode) {
         this.startDateTypeCode = startDateTypeCode;
+    }
+
+    /**
+     * @return the dataMonitoringCommitteInd
+     */
+    public Bl getDataMonitoringCommitteInd() {
+        return dataMonitoringCommitteInd;
+    }
+
+    /**
+     * @param dataMonitoringCommitteInd the dataMonitoringCommitteInd to set
+     */
+    public void setDataMonitoringCommitteInd(Bl dataMonitoringCommitteInd) {
+        this.dataMonitoringCommitteInd = dataMonitoringCommitteInd;
     }
 }
 

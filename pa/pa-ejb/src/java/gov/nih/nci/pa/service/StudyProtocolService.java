@@ -56,4 +56,14 @@ public interface StudyProtocolService {
       */
      InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException;
      
+     /**
+      * 
+      * @param ispDTO studyProtocolDTO
+      * @return InterventionalStudyProtocolDTO
+      * @throws PAException PAException
+      */     
+     InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
+             InterventionalStudyProtocolDTO ispDTO) throws PAException;
+     
+     
 }

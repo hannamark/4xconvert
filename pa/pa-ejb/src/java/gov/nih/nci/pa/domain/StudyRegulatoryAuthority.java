@@ -26,6 +26,9 @@ public class StudyRegulatoryAuthority extends AbstractEntity {
     private static final long serialVersionUID = 1L;
     private StudyProtocol studyProtocol;
     private RegulatoryAuthority regulatoryAuthority;
+    //private long studyProtocolID;
+    //private long regulatoryAuthorityID;
+   
     
     /**
      * 
@@ -52,6 +55,7 @@ public class StudyRegulatoryAuthority extends AbstractEntity {
     @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
     @NotNull
     public StudyProtocol getStudyProtocol() {
+        
        return studyProtocol;
     }
     /**

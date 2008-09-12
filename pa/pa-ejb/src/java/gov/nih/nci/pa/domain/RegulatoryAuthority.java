@@ -1,9 +1,13 @@
 package gov.nih.nci.pa.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -24,6 +28,7 @@ public class RegulatoryAuthority extends AbstractEntity {
     private static final long serialVersionUID = 1L;
     private String authorityName;
     private Country country;
+    private List<StudyRegulatoryAuthority> studyRegulatoryAuthorities = new ArrayList<StudyRegulatoryAuthority>();
     
     /**
      * @return the authorityName
@@ -54,4 +59,19 @@ public class RegulatoryAuthority extends AbstractEntity {
     public void setCountry(Country country) {
             this.country = country;
     }
+    /**
+     * @return the studyRegulatoryAuthorities
+     */
+    @OneToMany(mappedBy = "regulatoryAuthority")
+    public List<StudyRegulatoryAuthority> getStudyRegulatoryAuthorities() {
+        return studyRegulatoryAuthorities;
+    }
+    /**
+     * @param studyRegulatoryAuthorities the studyRegulatoryAuthorities to set
+     */
+    public void setStudyRegulatoryAuthorities(List<StudyRegulatoryAuthority> studyRegulatoryAuthorities) {
+        this.studyRegulatoryAuthorities = studyRegulatoryAuthorities;
+    }
+
+    
 }

@@ -3,77 +3,66 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title><fmt:message key="regulatory.title" /></title>
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet"	type="text/css" media="all" />
-<s:head />
 </head>
 <body>
 <!-- main content begins-->
-<s:form action="regulatoryInfo">
-<div id="contentwide">
+<!-- <div id="contentwide"> -->
 <h1><fmt:message key="regulatory.title" /></h1>
-<!--Help Content-->   <div id="box">
-<a href="#" class="helpbutton"onclick="Help.popHelp('query_protocol')">Help</a>
- 
-<table width="880">	
-<jsp:include page="/jsp/pajsp/trialDetailSummary.jsp"/>
+<jsp:include page="/jsp/pajsp/protocolDetailSummary.jsp"/>
+<div class="box">
+<h2><fmt:message key="regulatory.title" /></h2>
+<!--Help Content--> 
+<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
+<table class="form">
+	<!--  Trial Oversight Authority Country -->
 	<tr>
-		<th colspan="2">Regulatory Information</th>
-	</tr>
-	<!--  Trial Oversignt Authority Country -->	
-	<tr>
-		<td scope="row" class="label">Trial	Oversight Authority Country :</td>
-		<td><s:label name="regulatoryDTO.trialOversgtAuthCountry" /></td>
-                    
+		<td scope="row"  class="label"><label><fmt:message key="regulatory.oversight.country.name"/> </td>
+		<td class="value"><s:label name="webDTO.trialOversgtAuthCountry" /></td>                    
 	</tr>
 	<!--  Trial Oversignt Authority Organization Name -->
 	<tr>
-		<td scope="row" class="label">Trial	Oversight Authority Organization Name :</td>
-		<td><s:label name="regulatoryDTO.trialOversgtAuthOrgName" /></td>
+		<td scope="row"  class="label"><label><fmt:message key="regulatory.oversight.auth.name"/> </td>
+		<td class="value"><s:label name="webDTO.trialOversgtAuthOrgName" /></td>
 	</tr>
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
-		<td scope="row" class="label">FDA Regulated Intervention Indicator :</td>
-		<td><s:label name="regulatoryDTO.fdaRegulatedInterventionIndicator" /></td>
+		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/> </td>
+		<td class="value"><s:select  id="fdaindid" disabled="true" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
 	<!--   Section 801 Indicator-->
-	<c:if test='${regulatoryDTO.fdaRegulatedInterventionIndicator eq "Yes"}'>
-	<tr>
-		<td scope="row" class="label"><label for="localtrialIdentifier">Section	801 Indicator :</td>
-		<td><s:label name="regulatoryDTO.section801Indicator" /></td>
+	<c:if test='${webDTO.fdaRegulatedInterventionIndicator eq true}'>
+	<tr id="sec801row">
+		<td scope="row" class="label"><label><fmt:message key="regulatory.section801.ind"/></td>
+		<td class="value"><s:select id="sec801id" disabled="true" name="webDTO.section801Indicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
 	</c:if>
-	<!-- IDE/IND indicator -->
-	<c:if test='${regulatoryDTO.section801Indicator eq "Yes"}'>
-		<tr>
-			<td scope="row" class="label">IND/IDE Indicator :</td>
-			<td><s:label name="regulatoryDTO.indideTrialIndicator" /></td>
-		</tr>
-	</c:if>
+	<!--  IND/IDE Indicator-->
+	<c:if test='${webDTO.section801Indicator eq true}'>
+	<tr id="indiderow">
+		<td scope="row" class="label"><label><fmt:message key="regulatory.ideind.indicator"/></td>
+		<td class="value"><s:select id="indideid" disabled="true" name="webDTO.ideTrialIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
+	</tr>
+	</c:if>	
 	<!--   Delayed Posting Indicator-->
-	<c:if test='${regulatoryDTO.indideTrialIndicator eq "Yes"}'>
-	<tr>
-		<td scope="row" class="label"><label for="localtrialIdentifier">Delayed	Posting Indicator :</td>
-		<td><s:label name="regulatoryDTO.delayedPostingIndicator" /></td>	
+	<c:if test='${webDTO.ideTrialIndicator eq true}'>
+	<tr id="delpostindrow">
+		<td scope="row" class="label"><label><fmt:message key="regulatory.delayed.posting.ind"/></td>
+		<td class="value"><s:select id="delpostindid" disabled="true" name="webDTO.delayedPostingIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
 	</tr>
 	</c:if>
 	<!--   Data Monitoring Committee Appointed Indicator -->
-	<tr>
-		<td scope="row" class="label"><label for="localtrialIdentifier">Data Monitoring Committee Appointed Indicator :</td>
-		<td><s:label name="regulatoryDTO.dataMonitoringIndicator" /></td>	
+	<tr id="datamonrow">
+		<td scope="row" class="label"><label><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
+		<td class="value"><s:select id="datamonid" disabled="true" name="webDTO.dataMonitoringIndicator" list="#{'false':'No', 'true':'Yes'}"/></td>		
 	</tr>
-
-	<tr>
-		<td colspan="2" class="pad10">
-		<div class="line"></div>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2" class="centered"><input type="submit" value="Edit" class="button"></td>
-	</tr>
-</table></div>
+</table>
+	<div class="actionsrow">
+		<del class="btnwrapper">
+			<ul class="btnrow">
+				<li><a href="regulatoryInfo.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="edit">Edit</span></span></a></li>
+			</ul>	
+		</del>
+	</div>
 </div>
-</s:form>
 </body>
 </html>

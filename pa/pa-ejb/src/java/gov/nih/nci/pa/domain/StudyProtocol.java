@@ -21,30 +21,24 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * An action plan and execution of a pre-clinical or clinical study including all
- * activities to test a particular hypothesis that is the basis of the study regarding the
- * effectiveness of a particular treatment, drug, device, procedure, or care plan.
- * This includes prevention, observational, therapeutic, and other types of studies
- * that involve subjects.
- *
+ * An action plan and execution of a pre-clinical or clinical study including
+ * all activities to test a particular hypothesis that is the basis of the study
+ * regarding the effectiveness of a particular treatment, drug, device,
+ * procedure, or care plan. This includes prevention, observational,
+ * therapeutic, and other types of studies that involve subjects.
+ * 
  * @author Naveen Amiruddin
- * @since 07/07/2007
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 07/07/2007 copyright NCI 2007. All rights reserved. This code may not
+ *        be used without the express written permission of the copyright
+ *        holder, NCI.
  */
 @Entity
-
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(
-    name = "Study_Protocol_type",
-    discriminatorType = DiscriminatorType.STRING
-)
-@SuppressWarnings({"PMD.TooManyFields", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
-@Table(name =  "STUDY_PROTOCOL")
-public class StudyProtocol extends  AbstractEntity {
+@DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
+@Table(name = "STUDY_PROTOCOL")
+public class StudyProtocol extends AbstractEntity {
     private static final long serialVersionUID = 1234567890L;
-
     private String acronym;
     private AccrualReportingMethodCode accrualReportingMethodCode;
     private Boolean expandedAccessIndicator;
@@ -58,26 +52,29 @@ public class StudyProtocol extends  AbstractEntity {
     private Timestamp startDate;
     private ActualAnticipatedTypeCode startDateTypeCode;
     private PrimaryPurposeCode primaryPurposeCode;
-    
+    private Boolean indIdeIndicator;
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
+
     /**
-     *
+     * 
      * @return acronym
      */
     public String getAcronym() {
         return acronym;
     }
+
     /**
-     *
+     * 
      * @param acronym acronym
      */
     public void setAcronym(String acronym) {
         this.acronym = acronym;
     }
+
     /**
      * 
      * @return accrualReportingMethodCode
@@ -87,13 +84,13 @@ public class StudyProtocol extends  AbstractEntity {
     public AccrualReportingMethodCode getAccrualReportingMethodCode() {
         return accrualReportingMethodCode;
     }
+
     /**
      * 
      * @param accrualReportingMethodCode accrualReportingMethodCode
      */
-    public void setAccrualReportingMethodCode(
-           AccrualReportingMethodCode accrualReportingMethodCode) {
-       this.accrualReportingMethodCode = accrualReportingMethodCode;
+    public void setAccrualReportingMethodCode(AccrualReportingMethodCode accrualReportingMethodCode) {
+        this.accrualReportingMethodCode = accrualReportingMethodCode;
     }
 
     /**
@@ -104,48 +101,51 @@ public class StudyProtocol extends  AbstractEntity {
     public Boolean getExpandedAccessIndicator() {
         return expandedAccessIndicator;
     }
+
     /**
      * 
      * @param expandedAccessIndicator expandedAccessIndicator
      */
-     public void setExpandedAccessIndicator(Boolean expandedAccessIndicator) {
+    public void setExpandedAccessIndicator(Boolean expandedAccessIndicator) {
         this.expandedAccessIndicator = expandedAccessIndicator;
-     }
-     /**
+    }
+
+    /**
      * 
      * @return identifier
      */
-     @Column(name = "NCI_IDENTIFIER")
-     public String getIdentifier() {
-         return identifier;
-     }
-     /**
-      * 
-      * @param identifier identifier
-      */
-     public void setIdentifier(String identifier) {
-         this.identifier = identifier;
-     }
+    @Column(name = "NCI_IDENTIFIER")
+    public String getIdentifier() {
+        return identifier;
+    }
 
-    
-     /**
-      * 
-      * @return dataMonitoringCommitteeAppointedIndicator
-      */
-     @Column(name = "DATA_MONTY_COMTY_APPTN_INDICATOR")
-     public Boolean getDataMonitoringCommitteeAppointedIndicator() {
-         return dataMonitoringCommitteeAppointedIndicator;
-     }
-     /**
-      * 
-      * @param dataMonitoringCommitteeAppointedIndicator ind
-      */
-     public void setDataMonitoringCommitteeAppointedIndicator(
-             Boolean dataMonitoringCommitteeAppointedIndicator) {
-         this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
-     }
     /**
-     *
+     * 
+     * @param identifier identifier
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * 
+     * @return dataMonitoringCommitteeAppointedIndicator
+     */
+    @Column(name = "DATA_MONTY_COMTY_APPTN_INDICATOR")
+    public Boolean getDataMonitoringCommitteeAppointedIndicator() {
+        return dataMonitoringCommitteeAppointedIndicator;
+    }
+
+    /**
+     * 
+     * @param dataMonitoringCommitteeAppointedIndicator ind
+     */
+    public void setDataMonitoringCommitteeAppointedIndicator(Boolean dataMonitoringCommitteeAppointedIndicator) {
+        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
+    }
+
+    /**
+     * 
      * @return monitorCode
      */
     @Column(name = "MONITOR_CODE")
@@ -153,8 +153,9 @@ public class StudyProtocol extends  AbstractEntity {
     public MonitorCode getMonitorCode() {
         return monitorCode;
     }
+
     /**
-     *
+     * 
      * @param monitorCode monitorCode
      */
     public void setMonitorCode(MonitorCode monitorCode) {
@@ -169,6 +170,7 @@ public class StudyProtocol extends  AbstractEntity {
     public String getOfficialTitle() {
         return officialTitle;
     }
+
     /**
      * 
      * @param officialTitle officialTitle
@@ -176,9 +178,9 @@ public class StudyProtocol extends  AbstractEntity {
     public void setOfficialTitle(String officialTitle) {
         this.officialTitle = officialTitle;
     }
-    
+
     /**
-     *
+     * 
      * @return phaseCode
      */
     @Column(name = "PHASE_CODE")
@@ -186,8 +188,9 @@ public class StudyProtocol extends  AbstractEntity {
     public PhaseCode getPhaseCode() {
         return phaseCode;
     }
+
     /**
-     *
+     * 
      * @param phaseCode phaseCode
      */
     public void setPhaseCode(PhaseCode phaseCode) {
@@ -202,6 +205,7 @@ public class StudyProtocol extends  AbstractEntity {
     public Timestamp getPrimaryCompletionDate() {
         return primaryCompletionDate;
     }
+
     /**
      * 
      * @param primaryCompletionDate primaryCompletionDate
@@ -209,49 +213,52 @@ public class StudyProtocol extends  AbstractEntity {
     public void setPrimaryCompletionDate(Timestamp primaryCompletionDate) {
         this.primaryCompletionDate = primaryCompletionDate;
     }
+
     /**
      * 
      * @return primaryCompletionDateTypeCode
-     */ 
+     */
     @Column(name = "PRI_COMPL_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)    
+    @Enumerated(EnumType.STRING)
     public ActualAnticipatedTypeCode getPrimaryCompletionDateTypeCode() {
         return primaryCompletionDateTypeCode;
     }
+
     /**
      * 
      * @param primaryCompletionDateTypeCode primaryCompletionDateTypeCode
      */
-    public void setPrimaryCompletionDateTypeCode(
-            ActualAnticipatedTypeCode primaryCompletionDateTypeCode) {
+    public void setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode primaryCompletionDateTypeCode) {
         this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
     }
-    
+
     /**
      * 
      * @return startDate
      */
     @Column(name = "START_DATE")
-    public Timestamp  getStartDate() {
+    public Timestamp getStartDate() {
         return startDate;
     }
-    
+
     /**
      * 
      * @param startDate start Date
      */
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
-    }        
+    }
+
     /**
      * 
      * @return startDateTypeCode
      */
     @Column(name = "START_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)    
+    @Enumerated(EnumType.STRING)
     public ActualAnticipatedTypeCode getStartDateTypeCode() {
         return startDateTypeCode;
     }
+
     /**
      * 
      * @param startDateTypeCode startDateTypeCode
@@ -261,71 +268,74 @@ public class StudyProtocol extends  AbstractEntity {
     }
 
     /**
-    *
-    * @return primaryPurposeCode
-    */
-   @Column(name = "PRIMARY_PURPOSE_CODE")
-   @Enumerated(EnumType.STRING)
-   public PrimaryPurposeCode getPrimaryPurposeCode() {
-       return primaryPurposeCode;
-   }
-   /**
-    *
-    * @param primaryPurposeCode primaryPurposeCode
-    */
-   public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
-       this.primaryPurposeCode = primaryPurposeCode;
-   }
-    
-    
-    /**
-    *
-    * @return studyOverallStatuses
-    */
-   @OneToMany(mappedBy = "studyProtocol")
-   public List<StudyOverallStatus> getStudyOverallStatuses() {
-       return studyOverallStatuses;
-   }
-   /**
-    *
-    * @param studyOverallStatuses studyOverallStatuses
-    */
-   public void setStudyOverallStatuses(
-           List<StudyOverallStatus> studyOverallStatuses) {
-       this.studyOverallStatuses = studyOverallStatuses;
-   }
-   /**
-    * 
-    * @return documentWorkflowStatuses
-    */
-   @OneToMany(mappedBy = "studyProtocol")
-   public List<DocumentWorkflowStatus> getDocumentWorkflowStatuses() {
-       return documentWorkflowStatuses;
-   }
-   /**
-    * 
-    * @param documentWorkflowStatuses documentWorkflowStatuses
-    */
-   public void setDocumentWorkflowStatuses(
-           List<DocumentWorkflowStatus> documentWorkflowStatuses) {
-       this.documentWorkflowStatuses = documentWorkflowStatuses;
-   }
-   /**
-    * 
-    * @return studyParticipations
-    */
-   @OneToMany(mappedBy = "studyProtocol")
-   public List<StudyParticipation> getStudyParticipations() {
-        return studyParticipations;
-   }
-   
-   /**
-    * 
-    * @param studyParticipations studyParticipations
-    */
-    public void setStudyParticipations(List<StudyParticipation> studyParticipations) {
-       this.studyParticipations = studyParticipations;
+     * 
+     * @return primaryPurposeCode
+     */
+    @Column(name = "PRIMARY_PURPOSE_CODE")
+    @Enumerated(EnumType.STRING)
+    public PrimaryPurposeCode getPrimaryPurposeCode() {
+        return primaryPurposeCode;
     }
+
+    /**
+     * 
+     * @param primaryPurposeCode primaryPurposeCode
+     */
+    public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
+        this.primaryPurposeCode = primaryPurposeCode;
+    }
+
+    /**
+     * 
+     * @return studyOverallStatuses
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<StudyOverallStatus> getStudyOverallStatuses() {
+        return studyOverallStatuses;
+    }
+
+    /**
+     * 
+     * @param studyOverallStatuses studyOverallStatuses
+     */
+    public void setStudyOverallStatuses(List<StudyOverallStatus> studyOverallStatuses) {
+        this.studyOverallStatuses = studyOverallStatuses;
+    }
+
+    /**
+     * 
+     * @return documentWorkflowStatuses
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<DocumentWorkflowStatus> getDocumentWorkflowStatuses() {
+        return documentWorkflowStatuses;
+    }
+
+    /**
+     * 
+     * @param documentWorkflowStatuses documentWorkflowStatuses
+     */
+    public void setDocumentWorkflowStatuses(List<DocumentWorkflowStatus> documentWorkflowStatuses) {
+        this.documentWorkflowStatuses = documentWorkflowStatuses;
+    }
+
+    /**
+     * 
+     * @return studyParticipations
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    public List<StudyParticipation> getStudyParticipations() {
+        return studyParticipations;
+    }
+
+    /**
+     * 
+     * @param studyParticipations studyParticipations
+     */
+    public void setStudyParticipations(List<StudyParticipation> studyParticipations) {
+        this.studyParticipations = studyParticipations;
+    }
+
     /**
      * 
      * @return studyContacts
@@ -334,6 +344,7 @@ public class StudyProtocol extends  AbstractEntity {
     public List<StudyContact> getStudyContacts() {
         return studyContacts;
     }
+
     /**
      * 
      * @param studyContacts studyContacts
@@ -341,6 +352,7 @@ public class StudyProtocol extends  AbstractEntity {
     public void setStudyContacts(List<StudyContact> studyContacts) {
         this.studyContacts = studyContacts;
     }
+
     /**
      * 
      * @return studyResourcings
@@ -349,6 +361,7 @@ public class StudyProtocol extends  AbstractEntity {
     public List<StudyResourcing> getStudyResourcings() {
         return studyResourcings;
     }
+
     /**
      * 
      * @param studyResourcings studyResourcings
@@ -356,10 +369,19 @@ public class StudyProtocol extends  AbstractEntity {
     public void setStudyResourcings(List<StudyResourcing> studyResourcings) {
         this.studyResourcings = studyResourcings;
     }
-    
-    
-   
-   
-   
-   
+
+    /**
+     * @return the indIdeIndicator
+     */
+    @Column(name = "ind_ide_indicator")
+    public Boolean getIndIdeIndicator() {
+        return indIdeIndicator;
+    }
+
+    /**
+     * @param indIdeIndicator the indIdeIndicator to set
+     */
+    public void setIndIdeIndicator(Boolean indIdeIndicator) {
+        this.indIdeIndicator = indIdeIndicator;
+    }
 }

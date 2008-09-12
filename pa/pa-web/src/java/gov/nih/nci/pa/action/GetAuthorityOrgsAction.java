@@ -6,6 +6,8 @@ import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.NoStudyProtocolFoundException;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -15,12 +17,12 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Action class for getting a list of authority orgs for a selected country.
- *
+ * 
  * @author Harsha
  * @since 08/05/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
- *
+ * 
  */
 public class GetAuthorityOrgsAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
@@ -35,17 +37,19 @@ public class GetAuthorityOrgsAction extends ActionSupport {
      */
     public String execute() {
         try {
-            regIdAuthOrgList = PaRegistry.getRegulatoryInformationService()
-                    .getRegulatoryAuthorityNameId(Long.valueOf(getLst()));
+            regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
+                    Long.valueOf(getLst()));
             StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                     .getAttribute(Constants.TRIAL_SUMMARY);
-            RegulatoryAuthOrgDTO regulatoryAuthOrgDTO = PaRegistry.getRegulatoryInformationService()
-                    .getRegulatoryAuthOrgForEdit(
-                    spDTO.getStudyProtocolId());
-            setSelectedAuthOrg(Long.valueOf(regulatoryAuthOrgDTO.getId()).toString());
+            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
+                    .getStudyRegulatoryAuthority(IiConverter.convertToIi(spDTO.getStudyProtocolId()));
+            if (sraFromDatabaseDTO != null) {
+                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityId().getExtension());
+                List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);
+                setSelectedAuthOrg(regInfo.get(0).toString());
+            }
         } catch (NoStudyProtocolFoundException nspfe) {
             return SUCCESS;
-
         } catch (PAException e) {
             return SUCCESS;
         }
@@ -60,8 +64,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
     }
 
     /**
-     * @param lst
-     *            the lst to set
+     * @param lst the lst to set
      */
     public void setLst(String lst) {
         this.lst = lst;
@@ -75,8 +78,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
     }
 
     /**
-     * @param lstList
-     *            the lstList to set
+     * @param lstList the lstList to set
      */
     public void setLstList(List<String> lstList) {
         this.lstList = lstList;
@@ -90,8 +92,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
     }
 
     /**
-     * @param trialOversgtAuthCountry
-     *            the trialOversgtAuthCountry to set
+     * @param trialOversgtAuthCountry the trialOversgtAuthCountry to set
      */
     public void setTrialOversgtAuthCountry(String trialOversgtAuthCountry) {
         this.trialOversgtAuthCountry = trialOversgtAuthCountry;
@@ -105,8 +106,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
     }
 
     /**
-     * @param regIdAuthOrgList
-     *            the regIdAuthOrgList to set
+     * @param regIdAuthOrgList the regIdAuthOrgList to set
      */
     public void setRegIdAuthOrgList(List<RegulatoryAuthOrgDTO> regIdAuthOrgList) {
         this.regIdAuthOrgList = regIdAuthOrgList;
@@ -120,8 +120,7 @@ public class GetAuthorityOrgsAction extends ActionSupport {
     }
 
     /**
-     * @param selectedAuthOrg
-     *            the selectedAuthOrg to set
+     * @param selectedAuthOrg the selectedAuthOrg to set
      */
     public void setSelectedAuthOrg(String selectedAuthOrg) {
         this.selectedAuthOrg = selectedAuthOrg;

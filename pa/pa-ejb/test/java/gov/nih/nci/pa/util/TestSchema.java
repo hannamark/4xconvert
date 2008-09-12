@@ -74,7 +74,7 @@ public class TestSchema {
             setProperty("hibernate.connection.autocommit", "true").
             setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
             setProperty("hibernate.hbm2ddl.auto", "create-drop").
-            setProperty("hibernate.show_sql", TestProperties.getShowSQL());
+            setProperty("hibernate.show_sql", "True");
             HibernateUtil.getHibernateHelper().setConfiguration(config);
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
@@ -114,13 +114,13 @@ public class TestSchema {
                     }
                 } catch (HibernateException e) {
                     connection.rollback();
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 } catch (SQLException e) {
                     connection.rollback();
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             } finally {
                 session.close();
             }

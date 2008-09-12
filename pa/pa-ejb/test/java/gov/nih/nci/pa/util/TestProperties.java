@@ -17,7 +17,7 @@ public class TestProperties {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");;
             properties.load(stream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
     }
     

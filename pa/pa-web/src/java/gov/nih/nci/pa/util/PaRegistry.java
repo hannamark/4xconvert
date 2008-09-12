@@ -7,6 +7,7 @@ import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 /**
@@ -106,6 +107,14 @@ public final class PaRegistry {
      */
     public static StudyResourcingServiceRemote getStudyResourcingService() {
         return getInstance().getServiceLocator().getStudyResoucringService();
+    }
+    
+    /**
+     * 
+     * @return StudyRegulatoryAuthorityServiceRemote
+     */
+    public static StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
+        return getInstance().getServiceLocator().getStudyRegulatoryAuthorityService();
     }
     
 }

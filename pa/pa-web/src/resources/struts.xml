@@ -69,7 +69,7 @@
         <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
             <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>
         </action>	
-		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">
+		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
 		</action>	
@@ -77,7 +77,7 @@
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/nodecorate/orgs.jsp</result>
 		</action>				
-		<action name="saveRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="saveRegulatoryAuthority">
+		<action name="saveRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="update">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/regulatoryinformationview.jsp</result>
 		</action>		

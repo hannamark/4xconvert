@@ -44,4 +44,35 @@ public class BlConverter {
         }
         return bl.getValue();
     }
+    
+    /**
+     * 
+     * @param bl to be converted
+     * @return String as return value
+     */
+    public static String convertToString(Bl bl) {
+        if (bl == null) {
+            return null;
+        }
+        if (bl.getValue() == null) {
+            bl.setNullFlavor(NullFlavor.NI);
+            // @todo : throw proper exception 
+        }
+        return bl.getValue().toString();
+    }
+    
+//    /**
+//     * 
+//     * @param bool boolean
+//     * @return Bl 
+//     */
+//    public static String translateCodeForDisplay(Boolean bool) {
+//        if (bool) {
+//            return "
+//        } else {
+//            
+//        }
+//        return "";
+//    }
+  
 }

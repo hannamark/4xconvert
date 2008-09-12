@@ -39,7 +39,8 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", 
+    "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
@@ -219,6 +220,8 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         
     }
     
+
+    
     /**
      * 
      * @param ii ii
@@ -233,25 +236,96 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         }
         LOG.info("Entering getInterventionalStudyProtocol");
         Session session = null;
-        InterventionalStudyProtocol interventionalStudyProtocol = null;
+       
+        List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
+        InterventionalStudyProtocol isp = null;
         try {
+            Query query = null;
             session = HibernateUtil.getCurrentSession();
-            interventionalStudyProtocol = (InterventionalStudyProtocol) 
-                session.load(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
+            // step 1: form the hql
+            String hql = "select isp "
+                       + "from InterventionalStudyProtocol isp "
+                       + "where isp.id =  " + Long.valueOf(ii.getExtension());
+            LOG.info(" query InterventionalStudyProtocol = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            
+            isp = queryList.get(0);
+            session.flush();
+
             
         }  catch (HibernateException hbe) {
+            session.flush();
             LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = " 
                     + ii.getExtension() , hbe);
             throw new PAException(" Hibernate exception while retrieving " 
                     + "InterventionalStudyProtocol for id = " + ii.getExtension() , hbe);
         }
-        InterventionalStudyProtocolDTO interventionalStudyProtocolDTO =  
-            InterventionalStudyProtocolConverter.convertFromDomainToDTO(interventionalStudyProtocol);
+        InterventionalStudyProtocolDTO ispDTO = 
+            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
         LOG.info("Leaving getInterventionalStudyProtocol");
-        return interventionalStudyProtocolDTO;
+        return ispDTO;
         
     }
     
+    
+    /**
+     * 
+     * @param ispDTO studyProtocolDTO
+     * @return InterventionalStudyProtocolDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
+            InterventionalStudyProtocolDTO ispDTO) throws PAException {
+        // enforce business rules
+        if (ispDTO == null) {
+            LOG.error(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null ");
+            
+        }
+        Timestamp now = new Timestamp((new Date()).getTime());
+        InterventionalStudyProtocolDTO  ispRetDTO = null;
+        Session session = null;
+        List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
+        
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select isp "
+                       + "from InterventionalStudyProtocol isp "
+                       + "where isp.id =  " + Long.valueOf(ispDTO.getIi().getExtension());
+            LOG.info(" query InterventionalStudyProtocol = " + hql);
+            query = session.createQuery(hql);
+            queryList = query.list();
+            InterventionalStudyProtocol sp = queryList.get(0);
+            InterventionalStudyProtocol ispFromAction = InterventionalStudyProtocolConverter.
+                                convertFromDTOToDomain(ispDTO);
+            sp.setDateLastUpdated(now);
+            sp.setAccrualReportingMethodCode(ispFromAction.getAccrualReportingMethodCode());
+            sp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
+            //
+            sp.setSection801Indicator(ispFromAction.getSection801Indicator());
+            sp.setFdaRegulatedIndicator(ispFromAction.getFdaRegulatedIndicator());
+            sp.setDataMonitoringCommitteeAppointedIndicator(
+                    ispFromAction.getDataMonitoringCommitteeAppointedIndicator());
+            sp.setIndIdeIndicator(ispFromAction.getIndIdeIndicator());
+            sp.setDelayedpostingIndicator(ispFromAction.getDelayedpostingIndicator());
+            session.update(sp);
+            session.flush();
+            //spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
+            ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(sp);
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
+                    + ispDTO.getIi().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
+                    + ispDTO.getIi().getExtension() , hbe);
+        }
+        return ispRetDTO;
+        
+    }
 
 }

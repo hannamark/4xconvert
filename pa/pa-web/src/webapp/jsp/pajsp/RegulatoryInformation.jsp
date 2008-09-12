@@ -9,24 +9,24 @@
 	window.onload=checkAll;
 	/**/
 	function checkAll(){
-		if (document.getElementById('fdaindid').value == 'No'){
-			document.getElementById('sec801id').value ='No';
-			document.getElementById('indideid').value ='No';
-			document.getElementById('delpostindid').value ='No';
+		if (document.getElementById('fdaindid').value == 'false'){
+			document.getElementById('sec801id').value ='false';
+			document.getElementById('indideid').value ='false';
+			document.getElementById('delpostindid').value ='false';
 			hideRow(document.getElementById('sec801row'));
 		} else {
 			showRow(document.getElementById('sec801row'));
 		}
 			
-		if (document.getElementById('sec801id').value == 'No') {	
+		if (document.getElementById('sec801id').value == 'false') {	
 			hideRow(document.getElementById('indiderow'));
-			document.getElementById('indideid').value ='No';
-			document.getElementById('delpostindid').value ='No';
+			document.getElementById('indideid').value ='false';
+			document.getElementById('delpostindid').value ='false';
 		} else {
 			showRow(document.getElementById('indiderow'));
 		}			
-		if (document.getElementById('indideid').value == 'No') {
-			document.getElementById('delpostindid').value ='No';
+		if (document.getElementById('indideid').value == 'false') {
+			document.getElementById('delpostindid').value ='false';
 			hideRow(document.getElementById('delpostindrow'));
 		} else {
 			showRow(document.getElementById('delpostindrow'));
@@ -44,6 +44,10 @@
 	*/
 	function show_details() {
 		dojo.event.topic.publish("show_detail");
+	}
+	function handleAction(){
+		document.saveRegAuthority.action="saveRegAuthority.action";
+		document.saveRegAuthority.submit();
 	}
 </script>
 </head>
@@ -67,7 +71,7 @@
 	</tr> -->
 	<!--  Trial Oversight Authority Country -->
 	<tr>
-		<td scope="row" class="label">Trial	Oversight Authority Country :</td>
+		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.country.name"/></td>
 		<td class="value"><s:select id="countries"
 					 name="lst"                   
                      list="countryList"  
@@ -78,7 +82,7 @@
 	</tr>
 	<!--  Trial Oversignt Authority Organization Name -->
 	<tr>
-		<td scope="row" class="label"><fmt:message key="regulatory.oversight.auth.name"/></td>
+		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.auth.name"/></td>
 		<td class="value">
 			<s:url id="d_url" action="getAuthOrgsAjax" />
 			<s:div id="details" href="%{d_url}" theme="ajax" listenTopics="show_detail" formId="saveRegAuthority"></s:div>
@@ -86,28 +90,28 @@
 	</tr>
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
-		<td scope="row"  class="label"><fmt:message key="regulatory.FDA.regulated.interv.ind"/> </td>
-		<td class="value"><s:select  id="fdaindid" name="regulatoryDTO.fdaRegulatedInterventionIndicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkAll();"/></td>
+		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/> </td>
+		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
 	<!--   Section 801 Indicator-->
 	<tr id="sec801row">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.section801.ind"/></td>
-		<td class="value"><s:select id="sec801id" name="regulatoryDTO.section801Indicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkAll();"/></td>
+		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
 	<!--  IND/IDE Indicator-->
 	<tr id="indiderow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.ideind.indicator"/></td>
-		<td class="value"><s:select id="indideid" name="regulatoryDTO.indideTrialIndicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkAll();"/></td>		
+		<td class="value"><s:select id="indideid" name="webDTO.ideTrialIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
 	</tr>	
 	<!--   Delayed Posting Indicator-->
 	<tr id="delpostindrow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.delayed.posting.ind"/></td>
-		<td class="value"><s:select id="delpostindid" name="regulatoryDTO.delayedPostingIndicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkAll();"/></td>		
+		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
 	</tr>
 	<!--   Data Monitoring Committee Appointed Indicator -->
 	<tr id="datamonrow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
-		<td class="value"><s:select id="datamonid" name="regulatoryDTO.dataMonitoringIndicator" list="#{'No':'No', 'Yes':'Yes'}"/></td>		
+		<td class="value"><s:select id="datamonid" name="webDTO.dataMonitoringIndicator" list="#{'false':'No', 'true':'Yes'}"/></td>		
 	</tr>
 	<tr>
 		<td colspan="2" class="pad10">
@@ -122,8 +126,8 @@
 	
 <div class="actionsrow">
 	<del class="btnwrapper">
-		<ul class="btnrow">
-			<li><a href="saveRegAuthority.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+		<ul class="btnrow">			
+			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
 			<li><a href="nciSpecificInformation.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 			<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 		</ul>	
