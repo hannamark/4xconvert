@@ -109,13 +109,13 @@
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
-           <form-login-page>/index.action</form-login-page>
-            <form-error-page>/index.action?failedLogin=true</form-error-page>
+           <form-login-page>/login.action</form-login-page>
+            <form-error-page>/login.action?failedLogin=true</form-error-page>
         </form-login-config>
     </login-config>
 
     <security-role>
-        <description>Curators organize and oversee data quality in PO.</description>
+        <description>Curators organize and oversee data quality in PA.</description>
         <role-name>Curator</role-name>
     </security-role>
 </web-app>
