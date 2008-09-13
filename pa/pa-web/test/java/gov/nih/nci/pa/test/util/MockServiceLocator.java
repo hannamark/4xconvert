@@ -11,6 +11,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 /**
  * adapted from PO.
@@ -81,5 +82,14 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    /**
+    *
+    * @return OrganizationEntityServiceRemote
+    */
+    public  OrganizationEntityServiceRemote getPoOrganizationEntityService() {
+        return null;
+    }
+    
     
 }
