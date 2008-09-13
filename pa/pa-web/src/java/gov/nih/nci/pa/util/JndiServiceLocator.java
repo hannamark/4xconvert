@@ -8,6 +8,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 
 /**
@@ -70,4 +71,13 @@ public class JndiServiceLocator implements ServiceLocator {
         return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
     }
 
+    /**
+     * @return OrganizationEntityServiceRemote
+     */
+     public OrganizationEntityServiceRemote getPoOrganizationEntityService() {
+     return (OrganizationEntityServiceRemote) 
+         JNDIUtil.lookup("jnp://nci-reinharh-1:1099/po/OrganizationEntityServiceBean/remote");
+     }
+
+    
 }

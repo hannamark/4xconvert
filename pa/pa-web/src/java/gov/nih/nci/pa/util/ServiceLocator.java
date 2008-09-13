@@ -8,6 +8,8 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+
 
 /**
  *
@@ -65,4 +67,10 @@ public interface ServiceLocator {
      */
     StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService();    
 
+    /**
+    *
+    * @return StudyOverallStatusServiceRemote
+    */
+    OrganizationEntityServiceRemote getPoOrganizationEntityService();
+    
 }
