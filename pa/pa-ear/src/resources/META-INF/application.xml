@@ -16,6 +16,14 @@
             <context-root>/pa</context-root>
         </web>
     </module>
-    <module><java>iso-datatypes-0.2.jar</java></module>
+    <module>
+        <java>po-services-0.2.jar</java>
+     </module>
+    <module>
+        <java>xsnapshot-1.1-beta2.jar</java>
+    </module>
+    <module>
+        <java>iso-datatypes-0.2.jar</java>
+    </module>
     <security-role><role-name>Curator</role-name></security-role>
 </application>
