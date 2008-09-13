@@ -83,15 +83,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.PhoneNumber;
-import gov.nih.nci.po.data.bo.URL;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 
 /**
  * @author Scott Miller
@@ -101,38 +93,14 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
     @Override
     HealthCareProvider getSampleStructuralRole()  {
         HealthCareProvider hcp = new HealthCareProvider();
-        hcp.setPerson(basicPerson);
-        hcp.setOrganization(basicOrganization);
-        hcp.setStatusDate(new Date());
-        hcp.setEmail(new ArrayList<Email>());
-        hcp.getEmail().add(new Email("me@test.com"));
-        hcp.setPhone(new ArrayList<PhoneNumber>());
-        hcp.getPhone().add(new PhoneNumber("123-456-7890"));
-        hcp.setFax(new ArrayList<PhoneNumber>());
-        hcp.getFax().add(new PhoneNumber("098-765-4321"));
-        hcp.setTty(new ArrayList<PhoneNumber>());
-        hcp.getTty().add(new PhoneNumber("111-222-3333"));
-        hcp.setUrl(new ArrayList<URL>());
-        hcp.getUrl().add(new URL("http://www.google.com"));
+        fillinPersonRoleFields(hcp);
         hcp.setCertificateLicenseText("test cert");
-        Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
-        hcp.setPostalAddresses(new HashSet<Address>());
-        hcp.getPostalAddresses().add(mailingAddress);
         return hcp;
     }
 
     @Override
     void verifyStructuralRole(HealthCareProvider expected, HealthCareProvider actual) {
-        assertEquals(expected.getId(), actual.getId());
+        verifyPersonRole(expected, actual);
         assertEquals(expected.getCertificateLicenseText(), actual.getCertificateLicenseText());
-        assertEquals(expected.getEmail().size(), actual.getEmail().size());
-        assertEquals(expected.getPerson().getId(), actual.getPerson().getId());
-        assertEquals(expected.getOrganization().getId(), actual.getOrganization().getId());
-        assertEquals(expected.getFax().size(), actual.getFax().size());
-        assertEquals(expected.getPhone().size(), actual.getPhone().size());
-        assertEquals(expected.getTty().size(), actual.getTty().size());
-        assertEquals(expected.getUrl().size(), actual.getUrl().size());
-        assertEquals(expected.getStatus(), actual.getStatus());
-        assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
     }
 }

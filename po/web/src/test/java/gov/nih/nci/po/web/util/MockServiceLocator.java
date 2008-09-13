@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.web.util;
 
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.CountryServiceStub;
 import gov.nih.nci.po.service.GenericServiceLocal;
@@ -166,5 +167,12 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
         return hcfService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
+        return null;
     }
 }

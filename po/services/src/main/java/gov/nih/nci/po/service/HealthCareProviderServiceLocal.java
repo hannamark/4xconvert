@@ -86,7 +86,6 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 
 import javax.ejb.Local;
 
-
 /**
  * @author Scott Miller
  */

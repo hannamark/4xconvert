@@ -83,9 +83,14 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
@@ -97,6 +102,9 @@ import gov.nih.nci.po.util.TestServiceLocator;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -114,6 +122,38 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     ServiceLocator locator = new TestServiceLocator();
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
+
+    protected void fillinPersonRoleFields(PersonRole pr) {
+        pr.setPerson(basicPerson);
+        pr.setOrganization(basicOrganization);
+        pr.setStatusDate(new Date());
+        pr.setEmail(new ArrayList<Email>());
+        pr.getEmail().add(new Email("me@test.com"));
+        pr.setPhone(new ArrayList<PhoneNumber>());
+        pr.getPhone().add(new PhoneNumber("123-456-7890"));
+        pr.setFax(new ArrayList<PhoneNumber>());
+        pr.getFax().add(new PhoneNumber("098-765-4321"));
+        pr.setTty(new ArrayList<PhoneNumber>());
+        pr.getTty().add(new PhoneNumber("111-222-3333"));
+        pr.setUrl(new ArrayList<URL>());
+        pr.getUrl().add(new URL("http://www.google.com"));
+        Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
+        pr.setPostalAddresses(new HashSet<Address>());
+        pr.getPostalAddresses().add(mailingAddress);
+    }
+
+    protected void verifyPersonRole(PersonRole expected, PersonRole actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getEmail().size(), actual.getEmail().size());
+        assertEquals(expected.getPerson().getId(), actual.getPerson().getId());
+        assertEquals(expected.getOrganization().getId(), actual.getOrganization().getId());
+        assertEquals(expected.getFax().size(), actual.getFax().size());
+        assertEquals(expected.getPhone().size(), actual.getPhone().size());
+        assertEquals(expected.getTty().size(), actual.getTty().size());
+        assertEquals(expected.getUrl().size(), actual.getUrl().size());
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
+    }
 
     @Before
     public void setUpData() throws Exception {

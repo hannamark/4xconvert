@@ -80,85 +80,17 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+
+import javax.ejb.Local;
 
 /**
  * @author Scott Miller
- *
  */
-public class TestServiceLocator implements ServiceLocator {
+@Local
+public interface ClinicalResearchStaffServiceLocal extends GenericStructrualRoleServiceLocal<ClinicalResearchStaff> {
 
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService() {
-        return EjbTestHelper.getGenericServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return EjbTestHelper.getOrganizationServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return EjbTestHelper.getPersonServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return EjbTestHelper.getCountryServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return EjbTestHelper.getOversightCommitteeTypeServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return EjbTestHelper.getHealthCareProviderServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return EjbTestHelper.getOversightCommitteeServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return EjbTestHelper.getHealthCareFacilityServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return EjbTestHelper.getClinicalResearchStaffServiceBean();
-    }
+    // empty interface - all methods are defined by generic interface
 }

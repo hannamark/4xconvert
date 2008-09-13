@@ -212,4 +212,12 @@ public class EjbTestHelper {
     public static HealthCareFacilityServiceLocal getHealthCareFacilityServiceBean() {
         return new HealthCareFacilityServiceBean();
     }
+
+    /**
+     * Get the bean.
+     * @return Get the bean.
+     */
+    public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
+        return new ClinicalResearchStaffServiceBean();
+    }
 }

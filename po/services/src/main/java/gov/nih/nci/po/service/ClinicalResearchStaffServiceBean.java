@@ -80,85 +80,32 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.RoleStatus;
+
+import java.util.Date;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  * @author Scott Miller
- *
  */
-public class TestServiceLocator implements ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class ClinicalResearchStaffServiceBean extends AbstractBaseServiceBean<ClinicalResearchStaff>
+    implements ClinicalResearchStaffServiceLocal {
 
     /**
      * {@inheritDoc}
      */
-    public GenericServiceLocal getGenericService() {
-        return EjbTestHelper.getGenericServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return EjbTestHelper.getOrganizationServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return EjbTestHelper.getPersonServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return EjbTestHelper.getCountryServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return EjbTestHelper.getOversightCommitteeTypeServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return EjbTestHelper.getHealthCareProviderServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return EjbTestHelper.getOversightCommitteeServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return EjbTestHelper.getHealthCareFacilityServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return EjbTestHelper.getClinicalResearchStaffServiceBean();
+    @Override
+    public long create(ClinicalResearchStaff obj) throws EntityValidationException {
+        obj.setStatus(RoleStatus.PENDING);
+        obj.setStatusDate(new Date());
+        return super.create(obj);
     }
 }
