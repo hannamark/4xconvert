@@ -131,8 +131,19 @@ public class StudyOverallStatusAction extends ActionSupport implements
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
         dto.setStudyProtocolidentifier(spIdIi);
+        
         try {
             sosService.updateStudyOverallStatus(dto);            
+            // set the current date and status to the session
+            StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+            .getRequest().getSession()
+            .getAttribute(Constants.TRIAL_SUMMARY);
+            spDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
+            spDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
+            // set the nee object back to session
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.TRIAL_SUMMARY, spDTO);
+
         } catch (PAException e) {
             addActionError(e.getMessage());
         }
