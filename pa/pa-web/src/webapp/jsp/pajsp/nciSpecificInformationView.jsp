@@ -46,6 +46,16 @@ function resetValues () {
                  </tr>
                 <tr>
                       <td scope="row" class="label">
+                           <label for="summary4Name"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationIi"/></dfn></label>
+                      </td>
+                      <td class="value">
+                          ${nciSpecificInformationWebDTO.organizationIi}
+                          
+                      </td>          
+                 </tr>  
+                 
+                <tr>
+                      <td scope="row" class="label">
                            <label for="summary4Name"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationName"/></dfn></label>
                       </td>
                       <td class="value">
