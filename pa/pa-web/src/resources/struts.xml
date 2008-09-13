@@ -90,5 +90,15 @@
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
 		</action>
+         <action name="poOrganizationsAjax" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="getPoOrganizations">
+            <interceptor-ref name="nci-commonsParams" />
+            <result>/protected/nodecorate/orglookup.jsp</result>
+            <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
+        </action>
+        <action name="displaySelectedOrg" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="displayOrg">
+              <interceptor-ref name="nci-commonsParams" />
+              <result>/jsp/pajsp/nciSpecificInformation.jsp</result>
+              <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
+        </action>
 	</package>
 </struts>
