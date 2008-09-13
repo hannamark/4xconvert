@@ -5,7 +5,7 @@
     <!--User Details-->
   	<c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-        <div id="userarea">Welcome, <%=request.getRemoteUser()%>  |  <a href='<c:url value="/login/logout.action"/>'>Logout</a></div>
+        <div id="userarea">Welcome, <%=request.getRemoteUser()%>  |  <a href='<c:url value="/logout.action"/>'>Logout</a></div>
         </c:when>
         <c:otherwise>
         <div id="userarea"><a href='<c:url value="/protected/home.action"/>'>Login</a></div>
