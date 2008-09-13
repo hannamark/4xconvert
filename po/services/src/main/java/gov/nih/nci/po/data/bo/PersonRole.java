@@ -93,18 +93,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
@@ -208,18 +204,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
      * model-element-transformer="gov.nih.nci.po.data.convert.AdConverter"
      * copy-to-model="true"
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_role_address",
-            joinColumns = @JoinColumn(name = "person_role_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_ROLE_ADDRESS_FK", inverseName = "ADDRESS_PER_ROLE_FK")
-    @Valid
+    @Transient
     public Set<Address> getPostalAddresses() {
         return this.postalAddresses;
     }
@@ -234,18 +219,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     /**
      * @return the email
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_role_email",
-            joinColumns = @JoinColumn(name = "person_role_id"),
-            inverseJoinColumns = @JoinColumn(name = "email_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_ROLE_EMAIL_FK", inverseName = "EMAIL_PER_ROLE_FK")
-    @Valid
+    @Transient
     public List<Email> getEmail() {
         return this.email;
     }
@@ -260,18 +234,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     /**
      * @return the fax
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_role_fax",
-            joinColumns = @JoinColumn(name = "person_role_id"),
-            inverseJoinColumns = @JoinColumn(name = "fax_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_ROLE_FAX_FK", inverseName = "FAX_PER_ROLE_FK")
-    @Valid
+    @Transient
     public List<PhoneNumber> getFax() {
         return this.fax;
     }
@@ -286,18 +249,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     /**
      * @return the phone
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_role_phone",
-            joinColumns = @JoinColumn(name = "person_role_id"),
-            inverseJoinColumns = @JoinColumn(name = "phone_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_ROLE_PHONE_FK", inverseName = "PHONE_PER_ROLE_FK")
-    @Valid
+    @Transient
     public List<PhoneNumber> getPhone() {
         return this.phone;
     }
@@ -312,18 +264,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     /**
      * @return the url
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_role_url",
-            joinColumns = @JoinColumn(name = "person_role_id"),
-            inverseJoinColumns = @JoinColumn(name = "url_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_ROLE_URL_FK", inverseName = "URL_PER_ROLE_FK")
-    @Valid
+    @Transient
     public List<URL> getUrl() {
         return this.url;
     }
@@ -338,18 +279,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     /**
      * @return the tty
      */
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "person_role_tty",
-            joinColumns = @JoinColumn(name = "person_role_id"),
-            inverseJoinColumns = @JoinColumn(name = "tty_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "PER_ROLE_TTY_FK", inverseName = "TTY_PER_ROLE_FK")
-    @Valid
+    @Transient
     public List<PhoneNumber> getTty() {
         return this.tty;
     }

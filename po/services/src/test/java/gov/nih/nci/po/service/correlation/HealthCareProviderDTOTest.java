@@ -93,7 +93,6 @@ import java.net.URISyntaxException;
 
 /**
  * @author Scott Miller
- *
  */
 public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
 

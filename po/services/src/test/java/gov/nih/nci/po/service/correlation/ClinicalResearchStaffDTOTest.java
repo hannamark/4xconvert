@@ -80,175 +80,53 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
-import java.util.List;
-import java.util.Set;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.PersonRoleDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.Valid;
-
+import java.net.URISyntaxException;
 
 /**
- * Class that stores health care provider information.
  * @author Scott Miller
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.HealthCareProviderDTO"
- *      model-extends="gov.nih.nci.po.data.bo.PersonRole"
  */
-@Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class HealthCareProvider extends PersonRole {
-    private static final long serialVersionUID = 1L;
-
-    private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
-
-    private String certificateLicenseText;
+public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
 
     /**
-     * @return the certificateLicenseText
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
+     * {@inheritDoc}
      */
-    @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
-    public String getCertificateLicenseText() {
-        return this.certificateLicenseText;
-    }
-
-    /**
-     * @param certificateLicenseText the certificateLicenseText to set
-     */
-    public void setCertificateLicenseText(String certificateLicenseText) {
-        this.certificateLicenseText = certificateLicenseText;
+    @Override
+    protected PersonRole getExampleTestClass() {
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        fillInExamplePersonRoleFields(crs);
+        return crs;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "hcp_address",
-            joinColumns = @JoinColumn(name = "hcp_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "HCP_ADDRESS_FK", inverseName = "ADDRESS_HCP_FK")
-    @Valid
-    public Set<Address> getPostalAddresses() {
-        return super.getPostalAddresses();
+    protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+        ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
+        fillInPersonRoleDTOFields(dto, personId, orgId);
+        return dto;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "hcp_email",
-            joinColumns = @JoinColumn(name = "hcp_id"),
-            inverseJoinColumns = @JoinColumn(name = "email_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "HCP_EMAIL_FK", inverseName = "EMAIL_HCP_FK")
-    @Valid
-    public List<Email> getEmail() {
-        return super.getEmail();
+    protected void verifyTestClassDTOFields(PersonRole pr) {
+        // do nothing
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "hcp_fax",
-            joinColumns = @JoinColumn(name = "hcp_id"),
-            inverseJoinColumns = @JoinColumn(name = "fax_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "HCP_FAX_FK", inverseName = "FAX_HCP_FK")
-    @Valid
-    public List<PhoneNumber> getFax() {
-        return super.getFax();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "hcp_phone",
-            joinColumns = @JoinColumn(name = "hcp_id"),
-            inverseJoinColumns = @JoinColumn(name = "phone_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "HCP_PHONE_FK", inverseName = "PHONE_HCP_FK")
-    @Valid
-    public List<PhoneNumber> getPhone() {
-        return super.getPhone();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "hcp_tty",
-            joinColumns = @JoinColumn(name = "hcp_id"),
-            inverseJoinColumns = @JoinColumn(name = "tty_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "HCP_TTY_FK", inverseName = "TTY_HCP_FK")
-    @Valid
-    public List<PhoneNumber> getTty() {
-        return super.getTty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @OneToMany
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
-    )
-    @JoinTable(
-            name = "hcp_url",
-            joinColumns = @JoinColumn(name = "hcp_id"),
-            inverseJoinColumns = @JoinColumn(name = "url_id")
-    )
-    @IndexColumn(name = "idx")
-    @ForeignKey(name = "HCP_URL_FK", inverseName = "URL_HCP_FK")
-    @Valid
-    public List<URL> getUrl() {
-        return super.getUrl();
+    protected void verifyTestClassFields(PersonRoleDTO dto) {
+        // do nothing
     }
 }
