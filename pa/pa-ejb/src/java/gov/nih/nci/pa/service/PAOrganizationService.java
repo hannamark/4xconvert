@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.OrganizationDTO;
 
 import java.util.List;
@@ -23,4 +24,19 @@ public interface PAOrganizationService {
     List<OrganizationDTO> getOrganizationsAssociatedWithStudyProtocol()
     throws PAException;
 
+    /**
+     * This expects only id and identifier.
+     * @param organization organization
+     * @return Organization
+     * @throws PAException PAException
+     */
+    Organization getOrganizationByIndetifers(Organization organization) throws PAException;
+    
+    /**
+     * 
+     * @param organization Organization
+     * @return Organization
+     * @throws PAException PAException
+     */
+    Organization createOrganization(Organization organization) throws PAException;
 }

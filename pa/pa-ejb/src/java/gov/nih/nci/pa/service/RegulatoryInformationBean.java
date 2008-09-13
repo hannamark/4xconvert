@@ -1,120 +1,1 @@
-package gov.nih.nci.pa.service;
-
-import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
-import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
-import gov.nih.nci.pa.dto.RegulatoryInformationDTO;
-import gov.nih.nci.pa.service.impl.RegulatoryInformationServiceImpl;
-
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-/**
- * Stateless Enterprise Java Bean (EJB).
- * 
- * @author Harsha
- * @since 08/05/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- */
-@Stateless
-public class RegulatoryInformationBean implements RegulatoryInformationServiceRemote {
-
-    /**
-     * Return a list of countries.
-     * 
-     * @return List CountryRegAuthorityDTO 
-     */
-        @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-        public List<CountryRegAuthorityDTO> getCountryList() {                  
-                return new RegulatoryInformationServiceImpl().getCountryList();
-        }
-
-        /**
-         * Method to save the Regulatory Information DTO.
-         * 
-         * @param regulatoryDTO containing regulatoryinfo
-         * @throws PAException on error
-         */
-        public void saveRegulatoryInformation(RegulatoryInformationDTO regulatoryDTO) throws PAException {
-        new RegulatoryInformationServiceImpl().saveRegulatoryInformation(regulatoryDTO);
-        }
-
-    /**
-     * Method to get a list of Authority Organization names.
-     * 
-     * @param regAuthID Regulatory authorization id
-     * @return List of Authority name(s) as String
-         * @throws PAException on error 
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-        public List<String> getRegulatoryAuthorityName(Long regAuthID)
-                        throws PAException {
-        return new RegulatoryInformationServiceImpl().getRegulatoryAuthorityName(regAuthID);
-        }
-    
-    /**
-     * Method to get a Country name using the country id.
-     * 
-     * @param countryId as long
-     * @return country name as String
-         * @throws PAException on error 
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-        public String getCountryName(long countryId) throws PAException {
-        return new RegulatoryInformationServiceImpl().getCountryName(countryId);
-        }
-        
-    /**
-     * Method to get a list of distinct country names only.
-     *  
-     * @return List of distinct country names
-     * @throws PAException on error
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-        public List getDistinctCountryNames() throws PAException {
-        return new RegulatoryInformationServiceImpl().getDistinctCountryNames();
-        }
-    
-    /**
-     * Method to get a list of Regulatory Authority organizations for a 
-     * given regulatory authority id.
-     *  
-     * @param regAuthID as Long
-     * @return List of RegulatoryAuthOrgDTO(s)
-     * @throws PAException on error
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-        public List<RegulatoryAuthOrgDTO> getRegulatoryAuthorityNameId(Long regAuthID) throws PAException {
-        return new RegulatoryInformationServiceImpl().getRegulatoryAuthorityNameId(regAuthID);
-        }
-
-    /**
-     * Method to get the protocol for edit action.
-     *       
-     * @param protocolId for a given protocol
-     * @return RegulatoryInformationDTO information
-     * @throws PAException on error
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-        public RegulatoryInformationDTO getProtocolForEdit(long protocolId) throws PAException {
-        return new RegulatoryInformationServiceImpl().getProtocolForEdit(protocolId);
-        }
-
-    /**
-     * Method to Regulatory Org DTO for a given protocol ID.
-     * 
-     * @param protocolId for a given protocol
-     * @return RegulatoryAuthOrgDTO information
-     * @throws PAException on error
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    
-        public RegulatoryAuthOrgDTO getRegulatoryAuthOrgForEdit(long protocolId)
-                        throws PAException {
-        return new RegulatoryInformationServiceImpl().getRegulatoryAuthOrgForEdit(protocolId);
-        }
-}
-
+package gov.nih.nci.pa.service;import gov.nih.nci.pa.domain.Country;import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;import gov.nih.nci.pa.util.HibernateUtil;import java.util.ArrayList;import java.util.List;import javax.ejb.Stateless;import javax.ejb.TransactionAttribute;import javax.ejb.TransactionAttributeType;import org.apache.log4j.Logger;import org.hibernate.HibernateException;import org.hibernate.Session;/** * Stateless Enterprise Java Bean (EJB). *  * @author Harsha * @since 08/05/2008 copyright NCI 2007. All rights reserved. This code may not *        be used without the express written permission of the copyright *        holder, NCI. */@Statelesspublic class RegulatoryInformationBean implements RegulatoryInformationServiceRemote {    private static final Logger LOG = Logger.getLogger(RegulatoryInformationBean.class);    /**     * Method to get a list of distinct country names only.     *      * The DTOS here are not ISO     *      * @return List of distinct country names     * @throws PAException on error     */    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    public List getDistinctCountryNames() throws PAException {        LOG.debug("Entering getDistinctCountryNames ");        List<CountryRegAuthorityDTO> countryDtos = new ArrayList<CountryRegAuthorityDTO>();        CountryRegAuthorityDTO countryDTO;        Session session = null;        try {            Object[] searchResult = null;            session = HibernateUtil.getCurrentSession();            List results = session.createQuery("select distinct country from " + "RegulatoryAuthority").list();            for (int i = 0; i < results.size(); i++) {                countryDTO = new CountryRegAuthorityDTO();                Country resCountry = (Country) results.get(i);                countryDTO.setId(resCountry.getId());                countryDTO.setAlpha2(resCountry.getAlpha2());                countryDTO.setAlpha3(resCountry.getAlpha3());                countryDTO.setName(resCountry.getName());                countryDTO.setNumeric(resCountry.getNumeric());                countryDtos.add(countryDTO);            }        } catch (HibernateException hbe) {            LOG.error(" Hibernate exception in getDistinctCountryNames method ", hbe);            throw new PAException("Exception at getDistinctCountryNames", hbe);        }        LOG.debug("Leaving getDistinctCountryNames ");        return countryDtos;    }    /**     * Method to get a list of Regulatory Authority organizations for a given     * regulatory authority id.     *      * @param regAuthID as Long     * @return List of RegulatoryAuthOrgDTO(s)     * @throws PAException on error     */    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    public List getRegulatoryAuthorityNameId(Long regAuthID) throws PAException {        LOG.debug("Entering  getRegulatoryAuthorityName");        Session session = null;        RegulatoryAuthOrgDTO regAuthDTO = null;        List retResults = new ArrayList();        Object[] searchResult = null;        try {            session = HibernateUtil.getCurrentSession();            List results = session.createQuery(                    "select id, authorityName from RegulatoryAuthority " + "as ra where ra.country.id=" + regAuthID)                    .list();            for (int i = 0; i < results.size(); i++) {                regAuthDTO = new RegulatoryAuthOrgDTO();                searchResult = (Object[]) results.get(i);                regAuthDTO.setId((Long) searchResult[0]);                regAuthDTO.setName((String) searchResult[1]);                retResults.add(regAuthDTO);            }        } catch (HibernateException hbe) {            LOG.error(" Hibernate exception in getRegulatoryAuthorityName ", hbe);            throw new PAException(" Hibernate exception in getRegulatoryAuthorityName ", hbe);        }        LOG.debug("Leaving  getRegulatoryAuthorityName");        return retResults;    }    /**     * Method to get the regulatory authority name.     *      * @param regAuthID for the Regulatory Authority table     * @return List of Authority(s) for any given country     * @throws PAException on error     */    @SuppressWarnings ("PMD.UseArraysAsList")    public List<Long> getRegulatoryAuthorityInfo(Long regAuthID) throws PAException {        LOG.debug("Entering  getRegulatoryAuthorityInfo");        Session session = null;        List results = null;        try {            session = HibernateUtil.getCurrentSession();            results = session.createQuery(                    " select ra.id , c.id from RegulatoryAuthority as ra  " + " join ra.country as c"                            + " where ra.id = " + regAuthID).list();        } catch (HibernateException hbe) {            LOG.error("Exception at getRegulatoryAuthorityInfo method ", hbe);            throw new PAException(" Hibernate exception in getRegulatoryAuthorityInfo method ", hbe);        }               Object[] searchResult;        List returnResults = new ArrayList();        for (int i = 0; i < results.size(); i++) {            searchResult = (Object[]) results.get(i);            for (int k = 0; k < searchResult.length; k++) {                returnResults.add(searchResult[k]);            }        }        LOG.debug("Leaving  getRegulatoryAuthorityInfo");        return returnResults;    }    /**     *      * @param id to be searched     * @param className to be used for searching     * @return String value     * @throws PAException on error     */    public String getCountryOrOrgName(Long id, String className) throws PAException {        LOG.debug("Entering  getCountryOrOrgName");        Session session = null;        List results = null;        try {            session = HibernateUtil.getCurrentSession();            if ("RegulatoryAuthority".equals(className)) {                results = session.createQuery(                        " select val.authorityName  from " + className + " as val where val.id=" + id).list();            } else {                results = session.createQuery(" select val.name  from " + className + " as val where val.id=" + id)                        .list();            }        } catch (HibernateException hbe) {            LOG.error("Exception at getCountryOrOrgName method ", hbe);            throw new PAException(" Hibernate exception in getCountryOrOrgName method ", hbe);        }        LOG.debug("Leaving  getCountryOrOrgName");        return results.get(0).toString();    }}

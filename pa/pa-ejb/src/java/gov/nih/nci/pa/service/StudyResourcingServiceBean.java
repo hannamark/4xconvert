@@ -136,6 +136,8 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             // set the values from paramter
             studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
                     studyResourcingDTO.getTypeCode().getCode()));
+            studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
+                    studyResourcingDTO.getOrganizationIdentifier()));
             studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
             studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
             session.update(studyResourcing);
