@@ -38,7 +38,7 @@ function handleAction(){
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/jsp/pajsp/protocolDetailSummary.jsp"/>
-<div class="box"><s:form>
+<div class="box"><s:form name="studyOverallStatus">
     <s:actionerror />
 <h2><fmt:message key="trialStatus.title" /></h2>
     <table class="form">
