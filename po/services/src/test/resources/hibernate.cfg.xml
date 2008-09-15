@@ -25,6 +25,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.HealthCareFacility"/>
         <mapping class="gov.nih.nci.po.data.bo.Organization" />
         <mapping class="gov.nih.nci.po.data.bo.Person" />
+        <mapping class="gov.nih.nci.po.data.bo.PersonResourceProvider" />
         <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
         <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>

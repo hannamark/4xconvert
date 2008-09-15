@@ -228,4 +228,8 @@ public class EjbTestHelper {
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
         return new ClinicalResearchStaffServiceBean();
     }
+
+    public static PersonResourceProviderServiceLocal getPersonResourceProviderServiceBean() {
+        return new PersonResourceProviderServiceBean();
+    }
 }

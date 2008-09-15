@@ -90,6 +90,7 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
+import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 
 /**
@@ -159,6 +160,13 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
         return (ClinicalResearchStaffServiceLocal) JNDIUtil.lookup("po/ClinicalResearchStaffServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
+        return (PersonResourceProviderServiceLocal) JNDIUtil.lookup("po/PersonResourceProviderServiceBean/local");
     }
 
 

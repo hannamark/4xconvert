@@ -90,6 +90,7 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
+import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 
 /**
@@ -142,4 +143,9 @@ public interface ServiceLocator {
      * @return the oversight committee service
      */
     OversightCommitteeServiceLocal getOversightCommitteeService();
+
+    /**
+     * @return person resource provider service
+     */
+    PersonResourceProviderServiceLocal getPersonResourceProviderService();
 }

@@ -91,6 +91,7 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
+import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 
 /**
@@ -160,5 +161,12 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
         return EjbTestHelper.getClinicalResearchStaffServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
+        return EjbTestHelper.getPersonResourceProviderServiceBean();
     }
 }
