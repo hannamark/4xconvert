@@ -80,149 +80,59 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.util;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.util.ValidIi;
+import gov.nih.nci.coppa.iso.NullFlavor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.junit.Test;
 
 /**
- * ResourceProvider that has a Person player and Organization scoper.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.PersonResourceProviderDTO"
- *      implements="gov.nih.nci.services.PoDto"
+ * Tests the ISO tester.
  */
-@Entity
-public class PersonResourceProvider implements PersistentObject {
+public class ValidIiValidatorTest {
 
-    private static final long serialVersionUID = -4866225509121969001L;
-    private Long id;
-    private Person player;
-    private Organization scoper;
-    private RoleStatus status;
-    private Ii identifier;
+    @Test
+    public void testIt() throws Exception {
+        ValidIiValidator val = new ValidIiValidator();
+        val.initialize(null);
+        val.apply(null);
+        assertFalse(val.isValid(null));
+        assertFalse(val.isValid(new Object()));
 
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
+        Ii ii = new Ii();
 
-    /**
-     * {@inheritDoc}
-     * @xsnapshot.property match="iso"
-     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
-     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
+        // completely blank ii is invalid - no nullflavor, no root
+        assertFalse(val.isValid(ii));
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+        // !null + set root -> valid
+        ii.setRoot("root");
+        assertTrue(val.isValid(ii));
 
-    /**
-     * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @NotNull
-    @ForeignKey(name = "personrprole_player_fkey")
-    public Person getPlayer() {
-        return player;
-    }
+        // test the null case.
+        ii.setNullFlavor(NullFlavor.ASKU);
+        assertFalse(val.isValid(ii));
 
-    /**
-     * @param player the player to set
-     */
-    public void setPlayer(Person player) {
-        this.player = player;
-    }
+        ii.setRoot(null);
+        ii.setExtension("foo");
+        assertFalse(val.isValid(ii));
 
-    /**
-     * @return the scoper. may be null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "personrpnrole_scoper_fkey")
-    public Organization getScoper() {
-        return scoper;
-    }
+        ii.setExtension(null);
+        ii.setIdentifierName("name");
+        assertFalse(val.isValid(ii));
 
-    /**
-     * @param scoper the scoper to set
-     */
-    public void setScoper(Organization scoper) {
-        this.scoper = scoper;
-    }
+        ii.setIdentifierName(null);
+        ii.setDisplayable(Boolean.TRUE);
+        assertFalse(val.isValid(ii));
 
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    public RoleStatus getStatus() {
-        return this.status;
-    }
+        ii.setDisplayable(null);
+        ii.setReliability(IdentifierReliability.ISS);
+        assertFalse(val.isValid(ii));
 
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
-
-    /**
-     * @return the Id that <code>scoper</code> uses to identify <code>player</code>.  This is
-     *         distinct from the id of <em>this role</em>, which is system assigned.
-     * @xsnapshot.property match="iso" name="assignedId"
-     */
-    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
-    @Columns(columns = {
-            @Column(name = "identifier_flavor_id"),
-            @Column(name = "identifier_null_flavor"),
-            @Column(name = "identifier_displayable"),
-            @Column(name = "identifier_extension"),
-            @Column(name = "identifier_identifier_name"),
-            @Column(name = "identifier_reliability"),
-            @Column(name = "identifier_root"),
-            @Column(name = "identifier_scope")
-    })
-    @ValidIi
-    public Ii getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
+        ii.setReliability(null);
+        assertTrue(val.isValid(ii));
     }
 }

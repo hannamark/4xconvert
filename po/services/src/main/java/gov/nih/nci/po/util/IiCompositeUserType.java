@@ -110,14 +110,22 @@ import org.hibernate.usertype.CompositeUserType;
 public class IiCompositeUserType implements CompositeUserType {
 
     // Constants for the position of the attribute in the composite type
-    private static final int FLAVOR_ID = 0;
-    private static final int NULLFLAVOR = 1;
-    private static final int DISPLAYABLE = 2;
-    private static final int EXTENSION = 3;
-    private static final int IDENTIFIER_NAME = 4;
-    private static final int RELIABILITY = 5;
-    private static final int ROOT = 6;
-    private static final int SCOPE = 7;
+    /** Positional param. */
+    public static final int FLAVOR_ID = 0;
+    /** Positional param. */
+    public static final int NULLFLAVOR = 1;
+    /** Positional param. */
+    public static final int DISPLAYABLE = 2;
+    /** Positional param. */
+    public static final int EXTENSION = 3;
+    /** Positional param. */
+    public static final int IDENTIFIER_NAME = 4;
+    /** Positional param. */
+    public static final int RELIABILITY = 5;
+    /** Positional param. */
+    public static final int ROOT = 6;
+    /** Positional param. */
+    public static final int SCOPE = 7;
 
     /**
      * {@inheritDoc}
@@ -223,7 +231,7 @@ public class IiCompositeUserType implements CompositeUserType {
         case FLAVOR_ID:
             return var.getFlavorId();
         case NULLFLAVOR:
-            return var.getNullFlavor().toString();
+            return (var.getNullFlavor() != null) ? var.getNullFlavor().toString() : null;
         case DISPLAYABLE:
             return var.getDisplayable();
         case EXTENSION:
@@ -231,11 +239,11 @@ public class IiCompositeUserType implements CompositeUserType {
         case IDENTIFIER_NAME:
             return var.getIdentifierName();
         case RELIABILITY:
-            return var.getReliability().toString();
+            return (var.getReliability() != null) ? var.getReliability().toString() : null;
         case ROOT:
             return var.getRoot();
         case SCOPE:
-            return var.getScope().toString();
+            return (var.getScope() != null) ? var.getScope().toString() : null;
         default:
             throw new HibernateException("Property " + property + " is invalid");
         }
@@ -287,13 +295,22 @@ public class IiCompositeUserType implements CompositeUserType {
 
         Ii result = new Ii();
         result.setFlavorId(rs.getString(names[FLAVOR_ID]));
-        result.setNullFlavor(NullFlavor.valueOf(rs.getString(names[NULLFLAVOR])));
+        String nullFlavorStr = rs.getString(names[NULLFLAVOR]);
+        if (nullFlavorStr != null) {
+            result.setNullFlavor(NullFlavor.valueOf(nullFlavorStr));
+        }
         result.setDisplayable((Boolean) rs.getObject(names[DISPLAYABLE]));
         result.setExtension(rs.getString(names[EXTENSION]));
         result.setIdentifierName(rs.getString(names[IDENTIFIER_NAME]));
-        result.setReliability(IdentifierReliability.valueOf(rs.getString(names[RELIABILITY])));
+        String reliabilityStr = rs.getString(names[RELIABILITY]);
+        if (reliabilityStr != null) {
+            result.setReliability(IdentifierReliability.valueOf(reliabilityStr));
+        }
         result.setRoot(rs.getString(names[ROOT]));
-        result.setScope(IdentifierScope.valueOf(rs.getString(names[SCOPE])));
+        String scopeStr = rs.getString(names[SCOPE]);
+        if (scopeStr != null) {
+            result.setScope(IdentifierScope.valueOf(scopeStr));
+        }
 
         return result;
     }
@@ -310,13 +327,15 @@ public class IiCompositeUserType implements CompositeUserType {
         } else {
             Ii ii = (Ii) value;
             statement.setString(index + FLAVOR_ID, ii.getFlavorId());
-            statement.setString(index + NULLFLAVOR, ii.getNullFlavor().toString());
+            statement.setString(index + NULLFLAVOR, (ii.getNullFlavor() != null) ? ii.getNullFlavor().toString()
+                                                                                 : null);
             statement.setObject(index + DISPLAYABLE, ii.getDisplayable());
             statement.setString(index + EXTENSION, ii.getExtension());
             statement.setString(index + IDENTIFIER_NAME, ii.getIdentifierName());
-            statement.setString(index + RELIABILITY, ii.getReliability().toString());
+            statement.setString(index + RELIABILITY, (ii.getReliability() != null) ? ii.getReliability().toString()
+                                                                                   : null);
             statement.setString(index + ROOT, ii.getRoot());
-            statement.setString(index + SCOPE, ii.getScope().toString());
+            statement.setString(index + SCOPE, (ii.getScope() != null) ? ii.getScope().toString() : null);
         }
     }
 
@@ -341,6 +360,4 @@ public class IiCompositeUserType implements CompositeUserType {
     public Class returnedClass() {
         return Ii.class;
     }
-
-
 }

@@ -92,6 +92,8 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceBean;
+import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -175,6 +177,12 @@ public class EjbTestHelper {
         HealthCareFacilityCorrelationServiceBean hcfService = new HealthCareFacilityCorrelationServiceBean();
         hcfService.setHcfService(EjbTestHelper.getHealthCareFacilityServiceBean());
         return (HealthCareFacilityCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(hcfService);
+    }
+
+    public static PersonResourceProviderCorrelationServiceRemote getPersonResourceProviderCorrelationServiceRemote() {
+        PersonResourceProviderCorrelationServiceBean prpService = new PersonResourceProviderCorrelationServiceBean();
+        prpService.setPrpService(EjbTestHelper.getPersonResourceProviderServiceBean());
+        return (PersonResourceProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(prpService);
     }
 
     public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationServiceRemote() {

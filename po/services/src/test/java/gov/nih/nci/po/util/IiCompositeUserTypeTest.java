@@ -135,6 +135,10 @@ public class IiCompositeUserTypeTest {
         assertTrue(type.isMutable());
         assertEquals(Ii.class, type.returnedClass());
         Ii ii = new Ii();
+        assertNull(type.getPropertyValue(ii, IiCompositeUserType.NULLFLAVOR));
+        assertNull(type.getPropertyValue(ii, IiCompositeUserType.RELIABILITY));
+        assertNull(type.getPropertyValue(ii, IiCompositeUserType.SCOPE));
+
         try {
             type.getPropertyValue(ii, -1);
             fail();
