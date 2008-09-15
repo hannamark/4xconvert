@@ -80,66 +80,58 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.services.correlation;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
-import java.util.Map;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
-import org.junit.Test;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Scott Miller
  *
  */
-public class HealthCareProviderRemoteServiceTest
-    extends AbstractStructrualRoleRemoteServiceTest<HealthCareProviderDTO> {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({ PoHibernateSessionInterceptor.class })
+@SecurityDomain("po")
+public class ClinicalResearchStaffCorrelationServiceBean
+    extends AbstractCorrelationServiceBean<ClinicalResearchStaff, ClinicalResearchStaffDTO>
+    implements ClinicalResearchStaffCorrelationServiceRemote {
+
+    private ClinicalResearchStaffServiceLocal crsService;
 
     /**
-     * {@inheritDoc}
+     * @param crsService the crsService to set
      */
-    @Override
-    CorrelationService<HealthCareProviderDTO> getCorrelationService() {
-       return EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected HealthCareProviderDTO getSampleDto() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        fillInPersonRoleDate(pr);
-        St st = new St();
-        st.setValue("testCertLicense");
-        pr.setCertificateLicenseText(st);
-        return pr;
+    @EJB
+    public void setCrsService(ClinicalResearchStaffServiceLocal crsService) {
+        this.crsService = crsService;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void verifyDto(HealthCareProviderDTO e, HealthCareProviderDTO a) {
-        assertEquals(e.getCertificateLicenseText().getValue(), a.getCertificateLicenseText().getValue());
-        verifyPersonRoleDto(e, a);
+    IdConverter getIdConverter() {
+        return new ClinicalResearchStaffIdConverter();
     }
 
-    @Test(expected = EntityValidationException.class)
-    public void testCreateWithException() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        getCorrelationService().createCorrelation(pr);
-    }
-
-    @Test
-    public void testValidate() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        Map<String, String[]> errors = getCorrelationService().validate(pr);
-        assertEquals(3, errors.keySet().size());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    GenericStructrualRoleServiceLocal<ClinicalResearchStaff> getLocalService() {
+        return crsService;
     }
 }

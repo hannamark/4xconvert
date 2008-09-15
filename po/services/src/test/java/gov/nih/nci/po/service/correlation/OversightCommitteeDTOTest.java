@@ -83,12 +83,19 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.OrganizationRole;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.services.correlation.OrganizationRoleDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * @author Todd Parnell
@@ -115,6 +122,14 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
     protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
         OversightCommitteeDTO dto = new OversightCommitteeDTO();
         fillInOrgRoleDTOFields(dto, scoperId, playerId);
+        Ii ii = new Ii();
+        ii.setExtension("" + 1L);
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+        ii.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+        dto.setIdentifier(ii);
         Cd type = new Cd();
         type.setCode("testcode");
         dto.setType(type);
@@ -138,6 +153,15 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
     protected void verifyTestClassFields(OrganizationRoleDTO dto) {
         assertEquals("testcode", ((OversightCommitteeDTO) dto).getType().getCode());
 
+        // check id
+        Ii expectedIi = new Ii();
+        expectedIi.setExtension("" + 1);
+        expectedIi.setDisplayable(true);
+        expectedIi.setScope(IdentifierScope.OBJ);
+        expectedIi.setReliability(IdentifierReliability.ISS);
+        expectedIi.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+        expectedIi.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((OversightCommitteeDTO) dto).getIdentifier()));
     }
 
 }

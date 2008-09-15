@@ -86,6 +86,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -105,6 +108,21 @@ import org.hibernate.validator.Valid;
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class ClinicalResearchStaff extends PersonRole {
     private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @xsnapshot.property match="iso"
+     *                 type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                 snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$ClinicalResearchStaffIdConverter"
+     *                 model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return super.getId();
+    }
 
     /**
      * {@inheritDoc}

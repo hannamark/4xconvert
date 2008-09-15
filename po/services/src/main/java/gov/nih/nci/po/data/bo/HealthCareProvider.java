@@ -86,6 +86,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -113,6 +116,21 @@ public class HealthCareProvider extends PersonRole {
     private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
 
     private String certificateLicenseText;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @xsnapshot.property match="iso"
+     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$HealthCareProviderIdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return super.getId();
+    }
 
     /**
      * @return the certificateLicenseText

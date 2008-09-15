@@ -89,9 +89,6 @@ import java.util.Set;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -133,13 +130,8 @@ public abstract class PersonRole implements PersistentObject, Contactable {
 
     /**
      * @return the id
-     * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Transient
     public Long getId() {
         return this.id;
     }

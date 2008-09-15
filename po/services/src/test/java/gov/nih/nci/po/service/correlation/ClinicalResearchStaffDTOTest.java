@@ -82,12 +82,19 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URISyntaxException;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * @author Scott Miller
@@ -111,6 +118,16 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
     protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
+
+        Ii ii = new Ii();
+        ii.setExtension("" + 1L);
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+        ii.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        dto.setIdentifier(ii);
+
         return dto;
     }
 
@@ -127,6 +144,14 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
      */
     @Override
     protected void verifyTestClassFields(PersonRoleDTO dto) {
-        // do nothing
+        // check id
+        Ii expectedIi = new Ii();
+        expectedIi.setExtension("" + 1);
+        expectedIi.setDisplayable(true);
+        expectedIi.setScope(IdentifierScope.OBJ);
+        expectedIi.setReliability(IdentifierReliability.ISS);
+        expectedIi.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        expectedIi.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((ClinicalResearchStaffDTO) dto).getIdentifier()));
     }
 }

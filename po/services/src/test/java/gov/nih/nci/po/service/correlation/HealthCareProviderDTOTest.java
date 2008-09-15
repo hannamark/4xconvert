@@ -83,13 +83,20 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URISyntaxException;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * @author Scott Miller
@@ -112,6 +119,17 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      */
     @Override
     protected void verifyTestClassFields(PersonRoleDTO dto) {
+
+        // check id
+        Ii expectedIi = new Ii();
+        expectedIi.setExtension("" + 1);
+        expectedIi.setDisplayable(true);
+        expectedIi.setScope(IdentifierScope.OBJ);
+        expectedIi.setReliability(IdentifierReliability.ISS);
+        expectedIi.setIdentifierName(IdConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+        expectedIi.setRoot(IdConverter.HEALTH_CARE_PROVIDER_ROOT);
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((HealthCareProviderDTO) dto).getIdentifier()));
+
         assertEquals("testCertLicense", ((HealthCareProviderDTO) dto).getCertificateLicenseText().getValue());
 
     }
@@ -123,6 +141,16 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
     protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         HealthCareProviderDTO dto = new HealthCareProviderDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
+
+        Ii ii = new Ii();
+        ii.setExtension("" + 1L);
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot(IdConverter.HEALTH_CARE_PROVIDER_ROOT);
+        ii.setIdentifierName(IdConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+        dto.setIdentifier(ii);
+
         St st = new St();
         st.setValue("testCertLicense");
         dto.setCertificateLicenseText(st);

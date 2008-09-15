@@ -84,7 +84,7 @@ package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
@@ -120,7 +120,7 @@ public class HealthCareFacilityCorrelationServiceBean
 
     @Override
     IdConverter getIdConverter() {
-        return new OrgIdConverter();
+        return new HealthCareFacilityIdConverter();
     }
 
     @Override

@@ -83,6 +83,9 @@
 package gov.nih.nci.po.data.bo;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * Class that stores health care facility information.
@@ -92,9 +95,22 @@ import javax.persistence.Entity;
  *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
  */
 @Entity
+@SuppressWarnings("PMD.UselessOverridingMethod")
 public class HealthCareFacility extends OrganizationRole {
 
     private static final long serialVersionUID = -5965985190603758915L;
 
-    // There are no new fields in this class
+    /**
+     * {@inheritDoc}
+     * @xsnapshot.property match="iso"
+     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$HealthCareFacilityIdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return super.getId();
+    }
 }

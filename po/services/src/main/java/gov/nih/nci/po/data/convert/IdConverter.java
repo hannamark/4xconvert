@@ -117,6 +117,46 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     public static final String PERSON_ROOT = "UID.for.nci.entity.person";
 
     /**
+     * The identifier name for.
+     */
+    public static final String CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME = "NCI clinical research staff identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "UID.for.nci.role.clinicalresearchstaff";
+
+    /**
+     * The identifier name for.
+     */
+    public static final String HEALTH_CARE_PROVIDER_IDENTIFIER_NAME = "NCI health care provider identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String HEALTH_CARE_PROVIDER_ROOT = "UID.for.nci.role.healthcareprovider";
+
+    /**
+     * The identifier name for.
+     */
+    public static final String HEALTH_CARE_FACILITY_IDENTIFIER_NAME = "NCI health care facility identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String HEALTH_CARE_FACILITY_ROOT = "UID.for.nci.role.healthcarefacility";
+
+    /**
+     * The identifier name for.
+     */
+    public static final String OVERSIGHT_COMMITTEE_IDENTIFIER_NAME = "NCI oversight committee identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String OVERSIGHT_COMMITTEE_FACILITY_ROOT = "UID.for.nci.role.oversightcommittee";
+
+    /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
@@ -182,4 +222,71 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
         }
     }
 
+    /**
+     * convert the id of a clinical research staff.
+     * @author Scott Miller
+     */
+    public static class ClinicalResearchStaffIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+            return iso;
+        }
+    }
+
+    /**
+     * convert the id of a clinical research staff.
+     * @author Scott Miller
+     */
+    public static class HealthCareProviderIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.HEALTH_CARE_PROVIDER_ROOT);
+            return iso;
+        }
+    }
+
+    /**
+     * convert the id of a clinical research staff.
+     * @author Scott Miller
+     */
+    public static class HealthCareFacilityIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
+            return iso;
+        }
+    }
+
+    /**
+     * convert the id of a clinical research staff.
+     * @author Scott Miller
+     */
+    public static class OversightCommitteeIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+            return iso;
+        }
+    }
 }

@@ -149,12 +149,9 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         OrganizationRoleDTO dto = (OrganizationRoleDTO) PoXsnapshotHelper.createSnapshot(orgRole);
 
         Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 1);
         expectedIi.setDisplayable(true);
         expectedIi.setScope(IdentifierScope.OBJ);
         expectedIi.setReliability(IdentifierReliability.ISS);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getIdentifier()));
-
         expectedIi.setExtension("" + 2);
         expectedIi.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.ORG_ROOT);
@@ -169,14 +166,6 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
     }
 
     protected OrganizationRoleDTO fillInOrgRoleDTOFields(OrganizationRoleDTO or, Long scoperId, Long playerId) {
-        Ii ii = new Ii();
-        ii.setExtension("" + 1L);
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot("tstroot");
-        or.setIdentifier(ii);
-
         or.setScoperIdentifier(getPlayerScoperIi(scoperId));
         or.setPlayerIdentifier(getPlayerScoperIi(playerId));
 

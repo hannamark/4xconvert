@@ -84,11 +84,9 @@ package gov.nih.nci.po.data.bo;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.NotNull;
@@ -116,13 +114,8 @@ public class OrganizationRole implements PersistentObject {
 
     /**
      * @return the id
-     * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Transient
     public Long getId() {
         return id;
     }

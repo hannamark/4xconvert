@@ -82,10 +82,17 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.OrganizationRole;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.OrganizationRoleDTO;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * Tests concrete implementation.
@@ -109,6 +116,16 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
     protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         fillInOrgRoleDTOFields(dto, scoperId, playerId);
+
+        Ii ii = new Ii();
+        ii.setExtension("" + 1L);
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
+        ii.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        dto.setIdentifier(ii);
+
         return dto;
     }
 
@@ -125,6 +142,14 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      */
     @Override
     protected void verifyTestClassFields(OrganizationRoleDTO dto) {
-        // intentionally blank
+     // check id
+        Ii expectedIi = new Ii();
+        expectedIi.setExtension("" + 1);
+        expectedIi.setDisplayable(true);
+        expectedIi.setScope(IdentifierScope.OBJ);
+        expectedIi.setReliability(IdentifierReliability.ISS);
+        expectedIi.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        expectedIi.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((HealthCareFacilityDTO) dto).getIdentifier()));
     }
 }

@@ -83,6 +83,9 @@
 package gov.nih.nci.po.data.bo;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
@@ -95,11 +98,26 @@ import org.hibernate.annotations.ForeignKey;
  *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
  */
 @Entity
+@SuppressWarnings("PMD.UselessOverridingMethod")
 public class OversightCommittee extends OrganizationRole {
 
     private static final long serialVersionUID = 8832666500989835930L;
 
     private OversightCommitteeType type;
+
+    /**
+     * {@inheritDoc}
+     * @xsnapshot.property match="iso"
+     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OversightCommitteeIdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return super.getId();
+    }
 
     /**
      * @param type the type to set

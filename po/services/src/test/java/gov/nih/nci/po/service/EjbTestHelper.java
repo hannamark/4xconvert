@@ -84,6 +84,8 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.util.RemoteBeanHandler;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean;
@@ -161,6 +163,12 @@ public class EjbTestHelper {
         HealthCareProviderCorrelationServiceBean hcpService = new HealthCareProviderCorrelationServiceBean();
         hcpService.setHcpService(EjbTestHelper.getHealthCareProviderServiceBean());
         return (HealthCareProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(hcpService);
+    }
+
+    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationServiceRemote() {
+        ClinicalResearchStaffCorrelationServiceBean crsService = new ClinicalResearchStaffCorrelationServiceBean();
+        crsService.setCrsService(getClinicalResearchStaffServiceBean());
+        return (ClinicalResearchStaffCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(crsService);
     }
 
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationServiceRemote() {

@@ -83,11 +83,10 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 import java.util.Map;
 
@@ -97,48 +96,44 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public class HealthCareProviderRemoteServiceTest
-    extends AbstractStructrualRoleRemoteServiceTest<HealthCareProviderDTO> {
+public class ClinicalResearchStaffRemoteServiceTest
+    extends AbstractStructrualRoleRemoteServiceTest<ClinicalResearchStaffDTO> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    CorrelationService<HealthCareProviderDTO> getCorrelationService() {
-       return EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
+    CorrelationService<ClinicalResearchStaffDTO> getCorrelationService() {
+        return EjbTestHelper.getClinicalResearchStaffCorrelationServiceRemote();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected HealthCareProviderDTO getSampleDto() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        fillInPersonRoleDate(pr);
-        St st = new St();
-        st.setValue("testCertLicense");
-        pr.setCertificateLicenseText(st);
-        return pr;
+    protected ClinicalResearchStaffDTO getSampleDto() throws Exception {
+        ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
+        fillInPersonRoleDate(dto);
+        return dto;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void verifyDto(HealthCareProviderDTO e, HealthCareProviderDTO a) {
-        assertEquals(e.getCertificateLicenseText().getValue(), a.getCertificateLicenseText().getValue());
-        verifyPersonRoleDto(e, a);
+    void verifyDto(ClinicalResearchStaffDTO expected, ClinicalResearchStaffDTO actual) {
+        verifyPersonRoleDto(expected, actual);
     }
 
     @Test(expected = EntityValidationException.class)
     public void testCreateWithException() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        ClinicalResearchStaffDTO pr = new ClinicalResearchStaffDTO();
         getCorrelationService().createCorrelation(pr);
     }
 
     @Test
     public void testValidate() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        ClinicalResearchStaffDTO pr = new ClinicalResearchStaffDTO();
         Map<String, String[]> errors = getCorrelationService().validate(pr);
         assertEquals(3, errors.keySet().size());
     }

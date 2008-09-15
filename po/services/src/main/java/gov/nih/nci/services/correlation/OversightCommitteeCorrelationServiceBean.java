@@ -84,7 +84,7 @@ package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
@@ -120,7 +120,7 @@ public class OversightCommitteeCorrelationServiceBean
 
     @Override
     IdConverter getIdConverter() {
-        return new OrgIdConverter();
+        return new OversightCommitteeIdConverter();
     }
 
     @Override

@@ -201,16 +201,12 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         PersonRole perRole = getExampleTestClass();
         PersonRoleDTO dto = (PersonRoleDTO) PoXsnapshotHelper.createSnapshot(perRole);
 
-        // check id
+        // check person id
         Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 1);
+        expectedIi.setExtension("" + 2);
         expectedIi.setDisplayable(true);
         expectedIi.setScope(IdentifierScope.OBJ);
         expectedIi.setReliability(IdentifierReliability.ISS);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getIdentifier()));
-
-        // check person id
-        expectedIi.setExtension("" + 2);
         expectedIi.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.PERSON_ROOT);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPersonIdentifier()));
@@ -281,14 +277,6 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
     protected PersonRoleDTO fillInPersonRoleDTOFields(PersonRoleDTO pr, Long personId, Long orgId)
             throws URISyntaxException {
         Ii ii = new Ii();
-        ii.setExtension("" + 1L);
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot("tstroot");
-        pr.setIdentifier(ii);
-
-        ii = new Ii();
         ii.setExtension("" + personId);
         ii.setDisplayable(true);
         ii.setScope(IdentifierScope.OBJ);

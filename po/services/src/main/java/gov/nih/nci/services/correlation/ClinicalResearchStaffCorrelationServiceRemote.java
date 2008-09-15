@@ -80,66 +80,15 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.services.correlation;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
-import java.util.Map;
-
-import org.junit.Test;
+import javax.ejb.Remote;
 
 /**
  * @author Scott Miller
- *
  */
-public class HealthCareProviderRemoteServiceTest
-    extends AbstractStructrualRoleRemoteServiceTest<HealthCareProviderDTO> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CorrelationService<HealthCareProviderDTO> getCorrelationService() {
-       return EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected HealthCareProviderDTO getSampleDto() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        fillInPersonRoleDate(pr);
-        St st = new St();
-        st.setValue("testCertLicense");
-        pr.setCertificateLicenseText(st);
-        return pr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    void verifyDto(HealthCareProviderDTO e, HealthCareProviderDTO a) {
-        assertEquals(e.getCertificateLicenseText().getValue(), a.getCertificateLicenseText().getValue());
-        verifyPersonRoleDto(e, a);
-    }
-
-    @Test(expected = EntityValidationException.class)
-    public void testCreateWithException() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        getCorrelationService().createCorrelation(pr);
-    }
-
-    @Test
-    public void testValidate() throws Exception {
-        HealthCareProviderDTO pr = new HealthCareProviderDTO();
-        Map<String, String[]> errors = getCorrelationService().validate(pr);
-        assertEquals(3, errors.keySet().size());
-    }
+@Remote
+public interface ClinicalResearchStaffCorrelationServiceRemote extends CorrelationService<ClinicalResearchStaffDTO> {
 }
