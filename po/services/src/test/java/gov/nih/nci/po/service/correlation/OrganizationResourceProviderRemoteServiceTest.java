@@ -80,149 +80,81 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.correlation;
 
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.util.ValidIi;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.OrganizationResourceProviderDTO;
 
 /**
- * ResourceProvider that has a Person player and Organization scoper.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.PersonResourceProviderDTO"
- *      implements="gov.nih.nci.services.PoDto"
+ * Remote service tests.
  */
-@Entity
-public class PersonResourceProvider implements PersistentObject {
+public class OrganizationResourceProviderRemoteServiceTest extends
+        AbstractStructrualRoleRemoteServiceTest<OrganizationResourceProviderDTO> {
 
-    private static final long serialVersionUID = -4866225509121969001L;
-    private Long id;
-    private Person player;
-    private Organization scoper;
-    private RoleStatus status;
-    private Ii identifier;
-
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
-
-    /**
-     * {@inheritDoc}
-     * @xsnapshot.property match="iso"
-     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
-     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
+    @Override
+    CorrelationService<OrganizationResourceProviderDTO> getCorrelationService() {
+        return EjbTestHelper.getOrganizationResourceProviderCorrelationServiceRemote();
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    protected OrganizationResourceProviderDTO getSampleDto() throws Exception {
+        OrganizationResourceProviderDTO dto = new OrganizationResourceProviderDTO();
+        Ii ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        dto.setPlayerIdentifier(ii);
+
+        ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        dto.setScoperIdentifier(ii);
+
+        Cd status = new Cd();
+        status.setCode("active");
+        dto.setStatus(status);
+
+        ii = new Ii();
+        ii.setExtension("myExtension");
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_RESOURCE_PROVIDER_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_RESOURCE_PROVIDER_ROOT);
+        dto.setAssignedId(ii);
+
+        return dto;
     }
 
-    /**
-     * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @NotNull
-    @ForeignKey(name = "personrprole_player_fkey")
-    public Person getPlayer() {
-        return player;
+    @Override
+    void verifyDto(OrganizationResourceProviderDTO expected, OrganizationResourceProviderDTO actual) {
+        assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
+        assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
+        assertEquals("pending", actual.getStatus().getCode());
+
+        // really probe the assignedId, since that's different than other StructuralRoles
+        Ii ii1 = expected.getAssignedId();
+        Ii ii2 = actual.getAssignedId();
+        assertEquals(ii1.getExtension(), ii2.getExtension());
+        assertEquals(ii1.getDisplayable(), ii2.getDisplayable());
+        assertEquals(ii1.getScope(), ii2.getScope());
+        assertEquals(ii1.getReliability(), ii2.getReliability());
+        assertEquals(ii1.getIdentifierName(), ii2.getIdentifierName());
+        assertEquals(ii2.getRoot(), ii2.getRoot());
     }
 
-    /**
-     * @param player the player to set
-     */
-    public void setPlayer(Person player) {
-        this.player = player;
-    }
-
-    /**
-     * @return the scoper. may be null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "personrpnrole_scoper_fkey")
-    public Organization getScoper() {
-        return scoper;
-    }
-
-    /**
-     * @param scoper the scoper to set
-     */
-    public void setScoper(Organization scoper) {
-        this.scoper = scoper;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
-
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    public RoleStatus getStatus() {
-        return this.status;
-    }
-
-    /**
-     * @return the Id that <code>scoper</code> uses to identify <code>player</code>.  This is
-     *         distinct from the id of <em>this role</em>, which is system assigned.
-     * @xsnapshot.property match="iso" name="assignedId"
-     */
-    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
-    @Columns(columns = {
-            @Column(name = "identifier_flavor_id"),
-            @Column(name = "identifier_null_flavor"),
-            @Column(name = "identifier_displayable"),
-            @Column(name = "identifier_extension"),
-            @Column(name = "identifier_identifier_name"),
-            @Column(name = "identifier_reliability"),
-            @Column(name = "identifier_root"),
-            @Column(name = "identifier_scope")
-    })
-    @ValidIi
-    public Ii getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
-    }
 }

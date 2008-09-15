@@ -90,6 +90,8 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceBean;
+import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceBean;
@@ -185,6 +187,15 @@ public class EjbTestHelper {
         return (PersonResourceProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(prpService);
     }
 
+    public static OrganizationResourceProviderCorrelationServiceRemote
+        getOrganizationResourceProviderCorrelationServiceRemote() {
+
+        OrganizationResourceProviderCorrelationServiceBean orpService =
+            new OrganizationResourceProviderCorrelationServiceBean();
+        orpService.setOrpService(EjbTestHelper.getOrganizationResourceProviderServiceBean());
+        return (OrganizationResourceProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(orpService);
+    }
+
     public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationServiceRemote() {
         OversightCommitteeCorrelationServiceBean ocService = new OversightCommitteeCorrelationServiceBean();
         ocService.setOcService(EjbTestHelper.getOversightCommitteeServiceBean());
@@ -239,5 +250,9 @@ public class EjbTestHelper {
 
     public static PersonResourceProviderServiceLocal getPersonResourceProviderServiceBean() {
         return new PersonResourceProviderServiceBean();
+    }
+
+    public static OrganizationResourceProviderServiceLocal getOrganizationResourceProviderServiceBean() {
+        return new OrganizationResourceProviderServiceBean();
     }
 }

@@ -93,6 +93,7 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceStub;
 import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.service.MockPersonService;
+import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
@@ -181,6 +182,13 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
         return null;
     }
 }

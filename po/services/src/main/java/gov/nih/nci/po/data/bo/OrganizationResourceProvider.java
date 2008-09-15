@@ -102,18 +102,18 @@ import org.hibernate.validator.NotNull;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * ResourceProvider that has a Person player and Organization scoper.
+ * ResourceProvider that has an Organization player and Organization scoper.
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.PersonResourceProviderDTO"
+ *      class="gov.nih.nci.services.correlation.OrganizationResourceProviderDTO"
  *      implements="gov.nih.nci.services.PoDto"
  */
 @Entity
-public class PersonResourceProvider implements PersistentObject {
+public class OrganizationResourceProvider implements PersistentObject {
 
     private static final long serialVersionUID = -4866225509121969001L;
     private Long id;
-    private Person player;
+    private Organization player;
     private Organization scoper;
     private RoleStatus status;
     private Ii identifier;
@@ -124,7 +124,7 @@ public class PersonResourceProvider implements PersistentObject {
      * {@inheritDoc}
      * @xsnapshot.property match="iso"
      *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
+     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgResourceProviderIdConverter"
      *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Id
@@ -141,33 +141,13 @@ public class PersonResourceProvider implements PersistentObject {
     }
 
     /**
-     * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @NotNull
-    @ForeignKey(name = "personrprole_player_fkey")
-    public Person getPlayer() {
-        return player;
-    }
-
-    /**
-     * @param player the player to set
-     */
-    public void setPlayer(Person player) {
-        this.player = player;
-    }
-
-    /**
      * @return the scoper. may be null.
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @ManyToOne
-    @ForeignKey(name = "personrpnrole_scoper_fkey")
+    @ForeignKey(name = "orgrpnrole_scoper_fkey")
     public Organization getScoper() {
         return scoper;
     }
@@ -180,10 +160,23 @@ public class PersonResourceProvider implements PersistentObject {
     }
 
     /**
-     * @param status the status to set
+     * @return the player.  never null.
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
+    @ManyToOne
+    @NotNull
+    @ForeignKey(name = "orgrprole_player_fkey")
+    public Organization getPlayer() {
+        return player;
+    }
+
+    /**
+     * @param player the player to set
+     */
+    public void setPlayer(Organization player) {
+        this.player = player;
     }
 
     /**
@@ -196,6 +189,20 @@ public class PersonResourceProvider implements PersistentObject {
     @NotNull
     public RoleStatus getStatus() {
         return this.status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(RoleStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
+     */
+    public void setIdentifier(Ii identifier) {
+        this.identifier = identifier;
     }
 
     /**
@@ -217,12 +224,5 @@ public class PersonResourceProvider implements PersistentObject {
     @ValidIi
     public Ii getIdentifier() {
         return identifier;
-    }
-
-    /**
-     * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
     }
 }
