@@ -7,3 +7,5 @@ jdbc.driver=org.postgresql.Driver
 jdbc.url=jdbc:postgresql://localhost:5432/ctods
 test.schema.showsql=false
 test.java.naming.provider=localhost
+po.server.name=localhost
+po.port.number=1099

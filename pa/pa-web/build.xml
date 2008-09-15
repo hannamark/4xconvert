@@ -154,6 +154,10 @@
             </classpath>
         </javac>
         <copy todir="${pa-web.build.outputDir}">
+        	<filterset>
+ 	            <filter token="po.server.name" value="${po.server.name}"/>
+        		<filter token="po.port.number" value="${po.port.number}"/>
+        	</filterset>
             <fileset dir="${pa-web.build.resourceDir.0}"/>
         </copy>
     </target>
@@ -189,6 +193,8 @@
         <filter token="db.password" value="${db.password}"/>                                            
         <copy file="${pa.resourceDir}/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />                             
     </target>
+	
+
     
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
@@ -352,11 +358,10 @@
         <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
-
+    	
         <war destfile="${pa-web.build.dir}/${pa-web.war}" 
              compress="false" 
-             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">
-            
+             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">            
             <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${pa-web.build.outputDir}"/>
             <webinf dir="${pa.dir}/pa-web/src/webapp/WEB-INF" excludes="web.xml"/>
