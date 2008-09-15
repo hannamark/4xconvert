@@ -110,7 +110,7 @@
         <dependency>
             <groupId>net.sf.xsnapshot</groupId>
             <artifactId>xsnapshot</artifactId>
-            <version>1.1-beta3</version>
+            <version>${xsnapshot.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
