@@ -32,9 +32,8 @@ document.getElementById("loadimg").style.display="none";
 <c:choose>
 <c:when test="${orgs!=null}">
 <display:table class="its" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row" name="orgs" export="false">
-<display:column titleKey="Oranization Name" property="name.part[0].value" sortable="true" headerClass="sortable"/> 
-
-<display:column titleKey="Action" class="action" sortable="false">
+<display:column title="Oranization Name" property="name.part[0].value"  headerClass="sortable"/> 
+<display:column title="Action" class="action" sortable="false">
 <A href="javascript: submitform('${row.identifier.extension}')">Select</A>
 </display:column>
 </display:table>
