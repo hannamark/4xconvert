@@ -17,7 +17,31 @@
   </publications>
   
   <dependencies>               
-
+    <dependency 
+        org="jboss" 
+        name="jbossall-client"
+        rev="4.0.5.GA"/>
+    <dependency 
+        org="jboss" 
+        name="jboss-ejb3x"
+        rev="4.0.5.GA"/>
+<!-- This is the actual version of the artifact though it is currently listed as rev=noversion no in the CBIIT IVY Repo.
+    <dependency 
+        org="jboss" 
+        name="jboss-ejb3-client"
+        rev="3.0_RC9_Patch_1"/> --> 
+    <dependency 
+        org="jboss" 
+        name="jboss-ejb3-client"
+        rev="noversion"/>
+    <dependency 
+        org="jboss" 
+        name="jboss-aop-client"
+        rev="1.5.2.GA"/>
+    <dependency 
+        org="jboss" 
+        name="jboss-aspect-client"
+        rev="1.5"/>
   </dependencies>
   
 </ivy-module>
