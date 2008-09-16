@@ -10,14 +10,11 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -68,18 +65,9 @@ public class StudyOverallStatusConverter {
             throw new PAException(errmsg);
         }
 
-        StudyProtocol spBo; 
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            spBo = (StudyProtocol) session.load(StudyProtocol.class, 
-                    Long.valueOf(dto.getStudyProtocolidentifier().getExtension()));
-        } catch (HibernateException hbe) {
-            String errmsg = " Hibernate exception in convertFromDtoToDomain ";
-            LOG.error(errmsg, hbe);
-            throw new PAException(errmsg, hbe);
-        }        
-        
+        StudyProtocol spBo = new StudyProtocol();
+        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolidentifier()));
+
         StudyOverallStatus bo = new StudyOverallStatus();
         bo.setDateLastUpdated(new Date());
         bo.setStatusCode(CdConverter.convertToStudyStatusCode(dto.getStatusCode()));

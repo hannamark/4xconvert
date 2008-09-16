@@ -416,7 +416,8 @@
             <classpath refid="test.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
-            <classpath refid="jboss.client.classpath"/>
+            <classpath refid="compile.classpath"/>
+        	<classpath refid="jboss.client.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
