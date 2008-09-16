@@ -79,6 +79,7 @@ public class RegulatoryInformationAction extends ActionSupport {
             PaRegistry.getStudyRegulatoryAuthorityService().createStudyRegulatoryAuthority(sraDTO);
         } else {
             sraFromDatabaseDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(selectedAuthOrg));
+            sraFromDatabaseDTO.setUserLastUpdated(StConverter.convertToSt(user));
             PaRegistry.getStudyRegulatoryAuthorityService().updateStudyRegulatoryAuthority(sraFromDatabaseDTO);
         }
        // webDTO.setFdaRegulatedInterventionIndicator( )
