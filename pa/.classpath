@@ -107,6 +107,7 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/test/dom4j-1.6.1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/hsqldb-1.8.0.7.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/jdom-0.9.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/test/mockrunner-0.3.1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/ognl-2.6.9.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/postgresql-jdbc3-8.3-603.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/security-4.0.1.jar"/>

@@ -105,6 +105,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="codehaus"               name="cargo-core-uberjar"      rev="0.8"             conf="test->master"/>
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
     <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>    
+    <dependency org="mockrunner"             name="mockrunner"              rev="0.3.1"           conf="test->master"/>    
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="test->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="test->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.9"           conf="test->master"/>
