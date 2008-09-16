@@ -243,87 +243,25 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		</if>
 
 	</target>
-	<target name="install:database:re-create" description="Recreates database if database.re-create is true. Used on local installs" unless="exclude.database" depends="install:database:prep">
-		<if>
-			<equals arg1="${database.re-create}" arg2="true"/>
-			<then>
-				<switch value="${database.type}">
-					<case value="postgresql">
-						<database-create/>
-					</case>
-					<default>
-						<echo message="Re-creation (drop and re-create) of ${database.type} databases is not supported, nothing done."/>
-					</default>
-				</switch>
-			</then>
-			<else>
-				<echo message="Database.recreate flag not set, database not re-created."/>
-			</else>
-		</if>
-	</target>
-	<target name="install:database:drop" description="Runs database drop scripts if database.drop-schema is set. Used on Tier environments (dev, qa, stg, prod)." unless="exclude.database" depends="install:database:prep">
-		<if>
-			<equals arg1="${database.drop-schema}" arg2="true"/>
-			<then>
-				<echo message="Dropping database objects"/>
-				<dropAllDatabaseObjects
-					driver="${database.driver}"
-					url="${database.url}"
-					username="${database.user}"
-					password="${database.password}"
-					promptOnNonLocalDatabase="false"
-					classpathref="bda-utils.classpath"
-					defaultSchemaName="public"
-					/>
-				<!-- Sequences don't seem to drop in first run second run cleans them up -->
-				<dropAllDatabaseObjects
-					driver="${database.driver}"
-					url="${database.url}"
-					username="${database.user}"
-					password="${database.password}"
-					promptOnNonLocalDatabase="flase"
-					classpathref="bda-utils.classpath"
-					defaultSchemaName="public"
-					/>
-
-			</then>
-			<else>
-				<echo message="Database.drop-schema flag not set, database schema not dropped."/>
-			</else>
-		</if>
-	</target>
+	
 
 	<target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
 		depends="
 		install:init,
-		install:database:prep,
-		install:database:re-create,
-		install:database:drop
+		install:database:prep
 		">
-		<switch value="${database.type}">
-			<case value="postgresql">
-				<echo message="Creating database objects"/>
-				<for list="${db.install.create.postgresql.file.list}" param="db.install.postgresql.file">
-					<sequential>
-						<echo message="processing ${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"/>
-						<!-- Get rid of delimeter
-							sql.delimiter="/" 
-							sql.delimitertype="row"
-							-->
-						<run-sql-script
-							database.url="${database.url}"
-							database.user="${database.user}"
-							database.password="${database.password}"
-							sql.file="${db-install.dir.dest}/${database.type}/@{db.install.postgresql.file}"
-							/>
-					</sequential>
-				</for>
-			</case>
-			<default>
-				<fail message="Database type ${database.type} not supported for this project."/>
-			</default>
-
-		</switch>
+        <!-- Drop all schema objects or re-create the db -->
+        <database-clean/>
+        <!-- Run baseline scripts stored in db.install.create.${database.type}.file.list variable -->
+        <switch value="${database.type}">
+            <case value="postgresql">
+                <database-install
+                    db.install.create.file.list="${db.install.create.postgresql.file.list}"
+                    sql.delimiter="/"
+                    sql.delimitertype="row"
+                    />
+            </case>
+        </switch>
 	</target>
 
 	<target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
