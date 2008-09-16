@@ -35,7 +35,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({"PMD.StudyRegulatoryAuthorityServiceBean", "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.AvoidDuplicateLiterals" })
 public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAuthorityServiceRemote {
     private static final Logger LOG = Logger.getLogger(StudyRegulatoryAuthorityServiceBean.class);
 
@@ -106,6 +106,7 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(sraDTO.getProtocolId()));
         sra.setStudyProtocol(studyProtocol);
+        sra.setUserLastUpdated(StConverter.convertToString(sraDTO.getUserLastUpdated()));
         //
         RegulatoryAuthority ra = new RegulatoryAuthority();
         ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityId()));
@@ -143,33 +144,34 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
         List<StudyRegulatoryAuthority> queryList = new ArrayList<StudyRegulatoryAuthority>();
         try {
             session = HibernateUtil.getCurrentSession();
+            
             Query query = null;
             String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
             + " where sp.id = " + IsoConverter.convertIitoLong(sraDTO.getProtocolId());
             LOG.info(" query StudyRegulatoryAuthority = " + hql);
             query = session.createQuery(hql);
             queryList = query.list();
-            StudyRegulatoryAuthority sraDB = queryList.get(0);
-            StudyRegulatoryAuthority sraWeb = StudyRegulatoryAuthorityConverter.
-                                                    convertFromDTOToDomain(sraDTO);            
-            sraDB.setDateLastUpdated(now);  
-            //sraDB.setRegulatoryAuthorityID(sraWeb.getRegulatoryAuthority().getId());
+            StudyRegulatoryAuthority sra = queryList.get(0);
+
+            ///////// because of update of the object is not working, we will delete the record
+            //////// and create it
+            session.delete(sra);
             
-            List<RegulatoryAuthority> queryList2 = new ArrayList<RegulatoryAuthority>();
-            Query query2 = null;
-            String hql2 = " select ra from RegulatoryAuthority ra where ra.id = " 
-                    + sraWeb.getRegulatoryAuthority().getId();
-            query2 = session.createQuery(hql2);
-            queryList2 = query2.list();            
+            StudyRegulatoryAuthority createSra = new StudyRegulatoryAuthority();
+            StudyProtocol sp = new StudyProtocol();
+            sp.setId(IsoConverter.convertIitoLong(sraDTO.getProtocolId()));
+            createSra.setStudyProtocol(sp);
             
-            RegulatoryAuthority ra = queryList2.get(0);            
-            ra.setId(sraWeb.getRegulatoryAuthority().getId());
-            //ra.setCountry(sraWeb.getRegulatoryAuthority().getCountry());
-            sraDB.setRegulatoryAuthority(ra);
-            sraDB.setStudyProtocol(sraWeb.getStudyProtocol()); 
-            sraDB.setUserLastUpdated(StConverter.convertToString(sraDTO.getUserLastUpdated()));
-            session.update(sraDB);
-            spDTO =  StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(sraDB);
+            RegulatoryAuthority ra = new RegulatoryAuthority();
+            ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityId()));
+            createSra.setRegulatoryAuthority(ra);
+            
+            createSra.setDateLastUpdated(now);   
+            createSra.setUserLastUpdated(StConverter.convertToString(sraDTO.getUserLastUpdated()));
+            createSra.setRegulatoryAuthority(ra);
+            createSra.setStudyProtocol(sp);
+            session.save(createSra);
+            spDTO =  StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(createSra);
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while updating StudyProtocol for id = " 
                     + sraDTO.getIi().getExtension() , hbe);
