@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.domain;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +12,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import gov.nih.nci.pa.enums.InstitutionCode;
+import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 
@@ -31,7 +35,13 @@ public class StudyResourcing extends AbstractEntity {
     private String organizationIdentifier;
     private String resourceProviderIdentifier;
     private StudyProtocol studyProtocol;
-    
+    private String fundingMechanismCode;
+    private InstitutionCode institutionCode;
+    private String fundingTypeCode;
+    private MonitorCode monitorCode;
+    private Timestamp suffixgrantYear;
+    private String suffixOther;
+    private String serialNumber;
     /**
      * 
      * @return typeCode
@@ -111,5 +121,99 @@ public class StudyResourcing extends AbstractEntity {
      */
     public void setStudyProtocol(StudyProtocol studyProtocol) {
         this.studyProtocol = studyProtocol;
-    }    
+    }
+    /**
+     * @return fundingMechanismCode
+     */
+    @Column(name = "funding_mechanism_code")
+    public String getFundingMechanismCode() {
+        return fundingMechanismCode;
+    }
+    /**
+     * @param fundingMechanismCode fundingMechanismCode
+     */
+    public void setFundingMechanismCode(String fundingMechanismCode) {
+        this.fundingMechanismCode = fundingMechanismCode;
+    }
+    /**
+     * @return institutionCode
+     */
+    @Column(name = "nihinstitute_code")
+    @Enumerated(EnumType.STRING)
+    public InstitutionCode getInstitutionCode() {
+        return institutionCode;
+    }
+    /**
+     * @return fundingTypeCode
+     */
+    @Column(name = "fundig_type_code")
+    public String getFundingTypeCode() {
+        return fundingTypeCode;
+    }
+    /**
+     * @return monitorCode
+     */
+    @Column(name = "ncidivision_program_code")
+    @Enumerated(EnumType.STRING)
+    public MonitorCode getMonitorCode() {
+        return monitorCode;
+    }
+    /**
+     * @return suffixgrantYear
+     */
+    @Column(name = "suffix_grant_year")
+    public Timestamp getSuffixgrantYear() {
+        return suffixgrantYear;
+    }
+    /**
+     * @return suffixOther
+     */
+    @Column(name = "suffix_other")
+    public String getSuffixOther() {
+        return suffixOther;
+    }
+    /**
+     * @param institutionCode institutionCode
+     */
+    public void setInstitutionCode(InstitutionCode institutionCode) {
+        this.institutionCode = institutionCode;
+    }
+    /**
+     * @param fundingTypeCode fundingTypeCode
+     */
+    public void setFundingTypeCode(String fundingTypeCode) {
+        this.fundingTypeCode = fundingTypeCode;
+    }
+    /**
+     * @param monitorCode monitorCode
+     */
+    public void setMonitorCode(MonitorCode monitorCode) {
+        this.monitorCode = monitorCode;
+    }
+    /**
+     * @param suffixgrantYear suffixgrantYear
+     */
+    public void setSuffixgrantYear(Timestamp suffixgrantYear) {
+        this.suffixgrantYear = suffixgrantYear;
+    }
+    /**
+     * @param suffixOther suffixOther
+     */
+    public void setSuffixOther(String suffixOther) {
+        this.suffixOther = suffixOther;
+    }
+    /**
+     * @return serialNumber
+     */
+    @Column(name = "serial_number")
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+    /**
+     * @param serialNumber serialNumber
+     */
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }      
+   
 }
