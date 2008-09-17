@@ -96,5 +96,25 @@
              <result>/jsp/pajsp/nodecorate/orgField.jsp</result>
               <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
         </action>
+        <action name="trialFunding" class="gov.nih.nci.pa.action.TrialFundingAction" method="query">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/trialFunding.jsp</result>
+			<result name="error">/jsp/pajsp/trialFunding.jsp</result>
+		</action>
+		<action name="trialFundingAdd" class="gov.nih.nci.pa.action.TrialFundingAction">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/trialFundingAdd.jsp</result>
+			<result name="error">/jsp/pajsp/trialFundingAdd.jsp</result>
+		</action>
+		<action name="trialFundingUpdate" class="gov.nih.nci.pa.action.TrialFundingAction" method="add">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/trialFunding.jsp</result>
+			<result name="error">/jsp/pajsp/trialFundingAdd.jsp</result>
+		</action>
+		<action name="trialFundingEdit" class="gov.nih.nci.pa.action.TrialFundingAction" method="edit">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/jsp/pajsp/trialFundingAdd.jsp</result>
+			<result name="error">/jsp/pajsp/trialFundingAdd.jsp</result>
+		</action>		
 	</package>
 </struts>
