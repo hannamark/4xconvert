@@ -36,6 +36,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.HealthCareProvider" />
         <mapping class="gov.nih.nci.pa.domain.HealthCareFacility" />
         <mapping class="gov.nih.nci.pa.domain.StudyResourcing" />
+        <mapping class="gov.nih.nci.pa.domain.FundingMechanism" />
     	<mapping class="gov.nih.nci.pa.service.SessionEntry" />
     </session-factory>
 </hibernate-configuration>
