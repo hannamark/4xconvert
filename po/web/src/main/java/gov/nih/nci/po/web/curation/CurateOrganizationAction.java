@@ -31,6 +31,10 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      */
     public static final String CURATE_RESULT = "curate";
     /**
+     * The action execution was successful. Show result view to the end user.
+     */
+    public static final String CHANGE_CURRENT_CHANGE_REQUEST_RESULT = "changeCurrentChangeRequest";
+    /**
      * Default date time format.
      */
     static final FastDateFormat DEFAULT_CHANGEREQUEST_VALUE_DATE_FORMAT = FastDateFormat
@@ -150,7 +154,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      */
     public String changeCurrentChangeRequest() {
         findAndSetCr(getCr().getId());
-        return CURATE_RESULT;
+        return CHANGE_CURRENT_CHANGE_REQUEST_RESULT;
     }
 
     /**

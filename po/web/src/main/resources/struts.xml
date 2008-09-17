@@ -159,10 +159,10 @@
             <result name="success">/WEB-INF/jsp/curate/{2}.jsp</result>
             <result name="list" type="redirect-action">listAll</result>
         </action>
-        <action name="**organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{2}">
+        <action name="organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
-            <result name="input">/WEB-INF/jsp/curate/organization/{2}.jsp</result>
+            <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
             <result name="success" type="redirect-action">
                 <param name="namespace">/protected</param>
                 <param name="actionName">curate/search/listAll</param>
@@ -170,6 +170,10 @@
             <!-- 
             <result name="success">/WEB-INF/jsp/curate/organization/curate.jsp</result>
              -->
+        </action>        
+        <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/organization/orgCrInfo.jsp</result>
         </action>        
     </package>
 </struts>

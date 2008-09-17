@@ -65,9 +65,9 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(CurateOrganizationAction.CURATE_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
         
         action.getCr().setId(1L);
-        assertEquals(CurateOrganizationAction.CURATE_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
     }
 }

@@ -1,3 +1,17 @@
+function submitAjaxForm(formId, divId, options, showLoadingIcon) {
+    var formData = Form.serialize(formId);
+    options = options || {};
+    if (options.extraArgs) {
+        formData = formData + '&' + Hash.toQueryString(options.extraArgs);
+    }
+    var div = document.getElementById(divId);
+    if (showLoadingIcon) {
+        div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="' + contextPath + '/images/loading.gif"/>&nbsp;Loading...</div>';
+    }
+    var url = options.url || $(formId).action;
+    new Ajax.Updater(divId, url, {parameters: formData, evalScripts: true, insertion: options.insertion} );
+    return false;
+}
 
 function submitDivAsForm(url, divId) {
     var div = document.getElementById(divId);
