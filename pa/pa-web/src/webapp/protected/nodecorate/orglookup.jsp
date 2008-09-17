@@ -41,7 +41,7 @@ document.getElementById("loadimg").style.display="none";
 </display:table>
 </c:when>
 <c:otherwise>
-<img id="loadimg" src="../images/loading.gif">
+<div align="center"><img  alt="Indicator" align="absmiddle" id="loadimg" src="../images/loading.gif"></div>
 </c:otherwise>
 </c:choose>
 </form>

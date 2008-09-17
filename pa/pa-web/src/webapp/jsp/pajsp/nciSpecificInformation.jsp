@@ -59,8 +59,10 @@ function lookup(){
     showPopWin('<c:url value="nodecorate/orglookup.jsp"/>', 600, 250, '', 'Choose Organization');
 }
 
-function loadDiv(url) {   
-    var aj = new Ajax.Updater('loadOrgField', url, {
+function loadDiv(url) {
+    var div = document.getElementById('loadOrgField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+    var aj = new Ajax.Updater(div, url, {
         asynchronous: true,
         method: 'get',
         evalScripts: false
@@ -111,12 +113,15 @@ function loadDiv(url) {
                 
 			     
 			
+       
         
-        
-		</table> 
-		    <div id="loadOrgField">
-		   					          <%@ include file="/jsp/pajsp/nodecorate/orgField.jsp" %>
+			          
+		</table>   
+		<div id="loadOrgField">
+				   					          <%@ include file="/jsp/pajsp/nodecorate/orgField.jsp" %>
 			          </div>
+		
+	           
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
