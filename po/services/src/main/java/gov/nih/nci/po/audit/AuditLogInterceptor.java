@@ -213,6 +213,14 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String role = pc.getRole();
         Object oldV = pc.getStoredSnapshot();
         Object newV = pc.getValue();
+        if (oldV instanceof Map) {
+            Map oldVmap = (Map) oldV;
+            oldV = oldVmap.values();
+        }
+        if (newV instanceof Map) {
+            Map newVmap = (Map) newV;
+            newV = newVmap.values();
+        }
         String oldValStr = getValueString((Collection<?>) oldV);
         String newValStr = getValueString((Collection<?>) newV);
 
