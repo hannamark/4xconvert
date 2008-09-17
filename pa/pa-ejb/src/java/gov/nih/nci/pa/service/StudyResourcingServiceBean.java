@@ -3,11 +3,16 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.enums.InstitutionCode;
+import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -140,6 +145,15 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
                     studyResourcingDTO.getOrganizationIdentifier()));
             studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
             studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
+            studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
+                    studyResourcingDTO.getFundingMechanismCode()));
+            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode());
+            studyResourcing.setMonitorCode(MonitorCode.getByCode(studyResourcingDTO.getMonitorCode().getCode()));
+            studyResourcing.setInstitutionCode(InstitutionCode.getByCode(
+                    studyResourcingDTO.getInstitutionCode().getCode()));
+            studyResourcing.setSuffixgrantYear(TsConverter.convertToTimestamp(studyResourcingDTO.getSuffixgrantYear()));
+            studyResourcing.setSuffixOther(StConverter.convertToString(studyResourcingDTO.getSuffixOther()));
+            studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
             session.update(studyResourcing);
             session.flush();
             studyResourcingRetDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
@@ -208,5 +222,108 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         }            
         return studyProtocolDTO;
     }
+    /**
+     * @param studyProtocolIi Ii 
+     * @return StudyResourcingDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyResourcingDTO> getstudyResource(Ii studyProtocolIi)
+            throws PAException {
+        if (PAUtil.isIiNull(studyProtocolIi)) {
+            LOG.error(" studyProtocolIi should not be null ");
+            throw new PAException(" studyProtocolIi should not be null ");
+        }
+        LOG.info("Entering getstudyResource");
+        Session session = null;
+        List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            //@todo : session.load is not working, so using query to retrieve
+            // studyProtocol = (StudyProtocol) 
+            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
+            //session.flush();
 
+            Query query = null;
+            
+            // step 1: form the hql
+            String hql = " select sr "
+                       + " from StudyResourcing sr "
+                       + " join sr.studyProtocol sp "
+                       + " where sp.id = " + IsoConverter.convertIitoLong(studyProtocolIi);
+
+           LOG.info(" query studyResourcing = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            
+            
+        }  catch (HibernateException hbe) {
+            session.flush();
+            LOG.error(" Hibernate exception while retrieving getstudyResource" , hbe);
+            throw new PAException(" Hibernate exception while retrieving getstudyResource "  , hbe);
+        }
+        
+        ArrayList<StudyResourcingDTO> resultList = new ArrayList<StudyResourcingDTO>();
+        for (StudyResourcing bo : queryList) {
+            resultList.add(StudyResourcingConverter.convertFromDomainToDTO(bo));
+        }
+        session.flush();
+        LOG.info("Leaving getstudyResource");
+        return resultList;
+    }
+    /**
+     * @param studyResourceIi Ii 
+     * @return StudyResourcingDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
+            throws PAException {
+        if (PAUtil.isIiNull(studyResourceIi)) {
+            LOG.error(" studyProtocolIi should not be null ");
+            throw new PAException(" studyProtocolIi should not be null ");
+        }
+        LOG.info("Entering getStudyResourceByID");
+        Session session = null;
+        StudyResourcingDTO studyResourcingDTO = null;
+        StudyResourcing studyResourcing = null;
+        List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            //@todo : session.load is not working, so using query to retrieve
+            // studyProtocol = (StudyProtocol) 
+            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
+            //session.flush();
+
+            Query query = null;
+            
+            // step 1: form the hql
+            String hql = " select sr "
+                       + " from StudyResourcing sr "
+                       + " where sr.id = " + IsoConverter.convertIitoLong(studyResourceIi);
+
+           LOG.info(" query studyResourcing = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            
+            
+        }  catch (HibernateException hbe) {
+            session.flush();
+            LOG.error(" Hibernate exception while retrieving getStudyResourceByID" , hbe);
+            throw new PAException(" Hibernate exception while retrieving getStudyResourceByID "  , hbe);
+        }
+        
+        if (!queryList.isEmpty()) {
+            studyResourcing = queryList.get(0);
+            studyResourcingDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
+            
+        }
+        session.flush();
+        LOG.info("Leaving getStudyResourceByID");
+        return studyResourcingDTO;
+    }
 }
