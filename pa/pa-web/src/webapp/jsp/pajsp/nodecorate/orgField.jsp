@@ -1,5 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-&nbsp;<label class="label" for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationName"/></dfn></label> <s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30" maxlength="40" />
+
+&nbsp;
+<label for="summary4Name" style="font-family:arial, height:40px, helvetica,sans-serif; color:#333; font-weight:bold; font-style:normal; text-align:right; padding:3px 0 0 0">SummaryFourOrganization Name:</label>
+<s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30" maxlength="40" />
 <input type="button" value="Look Up" onclick="lookup();"/>
-
-
