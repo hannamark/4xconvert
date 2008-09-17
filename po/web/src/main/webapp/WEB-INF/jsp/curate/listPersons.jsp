@@ -3,7 +3,7 @@
 <c:url value="/protected/ajax/curate/search/listPersons.action" var="sortUrl"/>
 <ajax:displayTag id="personSearchResults" ajaxFlag="true" tableClass="data">
 	<display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="persons" requestURI="${sortUrl}">
-
+        <po:displayTagProperties/>
 		<display:setProperty name="pagination.sort.param" value="persons.sortCriterion" />
 		<display:setProperty name="pagination.sortdirection.param" value="persons.sortDirection" />
 		<display:setProperty name="pagination.pagenumber.param"	value="persons.pageNumber" />
