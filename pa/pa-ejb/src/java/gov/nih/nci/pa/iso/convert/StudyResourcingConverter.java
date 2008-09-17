@@ -1,12 +1,15 @@
 package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.InstitutionCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * Convert StudyResourcing from domain to DTO.
@@ -34,7 +37,14 @@ public class StudyResourcingConverter {
                 BlConverter.convertToBl(studyResourcing.getSummary4ReportedResourceIndicator()));
         srDTO.setTypeCode(CdConverter.convertToCd(studyResourcing.getTypeCode()));
         srDTO.setUserLastUpdated(StConverter.convertToSt(studyResourcing.getUserLastUpdated()));
-        
+        srDTO.setFundingMechanismCode(CdConverter.convertStringToCd(studyResourcing.getFundingMechanismCode()));
+        srDTO.setFundingTypeCode(studyResourcing.getFundingTypeCode());
+        srDTO.setMonitorCode(CdConverter.convertToCd(studyResourcing.getMonitorCode()));
+        srDTO.setInstitutionCode(CdConverter.convertToCd(studyResourcing.getInstitutionCode()));
+        srDTO.setSuffixgrantYear(TsConverter.convertToTs(studyResourcing.getSuffixgrantYear()));
+        srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
+        srDTO.setId(studyResourcing.getId());
+        srDTO.setSerialNumber(StConverter.convertToSt(studyResourcing.getSerialNumber()));
         //@tdo: date range 
         return srDTO;
     }
@@ -66,6 +76,29 @@ public class StudyResourcingConverter {
         }
         if (studyResourcingDTO.getUserLastUpdated() != null) {
             studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
+        }
+        if (studyResourcingDTO.getFundingMechanismCode() != null) {
+            studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
+                    studyResourcingDTO.getFundingMechanismCode()));
+        }
+        if (studyResourcingDTO.getMonitorCode() != null) {
+            studyResourcing.setMonitorCode(MonitorCode.getByCode(studyResourcingDTO.getMonitorCode().getCode()));
+        }
+        if (studyResourcingDTO.getInstitutionCode() != null) {
+            studyResourcing.setInstitutionCode(InstitutionCode.getByCode(
+                    studyResourcingDTO.getInstitutionCode().getCode()));
+        }
+        if (studyResourcingDTO.getFundingTypeCode() != null) {
+            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode());
+        }
+        if (studyResourcingDTO.getSuffixOther() != null) {
+            studyResourcing.setSuffixOther(studyResourcingDTO.getSuffixOther().getValue());
+        }
+        if (studyResourcingDTO.getSuffixgrantYear() != null) {
+            studyResourcing.setSuffixgrantYear(TsConverter.convertToTimestamp(studyResourcingDTO.getSuffixgrantYear()));
+        }
+        if (studyResourcingDTO.getSerialNumber() != null) {
+            studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
         }
         return studyResourcing;
     }
