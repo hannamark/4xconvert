@@ -91,7 +91,7 @@
             <result>/protected/nodecorate/orglookup.jsp</result>
             <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
         </action>
-        <action name="displaySelectedOrg" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="displayOrg">
+        <action name="displaySelectedOrgAjax" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="displayOrg">
               <interceptor-ref name="nci-commonsParams" />
              <result>/jsp/pajsp/nodecorate/orgField.jsp</result>
               <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
