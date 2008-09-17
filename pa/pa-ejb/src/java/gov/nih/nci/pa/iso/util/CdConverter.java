@@ -67,7 +67,7 @@ public class CdConverter {
     public static String convertCdToString(Cd cd) {
         if (cd == null) {
             return null;
-        } else if (cd.getNullFlavor().equals(NullFlavor.NI)) {
+        } else if (cd.getNullFlavor() != null && cd.getNullFlavor().equals(NullFlavor.NI)) {
             return null;
         } else {
             // set display name
