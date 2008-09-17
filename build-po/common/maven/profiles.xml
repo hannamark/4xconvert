@@ -27,6 +27,13 @@
 				<log.level.po>%%app.log.level%%</log.level.po>
 				<!-- jndi.properties -->
 				<jboss.naming.port>%%jboss.server.jndi.port%%</jboss.naming.port>
+
+                <!-- SMM: Preliminary: used to drive Selenium tests 
+                <jboss.port>@jboss.server.port@</jboss.port>
+                <test.selenium.server.port>@selenium.proxy.port@</test.selenium.server.port>
+                <test.selenium.server.debug>true</test.selenium.server.debug>        
+                <test.selenium.browser>@selenium.browser@</test.selenium.browser>		
+                -->		
 			</properties>
 		</profile>
 	</profiles>

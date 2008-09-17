@@ -680,7 +680,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	<target name="test:po" depends="init" description="Runs test targets on all sub-projects">
 		<maven
 			maven.profile.list="-P local"
-			maven.goal.list="stie verify"
+			maven.goal.list="site verify"
 			maven.dir="${po.base.dir}"
 			/>
 	</target>
@@ -772,201 +772,61 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			startURL="${selenium.url}"
 		      	/>
 	</target>
-
-
-	<!--
-	<macrodef name="svn-co2" description="based on properties passed to macro, clean the destination directory, then check out the tag specified into the destination directory.">
-		<attribute name="svn.project.base.url" default="${svn.project.base.url}" />
-		<attribute name="svn.project.name" default="${svn.project.name}"/>
-		<attribute name="svn.project.base.path" />
-		<attribute name="svn.tag" default="trunk"/>
-		<attribute name="svn.co.base.dir" default="${user.home}/tmp/" />
-		<sequential>		
-			<if>
-				<equals arg1="@{svn.tag}" arg2="trunk"/>
-				<then>
-					<property name="svn.url" value="@{svn.project.base.url}/trunk/@{svn.project.base.path}"/>
-				</then>
-				<else>
-					<property name="svn.url" value="@{svn.project.base.url}/tags/@{svn.tag}/@{svn.project.base.path}"/>
-				</else>
-			</if>
-			<property name="svn.co.dir" value="@{svn.co.base.dir}/svn/@{svn.tag}/@{svn.project.name}"/>
-			<echo message="Scorching temporary checkout directory ${svn.co.dir}."/>
-			<delete dir="${svn.co.dir}" failonerror="false"/>
-			<mkdir dir="${svn.co.dir}"/>
-			<echo message="Checking out @{svn.tag} from ${svn.url} to ${svn.co.dir}."/>
-			<svn username="anonymous" password="">
-				<checkout url="${svn.url}" revision="HEAD" destPath="${svn.co.dir}" />
-			</svn> 
-		</sequential>
-	</macrodef>
-	-->
-	<target name="ivy:module:co">
-		<if>
-			<available file="${ivy-repo.base.dir}" />
-			<then>
-				<echo message="Found ${ivy-repo.base.dir}, doing svn update." />
-				<echo message="svn-update not supported.. so deleting ${ivy-repo.base.dir} and performing a new checkout.. " />
-				<svn-co2 svn.project.base.url="${ivy-repo.base.url}" svn.project.name="ivy-repo" svn.tag="trunk" svn.project.base.path="ivy-repo" svn.co.base.dir="${ivy-repo.base.dir}" />
-				<!--
-				<svn-update
-					svn.update.dir="${ivy-repo.base.dir}"
-					/>
-					-->
-			</then>
-			<else>
-				<svn-co2 svn.project.base.url="${ivy-repo.base.url}" svn.project.name="ivy-repo" svn.tag="trunk" svn.project.base.path="ivy-repo" svn.co.base.dir="${ivy-repo.base.dir}" />
-			</else>
-		</if>
-	</target>
-	<target name="ivy:module:copy">
-		<copy todir="${ivy.version.dir}" file="${ivy.add.module.src.location}" />
-		<copy todir="${ivy.version.dir}" file="${ivy.add.xml.src.location}" />
-	</target>
-
-	<macrodef name="ivy-module-copy">
-		<attribute name="file.path"/>
-		<attribute name="ivy.artifact.org.name" />
-		<attribute name="ivy.artifact.module.name" />
-		<attribute name="ivy.artifact.version.name" />
-		<attribute name="ivy-repo.base.dir" default="${user.home}/tmp/ivy-repo" />
-		<sequential>
-			<copy todir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}/@{ivy.artifact.version.name}" 
-				file="@{file.path}" />
-		</sequential>
-	</macrodef>
-	
-	<macrodef name="ivy-module-co">
-		<attribute name="ivy-repo.base.url" default="${ivy-repo.base.url}" />
-		<attribute name="ivy-repo.base.dir" default="${user.home}/tmp/ivy-repo" />
-		<sequential>
-			<if>
-				<available file="@{ivy-repo.base.dir}" />
-				<then>
-					<echo message="Found @{ivy-repo.base.dir}, doing svn update." />
-					<echo message="svn-update not supported.. so deleting @{ivy-repo.base.dir} and performing a new checkout.. " />
-					<svn-co2 svn.project.base.url="@{ivy-repo.base.url}" svn.project.name="ivy-repo" svn.tag="trunk" svn.project.base.path="ivy-repo" svn.co.base.dir="@{ivy-repo.base.dir}" />
-					<!--
-					<svn-update
-						svn.update.dir="${ivy-repo.base.dir}"
-						/>
-						-->
-				</then>
-				<else>
-					<svn-co2 svn.project.base.url="@{ivy-repo.base.url}" svn.project.name="ivy-repo" svn.tag="trunk" svn.project.base.path="ivy-repo" svn.co.base.dir="@{ivy-repo.base.dir}" />
-				</else>
-			</if>
-		</sequential>
-	</macrodef>
-	
-	<macrodef name="ivy-module-add2repo" description="">
-		<attribute name="ivy.svn.user.name" default="${svn.user.name}" />
-		<attribute name="ivy.svn.user.pass" default="${svn.user.pass}" />
-		<attribute name="ivy.org.dir" default="${ivy.org.dir}" />
-		<attribute name="ivy.artifact.org.name" />
-		<attribute name="ivy.artifact.module.name" />
-		<attribute name="ivy.artifact.version.name" />
-		<attribute name="ivy-repo.base.dir" default="${user.home}/tmp/ivy-repo" />
-		<sequential>
-			<if>
-				<not>
-					<available file="@{ivy.org.dir}" />
-				</not>
-				<then>
-					<echo message="Adding org @{ivy.add.org}." />
-					<svn-add svn.add.dir="@{ivy.org.dir}" />
-				</then>
-				<elseif>
-					<not>
-						<available file="@{ivy.module.dir}" />
-					</not>
-					<then>
-						<echo message="Adding module @{ivy.add.org}/@{ivy.add.module}." />
-						<svn-add svn.add.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}" />
-					</then>
-				</elseif>
-				<else>
-					<echo message="Adding version ${ivy.artifact.org.name}/@{ivy.artifact.module.name}/@{ivy.artifact.version.name}." />
-					<svn-add svn.add.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}/@{ivy.artifact.version.name}" />
-				</else>
-			</if>
-		</sequential>
-	</macrodef>
-	
-	<macrodef name="ivy-module-commit2repo" description="">
-		<attribute name="ivy.svn.user.name" default="${svn.user.name}" />
-		<attribute name="ivy.svn.user.pass" default="${svn.user.pass}" />
-		<attribute name="ivy.org.dir" default="${ivy.org.dir}" />
-		<attribute name="ivy.artifact.org.name" />
-		<attribute name="ivy.artifact.module.name" />
-		<attribute name="ivy.artifact.version.name" />
-		<attribute name="ivy-repo.base.dir" default="${user.home}/tmp/ivy-repo" />
-		<sequential>
-			<if>
-				<not>
-					<available file="@{ivy.org.dir}" />
-				</not>
-				<then>
-					<echo message="Adding org @{ivy.add.org}." />
-					<svn-add svn.add.dir="@{ivy.org.dir}" />
-					<svn-commit svn.commit.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}" svn.commit.user="@{ivy.svn.user.name}" svn.commit.pass="@{ivy.svn.user.pass}" svn.commit.message="Files added by build process as part of ivy deploy process" />
-				</then>
-				<elseif>
-					<not>
-						<available file="@{ivy.module.dir}" />
-					</not>
-					<then>
-						<echo message="Adding module @{ivy.add.org}/@{ivy.add.module}." />
-						<svn-add svn.add.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}" />
-						<svn-commit 
-							svn.commit.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}" 
-							svn.commit.user="@{ivy.svn.user.name}" 
-							svn.commit.pass="@{ivy.svn.user.pass}" 
-							svn.commit.message="Files added by build process as part of ivy deploy process" />
-					</then>
-				</elseif>
-				<else>
-					<echo message="Adding version ${ivy.artifact.org.name}/@{ivy.artifact.module.name}/@{ivy.artifact.version.name}." />
-					<svn-add svn.add.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}/@{ivy.artifact.version.name}" />
-					<svn-commit 
-						svn.commit.dir="@{ivy-repo.base.dir}/@{ivy.artifact.org.name}/@{ivy.artifact.module.name}/@{ivy.artifact.version.name}" 
-						svn.commit.user="@{ivy.svn.user.name}" 
-						svn.commit.pass="@{ivy.svn.user.pass}" 
-						svn.commit.message="Files added by build process as part of ivy deploy process" />
-				</else>
-			</if>
-		</sequential>
-	</macrodef>
-
-	<target name="fun">
-		<property name="ivy-repo.base.url" value="http://gforge.nci.nih.gov/svnroot/commonlibrary/" />
-		<!-- you would want to use this value instead and you can get rid of the mkdir below
-		<property name="ivy-repo.base.dir" location="${software.dir}/../../ivy-repo"/>
-		-->
-		<mkdir dir="${user.home}/tmp" />
-		<property name="ivy-repo.base.dir" location="${user.home}/tmp/ivy-repo" />
-		<property name="ivy.add.org" value="ncicb" />
-		<property name="ivy.add.module" value="ssaksa-test-module" />
-		<property name="ivy.add.version" value="0.1.0" />
-		<property name="ivy.org.dir" value="${ivy-repo.base.dir}/${ivy.add.org}" />
-		<property name="ivy.module.dir" value="${ivy-repo.base.dir}/${ivy.add.org}/${ivy.add.module}" />
-		<property name="ivy.version.dir" value="${ivy-repo.base.dir}/${ivy.add.org}/${ivy.add.module}/${ivy.add.version}" />
 		
-		<property name="prop.list" value="svn.user.name,svn.user.pass" />
-		<for list="${prop.list}" param="prop.list.item" delimiter=",">
-			<sequential>
-				<echo message="Checking for existence of @{prop.list.item}" />
-				<if>
-					<not>
-						<isset property="@{prop.list.item}" />
-					</not>
-					<then>
-						<fail message="svn.user.name svn.user.pass must be set to add files to ivy so add them to a properties file (like local.properties) or pass them in on the command line." />
-					</then>
-				</if>
-			</sequential>
-		</for>
+	<target name="ivy:publish:artifacts" description="Use to publish PO artifacts to the CBIIT IVY repository" 
+	   depends="ivy:publish:artifact:iso-datatypes, ivy:publish:artifact:po-services-client">
+	</target>
+	
+	<target name="ivy:publish:artifact:iso-datatypes" description="Use to publish PO ISO-DATATYPEs artifacts to the CBIIT IVY repository">
+		<property name="iso-datatypes.jar.name" value="iso-datatypes-1.0-SNAPSHOT.jar"/>
 		
+		<available file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" property="iso-datatypes.jar.available"/>
+		<fail unless="iso-datatypes.jar.available" message="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name} not found!"/>
+		
+		<mkdir dir="${temp.dir}/po-ivy-modules"/>
+		<mkdir dir="${temp.dir}/po-ivy-modules/iso-datatypes"/>
+		<copy file="${common.dir}/po-ivy-modules/iso-datatypes.xml" 
+			tofile="${temp.dir}/po-ivy-modules/iso-datatypes/ivy.xml" 
+			filtering="true">
+			<filterset>
+				<filter token="revision" value="${po-iso-datatypes.version}"/>
+			</filterset>
+		</copy>
+	    <copy file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" 
+	    	tofile="${iso-datatypes.base.dir}/target/iso-datatypes-${po-iso-datatypes.version}.jar"/>		
+        <ivy-module-add2repo
+             ivy-repo.base.dir="${local.repo.dir}"
+             ivy.add.org="ncicb"
+             ivy.add.module="iso-datatypes"
+             ivy.add.version="${po-iso-datatypes.version}"
+             ivy.add.module.src.dir="${software.dir}/iso-datatypes/target"
+             ivy.add.module.src.file.list="iso-datatypes-${po-iso-datatypes.version}.jar"
+             ivy.add.xml.src.location="${temp.dir}/po-ivy-modules/iso-datatypes/ivy.xml" /> 		
+	</target>
+	
+	<target name="ivy:publish:artifact:po-services-client" description="Use to publish PO SERVICES CLIENT artifact to the CBIIT IVY repository">
+		<property name="po-services-client.jar.name" value="po-services-1.0-SNAPSHOT-client.jar"/>
+		
+		<available file="${po-services.base.dir}/target/${po-services-client.jar.name}" property="po-services-client.jar.available"/>
+		<fail unless="po-services-client.jar.available" message="${po-services.base.dir}/target/${po-services-client.jar.name} not found!"/>
+		
+		<mkdir dir="${temp.dir}/po-ivy-modules/po-services-client"/>
+		<copy file="${common.dir}/po-ivy-modules/po-services-client.xml" 
+			tofile="${temp.dir}/po-ivy-modules/po-services-client/ivy.xml" 
+			filtering="true">
+			<filterset>
+				<filter token="revision" value="${po-services-client.version}"/>
+			</filterset>
+		</copy>
+	    <copy file="${iso-datatypes.base.dir}/target/${iso-datatypes.jar.name}" 
+	    	tofile="${iso-datatypes.base.dir}/target/iso-datatypes-${po-iso-datatypes.version}.jar"/>		
+        <ivy-module-add2repo
+             ivy-repo.base.dir="${local.repo.dir}"
+             ivy.add.org="ncicb"
+             ivy.add.module="po-services-client"
+             ivy.add.version="${po-services-client.version}"
+             ivy.add.module.src.dir="${software.dir}/po/services/target"
+             ivy.add.module.src.file.list="iso-datatypes-${po-iso-datatypes.version}.jar"
+             ivy.add.xml.src.location="${temp.dir}/po-ivy-modules/po-services-client/ivy.xml" /> 		
 	</target>
 </project>
