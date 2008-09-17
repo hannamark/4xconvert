@@ -34,23 +34,27 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return FundingMechanism  FundingMechanism
      * @throws PAException PAException
      */
-    public List<FundingMechanism> getFundingMechanisms() throws PAException {
+    public List<String> getFundingMechanisms() throws PAException {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
-        List<FundingMechanism> fm = new ArrayList<FundingMechanism>();
+        List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = "select fm from FundingMechanism fm order by fundingMechanismCode";
             query = session.createQuery(hql);
-            fm = query.list();
+            fmList = query.list();
         }  catch (HibernateException hbe) {
             LOG.error(" Unable to load funding Mechanism" , hbe);
             throw new PAException(" Unable to load funding Mechanism", hbe);
         } finally {
             session.flush();
         } 
-        return fm;
+        List<String> fundingMechanism =  new ArrayList<String>();
+        for (FundingMechanism fm : fmList) {
+            fundingMechanism.add(fm.getFundingMechanismCode());
+        }
+        return fundingMechanism;
         
     }
 }
