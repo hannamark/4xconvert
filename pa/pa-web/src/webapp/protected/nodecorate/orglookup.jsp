@@ -3,8 +3,10 @@
 <SCRIPT language="JavaScript">
 function submitform(orgid)
 {
+var url = '/pa/protected/displaySelectedOrgAjax.action?orgId='+orgid;
+top.window.loadDiv(url);
 window.top.hidePopWin(true); 
-parent.location.href='/pa/protected/displaySelectedOrg.action?orgId='+orgid;
+
 }
 function getOrganizationsFromPO(){
 try{

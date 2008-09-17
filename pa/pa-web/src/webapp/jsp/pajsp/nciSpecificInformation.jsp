@@ -10,10 +10,13 @@
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<s:head />
-</head>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+    <c:url value="/protected/displaySelectedOrgAjax.action" var="pingurl"/>
+        
+   
 
 <script type="text/javascript">
+
     function orgSearchPopup() {
     showPopWin('nodecorate/orglookup.jsp', 665, 400, orgSeachPopupReturn, 'Organization Selector');
     return;
@@ -37,10 +40,7 @@
     newstr = newstr.replace(/\s{2,}/, " ");
     return newstr;
     }
-</script>
 
-
-<SCRIPT LANGUAGE="JavaScript">
 
 function resetValues () {
     document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_accrualReportingMethodCode.value="";
@@ -54,8 +54,23 @@ function handleAction(){
      document.updateNCISpecificInformation.submit();     
 }
 
+function lookup(){
+
+    showPopWin('<c:url value="nodecorate/orglookup.jsp"/>', 600, 250, '', 'Choose Organization');
+}
+
+function loadDiv(url) {   
+    var aj = new Ajax.Updater('loadOrgField', url, {
+        asynchronous: true,
+        method: 'get',
+        evalScripts: false
+    });
+    return false;
+}
+
 </SCRIPT>
 
+</head>
 <body onload="setFocusToFirstControl();">
 
  <h1><fmt:message key="nciSpecificInformation.title" /></h1>
@@ -93,32 +108,15 @@ function handleAction(){
                       </td>  			                    
 			     </tr>
 
-                <tr>
-                      <td scope="row" class="label">
-                           <label for="summary4Name"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationIi"/></dfn></label>
-                      </td>
-                      <td class="value">
-                          <s:textfield name="nciSpecificInformationWebDTO.organizationIi" size="30" maxlength="40" />
-                          
-                      </td>          
-                        <td>
-                        <button onclick="showPopWin('<c:url value="nodecorate/orglookup.jsp"/>', 600, 250, orgSeachPopupReturn, 'Choose Organization');">Look Up</button>
-                        </td>                      
-                 </tr>  
-
-				<tr>
-			          <td scope="row" class="label">
-			               <label for="summary4Name"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="summaryFourFundingSource.organizationName"/></dfn></label>
-			          </td>
-			          <td class="value">
-			              <s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30" maxlength="40" />
-			          </td>          
-			     </tr>  
-
-
-
-			    
+                
+			     
+			
+        
+        
 		</table> 
+		    <div id="loadOrgField">
+		   					          <%@ include file="/jsp/pajsp/nodecorate/orgField.jsp" %>
+			          </div>
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
