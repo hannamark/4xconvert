@@ -9,6 +9,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 
@@ -127,5 +128,12 @@ public final class PaRegistry {
     return getInstance().getServiceLocator().getPoOrganizationEntityService();
     }
     
+    /**
+    *
+    * @return LookUpTableServiceRemote
+    */
+    public static LookUpTableServiceRemote getLookUpTableService() {
+    return getInstance().getServiceLocator().getLookUpTableService();
+    }
     
 }

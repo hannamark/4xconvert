@@ -23,4 +23,8 @@ public class Constants {
     
     /** Study Protocol II. */
     public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
+
+    /** Funding Mechanism code. */
+    public static final String FUNDING_MECHANISM = "fundingMechanism";
+
 }
