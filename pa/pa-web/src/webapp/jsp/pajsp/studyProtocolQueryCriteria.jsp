@@ -28,20 +28,9 @@ function handleAction(){
 </SCRIPT>
 <body>
 <!-- main content begins-->
-
-  <!--  <div id="contentwide"> -->
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
-    <c:if test="${records != null}">	
-	<div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
-	</c:if>	
-    <!--Help Content-->
-   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
- 	<s:if test="records != null">	
-		<div class="box" id="filters" style="display:none">
-	</s:if>
-	<s:else>
-		<div class="box" id="filters">
-	</s:else>
+    <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
+    <div class="box" id="filters">
     <s:form action="studyProtocolQuery"><s:actionerror/>
         <table class="form">    
             <tr>
