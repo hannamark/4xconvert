@@ -3,6 +3,8 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * StudyResourcingDTO for transferring Study Resourcing object .
@@ -18,7 +20,14 @@ public class StudyResourcingDTO extends BaseDTO {
     private Ii organizationIdentifier;
     private Ii resourceProviderIdentifier;
     Ii studyProtocolIi;
-    
+    private Cd fundingMechanismCode;
+    private String fundingTypeCode;
+    private Cd monitorCode;
+    private Cd institutionCode;
+    private Ts suffixgrantYear;
+    private St suffixOther;
+    private Long id;
+    private St serialNumber;
     /**
      * 
      * @return typeCode
@@ -88,5 +97,103 @@ public class StudyResourcingDTO extends BaseDTO {
      */
     public void setStudyProtocolIi(Ii studyProtocolIi) {
         this.studyProtocolIi = studyProtocolIi;
+    }
+    /**
+     * @return the fundingMechanismCode
+     */
+    public Cd getFundingMechanismCode() {
+        return fundingMechanismCode;
+    }
+    /**
+     * @param fundingMechanismCode Cd
+     */
+    public void setFundingMechanismCode(Cd fundingMechanismCode) {
+        this.fundingMechanismCode = fundingMechanismCode;
+    }
+    
+    /**
+     * @return monitorCode
+     */
+    public Cd getMonitorCode() {
+        return monitorCode;
+    }
+    /**
+     * @return institutionCode
+     */
+    public Cd getInstitutionCode() {
+        return institutionCode;
+    }
+    /**
+     * @return suffixgrantYear
+     */
+    public Ts getSuffixgrantYear() {
+        return suffixgrantYear;
+    }
+    /**
+     * @return suffixOther
+     */
+    public St getSuffixOther() {
+        return suffixOther;
+    }
+    
+    /**
+     * @param monitorCode monitorCode Cd
+     */
+    public void setMonitorCode(Cd monitorCode) {
+        this.monitorCode = monitorCode;
+    }
+    /**
+     * @param institutionCode institutionCode Cd
+     */
+    public void setInstitutionCode(Cd institutionCode) {
+        this.institutionCode = institutionCode;
+    }
+    /**
+     * @param suffixgrantYear suffixgrantYear Ts
+     */
+    public void setSuffixgrantYear(Ts suffixgrantYear) {
+        this.suffixgrantYear = suffixgrantYear;
+    }
+    /**
+     * @param suffixOther suffixOther St
+     */
+    public void setSuffixOther(St suffixOther) {
+        this.suffixOther = suffixOther;
+    }
+    /**
+     * @return fundingTypeCode
+     */
+    public String getFundingTypeCode() {
+        return fundingTypeCode;
+    }
+    /**
+     * @param fundingTypeCode fundingTypeCode
+     */
+    public void setFundingTypeCode(String fundingTypeCode) {
+        this.fundingTypeCode = fundingTypeCode;
+    }
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
+    /**
+     * @param id id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+    /**
+     * @return serialNumber
+     */
+    public St getSerialNumber() {
+        return serialNumber;
+    }
+    /**
+     * @param serialNumber serialNumber
+     */
+    public void setSerialNumber(St serialNumber) {
+        this.serialNumber = serialNumber;
     }    
 }
