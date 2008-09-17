@@ -40,6 +40,41 @@ public class CdConverter {
     }
     
     /**
+     * converts a String to a Cd.
+     * @param code code
+     * @return Cd
+     */
+    public static Cd convertStringToCd(String code) {
+        Cd cd = new Cd();
+        St st = new St();
+        if (code == null) {
+            cd.setNullFlavor(NullFlavor.NI);
+        } else {
+            // set display name
+            st.setValue(code);
+            cd.setDisplayName(st);
+            // set code 
+            cd.setCode(code);
+        }
+        return cd;
+    }
+    
+    /**
+     * converts a Cd to String.
+     * @param cd code
+     * @return String
+     */
+    public static String convertCdToString(Cd cd) {
+        if (cd == null) {
+            return null;
+        } else if (cd.getNullFlavor().equals(NullFlavor.NI)) {
+            return null;
+        } else {
+            // set display name
+            return cd.getCode();
+        }
+    }    
+    /**
      * converts a T to an enum.
      * @param cd iso Cd class
      * @return StudyStatusCode
