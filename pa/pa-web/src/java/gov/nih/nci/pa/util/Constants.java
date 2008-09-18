@@ -27,4 +27,7 @@ public class Constants {
     /** Funding Mechanism code. */
     public static final String FUNDING_MECHANISM = "fundingMechanism";
 
+    /** nih Institute Code . */
+    public static final String NIH_INSTITUTE = "nihInstitute";
+    
 }
