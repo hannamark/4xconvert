@@ -4,7 +4,7 @@ import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
+
 
 /**
  * StudyResourcingDTO for transferring Study Resourcing object .
@@ -19,14 +19,13 @@ public class StudyResourcingDTO extends BaseDTO {
     private Bl summary4ReportedResourceIndicator;
     private Ii organizationIdentifier;
     private Ii resourceProviderIdentifier;
-    Ii studyProtocolIi;
+    private Ii studyProtocolIi;
     private Cd fundingMechanismCode;
-    private String fundingTypeCode;
-    private Cd monitorCode;
-    private Cd institutionCode;
-    private Ts suffixgrantYear;
+    private Cd fundingTypeCode;
+    private Cd nciDivisionProgramCode;
+    private Cd nihInstitutionCode;
+    private St suffixGrantYear;
     private St suffixOther;
-    private Long id;
     private St serialNumber;
     /**
      * 
@@ -112,48 +111,12 @@ public class StudyResourcingDTO extends BaseDTO {
     }
     
     /**
-     * @return monitorCode
-     */
-    public Cd getMonitorCode() {
-        return monitorCode;
-    }
-    /**
-     * @return institutionCode
-     */
-    public Cd getInstitutionCode() {
-        return institutionCode;
-    }
-    /**
-     * @return suffixgrantYear
-     */
-    public Ts getSuffixgrantYear() {
-        return suffixgrantYear;
-    }
-    /**
      * @return suffixOther
      */
     public St getSuffixOther() {
         return suffixOther;
     }
     
-    /**
-     * @param monitorCode monitorCode Cd
-     */
-    public void setMonitorCode(Cd monitorCode) {
-        this.monitorCode = monitorCode;
-    }
-    /**
-     * @param institutionCode institutionCode Cd
-     */
-    public void setInstitutionCode(Cd institutionCode) {
-        this.institutionCode = institutionCode;
-    }
-    /**
-     * @param suffixgrantYear suffixgrantYear Ts
-     */
-    public void setSuffixgrantYear(Ts suffixgrantYear) {
-        this.suffixgrantYear = suffixgrantYear;
-    }
     /**
      * @param suffixOther suffixOther St
      */
@@ -163,26 +126,14 @@ public class StudyResourcingDTO extends BaseDTO {
     /**
      * @return fundingTypeCode
      */
-    public String getFundingTypeCode() {
+    public Cd getFundingTypeCode() {
         return fundingTypeCode;
     }
     /**
      * @param fundingTypeCode fundingTypeCode
      */
-    public void setFundingTypeCode(String fundingTypeCode) {
+    public void setFundingTypeCode(Cd fundingTypeCode) {
         this.fundingTypeCode = fundingTypeCode;
-    }
-    /**
-     * @return id
-     */
-    public Long getId() {
-        return id;
-    }
-    /**
-     * @param id id
-     */
-    public void setId(Long id) {
-        this.id = id;
     }
     /**
      * @return serialNumber
@@ -195,5 +146,53 @@ public class StudyResourcingDTO extends BaseDTO {
      */
     public void setSerialNumber(St serialNumber) {
         this.serialNumber = serialNumber;
+    }
+    /**
+     * 
+     * @return nciDivisionProgramCode
+     */
+    public Cd getNciDivisionProgramCode() {
+        return nciDivisionProgramCode;
+    }
+    /**
+     * 
+     * @param nciDivisionProgramCode nciDivisionProgramCode
+     */
+    public void setNciDivisionProgramCode(Cd nciDivisionProgramCode) {
+        this.nciDivisionProgramCode = nciDivisionProgramCode;
+    }
+    /**
+     * 
+     * @return nihInstitutionCode
+     */
+    public Cd getNihInstitutionCode() {
+        return nihInstitutionCode;
+    }
+    /**
+     * 
+     * @param nihInstitutionCode nihInstitutionCode
+     */
+    public void setNihInstitutionCode(Cd nihInstitutionCode) {
+        this.nihInstitutionCode = nihInstitutionCode;
+    }
+    
+    /**
+     * 
+     * @return suffixGrantYear
+     */
+    public St getSuffixGrantYear() {
+        return suffixGrantYear;
+    }
+    /**
+     * 
+     * @param suffixGrantYear suffixGrantYear
+     */
+    public void setSuffixGrantYear(St suffixGrantYear) {
+        this.suffixGrantYear = suffixGrantYear;
     }    
+    
+    
+    
+    
+    
 }
