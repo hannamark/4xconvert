@@ -3,7 +3,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
-import gov.nih.nci.pa.enums.InstitutionCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
@@ -12,7 +11,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -61,10 +59,6 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
         try {
             session = HibernateUtil.getCurrentSession();
-            //@todo : session.load is not working, so using query to retrieve
-            // studyProtocol = (StudyProtocol) 
-            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            //session.flush();
 
             Query query = null;
             
@@ -123,10 +117,6 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
         try {
             session = HibernateUtil.getCurrentSession();
-            //@todo : session.load is not working, so using query to retrieve
-            // studyProtocol = (StudyProtocol) 
-            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            //session.flush();
 
             Query query = null;
             
@@ -147,11 +137,11 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
-            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode());
-            studyResourcing.setMonitorCode(MonitorCode.getByCode(studyResourcingDTO.getMonitorCode().getCode()));
-            studyResourcing.setInstitutionCode(InstitutionCode.getByCode(
-                    studyResourcingDTO.getInstitutionCode().getCode()));
-            studyResourcing.setSuffixgrantYear(TsConverter.convertToTimestamp(studyResourcingDTO.getSuffixgrantYear()));
+            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode().getCode());
+            studyResourcing.setNciDivisionProgramCode(MonitorCode.getByCode(
+                        studyResourcingDTO.getNciDivisionProgramCode().getCode()));
+            studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
+            studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));
             studyResourcing.setSuffixOther(StConverter.convertToString(studyResourcingDTO.getSuffixOther()));
             studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
             session.update(studyResourcing);
@@ -228,7 +218,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyResourcingDTO> getstudyResource(Ii studyProtocolIi)
+    public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
             LOG.error(" studyProtocolIi should not be null ");
@@ -239,10 +229,6 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
         try {
             session = HibernateUtil.getCurrentSession();
-            //@todo : session.load is not working, so using query to retrieve
-            // studyProtocol = (StudyProtocol) 
-            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            //session.flush();
 
             Query query = null;
             
@@ -292,10 +278,6 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
         try {
             session = HibernateUtil.getCurrentSession();
-            //@todo : session.load is not working, so using query to retrieve
-            // studyProtocol = (StudyProtocol) 
-            // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            //session.flush();
 
             Query query = null;
             

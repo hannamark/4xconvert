@@ -53,7 +53,7 @@ public interface StudyResourcingServiceRemote {
      * @return StudyResourcingDTO
      * @throws PAException PAException
      */
-    List<StudyResourcingDTO> getstudyResource(Ii studyProtocolIi) throws PAException; 
+    List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi) throws PAException; 
     /**
      * @param studyResourceIi Ii 
      * @return StudyResourcingDTO
