@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC 
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+ <constant name="struts.devMode" value="true" />
+    <package name="default" extends="struts-default">
+        <interceptors>
+            <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
+        </interceptors>     
+        <action name="logout" class="gov.nih.nci.pa.action.Logout" method="logout">
+            <result>/index.jsp</result>
+        </action>
+        <action name="login">
+            <result>/jsp/pajsp/login.jsp</result>
+        </action>      
+    </package>
+    <package name="protected" namespace="/protected" extends="default"> 
+        <action name="studyProtocolQueryHome" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
+            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
+        </action> 
+        <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
+            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
+        </action> 
+        <action name="studyOverallStatusUpdate" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="update">
+            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
+        </action> 
+        <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
+            <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>
+        </action>   
+    </package>
+</struts>
