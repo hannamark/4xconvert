@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * Class for holding attributes for StudyResourcing DTO.
@@ -27,12 +26,12 @@ public class StudyResourcingWebDTO {
     public StudyResourcingWebDTO(StudyResourcingDTO iso) {
         super();
         this.fundingMechanismCode = iso.getFundingMechanismCode().getCode();
-        this.institutionCode = iso.getInstitutionCode().getCode();
-        this.monitorCode = iso.getMonitorCode().getCode();
-        this.fundingTypeCode = iso.getFundingTypeCode();
-        this.suffixgrantYear = TsConverter.convertToTimestamp(iso.getSuffixgrantYear()).toString();
+        this.institutionCode = iso.getNihInstitutionCode().getCode();
+        this.monitorCode = iso.getNciDivisionProgramCode().getCode();
+        this.fundingTypeCode = iso.getFundingTypeCode().getCode();
+        this.suffixgrantYear = iso.getSuffixGrantYear().getValue();
         this.suffixOther = iso.getSuffixOther().getValue();
-        this.id = iso.getId().toString();
+        this.id = iso.getIi().getExtension();
         this.serialNumber = iso.getSerialNumber().getValue();
     }
     
