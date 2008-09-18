@@ -133,7 +133,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "unchecked", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class AuditLogInterceptor extends EmptyInterceptor {
 
-    private static final int MAX_VALUE_LENGTH = 1024;
+    private static final int MAX_VALUE_LENGTH = AuditLogDetail.VALUE_LENGTH;
     private static final BagType BOGUS_TYPE = new BagType("", "", true);
     private static final String COLUMN_NAME = "columnName";
     private static final String TABLE_NAME = "tableName";
@@ -211,18 +211,11 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         Auditable auditableOwner = (Auditable) owner;
         String role = pc.getRole();
-        Object oldV = pc.getStoredSnapshot();
+        
+        Serializable oldSerial = pc.getStoredSnapshot();
+        String oldValStr = getValueStringHelper(oldSerial);
         Object newV = pc.getValue();
-        if (oldV instanceof Map) {
-            Map oldVmap = (Map) oldV;
-            oldV = oldVmap.values();
-        }
-        if (newV instanceof Map) {
-            Map newVmap = (Map) newV;
-            newV = newVmap.values();
-        }
-        String oldValStr = getValueString((Collection<?>) oldV);
-        String newValStr = getValueString((Collection<?>) newV);
+        String newValStr = getValueStringHelper(newV); 
 
         int idx = role.lastIndexOf('.');
         String className = role.substring(0, idx);
@@ -237,6 +230,20 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         AuditLogDetail detail = new AuditLogDetail(record, attribute, oldValStr, newValStr, true);
         record.getDetails().add(detail);
         details.get().add(new DetailHelper(detail, (Collection<Auditable>) newV));
+    }
+
+    private static String getValueStringHelper(Object newV) {
+        String newValStr;
+        if (newV instanceof Collection<?>) {
+            newValStr = getValueString((Collection<?>) newV);
+        } else if (newV instanceof Map<?, ?>) {
+            newValStr = getValueString((Map<?, ?>) newV);
+        } else {
+            LOG.error(String.format("Unknown [object|serializable] type '%s' - falling back to toString", newV
+                    .getClass().getName()));
+            newValStr = newV.toString();
+        }
+        return newValStr;
     }
 
     /**
@@ -506,19 +513,54 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String sep = "";
         StringBuffer sb = new StringBuffer();
         for (Object a : value) {
+            if (sb.length() > MAX_VALUE_LENGTH) {
+                break;
+            }
             if (a instanceof PersistentObject) {
                 a = ((PersistentObject) a).getId();
             } 
             sb.append(sep).append(String.valueOf(a));
             sep = ", ";
+        }
+        return StringUtils.abbreviate(sb.toString(), MAX_VALUE_LENGTH);
+    }
+    
+    /**
+     * Produces a string formatted as follows "(k1=String.valueOf(k), v1=String.valueOf(v)) , 
+     * (k1=String.valueOf(k), v1=String.valueOf(v)), ...".
+     * @param map
+     * @return a value string of the provided map
+     */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
+    private static String getValueString(Map<?, ?> map) {
+        //
+        if (map == null) {
+            return null;
+        }
+        String sep = "";
+        StringBuffer sb = new StringBuffer();
+        long i = 1;
+        for (Object k : map.keySet()) {
             if (sb.length() > MAX_VALUE_LENGTH) {
-                String suffix = "...";
-                sb.setLength(MAX_VALUE_LENGTH);
-                sb.replace(MAX_VALUE_LENGTH - suffix.length(), MAX_VALUE_LENGTH, suffix);
                 break;
             }
+            if (k instanceof PersistentObject) {
+                k = ((PersistentObject) k).getId();
+            }
+            Object v = map.get(k);
+            if (v instanceof PersistentObject) {
+                v = ((PersistentObject) v).getId();
+            }
+            sb.append(sep);
+            sb.append('(');
+            sb.append('k').append(i).append('=').append(String.valueOf(k));
+            sep = ", ";
+            sb.append(sep);
+            sb.append('v').append(i).append('=').append(String.valueOf(v));
+            sb.append(')');
+            i++;
         }
-        return sb.toString();
+        return StringUtils.abbreviate(sb.toString(), MAX_VALUE_LENGTH);
     }
 
     /**

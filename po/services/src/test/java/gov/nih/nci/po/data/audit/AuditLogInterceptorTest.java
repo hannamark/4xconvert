@@ -1,5 +1,7 @@
 package gov.nih.nci.po.data.audit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogInterceptor;
@@ -8,8 +10,8 @@ import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -19,9 +21,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
@@ -153,9 +157,54 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
             throw new RuntimeException(t);
         }
     }
-
+    private static String callGetValueString(Map<? extends Auditable, ? extends Auditable> value) {
+        try {
+            Method m = AuditLogInterceptor.class.getDeclaredMethod("getValueString", Map.class);
+            m.setAccessible(true);
+            return (String) m.invoke(null, value);
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException(ex);
+        } catch (SecurityException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException(ex);
+        } catch (InvocationTargetException ex) {
+            Throwable t = ex.getTargetException();
+            if(t instanceof RuntimeException) {
+                throw (RuntimeException) t;
+            }
+            throw new RuntimeException(t);
+        }
+    }
+    private static String callGetValueStringHelper(Object value) {
+        try {
+            Method m = AuditLogInterceptor.class.getDeclaredMethod("getValueStringHelper", Object.class);
+            m.setAccessible(true);
+            return (String) m.invoke(null, value);
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException(ex);
+        } catch (SecurityException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException(ex);
+        } catch (InvocationTargetException ex) {
+            Throwable t = ex.getTargetException();
+            if(t instanceof RuntimeException) {
+                throw (RuntimeException) t;
+            }
+            throw new RuntimeException(t);
+        }
+    }
     @Test
-    public void getValueString() {
+    public void getValueStringFromCollectionWithNull() {
+        assertNull(callGetValueString((Collection<Auditable>) null));
+    }
+    @Test
+    public void getValueStringFromCollection() {
         class Foo implements Auditable {
             private static final long serialVersionUID = 1L;
             public Long getId() {
@@ -178,7 +227,127 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         };
 
         String s = callGetValueString(list);
-        assertTrue(s.length() == 1024);
+        assertTrue(s.length() == 4000);
+        assertTrue(s.endsWith("..."));
+    }
+    
+    @Test
+    public void getValueStringHelper() {
+        Object value = new Object();
+        String s = callGetValueStringHelper(value);
+        assertEquals(value.toString(), s);
+    }
+    
+    @Test
+    public void getValueStringFromMapWithNull() {
+        assertNull(callGetValueString((Map<Auditable, Auditable>) null));
+    }
+    
+    @Test
+    public void getValueStringFromMap() {
+        class Key implements Auditable {
+            private static final long serialVersionUID = 1L;
+            public Long getId() {
+                return Long.MAX_VALUE;
+            }
+        }
+        
+        class Value implements Auditable {
+            private static final long serialVersionUID = 1L;
+            public Long getId() {
+                return Long.MIN_VALUE;
+            }
+        }
+        final Key dummyKey = new Key();
+        final Value dummyValue = new Value();
+        class KeySet implements Set {
+
+            public boolean add(Object o) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public boolean addAll(Collection c) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public void clear() {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public boolean contains(Object o) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public boolean containsAll(Collection c) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public boolean isEmpty() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public Iterator<Key> iterator() {
+                return new Iterator<Key>() {
+                    int iteration = 0;
+                    public boolean hasNext() { return true; }
+                    public Key next() { iteration++; return dummyKey; }
+                    public void remove() { };
+                };
+            }
+
+            public boolean remove(Object o) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public boolean removeAll(Collection c) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public boolean retainAll(Collection c) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            public int size() {
+                // TODO Auto-generated method stub
+                return 0;
+            }
+
+            public Object[] toArray() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            public Object[] toArray(Object[] a) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+        }
+        final KeySet dummyKeySet = new KeySet();
+        Map<Key,Value> map = new HashMap<Key,Value>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Set<Key> keySet() {
+                return dummyKeySet;
+            }
+            @Override
+            public Value get(Object key) {
+                return dummyValue;
+            }
+        };
+        
+        String s = callGetValueString(map);
+        assertTrue(s.startsWith("(k1=9223372036854775807, v1=-9223372036854775808), (k2=9223372036854775807, v2=-9223372036854775808),"));
+        assertTrue(s.length() == 4000);
         assertTrue(s.endsWith("..."));
     }
 }

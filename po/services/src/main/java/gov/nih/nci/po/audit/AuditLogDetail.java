@@ -111,7 +111,7 @@ public class AuditLogDetail implements Serializable {
 
     private static final long serialVersionUID = -7074112096539572447L;
     private static final int ATTRIBUTE_LENGTH = 100;
-    private static final int VALUE_LENGTH = 4000;
+    static final int VALUE_LENGTH = 4000;
 
     private Long id;
     private AuditLogRecord record;
