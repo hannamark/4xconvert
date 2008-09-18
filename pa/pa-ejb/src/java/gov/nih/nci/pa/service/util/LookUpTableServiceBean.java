@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.FundingMechanism;
+import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -31,10 +32,10 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     
     /**
      * 
-     * @return FundingMechanism  FundingMechanism
+     * @return fmList  FundingMechanism
      * @throws PAException PAException
      */
-    public List<String> getFundingMechanisms() throws PAException {
+    public List<FundingMechanism> getFundingMechanisms() throws PAException {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
         List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
@@ -50,11 +51,33 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         } finally {
             session.flush();
         } 
-        List<String> fundingMechanism =  new ArrayList<String>();
-        for (FundingMechanism fm : fmList) {
-            fundingMechanism.add(fm.getFundingMechanismCode());
-        }
-        return fundingMechanism;
+        return fmList;
         
     }
+
+    /**
+     * 
+     * @return nihList  FundingMechanism
+     * @throws PAException PAException
+     */
+    public List<NIHinstitute> getNihInstitutes() throws PAException {
+        LOG.info("Entering getFundingMechanisms");
+        Session session = null;
+        List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select nih from NIHinstitute nih order by nihInstituteCode";
+            query = session.createQuery(hql);
+            nihList = query.list();
+        }  catch (HibernateException hbe) {
+            LOG.error(" Unable to load NIHinstitute" , hbe);
+            throw new PAException(" Unable to load NIHinstitute", hbe);
+        } finally {
+            session.flush();
+        } 
+        return nihList;
+        
+    }
+
 }
