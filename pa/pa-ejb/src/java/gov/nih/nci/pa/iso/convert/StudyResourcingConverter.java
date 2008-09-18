@@ -2,14 +2,12 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.InstitutionCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * Convert StudyResourcing from domain to DTO.
@@ -38,12 +36,11 @@ public class StudyResourcingConverter {
         srDTO.setTypeCode(CdConverter.convertToCd(studyResourcing.getTypeCode()));
         srDTO.setUserLastUpdated(StConverter.convertToSt(studyResourcing.getUserLastUpdated()));
         srDTO.setFundingMechanismCode(CdConverter.convertStringToCd(studyResourcing.getFundingMechanismCode()));
-        srDTO.setFundingTypeCode(studyResourcing.getFundingTypeCode());
-        srDTO.setMonitorCode(CdConverter.convertToCd(studyResourcing.getMonitorCode()));
-        srDTO.setInstitutionCode(CdConverter.convertToCd(studyResourcing.getInstitutionCode()));
-        srDTO.setSuffixgrantYear(TsConverter.convertToTs(studyResourcing.getSuffixgrantYear()));
+        srDTO.setFundingTypeCode(CdConverter.convertStringToCd(studyResourcing.getFundingTypeCode()));
+        srDTO.setNciDivisionProgramCode(CdConverter.convertToCd(studyResourcing.getNciDivisionProgramCode()));
+        srDTO.setNihInstitutionCode(CdConverter.convertStringToCd(studyResourcing.getNihInstituteCode()));
+        srDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcing.getSuffixGrantYear()));
         srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
-        srDTO.setId(studyResourcing.getId());
         srDTO.setSerialNumber(StConverter.convertToSt(studyResourcing.getSerialNumber()));
         //@tdo: date range 
         return srDTO;
@@ -81,21 +78,21 @@ public class StudyResourcingConverter {
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
         }
-        if (studyResourcingDTO.getMonitorCode() != null) {
-            studyResourcing.setMonitorCode(MonitorCode.getByCode(studyResourcingDTO.getMonitorCode().getCode()));
+        if (studyResourcingDTO.getNciDivisionProgramCode() != null) {
+            studyResourcing.setNciDivisionProgramCode(
+                    MonitorCode.getByCode(studyResourcingDTO.getNciDivisionProgramCode().getCode()));
         }
-        if (studyResourcingDTO.getInstitutionCode() != null) {
-            studyResourcing.setInstitutionCode(InstitutionCode.getByCode(
-                    studyResourcingDTO.getInstitutionCode().getCode()));
+        if (studyResourcingDTO.getNihInstitutionCode() != null) {
+            studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
         }
         if (studyResourcingDTO.getFundingTypeCode() != null) {
-            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode());
+            studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode().getCode());
         }
         if (studyResourcingDTO.getSuffixOther() != null) {
             studyResourcing.setSuffixOther(studyResourcingDTO.getSuffixOther().getValue());
         }
-        if (studyResourcingDTO.getSuffixgrantYear() != null) {
-            studyResourcing.setSuffixgrantYear(TsConverter.convertToTimestamp(studyResourcingDTO.getSuffixgrantYear()));
+        if (studyResourcingDTO.getSuffixGrantYear() != null) {
+            studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));
         }
         if (studyResourcingDTO.getSerialNumber() != null) {
             studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
