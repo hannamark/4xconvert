@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
@@ -126,6 +127,13 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
             o = (Organization) s.merge(org);
         } else {
             o = org;
+        }
+        if (!o.getChangeRequests().isEmpty()) {
+            for (OrganizationCR cr : o.getChangeRequests()) {
+                // TODO delete or mark as processed
+                // see https://jira.5amsolutions.com/browse/PO-492
+                PoHibernateUtil.getCurrentSession().delete(cr);
+            }
         }
         o.setStatusCode(EntityStatus.CURATED);
         o.setStatusDate(new Date());

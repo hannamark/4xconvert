@@ -122,6 +122,8 @@ LEGEND
 { outline:none; background:#D1CEC4}
 #leftnav LI.liheader
 { background:#5c5c5c; color:#fff; padding:3px 8px; border-bottom:1px solid #fff; }
+#leftnav LI.lisubheader
+{ background:#c9c9c9; color:#333; padding:3px 8px; border-bottom:1px solid #fff; }
 /* Quicklinks */
 #leftnav UL.quicklinks
 { min-height:.1%; width:155px; padding:0; border:0; }

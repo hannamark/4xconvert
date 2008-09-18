@@ -42,8 +42,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         loginAsCurator();
 
-        selenium.open("/po-web/protected/curate/search/listAll.action");
-        selenium.click("link=Inbox");
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("link=Organization");
         waitForPageToLoad();
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
@@ -95,8 +95,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         loginAsCurator();
 
-        selenium.open("/po-web/protected/curate/search/listAll.action");
-        selenium.click("link=Inbox");
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("link=Organization");
         waitForPageToLoad();
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");

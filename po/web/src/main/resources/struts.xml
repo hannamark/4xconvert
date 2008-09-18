@@ -155,8 +155,12 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="common">
-        <action name="**curate/search/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{2}">
-            <result name="success">/WEB-INF/jsp/curate/{2}.jsp</result>
+        <action name="curate/search/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/curate/{1}.jsp</result>
+            <result name="list" type="redirect-action">listAll</result>
+        </action>
+        <action name="ajax/curate/search/*/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{2}">
+            <result name="success">/WEB-INF/jsp/curate/{1}/list.jsp</result>
             <result name="list" type="redirect-action">listAll</result>
         </action>
         <action name="organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
@@ -165,7 +169,7 @@
             <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
             <result name="success" type="redirect-action">
                 <param name="namespace">/protected</param>
-                <param name="actionName">curate/search/listAll</param>
+                <param name="actionName">curate/search/listOrgs</param>
             </result>
             <!-- 
             <result name="success">/WEB-INF/jsp/curate/organization/curate.jsp</result>

@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogRecord;
@@ -92,9 +93,13 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -283,4 +288,46 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
     }
+    
+    @Test
+    public void acceptWithChangesAndCRrs() throws EntityValidationException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        
+        OrganizationCRServiceBean organizationCRServiceBean = EjbTestHelper.getOrganizationCRServiceBean();
+        OrganizationCR cr = new OrganizationCR(o);
+        OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o);
+        oDto.setIdentifier(null);
+        PoXsnapshotHelper.copyIntoAbstractModel(oDto, cr);
+        cr.setId(null);
+        cr.setStatusCode(o.getStatusCode());
+        organizationCRServiceBean.create(cr);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        o = getOrgServiceBean().getById(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+
+        assertFalse(o.getChangeRequests().isEmpty());
+        
+        getOrgServiceBean().accept(o);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.CURATED, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+        
+        assertTrue(result.getChangeRequests().isEmpty());
+    }    
 }
