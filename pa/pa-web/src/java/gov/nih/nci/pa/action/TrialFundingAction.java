@@ -2,15 +2,12 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyResourcingWebDTO;
-import gov.nih.nci.pa.enums.InstitutionCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -35,8 +32,6 @@ public class TrialFundingAction extends ActionSupport {
     private List<StudyResourcingWebDTO> trialFundingList;
     private Long cbValue;
     private String page;
-    private List<String> fundingMechanism;
-    //private List<String> fundings;
    
     /**  
      * @return result
@@ -46,7 +41,8 @@ public class TrialFundingAction extends ActionSupport {
         try { 
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);             
-            List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().getstudyResource(studyProtocolIi);
+            List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().
+                getstudyResourceByStudyProtocol(studyProtocolIi);
             if (!(isoList.isEmpty())) {                
               trialFundingList = new ArrayList<StudyResourcingWebDTO>();                
               for (StudyResourcingDTO dto : isoList) {
@@ -60,26 +56,6 @@ public class TrialFundingAction extends ActionSupport {
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
-        }
-    }
-    /**
-     * @return fundingMechanism List
-     */
-    public List getFundingMechanism() {
-        
-        fundingMechanism = (List) ServletActionContext.getRequest().getSession()
-        .getAttribute(Constants.FUNDING_MECHANISM);       
-
-        try {
-            if (fundingMechanism == null) {
-                fundingMechanism = PaRegistry.getLookUpTableService().getFundingMechanisms();
-                ServletActionContext.getRequest().getSession().
-                    setAttribute(Constants.FUNDING_MECHANISM, fundingMechanism);
-            }
-            return fundingMechanism;   
-        } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            return null;
         }
     }
     
@@ -101,13 +77,13 @@ public class TrialFundingAction extends ActionSupport {
                 studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
                 studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
                             studyResourcingWebDTO.getFundingMechanismCode()));
-                studyResoureDTO.setFundingTypeCode(studyResourcingWebDTO.getFundingTypeCode());
-                studyResoureDTO.setMonitorCode(CdConverter.convertToCd(
+                studyResoureDTO.setFundingTypeCode(
+                        CdConverter.convertStringToCd(studyResourcingWebDTO.getFundingTypeCode()));
+                studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
                             MonitorCode.getByCode(studyResourcingWebDTO.getMonitorCode())));
-                studyResoureDTO.setInstitutionCode(CdConverter.convertToCd(
-                            InstitutionCode.getByCode(studyResourcingWebDTO.getInstitutionCode())));
-                studyResoureDTO.setSuffixgrantYear(TsConverter.convertToTs(
-                            PAUtil.dateStringToTimestamp(studyResourcingWebDTO.getSuffixgrantYear())));
+                studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
+                        studyResourcingWebDTO.getInstitutionCode()));
+                studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcingWebDTO.getSuffixgrantYear()));
                 studyResoureDTO.setSuffixOther(StConverter.convertToSt(studyResourcingWebDTO.getSuffixOther()));
                 studyResoureDTO.setSerialNumber(StConverter.convertToSt(studyResourcingWebDTO.getSerialNumber()));
                 studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
@@ -117,13 +93,13 @@ public class TrialFundingAction extends ActionSupport {
                 studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
                 studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
                         studyResourcingWebDTO.getFundingMechanismCode()));
-                studyResoureDTO.setFundingTypeCode(studyResourcingWebDTO.getFundingTypeCode());
-                studyResoureDTO.setMonitorCode(CdConverter.convertToCd(
+                studyResoureDTO.setFundingTypeCode(
+                        CdConverter.convertStringToCd(studyResourcingWebDTO.getFundingTypeCode()));
+                studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
                             MonitorCode.getByCode(studyResourcingWebDTO.getMonitorCode())));
-                studyResoureDTO.setInstitutionCode(CdConverter.convertToCd(
-                            InstitutionCode.getByCode(studyResourcingWebDTO.getInstitutionCode())));
-                studyResoureDTO.setSuffixgrantYear(TsConverter.convertToTs(
-                            PAUtil.dateStringToTimestamp(studyResourcingWebDTO.getSuffixgrantYear())));
+                studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
+                            studyResourcingWebDTO.getInstitutionCode()));
+                studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcingWebDTO.getSuffixgrantYear()));
                 studyResoureDTO.setSuffixOther(StConverter.convertToSt(studyResourcingWebDTO.getSuffixOther()));
                 studyResoureDTO.setSerialNumber(StConverter.convertToSt(studyResourcingWebDTO.getSerialNumber()));
                 studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
@@ -210,12 +186,6 @@ public class TrialFundingAction extends ActionSupport {
      */
     public void setPage(String page) {
         this.page = page;
-    }
-    /**
-     * @param fundingMechanism fundingMechanism
-     */
-    public void setFundingMechanism(List<String> fundingMechanism) {
-        this.fundingMechanism = fundingMechanism;
     }
       
 }
