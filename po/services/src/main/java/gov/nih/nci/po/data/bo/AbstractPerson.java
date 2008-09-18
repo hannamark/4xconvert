@@ -244,8 +244,8 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     /**
      * @return mail address
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ad"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SimpleConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$SimpleConverter"
      */
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull

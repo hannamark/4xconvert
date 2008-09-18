@@ -189,12 +189,10 @@ public abstract class PersonRole implements PersistentObject, Contactable {
      * @return the postalAddresses
      * todo add xsnapshot tags
      *
-     * @xsnapshot.collection match="iso"
-     * snapshot-element-type="gov.nih.nci.coppa.iso.Ad"
-     * snapshot-element-transformer="gov.nih.nci.po.data.convert.AddressConverter"
-     * model-element-type="gov.nih.nci.po.data.bo.Address"
-     * model-element-transformer="gov.nih.nci.po.data.convert.AdConverter"
-     * copy-to-model="true"
+     * @xsnapshot.property name="postalAddress"
+     *                     match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SetConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$DSetConverter"
      */
     @Transient
     public Set<Address> getPostalAddresses() {

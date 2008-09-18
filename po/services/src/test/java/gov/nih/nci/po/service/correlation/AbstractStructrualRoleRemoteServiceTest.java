@@ -248,14 +248,15 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> e
 
         Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
                 "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3());
-        pr.setPostalAddresses(Collections.singleton(ad));
+        pr.setPostalAddress(new DSet<Ad>());
+        pr.getPostalAddress().setItem(Collections.singleton(ad));
     }
 
     protected void verifyPersonRoleDto(PersonRoleDTO e, PersonRoleDTO a) {
         assertEquals(e.getOrganizationIdentifier().getExtension(), a.getOrganizationIdentifier().getExtension());
         assertEquals(e.getPersonIdentifier().getExtension(), a.getPersonIdentifier().getExtension());
         assertEquals("pending", a.getStatus().getCode());
-        assertEquals(e.getPostalAddresses().size(), a.getPostalAddresses().size());
+        assertEquals(e.getPostalAddress().getItem().size(), a.getPostalAddress().getItem().size());
         assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
     }
 }

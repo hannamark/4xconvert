@@ -256,8 +256,8 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         assertTrue(ttyFound);
         assertTrue(urlFound);
 
-        assertEquals(1, dto.getPostalAddresses().size());
-        Ad ad = (Ad)dto.getPostalAddresses().iterator().next();
+        assertEquals(1, dto.getPostalAddress().getItem().size());
+        Ad ad = (Ad)dto.getPostalAddress().getItem().iterator().next();
         List<Adxp> parts = ad.getPart();
         assertEquals(5, parts.size());
         for(Adxp a : parts) {
@@ -328,7 +328,8 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         pr.setTelecomAddress(tels);
 
         Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", defaultCountry.getAlpha3());
-        pr.setPostalAddresses(Collections.singleton(ad));
+        pr.setPostalAddress(new DSet<Ad>());
+        pr.getPostalAddress().setItem(Collections.singleton(ad));
 
         return pr;
     }

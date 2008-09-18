@@ -107,7 +107,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         dto.getName().getPart().add(part);
         Address a = makePerson().getPostalAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
-        dto.setPostalAddress(AddressConverter.convertToAd(a));
+        dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
         Ii id = remote.createPerson(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -216,7 +216,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals("d", p.getSuffix());
         Address a = makePerson().getPostalAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
-        dto.setPostalAddress(AddressConverter.convertToAd(a));
+        dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
 
         Ii id = remote.createPerson(dto);
         assertNotNull(id);

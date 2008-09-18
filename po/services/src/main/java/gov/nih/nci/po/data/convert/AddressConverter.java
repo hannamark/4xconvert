@@ -84,44 +84,80 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  * Utility class for converting between BO and ISO types.
- * 
+ *
  * @author gax
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public final class AddressConverter extends AbstractXSnapshotConverter<Address> {
+public final class AddressConverter {
 
     /**
-     * {@inheritDoc}
+     * Converter for simple addresses (ie, not sets or bags).
      */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Address value) {
-        if (returnClass == Ad.class) {
-            return (TO) convertToAd(value);
+    public static class SimpleConverter extends AbstractXSnapshotConverter<Address> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public <TO> TO convert(Class<TO> returnClass, Address value) {
+            if (returnClass == Ad.class) {
+                return (TO) convertToAd(value);
+            }
+            throw new UnsupportedOperationException(returnClass.getName());
         }
-        throw new UnsupportedOperationException(returnClass.getName());
+
+        /**
+         * @param a address to convert from
+         * @return ISO address form of address
+         */
+        public static Ad convertToAd(Address a) {
+            if (a == null) {
+                Ad iso = new Ad();
+                iso.setNullFlavor(NullFlavor.NI);
+                return iso;
+            } else {
+                return AddressConverterUtil.create(a.getStreetAddressLine(), a.getDeliveryAddressLine(), a
+                        .getCityOrMunicipality(), a.getStateOrProvince(), a.getPostalCode(),
+                        a.getCountry().getAlpha3());
+            }
+        }
     }
 
     /**
-     * @param a an address.
-     * @return best guess of a's ISO equivalent.
+     * Converter for Set&lt;Address&gt;.
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
-    public static Ad convertToAd(Address a) {
-        if (a == null) {
-            Ad iso = new Ad();
-            iso.setNullFlavor(NullFlavor.NI);
-            return iso;
-        } else {
-            return AddressConverterUtil.create(a.getStreetAddressLine(), a.getDeliveryAddressLine(), a
-                    .getCityOrMunicipality(), a.getStateOrProvince(), a.getPostalCode(), a.getCountry().getAlpha3());
-        }
-    }
+    public static class SetConverter extends AbstractXSnapshotConverter<Set<Address>> {
 
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, Set<Address> value) {
+            if (CollectionUtils.isEmpty(value)) {
+                return null;
+            }
+            DSet<Ad> ads = new DSet<Ad>();
+            ads.setItem(new HashSet<Ad>());
+            for (Address address : value) {
+                Ad ad = SimpleConverter.convertToAd(address);
+                ads.getItem().add(ad);
+            }
+
+            return (TO) ads;
+        }
+
+    }
 }

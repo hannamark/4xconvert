@@ -35,7 +35,7 @@ public class AdConverterTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testConvert() {
-        AdConverter instance = new AdConverter();
+        AdConverter.SimpleConverter instance = new AdConverter.SimpleConverter();
         instance.convert(Integer.class, null);
     }
 
@@ -47,7 +47,7 @@ public class AdConverterTest {
     public void testConvertToAddress() {
         Ad iso = new Ad();
         iso.setNullFlavor(NullFlavor.UNK);
-        Address result = AdConverter.convertToAddress(iso, resolver);
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         assertNull(result);
     }
 
@@ -89,7 +89,7 @@ labelled in regard to their semantic significance.
         a.setValue("Indianapolis, IN 46240");
         part.add(a);
 
-        Address result = AdConverter.convertToAddress(iso, resolver);
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         assertNull(result.getPostalCode());
         assertNull(result.getStateOrProvince());
         assertNull(result.getCountry());
@@ -140,7 +140,7 @@ address lines, this is not implied by this example. See Section 7.7.3.6.
         a.setCode("USA");
         part.add(a);
 
-        Address result = AdConverter.convertToAddress(iso, resolver);
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         assertEquals("46240", result.getPostalCode());
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
@@ -187,7 +187,7 @@ This is the same address from a system that differentiates between different lin
         a.setCode("USA");
         part.add(a);
 
-        Address result = AdConverter.convertToAddress(iso, resolver);
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         assertEquals("46240", result.getPostalCode());
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
@@ -249,7 +249,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a.setCode("USA");
         part.add(a);
 
-        Address result = AdConverter.convertToAddress(iso, resolver);
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         assertEquals("46240", result.getPostalCode());
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
@@ -284,7 +284,7 @@ useful in Germany, where many systems keep house number as a distinct field
         a.setCode("USA");
         part.add(a);
 
-        Address result = AdConverter.convertToAddress(iso, resolver);
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         assertEquals("46240", result.getPostalCode());
         assertEquals("IN", result.getStateOrProvince());
         assertEquals("USA", result.getCountry().getAlpha3());
@@ -302,7 +302,7 @@ useful in Germany, where many systems keep house number as a distinct field
         iso.setPart(part);
 
         try {
-            AdConverter.convertToAddress(iso, resolver);
+            AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         } catch (Exception e) {
             fail();
         }
@@ -310,13 +310,13 @@ useful in Germany, where many systems keep house number as a distinct field
         iso.setUse(new HashSet<PostalAddressUse>());
 
         try {
-            AdConverter.convertToAddress(iso, resolver);
+            AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         } catch (Exception e) {
             fail();
         }
 
         iso.getUse().add(PostalAddressUse.DIR);
-        AdConverter.convertToAddress(iso, resolver);
+        AdConverter.SimpleConverter.convertToAddress(iso, resolver);
     }
 
     /**
@@ -329,14 +329,14 @@ useful in Germany, where many systems keep house number as a distinct field
         iso.setPart(part);
 
         try {
-            AdConverter.convertToAddress(iso, resolver);
+            AdConverter.SimpleConverter.convertToAddress(iso, resolver);
         } catch (Exception e) {
             fail();
         }
 
         iso.setUsablePeriod(new Ivl<Ts>());
 
-        AdConverter.convertToAddress(iso, resolver);
+        AdConverter.SimpleConverter.convertToAddress(iso, resolver);
     }
 
     /**
@@ -345,10 +345,10 @@ useful in Germany, where many systems keep house number as a distinct field
     public void testFlavorId() {
         Ad iso = new Ad();
         iso.setNullFlavor(NullFlavor.OTH);
-        AdConverter.convertToAddress(iso, null);
+        AdConverter.SimpleConverter.convertToAddress(iso, null);
         iso.setFlavorId("flavorId");
         try{
-            AdConverter.convertToAddress(iso, null);
+            AdConverter.SimpleConverter.convertToAddress(iso, null);
             fail();
         } catch(PoIsoConstraintException ex) {
 
@@ -362,7 +362,7 @@ useful in Germany, where many systems keep house number as a distinct field
     public void testUseOfIsNotOrdered() {
         Ad iso = new Ad();
         iso.setIsNotOrdered(Boolean.TRUE);
-        AdConverter.convertToAddress(iso, resolver);
+        AdConverter.SimpleConverter.convertToAddress(iso, resolver);
     }
 
 

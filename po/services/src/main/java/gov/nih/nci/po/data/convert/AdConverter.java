@@ -86,120 +86,153 @@ package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.services.PoIsoConstraintException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
- *
- * @author gax
+ * Converts for Ad (both simple and set based).
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class AdConverter extends AbstractXSnapshotConverter<Ad> {
+public class AdConverter {
 
     private static final PoCountryResolver RESOLVER = new PoCountryResolver();
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Ad value) {
-        if (returnClass == Address.class) {
-            return (TO) convertToAddress(value, RESOLVER);
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
 
     /**
-     * https://jira.5amsolutions.com/browse/PO-429 .
-     * @param iso the address to convert into a BO Address.
-     * @param resolver converts 3 letter iso country codes to a BO {@link Country}
-     * @return a BO address.
+     * Converter for simple addresses (ie, not sets or bags).
      */
-    public static Address convertToAddress(Ad iso, CountryResolver resolver) {
-        if (iso == null || iso.getNullFlavor() != null) {
-            return null;
-        }
-
-        if (iso.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
-        if (iso.getUse() != null && !iso.getUse().isEmpty()) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'use' field on AD at this time.");
-        }
-
-        if (iso.getUsablePeriod() != null) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
-                    + " field on AD at this time.");
-        }
-
-        if (iso.getIsNotOrdered() != null) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'isNotOrdered' "
-                    + "field on AD at this time.");
-        }
-
-        return processParts(iso, resolver);
-
-    }
-
-    @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
-                        "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "fallthrough" })
-    private static Address processParts(Ad iso, CountryResolver resolver) {
-        Address a = new Address();
-
-        StringBuffer street = new StringBuffer();
-        StringBuffer delivery = new StringBuffer();
-        String sdelimitor = "";
-        String ddelimitor = "";
-
-        for (Adxp part : iso.getPart()) {
-            if (part.getType() == null) {
-                street.append(sdelimitor).append(part.getValue());
-            } else {
-                switch (part.getType()) {
-                    case CAR:
-                        ddelimitor += "c/o ";
-                    case DAL:
-                    case ADL:
-                        delivery.append(ddelimitor).append(part.getValue());
-                        break;
-                    case DEL:
-                        String del = part.getValue() == null ? "\n" : part.getValue();
-                        street.append(del);
-                        sdelimitor = "";
-                        continue;
-                    case CNT:
-                        a.setCountry(resolver.getCountryByAlpha3(part.getCode()));
-                        sdelimitor = "";
-                        continue;
-                    case STA:
-                        a.setStateOrProvince(part.getValue());
-                        sdelimitor = "";
-                        continue;
-                    case CTY:
-                        a.setCityOrMunicipality(part.getValue());
-                        sdelimitor = "";
-                        continue;
-                    case ZIP:
-                        a.setPostalCode(part.getValue());
-                        sdelimitor = "";
-                        continue;
-                    case POB:
-                        sdelimitor += "P.O.Box ";
-                    default:
-                        street.append(sdelimitor).append(part.getValue());
-                }
-                sdelimitor = street.length() == 0 ? "" : " ";
-                ddelimitor = delivery.length() == 0 ? "" : " ";
+    public static class SimpleConverter extends AbstractXSnapshotConverter<Ad> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public <TO> TO convert(Class<TO> returnClass, Ad value) {
+            if (returnClass == Address.class) {
+                return (TO) convertToAddress(value, RESOLVER);
             }
+            throw new UnsupportedOperationException(returnClass.getName());
         }
-        a.setStreetAddressLine(street.toString());
-        if (delivery.length() > 0) {
-            a.setDeliveryAddressLine(delivery.toString());
+
+        /**
+         * https://jira.5amsolutions.com/browse/PO-429 .
+         * @param iso the address to convert into a BO Address.
+         * @param resolver converts 3 letter iso country codes to a BO {@link Country}
+         * @return a BO address.
+         */
+        public static Address convertToAddress(Ad iso, CountryResolver resolver) {
+            if (iso == null || iso.getNullFlavor() != null) {
+                return null;
+            }
+
+            if (iso.getFlavorId() != null) {
+                throw new PoIsoConstraintException("PO expects a null flavorId");
+            }
+
+            if (iso.getUse() != null && !iso.getUse().isEmpty()) {
+                throw new PoIsoConstraintException("PO does not support the use of the 'use' "
+                        + "field on AD at this time.");
+            }
+
+            if (iso.getUsablePeriod() != null) {
+                throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
+                        + " field on AD at this time.");
+            }
+
+            if (iso.getIsNotOrdered() != null) {
+                throw new PoIsoConstraintException("PO does not support the use of the 'isNotOrdered' "
+                        + "field on AD at this time.");
+            }
+
+            return processParts(iso, resolver);
+
         }
-        return a;
+
+        @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
+                            "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "fallthrough" })
+        private static Address processParts(Ad iso, CountryResolver resolver) {
+            Address a = new Address();
+
+            StringBuffer street = new StringBuffer();
+            StringBuffer delivery = new StringBuffer();
+            String sdelimitor = "";
+            String ddelimitor = "";
+
+            for (Adxp part : iso.getPart()) {
+                if (part.getType() == null) {
+                    street.append(sdelimitor).append(part.getValue());
+                } else {
+                    switch (part.getType()) {
+                        case CAR:
+                            ddelimitor += "c/o ";
+                        case DAL:
+                        case ADL:
+                            delivery.append(ddelimitor).append(part.getValue());
+                            break;
+                        case DEL:
+                            String del = part.getValue() == null ? "\n" : part.getValue();
+                            street.append(del);
+                            sdelimitor = "";
+                            continue;
+                        case CNT:
+                            a.setCountry(resolver.getCountryByAlpha3(part.getCode()));
+                            sdelimitor = "";
+                            continue;
+                        case STA:
+                            a.setStateOrProvince(part.getValue());
+                            sdelimitor = "";
+                            continue;
+                        case CTY:
+                            a.setCityOrMunicipality(part.getValue());
+                            sdelimitor = "";
+                            continue;
+                        case ZIP:
+                            a.setPostalCode(part.getValue());
+                            sdelimitor = "";
+                            continue;
+                        case POB:
+                            sdelimitor += "P.O.Box ";
+                        default:
+                            street.append(sdelimitor).append(part.getValue());
+                    }
+                    sdelimitor = street.length() == 0 ? "" : " ";
+                    ddelimitor = delivery.length() == 0 ? "" : " ";
+                }
+            }
+            a.setStreetAddressLine(street.toString());
+            if (delivery.length() > 0) {
+                a.setDeliveryAddressLine(delivery.toString());
+            }
+            return a;
+        }
+    }
+
+    /**
+     * Converter for DSet.
+     */
+    public static class DSetConverter extends AbstractXSnapshotConverter<DSet<Ad>> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, DSet<Ad> value) {
+            if (value == null || value.getItem() == null) {
+                return null;
+            }
+            Set<Address> addresses = new HashSet<Address>();
+            for (Ad ad : value.getItem()) {
+                addresses.add(SimpleConverter.convertToAddress(ad, RESOLVER));
+            }
+            return (TO) addresses;
+        }
+
     }
 
     /**
