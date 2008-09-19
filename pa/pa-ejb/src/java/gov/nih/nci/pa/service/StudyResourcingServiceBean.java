@@ -12,7 +12,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -66,7 +65,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             String hql = " select sr "
                        + " from StudyResourcing sr "
                        + " join sr.studyProtocol sp "
-                       + " where sp.id = " + IsoConverter.convertIitoLong(studyProtocolIi)
+                       + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
                        + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.TRUE + "'";
 
            LOG.info(" query studyResourcing = " + hql);
@@ -123,7 +122,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             // step 1: form the hql
             String hql = " select sr "
                        + " from StudyResourcing sr "
-                       + " where sr.id = " + IsoConverter.convertIitoLong(studyResourcingDTO.getIi());
+                       + " where sr.id = " + IiConverter.convertToLong(studyResourcingDTO.getIi());
             // step 2: construct query object
             query = session.createQuery(hql);
             queryList = query.list();
@@ -236,7 +235,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             String hql = " select sr "
                        + " from StudyResourcing sr "
                        + " join sr.studyProtocol sp "
-                       + " where sp.id = " + IsoConverter.convertIitoLong(studyProtocolIi);
+                       + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi);
 
            LOG.info(" query studyResourcing = " + hql);
             
@@ -284,7 +283,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             // step 1: form the hql
             String hql = " select sr "
                        + " from StudyResourcing sr "
-                       + " where sr.id = " + IsoConverter.convertIitoLong(studyResourceIi);
+                       + " where sr.id = " + IiConverter.convertToLong(studyResourceIi);
 
            LOG.info(" query studyResourcing = " + hql);
             

@@ -9,9 +9,9 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -71,7 +71,7 @@ public class StudyOverallStatusServiceBean implements
             
             // step 2: construct query object
             query = session.createQuery(hql);
-            query.setParameter("studyProtocolId", IsoConverter.convertIitoLong(studyProtocolId));
+            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolId));
             
             // step 3: query the result
             queryList = query.list();

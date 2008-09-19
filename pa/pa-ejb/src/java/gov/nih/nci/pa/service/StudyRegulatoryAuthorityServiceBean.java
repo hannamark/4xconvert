@@ -9,7 +9,6 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -60,7 +59,7 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
             session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
-                    + " where sp.id = " + IsoConverter.convertIitoLong(ii);
+                    + " where sp.id = " + IiConverter.convertToLong(ii);
             LOG.info(" query StudyRegulatoryAuthority = " + hql);
             query = session.createQuery(hql);
             queryList = query.list();
@@ -147,7 +146,7 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
             
             Query query = null;
             String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
-            + " where sp.id = " + IsoConverter.convertIitoLong(sraDTO.getProtocolId());
+            + " where sp.id = " + IiConverter.convertToLong(sraDTO.getProtocolId());
             LOG.info(" query StudyRegulatoryAuthority = " + hql);
             query = session.createQuery(hql);
             queryList = query.list();
@@ -159,7 +158,7 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
             
             StudyRegulatoryAuthority createSra = new StudyRegulatoryAuthority();
             StudyProtocol sp = new StudyProtocol();
-            sp.setId(IsoConverter.convertIitoLong(sraDTO.getProtocolId()));
+            sp.setId(IiConverter.convertToLong(sraDTO.getProtocolId()));
             createSra.setStudyProtocol(sp);
             
             RegulatoryAuthority ra = new RegulatoryAuthority();
