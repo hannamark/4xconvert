@@ -1,20 +1,20 @@
 package gov.nih.nci.service;
 
+import gov.nih.nci.pa.dto.DiseaseConditionDTO;
+import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.PAException;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.HashMap;
-
-import gov.nih.nci.pa.dto.DiseaseConditionDTO;
-import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
-import gov.nih.nci.pa.service.PAException;
+import java.util.List;
 
 /**
  * adapted from PO.
  * @author Harsha
  *
  */
-public class MockDiseaseConditionService implements DiseaseCondServiceLocal{
+public class MockDiseaseConditionService implements DiseaseCondServiceRemote{
 
     private final HashMap<Long, List<DiseaseConditionDTO>> diseaseCondMap = 
         new HashMap<Long, List<DiseaseConditionDTO>>();
