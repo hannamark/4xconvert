@@ -80,114 +80,43 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.hibernate.Query;
 
 /**
- * Base class for all organization to organization roles.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
- *      implements="gov.nih.nci.services.PoDto"
+ * Search criteria for health care providers.
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationRole implements PersistentObject {
+public class HealthCareProviderSearchCriteria extends AbstractSearchCriteria implements
+        SearchCriteria<HealthCareProvider> {
 
-    private static final long serialVersionUID = -8983758513489261005L;
-
-    private Long id;
-    private Organization player;
-    private Organization scoper;
-    private RoleStatus status;
-
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
+    private final HealthCareProvider hcp;
 
     /**
-     * @return the id
+     * Constructs new search criteria via query by example.
+     *
+     * @param hcp the example object to query for
      */
-    @Transient
-    @Searchable
-    public Long getId() {
-        return id;
+    public HealthCareProviderSearchCriteria(HealthCareProvider hcp) {
+        this.hcp = hcp;
     }
 
     /**
-     * @param id the id to set
+     * {@inheritDoc}
      */
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public boolean hasOneCriterionSpecified() {
+        return hcp != null && hasSearchableCriterion(hcp);
     }
 
     /**
-     * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     * {@inheritDoc}
      */
-    @ManyToOne
-    @NotNull
-    @ForeignKey(name = "organizationrole_player_fkey")
-    @Searchable
-    public Organization getPlayer() {
-        return player;
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    /**
-     * @param player the player to set
-     */
-    public void setPlayer(Organization player) {
-        this.player = player;
-    }
-
-    /**
-     * @return the scoper. may be null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "organizationrole_scoper_fkey")
-    @Searchable
-    public Organization getScoper() {
-        return scoper;
-    }
-
-    /**
-     * @param scoper the scoper to set
-     */
-    public void setScoper(Organization scoper) {
-        this.scoper = scoper;
-    }
-
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Searchable
-    public RoleStatus getStatus() {
-        return this.status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
 }

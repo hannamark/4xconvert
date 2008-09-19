@@ -80,114 +80,153 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.util.Searchable;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.service.AbstractSearchCriteria;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.validator.NotNull;
+import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Base class for all organization to organization roles.
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
- *      implements="gov.nih.nci.services.PoDto"
+ * Exercises the Searchable annotation and AbstractSearchCriteria class that uses it.
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationRole implements PersistentObject {
+@SuppressWarnings({"unused", "serial" })
+public class SearchableTest {
 
-    private static final long serialVersionUID = -8983758513489261005L;
+    @Test
+    public void testBaseCases() throws Exception {
+        // null isn't searchable
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(null));
 
-    private Long id;
-    private Organization player;
-    private Organization scoper;
-    private RoleStatus status;
+        // no searchable methods
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object()));
 
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
+        // searchable method has void return
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public void test() {}
+        }));
 
-    /**
-     * @return the id
-     */
-    @Transient
-    @Searchable
-    public Long getId() {
-        return id;
+        // cases for method invocation problems
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test(Object o) {
+                return new Object();
+            }
+        }));
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test() throws IllegalAccessException {
+                throw new IllegalAccessException();
+            }
+        }));
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test() {
+                throw new IllegalArgumentException();
+            }
+        }));
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
+    public void testObjectCases() throws Exception {
+        // searchable method with object return returns null
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test() {
+                return null;
+            }
+        }));
+
+        // another test with no searchable methods
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            public Object test() {
+                return new Object();
+            }
+        }));
+
+        // the simple object case
+        assertTrue(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test() {
+                return new Object();
+            }
+        }));
+
+        // one of two searchable methods has data
+        assertTrue(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test1() {
+                return new Object();
+            }
+
+            @Searchable
+            public Object test2() {
+                return null;
+            }
+        }));
+
+        // neither of two searchable methods has data
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Object test1() {
+                return null;
+            }
+
+            @Searchable
+            public Object test2() {
+                return null;
+            }
+        }));
     }
 
-    /**
-     * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @NotNull
-    @ForeignKey(name = "organizationrole_player_fkey")
-    @Searchable
-    public Organization getPlayer() {
-        return player;
+    public void testPersistentObjectCases() throws Exception {
+        // PersistentObject with no id
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public PersistentObject test() {
+                return new PersistentObject() {
+                    public Long getId() {
+                        return null;
+                    }
+                };
+            }
+        }));
+
+        // PersistentObject with id
+        assertTrue(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public PersistentObject test() {
+                return new PersistentObject() {
+                    public Long getId() {
+                        return 1L;
+                    }
+                };
+            }
+        }));
     }
 
-    /**
-     * @param player the player to set
-     */
-    public void setPlayer(Organization player) {
-        this.player = player;
-    }
+    public void testCollectionCases() throws Exception {
+        // empty collection
+        assertFalse(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Collection<?> test() {
+                return new ArrayList<Object>();
+            }
+        }));
 
-    /**
-     * @return the scoper. may be null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "organizationrole_scoper_fkey")
-    @Searchable
-    public Organization getScoper() {
-        return scoper;
-    }
-
-    /**
-     * @param scoper the scoper to set
-     */
-    public void setScoper(Organization scoper) {
-        this.scoper = scoper;
-    }
-
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    @Searchable
-    public RoleStatus getStatus() {
-        return this.status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
+        // non empty collection
+        assertTrue(AbstractSearchCriteria.hasSearchableCriterion(new Object() {
+            @Searchable
+            public Collection<?> test() {
+                return Arrays.asList(new Object());
+            }
+        }));
     }
 }

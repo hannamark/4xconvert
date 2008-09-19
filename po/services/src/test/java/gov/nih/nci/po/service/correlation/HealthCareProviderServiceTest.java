@@ -84,6 +84,10 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.service.HealthCareProviderSearchCriteria;
+import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+
+import org.junit.Test;
 
 /**
  * @author Scott Miller
@@ -102,5 +106,14 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
     void verifyStructuralRole(HealthCareProvider expected, HealthCareProvider actual) {
         verifyPersonRole(expected, actual);
         assertEquals(expected.getCertificateLicenseText(), actual.getCertificateLicenseText());
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        HealthCareProviderServiceLocal svc = (HealthCareProviderServiceLocal) getService();
+        HealthCareProvider hcp = getSampleStructuralRole();
+        svc.create(hcp);
+
+        HealthCareProviderSearchCriteria sc = new HealthCareProviderSearchCriteria(null);
     }
 }
