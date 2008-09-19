@@ -83,42 +83,89 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 /**
- * Mock implementation.
+ * Search criteria for health care facilities.
  */
-public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceLocal {
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class HealthCareFacilitySearchCriteria extends AbstractSearchCriteria
+    implements SearchCriteria<HealthCareFacility> {
 
-    public long create(HealthCareFacility structuralRole) throws EntityValidationException {
-        return 0;
+    private final HealthCareFacility hcf;
+
+    /**
+     * Constructs new search criteria via query by example.
+     *
+     * @param hcf the example object to query for
+     */
+    public HealthCareFacilitySearchCriteria(HealthCareFacility hcf) {
+        this.hcf = hcf;
     }
 
-    public HealthCareFacility getById(long id) {
-        return null;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasOneCriterionSpecified() {
+        return hcf != null
+            && (hcf.getId() != null || hcf.getPlayer() != null || hcf.getScoper() != null || hcf.getStatus() != null);
     }
 
-    public List<HealthCareFacility> getByIds(Long[] ids) {
-        return null;
-    }
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.NPathComplexity")
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        StringBuffer query = new StringBuffer(SELECT);
+        query.append((isCountOnly ? "COUNT(hcf) " : "hcf"));
+        query.append(FROM);
+        query.append(HealthCareFacility.class.getName());
+        query.append(" hcf");
 
-    public Map<String, String[]> validate(HealthCareFacility entity) {
-        return null;
-    }
+        String whereOrAnd = WHERE;
 
-    public int count(SearchCriteria<HealthCareFacility> criteria) {
-        return 0;
-    }
+        if (hcf.getId() != null) {
+            query.append(whereOrAnd);
+            query.append("hcf.id = :id");
+            params.put("id", hcf.getId());
+            whereOrAnd = AND;
+        }
 
-    public List<HealthCareFacility> search(SearchCriteria<HealthCareFacility> criteria) {
-        return null;
-    }
+        if (hcf.getPlayer() != null && hcf.getPlayer().getId() != null) {
+            query.append(whereOrAnd);
+            query.append("hcf.player.id = :playerId");
+            params.put("playerId", hcf.getPlayer().getId());
+            whereOrAnd = AND;
+        }
 
-    public List<HealthCareFacility> search(SearchCriteria<HealthCareFacility> criteria,
-            PageSortParams<HealthCareFacility> pageSortParams) {
-        return null;
+        if (hcf.getScoper() != null && hcf.getScoper().getId() != null) {
+            query.append(whereOrAnd);
+            query.append("hcf.scoper.id = :scoperId");
+            params.put("scoperId", hcf.getScoper().getId());
+            whereOrAnd = AND;
+        }
+
+        if (hcf.getStatus() != null) {
+            query.append(whereOrAnd);
+            query.append("hcf.status = :status");
+            params.put("status", hcf.getStatus());
+            whereOrAnd = AND;
+        }
+
+        Session session = PoHibernateUtil.getCurrentSession();
+        Query q = session.createQuery(query.toString());
+        for (String key : params.keySet()) {
+            q.setParameter(key, params.get(key));
+        }
+        return q;
     }
 
 }

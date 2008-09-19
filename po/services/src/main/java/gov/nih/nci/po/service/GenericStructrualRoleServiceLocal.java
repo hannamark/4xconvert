@@ -85,12 +85,15 @@ package gov.nih.nci.po.service;
 import java.util.List;
 import java.util.Map;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
 /**
  * Defines the generic methods we expect to implement for all structural role.
  *
  * @param <T> structural role
  */
-public interface GenericStructrualRoleServiceLocal<T> {
+public interface GenericStructrualRoleServiceLocal<T extends PersistentObject>
+    extends GenericSearchService<T, SearchCriteria<T>> {
 
     /**
      * @param structuralRole new role

@@ -179,7 +179,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     abstract void verifyStructuralRole(T expected, T actual);
 
     @SuppressWarnings("unchecked")
-    private AbstractBaseServiceBean<T> getService() {
+    protected AbstractBaseServiceBean<T> getService() {
         // find the correct service via reflection
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];

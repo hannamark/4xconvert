@@ -83,7 +83,19 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.HealthCareFacilitySearchCriteria;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.OneCriterionRequiredException;
+
+import java.util.List;
+
+import org.junit.Test;
 
 /**
  * Service tests.
@@ -102,6 +114,66 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
     @Override
     void verifyStructuralRole(HealthCareFacility expected, HealthCareFacility actual) {
         assertEquals(expected.getId(), actual.getId());
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
+
+        HealthCareFacility hcf = getSampleStructuralRole();
+        svc.create(hcf);
+
+        HealthCareFacilitySearchCriteria sc = new HealthCareFacilitySearchCriteria(null);
+
+        try {
+            svc.search(null);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        try {
+            svc.search(sc);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        testSearchParams(hcf, hcf.getId(), null, null, null, 1);
+        testSearchParams(hcf, null, hcf.getPlayer().getId(), null, null, 1);
+        testSearchParams(hcf, null, null, hcf.getScoper().getId(), null, 1);
+        testSearchParams(hcf, null, null, null, hcf.getStatus(), 1);
+        testSearchParams(hcf, hcf.getId(), hcf.getPlayer().getId(), hcf.getScoper().getId(), hcf.getStatus(), 1);
+
+        testSearchParams(hcf, -1L, null, null, null, 0);
+        testSearchParams(hcf, -1L, null, null, hcf.getStatus(), 0); // verifies that we're doing ANDs (not ORs)
+
+        HealthCareFacility hcf2 = getSampleStructuralRole();
+        svc.create(hcf2);
+        testSearchParams(hcf2, hcf2.getId(), null, null, null, 1);
+        testSearchParams(hcf, null, null, null, hcf.getStatus(), 2);
+        testSearchParams(hcf2, null, null, null, hcf.getStatus(), 2);
+
+    }
+
+    private void testSearchParams(HealthCareFacility hcf, Long id, Long playerId, Long scoperId, RoleStatus rs,
+            int numExpected) {
+        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
+        HealthCareFacility example = new HealthCareFacility();
+        example.setId(id);
+        example.setPlayer(new Organization());
+        example.getPlayer().setId(playerId);
+        example.setScoper(new Organization());
+        example.getScoper().setId(scoperId);
+        example.setStatus(rs);
+
+        HealthCareFacilitySearchCriteria sc = new HealthCareFacilitySearchCriteria(example);
+        List<HealthCareFacility> l = svc.search(sc);
+        assertNotNull(l);
+        assertEquals(numExpected, l.size());
+        if (numExpected > 0) {
+            assertTrue(l.contains(hcf));
+        }
     }
 
 }

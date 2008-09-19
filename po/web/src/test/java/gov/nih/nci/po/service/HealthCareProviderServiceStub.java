@@ -120,4 +120,17 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
     public List<HealthCareProvider> getByIds(Long[] ids) {
         return null;
     }
+
+    public int count(SearchCriteria<HealthCareProvider> criteria) {
+        return 0;
+    }
+
+    public List<HealthCareProvider> search(SearchCriteria<HealthCareProvider> criteria) {
+        return null;
+    }
+
+    public List<HealthCareProvider> search(SearchCriteria<HealthCareProvider> criteria,
+            PageSortParams<HealthCareProvider> pageSortParams) {
+        return null;
+    }
 }

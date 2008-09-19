@@ -109,5 +109,16 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
         return null;
     }
 
+    public int count(SearchCriteria<OversightCommittee> criteria) {
+        return 0;
+    }
 
+    public List<OversightCommittee> search(SearchCriteria<OversightCommittee> criteria) {
+        return null;
+    }
+
+    public List<OversightCommittee> search(SearchCriteria<OversightCommittee> criteria,
+            PageSortParams<OversightCommittee> pageSortParams) {
+        return null;
+    }
 }
