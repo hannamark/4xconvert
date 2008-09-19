@@ -1,5 +1,9 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.dto.PersonDTO;
+
+import java.util.List;
+
 import javax.ejb.Remote;
 
 /**
@@ -12,6 +16,14 @@ import javax.ejb.Remote;
  */
 
 @Remote
-public interface PAPersonServiceRemote extends PAPersonService {
+public interface PAPersonServiceRemote  {
+    
+    /**
+     * returns a list of PI name who have been associated with study protocol. 
+     * @return list PersonDTO   
+     * @throws PAException on error 
+     */
+   List<PersonDTO> getAllPrincipalInvestigators() throws PAException;
+    
 
 }
