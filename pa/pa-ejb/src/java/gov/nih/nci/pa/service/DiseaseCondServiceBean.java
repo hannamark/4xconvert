@@ -14,7 +14,7 @@ import gov.nih.nci.pa.service.impl.DiseaseCondServiceImpl;
  *
  */
 @Stateless
-public class DiseaseCondServiceBean implements DiseaseCondServiceRemote, DiseaseCondServiceLocal {
+public class DiseaseCondServiceBean implements DiseaseCondServiceRemote {
 
     /**
      * @param protocolID Long

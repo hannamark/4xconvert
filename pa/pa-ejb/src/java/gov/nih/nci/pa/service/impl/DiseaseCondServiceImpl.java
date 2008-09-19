@@ -2,8 +2,9 @@ package gov.nih.nci.pa.service.impl;
 
 import gov.nih.nci.pa.dao.DiseaseCondDAO;
 import gov.nih.nci.pa.dto.DiseaseConditionDTO;
-import gov.nih.nci.pa.service.IDiseaseConditionService;
+import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * @author Harsha
  *
  */
-public class DiseaseCondServiceImpl implements IDiseaseConditionService {
+public class DiseaseCondServiceImpl implements DiseaseCondServiceRemote {
 
     /**
      * @param protocolID Long
