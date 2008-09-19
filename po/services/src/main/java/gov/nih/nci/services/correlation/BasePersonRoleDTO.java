@@ -90,7 +90,8 @@ import gov.nih.nci.services.PoDto;
  * @author Scott Miller
  *
  */
-public class BasePersonRoleDTO implements PoDto {
+@SuppressWarnings("PMD.AbstractNaming")
+public abstract class BasePersonRoleDTO implements PoDto {
 
     private static final long serialVersionUID = 1L;
 

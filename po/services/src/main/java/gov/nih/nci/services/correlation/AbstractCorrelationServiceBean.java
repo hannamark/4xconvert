@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.PoDto;
 
@@ -107,6 +108,7 @@ public abstract class AbstractCorrelationServiceBean<T extends PersistentObject,
     private static final String UNCHECKED = "unchecked";
     abstract GenericStructrualRoleServiceLocal<T> getLocalService();
     abstract IdConverter getIdConverter();
+    abstract SearchCriteria<T> getSearchCriteria(T example);
 
     /**
      * TODO.
@@ -152,5 +154,16 @@ public abstract class AbstractCorrelationServiceBean<T extends PersistentObject,
     public Map<String, String[]> validate(DTO dto) {
         T hcpBo = (T) PoXsnapshotHelper.createModel(dto);
         return getLocalService().validate(hcpBo);
+    }
+
+    /**
+     * @param dto query by example dto
+     * @return list of matching dtos
+     */
+    @SuppressWarnings("unchecked")
+    public List<DTO> search(DTO dto) {
+        T model = (T) PoXsnapshotHelper.createModel(dto);
+        List<T> search = getLocalService().search(getSearchCriteria(model));
+        return PoXsnapshotHelper.createSnapshotList(search);
     }
 }

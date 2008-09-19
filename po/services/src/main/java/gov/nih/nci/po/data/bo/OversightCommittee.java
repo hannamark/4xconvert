@@ -95,11 +95,11 @@ import org.hibernate.annotations.ForeignKey;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
-public class OversightCommittee extends OrganizationRole {
+public class OversightCommittee extends AbstractOrganizationRole {
 
     private static final long serialVersionUID = 8832666500989835930L;
 

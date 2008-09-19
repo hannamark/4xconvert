@@ -88,8 +88,8 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -99,7 +99,7 @@ import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.util.ServiceLocator;
 import gov.nih.nci.po.util.TestServiceLocator;
-import gov.nih.nci.services.correlation.OrganizationRoleDTO;
+import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.After;
@@ -128,7 +128,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         CdConverter.setServiceLocator(cdLocator);
     }
 
-    protected OrganizationRole fillInExampleOrgRoleFields(OrganizationRole or) {
+    protected AbstractOrganizationRole fillInExampleOrgRoleFields(AbstractOrganizationRole or) {
         or.setId(1L);
         or.setStatus(RoleStatus.ACTIVE);
         or.setPlayer(new Organization());
@@ -139,14 +139,14 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         return or;
     }
 
-    abstract protected OrganizationRole getExampleTestClass();
+    abstract protected AbstractOrganizationRole getExampleTestClass();
 
-    abstract protected void verifyTestClassFields(OrganizationRoleDTO dto);
+    abstract protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto);
 
     @Test
     public void testCreateFullSnapshotFromModel() {
-        OrganizationRole orgRole = getExampleTestClass();
-        OrganizationRoleDTO dto = (OrganizationRoleDTO) PoXsnapshotHelper.createSnapshot(orgRole);
+        AbstractOrganizationRole orgRole = getExampleTestClass();
+        AbstractOrganizationRoleDTO dto = (AbstractOrganizationRoleDTO) PoXsnapshotHelper.createSnapshot(orgRole);
 
         Ii expectedIi = new Ii();
         expectedIi.setDisplayable(true);
@@ -165,7 +165,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         verifyTestClassFields(dto);
     }
 
-    protected OrganizationRoleDTO fillInOrgRoleDTOFields(OrganizationRoleDTO or, Long scoperId, Long playerId) {
+    protected AbstractOrganizationRoleDTO fillInOrgRoleDTOFields(AbstractOrganizationRoleDTO or, Long scoperId, Long playerId) {
         or.setScoperIdentifier(getPlayerScoperIi(scoperId));
         or.setPlayerIdentifier(getPlayerScoperIi(playerId));
 
@@ -187,9 +187,9 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         return ii;
     }
 
-    abstract protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId);
+    abstract protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId);
 
-    abstract protected void verifyTestClassDTOFields(OrganizationRole or);
+    abstract protected void verifyTestClassDTOFields(AbstractOrganizationRole or);
 
     @Test
     public void testCreateFullModelFromSnapshot() throws Exception {
@@ -199,8 +199,8 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
 
         long scoperId = orgTest.createOrganization();
         long playerId = orgTest.createOrganization();
-        OrganizationRoleDTO dto = getExampleTestClassDTO(scoperId, playerId);
-        OrganizationRole bo = (OrganizationRole) PoXsnapshotHelper.createModel(dto);
+        AbstractOrganizationRoleDTO dto = getExampleTestClassDTO(scoperId, playerId);
+        AbstractOrganizationRole bo = (AbstractOrganizationRole) PoXsnapshotHelper.createModel(dto);
 
         assertEquals(1L, bo.getId().longValue());
         assertEquals(scoperId, bo.getScoper().getId().longValue());

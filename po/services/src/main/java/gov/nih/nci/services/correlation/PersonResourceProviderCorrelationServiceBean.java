@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonResourceProviderIdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import javax.ejb.EJB;
@@ -126,6 +127,12 @@ public class PersonResourceProviderCorrelationServiceBean
     @Override
     GenericStructrualRoleServiceLocal<PersonResourceProvider> getLocalService() {
         return prpService;
+    }
+
+    @Override
+    SearchCriteria<PersonResourceProvider> getSearchCriteria(PersonResourceProvider example) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -86,11 +86,11 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.OrganizationRole;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
-import gov.nih.nci.services.correlation.OrganizationRoleDTO;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
@@ -103,7 +103,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected OrganizationRole getExampleTestClass() {
+    protected AbstractOrganizationRole getExampleTestClass() {
         HealthCareFacility hcf = new HealthCareFacility();
         fillInExampleOrgRoleFields(hcf);
         return hcf;
@@ -113,7 +113,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
+    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         fillInOrgRoleDTOFields(dto, scoperId, playerId);
 
@@ -133,7 +133,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassDTOFields(OrganizationRole or) {
+    protected void verifyTestClassDTOFields(AbstractOrganizationRole or) {
         // intentionally blank
     }
 
@@ -141,7 +141,7 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassFields(OrganizationRoleDTO dto) {
+    protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
      // check id
         Ii expectedIi = new Ii();
         expectedIi.setExtension("" + 1);

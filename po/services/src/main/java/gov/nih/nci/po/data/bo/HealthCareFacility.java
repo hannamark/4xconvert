@@ -92,11 +92,11 @@ import javax.persistence.Id;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
- *      model-extends="gov.nih.nci.po.data.bo.OrganizationRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
-public class HealthCareFacility extends OrganizationRole {
+public class HealthCareFacility extends AbstractOrganizationRole {
 
     private static final long serialVersionUID = -5965985190603758915L;
 

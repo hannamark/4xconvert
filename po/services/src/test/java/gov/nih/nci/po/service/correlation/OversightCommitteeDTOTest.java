@@ -88,11 +88,11 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.OrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.services.correlation.OrganizationRoleDTO;
+import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -107,7 +107,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected OrganizationRole getExampleTestClass() {
+    protected AbstractOrganizationRole getExampleTestClass() {
         OversightCommittee oc = new OversightCommittee();
         fillInExampleOrgRoleFields(oc);
         OversightCommitteeType oct = new OversightCommitteeType("testcode");
@@ -119,7 +119,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected OrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
+    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
         OversightCommitteeDTO dto = new OversightCommitteeDTO();
         fillInOrgRoleDTOFields(dto, scoperId, playerId);
         Ii ii = new Ii();
@@ -141,7 +141,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassDTOFields(OrganizationRole or) {
+    protected void verifyTestClassDTOFields(AbstractOrganizationRole or) {
         assertEquals("testcode", ((OversightCommittee) or).getType().getCode());
 
     }
@@ -150,7 +150,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassFields(OrganizationRoleDTO dto) {
+    protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
         assertEquals("testcode", ((OversightCommitteeDTO) dto).getType().getCode());
 
         // check id

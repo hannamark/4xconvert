@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import javax.ejb.EJB;
@@ -133,5 +134,14 @@ public class ClinicalResearchStaffCorrelationServiceBean
     @Override
     GenericStructrualRoleServiceLocal<ClinicalResearchStaff> getLocalService() {
         return crsService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    SearchCriteria<ClinicalResearchStaff> getSearchCriteria(ClinicalResearchStaff example) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

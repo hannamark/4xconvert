@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import javax.ejb.EJB;
@@ -125,5 +126,11 @@ public class HealthCareProviderCorrelationServiceBean
     @Override
     IdConverter getIdConverter() {
         return new HealthCareProviderIdConverter();
+    }
+
+    @Override
+    SearchCriteria<HealthCareProvider> getSearchCriteria(HealthCareProvider example) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

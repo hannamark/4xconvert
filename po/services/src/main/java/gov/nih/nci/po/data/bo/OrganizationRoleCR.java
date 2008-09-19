@@ -3,14 +3,14 @@ package gov.nih.nci.po.data.bo;
 /**
  * Placeholder.
  */
-public class OrganizationRoleCR implements ChangeRequest<OrganizationRole> {
+public class OrganizationRoleCR implements ChangeRequest<AbstractOrganizationRole> {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * @return Placeholder
      */
-    public OrganizationRole getTarget() {
+    public AbstractOrganizationRole getTarget() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

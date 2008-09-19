@@ -121,4 +121,14 @@ public interface CorrelationService<T extends PoDto> {
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(T dto);
+
+    /**
+     * Provides the ability to find correlations using conjunctional insensitive substring matching.
+     *
+     * <p>See the concrete implementations for restrictions and field documentation.
+     *
+     * @param dto criteria used to find matching dtos
+     * @return list of matching dto
+     */
+    List<T> search(T dto);
 }

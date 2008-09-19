@@ -130,4 +130,8 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         assertEquals(expected.getType().getCode(), actual.getType().getCode());
     }
 
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  Remove this (use superclass impl) when PO-521 is implemented
+    }
 }

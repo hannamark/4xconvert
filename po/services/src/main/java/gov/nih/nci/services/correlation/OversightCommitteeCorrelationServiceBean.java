@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import javax.ejb.EJB;
@@ -126,5 +127,11 @@ public class OversightCommitteeCorrelationServiceBean
     @Override
     GenericStructrualRoleServiceLocal<OversightCommittee> getLocalService() {
         return ocService;
+    }
+
+    @Override
+    SearchCriteria<OversightCommittee> getSearchCriteria(OversightCommittee example) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

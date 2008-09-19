@@ -137,4 +137,9 @@ public class ClinicalResearchStaffRemoteServiceTest
         Map<String, String[]> errors = getCorrelationService().validate(pr);
         assertEquals(3, errors.keySet().size());
     }
+
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  Remove this (use superclass impl) when PO-527 is implemented
+    }
 }

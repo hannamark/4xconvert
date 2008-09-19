@@ -157,4 +157,9 @@ public class PersonResourceProviderRemoteServiceTest extends
         assertEquals(ii2.getRoot(), ii2.getRoot());
     }
 
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  Remove this (use superclass impl) when PO-530 is implemented
+    }
+
 }

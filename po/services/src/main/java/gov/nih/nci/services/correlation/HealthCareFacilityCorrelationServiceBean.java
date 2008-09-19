@@ -86,7 +86,9 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilitySearchCriteria;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import javax.ejb.EJB;
@@ -128,4 +130,8 @@ public class HealthCareFacilityCorrelationServiceBean
         return hcfService;
     }
 
+    @Override
+    SearchCriteria<HealthCareFacility> getSearchCriteria(HealthCareFacility example) {
+        return new HealthCareFacilitySearchCriteria(example);
+    }
 }

@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -201,6 +202,25 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> e
 
         srs = service.getCorrelations(new Ii[0]);
         assertEquals(0, srs.size());
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        CorrelationService<T> service = getCorrelationService();
+        T dto1 = getSampleDto();
+        dto1.setIdentifier(service.createCorrelation(dto1));
+        T dto2 = getSampleDto();
+        dto2.setIdentifier(service.createCorrelation(dto2));
+
+        List<T> list = service.search(dto1);
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertEquals(dto1.getIdentifier().getExtension(), list.get(0).getIdentifier().getExtension());
+
+        dto1.getIdentifier().setExtension(dto1.getIdentifier().getExtension() + "1");
+        list = service.search(dto1);
+        assertNotNull(list);
+        assertEquals(0, list.size());
     }
 
     protected void fillInPersonRoleDate(PersonRoleDTO pr) throws Exception {

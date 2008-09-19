@@ -97,11 +97,11 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * Base class for all organization to organization roles.
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.OrganizationRoleDTO"
+ *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
  *      implements="gov.nih.nci.services.PoDto"
  */
 @MappedSuperclass
-public class OrganizationRole implements PersistentObject {
+public abstract class AbstractOrganizationRole implements PersistentObject {
 
     private static final long serialVersionUID = -8983758513489261005L;
 
