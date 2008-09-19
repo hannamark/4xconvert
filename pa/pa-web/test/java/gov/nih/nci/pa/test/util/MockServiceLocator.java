@@ -1,6 +1,6 @@
 package gov.nih.nci.pa.test.util;
 
-import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
+import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
@@ -23,14 +23,14 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 public class MockServiceLocator implements ServiceLocator {
     
 
-    private final DiseaseCondServiceLocal condServiceLocal = new MockDiseaseConditionService();
+    private final DiseaseCondServiceRemote condServiceLocal = new MockDiseaseConditionService();
     private final StudyProtocolServiceRemote studyProtocolService = new MockStudyProtocolService();
     private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
 
     /**
      * @return condServiceLocal
      */
-    public DiseaseCondServiceLocal getDiseaseConditionService() {
+    public DiseaseCondServiceRemote getDiseaseConditionService() {
         return condServiceLocal;
     }
 
