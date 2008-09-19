@@ -1,8 +1,8 @@
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
-import gov.nih.nci.pa.service.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -36,7 +36,7 @@ public interface ServiceLocator {
      *
      * @return DiseaseCondServiceRemote
      */
-    DiseaseCondServiceLocal getDiseaseConditionService();
+    DiseaseCondServiceRemote getDiseaseConditionService();
     
     /**
      *

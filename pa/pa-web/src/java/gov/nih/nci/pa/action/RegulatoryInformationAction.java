@@ -7,7 +7,6 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.NoStudyProtocolFoundException;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -128,8 +127,6 @@ public class RegulatoryInformationAction extends ActionSupport {
                 setLst(regInfo.get(1).toString());
             }
             ispDTO = PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolIi);
-        } catch (NoStudyProtocolFoundException nspfe) {
-            return SUCCESS;
         } catch (PAException e) {
             return SUCCESS;
         }

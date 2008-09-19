@@ -1,17 +1,16 @@
 package gov.nih.nci.pa.action;
 
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
-
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.NoStudyProtocolFoundException;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -48,8 +47,6 @@ public class GetAuthorityOrgsAction extends ActionSupport {
                 List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);
                 setSelectedAuthOrg(regInfo.get(0).toString());
             }
-        } catch (NoStudyProtocolFoundException nspfe) {
-            return SUCCESS;
         } catch (PAException e) {
             return SUCCESS;
         }

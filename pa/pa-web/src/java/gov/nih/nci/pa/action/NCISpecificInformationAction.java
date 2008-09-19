@@ -3,7 +3,6 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -14,7 +13,6 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.IsoConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -99,10 +97,10 @@ public class NCISpecificInformationAction extends ActionSupport {
             spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             // Step1 : update values to StudyProtocol
             spDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
-            spDTO.setAccrualReportingMethodCode(IsoConverter.convertEnumCodeToIsoCd(AccrualReportingMethodCode
+            spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             // Step2 : update values to StudyResourcing
-            srDTO.setTypeCode(IsoConverter.convertEnumCodeToIsoCd(SummaryFourFundingCategoryCode
+            srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
             srDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             srDTO.setStudyProtocolIi(studyProtocolIi);
@@ -177,15 +175,9 @@ public class NCISpecificInformationAction extends ActionSupport {
 
     // @todo : catch and throw paexception
     private StudyProtocolDTO getStudyProtocol() {
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(Constants.TRIAL_SUMMARY);
-        Long studyProtocolId = spDTO.getStudyProtocolId();
-        // Step2 : convert from long to Ii
-        Ii ii = IsoConverter.convertIdToIsoIi(studyProtocolId);
-        // Step3 : get the StudyProtocol Remote interface and call
-        // getStudyProtocol
         try {
-            return PaRegistry.getStudyProtocolService().getStudyProtocol(ii);
+            return PaRegistry.getStudyProtocolService().getStudyProtocol(
+                    (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II));
         } catch (Exception e) {
             return null;
         }

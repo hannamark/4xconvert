@@ -1,8 +1,8 @@
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.pa.service.DiseaseCondServiceLocal;
-import gov.nih.nci.pa.service.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -34,8 +34,8 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return DiseaseConditionService
      */
-    public DiseaseCondServiceLocal getDiseaseConditionService() {
-        return (DiseaseCondServiceLocal) JNDIUtil.lookup("pa/DiseaseCondServiceBean/local");
+    public DiseaseCondServiceRemote getDiseaseConditionService() {
+        return (DiseaseCondServiceRemote) JNDIUtil.lookup("pa/DiseaseCondServiceBean/remote");
     }
 
     /**
