@@ -22,7 +22,7 @@
        name="cr"
        list="selectChangeRequests"
        value="cr.id"
-       onchange="javascript:submitAjaxForm('changeCrForm','crinfo', null, true);" 
+       onchange="document.getElementById('curateOrgForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
        />
 </s:form>
 </c:if>
