@@ -13,7 +13,8 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 
 /**
- *
+ * Interface used to locate the services used by pa-web.
+ * 
  * @author Harsha
  *
  */
