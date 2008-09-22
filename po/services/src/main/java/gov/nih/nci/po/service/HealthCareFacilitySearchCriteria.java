@@ -115,7 +115,6 @@ public class HealthCareFacilitySearchCriteria extends AbstractSearchCriteria
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.NPathComplexity")
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         return super.getQueryBySearchableFields(hcf, isCountOnly);
     }

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -153,6 +155,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     @NotNull
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
+    @Searchable
     public Person getPerson() {
         return this.person;
     }
@@ -174,6 +177,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     @NotNull
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
+    @Searchable
     public Organization getOrganization() {
         return this.organization;
     }
@@ -289,6 +293,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
      */
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public RoleStatus getStatus() {
         return this.status;
     }
@@ -308,6 +313,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
      *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
      */
     @Temporal(TemporalType.TIMESTAMP)
+    @Searchable
     public Date getStatusDate() {
         return this.statusDate;
     }

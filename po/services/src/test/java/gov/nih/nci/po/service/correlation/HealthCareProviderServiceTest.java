@@ -83,9 +83,20 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.HealthCareProviderSearchCriteria;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.OneCriterionRequiredException;
+
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -115,5 +126,106 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         svc.create(hcp);
 
         HealthCareProviderSearchCriteria sc = new HealthCareProviderSearchCriteria(null);
+
+        try {
+            svc.search(null);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        try {
+            svc.search(sc);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        //
+        // Simple fields
+        //
+
+        // id
+        doSearch(hcp, hcp.getId(), null, null, null, null, null, null, 1);
+        doSearch(hcp, -1L, null, null, null, null, null, null, 0);
+
+        // license
+        doSearch(hcp, null, null, null, hcp.getCertificateLicenseText(), null, null, null, 1);
+        doSearch(hcp, null, null, null, hcp.getCertificateLicenseText() + "foo", null, null, null, 0);
+
+        // id + license
+        doSearch(hcp, hcp.getId(), null, null, hcp.getCertificateLicenseText(), null, null, null, 1);
+        doSearch(hcp, hcp.getId(), null, null, hcp.getCertificateLicenseText() + "foo", null, null, null, 0);
+
+        // person + org
+        doSearch(hcp, null, hcp.getOrganization().getId(), null, null, null, null, null, 1);
+        doSearch(hcp, null, null, hcp.getPerson().getId(), null, null, null, null, 1);
+        doSearch(hcp, null, -1L, null, null, null, null, null, 0);
+        doSearch(hcp, null, null, -1L, null, null, null, null, 0);
+        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId(), null, null, null, null, 1);
+        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId() + 1, null, null, null, null, 0);
+
+        // status fields
+        doSearch(hcp, null, null, null, null, RoleStatus.PENDING, null, null, 1);
+        doSearch(hcp, null, null, null, null, null, hcp.getStatusDate(), null, 1);
+        doSearch(hcp, null, null, null, null, RoleStatus.ACTIVE, null, null, 0);
+        doSearch(hcp, null, null, null, null, null, new Date(11111L), null, 0);
+        doSearch(hcp, null, hcp.getId(), null, null, RoleStatus.PENDING, null, null, 1);
+        doSearch(hcp, null, -1L, null, null, RoleStatus.PENDING, null, null, 0);
+
+        //
+        // List fields
+        //
+
+
+        /* Commenting out, because collection types are not yet implements (see AbstractSearchCriteria:393)
+
+        // email
+        List<Email> emails = new ArrayList<Email>();
+        emails.add(new Email(hcp.getEmail().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+
+        emails.get(0).setValue(emails.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+
+        emails.get(0).setValue(emails.get(0).getValue().substring(0, 3));
+        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+
+        emails.add(new Email("idontexist"));
+        doSearch(hcp, null, null, null, null, null, null, emails, 0);
+
+        */
+
+
+        // Fields Remaining to test:
+        // - fax
+        // - phone
+        // - url
+        // - tty
+        // - address (tricky!)
+
     }
+
+    private void doSearch(HealthCareProvider hcp, Long id, Long orgId, Long personId, String certTxt,
+                          RoleStatus status, Date statusDate, List<Email> email, int numExpected) {
+        HealthCareProviderServiceLocal svc = (HealthCareProviderServiceLocal) getService();
+        HealthCareProvider example = new HealthCareProvider();
+        example.setId(id);
+        example.setPerson(new Person());
+        example.getPerson().setId(personId);
+        example.setOrganization(new Organization());
+        example.getOrganization().setId(orgId);
+        example.setCertificateLicenseText(certTxt);
+        example.setStatus(status);
+        example.setStatusDate(statusDate);
+        example.setEmail(email);
+        HealthCareProviderSearchCriteria sc = new HealthCareProviderSearchCriteria(example);
+        List<HealthCareProvider> l = svc.search(sc);
+        assertNotNull(l);
+        assertEquals(numExpected, l.size());
+        if (numExpected > 0) {
+            assertTrue(l.contains(hcp));
+        }
+    }
+
 }

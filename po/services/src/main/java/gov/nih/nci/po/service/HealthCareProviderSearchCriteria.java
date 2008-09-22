@@ -115,8 +115,7 @@ public class HealthCareProviderSearchCriteria extends AbstractSearchCriteria imp
      * {@inheritDoc}
      */
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        // TODO Auto-generated method stub
-        return null;
+        return super.getQueryBySearchableFields(hcp, isCountOnly);
     }
 
 }

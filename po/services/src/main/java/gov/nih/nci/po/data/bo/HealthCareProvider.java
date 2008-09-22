@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
+
 import java.util.List;
 import java.util.Set;
 
@@ -128,6 +130,7 @@ public class HealthCareProvider extends PersonRole {
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return super.getId();
     }
@@ -139,6 +142,7 @@ public class HealthCareProvider extends PersonRole {
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
     @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
+    @Searchable
     public String getCertificateLicenseText() {
         return this.certificateLicenseText;
     }
@@ -186,6 +190,7 @@ public class HealthCareProvider extends PersonRole {
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_EMAIL_FK", inverseName = "EMAIL_HCP_FK")
     @Valid
+    @Searchable
     public List<Email> getEmail() {
         return super.getEmail();
     }

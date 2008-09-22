@@ -378,7 +378,7 @@ public abstract class AbstractSearchCriteria {
 
             private String whereOrAnd = WHERE;
 
-            @SuppressWarnings("PMD.UseStringBufferForStringAppends")
+            @SuppressWarnings({"PMD.UseStringBufferForStringAppends", "PMD.AvoidThrowingRawExceptionTypes" })
             public void callback(Method m, Object result) {
                 String fieldName = StringUtils.uncapitalize(m.getName().substring("get".length()));
                 String paramName = fieldName;
@@ -389,8 +389,12 @@ public abstract class AbstractSearchCriteria {
                 }
                 if (paramValue != null) {
                     query.append(whereOrAnd);
-                    query.append(String.format("obj.%s = :%s", fieldName, paramName));
-                    params.put(paramName, paramValue);
+                    if (result instanceof Collection<?>) {
+                        throw new RuntimeException("collection types not yet implemented");
+                    } else {
+                        query.append(String.format("obj.%s = :%s", fieldName, paramName));
+                        params.put(paramName, paramValue);
+                    }
                     whereOrAnd = AND;
                 }
             }
