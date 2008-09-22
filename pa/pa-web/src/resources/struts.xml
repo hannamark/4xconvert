@@ -15,106 +15,67 @@
 		</action>
     
 		<action name="login">
-			<result>/jsp/pajsp/login.jsp</result>
+			<result>/WEB-INF/jsp/login.jsp</result>
 		</action>	   
 	</package>
 	<package name="protected" namespace="/protected" extends="default">
 		<action name="studyProtocolQuery" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
+			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
 		</action>
 		<action name="studyProtocolQueryHome" class="gov.nih.nci.pa.action.StudyProtocolQueryAction">
 			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
+			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
 		</action>		
 		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
 			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/jsp/pajsp/protocolDiseaseCondition.jsp</result>
+			<result>/WEB-INF/jsp/protocolDiseaseCondition.jsp</result>
 		</action>	
-		<action name="authenticate" class="gov.nih.nci.pa.action.LoginAction">
-			<interceptor-ref name="nci-commonsParams" />
-			<result name="input">/jsp/pajsp/login.jsp</result>
-			<result name="error">/jsp/pajsp/login.jsp</result>
-			<result>/jsp/pajsp/studyProtocolQueryCriteria.jsp</result>
-		</action>	
-		<action name="nciSpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" >
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-		</action>			
-		<action name="nciSpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-		</action>		
-		<action name="updateNCISpecificInformation" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="update">
-		    <interceptor-ref name="nci-commonsParams" />
-			<result name="input">/jsp/pajsp/nciSpecificInformation.jsp</result>			
-			<result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-			<result>/jsp/pajsp/nciSpecificInformationView.jsp</result>
-		</action>		 
         <action name="studyProtocolView" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
             <interceptor-ref name="nci-commonsParams" />                         
-            <result>/jsp/pajsp/studyProtocolView.jsp</result>
+            <result>/WEB-INF/jsp/studyProtocolView.jsp</result>
         </action> 
         <action name="studyProtocolEdit" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
             <interceptor-ref name="nci-commonsParams" />                         
-            <result>/jsp/pajsp/studyProtocolEdit.jsp</result>
+            <result>/WEB-INF/jsp/studyProtocolEdit.jsp</result>
         </action> 
         <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
-            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
+            <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
         </action> 
         <action name="studyOverallStatusUpdate" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="update">
-            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
+            <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
         </action> 
         <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
-            <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>
+            <result>/WEB-INF/jsp/studyOverallStatusHistory.jsp</result>
         </action>	
-		<action name="regulatoryInfo" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
+        <action name="trialFunding" class="gov.nih.nci.pa.action.TrialFundingAction" method="query">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/WEB-INF/jsp/trialFunding.jsp</result>
+			<result name="error">/WEB-INF/jsp/trialFunding.jsp</result>
 		</action>	
 		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >
 			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/jsp/pajsp/nodecorate/orgs.jsp</result>
+			<result>/WEB-INF/jsp/nodecorate/organizations.jsp</result>
 		</action>				
-		<action name="saveRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="update">
+		<!-- Wildcards -->
+		<action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
+			<result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
+		</action>				
+		<action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/jsp/pajsp/regulatoryinformationview.jsp</result>
-		</action>		
-		<action name="editRegAuthority" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="editRegulatoryAuthority">
-			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/jsp/pajsp/RegulatoryInformation.jsp</result>
-		</action>
-         <action name="poOrganizationsAjax" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="getPoOrganizations">
-            <interceptor-ref name="nci-commonsParams" />
-            <result>/protected/nodecorate/orglookup.jsp</result>
-            <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-        </action>
-        <action name="displaySelectedOrgAjax" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="displayOrg">
-              <interceptor-ref name="nci-commonsParams" />
-             <result>/jsp/pajsp/nodecorate/orgField.jsp</result>
-              <result name="error">/jsp/pajsp/nciSpecificInformation.jsp</result>
-        </action>
-        <action name="trialFunding" class="gov.nih.nci.pa.action.TrialFundingAction" method="query">
+			<result>/WEB-INF/jsp/RegulatoryInformation.jsp</result>
+			<result name="view_page">/WEB-INF/jsp/regulatoryinformationview.jsp</result>
+		</action>			
+		<action name="nciSpecificInformation*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/trialFunding.jsp</result>
-			<result name="error">/jsp/pajsp/trialFunding.jsp</result>
+			<result>/WEB-INF/jsp/nciSpecificInformation.jsp</result>
+			<result name="error">/WEB-INF/jsp/nciSpecificInformation.jsp</result>
 		</action>
-		<action name="trialFundingAdd" class="gov.nih.nci.pa.action.TrialFundingAction">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/trialFundingAdd.jsp</result>
-			<result name="error">/jsp/pajsp/trialFundingAdd.jsp</result>
+		<action name="ajaxorg*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
+			<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+			<result name="displayOrgFld">/WEB-INF/jsp/nodecorate/orgField.jsp</result>	
 		</action>
-		<action name="trialFundingUpdate" class="gov.nih.nci.pa.action.TrialFundingAction" method="add">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/trialFunding.jsp</result>
-			<result name="error">/jsp/pajsp/trialFundingAdd.jsp</result>
-		</action>
-		<action name="trialFundingEdit" class="gov.nih.nci.pa.action.TrialFundingAction" method="edit">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/jsp/pajsp/trialFundingAdd.jsp</result>
-			<result name="error">/jsp/pajsp/trialFundingAdd.jsp</result>
-		</action>		
 	</package>
 </struts>

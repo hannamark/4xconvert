@@ -8,8 +8,9 @@
         <pattern>/scripts/*</pattern>
         <pattern>/images/*</pattern>
         <pattern>/dojo/*</pattern>
-        <pattern>/struts/*</pattern>
-        <pattern>*Ajax.action*</pattern>        
+        <pattern>/struts/*</pattern>  
+        <pattern>*Ajax*</pattern>  
+        <pattern>*ajax*</pattern>       
     </excludes>
 
     <decorator name="popup" page="popup.jsp">

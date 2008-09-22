@@ -33,6 +33,7 @@ public class BindHibernateSession implements Filter {
             FilterChain arg2) throws IOException, ServletException {        
         HibernateUtil.getHibernateHelper().openAndBindSession();
         arg2.doFilter(arg0, arg1);
+        HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         
     }
 

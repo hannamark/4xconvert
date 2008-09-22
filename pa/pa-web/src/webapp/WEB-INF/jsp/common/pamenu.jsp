@@ -24,8 +24,8 @@
         		</li>
         		<li><div>Administrative Data</div>
         			<ul>
-		        		<li><a href="nciSpecificInformation.action" >NCI Specific Information</a></li>
-		        		<li><a href="regulatoryInfo.action" >Regulatory Information</a></li>      
+		        		<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
+		        		<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
 		        		<li><a href="studyOverallStatus.action" >Trial Status</a></li>
 		        		<li><a href="trialFunding.action" >Trial Funding</a></li>
 		     		</ul>

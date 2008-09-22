@@ -34,6 +34,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
 public class NCISpecificInformationAction extends ActionSupport {
+    private static final String DISPLAY_ORG_FLD = "displayOrgFld";
     private static final Logger LOG = Logger.getLogger(NCISpecificInformationAction.class);
     private NCISpecificInformationWebDTO nciSpecificInformationWebDTO = new NCISpecificInformationWebDTO();
     private List<OrganizationDTO> orgs = new ArrayList<OrganizationDTO>();
@@ -204,8 +205,12 @@ public class NCISpecificInformationAction extends ActionSupport {
      * 
      * @return result
      */
-    public String getPoOrganizations() {
+    public String lookup() {
         String orgName = ServletActionContext.getRequest().getParameter("orgName");
+        if (orgName == null) {
+            orgs = null;
+            return SUCCESS;
+        }
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setName(EnOnConverter.convertToEnOn(orgName));
         orgs = PaRegistry.getPoOrganizationEntityService().search(criteria);
@@ -224,7 +229,7 @@ public class NCISpecificInformationAction extends ActionSupport {
                 .getValue();
         nciSpecificInformationWebDTO.setOrganizationName(chosenOrg);
         nciSpecificInformationWebDTO.setOrganizationIi(orgId);
-        return SUCCESS;
+        return DISPLAY_ORG_FLD;
     }
 
     /**
@@ -253,5 +258,12 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public void setChosenOrg(String chosenOrg) {
         this.chosenOrg = chosenOrg;
+    }
+    
+    /**
+     * @return String success or failure
+     */
+    public String lookup1() {
+        return SUCCESS;
     }
 }

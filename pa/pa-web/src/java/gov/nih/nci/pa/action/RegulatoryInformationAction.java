@@ -29,6 +29,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings("PMD")
 public class RegulatoryInformationAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
+    private static final String VIEW_PAGE = "view_page";
     private InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
     private List countryList = new ArrayList();
     private String lst = null;
@@ -82,7 +83,7 @@ public class RegulatoryInformationAction extends ActionSupport {
             PaRegistry.getStudyRegulatoryAuthorityService().updateStudyRegulatoryAuthority(sraFromDatabaseDTO);
         }
        // webDTO.setFdaRegulatedInterventionIndicator( )
-        return SUCCESS;
+        return VIEW_PAGE;
     }
 
     /**

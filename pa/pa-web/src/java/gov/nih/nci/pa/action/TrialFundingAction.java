@@ -32,6 +32,13 @@ public class TrialFundingAction extends ActionSupport {
     private List<StudyResourcingWebDTO> trialFundingList;
     private Long cbValue;
     private String page;
+    
+    /**  
+     * @return result
+     */
+    public String displayJs() {
+        return SUCCESS;
+    }
    
     /**  
      * @return result
