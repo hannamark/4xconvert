@@ -50,7 +50,7 @@ public class StudyOverallStatusTest {
         
         // Following tests assume current status is ACTIVE, ACTIVE can transition 
         //   to CLOSED_TO_ACCRUAL, and ACTIVE cannot transition to COMPLETE.
-        assertTrue(StudyStatusCode.ACTIVE.equals(CdConverter.convertToStudyStatusCode(dto.getStatusCode())));
+        assertTrue(StudyStatusCode.ACTIVE.getCode().equals(dto.getStatusCode().getCode()));
         assertTrue(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertFalse(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.COMPLETE));
         try {
@@ -69,8 +69,7 @@ public class StudyOverallStatusTest {
         StudyOverallStatusDTO result = 
             remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid);
         assertNotNull (IiConverter.convertToLong(result.getIi()));
-        assertEquals (CdConverter.convertToStudyStatusCode(result.getStatusCode())
-                    , CdConverter.convertToStudyStatusCode(dto.getStatusCode()));
+        assertEquals (result.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
                     , TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals (IiConverter.convertToLong(pid)

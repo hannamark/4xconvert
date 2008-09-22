@@ -10,7 +10,6 @@ import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.impl.StudyProtocolServiceImpl;
@@ -149,10 +148,10 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         }
         Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
         Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
-        ActualAnticipatedTypeCode sCode = CdConverter.convertToActualAnticipatedTypeCode(
-                studyProtocolDTO.getStartDateTypeCode());
-        ActualAnticipatedTypeCode cCode = CdConverter.convertToActualAnticipatedTypeCode(
-                studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+        ActualAnticipatedTypeCode sCode = ActualAnticipatedTypeCode.getByCode(
+                studyProtocolDTO.getStartDateTypeCode().getCode());
+        ActualAnticipatedTypeCode cCode = ActualAnticipatedTypeCode.getByCode(
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
         Timestamp now = new Timestamp((new Date()).getTime());
         if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
             throw new PAException(" Actual start dates cannot be in the future. ");

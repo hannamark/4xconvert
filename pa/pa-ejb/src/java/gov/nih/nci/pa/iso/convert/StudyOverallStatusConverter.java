@@ -5,6 +5,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -70,7 +71,7 @@ public class StudyOverallStatusConverter {
 
         StudyOverallStatus bo = new StudyOverallStatus();
         bo.setDateLastUpdated(new Date());
-        bo.setStatusCode(CdConverter.convertToStudyStatusCode(dto.getStatusCode()));
+        bo.setStatusCode(StudyStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudyProtocol(spBo);
         return bo;

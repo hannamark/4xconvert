@@ -3,8 +3,8 @@
  */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -28,7 +28,7 @@ public class StudyOverallStatusWebDTO {
     public StudyOverallStatusWebDTO(StudyOverallStatusDTO dto) {
         super();
         this.id = IiConverter.convertToLong(dto.getIi());
-        this.statusCode = CdConverter.convertToStudyStatusCode(dto.getStatusCode()).getDisplayName();
+        this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getDisplayName();
         this.statusDate = PAUtil.normalizeDateString(
                 TsConverter.convertToTimestamp(dto.getStatusDate()).toString());
     }

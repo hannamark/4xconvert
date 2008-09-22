@@ -13,16 +13,16 @@ import org.junit.Test;
 public class CdConverterTest {    
     @Test
     public void studyStatusCodeTest () {
-        assertNull(CdConverter.convertToStudyStatusCode(CdConverter.convertToCd(null)));
+        assertNull(CdConverter.convertToCd(null).getCode());
         for (StudyStatusCode xxx : StudyStatusCode.values()) {
-            assertTrue(xxx.equals(CdConverter.convertToStudyStatusCode(CdConverter.convertToCd(xxx))));            
+            assertTrue(xxx.getCode().equals(CdConverter.convertToCd(xxx).getCode()));
         }
     }
     @Test
     public void actualAnticipatedTypeCodeTest () {
-        assertNull(CdConverter.convertToActualAnticipatedTypeCode(CdConverter.convertToCd(null)));
+        assertNull(CdConverter.convertToCd(null).getCode());
         for (ActualAnticipatedTypeCode xxx : ActualAnticipatedTypeCode.values()) {
-            assertTrue(xxx.equals(CdConverter.convertToActualAnticipatedTypeCode(CdConverter.convertToCd(xxx))));            
+            assertTrue(xxx.getCode().equals(CdConverter.convertToCd(xxx).getCode()));
         }
     }
 }

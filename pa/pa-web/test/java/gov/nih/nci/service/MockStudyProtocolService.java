@@ -11,7 +11,6 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -57,8 +56,8 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
             StudyProtocolDTO dto) throws PAException {
         for (StudyProtocol bo : spList) {
             if (bo.getId().equals(IiConverter.convertToLong(dto.getIi()))) {
-                bo.setStartDateTypeCode(CdConverter.convertToActualAnticipatedTypeCode(dto.getStartDateTypeCode()));
-                bo.setPrimaryCompletionDateTypeCode(CdConverter.convertToActualAnticipatedTypeCode(dto.getPrimaryCompletionDateTypeCode()));
+                bo.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getStartDateTypeCode().getCode()));
+                bo.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getPrimaryCompletionDateTypeCode().getCode()));
                 bo.setStartDate(TsConverter.convertToTimestamp(dto.getStartDate()));
                 bo.setPrimaryCompletionDate(TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate()));
                 return StudyProtocolConverter.convertFromDomainToDTO(bo);

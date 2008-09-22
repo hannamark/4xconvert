@@ -8,7 +8,6 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -122,8 +121,8 @@ public class StudyOverallStatusServiceBean implements
             session.beginTransaction();
             StudyOverallStatusDTO oldStatus = getCurrentStudyOverallStatusByStudyProtocol(
                     dto.getStudyProtocolidentifier());
-            StudyStatusCode oldCode = CdConverter.convertToStudyStatusCode(oldStatus.getStatusCode());
-            StudyStatusCode newCode = CdConverter.convertToStudyStatusCode(dto.getStatusCode());
+            StudyStatusCode oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+            StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
             Timestamp oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
             Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
             if (newCode == null) {

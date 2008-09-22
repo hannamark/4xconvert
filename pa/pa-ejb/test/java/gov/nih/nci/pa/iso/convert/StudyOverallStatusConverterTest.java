@@ -43,7 +43,7 @@ public class StudyOverallStatusConverterTest {
         
         StudyOverallStatusDTO dto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIi()));
-        assertEquals(bo.getStatusCode(), CdConverter.convertToStudyStatusCode(dto.getStatusCode()));
+        assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(bo.getStatusDate(), TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolidentifier()));
     }
@@ -59,7 +59,7 @@ public class StudyOverallStatusConverterTest {
         
         StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
         assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIi()));
-        assertEquals(bo.getStatusCode(), CdConverter.convertToStudyStatusCode(dto.getStatusCode()));
+        assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(bo.getStatusDate(), TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolidentifier()));
     }
