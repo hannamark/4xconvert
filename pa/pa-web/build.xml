@@ -123,7 +123,7 @@
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="clean" description="Clean the output directory">
+    <target name="clean" depends="ivy-clean" description="Clean the output directory">
         <delete dir="${pa-web.build.dir}"/>
         <delete dir="${pa.report.dir}/pa-web"/>
     </target>
@@ -154,10 +154,10 @@
             </classpath>
         </javac>
         <copy todir="${pa-web.build.outputDir}">
-        	<filterset>
- 	            <filter token="po.server.name" value="${po.server.name}"/>
-        		<filter token="po.port.number" value="${po.port.number}"/>
-        	</filterset>
+            <filterset>
+                <filter token="po.server.name" value="${po.server.name}"/>
+                <filter token="po.port.number" value="${po.port.number}"/>
+            </filterset>
             <fileset dir="${pa-web.build.resourceDir.0}"/>
         </copy>
     </target>
@@ -193,7 +193,7 @@
         <filter token="db.password" value="${db.password}"/>                                            
         <copy file="${pa.resourceDir}/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />                             
     </target>
-	
+    
 
     
     <!-- ====================================================================== -->
@@ -358,7 +358,7 @@
         <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
-    	
+        
         <war destfile="${pa-web.build.dir}/${pa-web.war}" 
              compress="false" 
              webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">            
@@ -417,7 +417,7 @@
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
-        	<classpath refid="jboss.client.classpath"/>
+            <classpath refid="jboss.client.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">

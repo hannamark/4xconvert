@@ -76,7 +76,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-ear.build.file" value="build.xml"/>
     
     <!-- The target name that should be called from the sub-project build file -->
-    <property name="pa-clean.build.target" value="ivy-clean"/>
+    <property name="pa-clean.build.target" value="clean"/>
     <property name="pa-ear.build.target" value="package"/>
     <property name="pa-web.build.target" value="package-notest"/>
     <property name="pa-ejb.build.target" value="package-notest"/>
