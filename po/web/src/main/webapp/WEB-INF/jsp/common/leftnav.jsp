@@ -14,7 +14,7 @@
             <li class="lisubheader">Role Inboxes</li>
         </c:when>
         <c:otherwise>
-            <li><a href="<c:url value="/protected/curate/search/listAll.action"/>">Login</a></li>
+            <li><a href="<c:url value="/protected/home.action"/>">Login</a></li>
         </c:otherwise>
     </c:choose>
     <li><a href="helpTK.html">Help</a></li>
