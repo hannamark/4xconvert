@@ -77,6 +77,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     
     <!-- The target name that should be called from the sub-project build file -->
     <property name="pa-clean.build.target" value="clean"/>
+    <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
     <property name="pa-web.build.target" value="package-notest"/>
     <property name="pa-ejb.build.target" value="package-notest"/>
@@ -282,6 +283,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${pa-ear.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
@@ -293,6 +295,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
             <property name="po.server.name" value="${po.server.name}"/>
             <property name="po.port.number" value="${po.port.number}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
         </ant>
@@ -303,6 +306,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${pa-ejb.base.dir}" >
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
         </ant>

@@ -116,7 +116,7 @@
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="clean" depends="ivy-clean" description="Clean the output directory">
+    <target name="clean" description="Clean the output directory">
         <delete dir="${pa-ejb.build.dir}"/>
         <delete dir="${pa.report.dir}/pa-ejb"/>
     </target>

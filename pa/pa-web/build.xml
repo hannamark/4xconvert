@@ -123,7 +123,7 @@
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="clean" depends="ivy-clean" description="Clean the output directory">
+    <target name="clean" description="Clean the output directory">
         <delete dir="${pa-web.build.dir}"/>
         <delete dir="${pa.report.dir}/pa-web"/>
     </target>
