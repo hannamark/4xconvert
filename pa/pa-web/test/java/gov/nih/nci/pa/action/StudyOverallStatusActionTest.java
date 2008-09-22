@@ -37,11 +37,11 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         
         testAction = new StudyOverallStatusAction();
         testAction.prepare();
-        testAction.execute();
     }
 
     @Test
     public void testDisplayStatus() throws Exception {
+        testAction.execute();
         assertEquals(ActualAnticipatedTypeCode.ACTUAL.getCode(), testAction.getStartDateType());
         assertEquals("01/01/2000" , testAction.getStartDate());
         assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), testAction.getCompletionDateType());
@@ -52,6 +52,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
     
     @Test
     public void testDisplayHistory() throws Exception {
+        testAction.execute();
         testAction.history();
         List<StudyOverallStatusWebDTO> rslt = testAction.getOverallStatusList();
         assertEquals(2, rslt.size());
@@ -62,11 +63,59 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
     }
     
     @Test
-    public void testUpdateStatus() throws Exception {
+    public void testUpdateDates() throws Exception {
         // check business rules enforced in action class
+        testAction.execute();
         testAction.setCompletionDate(null);
         testAction.update();
         assertTrue(testAction.hasActionErrors());
-        assertTrue(true);
+        assertTrue(testAction.getActionErrors().toString().contains("Primary completion date must be set."));
+
+        testAction.execute();
+        testAction.setCompletionDateType(null);
+        testAction.update();
+        assertTrue(testAction.hasActionErrors());
+        assertTrue(testAction.getActionErrors().toString().contains("Primary completion date type must be set."));
+
+        testAction.execute();
+        testAction.setStartDate(null);
+        testAction.update();
+        assertTrue(testAction.hasActionErrors());
+        assertTrue(testAction.getActionErrors().toString().contains("Trial start date must be set."));
+
+        testAction.execute();
+        testAction.setStartDateType(null);
+        testAction.update();
+        assertTrue(testAction.hasActionErrors());
+        assertTrue(testAction.getActionErrors().toString().contains("Trial start date type must be set."));
+        
+        // update dates
+        testAction.execute();
+        testAction.setStartDate("1/5/2008");
+        testAction.setStartDateType(ActualAnticipatedTypeCode.ACTUAL.getCode());
+        testAction.setCompletionDate("12/15/2010");
+        testAction.setCompletionDateType(ActualAnticipatedTypeCode.ANTICIPATED.getCode());
+        testAction.update();
+        testAction.execute();
+        assertEquals("01/05/2008", testAction.getStartDate());
+        assertEquals(ActualAnticipatedTypeCode.ACTUAL.getCode(), testAction.getStartDateType());
+        assertEquals("12/15/2010", testAction.getCompletionDate());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), testAction.getCompletionDateType());
+    }
+    
+    @Test
+    public void testUpdateStatus() throws Exception {
+        // check business rules enforced in action class
+        testAction.execute();
+        testAction.setCurrentTrialStatus(null);
+        testAction.update();
+        assertTrue(testAction.hasActionErrors());
+        assertTrue(testAction.getActionErrors().toString().contains("Current trial status must be set."));
+
+        testAction.execute();
+        testAction.setStatusDate(null);
+        testAction.update();
+        assertTrue(testAction.hasActionErrors());
+        assertTrue(testAction.getActionErrors().toString().contains("Current trial status date must be set."));
     }
 }

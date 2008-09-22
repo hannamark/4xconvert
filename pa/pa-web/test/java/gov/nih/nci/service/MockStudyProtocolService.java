@@ -11,7 +11,9 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
@@ -42,23 +44,34 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         spList.add(sp);
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#getInterventionalStudyProtocol(gov.nih.nci.coppa.iso.Ii)
-     */
-    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii)
-            throws PAException {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#getStudyProtocol(gov.nih.nci.coppa.iso.Ii)
-     */
     public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
         for (StudyProtocol sp: spList) {
             if(sp.getId().equals(IiConverter.convertToLong(ii))) {
                 return StudyProtocolConverter.convertFromDomainToDTO(sp);
             }
         }
+        return null;
+    }
+
+    public StudyProtocolDTO updateStudyProtocol(
+            StudyProtocolDTO dto) throws PAException {
+        for (StudyProtocol bo : spList) {
+            if (bo.getId().equals(IiConverter.convertToLong(dto.getIi()))) {
+                bo.setStartDateTypeCode(CdConverter.convertToActualAnticipatedTypeCode(dto.getStartDateTypeCode()));
+                bo.setPrimaryCompletionDateTypeCode(CdConverter.convertToActualAnticipatedTypeCode(dto.getPrimaryCompletionDateTypeCode()));
+                bo.setStartDate(TsConverter.convertToTimestamp(dto.getStartDate()));
+                bo.setPrimaryCompletionDate(TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate()));
+                return StudyProtocolConverter.convertFromDomainToDTO(bo);
+            }
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyProtocolService#getInterventionalStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     */
+    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii)
+            throws PAException {
         return null;
     }
 
@@ -88,14 +101,4 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         // TODO Auto-generated method stub
         return null;
     }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#updateStudyProtocol(gov.nih.nci.pa.iso.dto.StudyProtocolDTO)
-     */
-    public StudyProtocolDTO updateStudyProtocol(
-            StudyProtocolDTO studyProtocolDTO) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
