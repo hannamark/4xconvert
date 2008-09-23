@@ -2,7 +2,7 @@ package gov.nih.nci.pa.test.integration;
 
 
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.SessionManagerRemote;
+import gov.nih.nci.pa.service.util.SessionManagerRemote;
 import gov.nih.nci.pa.test.util.TestPropertiesPaEar;
 
 import java.util.Properties;
