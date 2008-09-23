@@ -80,85 +80,110 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.util;
+package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.CountryServiceBean;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
+import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.util.JndiServiceLocator;
-import gov.nih.nci.po.util.ServiceLocator;
-
 
 /**
- * @author smatyas
+ * @author Scott Miller
+ *
  */
-public final class PoRegistry {
+public class MockCountryServiceLocator implements ServiceLocator {
 
     /**
-     * Number of records to display by default in displaytag controlled tables.
+     * {@inheritDoc}
      */
-    public static final int DEFAULT_RECORDS_PER_PAGE = 20;
-    private static final PoRegistry PO_REGISTRY = new PoRegistry();
-    private ServiceLocator serviceLocator;
-    
-    /**
-     * Constructor for the singleton instance.
-     */
-    private PoRegistry() {
-        this.serviceLocator = new JndiServiceLocator();
+    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
+        return null;
     }
 
     /**
-     * @return the PO_REGISTRY
+     * {@inheritDoc}
      */
-    public static PoRegistry getInstance() {
-        return PO_REGISTRY;
+    public CountryServiceLocal getCountryService() {
+        return new CountryServiceBean() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Country getCountryByAlpha3(String code) {
+                return new Country("test", "123", "??", code);
+            }
+        };
     }
 
     /**
-     * Gets the generic service from the service locator.
-     * @return the service.
+     * {@inheritDoc}
      */
-    public static GenericServiceLocal getGenericService() {
-        return getInstance().getServiceLocator().getGenericService();
+    public GenericServiceLocal getGenericService() {
+        return null;
     }
 
     /**
-     * Gets the org service from the service locator.
-     * @return the service.
+     * {@inheritDoc}
      */
-    public static OrganizationServiceLocal getOrganizationService() {
-        return getInstance().getServiceLocator().getOrganizationService();
+    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
+        return null;
     }
 
     /**
-     * Gets the person service from the service locator.
-     * @return the service.
+     * {@inheritDoc}
      */
-    public static PersonServiceLocal getPersonService() {
-        return getInstance().getServiceLocator().getPersonService();
-    }
-    
-    /**
-     * Gets the country service from the service locator.
-     * @return the service.
-     */
-    public static CountryServiceLocal getCountryService() {
-        return getInstance().getServiceLocator().getCountryService();
+    public HealthCareProviderServiceLocal getHealthCareProviderService() {
+        return null;
     }
 
     /**
-     * @return the serviceLocator
+     * {@inheritDoc}
      */
-    public ServiceLocator getServiceLocator() {
-        return this.serviceLocator;
+    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
+        return null;
     }
 
     /**
-     * @param serviceLocator the serviceLocator to set
+     * {@inheritDoc}
      */
-    public void setServiceLocator(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
+    public OrganizationServiceLocal getOrganizationService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OversightCommitteeServiceLocal getOversightCommitteeService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PersonServiceLocal getPersonService() {
+        return null;
     }
 }

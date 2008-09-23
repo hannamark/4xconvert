@@ -87,8 +87,7 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.util.JndiServiceLocator;
-import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import org.apache.commons.lang.StringUtils;
@@ -98,24 +97,6 @@ import org.apache.commons.lang.StringUtils;
  * @author gax
  */
 public class IiConverter extends AbstractXSnapshotConverter<Ii> {
-
-    private static ServiceLocator locator = new JndiServiceLocator();
-
-    /**
-     * Get the service locator.
-     * @return the service locator.
-     */
-    public static ServiceLocator getServiceLocator() {
-        return locator;
-    }
-
-    /**
-     * Change the store service locator.
-     * @param newLocator the new service locator.
-     */
-    public static void setServiceLocator(ServiceLocator newLocator) {
-        locator = newLocator;
-    }
 
     /**
      * {@inheritDoc}
@@ -183,7 +164,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (!IdConverter.PERSON_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
             throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
         }
-        return getServiceLocator().getPersonService().getById(id);
+        return PoRegistry.getPersonService().getById(id);
     }
 
     /**
@@ -205,6 +186,6 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (!IdConverter.ORG_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
             throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
         }
-        return getServiceLocator().getOrganizationService().getById(id);
+        return PoRegistry.getOrganizationService().getById(id);
     }
 }

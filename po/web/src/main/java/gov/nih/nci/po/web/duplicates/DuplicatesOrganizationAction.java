@@ -3,9 +3,9 @@ package gov.nih.nci.po.web.duplicates;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.DuplicatesOrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSortCriterion;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
-import gov.nih.nci.po.web.util.PoRegistry;
 
 import java.util.ArrayList;
 
@@ -39,11 +39,11 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
             criteria = (DuplicatesOrganizationSearchCriteria) getSession().getAttribute(getRootKey());
         }
     }
-    
+
     private HttpSession getSession() {
         return PoHttpSessionUtil.getSession();
     }
-    
+
     /**
      * @return success
      */
@@ -51,7 +51,7 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
         setRootKey(PoHttpSessionUtil.addAttribute(criteria));
         return SUCCESS;
     }
-    
+
     /**
      * @return success
      */
@@ -81,15 +81,15 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
         this.criteria = criteria;
     }
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
         return rootKey;
     }
-    
+
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {

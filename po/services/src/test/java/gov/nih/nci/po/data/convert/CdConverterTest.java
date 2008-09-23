@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ServiceLocator;
 import gov.nih.nci.po.util.TestServiceLocator;
 
@@ -100,17 +101,17 @@ import org.junit.Test;
  */
 public class CdConverterTest {
 
-    private ServiceLocator locator;
+    ServiceLocator oldLocator = null;
 
     @Before
     public void setUpTest() {
-        locator = CdConverter.getServiceLocator();
-        CdConverter.setServiceLocator(new TestServiceLocator());
+        oldLocator = PoRegistry.getInstance().getServiceLocator();
+        PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
     }
 
     @After
     public void tearDownTest() {
-        CdConverter.setServiceLocator(locator);
+        PoRegistry.getInstance().setServiceLocator(oldLocator);
     }
 
     /**

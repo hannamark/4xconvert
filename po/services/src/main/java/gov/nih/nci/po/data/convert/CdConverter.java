@@ -85,30 +85,13 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.JndiServiceLocator;
-import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.PoRegistry;
 
 /**
  * @author Scott Miller
  *
  */
 public class CdConverter extends AbstractXSnapshotConverter<Cd> {
-
-    private static ServiceLocator serviceLocator = new JndiServiceLocator();
-
-    /**
-     * @return the serviceLocator
-     */
-    public static ServiceLocator getServiceLocator() {
-        return serviceLocator;
-    }
-
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public static void setServiceLocator(ServiceLocator serviceLocator) {
-        CdConverter.serviceLocator = serviceLocator;
-    }
 
     /**
      * {@inheritDoc}
@@ -128,7 +111,7 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
     }
 
     private OversightCommitteeType convertToOversightCommitteeType(Cd value) {
-        return serviceLocator.getOversightCommitteeTypeService().getByCode(value.getCode());
+        return PoRegistry.getOversightCommitteeTypeService().getByCode(value.getCode());
     }
 
     private RoleStatus converToRoleStatus(Cd value) {

@@ -83,6 +83,9 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.util.TestServiceLocator;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -162,5 +165,18 @@ public abstract class AbstractHibernateTestCase {
                 break;
             }
         }
+    }
+
+    ServiceLocator oldLocator = null;
+
+    @Before
+    public void setUpTest() {
+        oldLocator = PoRegistry.getInstance().getServiceLocator();
+        PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
+    }
+
+    @After
+    public void tearDownTest() {
+        PoRegistry.getInstance().setServiceLocator(oldLocator);
     }
 }

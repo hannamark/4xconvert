@@ -230,19 +230,19 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         assertTrue(s.length() == 4000);
         assertTrue(s.endsWith("..."));
     }
-    
+
     @Test
     public void getValueStringHelper() {
         Object value = new Object();
         String s = callGetValueStringHelper(value);
         assertEquals(value.toString(), s);
     }
-    
+
     @Test
     public void getValueStringFromMapWithNull() {
         assertNull(callGetValueString((Map<Auditable, Auditable>) null));
     }
-    
+
     @Test
     public void getValueStringFromMap() {
         class Key implements Auditable {
@@ -251,7 +251,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
                 return Long.MAX_VALUE;
             }
         }
-        
+
         class Value implements Auditable {
             private static final long serialVersionUID = 1L;
             public Long getId() {
@@ -274,7 +274,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
 
             public void clear() {
                 // TODO Auto-generated method stub
-                
+
             }
 
             public boolean contains(Object o) {
@@ -326,16 +326,18 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
                 return null;
             }
 
+            @SuppressWarnings("unchecked")
             public Object[] toArray(Object[] a) {
                 // TODO Auto-generated method stub
                 return null;
             }
-            
+
         }
         final KeySet dummyKeySet = new KeySet();
         Map<Key,Value> map = new HashMap<Key,Value>() {
             private static final long serialVersionUID = 1L;
             @Override
+            @SuppressWarnings("unchecked")
             public Set<Key> keySet() {
                 return dummyKeySet;
             }
@@ -344,7 +346,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
                 return dummyValue;
             }
         };
-        
+
         String s = callGetValueString(map);
         assertTrue(s.startsWith("(k1=9223372036854775807, v1=-9223372036854775808), (k2=9223372036854775807, v2=-9223372036854775808),"));
         assertTrue(s.length() == 4000);

@@ -4,6 +4,7 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.CuratePersonSearchCriteria;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
 

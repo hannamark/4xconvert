@@ -1,8 +1,8 @@
 package gov.nih.nci.po.web;
 
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.MockServiceLocator;
-import gov.nih.nci.po.web.util.PoRegistry;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;

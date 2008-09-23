@@ -4,8 +4,8 @@ import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
-import gov.nih.nci.po.web.util.PoRegistry;
 
 import java.util.Map;
 import java.util.Set;

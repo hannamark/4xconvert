@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.web.converter;
 
-import gov.nih.nci.po.web.util.PoRegistry;
+import gov.nih.nci.po.util.PoRegistry;
 
 import com.fiveamsolutions.nci.commons.service.GenericDataService;
 import com.fiveamsolutions.nci.commons.web.struts2.converter.AbstractPersistentObjectTypeConverter;

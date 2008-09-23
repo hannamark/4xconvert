@@ -88,7 +88,7 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.HashSet;
@@ -101,8 +101,6 @@ import java.util.Set;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class AdConverter {
 
-    private static final PoCountryResolver RESOLVER = new PoCountryResolver();
-
     /**
      * Converter for simple addresses (ie, not sets or bags).
      */
@@ -114,7 +112,7 @@ public class AdConverter {
         @SuppressWarnings("unchecked")
         public <TO> TO convert(Class<TO> returnClass, Ad value) {
             if (returnClass == Address.class) {
-                return (TO) convertToAddress(value, RESOLVER);
+                return (TO) convertToAddress(value);
             }
             throw new UnsupportedOperationException(returnClass.getName());
         }
@@ -122,10 +120,9 @@ public class AdConverter {
         /**
          * https://jira.5amsolutions.com/browse/PO-429 .
          * @param iso the address to convert into a BO Address.
-         * @param resolver converts 3 letter iso country codes to a BO {@link Country}
          * @return a BO address.
          */
-        public static Address convertToAddress(Ad iso, CountryResolver resolver) {
+        public static Address convertToAddress(Ad iso) {
             if (iso == null || iso.getNullFlavor() != null) {
                 return null;
             }
@@ -149,13 +146,13 @@ public class AdConverter {
                         + "field on AD at this time.");
             }
 
-            return processParts(iso, resolver);
+            return processParts(iso);
 
         }
 
         @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
                             "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "fallthrough" })
-        private static Address processParts(Ad iso, CountryResolver resolver) {
+        private static Address processParts(Ad iso) {
             Address a = new Address();
 
             StringBuffer street = new StringBuffer();
@@ -180,7 +177,7 @@ public class AdConverter {
                             sdelimitor = "";
                             continue;
                         case CNT:
-                            a.setCountry(resolver.getCountryByAlpha3(part.getCode()));
+                            a.setCountry(PoRegistry.getCountryService().getCountryByAlpha3(part.getCode()));
                             sdelimitor = "";
                             continue;
                         case STA:
@@ -228,22 +225,10 @@ public class AdConverter {
             }
             Set<Address> addresses = new HashSet<Address>();
             for (Ad ad : value.getItem()) {
-                addresses.add(SimpleConverter.convertToAddress(ad, RESOLVER));
+                addresses.add(SimpleConverter.convertToAddress(ad));
             }
             return (TO) addresses;
         }
 
-    }
-
-    /**
-     * helps resolve countries.
-     */
-    public static interface CountryResolver {
-        /**
-         * Must be thread safe.
-         * @param code http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
-         * @return a county
-         */
-        Country getCountryByAlpha3(String code);
     }
 }

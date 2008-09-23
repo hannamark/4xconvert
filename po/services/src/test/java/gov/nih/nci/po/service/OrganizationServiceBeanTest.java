@@ -98,7 +98,6 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.Date;
@@ -288,12 +287,12 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
     }
-    
+
     @Test
     public void acceptWithChangesAndCRrs() throws EntityValidationException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
-        
+
         OrganizationCRServiceBean organizationCRServiceBean = EjbTestHelper.getOrganizationCRServiceBean();
         OrganizationCR cr = new OrganizationCR(o);
         OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o);
@@ -304,7 +303,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         organizationCRServiceBean.create(cr);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         o = getOrgServiceBean().getById(id);
         //remove elements from the different CollectionType properties to ensure proper persistence
         o.getEmail().remove(0);
@@ -314,7 +313,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         o.getUrl().remove(0);
 
         assertFalse(o.getChangeRequests().isEmpty());
-        
+
         getOrgServiceBean().accept(o);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -327,7 +326,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getPhone().size());
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
-        
+
         assertTrue(result.getChangeRequests().isEmpty());
-    }    
+    }
 }

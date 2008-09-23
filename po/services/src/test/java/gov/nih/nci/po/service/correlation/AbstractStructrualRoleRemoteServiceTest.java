@@ -96,16 +96,12 @@ import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
@@ -115,7 +111,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -127,24 +122,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> e
 
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
-
-    private ServiceLocator oldIiLocator = null;
-    private ServiceLocator oldCdLocator = null;
-
-    @Before
-    public void setUpLocators() {
-        oldIiLocator = IiConverter.getServiceLocator();
-        oldCdLocator = CdConverter.getServiceLocator();
-        TestServiceLocator newLocator = new TestServiceLocator();
-        IiConverter.setServiceLocator(newLocator);
-        CdConverter.setServiceLocator(newLocator);
-    }
-
-    @After
-    public void relaceLocators() {
-        IiConverter.setServiceLocator(oldIiLocator);
-        CdConverter.setServiceLocator(oldCdLocator);
-    }
 
     @Before
     public void setUpData() throws Exception {
@@ -223,6 +200,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> e
         assertEquals(0, list.size());
     }
 
+    @SuppressWarnings("unchecked")
     protected void fillInPersonRoleDate(PersonRoleDTO pr) throws Exception {
         Ii ii = new Ii();
         ii.setExtension("" + basicPerson.getId());

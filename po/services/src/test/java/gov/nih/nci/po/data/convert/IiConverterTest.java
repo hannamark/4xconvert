@@ -12,12 +12,8 @@ import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
 import gov.nih.nci.services.PoIsoConstraintException;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -25,19 +21,6 @@ import org.junit.Test;
  * @author gax
  */
 public class IiConverterTest extends AbstractHibernateTestCase {
-    private ServiceLocator locator;
-
-    @Before
-    public void setUpTest() {
-        locator = IiConverter.getServiceLocator();
-        IiConverter.setServiceLocator(new TestServiceLocator());
-    }
-
-    @After
-    public void tearDownTest() {
-        IiConverter.setServiceLocator(locator);
-    }
-
    @Test (expected = UnsupportedOperationException.class)
     public void testConvert() {
         Class<URL> returnClass = URL.class;

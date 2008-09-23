@@ -356,7 +356,6 @@ public class IiCompositeUserType implements CompositeUserType {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public Class returnedClass() {
         return Ii.class;
     }

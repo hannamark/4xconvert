@@ -91,42 +91,19 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test to verify the conversion to and from the org role is valid.
  */
 public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateTestCase {
-
-    private ServiceLocator iiLocator;
-    private ServiceLocator cdLocator;
-
-    @Before
-    public void setUpTest() {
-        iiLocator = IiConverter.getServiceLocator();
-        IiConverter.setServiceLocator(new TestServiceLocator());
-        cdLocator = CdConverter.getServiceLocator();
-        CdConverter.setServiceLocator(new TestServiceLocator());
-    }
-
-    @After
-    public void tearDownTest() {
-        IiConverter.setServiceLocator(iiLocator);
-        CdConverter.setServiceLocator(cdLocator);
-    }
 
     protected AbstractOrganizationRole fillInExampleOrgRoleFields(AbstractOrganizationRole or) {
         or.setId(1L);

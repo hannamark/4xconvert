@@ -88,8 +88,8 @@ import gov.nih.nci.po.service.CurateOrganizationSearchCriteria;
 import gov.nih.nci.po.service.CuratePersonSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSortCriterion;
 import gov.nih.nci.po.service.PersonSortCriterion;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
-import gov.nih.nci.po.web.util.PoRegistry;
 
 import java.util.ArrayList;
 

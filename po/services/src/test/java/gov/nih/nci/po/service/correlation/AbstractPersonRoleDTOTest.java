@@ -113,9 +113,7 @@ import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.CountryTestUtil;
@@ -123,8 +121,6 @@ import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URI;
@@ -136,7 +132,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -146,24 +141,11 @@ import org.junit.Test;
  */
 public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCase {
 
-    private ServiceLocator iiLocator;
-    private ServiceLocator cdLocator;
     private Country defaultCountry;
 
     @Before
-    public void setUpTest() {
-        iiLocator = IiConverter.getServiceLocator();
-        IiConverter.setServiceLocator(new TestServiceLocator());
-        cdLocator = CdConverter.getServiceLocator();
-        CdConverter.setServiceLocator(new TestServiceLocator());
-
+    public void setUpTestData() {
         defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG"));
-    }
-
-    @After
-    public void tearDownTest() {
-        IiConverter.setServiceLocator(iiLocator);
-        CdConverter.setServiceLocator(cdLocator);
     }
 
     protected PersonRole fillInExamplePersonRoleFields(PersonRole pr) {
@@ -274,6 +256,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         verifyTestClassFields(dto);
     }
 
+    @SuppressWarnings("unchecked")
     protected PersonRoleDTO fillInPersonRoleDTOFields(PersonRoleDTO pr, Long personId, Long orgId)
             throws URISyntaxException {
         Ii ii = new Ii();

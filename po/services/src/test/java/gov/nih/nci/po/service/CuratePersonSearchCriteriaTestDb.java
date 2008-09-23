@@ -19,7 +19,6 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
 
     private long orgId;
 
-
     @Before
     public void setupData() throws EntityValidationException {
         pst = new PersonServiceBeanTest();
