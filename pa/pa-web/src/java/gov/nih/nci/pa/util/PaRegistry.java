@@ -3,10 +3,12 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -144,4 +146,20 @@ public final class PaRegistry {
     public static ProtocolQueryServiceLocal getProtocolQueryService() {
     return getInstance().getServiceLocator().getProtocolQueryService();
     }    
+    
+    /**
+    *
+    * @return HealthCareFacilityServiceRemote
+    */
+    public static PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
+    return getInstance().getServiceLocator().getPAHealthCareFacilityService();
+    }
+    /**
+    *
+    * @return StudyParticipationService
+    */
+    public static StudyParticipationServiceRemote getStudyParticipationService() {
+    return getInstance().getServiceLocator().getStudyParticipationService();
+    }
+
 }

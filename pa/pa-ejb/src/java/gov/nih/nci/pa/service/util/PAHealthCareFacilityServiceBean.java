@@ -1,10 +1,11 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
+import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import javax.ejb.Stateless;
  *        holder, NCI.
  */
 @Stateless
-public class HealthCareFacilityServiceBean implements HealthCareFacilityServiceRemote {
+public class PAHealthCareFacilityServiceBean implements PAHealthCareFacilityServiceRemote {
     private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
     /**

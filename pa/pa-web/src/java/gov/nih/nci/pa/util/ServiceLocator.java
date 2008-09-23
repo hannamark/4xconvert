@@ -2,10 +2,12 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -87,4 +89,14 @@ public interface ServiceLocator {
      * @return ProtocolQueryServiceRemote
      */
     ProtocolQueryServiceLocal getProtocolQueryService();
+    
+    /**
+     * @return StudyParticipationServiceRemote
+     */
+    StudyParticipationServiceRemote getStudyParticipationService();
+    
+    /**
+     * @return HealthCareFacilityService
+     */
+    PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService();
 }

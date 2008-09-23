@@ -11,7 +11,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
 /**
- * Convert HealthCareFacility domain to DTO.
+ * Convert HealthCareFacility domain to/from DTO.
  *
  * @author Hugh Reinhart
  * @since 09/23/2008
@@ -36,7 +36,6 @@ public class HealthCareFacilityConverter {
     }
 
     /**
-     * Create a new domain object from a given dto.
      * @param dto HealthCareFacilityDTO
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
