@@ -18,11 +18,11 @@
 		</action>	   
 	</package>
 	<package name="protected" namespace="/protected" extends="default">
+		<!-- Future use case -->
 		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/WEB-INF/jsp/protocolDiseaseCondition.jsp</result>
-		</action>	
-        
+		</action>        
         <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
         </action> 
@@ -35,12 +35,7 @@
         <action name="participatingOrganizations" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction">
             <result>/WEB-INF/jsp/participatingOrganizations.jsp</result>
          </action>       
-         
-        <action name="trialFunding" class="gov.nih.nci.pa.action.TrialFundingAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/WEB-INF/jsp/trialFunding.jsp</result>
-			<result name="error">/WEB-INF/jsp/trialFunding.jsp</result>
-		</action>	
+  		<!-- needs to be refactored -->
 		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/WEB-INF/jsp/nodecorate/organizations.jsp</result>
