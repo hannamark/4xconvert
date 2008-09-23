@@ -1,15 +1,15 @@
 package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
-import gov.nih.nci.pa.service.PAOrganizationServiceRemote;
-import gov.nih.nci.pa.service.PAPersonServiceRemote;
-import gov.nih.nci.pa.service.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
