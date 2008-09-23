@@ -150,4 +150,41 @@ public class PAUtil {
         Date dt = dateStringToDate(inDate);
         return (dt == null) ? null : new Timestamp(dt.getTime());
     }
+    
+    /** 
+    * Returns whether the argument is null or has only whitespace characters 
+    * within it. This method is more efficient than performing a trim() operation 
+    * because no intermediate strings are created and we often don't need to 
+    * iterate over the whole string. 
+    * 
+    * @param aString String 
+    * @return boolean 
+    */ 
+    public static boolean isEmpty(String aString) { 
+     
+        if (aString == null) {
+            return true; 
+        }
+         
+        int length = aString.length(); 
+         
+        for (int i = 0; i < length; i++) { 
+            if (Character.isWhitespace(aString.charAt(i))) {
+                continue; 
+            }
+            return false; 
+        } 
+     
+    return true; 
+    } 
+    
+    /**
+     * 
+     * @param aString aString
+     * @return boolean
+     */
+    public static boolean isNotEmpty(String aString) { 
+        return !isEmpty(aString); 
+    } 
+    
 }
