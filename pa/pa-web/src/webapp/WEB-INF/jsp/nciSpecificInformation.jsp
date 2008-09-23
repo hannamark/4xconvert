@@ -57,7 +57,7 @@
   <div class="box">  
     <s:form action="nciSpecificInformationupdate"><s:actionerror/>
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
-    	<table class="form">
+    	<table class="form" >
 			    <tr>
 			    	  <td scope="row" class="label">
 			               <label for="accrualReportingMethodCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
@@ -82,9 +82,20 @@
                             value="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
                             cssStyle="width:206px" />
                       </td>  			                    
-			     </tr>
-		</table>   
-		<div id="loadOrgField"><%@ include file="/WEB-INF/jsp/nodecorate/orgField.jsp" %></div>
+			     </tr>	  
+				<tr>
+					<td scope="row" class="label">
+						<label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here."> Summary 4 Funding Source:</dfn></label>
+					</td>
+					<td class="value">
+						<div id="loadOrgField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/orgField.jsp" %>
+						</div>		
+					</td>
+					
+				</tr>
+				
+			</table> 
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
