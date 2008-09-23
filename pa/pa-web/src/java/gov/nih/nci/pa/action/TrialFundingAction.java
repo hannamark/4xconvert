@@ -26,7 +26,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
 public class TrialFundingAction extends ActionSupport {
-    private static final String QUERY = "query";
+    private static final String QUERY_RESULT = "query";
     private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
     private StudyResourcingWebDTO studyResourcingWebDTO = new StudyResourcingWebDTO();
     private List<StudyResourcingWebDTO> trialFundingList;
@@ -58,7 +58,7 @@ public class TrialFundingAction extends ActionSupport {
             } else {
                 addActionError(getText("error.trialFunding.noRecords"));
             }
-            return QUERY;    
+            return QUERY_RESULT;    
 
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());

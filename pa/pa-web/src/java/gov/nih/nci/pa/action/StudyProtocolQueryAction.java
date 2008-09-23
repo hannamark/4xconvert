@@ -42,7 +42,7 @@ public class StudyProtocolQueryAction extends ActionSupport {
     /**  
      * @return res
      */     
-    public String criteria() {
+    public String showCriteria() {
         return "criteria";
     }
     
