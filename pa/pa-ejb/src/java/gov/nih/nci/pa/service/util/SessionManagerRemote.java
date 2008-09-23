@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 import javax.ejb.Remote;
 
@@ -44,4 +44,17 @@ public interface SessionManagerRemote {
      * @return the code the client's user should identify itself with.
      */
     long startSession(String username, String returnURL);
+    
+    /**
+     * update last access timestamp.
+     * @param entry the session to who's accessTime will be updated
+     */
+    void touch(SessionEntry entry);    
+    
+    /**
+     * remove (invalidate) a session.
+     * @param entry the session to remove
+     */
+    void removeSession(SessionEntry entry);
+    
 }

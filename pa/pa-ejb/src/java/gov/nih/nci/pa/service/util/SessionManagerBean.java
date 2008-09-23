@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -36,14 +36,14 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors({ HibernateSessionInterceptor.class })
-public class SessionManagerBean implements SessionManagerRemote, SessionManagerLocal {
+public class SessionManagerBean implements SessionManagerRemote {
 
     private final long sessionGCInterval = DateUtils.MILLIS_PER_MINUTE;
     private final long sessionLifespan = DateUtils.MILLIS_PER_HOUR;
 
     private SessionContext ejbContext;
 
-    private SessionManagerLocal selfProxy;
+    private SessionManagerRemote selfProxy;
 
     private static Random random = new SecureRandom();
 
@@ -67,7 +67,7 @@ public class SessionManagerBean implements SessionManagerRemote, SessionManagerL
      * @param proxy managed proxy of self.
      */
     @EJB
-    public void setSelfProxy(SessionManagerLocal proxy) {
+    public void setSelfProxy(SessionManagerRemote proxy) {
         this.selfProxy = proxy;
     }
 

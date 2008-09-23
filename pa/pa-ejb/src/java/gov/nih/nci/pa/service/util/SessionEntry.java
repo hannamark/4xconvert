@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 
 import java.io.Serializable;
