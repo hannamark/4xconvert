@@ -44,7 +44,7 @@ public class StudyProtocolViewAction extends ActionSupport {
     public String getStudyProtocol() {
         try {            
             StudyProtocolQueryDTO  studyProtocolQueryDTO = 
-                PaRegistry.getStudyProtocolService().getTrialSummaryByStudyProtocolId(studyProtocolId);
+                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO 
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);

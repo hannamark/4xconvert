@@ -37,7 +37,7 @@ public class StudyProtocolQueryAction extends ActionSupport {
     public String query()  {
         try { 
             records = new ArrayList<StudyProtocolQueryDTO>();
-            records = PaRegistry.getStudyProtocolService().getStudyProtocolByCriteria(criteria);       
+            records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);       
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
