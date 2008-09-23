@@ -12,66 +12,44 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <c:url value="/protected/ajaxorglookup.action" var="lookupUrl"/>
-<script type="text/javascript">
-
-    function orgSearchPopup() {
-    showPopWin('nodecorate/orglookup.jsp', 665, 400, orgSeachPopupReturn, 'Organization Selector');
-    return;
-    };
-    
-    function orgSeachPopupReturn() {
-    loadDiv('${contactInforEditorUrl}', 'businessCardDiv', true);
-    }
-    
-    function reSelectOrg() {
-    loadDiv('${orgSelectionUrl}', 'businessCardDiv', true);
-    }
-    
-    function setUnaffiliatedOrg() {
-    loadDiv('${unaffiliatedOrgSelection}', 'businessCardDiv', true);
-    }
-    
+<script type="text/javascript">    
     function trim(str) {
-    var newstr;
-    newstr = str.replace(/^\s*/, "").replace(/\s*$/, "");
-    newstr = newstr.replace(/\s{2,}/, " ");
-    return newstr;
+	    var newstr;
+	    newstr = str.replace(/^\s*/, "").replace(/\s*$/, "");
+	    newstr = newstr.replace(/\s{2,}/, " ");
+	    return newstr;
     }
-
-
-function resetValues () {
-    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_accrualReportingMethodCode.value="";
-    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_summaryFourFundingCategoryCode.value="";
-    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_organizationName.value="";
-    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_monitorCode.value="";
-}
-
-function handleAction(){
-     document.nciSpecificInformationupdate.action="nciSpecificInformationupdate.action";
-     document.nciSpecificInformationupdate.submit();     
-}
-
-function lookup(){	
-    showPopWin('${lookupUrl}', 600, 250, '', 'Choose Organization');
-}
-
-function loadDiv(url) {
-    var div = document.getElementById('loadOrgField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-    var aj = new Ajax.Updater(div, url, {
-        asynchronous: true,
-        method: 'get',
-        evalScripts: false
-    });
-    return false;
-}
-
+	function resetValues () {
+	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_accrualReportingMethodCode.value="";
+	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_summaryFourFundingCategoryCode.value="";
+	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_organizationName.value="";
+	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_monitorCode.value="";
+	}
+	
+	function handleAction(){
+	     document.nciSpecificInformationupdate.action="nciSpecificInformationupdate.action";
+	     document.nciSpecificInformationupdate.submit();     
+	}
+	
+	function lookup(){	
+	    showPopWin('${lookupUrl}', 600, 250, '', 'Choose Organization');
+	}
+	
+	function loadDiv(url) {
+	    var div = document.getElementById('loadOrgField');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+	    var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	    });
+	    return false;
+	}
 </SCRIPT>
-
 </head>
 <body onload="setFocusToFirstControl();">
 
- <h1><fmt:message key="nciSpecificInformation.title" /></h1>
+<h1><fmt:message key="nciSpecificInformation.title" /></h1>
 
 <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -105,19 +83,8 @@ function loadDiv(url) {
                             cssStyle="width:206px" />
                       </td>  			                    
 			     </tr>
-
-                
-			     
-			
-       
-        
-			          
 		</table>   
-		<div id="loadOrgField">
-				   					          <%@ include file="/WEB-INF/jsp/nodecorate/orgField.jsp" %>
-			          </div>
-		
-	           
+		<div id="loadOrgField"><%@ include file="/WEB-INF/jsp/nodecorate/orgField.jsp" %></div>
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
