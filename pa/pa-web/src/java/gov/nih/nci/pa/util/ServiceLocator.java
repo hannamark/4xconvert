@@ -9,6 +9,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 
@@ -81,4 +82,9 @@ public interface ServiceLocator {
     */
     LookUpTableServiceRemote getLookUpTableService();
 
+    /**
+     * 
+     * @return ProtocolQueryServiceRemote
+     */
+    ProtocolQueryServiceLocal getProtocolQueryService();
 }

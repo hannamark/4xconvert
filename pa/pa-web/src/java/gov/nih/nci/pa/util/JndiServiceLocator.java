@@ -9,6 +9,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 /**
@@ -83,10 +84,18 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return StudyResourcingServiceRemote
+     * @return LookUpTableServiceRemote
      */
     public LookUpTableServiceRemote getLookUpTableService() {
         return (LookUpTableServiceRemote) JNDIUtil.lookup("pa/LookUpTableServiceBean/remote");
     }
+    
+    /**
+     * @return ProtocolQueryServiceRemote
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return (ProtocolQueryServiceLocal) JNDIUtil.lookup("pa/ProtocolQueryServiceBean/local");
+    }
+    
 
 }
