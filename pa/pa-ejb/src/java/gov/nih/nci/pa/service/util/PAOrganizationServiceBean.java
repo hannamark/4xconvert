@@ -1,8 +1,9 @@
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.OrganizationDTO;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.util.ArrayList;

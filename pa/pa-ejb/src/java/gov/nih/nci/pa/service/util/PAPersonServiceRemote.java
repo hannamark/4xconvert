@@ -1,6 +1,7 @@
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.dto.PersonDTO;
+import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
 
