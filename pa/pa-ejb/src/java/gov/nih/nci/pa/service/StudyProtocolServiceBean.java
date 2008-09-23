@@ -3,21 +3,20 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.impl.StudyProtocolServiceImpl;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,39 +42,7 @@ import org.hibernate.Session;
 public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
-  
-    /**
-     * gets a list StudyProtocl by criteria.
-     * @param studyProtocolQueryCriteria studyProtocolQueryCriteria
-     * @return pdtos
-     * @throws PAException PAException
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyProtocolQueryDTO> 
-                getStudyProtocolByCriteria(StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
-            LOG.debug("Entering getStudyProtocolByCriteria ");
-        StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
-        List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        pdtos = pImpl.getStudyProtocolByCriteria(studyProtocolQueryCriteria);
-        LOG.debug("Leaving getStudyProtocolByCriteria ");
-        return pdtos;
-    }
-    
-    /**
-     * 
-     * @param studyProtocolId studyProtocolId
-     * @return StudyProtocolQueryDTO
-     * @throws PAException PAException
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) 
-    throws PAException {
-        LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
-        StudyProtocolQueryDTO trialSummary = (new StudyProtocolServiceImpl()).
-            getTrialSummaryByStudyProtocolId(studyProtocolId);
-        LOG.debug("Leaving getTrialSummaryByStudyProtocolId ");
-        return trialSummary;
-    }
+    private static final int FIVE_5 = 5;
     
     /**
      * 
@@ -326,5 +293,79 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         return ispRetDTO;
         
     }
+    
+    /**
+     * for creating a new ISP.
+     * @param ispDTO  for isp
+     * @return ii ii
+     * @throws PAException exception
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
+    throws PAException {
+        if (ispDTO == null) {
+            LOG.error(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null ");
+            
+        }
+        if (ispDTO.getIi().getExtension() != null) {
+            LOG.error(" Extension should be null = " + ispDTO.getIi().getExtension());
+            throw new PAException("  Extension should be null, but got  = " + ispDTO.getIi().getExtension());
+            
+        }
+        LOG.debug("Entering createInterventionalStudyProtocol");
+        InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
+        convertFromDTOToDomain(ispDTO);
+        isp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+        isp.setIdentifier(generateNciIdentifier());
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.save(isp);
+            LOG.info("Creating isp for id = " + isp.getId());
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while creating InterventionalStudyProtocol for id = " 
+                    + ispDTO.getIi().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
+                    + ispDTO.getIi().getExtension() , hbe);
+        } finally {
+            session.flush();
+        }
+        LOG.debug("Leaving createInterventionalStudyProtocol");
+        return IiConverter.convertToIi(isp.getId());
+        
+    }
+
+    private String generateNciIdentifier() throws PAException {
+        Session session = null;
+        Calendar today = Calendar.getInstance();
+        int currentYear  = today.get(Calendar.YEAR);
+        String query = "select max(sp.identifier) from Protocol pro where sp.identifier like '%" + currentYear + "%' ";
+        String nciIdentifier;
+        
+        try {
+            session = HibernateUtil.getCurrentSession(); 
+            Query queryObject = session.createQuery(query);
+            List result = queryObject.list();
+            String maxValue = (String) result.get(0);
+            if (maxValue != null && PAUtil.isNotEmpty(maxValue)) {
+                String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
+                StringBuffer nextNumber = new StringBuffer(String.valueOf(Integer.parseInt(maxNumber) + 1));
+                while (nextNumber.length() < FIVE_5) {
+                    nextNumber.insert(0, "0");
+                }
+                nciIdentifier = "NCI-" + currentYear + "-" + nextNumber;                
+            } else {
+                nciIdentifier = "NCI-" + currentYear + "-00001"; 
+            }
+
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while creating NciIdentifier " , hbe);
+            throw new PAException(" Hibernate exception while creating NciIdentifier " , hbe);
+        } finally {
+            session.flush();
+        }
+        return nciIdentifier;
+    }    
 
 }
