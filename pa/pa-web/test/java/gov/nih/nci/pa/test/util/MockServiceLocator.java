@@ -9,6 +9,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
@@ -98,6 +99,13 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getLookUpTableService()
      */
     public LookUpTableServiceRemote getLookUpTableService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getProtocolQueryService()
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
         // TODO Auto-generated method stub
         return null;
     }
