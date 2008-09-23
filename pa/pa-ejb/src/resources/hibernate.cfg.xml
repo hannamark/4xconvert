@@ -38,6 +38,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyResourcing" />
         <mapping class="gov.nih.nci.pa.domain.FundingMechanism" />
         <mapping class="gov.nih.nci.pa.domain.NIHinstitute" />
-    	<mapping class="gov.nih.nci.pa.service.SessionEntry" />
+    	<mapping class="gov.nih.nci.pa.service.util.SessionEntry" />
     </session-factory>
 </hibernate-configuration>
