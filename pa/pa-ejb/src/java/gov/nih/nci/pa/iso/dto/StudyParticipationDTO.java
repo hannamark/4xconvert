@@ -3,7 +3,9 @@
  */
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 /**
  * StudyParticipationDTO for transferring StudyParticipation object .
@@ -13,20 +15,45 @@ import gov.nih.nci.coppa.iso.Ii;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class StudyParticipationDTO extends BaseDTO {
-    Ii studyProtocolIdentifier;
-    Ii healthcareFacilityIdentifier;
+public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
+    Ii healthcareFacilityIi;
+    Cd functionalCode;
+    St localStudyProtocolIdentifier;
     
     /**
-     * @return the studyProtocolIdentifier
+     * @return the healthcareFacilityIi
      */
-    public Ii getStudyProtocolIdentifier() {
-        return studyProtocolIdentifier;
+    public Ii getHealthcareFacilityIi() {
+        return healthcareFacilityIi;
     }
     /**
-     * @param studyProtocolIdentifier the studyProtocolIdentifier to set
+     * @param healthcareFacilityIi the healthcareFacilityIi to set
      */
-    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
-        this.studyProtocolIdentifier = studyProtocolIdentifier;
+    public void setHealthcareFacilityIi(Ii healthcareFacilityIi) {
+        this.healthcareFacilityIi = healthcareFacilityIi;
+    }
+    /**
+     * @return the functionalCode
+     */
+    public Cd getFunctionalCode() {
+        return functionalCode;
+    }
+    /**
+     * @param functionalCode the functionalCode to set
+     */
+    public void setFunctionalCode(Cd functionalCode) {
+        this.functionalCode = functionalCode;
+    }
+    /**
+     * @return the localStudyProtocolIdentifier
+     */
+    public St getLocalStudyProtocolIdentifier() {
+        return localStudyProtocolIdentifier;
+    }
+    /**
+     * @param localStudyProtocolIdentifier the localStudyProtocolIdentifier to set
+     */
+    public void setLocalStudyProtocolIdentifier(St localStudyProtocolIdentifier) {
+        this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
 }

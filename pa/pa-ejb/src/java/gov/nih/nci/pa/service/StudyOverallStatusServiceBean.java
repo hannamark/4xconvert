@@ -67,7 +67,7 @@ public class StudyOverallStatusServiceBean implements
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
             StudyOverallStatusDTO oldStatus = getCurrentStudyOverallStatusByStudyProtocol(
-                    dto.getStudyProtocolIdentifier());
+                    dto.getStudyProtocolIi());
             StudyStatusCode oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
             StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
             Timestamp oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());

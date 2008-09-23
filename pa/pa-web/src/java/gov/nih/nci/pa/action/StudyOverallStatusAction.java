@@ -130,7 +130,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         dto.setIi(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
-        dto.setStudyProtocolIdentifier(spIdIi);
+        dto.setStudyProtocolIi(spIdIi);
         
         try {
             sosService.createStudyOverallStatus(dto);            

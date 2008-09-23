@@ -8,18 +8,16 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
- * StudyOverallStatusDTO for transferring StudyOverallStatus object .
+ * FunctionalRoleDTO for transferring FunctionalRole object .
  * @author Hugh Reinhart
- * @since 07/22/2007
+ * @since 08/23/2007
  
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class StudyOverallStatusDTO extends BaseDTO {
-    private static final long serialVersionUID = 1234562452L;
-    
+public class FunctionalRoleDTO extends BaseDTO {
     Cd statusCode;
-    Ts statusDate;
+    Ts statusDateRangeLow;
     Ii studyProtocolIi;
     
     /**
@@ -35,28 +33,27 @@ public class StudyOverallStatusDTO extends BaseDTO {
         this.statusCode = statusCode;
     }
     /**
-     * @return the statusDate
+     * @return the statusDateRangeLow
      */
-    public Ts getStatusDate() {
-        return statusDate;
+    public Ts getStatusDateRangeLow() {
+        return statusDateRangeLow;
     }
     /**
-     * @param statusDate the statusDate to set
+     * @param statusDateRangeLow the statusDateRangeLow to set
      */
-    public void setStatusDate(Ts statusDate) {
-        this.statusDate = statusDate;
+    public void setStatusDateRangeLow(Ts statusDateRangeLow) {
+        this.statusDateRangeLow = statusDateRangeLow;
     }
     /**
-     * @return the studyProtocolidentifier
+     * @return the studyProtocolIi
      */
     public Ii getStudyProtocolIi() {
         return studyProtocolIi;
     }
     /**
-     * @param studyProtocolidentifier the studyProtocolidentifier to set
+     * @param studyProtocolIi the studyProtocolIi to set
      */
-    public void setStudyProtocolIi(Ii studyProtocolidentifier) {
-        this.studyProtocolIi = studyProtocolidentifier;
+    public void setStudyProtocolIi(Ii studyProtocolIi) {
+        this.studyProtocolIi = studyProtocolIi;
     }
-
 }

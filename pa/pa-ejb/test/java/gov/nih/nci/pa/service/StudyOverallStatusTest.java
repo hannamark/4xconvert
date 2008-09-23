@@ -73,7 +73,7 @@ public class StudyOverallStatusTest {
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
                     , TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals (IiConverter.convertToLong(pid)
-                    , IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
+                    , IiConverter.convertToLong(result.getStudyProtocolIi()));
         
     }
     
