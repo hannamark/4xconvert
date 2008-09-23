@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 public class TestPropertiesPaEar {
     public static final String JAVA_NAMING_PROVIDER_URL 
          = "test.java.naming.provider";
