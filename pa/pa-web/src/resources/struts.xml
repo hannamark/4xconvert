@@ -18,26 +18,10 @@
 		</action>	   
 	</package>
 	<package name="protected" namespace="/protected" extends="default">
-		<action name="studyProtocolQuery" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="query">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-		</action>
-		<action name="studyProtocolQueryHome" class="gov.nih.nci.pa.action.StudyProtocolQueryAction">
-			<interceptor-ref name="nci-commonsParams" />			
-			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-		</action>		
 		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/WEB-INF/jsp/protocolDiseaseCondition.jsp</result>
 		</action>	
-        <action name="studyProtocolView" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
-            <interceptor-ref name="nci-commonsParams" />                         
-            <result>/WEB-INF/jsp/studyProtocolView.jsp</result>
-        </action> 
-        <action name="studyProtocolEdit" class="gov.nih.nci.pa.action.StudyProtocolViewAction" method="getStudyProtocol">
-            <interceptor-ref name="nci-commonsParams" />                         
-            <result>/WEB-INF/jsp/studyProtocolEdit.jsp</result>
-        </action> 
         
         <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
@@ -62,9 +46,16 @@
 			<result>/WEB-INF/jsp/nodecorate/organizations.jsp</result>
 		</action>				
 		<!-- Wildcards -->
+		<action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
+			<interceptor-ref name="nci-commonsParams" />
+			<result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>			
+			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+			<result name="criteria">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+		</action>		
 		<action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
+			<result name="query">/WEB-INF/jsp/trialFunding.jsp</result>
 			<result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
 		</action>				
 		<action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">

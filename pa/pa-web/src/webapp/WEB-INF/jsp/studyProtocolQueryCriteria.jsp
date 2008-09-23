@@ -22,8 +22,8 @@ function resetValues () {
 }
 
 function handleAction(){
-     document.studyProtocolQuery.action="studyProtocolQuery.action";
-     document.studyProtocolQuery.submit();     
+     document.forms[0].action="studyProtocolquery.action";
+     document.forms[0].submit();     
 }
 </SCRIPT>
 <body>
@@ -31,7 +31,7 @@ function handleAction(){
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">
-    <s:form action="studyProtocolQuery"><s:actionerror/>
+    <s:form><s:actionerror/>
         <table class="form">    
             <tr>
                 <td scope="row" class="label">

@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
-    name="${param.listName}" requestURI="studyProtocolQuery.action" export="false">    
+    name="${param.listName}" requestURI="studyProtocolquery.action" export="false">    
     <display:column class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" 
-            href="studyProtocolView.action"
+            href="studyProtocolview.action"
             paramId="studyProtocolId"  paramProperty="studyProtocolId"
             sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.officialTitle" property="officialTitle"    sortable="true" headerClass="sortable"/>

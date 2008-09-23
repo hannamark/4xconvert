@@ -1,2 +1,2 @@
 
-<% response.sendRedirect("/pa/protected/studyProtocolQueryHome.action"); %>
+<% response.sendRedirect("/pa/protected/studyProtocolcriteria.action"); %>
