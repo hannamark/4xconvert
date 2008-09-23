@@ -13,7 +13,6 @@
 		<action name="logout" class="gov.nih.nci.pa.action.Logout" method="logout">
 		 	<result>/index.jsp</result>
 		</action>
-    
 		<action name="login">
 			<result>/WEB-INF/jsp/login.jsp</result>
 		</action>	   
@@ -39,6 +38,7 @@
             <interceptor-ref name="nci-commonsParams" />                         
             <result>/WEB-INF/jsp/studyProtocolEdit.jsp</result>
         </action> 
+        
         <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
         </action> 
@@ -48,6 +48,10 @@
         <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
             <result>/WEB-INF/jsp/studyOverallStatusHistory.jsp</result>
         </action>	
+        <action name="participatingOrganizations" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction">
+            <result>/WEB-INF/jsp/participatingOrganizations.jsp</result>
+         </action>       
+         
         <action name="trialFunding" class="gov.nih.nci.pa.action.TrialFundingAction" method="query">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/trialFunding.jsp</result>

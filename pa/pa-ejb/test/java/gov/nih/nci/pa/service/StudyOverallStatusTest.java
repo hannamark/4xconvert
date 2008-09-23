@@ -42,7 +42,7 @@ public class StudyOverallStatusTest {
         StudyOverallStatusDTO dto = 
             remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid);
         try {
-            remoteEjb.updateStudyOverallStatus(dto);
+            remoteEjb.createStudyOverallStatus(dto);
             fail("StudyOverallStatus objects cannot be modified.");
         } catch (PAException e) {
             // expected behavior
@@ -56,7 +56,7 @@ public class StudyOverallStatusTest {
         try {
             dto.setIi(IiConverter.convertToIi((Long) null)); 
             dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
-            remoteEjb.updateStudyOverallStatus(dto);
+            remoteEjb.createStudyOverallStatus(dto);
             fail("StudyOverallStatus transitions must follow business rules.");
         } catch (PAException e) {
             // expected behavior
@@ -64,7 +64,7 @@ public class StudyOverallStatusTest {
         dto.setIi(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
-        remoteEjb.updateStudyOverallStatus(dto);
+        remoteEjb.createStudyOverallStatus(dto);
         
         StudyOverallStatusDTO result = 
             remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid);
@@ -73,7 +73,7 @@ public class StudyOverallStatusTest {
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
                     , TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals (IiConverter.convertToLong(pid)
-                    , IiConverter.convertToLong(result.getStudyProtocolidentifier()));
+                    , IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
         
     }
     

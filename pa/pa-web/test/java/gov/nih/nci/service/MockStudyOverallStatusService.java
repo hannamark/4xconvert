@@ -80,8 +80,26 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusService#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)
      */
-    public StudyOverallStatusDTO updateStudyOverallStatus(
+    public StudyOverallStatusDTO createStudyOverallStatus(
             StudyOverallStatusDTO studyOverallStatusDTO) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#getStudyOverallStatus(gov.nih.nci.coppa.iso.Ii)
+     */
+    public StudyOverallStatusDTO getStudyOverallStatus(Ii ii)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)
+     */
+    public StudyOverallStatusDTO updateStudyOverallStatus(
+            StudyOverallStatusDTO dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

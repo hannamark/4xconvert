@@ -130,10 +130,10 @@ public class StudyOverallStatusAction extends ActionSupport implements
         dto.setIi(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
-        dto.setStudyProtocolidentifier(spIdIi);
+        dto.setStudyProtocolIdentifier(spIdIi);
         
         try {
-            sosService.updateStudyOverallStatus(dto);            
+            sosService.createStudyOverallStatus(dto);            
             // set the current date and status to the session
             StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
             .getRequest().getSession()

@@ -15,14 +15,12 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-
-
 public class StudyOverallStatusDTO extends BaseDTO {
     private static final long serialVersionUID = 1234562452L;
     
     Cd statusCode;
     Ts statusDate;
-    Ii studyProtocolidentifier;
+    Ii studyProtocolIdentifier;
     
     /**
      * @return the statusCode
@@ -51,14 +49,14 @@ public class StudyOverallStatusDTO extends BaseDTO {
     /**
      * @return the studyProtocolidentifier
      */
-    public Ii getStudyProtocolidentifier() {
-        return studyProtocolidentifier;
+    public Ii getStudyProtocolIdentifier() {
+        return studyProtocolIdentifier;
     }
     /**
      * @param studyProtocolidentifier the studyProtocolidentifier to set
      */
-    public void setStudyProtocolidentifier(Ii studyProtocolidentifier) {
-        this.studyProtocolidentifier = studyProtocolidentifier;
+    public void setStudyProtocolIdentifier(Ii studyProtocolidentifier) {
+        this.studyProtocolIdentifier = studyProtocolidentifier;
     }
 
 }

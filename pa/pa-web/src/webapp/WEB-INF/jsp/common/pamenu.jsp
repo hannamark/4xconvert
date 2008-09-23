@@ -28,6 +28,7 @@
 		        		<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
 		        		<li><a href="studyOverallStatus.action" >Trial Status</a></li>
 		        		<li><a href="trialFunding.action" >Trial Funding</a></li>
+                        <li><a href="participatingOrganizations.action" >Participating Organizations</a></li>
 		     		</ul>
         		</li>
         	</ul>

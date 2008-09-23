@@ -40,66 +40,13 @@ public class StudyOverallStatusServiceBean implements
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusServiceBean.class);
 
     /**
-     * @param studyProtocolId Primary key assigned to a StudyProtocl.
-     * @return List.
-     * @throws PAException Exception.
+     * @param ii index
+     * @return StudyOverallStatusDTO
+     * @throws PAException PAException
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(
-            Ii studyProtocolId) throws PAException {
-
-        if (PAUtil.isIiNull(studyProtocolId)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
-        }
-        LOG.info("Entering getStudyOverallStatusByStudyProtocol");
-        
-        Session session = null;
-        List<StudyOverallStatus> queryList = new ArrayList<StudyOverallStatus>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-            // step 1: form the hql
-            String hql = "select sos "
-                       + "from StudyOverallStatus sos "
-                       + "join sos.studyProtocol sp "
-                       + "where sp.id = :studyProtocolId "
-                       + "order by sos.id ";
-            LOG.info(" query StudyOverallStatus = " + hql);
-            
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolId));
-            
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudyProtocolByCriteria ", hbe);
-            throw new PAException(" Hibernate exception in getStudyProtocolByCriteria ", hbe);
-        }
-        ArrayList<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
-        for (StudyOverallStatus bo : queryList) {
-            resultList.add(StudyOverallStatusConverter.convertFromDomainToDTO(bo));
-        }
-        
-        LOG.info("Leaving getStudyOverallStatusByStudyProtocol, returning " + resultList.size() + " object(s).");
-        return resultList;
-    }
-    
-    /**
-     * @param studyProtocolId Primary key assigned to a StudyProtocl.
-     * @return StudyOverallStatusDTO Current status.
-     * @throws PAException Exception.
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyOverallStatusDTO getCurrentStudyOverallStatusByStudyProtocol(
-            Ii studyProtocolId) throws PAException {
-        List<StudyOverallStatusDTO> sosList = this.getStudyOverallStatusByStudyProtocol(studyProtocolId);
-        if (sosList.isEmpty()) {
-            return null;
-        }
-        return sosList.get(sosList.size() - 1);
+    public StudyOverallStatusDTO getStudyOverallStatus(Ii ii)
+            throws PAException {
+        throw new PAException("Method not yet implemented.");
     }
 
     /**
@@ -107,7 +54,7 @@ public class StudyOverallStatusServiceBean implements
      * @return StudyOverallStatusDTO
      * @throws PAException PAException
      */
-    public StudyOverallStatusDTO updateStudyOverallStatus(
+    public StudyOverallStatusDTO createStudyOverallStatus(
             StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
             LOG.error(" Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ");
@@ -120,7 +67,7 @@ public class StudyOverallStatusServiceBean implements
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
             StudyOverallStatusDTO oldStatus = getCurrentStudyOverallStatusByStudyProtocol(
-                    dto.getStudyProtocolidentifier());
+                    dto.getStudyProtocolIdentifier());
             StudyStatusCode oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
             StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
             Timestamp oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
@@ -147,5 +94,76 @@ public class StudyOverallStatusServiceBean implements
         return null;
     }
 
+    /**
+     * @param dto studyOverallStatusDTO
+     * @return StudyOverallStatusDTO
+     * @throws PAException PAException
+     */
+    public StudyOverallStatusDTO updateStudyOverallStatus(
+            StudyOverallStatusDTO dto) throws PAException {
+        throw new PAException("Method not yet implemented.");
+    }
 
+    /**
+     * @param studyProtocolIi Primary key assigned to a StudyProtocl.
+     * @return List.
+     * @throws PAException Exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+
+        if (PAUtil.isIiNull(studyProtocolIi)) {
+            LOG.error(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
+        }
+        LOG.info("Entering getStudyOverallStatusByStudyProtocol");
+        
+        Session session = null;
+        List<StudyOverallStatus> queryList = new ArrayList<StudyOverallStatus>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+            // step 1: form the hql
+            String hql = "select sos "
+                       + "from StudyOverallStatus sos "
+                       + "join sos.studyProtocol sp "
+                       + "where sp.id = :studyProtocolId "
+                       + "order by sos.id ";
+            LOG.info(" query StudyOverallStatus = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+            
+            // step 3: query the result
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception in getStudyProtocolByCriteria ", hbe);
+            throw new PAException(" Hibernate exception in getStudyProtocolByCriteria ", hbe);
+        }
+        ArrayList<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
+        for (StudyOverallStatus bo : queryList) {
+            resultList.add(StudyOverallStatusConverter.convertFromDomainToDTO(bo));
+        }
+        
+        LOG.info("Leaving getStudyOverallStatusByStudyProtocol, returning " + resultList.size() + " object(s).");
+        return resultList;
+    }
+    
+    /**
+     * @param studyProtocolIi Primary key assigned to a StudyProtocl.
+     * @return StudyOverallStatusDTO Current status.
+     * @throws PAException Exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyOverallStatusDTO getCurrentStudyOverallStatusByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        List<StudyOverallStatusDTO> sosList = this.getStudyOverallStatusByStudyProtocol(studyProtocolIi);
+        if (sosList.isEmpty()) {
+            return null;
+        }
+        return sosList.get(sosList.size() - 1);
+    }
 }

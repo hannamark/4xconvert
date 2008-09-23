@@ -42,7 +42,7 @@ public class StudyOverallStatusConverter {
         dto.setIi(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
-        dto.setStudyProtocolidentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 
@@ -60,14 +60,14 @@ public class StudyOverallStatusConverter {
             LOG.error(errmsg);
             throw new PAException(errmsg);
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolidentifier())) {
+        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             String errmsg = " StudyOverallStatus.studyProtocol cannot be null. ";
             LOG.error(errmsg);
             throw new PAException(errmsg);
         }
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolidentifier()));
+        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
         StudyOverallStatus bo = new StudyOverallStatus();
         bo.setDateLastUpdated(new Date());
