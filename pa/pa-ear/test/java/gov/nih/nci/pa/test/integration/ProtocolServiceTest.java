@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.SessionManagerRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 
 import java.util.Hashtable;
@@ -15,7 +15,7 @@ import org.junit.Before;
 
 public class ProtocolServiceTest {
     
-    private StudyProtocolService bean;
+    private StudyProtocolServiceRemote bean;
     private SessionManagerRemote sessionManager;
     private InitialContext ctx;
     
@@ -47,7 +47,7 @@ public class ProtocolServiceTest {
     //@Test
     public void serviceAvailableTest() throws Exception
     {
-        StudyProtocolService bean = RemoteServiceHelper.getProtocolService();
+        StudyProtocolServiceRemote bean = RemoteServiceHelper.getProtocolService();
         //ProtocolSearchCriteria sc = new ProtocolSearchCriteria();
         //sc.setNciIdentifier("NCI-2008-0006");
         //List<ProtocolDTO> p = bean.getProtocol(sc);
