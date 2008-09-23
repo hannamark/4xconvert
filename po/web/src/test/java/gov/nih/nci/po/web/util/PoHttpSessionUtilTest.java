@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.DuplicatesOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.ArrayList;
@@ -42,6 +43,17 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
         assertFalse(result1.equals(result2));
         assertSame(p1, PoHttpSessionUtil.getSession().getAttribute(result1));
         assertSame(p2, PoHttpSessionUtil.getSession().getAttribute(result2));
+    }
+    
+    @Test
+    public void testAddAttribute_DOSC() {
+        DuplicatesOrganizationSearchCriteria x = new DuplicatesOrganizationSearchCriteria();
+        DuplicatesOrganizationSearchCriteria y = new DuplicatesOrganizationSearchCriteria();
+        String resultX = PoHttpSessionUtil.addAttribute(x);
+        String resultY = PoHttpSessionUtil.addAttribute(y);
+        assertFalse(resultX.equals(resultY));
+        assertSame(x, PoHttpSessionUtil.getSession().getAttribute(resultX));
+        assertSame(y, PoHttpSessionUtil.getSession().getAttribute(resultY));
     }
 
     @Test

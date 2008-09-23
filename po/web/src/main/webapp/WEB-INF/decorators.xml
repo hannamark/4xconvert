@@ -11,7 +11,13 @@
         <pattern>/*/ajax/*</pattern>
         <pattern>*/contactable/*</pattern>
     </excludes>
-
+    
+    <decorator name="popup" page="popup.jsp">
+        <pattern>/*/popup/*</pattern>
+        <pattern>/popup/*</pattern>
+        <pattern>/*/duplicates/*</pattern>
+    </decorator>
+    
     <decorator name="main" page="main.jsp">
         <pattern>/*</pattern>
     </decorator>

@@ -178,6 +178,14 @@
         <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/organization/orgCrInfo.jsp</result>
-        </action>        
+        </action>
+        <action name="duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
+        </action>      
+        <action name="ajax/duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/duplicates/organization/results.jsp</result>
+        </action>            
     </package>
 </struts>

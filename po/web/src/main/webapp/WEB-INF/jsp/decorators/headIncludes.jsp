@@ -15,4 +15,6 @@
 <script type="text/javascript" language="javascript">
     var contextPath = "<%=request.getContextPath()%>";
 </script>
+<script type="text/javascript" src="<c:url value="/scripts/submodal/common.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/submodal/submodal.js"/>"></script>        
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/po.js'/>"></script>

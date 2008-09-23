@@ -52,11 +52,47 @@ function getViewportHeight() {
 	if (window.innerHeight!=window.undefined) return window.innerHeight;
 	if (document.compatMode=='CSS1Compat') return document.documentElement.clientHeight;
 	if (document.body) return document.body.clientHeight; 
+
 	return window.undefined; 
 }
 function getViewportWidth() {
+	var offset = 17;
+	var width = null;
 	if (window.innerWidth!=window.undefined) return window.innerWidth; 
 	if (document.compatMode=='CSS1Compat') return document.documentElement.clientWidth; 
 	if (document.body) return document.body.clientWidth; 
-	return window.undefined; 
+}
+
+/**
+ * Gets the real scroll top
+ */
+function getScrollTop() {
+	if (self.pageYOffset) // all except Explorer
+	{
+		return self.pageYOffset;
+	}
+	else if (document.documentElement && document.documentElement.scrollTop)
+		// Explorer 6 Strict
+	{
+		return document.documentElement.scrollTop;
+	}
+	else if (document.body) // all other Explorers
+	{
+		return document.body.scrollTop;
+	}
+}
+function getScrollLeft() {
+	if (self.pageXOffset) // all except Explorer
+	{
+		return self.pageXOffset;
+	}
+	else if (document.documentElement && document.documentElement.scrollLeft)
+		// Explorer 6 Strict
+	{
+		return document.documentElement.scrollLeft;
+	}
+	else if (document.body) // all other Explorers
+	{
+		return document.body.scrollLeft;
+	}
 }

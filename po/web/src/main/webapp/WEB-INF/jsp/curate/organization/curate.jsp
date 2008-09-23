@@ -30,7 +30,7 @@
 
 <div id="page">
 	<div class="boxouter">
-	<h2>Person Information</h2>
+	<h2>Organization Information</h2>
 	<s:form action="organization/curate/curate.action" id="curateOrgForm">
 		<s:hidden key="rootKey"/>
 	    <s:hidden key="cr.id"/>
@@ -61,8 +61,23 @@
                 <%@ include file="../../contactable/contacts.jsp" %>    		
 		    </div>
 		</div>
+   	    <div class="boxouter">
+        <h2>Entity Information</h2>
+        <div class="box_white">
+			<div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
+			<div class="wwlbl" id="wwlbl_curateOrgForm_organization_statusCode">
+			<label class="label" for="curateOrgForm_organization_statusCode">        
+			<s:text name="organization.statusCode"/>:
+			</label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_statusCode">
+			${organization.statusCode} 
+			</div></div>
+            
+            <s:textfield key="organization.duplicateOf.id" size="10"/>
+        </div>
 		<div class="clearfloat"></div>
+    </div>    
 	</s:form>
+	
     </div>
 </div>
 
@@ -82,8 +97,9 @@
 
 
 <div class="btnwrapper">
+    <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl"/>
     <po:buttonRow>
-        <po:button href="${urlNotYetImplemented}" style="search" text="Search for Duplicates"/>
+        <po:button href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, null);" style="search" text="Search for Duplicates"/>
         <po:button id="mark_as_accepted_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="confirm" text="Mark as Accepted"/>
         <po:button id="mark_as_rejected_button" href="${urlNotYetImplemented}" style="reject" text="Mark as Rejected"/>
     </po:buttonRow>
