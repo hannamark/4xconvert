@@ -100,4 +100,19 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
+     */
+    public InterventionalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
+     */
+    
+    public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
+    throws PAException {
+        return null;
+    }    
 }
