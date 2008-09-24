@@ -9,37 +9,53 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class StudyResourcingWebDTO {
+public class TrialFundingWebDTO {
     
     private String fundingTypeCode;
     private String fundingMechanismCode;
-    private String institutionCode;
-    private String monitorCode;
+    private String nihInstitutionCode;
+    private String nciDivisionProgramCode;
     private String suffixgrantYear;
     private String suffixOther;
     private String id;
     private String serialNumber;
+    private String inactiveCommentText;
     
     /**
      * @param iso StudyResourcingDTO object
      */
-    public StudyResourcingWebDTO(StudyResourcingDTO iso) {
+    public TrialFundingWebDTO(StudyResourcingDTO iso) {
         super();
         this.fundingMechanismCode = iso.getFundingMechanismCode().getCode();
-        this.institutionCode = iso.getNihInstitutionCode().getCode();
-        this.monitorCode = iso.getNciDivisionProgramCode().getCode();
+        this.nihInstitutionCode = iso.getNihInstitutionCode().getCode();
+        this.nciDivisionProgramCode = iso.getNciDivisionProgramCode().getCode();
         this.fundingTypeCode = iso.getFundingTypeCode().getCode();
         this.suffixgrantYear = iso.getSuffixGrantYear().getValue();
         this.suffixOther = iso.getSuffixOther().getValue();
         this.id = iso.getIi().getExtension();
         this.serialNumber = iso.getSerialNumber().getValue();
+        //this.inactiveCommentText = iso.getInactiveCommentText().getValue();
     }
     
     /** .
      *  Default Constructor
      */
-    public StudyResourcingWebDTO() {
+    public TrialFundingWebDTO() {
         super();
+    }
+
+    /**
+     * @return fundingTypeCode
+     */
+    public String getFundingTypeCode() {
+        return fundingTypeCode;
+    }
+
+    /**
+     * @param fundingTypeCode fundingTypeCode
+     */
+    public void setFundingTypeCode(String fundingTypeCode) {
+        this.fundingTypeCode = fundingTypeCode;
     }
 
     /**
@@ -48,66 +64,63 @@ public class StudyResourcingWebDTO {
     public String getFundingMechanismCode() {
         return fundingMechanismCode;
     }
+
     /**
      * @param fundingMechanismCode fundingMechanismCode
      */
     public void setFundingMechanismCode(String fundingMechanismCode) {
         this.fundingMechanismCode = fundingMechanismCode;
     }
+
     /**
-     * @return fundingTypeCode
+     * @return nihInstitutionCode
      */
-    public String getFundingTypeCode() {
-        return fundingTypeCode;
+    public String getNihInstitutionCode() {
+        return nihInstitutionCode;
     }
+
     /**
-     * @return institutionCode
+     * @param nihInstitutionCode nihInstitutionCode
      */
-    public String getInstitutionCode() {
-        return institutionCode;
+    public void setNihInstitutionCode(String nihInstitutionCode) {
+        this.nihInstitutionCode = nihInstitutionCode;
     }
+
     /**
-     * @return monitorCode
+     * @return nciDivisionProgramCode
      */
-    public String getMonitorCode() {
-        return monitorCode;
+    public String getNciDivisionProgramCode() {
+        return nciDivisionProgramCode;
     }
+
+    /**
+     * @param nciDivisionProgramCode nciDivisionProgramCode
+     */
+    public void setNciDivisionProgramCode(String nciDivisionProgramCode) {
+        this.nciDivisionProgramCode = nciDivisionProgramCode;
+    }
+
     /**
      * @return suffixgrantYear
      */
     public String getSuffixgrantYear() {
         return suffixgrantYear;
     }
-    /**
-     * @return suffixOther
-     */
-    public String getSuffixOther() {
-        return suffixOther;
-    }
-    /**
-     * @param fundingTypeCode fundingTypeCode
-     */
-    public void setFundingTypeCode(String fundingTypeCode) {
-        this.fundingTypeCode = fundingTypeCode;
-    }
-    /**
-     * @param institutionCode institutionCode
-     */
-    public void setInstitutionCode(String institutionCode) {
-        this.institutionCode = institutionCode;
-    }
-    /**
-     * @param monitorCode monitorCode
-     */
-    public void setMonitorCode(String monitorCode) {
-        this.monitorCode = monitorCode;
-    }
+
     /**
      * @param suffixgrantYear suffixgrantYear
      */
     public void setSuffixgrantYear(String suffixgrantYear) {
         this.suffixgrantYear = suffixgrantYear;
     }
+
+    /**
+     * @return suffixOther
+     */
+    public String getSuffixOther() {
+        return suffixOther;
+    }
+
     /**
      * @param suffixOther suffixOther
      */
@@ -138,8 +151,24 @@ public class StudyResourcingWebDTO {
 
     /**
      * @param serialNumber serialNumber
-     */
+     */ 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
+
+    /**
+     * @return inactiveCommentText
+     */
+    public String getInactiveCommentText() {
+        return inactiveCommentText;
+    }
+
+    /**
+     * @param inactiveCommentText inactiveCommentText
+     */
+    public void setInactiveCommentText(String inactiveCommentText) {
+        this.inactiveCommentText = inactiveCommentText;
+    }
+
+    
 }
