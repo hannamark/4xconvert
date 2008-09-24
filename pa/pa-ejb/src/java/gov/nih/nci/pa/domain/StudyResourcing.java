@@ -39,6 +39,8 @@ public class StudyResourcing extends AbstractEntity {
     private String suffixOther;
     private String serialNumber;
     private StudyProtocol studyProtocol;
+    private Boolean activeIndicator;
+    private String inactiveCommentText;
 
     /**
      * 
@@ -221,6 +223,39 @@ public class StudyResourcing extends AbstractEntity {
      */
     public void setStudyProtocol(StudyProtocol studyProtocol) {
         this.studyProtocol = studyProtocol;
+    }
+    /**
+     * 
+     * @return activeIndicator
+     */
+    @Column(name = "ACTIVE_INDICATOR")
+    public Boolean getActiveIndicator() {
+        return activeIndicator;
+    }
+    
+    /**
+     * 
+     * @param activeIndicator activeIndicator
+     */
+    public void setActiveIndicator(Boolean activeIndicator) {
+        this.activeIndicator = activeIndicator;
+    }
+    
+    /**
+     * 
+     * @return inactiveCommentText
+     */
+    @Column(name = "INACTIVE_COMMENT_TEXT")
+    public String getInactiveCommentText() {
+        return inactiveCommentText;
+    }
+    
+    /**
+     * 
+     * @param inactiveCommentText inactiveCommentText
+     */
+    public void setInactiveCommentText(String inactiveCommentText) {
+        this.inactiveCommentText = inactiveCommentText;
     }
 
 }

@@ -3,7 +3,6 @@ package gov.nih.nci.pa.service;
 import java.util.List;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 
 import javax.ejb.Remote;
@@ -42,13 +41,6 @@ public interface StudyResourcingServiceRemote {
     StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException;
     
     /**
-     * 
-     * @param ii primary id of StudyResourcing
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
-     */
-    StudyProtocolDTO getStudyResourcing(Ii ii) throws PAException;    
-    /**
      * @param studyProtocolIi Ii 
      * @return StudyResourcingDTO
      * @throws PAException PAException
@@ -60,4 +52,10 @@ public interface StudyResourcingServiceRemote {
      * @throws PAException PAException
      */
     StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi) throws PAException; 
+    /**
+     * @param studyResourcingDTO StudyResourcingDTO 
+     * @return Boolean
+     * @throws PAException PAException
+     */
+    Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException;
 }

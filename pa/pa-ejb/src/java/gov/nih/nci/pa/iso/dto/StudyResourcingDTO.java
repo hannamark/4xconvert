@@ -27,6 +27,7 @@ public class StudyResourcingDTO extends BaseDTO {
     private St suffixGrantYear;
     private St suffixOther;
     private St serialNumber;
+    private St inactiveCommentText;
     /**
      * 
      * @return typeCode
@@ -190,9 +191,19 @@ public class StudyResourcingDTO extends BaseDTO {
     public void setSuffixGrantYear(St suffixGrantYear) {
         this.suffixGrantYear = suffixGrantYear;
     }    
+    /**
+     * 
+     * @return inactiveCommentText
+     */
+    public St getInactiveCommentText() {
+        return inactiveCommentText;
+    }
     
-    
-    
-    
-    
+    /**
+     * 
+     * @param inactiveCommentText inactiveCommentText
+     */
+    public void setInactiveCommentText(St inactiveCommentText) {
+        this.inactiveCommentText = inactiveCommentText;
+    }    
 }
