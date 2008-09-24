@@ -85,7 +85,6 @@ package gov.nih.nci.coppa.iso;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents the iso TEL.URL data type.
@@ -110,35 +109,19 @@ public class TelUrl extends Tel {
     public static final String SCHEME_HTTP = "http";
     /** scheme. */
     public static final String SCHEME_HTTPS = "https";
-    
+
     /** set of allowed URI schemes. */
     public static final List<String> SCHEMES = Collections.unmodifiableList(Arrays.asList(
-        SCHEME_FILE, 
-        SCHEME_NFS, 
-        SCHEME_FTP, 
-        SCHEME_CID, 
-        SCHEME_HTTP, 
+        SCHEME_FILE,
+        SCHEME_NFS,
+        SCHEME_FTP,
+        SCHEME_CID,
+        SCHEME_HTTP,
         SCHEME_HTTPS));
 
     /** {@inheritDoc} */
     @Override
     protected List<String> getAllowedSchemes() {
         return SCHEMES;
-    }
-
-    /**
-     * @return the use
-     */
-    @Override
-    public Set<TelecommunicationAddressUse> getUse() {
-        return Collections.emptySet();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setUse(Set<TelecommunicationAddressUse> use) {
-        throw new IllegalArgumentException("TEL.URL does not allow use");
     }
 }

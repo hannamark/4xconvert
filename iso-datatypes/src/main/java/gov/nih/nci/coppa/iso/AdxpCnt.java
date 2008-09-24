@@ -92,36 +92,11 @@ import java.util.Locale;
 public final class AdxpCnt extends Adxp {
     private static final long serialVersionUID = 1L;
 
-    /** HL7 OID for Country. {@value} */
-    public static final String OID = "2.16.840.1.113883.11.171";
-
     private static final int CODE_LENGTH = 3;
 
     /** type is always {@link AddressPartType#CNT}. */
     public AdxpCnt() {
         super(AddressPartType.CNT);
-    }
-
-
-    /**
-     *  always returns {@link #OID} = {@value #OID}.
-     *  @return {@link #OID}
-     */
-    @Override
-    public String getCodeSystem() {
-        return OID;
-    }
-
-    /**
-     * @param codeSystem no need to set it to {@code "2.16.840.1.113883.11.171"}.
-     * @deprecated read-only property
-     */
-    @Deprecated
-    @Override
-    public void setCodeSystem(String codeSystem) {
-        if (!codeSystem.equals(OID)) {
-            throw new IllegalArgumentException("codeSystem is fix to " + OID);
-        }
     }
 
     /**

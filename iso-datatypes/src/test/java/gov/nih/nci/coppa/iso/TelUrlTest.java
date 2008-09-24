@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,18 +31,6 @@ public class TelUrlTest {
     @Test(expected = IllegalArgumentException.class)
     public void testValueAny() {
         t.setValue(URI.create(phrase));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetUse() {
-        Set<TelecommunicationAddressUse> a = new HashSet<TelecommunicationAddressUse>();
-        a.add(TelecommunicationAddressUse.BAD);
-        t.setUse(a);
-    }
-
-    @Test
-    public void testGetUse() {
-        assertEquals(t.getUse(), Collections.EMPTY_SET);
     }
 
     public static void testAllowed(Tel t, String... allowed) {

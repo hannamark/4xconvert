@@ -92,22 +92,7 @@ import java.io.Serializable;
 public abstract class Any implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String flavorId;
     private NullFlavor nullFlavor;
-
-    /**
-     * @return the flavorId
-     */
-    public String getFlavorId() {
-        return this.flavorId;
-    }
-
-    /**
-     * @param flavorId the flavorId to set
-     */
-    public void setFlavorId(String flavorId) {
-        this.flavorId = flavorId;
-    }
 
     /**
      * @return the nullFlavor
@@ -123,5 +108,4 @@ public abstract class Any implements Serializable {
     public void setNullFlavor(NullFlavor nullFlavor) {
         this.nullFlavor = nullFlavor;
     }
-
 }

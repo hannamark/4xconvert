@@ -84,7 +84,6 @@ package gov.nih.nci.coppa.iso;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents the iso TEL data type.
@@ -95,8 +94,6 @@ public class Tel extends Any {
     private static final long serialVersionUID = 1L;
 
     private URI value;
-    private Set<TelecommunicationAddressUse> use;
-    private QSet<Ts> useablePeriod;
 
     /**
      * the schemes that this Tel will allow (null to allow any).
@@ -105,19 +102,7 @@ public class Tel extends Any {
     protected List<String> getAllowedSchemes() {
         return null;
     }
-    
-    /**
-     * @return the useablePeriod
-     */
-    public QSet<Ts> getUseablePeriod() {
-        return useablePeriod;
-    }
-    /**
-     * @param useablePeriod the useablePeriod to set
-     */
-    public void setUseablePeriod(QSet<Ts> useablePeriod) {
-        this.useablePeriod = useablePeriod;
-    }
+
     /**
      * @return the value
      */
@@ -129,15 +114,15 @@ public class Tel extends Any {
      */
     public void setValue(URI value) {
         if (!isAllowed(value, getAllowedSchemes())) {
-            throw new IllegalArgumentException(value.getScheme()); 
-        }        
+            throw new IllegalArgumentException(value.getScheme());
+        }
         this.value = value;
     }
-    
+
     private static boolean isAllowed(URI uri, List<String> allowedSchemes) {
         return uri != null && isAllowed(uri.getScheme(), allowedSchemes);
     }
-    
+
     /**
      * @param scheme the scheme part of a URI.
      * @param allowedSchemes the schemes that we consider to be valid.
@@ -146,18 +131,4 @@ public class Tel extends Any {
     protected static boolean isAllowed(String scheme, List<String> allowedSchemes) {
         return allowedSchemes == null || allowedSchemes.contains(scheme);
     }
-    
-    /**
-     * @return the use
-     */
-    public Set<TelecommunicationAddressUse> getUse() {
-        return use;
-    }
-    /**
-     * @param use the use to set
-     */
-    public void setUse(Set<TelecommunicationAddressUse> use) {
-        this.use = use;
-    }
-
 }

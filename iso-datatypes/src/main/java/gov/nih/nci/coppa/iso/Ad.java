@@ -83,7 +83,6 @@
 package gov.nih.nci.coppa.iso;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents iso data type AD.
@@ -96,8 +95,6 @@ public class Ad extends Any {
     private Boolean isNotOrdered;
 
     // TODO Invariant must be applied - see COPPA ISO's from EA
-    private Set<PostalAddressUse> use;
-    private QSet<Ts> usablePeriod;
     private List<Adxp> part;
 
     /**
@@ -115,34 +112,6 @@ public class Ad extends Any {
     }
 
     /**
-     * @return the use
-     */
-    public Set<PostalAddressUse> getUse() {
-        return use;
-    }
-
-    /**
-     * @param use the use to set
-     */
-    public void setUse(Set<PostalAddressUse> use) {
-        this.use = use;
-    }
-
-    /**
-     * @return the usablePeriod
-     */
-    public QSet<Ts> getUsablePeriod() {
-        return usablePeriod;
-    }
-
-    /**
-     * @param usablePeriod the usablePeriod to set
-     */
-    public void setUsablePeriod(QSet<Ts> usablePeriod) {
-        this.usablePeriod = usablePeriod;
-    }
-
-    /**
      * @return the part
      */
     public List<Adxp> getPart() {
@@ -155,6 +124,4 @@ public class Ad extends Any {
     public void setPart(List<Adxp> part) {
         this.part = part;
     }
-
-
 }

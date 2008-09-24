@@ -93,11 +93,9 @@ public class Adxp implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String code;
-    private String codeSystem;
-    private String codeSystemVersion;
     private String value;
     private final AddressPartType type;
-    
+
     /** ctor with immutable type.
      * @param type type
      */
@@ -126,34 +124,6 @@ public class Adxp implements Serializable {
     }
 
     /**
-     * @return the codeSystem
-     */
-    public String getCodeSystem() {
-        return codeSystem;
-    }
-
-    /**
-     * @param codeSystem the codeSystem to set
-     */
-    public void setCodeSystem(String codeSystem) {
-        this.codeSystem = codeSystem;
-    }
-
-    /**
-     * @return the codeSystemVersion
-     */
-    public String getCodeSystemVersion() {
-        return codeSystemVersion;
-    }
-
-    /**
-     * @param codeSystemVersion the codeSystemVersion to set
-     */
-    public void setCodeSystemVersion(String codeSystemVersion) {
-        this.codeSystemVersion = codeSystemVersion;
-    }
-
-    /**
      * @return the type
      */
     public AddressPartType getType() {
@@ -178,11 +148,11 @@ public class Adxp implements Serializable {
     /**
      * factory method to create an address part.
      * @param type the typeof the part to create.
-     * @return an address part with the 
+     * @return an address part with the
      */
      public static Adxp createAddressPart(AddressPartType type) {
         if (type == null) { return new Adxp(null); }
-        
+
         switch (type) {
             case ADL: return new AdxpAdl();
             case AL : return new AdxpAl();
@@ -213,9 +183,9 @@ public class Adxp implements Serializable {
             case UNID: return new AdxpUnid();
             case UNIT: return new AdxpUnit();
             case ZIP: return new AdxpZip();
-            
+
             // there must be a new type added
-            default: throw new UnsupportedOperationException(type.name()); 
+            default: throw new UnsupportedOperationException(type.name());
         }
     }
 }

@@ -18,22 +18,6 @@ public class AdxpCntTest {
         a = new AdxpCnt();
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    @SuppressWarnings("deprecation")
-    public void testSetCodingSystemBad() {
-        a.setCodeSystem("foo");
-    }
-
-    @SuppressWarnings("deprecation")
-    public void testSetCodingSystem() {
-        a.setCodeSystem(AdxpCnt.OID);
-    }
-
-    public void testCodingSystem() {
-        assertEquals(AdxpCnt.OID, a.getCodeSystem());
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testCodeBad() {
         a.setCode("China");

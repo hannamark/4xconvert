@@ -84,7 +84,6 @@ package gov.nih.nci.coppa.iso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.list.PredicatedList;
@@ -98,7 +97,6 @@ public class En extends Any {
     private static final long serialVersionUID = 1L;
 
     private final List<Enxp> part;
-    private Set<EntityNameUse> use;
 
     /**
      * Default ctor.
@@ -120,19 +118,5 @@ public class En extends Any {
      */
     public List<Enxp> getPart() {
         return part;
-    }
-
-    /**
-     * @return the use
-     */
-    public Set<EntityNameUse> getUse() {
-        return use;
-    }
-
-    /**
-     * @param use the use to set
-     */
-    public void setUse(Set<EntityNameUse> use) {
-        this.use = use;
     }
 }
