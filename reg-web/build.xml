@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ====================================================================== -->
-<!-- pa-reg-web ant script for COPPA PA                                         -->
+<!-- reg-web ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="pa-reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="software.dir" value="${basedir}/.."/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     
@@ -14,26 +14,26 @@
     <property name="pa.pmd" value="${pa.resourceDir}/paRegPmd.xml"/>
     <property name="pa.checkstyle" value="${pa.resourceDir}/paRegCheckstyle.xml"/>
 
-    <property name="pa-reg-web.build.finalName" value="pa-reg-web"/>
-    <property name="pa-reg-web.build.dir" value="${software.dir}/pa-reg-web/target"/>
-    <property name="pa-reg-web.build.outputDir" value="${pa-reg-web.build.dir}/classes"/>
-    <property name="pa-reg-web.build.srcDir.0" value="${software.dir}/pa-reg-web/src/java"/>
-    <property name="pa-reg-web.build.resourceDir.0" value="${software.dir}/pa-reg-web/src/resources"/>
-    <property name="pa-reg-web.build.testOutputDir" value="${pa-reg-web.build.dir}/test-classes"/>
-    <property name="pa-reg-web.build.testDir.0" value="${software.dir}/pa-reg-web/test/java"/>
-    <property name="pa-reg-web.build.testResourceDir.0" value="${software.dir}/pa-reg-web/test/resources"/>
-    <property name="pa-reg-web.test.reports" value="${pa.report.dir}/pa-reg-web/test-reports"/>
-    <property name="pa-reg-web.coverage.reports" value="${pa.report.dir}/pa-reg-web/coverage-reports"/>
-    <property name="pa-reg-web.reporting.outputDirectory" value="${pa.report.dir}/pa-reg-web/site"/>
-    <property name="pa-reg-web.war" value="${pa-reg-web.build.finalName}.war"/>
-    <property name="pa-reg-web.build.coberturaOutputDir" value="${pa-reg-web.build.dir}/generated-classes"/>
+    <property name="reg-web.build.finalName" value="reg-web"/>
+    <property name="reg-web.build.dir" value="${software.dir}/reg-web/target"/>
+    <property name="reg-web.build.outputDir" value="${reg-web.build.dir}/classes"/>
+    <property name="reg-web.build.srcDir.0" value="${software.dir}/reg-web/src/java"/>
+    <property name="reg-web.build.resourceDir.0" value="${software.dir}/reg-web/src/resources"/>
+    <property name="reg-web.build.testOutputDir" value="${reg-web.build.dir}/test-classes"/>
+    <property name="reg-web.build.testDir.0" value="${software.dir}/reg-web/test/java"/>
+    <property name="reg-web.build.testResourceDir.0" value="${software.dir}/reg-web/test/resources"/>
+    <property name="reg-web.test.reports" value="${pa.report.dir}/reg-web/test-reports"/>
+    <property name="reg-web.coverage.reports" value="${pa.report.dir}/reg-web/coverage-reports"/>
+    <property name="reg-web.reporting.outputDirectory" value="${pa.report.dir}/reg-web/site"/>
+    <property name="reg-web.war" value="${reg-web.build.finalName}.war"/>
+    <property name="reg-web.build.coberturaOutputDir" value="${reg-web.build.dir}/generated-classes"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
-    <property name="ivy.def.file" location="ivy-pa-reg-web.xml" />
+    <property name="ivy.def.file" location="ivy-reg-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
     
@@ -41,42 +41,42 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
     
-    <property name="compile.jar.dir" location="${lib.dir}/pa-reg-web/compile" />
+    <property name="compile.jar.dir" location="${lib.dir}/reg-web/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
     </path>
 
-    <property name="runtime.jar.dir" location="${lib.dir}/pa-reg-web/runtime" />
+    <property name="runtime.jar.dir" location="${lib.dir}/reg-web/runtime" />
     <path id="runtime.classpath">
         <fileset dir="${runtime.jar.dir}"/>
     </path>
 
-    <property name="test.jar.dir" location="${lib.dir}/pa-reg-web/test" />
+    <property name="test.jar.dir" location="${lib.dir}/reg-web/test" />
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}"/>
     </path>
     
-    <property name="test-simian.jar.dir" location="${lib.dir}/pa-reg-web/test-simian" />
+    <property name="test-simian.jar.dir" location="${lib.dir}/reg-web/test-simian" />
     <path id="test-simian.classpath">
         <fileset dir="${test-simian.jar.dir}"/>
     </path>
     
-    <property name="test-junit.jar.dir" location="${lib.dir}/pa-reg-web/test-junit" />
+    <property name="test-junit.jar.dir" location="${lib.dir}/reg-web/test-junit" />
     <path id="test-junit.classpath">
         <fileset dir="${test-junit.jar.dir}"/>
     </path>
     
-    <property name="test-cobertura.jar.dir" location="${lib.dir}/pa-reg-web/test-cobertura" />
+    <property name="test-cobertura.jar.dir" location="${lib.dir}/reg-web/test-cobertura" />
     <path id="test-cobertura.classpath">
         <fileset dir="${test-cobertura.jar.dir}"/>
     </path>
     
-    <property name="test-checkstyle.jar.dir" location="${lib.dir}/pa-reg-web/test-checkstyle" />
+    <property name="test-checkstyle.jar.dir" location="${lib.dir}/reg-web/test-checkstyle" />
     <path id="test-checkstyle.classpath">
         <fileset dir="${test-checkstyle.jar.dir}"/>
     </path>
 
-    <property name="test-pmd.jar.dir" location="${lib.dir}/pa-reg-web/test-pmd" />
+    <property name="test-pmd.jar.dir" location="${lib.dir}/reg-web/test-pmd" />
     <path id="test-pmd.classpath">
         <fileset dir="${test-pmd.jar.dir}"/>
     </path>
@@ -103,7 +103,7 @@
     <!-- ====================================================================== -->
     
     <mkdir dir="${lib.dir}"/>
-    <mkdir dir="${pa.report.dir}/pa-reg-web"/>
+    <mkdir dir="${pa.report.dir}/reg-web"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     
@@ -112,10 +112,10 @@
     <!-- ====================================================================== -->
 
     <target name="clean" description="Clean the output directory">
-        <delete dir="${pa-reg-web.build.dir}"/>
-        <delete dir="${pa.report.dir}/pa-reg-web"/>
-        <mkdir dir="${pa-reg-web.build.dir}"/>
-        <mkdir dir="${pa.report.dir}/pa-reg-web"/>
+        <delete dir="${reg-web.build.dir}"/>
+        <delete dir="${pa.report.dir}/reg-web"/>
+        <mkdir dir="${reg-web.build.dir}"/>
+        <mkdir dir="${pa.report.dir}/reg-web"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -123,8 +123,8 @@
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
-        <mkdir dir="${pa-reg-web.build.outputDir}"/>
-        <javac destdir="${pa-reg-web.build.outputDir}" 
+        <mkdir dir="${reg-web.build.outputDir}"/>
+        <javac destdir="${reg-web.build.outputDir}" 
                nowarn="false" 
                debug="true" 
                optimize="false" 
@@ -134,7 +134,7 @@
                fork="false" 
                source="1.5">
             <src>
-                <pathelement location="${pa-reg-web.build.srcDir.0}"/>
+                <pathelement location="${reg-web.build.srcDir.0}"/>
             </src>
             <classpath>
                 <path refid="compile.classpath"/> 
@@ -142,12 +142,12 @@
                 <path refid="jboss.client.classpath"/>
             </classpath>
         </javac>
-        <copy todir="${pa-reg-web.build.outputDir}">
+        <copy todir="${reg-web.build.outputDir}">
             <filterset>
                 <filter token="po.server.name" value="${po.server.name}"/>
                 <filter token="po.port.number" value="${po.port.number}"/>
             </filterset>
-            <fileset dir="${pa-reg-web.build.resourceDir.0}"/>
+            <fileset dir="${reg-web.build.resourceDir.0}"/>
         </copy>
     </target>
 
@@ -161,7 +161,7 @@
         <filter token="jdbc.url" value="${jdbc.url}"/> 
         <filter token="db.username" value="${db.username}"/>
         <filter token="db.password" value="${db.password}"/>                                            
-        <copy file="${pa.resourceDir}/login.config" todir="${pa-reg-web.build.testResourceDir.0}" filtering="true" />                             
+        <copy file="${pa.resourceDir}/login.config" todir="${reg-web.build.testResourceDir.0}" filtering="true" />                             
     </target>
     
 
@@ -173,8 +173,8 @@
     <target name="compile-tests" 
       depends="compile,create-artifacts" 
       description="Compile the test code"> 
-        <mkdir dir="${pa-reg-web.build.testOutputDir}"/>
-        <javac destdir="${pa-reg-web.build.testOutputDir}" 
+        <mkdir dir="${reg-web.build.testOutputDir}"/>
+        <javac destdir="${reg-web.build.testOutputDir}" 
                nowarn="false" 
                debug="true" 
                optimize="false" 
@@ -184,18 +184,18 @@
                fork="false" 
                source="1.5">
             <src>
-                <pathelement location="${pa-reg-web.build.testDir.0}"/>
+                <pathelement location="${reg-web.build.testDir.0}"/>
             </src>
             <classpath>
-                <pathelement location="${pa-reg-web.build.outputDir}"/> 
+                <pathelement location="${reg-web.build.outputDir}"/> 
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="compile.classpath"/>  
                 <path refid="jboss.classpath"/>  
             </classpath>
         </javac>
-        <copy todir="${pa-reg-web.build.testOutputDir}">
-            <fileset dir="${pa-reg-web.build.testResourceDir.0}"/>
+        <copy todir="${reg-web.build.testOutputDir}">
+            <fileset dir="${reg-web.build.testResourceDir.0}"/>
         </copy>
     </target>
 
@@ -213,8 +213,8 @@
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
-            <formatter type="plain" toFile="${pa.report.dir}/pa-reg-web/checkstyle.txt"/>
-            <formatter type="xml"   toFile="${pa.report.dir}/pa-reg-web/checkstyle.xml"/>
+            <formatter type="plain" toFile="${pa.report.dir}/reg-web/checkstyle.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/reg-web/checkstyle.xml"/>
         </checkstyle>
     </target>
 
@@ -230,8 +230,8 @@
         <pmd shortFilenames="true" failOnRuleViolation="true" 
                                    rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
-            <formatter type="text" toFile="${pa.report.dir}/pa-reg-web/pmd.txt"/>
-            <formatter type="xml"  toFile="${pa.report.dir}/pa-reg-web/pmd.xml"/>
+            <formatter type="text" toFile="${pa.report.dir}/reg-web/pmd.txt"/>
+            <formatter type="xml"  toFile="${pa.report.dir}/reg-web/pmd.xml"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
@@ -247,8 +247,8 @@
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
-            <formatter type="plain" toFile="${pa.report.dir}/pa-reg-web/simian.txt"/>
-            <formatter type="xml" toFile="${pa.report.dir}/pa-reg-web/simian.xml"/>
+            <formatter type="plain" toFile="${pa.report.dir}/reg-web/simian.txt"/>
+            <formatter type="xml" toFile="${pa.report.dir}/reg-web/simian.xml"/>
             <formatter type="plain"/>
         </simian>
     </target>
@@ -275,18 +275,18 @@
     <!-- ====================================================================== -->
 
     <target name="war">
-        <mkdir dir="${pa-reg-web.build.dir}/${pa-reg-web.build.finalName}/WEB-INF/lib"/>
-        <copy todir="${pa-reg-web.build.dir}/${pa-reg-web.build.finalName}/WEB-INF/lib">
+        <mkdir dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
+        <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
         
-        <war destfile="${pa-reg-web.build.dir}/${pa-reg-web.war}" 
+        <war destfile="${reg-web.build.dir}/${reg-web.war}" 
              compress="false" 
-             webxml="${software.dir}/pa-reg-web/src/webapp/WEB-INF/web.xml">            
-            <lib dir="${pa-reg-web.build.dir}/${pa-reg-web.build.finalName}/WEB-INF/lib"/>
-            <classes dir="${pa-reg-web.build.outputDir}"/>
-            <webinf dir="${software.dir}/pa-reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${software.dir}/pa-reg-web/src/webapp"/>
+             webxml="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml">            
+            <lib dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
+            <classes dir="${reg-web.build.outputDir}"/>
+            <webinf dir="${software.dir}/reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
+            <fileset dir="${software.dir}/reg-web/src/webapp"/>
         </war>
     </target>
 
@@ -315,32 +315,32 @@
         
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
 
-        <delete file="${pa-reg-web.build.dir}/cobertura.ser" />
+        <delete file="${reg-web.build.dir}/cobertura.ser" />
 
-        <cobertura-instrument datafile="${pa-reg-web.build.dir}/cobertura.ser"
-                              toDir="${pa-reg-web.build.coberturaOutputDir}">
-            <fileset dir="${pa-reg-web.build.outputDir}">
+        <cobertura-instrument datafile="${reg-web.build.dir}/cobertura.ser"
+                              toDir="${reg-web.build.coberturaOutputDir}">
+            <fileset dir="${reg-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
         </cobertura-instrument>   
         
-        <mkdir dir="${pa-reg-web.test.reports}"/>
+        <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${pa-reg-web.build.dir}/cobertura.ser" />
+                    file="${reg-web.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
-            <classpath location="${pa-reg-web.build.coberturaOutputDir}"/>
-            <classpath location="${pa-reg-web.build.outputDir}"/>
-            <classpath location="${pa-reg-web.build.testOutputDir}"/>
+            <classpath location="${reg-web.build.coberturaOutputDir}"/>
+            <classpath location="${reg-web.build.outputDir}"/>
+            <classpath location="${reg-web.build.testOutputDir}"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
             <classpath refid="jboss.client.classpath"/>
-            <batchtest todir="${pa-reg-web.test.reports}">
-                <fileset dir="${pa-reg-web.build.testDir.0}">
+            <batchtest todir="${reg-web.test.reports}">
+                <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>                    
                     <exclude name="**/*SeleniumTest.java"/>
@@ -348,16 +348,16 @@
             </batchtest>
         </junit>
         
-        <cobertura-report datafile="${pa-reg-web.build.dir}/cobertura.ser"
-                          destdir="${pa-reg-web.coverage.reports}" 
-                          srcdir="${pa-reg-web.build.srcDir.0}" />
+        <cobertura-report datafile="${reg-web.build.dir}/cobertura.ser"
+                          destdir="${reg-web.coverage.reports}" 
+                          srcdir="${reg-web.build.srcDir.0}" />
         
-        <cobertura-report datafile="${pa-reg-web.build.dir}/cobertura.ser"
+        <cobertura-report datafile="${reg-web.build.dir}/cobertura.ser"
                           format="xml"        
-                          destdir="${pa-reg-web.coverage.reports}" 
-                          srcdir="${pa-reg-web.build.srcDir.0}" />
+                          destdir="${reg-web.coverage.reports}" 
+                          srcdir="${reg-web.build.srcDir.0}" />
         
-        <cobertura-check datafile="${pa-reg-web.build.dir}/cobertura.ser"
+        <cobertura-check datafile="${reg-web.build.dir}/cobertura.ser"
                          totalbranchrate="10" 
                          totallinerate="10"
                          haltonfailure="false"/>
@@ -375,43 +375,43 @@
     </target>
     <target name="ivy-test-cobertura" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-cobertura" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
     </target>
     <target name="ivy-test-junit" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-junit" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
     </target>
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-pmd" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-pmd" />
     </target>
     <target name="ivy-test-checkstyle" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-checkstyle" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle" />
     </target>
     <target name="ivy-test-simian" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-simian" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
     </target>
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
     <target name="ivy-test" 
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
             <ivy:resolve refresh="true" conf="test" />
-            <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
+            <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>
     <target name="ivy-runtime" depends="init:ivy" description="Updates the local ivy repository">
         <ivy:resolve refresh="true" conf="runtime" />
-        <ivy:retrieve pattern="${lib.dir}/pa-reg-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
+        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
     <target name="ivy-get" 
             depends="init:ivy,ivy-compile,ivy-test,ivy-runtime" 
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/pa-reg-web"/>
+        <delete dir="${lib.dir}/reg-web"/>
     </target>
     
 </project>

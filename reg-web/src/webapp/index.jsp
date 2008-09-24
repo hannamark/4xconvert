@@ -1,2 +1,2 @@
 
-<% response.sendRedirect("/pa-reg-web/protected/studyOverallStatus.action"); %>
+<% response.sendRedirect("/registry/protected/studyOverallStatus.action"); %>
