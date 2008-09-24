@@ -7,6 +7,13 @@
     <project name="pa" default="package" basedir=".">
     <property file="${basedir}/build.properties"/>
     
+	<!-- PATHS -->
+	<path id="macrodef">
+		<fileset dir="${basedir}/lib-temp">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -116,5 +123,24 @@
          <ant target="ivy-clean" dir="pa-web" inheritAll="false"/>
          <ant target="ivy-clean" dir="pa-ear" inheritAll="false"/>
     </target>
-    
+
+    <!-- ====================================================================== -->
+    <!-- Copies JSP to the tmp folder                                           -->
+    <!-- ====================================================================== -->
+    	
+    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
+            <for param="toDir">
+              <path>
+                <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/pa-web-exp.war"/>
+              </path>
+              <sequential>
+                  <copy todir="@{toDir}">
+                      <fileset dir="${basedir}/pa-web/src/webapp">                         
+                          <include name="WEB-INF/jsp/*.jsp"/>
+                      	  <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                      </fileset>
+                  </copy>
+              </sequential>
+            </for>
+      </target>	
 </project>
