@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,21 @@ import java.util.List;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class HealthCareFacilityDTO extends BaseDTO {
+    private St identifier;
     private Ii organizationIi;
     private List<Ii> studyParticipations = new ArrayList<Ii>();
+    /**
+     * @return the identifier
+     */
+    public St getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(St identifier) {
+        this.identifier = identifier;
+    }
     /**
      * @return the organizationIi
      */

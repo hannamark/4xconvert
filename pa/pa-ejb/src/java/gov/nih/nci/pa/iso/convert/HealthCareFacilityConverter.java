@@ -30,6 +30,7 @@ public class HealthCareFacilityConverter {
             HealthCareFacility bo) throws PAException {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         dto.setIi(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(StConverter.convertToSt(bo.getIdentifier()));
         dto.setOrganizationIi(IiConverter.convertToIi(bo.getOrganization().getId()));
         dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
@@ -47,6 +48,7 @@ public class HealthCareFacilityConverter {
         
         HealthCareFacility bo = new HealthCareFacility();
         bo.setId(IiConverter.convertToLong(dto.getIi()));
+        bo.setIdentifier(StConverter.convertToString(dto.getIdentifier()));
         bo.setOrganization(oBo);
         bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;

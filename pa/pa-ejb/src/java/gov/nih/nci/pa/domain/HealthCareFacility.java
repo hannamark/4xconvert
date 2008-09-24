@@ -3,6 +3,7 @@ package gov.nih.nci.pa.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,6 +31,7 @@ import org.hibernate.validator.NotNull;
 public class HealthCareFacility  extends AbstractEntity {
     
     private Organization organization;
+    private String identifier;  
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
     
     /**
@@ -48,6 +50,19 @@ public class HealthCareFacility  extends AbstractEntity {
      */
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+    /**
+     * @return the identifier
+     */
+    @Column(name = "IDENTIFIER")
+    public String getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
     /**
      * 

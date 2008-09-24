@@ -225,27 +225,27 @@ values (5, 'Oraganization E', '5', current_timestamp, 'po' )
 
 ---- healthcare_facility
 
-insert into healthcare_facility (id,organization_id, date_last_updated, user_last_updated) 
-values (1,1, current_timestamp, 'po' ) 
+insert into healthcare_facility (id, identifier, organization_id, date_last_updated, user_last_updated) 
+values (1, 'PO001', 1, current_timestamp, 'po' ) 
 ;
 
-insert into healthcare_facility (id,organization_id, date_last_updated, user_last_updated) 
-values (2,2, current_timestamp, 'po' ) 
+insert into healthcare_facility (id, identifier, organization_id, date_last_updated, user_last_updated) 
+values (2, 'PO002', 2, current_timestamp, 'po' ) 
 ;
 
-insert into healthcare_facility (id,organization_id, date_last_updated, user_last_updated) 
-values (3,3, current_timestamp, 'po' ) 
+insert into healthcare_facility (id, identifier, organization_id, date_last_updated, user_last_updated) 
+values (3, 'PO003', 3, current_timestamp, 'po' ) 
 ;
 
-insert into healthcare_facility (id,organization_id, date_last_updated, user_last_updated) 
-values (4,3, current_timestamp, 'po' ) 
+insert into healthcare_facility (id, identifier, organization_id, date_last_updated, user_last_updated) 
+values (4, 'PO004', 3, current_timestamp, 'po' ) 
 ;
 
-insert into healthcare_facility (id,organization_id, date_last_updated, user_last_updated) 
-values (5,2, current_timestamp, 'po' ) 
+insert into healthcare_facility (id, identifier, organization_id, date_last_updated, user_last_updated) 
+values (5, 'PO005', 2, current_timestamp, 'po' ) 
 ;
-insert into healthcare_facility (id,organization_id, date_last_updated, user_last_updated) 
-values (6,1, current_timestamp, 'po' ) 
+insert into healthcare_facility (id, identifier, organization_id, date_last_updated, user_last_updated) 
+values (6, 'PO006', 1, current_timestamp, 'po' ) 
 ;
 
 
