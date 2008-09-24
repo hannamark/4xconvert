@@ -11,7 +11,6 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.util.MockCountryServiceLocator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -296,15 +295,5 @@ useful in Germany, where many systems keep house number as a distinct field
         assertEquals("USA", result.getCountry().getAlpha3());
 
         assertEquals("P.O.Box 909", result.getStreetAddressLine());
-    }
-
-    /**
-     * Verify that setting is NotOrdered causes an error.
-     */
-    @Test(expected = PoIsoConstraintException.class)
-    public void testUseOfIsNotOrdered() {
-        Ad iso = new Ad();
-        iso.setIsNotOrdered(Boolean.TRUE);
-        AdConverter.SimpleConverter.convertToAddress(iso);
     }
 }

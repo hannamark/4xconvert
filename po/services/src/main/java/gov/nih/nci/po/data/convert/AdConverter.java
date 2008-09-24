@@ -89,7 +89,6 @@ import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -125,11 +124,6 @@ public class AdConverter {
         public static Address convertToAddress(Ad iso) {
             if (iso == null || iso.getNullFlavor() != null) {
                 return null;
-            }
-
-            if (iso.getIsNotOrdered() != null) {
-                throw new PoIsoConstraintException("PO does not support the use of the 'isNotOrdered' "
-                        + "field on AD at this time.");
             }
 
             return processParts(iso);
