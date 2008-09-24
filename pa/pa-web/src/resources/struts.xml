@@ -34,7 +34,16 @@
         </action>	
         <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <result>/WEB-INF/jsp/participatingOrganizations{1}.jsp</result>
-         </action>       
+         </action>  
+         <action name="trialFundingAdd">
+	      	<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
+			<result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
+        </action> 
+        <action	name="trialFundingDelete" class="gov.nih.nci.pa.action.TrialFundingAction">
+	      	<result>/WEB-INF/jsp/trialFundingDelete.jsp</result>
+			<result name="error">/WEB-INF/jsp/trialFundingDelete.jsp</result>
+        </action>
+       		
   		<!-- needs to be refactored -->
 		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >
 			<interceptor-ref name="nci-commonsParams" />				         
@@ -52,6 +61,7 @@
 			<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
 			<result name="query">/WEB-INF/jsp/trialFunding.jsp</result>
 			<result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
+			<result name="delete">/WEB-INF/jsp/trialFundingDelete.jsp</result>
 		</action>				
 		<action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />				         
