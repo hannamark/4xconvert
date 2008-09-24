@@ -157,14 +157,16 @@ public class CountryServiceBean implements CountryServiceLocal {
         q.setCacheRegion(COUNTRY_CACHE_REGION);
         return (Country) q.uniqueResult();
     }
-    
-    /** 
-     * {@inheritDoc} 
+
+    /**
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Country getCountryByAlpha3(String code) {
         Criteria c = PoHibernateUtil.getCurrentSession().createCriteria(Country.class);
         c.add(Restrictions.eq("alpha3", code));
+        c.setCacheable(true);
+        c.setCacheRegion(COUNTRY_CACHE_REGION);
         Country cnt = (Country) c.uniqueResult();
         if (cnt == null) {
             throw new IllegalArgumentException("no country for code " + code);
