@@ -31,21 +31,27 @@
     <s:actionerror />
 <h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>        
-        <tr>
-        </tr>
-        <tr>
-        </tr>
-        <tr>
-        </tr>
-        <tr>
-        </tr>
+        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
+    <tr><td colspan="2">
+    <display:table name="organizationList" class="data">  
+        <display:column property="name" titleKey="participatingOrganizations.name" />
+        <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" />
+        <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" />
+        <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" />
+        <display:column titleKey="participatingOrganizations.edit" />
+        <display:column titleKey="participatingOrganizations.unlink" />
+    </display:table>
+    </td></tr>
     </table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">
-            <li><a href="trialFunding.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-            <li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+            <li><a href="participatingOrganizationscreate.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
+            <li><a href="trialFunding.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+            <li><a href="nciSpecificInformationquery.action" 
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
         </ul>   
     </del>
 </div>

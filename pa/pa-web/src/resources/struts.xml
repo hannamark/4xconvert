@@ -32,8 +32,8 @@
         <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
             <result>/WEB-INF/jsp/studyOverallStatusHistory.jsp</result>
         </action>	
-        <action name="participatingOrganizations" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction">
-            <result>/WEB-INF/jsp/participatingOrganizations.jsp</result>
+        <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
+            <result>/WEB-INF/jsp/participatingOrganizations{1}.jsp</result>
          </action>       
   		<!-- needs to be refactored -->
 		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >

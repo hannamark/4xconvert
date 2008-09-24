@@ -34,7 +34,6 @@ public class StudyOverallStatusWebDTOTest {
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(sString)));
         
         StudyOverallStatusWebDTO webDto = new StudyOverallStatusWebDTO(dto);
-        assertEquals(sId, webDto.getId());
         assertEquals(PAUtil.normalizeDateString(sString), webDto.getStatusDate());
         assertEquals(sCode.getDisplayName(), webDto.getStatusCode());
         

@@ -5,7 +5,6 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -18,7 +17,6 @@ import gov.nih.nci.pa.util.PAUtil;
  *        holder, NCI.
  */
 public class StudyOverallStatusWebDTO {
-    private Long id;
     private String statusCode;
     private String statusDate;
 
@@ -27,23 +25,9 @@ public class StudyOverallStatusWebDTO {
      */
     public StudyOverallStatusWebDTO(StudyOverallStatusDTO dto) {
         super();
-        this.id = IiConverter.convertToLong(dto.getIi());
         this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getDisplayName();
         this.statusDate = PAUtil.normalizeDateString(
                 TsConverter.convertToTimestamp(dto.getStatusDate()).toString());
-    }
-
-    /**
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
     }
     /**
      * @return the statusCode

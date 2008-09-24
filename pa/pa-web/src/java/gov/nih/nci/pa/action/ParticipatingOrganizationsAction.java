@@ -4,15 +4,24 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.OrganizationWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -30,80 +39,100 @@ import com.opensymphony.xwork2.Preparable;
  * 
  */
 @SuppressWarnings("PMD")
-public class ParticipatingOrganizationsAction extends ActionSupport implements
-           Preparable {
-       private static final long serialVersionUID = 123412653L;
+public class ParticipatingOrganizationsAction extends ActionSupport 
+        implements Preparable {
+    private static final long serialVersionUID = 123412653L;
 
-       private StudyProtocolServiceRemote sProService;
-       private StudyParticipationServiceRemote sPartService;
-       private PAHealthCareFacilityServiceRemote hfService;
-       private PAOrganizationServiceRemote paoService;
+    private StudyProtocolServiceRemote sProService;
+    private StudyParticipationServiceRemote sPartService;
+    private PAHealthCareFacilityServiceRemote pahfService;
+    private PAOrganizationServiceRemote paoService;
 
-       private Ii spIi;
-       
-       /** 
-        * @see com.opensymphony.xwork2.Preparable#prepare()
-        * @throws Exception e
-        */
-       public void prepare() throws Exception {
-           sProService = PaRegistry.getStudyProtocolService();
-           sPartService = PaRegistry.getStudyParticipationService();
-           hfService = PaRegistry.getPAHealthCareFacilityService();
-           paoService = PaRegistry.getPAOrganizationService();
+    private Ii spIi;
+    private List<OrganizationWebDTO> organizationList;
 
-           StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-                   .getRequest().getSession()
-                   .getAttribute(Constants.TRIAL_SUMMARY);
-           
-           spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
-       }
+    /** 
+     * @see com.opensymphony.xwork2.Preparable#prepare()
+     * @throws Exception e
+     */
+    public void prepare() throws Exception {
+        sProService = PaRegistry.getStudyProtocolService();
+        sPartService = PaRegistry.getStudyParticipationService();
+        pahfService = PaRegistry.getPAHealthCareFacilityService();
+        paoService = PaRegistry.getPAOrganizationService();
 
-       /**
-        * @return Action result.
-        * @throws Exception exception.
-        */
-       @Override
-       public String execute() throws Exception {
-           loadForm();
-           return SUCCESS;
-       }
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+        .getRequest().getSession()
+        .getAttribute(Constants.TRIAL_SUMMARY);
 
-       /**  
-        * @return result
-        * @throws Exception exception
-        */
-       public String update() throws Exception {
-           clearErrorsAndMessages();
-           enforceBusinessRules();
-           if (hasActionErrors()) {
-               return Action.SUCCESS;
-           }
-           if (!hasActionErrors()) {
-               addActionError("Update succeeded.");
-           }
-           loadForm();
-           return Action.SUCCESS;
-       }
-       
-    
-       private void loadForm() throws Exception {
-           StudyProtocolDTO sPro = sProService.getStudyProtocol(spIi);
-//           List<StudyParticipationDTO> sPartList = sPartService.getStudyParticipationByStudyProtocol(spIi);
-//           ArrayList<HealthCareFacilityDTO> hfList = new ArrayList<HealthCareFacilityDTO>();
-//           for (StudyParticipationDTO sPart : sPartList) {
-//               hfList.add(hfService.getHealthCareFacility(sPart.getHealthcareFacilityIi()));
-//           }
-//           ArrayList<OrganizationDTO> paoList = new ArrayList<OrganizationDTO>();
-//           for (HealthCareFacilityDTO hf : hfList) {
-//               paoService.getOrganization(hf.getOrganizationIi());
-//           }
-       }
+        spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+    }
 
-       /**
-        * This method is used to enforce the business rules which are form specific or
-        * based on an interaction between services.
-        */
-       private void enforceBusinessRules() {
-       }
+    /**
+     * @return Action result.
+     * @throws Exception exception.
+     */
+    @Override
+    public String execute() throws Exception {
+        loadForm();
+        return SUCCESS;
+    }
 
-   }
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String create() throws Exception {
+        clearErrorsAndMessages();
+        enforceBusinessRules();
+        if (hasActionErrors()) {
+            return Action.SUCCESS;
+        }
+        if (!hasActionErrors()) {
+//            addActionError("Create succeeded.");
+        }
+        loadForm();
+        return Action.SUCCESS;
+    }
+
+
+    private void loadForm() throws Exception {
+        organizationList = new ArrayList<OrganizationWebDTO>();
+        List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
+        for (StudyParticipationDTO sp : spList) {
+            HealthCareFacilityDTO hf = pahfService.getHealthCareFacility(sp.getHealthcareFacilityIi());
+            Organization orgBo = new Organization();
+            orgBo.setId(IiConverter.convertToLong(hf.getOrganizationIi()));
+            orgBo = paoService.getOrganizationByIndetifers(orgBo);
+            OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
+            orgWebDTO.setName(orgBo.getName());
+            orgWebDTO.setNciNumber(orgBo.getIdentifier());
+            orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(sp.getStatusCode()));
+            orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(
+                    TsConverter.convertToTimestamp(sp.getStatusDateRangeLow()).toString()));
+            organizationList.add(orgWebDTO);
+        }
+    }
+
+    /**
+     * This method is used to enforce the business rules which are form specific or
+     * based on an interaction between services.
+     */
+    private void enforceBusinessRules() {
+    }
+
+    /**
+     * @return the organizationList
+     */
+    public List<OrganizationWebDTO> getOrganizationList() {
+        return organizationList;
+    }
+
+    /**
+     * @param organizationList the organizationList to set
+     */
+    public void setOrganizationList(List<OrganizationWebDTO> organizationList) {
+        this.organizationList = organizationList;
+    }
+
+}
