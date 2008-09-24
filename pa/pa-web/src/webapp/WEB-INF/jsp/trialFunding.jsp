@@ -11,28 +11,18 @@
 <SCRIPT LANGUAGE="JavaScript">
 
 
-function handleAction(){
-     var studyResourcingId;
-    len = document.forms[0].cbValue.length;
-    if ((typeof document.forms[0].cbValue.length == 'undefined') && (document.forms[0].cbValue.checked))
-    {
-      studyResourcingId = document.forms[0].cbValue.value;
-    }
-    else
-    {
-      for (i = 0; i < len; i++)
-      {
-        if (document.forms[0].cbValue[i].checked)
-        {
-          studyResourcingId = document.forms[0].cbValue[i].value;
-          break;
-        }
-      } // end for
-    }
+function handleAction(studyResourcingId){   
 	document.forms[0].cbValue.value = studyResourcingId;
     document.forms[0].page.value = "Edit";
     document.forms[0].action="trialFundingedit.action";
     document.forms[0].submit();  
+}
+function handleDelete(studyResourcingId){
+	document.forms[0].cbValue.value = studyResourcingId;
+ 	document.forms[0].page.value = "Delete";
+ 	//openPI('trialFundingDelete.action', 'popup');
+ 	document.forms[0].action="trialFundingDelete.action";
+    document.forms[0].submit(); 
 }
 
 </SCRIPT>
@@ -44,37 +34,31 @@ function handleAction(){
   <div class="box">  
     <s:form><s:actionerror/>
     <h2>NIH Grant Information</h2>
-    <table class="data">
     <s:if test="trialFundingList != null">
-    <tr><td colspan="5">
     <input type="hidden" name="page" />
-	<display:table name="${trialFundingList}" id="list">    
-    <display:column>
-	    	<s:checkbox name="cbValue" fieldValue="%{#attr.list.id}"></s:checkbox>
-    </display:column>
-    <display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" />
-    <display:column titleKey="trialFunding.institution.code" property="institutionCode" />
-    <display:column titleKey="trialFunding.serial.number" property="serialNumber"   />
-    <display:column titleKey="studyProtocol.monitorCode" property="monitorCode" />
-    
-</display:table>
- </td></tr>
-    </s:if> 
-    </table>
+    <input type="hidden" name="cbValue" />
+	<display:table name="${trialFundingList}" id="row" class="data" sort="list"  pagesize="5" requestURI="trialFundingquery.action" export="false">    
+	    <display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
+	    <display:column titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
+	    <display:column titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
+	    <display:column titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
+	    <display:column title="Edit" class="action">
+    		<s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+		</display:column>
+		<display:column title="Delete" class="action">
+    		<s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
+    	</display:column>
+	</display:table>
+  </s:if> 
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
-					<li><s:a href="trialFundingdisplayJs.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-				<s:if test="trialFundingList != null">	
-					<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="edit">Edit</span></span></s:a></li>
-					<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
-				</s:if>
+					<li><s:a href="trialFundingAdd.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				</ul>	
 			</del>
 		</div>
-
 		           
   	</s:form>
    </div>

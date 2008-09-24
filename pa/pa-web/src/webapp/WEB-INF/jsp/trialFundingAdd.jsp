@@ -10,11 +10,17 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
-
 function handleAction(){
- document.forms[0].action="trialFundingadd.action";
- document.forms[0].submit();    
-}
+ var page;
+page=document.forms[0].page.value;
+if (page == "Edit"){
+ document.forms[0].action="trialFundingupdate.action";
+ document.forms[0].submit(); 
+} else {
+ document.forms[0].action="trialFundingcreate.action";
+ document.forms[0].submit();   
+ } 
+} 
 
 </SCRIPT>
 
@@ -25,98 +31,98 @@ function handleAction(){
   <div class="box">  
     <s:form><s:actionerror/>
     <h2>NIH Grant Information</h2>
-    <input type="hidden" id="pageValue" name="page" value="${page}" />
+    <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="cbValue" value="${cbValue}" />
     <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="fundingMechanism">                      
-                            <fmt:message key="trialFunding.funding.mechanism"/>
+                        <label for="fundingMechanism"><dfn title="Context sensitive help text or tooltip here.">                      
+                            <fmt:message key="trialFunding.funding.mechanism"/>*</dfn>
                         </label>
                      </td>
                      <s:set name="fundingMechanism" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
                       <td class="value">
                         <s:select headerKey="" headerValue="" 
-                           name="studyResourcingWebDTO.fundingMechanismCode" 
+                           name="trialFundingWebDTO.fundingMechanismCode" 
                            list="#fundingMechanism"  
                            listKey="fundingMechanismCode" 
                            listValue="fundingMechanismCode" 
-                           cssStyle="width:80px"/>
+                           cssStyle="width:206px"/>
                       </td>         
                 </tr>
                 
                 <tr> 
                      <td scope="row" class="label">
-                          <label for="institutionCode">
-                            <fmt:message key="trialFunding.institution.code"/>
+                          <label for="institutionCode"><dfn title="Context sensitive help text or tooltip here.">
+                            <fmt:message key="trialFunding.institution.code"/>*</dfn>
                           </label>
                      </td>              
                      <s:set name="nihInstitute" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
                       <td class="value">
                         <s:select headerKey="" headerValue="" 
-                           name="studyResourcingWebDTO.institutionCode" 
+                           name="trialFundingWebDTO.nihInstitutionCode" 
                            list="#nihInstitute"  
                            listKey="nihInstituteCode" 
                            listValue="nihInstituteCode" 
-                           cssStyle="width:70px"/>
+                           cssStyle="width:206px"/>
                       </td>         
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="serialNumber">
-                            <fmt:message key="trialFunding.serial.number"/>
+                     <label for="serialNumber"><dfn title="Context sensitive help text or tooltip here.">
+                            <fmt:message key="trialFunding.serial.number"/>*</dfn>
                      </label>
                      </td>
                      <td class="value">
-                        <s:textfield name="studyResourcingWebDTO.serialNumber" maxlength="200" cssStyle="width:60px"/>
+                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="200" cssStyle="width:206px"/>
                       </td> 
                 </tr>
                 <tr>
                      <td scope="row" class="label">
-                     <label for="monitorCode">
-                            <fmt:message key="studyProtocol.monitorCode"/>
+                     <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here.">
+                            <fmt:message key="studyProtocol.monitorCode"/>*</dfn>
                      </label>
                     </td>
                     <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
                       <td class="value">
                         <s:select headerKey="" headerValue="" 
-                           name="studyResourcingWebDTO.monitorCode" 
+                           name="trialFundingWebDTO.nciDivisionProgramCode" 
                            list="#monitorCodeValues"  
-                           cssStyle="width:60px"/>
+                           cssStyle="width:206px"/>
                       </td>         
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="fundingTypeCode">
-                            FundingTypeCode
+                     <label for="fundingTypeCode"><dfn title="Context sensitive help text or tooltip here.">
+                            <fmt:message key="trialFunding.funding.typecode"/></dfn>
                      </label>
                     </td>
                     <td class="value">
                         
                         <s:select  
-                           name="studyResourcingWebDTO.fundingTypeCode" 
-                           list="#{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" />
-                        
+                           name="trialFundingWebDTO.fundingTypeCode" 
+                           list="#{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" 
+                           cssStyle="width:206px" />                           
                       </td>         
                 </tr>                   
                 <tr>
                      <td scope="row" class="label">
-                     <label for="grantYear">
-                            Grant Year
+                     <label for="grantYear"><dfn title="Context sensitive help text or tooltip here.">
+                            <fmt:message key="trialFunding.grant.year" /></dfn>
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="studyResourcingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:60px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:206px"/>
                       </td>         
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="suffix">
-                            Suffix
+                     <label for="suffix"><dfn title="Context sensitive help text or tooltip here.">
+                            <fmt:message key="trialFunding.suffix" /></dfn>
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="studyResourcingWebDTO.suffixOther" maxlength="200" cssStyle="width:60px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:206px"/>
                       </td>         
                 </tr>                 
         </table>

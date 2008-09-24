@@ -315,6 +315,8 @@ TABLE.register
 
 TABLE.form
 { width:98%; margin:10px auto;  }
+TABLE.form TH
+{ background:#dcdcdc; border-bottom:2px solid #ccc; padding:5px }
 TABLE.form TD
 { padding:3px }
 .label_left
@@ -335,6 +337,8 @@ TD.value
 { padding:7px 5px 5px 0 !important; }
 .value INPUT
 { display:inline }
+INPUT.readonly
+{ background:#dcdcdc; border:1px solid #ccc; height:17px }
 TD.title
 { font-weight:bold }
 .hidethis
@@ -456,7 +460,7 @@ HTML>BODY .btnrow A, HTML>BODY .btnrow2 A { *float:left }
 HTML>BODY .container { *display:inline-block; }
 
 A.btn 
-{ width:auto; background:transparent url("../images/bg_btn_right.gif") no-repeat scroll top right; color:#5a5a5a; display:block; float:left; font:bold 14px arial, sans-serif; height:24px; line-height:24px; margin:0 20px; padding-right:9px; /* sliding doors padding */ text-decoration:none; }
+{ width:auto; background:transparent url("../images/bg_btn_right.gif") no-repeat scroll top right; color:#5a5a5a; display:block; float:left; font:bold 14px arial, sans-serif; height:24px; line-height:24px; margin:0 10px; padding-right:9px; /* sliding doors padding */ text-decoration:none; }
 
 A.btn SPAN.btn_img 
 { background:transparent url("../images/bg_btn_left.gif") no-repeat; display:block; line-height:17px; padding:4px 0 3px 9px; }
@@ -500,6 +504,10 @@ A.btn SPAN.upload
 { background:url("../images/ico_upload.gif") no-repeat; }
 A.btn SPAN.history
 { background:url("../images/ico_history.gif") no-repeat; }
+
+/* Error Messages */
+SPAN.errorMessage
+{ color: red; font-weight:bold; width:20%; white-space:nowrap; padding:5px 5px 5px 0 !important; }
 
 /* Footer */
 
