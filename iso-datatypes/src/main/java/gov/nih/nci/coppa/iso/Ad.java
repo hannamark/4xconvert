@@ -92,24 +92,8 @@ public class Ad extends Any {
 
     private static final long serialVersionUID = 1L;
 
-    private Boolean isNotOrdered;
-
     // TODO Invariant must be applied - see COPPA ISO's from EA
     private List<Adxp> part;
-
-    /**
-     * @return the isNotOrdered
-     */
-    public Boolean getIsNotOrdered() {
-        return isNotOrdered;
-    }
-
-    /**
-     * @param isNotOrdered the isNotOrdered to set
-     */
-    public void setIsNotOrdered(Boolean isNotOrdered) {
-        this.isNotOrdered = isNotOrdered;
-    }
 
     /**
      * @return the part
