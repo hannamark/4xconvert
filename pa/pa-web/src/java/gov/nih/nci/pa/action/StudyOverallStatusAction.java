@@ -45,6 +45,7 @@ import com.opensymphony.xwork2.Preparable;
 public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
+    private static final String ACTION_HISTORY = "history";
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
 
@@ -87,7 +88,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     @Override
     public String execute() throws Exception {
         loadForm();
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     /**  
@@ -122,7 +123,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         for (StudyOverallStatusDTO iso : isoList) {
             overallStatusList.add(new StudyOverallStatusWebDTO(iso));
         }
-        return Action.SUCCESS;
+        return ACTION_HISTORY;
     }
     
     private void insertStudyOverallStatus() {

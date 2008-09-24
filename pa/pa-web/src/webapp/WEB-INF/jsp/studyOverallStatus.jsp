@@ -23,7 +23,7 @@
 function handleAction(){
     input_box=confirm("Click OK to save changes or Cancel to Abort.");
     if (input_box==true){
-     document.studyOverallStatus.action="studyOverallStatusUpdate.action";
+     document.studyOverallStatus.action="studyOverallStatusupdate.action";
      document.studyOverallStatus.submit();     
     }
 }
@@ -54,7 +54,7 @@ function handleAction(){
                 list="#currentTrialStatusValues" /></td>
             <td>
             	<ul class="btnrow">			
-					<li style="padding-left:0"><a href="#" class="btn" onclick="openPI('studyOverallStatusHistory.action', 'popup')"><span class="btn_img"><span class="history">History</span></span></a></li>
+					<li style="padding-left:0"><a href="#" class="btn" onclick="openPI('studyOverallStatushistory.action', 'popup')"><span class="btn_img"><span class="history">History</span></span></a></li>
 				</ul>
             <!--<s:submit value="Status History"
                 action='studyOverallStatusHistory' cssClass="button" />-->
