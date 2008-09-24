@@ -136,10 +136,6 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
     }
 
     private static void enforcePoIsoConstraints(Ii value) {
-        if (value.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
         if (StringUtils.isEmpty(value.getExtension())) {
             throw new PoIsoConstraintException("ii.extension is required if a null flavor is not provided.");
         }

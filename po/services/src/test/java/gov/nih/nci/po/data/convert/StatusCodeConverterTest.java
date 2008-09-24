@@ -73,13 +73,6 @@ public class StatusCodeConverterTest {
         expResult = EntityStatus.CURATED;
         result = StatusCodeConverter.convertToStatusEnum(iso);
         assertEquals(expResult, result);
-
-        iso.setFlavorId("flava");
-        try {
-            StatusCodeConverter.convertToStatusEnum(iso);
-            fail();
-        } catch(PoIsoConstraintException x) {
-        }
     }
 
     @Test

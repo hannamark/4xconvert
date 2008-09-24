@@ -111,21 +111,19 @@ public class IiCompositeUserType implements CompositeUserType {
 
     // Constants for the position of the attribute in the composite type
     /** Positional param. */
-    public static final int FLAVOR_ID = 0;
+    public static final int NULLFLAVOR = 0;
     /** Positional param. */
-    public static final int NULLFLAVOR = 1;
+    public static final int DISPLAYABLE = 1;
     /** Positional param. */
-    public static final int DISPLAYABLE = 2;
+    public static final int EXTENSION = 2;
     /** Positional param. */
-    public static final int EXTENSION = 3;
+    public static final int IDENTIFIER_NAME = 3;
     /** Positional param. */
-    public static final int IDENTIFIER_NAME = 4;
+    public static final int RELIABILITY = 4;
     /** Positional param. */
-    public static final int RELIABILITY = 5;
+    public static final int ROOT = 5;
     /** Positional param. */
-    public static final int ROOT = 6;
-    /** Positional param. */
-    public static final int SCOPE = 7;
+    public static final int SCOPE = 6;
 
     /**
      * {@inheritDoc}
@@ -175,8 +173,7 @@ public class IiCompositeUserType implements CompositeUserType {
 
         // TODO PO-535 really, all ISO types should implement correct equals and hashcode methods
         return new EqualsBuilder()
-            .append(i1.getFlavorId(), i2.getFlavorId())
-            .append(i1.getNullFlavor(), i2.getFlavorId())
+            .append(i1.getNullFlavor(), i2.getNullFlavor())
             .append(i1.getDisplayable(), i2.getDisplayable())
             .append(i1.getExtension(), i2.getExtension())
             .append(i1.getIdentifierName(), i2.getIdentifierName())
@@ -195,7 +192,6 @@ public class IiCompositeUserType implements CompositeUserType {
         Ii ii = (Ii) x;
 
         return new HashCodeBuilder()
-            .append(ii.getFlavorId())
             .append(ii.getNullFlavor())
             .append(ii.getDisplayable())
             .append(ii.getExtension())
@@ -210,7 +206,7 @@ public class IiCompositeUserType implements CompositeUserType {
      * {@inheritDoc}
      */
     public String[] getPropertyNames() {
-        return new String[] {"flavorId", "nullFlavor", "displayable", "extension", "identifier_name",
+        return new String[] {"nullFlavor", "displayable", "extension", "identifier_name",
                              "reliability", "root", "scope"};
     }
 
@@ -218,7 +214,7 @@ public class IiCompositeUserType implements CompositeUserType {
      * {@inheritDoc}
      */
     public Type[] getPropertyTypes() {
-        return new Type[] {Hibernate.STRING, Hibernate.STRING, Hibernate.BOOLEAN, Hibernate.STRING,
+        return new Type[] {Hibernate.STRING, Hibernate.BOOLEAN, Hibernate.STRING,
                            Hibernate.STRING, Hibernate.STRING, Hibernate.STRING, Hibernate.STRING};
     }
 
@@ -228,8 +224,6 @@ public class IiCompositeUserType implements CompositeUserType {
     public Object getPropertyValue(Object component, int property) {
         Ii var = (Ii) component;
         switch (property) {
-        case FLAVOR_ID:
-            return var.getFlavorId();
         case NULLFLAVOR:
             return (var.getNullFlavor() != null) ? var.getNullFlavor().toString() : null;
         case DISPLAYABLE:
@@ -255,9 +249,6 @@ public class IiCompositeUserType implements CompositeUserType {
     public void setPropertyValue(Object component, int property, Object value) {
         Ii ii = (Ii) value;
         switch (property) {
-        case FLAVOR_ID:
-            ii.setFlavorId((String) component);
-            break;
         case NULLFLAVOR:
             ii.setNullFlavor(NullFlavor.valueOf((String) component));
             break;
@@ -294,7 +285,6 @@ public class IiCompositeUserType implements CompositeUserType {
         }
 
         Ii result = new Ii();
-        result.setFlavorId(rs.getString(names[FLAVOR_ID]));
         String nullFlavorStr = rs.getString(names[NULLFLAVOR]);
         if (nullFlavorStr != null) {
             result.setNullFlavor(NullFlavor.valueOf(nullFlavorStr));
@@ -326,7 +316,6 @@ public class IiCompositeUserType implements CompositeUserType {
             }
         } else {
             Ii ii = (Ii) value;
-            statement.setString(index + FLAVOR_ID, ii.getFlavorId());
             statement.setString(index + NULLFLAVOR, (ii.getNullFlavor() != null) ? ii.getNullFlavor().toString()
                                                                                  : null);
             statement.setObject(index + DISPLAYABLE, ii.getDisplayable());

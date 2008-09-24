@@ -84,7 +84,6 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.services.PoIsoConstraintException;
 
 /**
  *
@@ -115,10 +114,6 @@ public class StConverter extends AbstractXSnapshotConverter<St> {
             // this should not happen, but we might be able to help convert
             return null;
         }
-        if (iso.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
         if (iso.getNullFlavor() != null) {
             return null;
         } else {

@@ -77,7 +77,6 @@ public class SexCodeConverter {
             return null;
         }
 
-        checkFlavorId(cd);
         if (cd.getNullFlavor() != null) {
             return null;
         }
@@ -87,12 +86,6 @@ public class SexCodeConverter {
         checkNull(sex, code);
         return sex;
 
-    }
-
-    private static void checkFlavorId(Cd cd) {
-        if (cd.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
     }
 
     private static void checkBlank(String code) {

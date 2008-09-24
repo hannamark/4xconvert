@@ -57,15 +57,6 @@ public class IiConverterTest extends AbstractHibernateTestCase {
     }
 
     @Test(expected = PoIsoConstraintException.class)
-    public void testFlavorId() {
-        Ii iso = new Ii();
-        iso.setExtension("1");
-        iso.setRoot("tstroot");
-        iso.setFlavorId("flavorId");
-        IiConverter.convertToLong(iso);
-    }
-
-    @Test(expected = PoIsoConstraintException.class)
     public void testExtension() {
         Ii iso = new Ii();
         iso.setRoot("tstroot");
@@ -87,15 +78,6 @@ public class IiConverterTest extends AbstractHibernateTestCase {
         value.setNullFlavor(NullFlavor.NI);
         org = converter.convert(Organization.class, value);
         assertEquals(null, org);
-
-        value = new Ii();
-        value.setFlavorId("tst");
-        try {
-            org = converter.convert(Organization.class, value);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            // expected
-        }
 
         value = new Ii();
         value.setExtension("" + orgId);
@@ -136,15 +118,6 @@ public class IiConverterTest extends AbstractHibernateTestCase {
         value.setNullFlavor(NullFlavor.NI);
         p = converter.convert(Person.class, value);
         assertEquals(null, p);
-
-        value = new Ii();
-        value.setFlavorId("tst");
-        try {
-            p = converter.convert(Person.class, value);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            // expected
-        }
 
         value = new Ii();
         value.setExtension("" + personId.longValue());

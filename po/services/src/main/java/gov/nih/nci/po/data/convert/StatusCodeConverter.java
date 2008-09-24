@@ -165,9 +165,6 @@ public final class StatusCodeConverter {
             return null;
         }
 
-        if (iso.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
         if (iso.getNullFlavor() != null) {
             return null;
         }

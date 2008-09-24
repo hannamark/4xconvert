@@ -197,10 +197,6 @@ public class RemoteApiUtils {
     }
 
     private static void enforcePoIiIsoConstraints(Ii value) {
-        if (value.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
         if (StringUtils.isEmpty(value.getExtension())) {
             throw new PoIsoConstraintException("ii.extension is required if a null flavor is not provided.");
         }

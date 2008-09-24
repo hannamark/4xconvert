@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -61,21 +60,6 @@ public class IvlTsConverterTest {
         result = IvlTsConverter.convertToIvlTs(iso);
         assertNotSame(expResult, result);
         assertEquals(expResult, result);
-
-        iso.setFlavorId("flava");
-        try {
-            IvlTsConverter.convertToIvlTs(iso);
-            fail();
-        } catch(PoIsoConstraintException x) {
-        }
-
-        iso.setFlavorId(null);
-        ts.setFlavorId("flava");
-        try {
-            IvlTsConverter.convertToIvlTs(iso);
-            fail();
-        } catch(PoIsoConstraintException x) {
-        }
     }
 
     public static Date make(int year, int month, int date, int hour24, int min, int sec, int millis, String zone) {

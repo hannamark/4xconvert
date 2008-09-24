@@ -89,7 +89,6 @@ public class RaceCodeConverter {
                 continue;
             }
 
-            checkFlavorId(cd);
             if (cd.getNullFlavor() != null) {
                 continue;
             }
@@ -101,12 +100,6 @@ public class RaceCodeConverter {
         }
         return races;
 
-    }
-
-    private static void checkFlavorId(Cd cd) {
-        if (cd.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
     }
 
     private static void checkBlank(String code) {

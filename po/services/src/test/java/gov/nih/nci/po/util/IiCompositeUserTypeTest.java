@@ -110,18 +110,8 @@ public class IiCompositeUserTypeTest {
     }
 
     @Test
-    public void testDeepCopyAndReplace() {
-        Ii ii = new Ii();
-        ii.setFlavorId("myFlavor");
-        Ii result = (Ii) type.deepCopy(ii);
-        assertEquals(ii.getFlavorId(), result.getFlavorId());
-        assertEquals(ii.getFlavorId(), ((Ii) type.replace(ii, null, null, null)).getFlavorId());
-    }
-
-    @Test
     public void testEqualsHashCode() {
         Ii ii = new Ii();
-        ii.setFlavorId("test");
         assertTrue(type.equals(ii, ii));
         assertFalse(type.equals(null, ii));
         assertFalse(type.equals(ii, null));

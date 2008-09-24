@@ -102,7 +102,6 @@ public class PersonResourceProviderServiceTest extends AbstractStructrualRoleSer
 
         Ii ii = new Ii();;
         // we're going to set to nonsense values, to ensure that the whole type can be persisted
-        ii.setFlavorId("myFlavorId");
         ii.setDisplayable(Boolean.TRUE);
         ii.setExtension("myExtension");
         ii.setIdentifierName("myIdName");
@@ -118,7 +117,6 @@ public class PersonResourceProviderServiceTest extends AbstractStructrualRoleSer
     @Override
     void verifyStructuralRole(PersonResourceProvider expected, PersonResourceProvider actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals("myFlavorId", actual.getIdentifier().getFlavorId());
         assertTrue(actual.getIdentifier().getDisplayable().booleanValue());
         assertEquals("myExtension", actual.getIdentifier().getExtension());
         assertEquals("myIdName", actual.getIdentifier().getIdentifierName());

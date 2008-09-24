@@ -3,14 +3,10 @@ package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.PostalAddressUse;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.util.MockCountryServiceLocator;
 import gov.nih.nci.po.util.PoRegistry;
@@ -18,7 +14,6 @@ import gov.nih.nci.po.util.ServiceLocator;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.After;
@@ -301,69 +296,6 @@ useful in Germany, where many systems keep house number as a distinct field
         assertEquals("USA", result.getCountry().getAlpha3());
 
         assertEquals("P.O.Box 909", result.getStreetAddressLine());
-    }
-
-    /**
-     * Verify that adding items in to the USE set causes an error.
-     */
-    @Test(expected = PoIsoConstraintException.class)
-    public void testUseThrowsError() {
-        Ad iso = new Ad();
-        List<Adxp> part = new ArrayList<Adxp>();
-        iso.setPart(part);
-
-        try {
-            AdConverter.SimpleConverter.convertToAddress(iso);
-        } catch (Exception e) {
-            fail();
-        }
-
-        iso.setUse(new HashSet<PostalAddressUse>());
-
-        try {
-            AdConverter.SimpleConverter.convertToAddress(iso);
-        } catch (Exception e) {
-            fail();
-        }
-
-        iso.getUse().add(PostalAddressUse.DIR);
-        AdConverter.SimpleConverter.convertToAddress(iso);
-    }
-
-    /**
-     * Verify that adding items in to the USE set causes an error.
-     */
-    @Test(expected = PoIsoConstraintException.class)
-    public void testUsablePeriodThrowsError() {
-        Ad iso = new Ad();
-        List<Adxp> part = new ArrayList<Adxp>();
-        iso.setPart(part);
-
-        try {
-            AdConverter.SimpleConverter.convertToAddress(iso);
-        } catch (Exception e) {
-            fail();
-        }
-
-        iso.setUsablePeriod(new Ivl<Ts>());
-
-        AdConverter.SimpleConverter.convertToAddress(iso);
-    }
-
-    /**
-     * test that the constraing on flavor id is enforced.
-     */
-    public void testFlavorId() {
-        Ad iso = new Ad();
-        iso.setNullFlavor(NullFlavor.OTH);
-        AdConverter.SimpleConverter.convertToAddress(iso);
-        iso.setFlavorId("flavorId");
-        try{
-            AdConverter.SimpleConverter.convertToAddress(iso);
-            fail();
-        } catch(PoIsoConstraintException ex) {
-
-        }
     }
 
     /**

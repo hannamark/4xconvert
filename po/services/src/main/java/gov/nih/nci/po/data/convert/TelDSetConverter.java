@@ -91,7 +91,6 @@ import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.List;
 
@@ -116,7 +115,6 @@ public class TelDSetConverter {
             List<Email> email, List<PhoneNumber> fax, List<PhoneNumber> phone, List<URL> url, List<PhoneNumber> text) {
         if (value == null || value.getItem() == null) { return; }
         for (Tel t : value.getItem()) {
-            enforcePoIsoConstraints(t);
 
             if (t.getNullFlavor() != null) {
                 continue;
@@ -135,26 +133,6 @@ public class TelDSetConverter {
             } else if (val.startsWith(TelPhone.SCHEME_X_TEXT_TEL)) {
                 text.add(new PhoneNumber(t.getValue().getSchemeSpecificPart()));
             }
-        }
-    }
-
-    /**
-     * Enforce the po iso constraints for tel.
-     * @param t the tel
-     */
-    private static void enforcePoIsoConstraints(Tel t) {
-        if (t.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
-        if (t.getUse() != null && !t.getUse().isEmpty()) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'use'"
-                    + " field on TEL at this time.");
-        }
-
-        if (t.getUseablePeriod() != null) {
-            throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
-                    + " field on Tel at this time.");
         }
     }
 

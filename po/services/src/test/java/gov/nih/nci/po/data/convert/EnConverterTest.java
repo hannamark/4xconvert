@@ -8,11 +8,12 @@ import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
-
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.services.PoIsoConstraintException;
-import org.junit.Test;
+
 import java.util.Collections;
+
+import org.junit.Test;
 
 /**
  *
@@ -38,7 +39,7 @@ public class EnConverterTest {
         }catch (PoIsoConstraintException ex) {
             // expected
         }
-        
+
         Enxp p = new Enxp(null);
         p.setValue("5AM Solutions, ");
         iso.getPart().add(p);
@@ -51,7 +52,7 @@ public class EnConverterTest {
         String result = instance.convertToString(iso);
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void testValidation() {
         EnOn iso = new EnOn();
@@ -62,7 +63,7 @@ public class EnConverterTest {
         }catch(PoIsoConstraintException ex){
             assertTrue(ex.getMessage().contains("is null or it has at least one part"));
         }
-        
+
         iso.setNullFlavor(NullFlavor.OTH);
         Enxp p = new Enxp(null);
         p.setValue("5AM Solutions, ");
@@ -72,15 +73,6 @@ public class EnConverterTest {
             fail();
         }catch(PoIsoConstraintException ex){
             assertTrue(ex.getMessage().contains("is null or it has at least one part"));
-        }
-        
-        iso.setNullFlavor(null);
-        iso.setFlavorId("flavorId");
-        try{
-            instance.convertToString(iso);
-            fail();
-        }catch(PoIsoConstraintException ex){
-            assertTrue(ex.getMessage().contains("flavorId"));
         }
     }
 }

@@ -205,7 +205,6 @@ public class PersonResourceProvider implements PersistentObject {
      */
     @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
     @Columns(columns = {
-            @Column(name = "identifier_flavor_id"),
             @Column(name = "identifier_null_flavor"),
             @Column(name = "identifier_displayable"),
             @Column(name = "identifier_extension"),

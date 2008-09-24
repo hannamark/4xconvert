@@ -87,6 +87,7 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.services.PoIsoConstraintException;
+
 import java.util.Date;
 
 
@@ -97,15 +98,9 @@ import java.util.Date;
 public class IvlTsConverter extends AbstractXSnapshotConverter<Ivl<Ts>> {
 
     private static void validate(Ivl<Ts> iso) {
-        if (iso.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
         Ts low = iso.getLow();
         if (low == null) {
             return;
-        }
-        if (low.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
         }
         if (low.getValue() == null) {
             throw new PoIsoConstraintException("low.value cannot be null");
@@ -137,7 +132,7 @@ public class IvlTsConverter extends AbstractXSnapshotConverter<Ivl<Ts>> {
         if (low == null || low.getNullFlavor() != null) {
             return null;
         }
-        
+
         return new Date(low.getValue().getTime());
     }
 }

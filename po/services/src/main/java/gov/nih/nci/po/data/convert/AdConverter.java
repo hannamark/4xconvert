@@ -127,20 +127,6 @@ public class AdConverter {
                 return null;
             }
 
-            if (iso.getFlavorId() != null) {
-                throw new PoIsoConstraintException("PO expects a null flavorId");
-            }
-
-            if (iso.getUse() != null && !iso.getUse().isEmpty()) {
-                throw new PoIsoConstraintException("PO does not support the use of the 'use' "
-                        + "field on AD at this time.");
-            }
-
-            if (iso.getUsablePeriod() != null) {
-                throw new PoIsoConstraintException("PO does not support the use of the 'usablePeriod'"
-                        + " field on AD at this time.");
-            }
-
             if (iso.getIsNotOrdered() != null) {
                 throw new PoIsoConstraintException("PO does not support the use of the 'isNotOrdered' "
                         + "field on AD at this time.");

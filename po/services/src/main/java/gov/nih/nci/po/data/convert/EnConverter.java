@@ -132,24 +132,12 @@ public class EnConverter <ENXX extends En> extends AbstractXSnapshotConverter<EN
     }
 
     private static void validate(En iso) {
-        enforceNonNullFlavorPoIsoContraints(iso);
-
         if (iso.getNullFlavor() != null) {
             if (iso.getPart() != null && !iso.getPart().isEmpty()) {
                 throw new PoIsoConstraintException("Either the EN is null or it has at least one part");
             }
         } else if (iso.getPart().isEmpty()) {
             throw new PoIsoConstraintException("Either the EN is null or it has at least one part");
-        }
-    }
-
-    private static void enforceNonNullFlavorPoIsoContraints(En iso) {
-        if (iso.getFlavorId() != null) {
-            throw new PoIsoConstraintException("PO expects a null flavorId");
-        }
-
-        if (iso.getUse() != null && !iso.getUse().isEmpty()) {
-            throw new PoIsoConstraintException("PO expects an empty use set for EnPn.use");
         }
     }
 }
