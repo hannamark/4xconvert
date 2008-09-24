@@ -2,7 +2,7 @@
 <!--<ul class="cactusmenu"> -->
 
 
-		<li class="stdnav"><div>Protocol Abstraction</div>
+		<li class="stdnav"><div>NCI Registry</div>
 			<ul>
 				<li><a href="#">Home</a></li>			
 				<li><a href="studyProtocolQuery.action" >Protocol Search</a></li>			
