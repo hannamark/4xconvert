@@ -52,4 +52,12 @@ public interface StudyProtocolServiceRemote {
     InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO) throws PAException;
     
+    /**
+     * for creating a new ISP.
+     * @param ispDTO  for isp
+     * @return ii ii
+     * @throws PAException exception
+     */
+    Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO) throws PAException;    
+    
 }

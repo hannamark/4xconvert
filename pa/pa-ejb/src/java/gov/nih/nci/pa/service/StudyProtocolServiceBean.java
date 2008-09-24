@@ -267,23 +267,34 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             LOG.info(" query InterventionalStudyProtocol = " + hql);
             query = session.createQuery(hql);
             queryList = query.list();
-            InterventionalStudyProtocol sp = queryList.get(0);
-            InterventionalStudyProtocol ispFromAction = InterventionalStudyProtocolConverter.
+            InterventionalStudyProtocol isp = queryList.get(0);
+            
+            InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.
                                 convertFromDTOToDomain(ispDTO);
-            sp.setDateLastUpdated(now);
-            sp.setAccrualReportingMethodCode(ispFromAction.getAccrualReportingMethodCode());
-            sp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
-            //
-            sp.setSection801Indicator(ispFromAction.getSection801Indicator());
-            sp.setFdaRegulatedIndicator(ispFromAction.getFdaRegulatedIndicator());
-            sp.setDataMonitoringCommitteeAppointedIndicator(
-                    ispFromAction.getDataMonitoringCommitteeAppointedIndicator());
-            sp.setIndIdeIndicator(ispFromAction.getIndIdeIndicator());
-            sp.setDelayedpostingIndicator(ispFromAction.getDelayedpostingIndicator());
-            session.update(sp);
+            // overwrite the values
+            isp.setAccrualReportingMethodCode(upd.getAccrualReportingMethodCode());
+            isp.setAcronym(upd.getAcronym());
+            isp.setDataMonitoringCommitteeAppointedIndicator(upd.getDataMonitoringCommitteeAppointedIndicator());
+            isp.setDelayedpostingIndicator(upd.getDelayedpostingIndicator());
+            isp.setExpandedAccessIndicator(upd.getExpandedAccessIndicator());
+            isp.setFdaRegulatedIndicator(upd.getFdaRegulatedIndicator());
+            isp.setIndIdeIndicator(upd.getIndIdeIndicator());
+            isp.setOfficialTitle(upd.getOfficialTitle());
+            isp.setPhaseCode(upd.getPhaseCode());
+            isp.setPrimaryCompletionDate(upd.getPrimaryCompletionDate());
+            isp.setPrimaryCompletionDateTypeCode(upd.getPrimaryCompletionDateTypeCode());
+            isp.setPrimaryPurposeCode(upd.getPrimaryPurposeCode());
+            isp.setSection801Indicator(upd.getSection801Indicator());
+            isp.setStartDate(upd.getStartDate());
+            isp.setStartDateTypeCode(upd.getStartDateTypeCode());
+            
+            isp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
+            isp.setDateLastUpdated(now);
+
+            session.update(isp);
             session.flush();
             //spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
-            ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(sp);
+            ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
                     + ispDTO.getIi().getExtension() , hbe);
@@ -308,7 +319,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             throw new PAException(" studyProtocolDTO should not be null ");
             
         }
-        if (ispDTO.getIi().getExtension() != null) {
+        if (ispDTO.getIi() != null && ispDTO.getIi().getExtension() != null) {
             LOG.error(" Extension should be null = " + ispDTO.getIi().getExtension());
             throw new PAException("  Extension should be null, but got  = " + ispDTO.getIi().getExtension());
             
@@ -336,11 +347,14 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         
     }
 
+    
+    
     private String generateNciIdentifier() throws PAException {
         Session session = null;
         Calendar today = Calendar.getInstance();
         int currentYear  = today.get(Calendar.YEAR);
-        String query = "select max(sp.identifier) from Protocol pro where sp.identifier like '%" + currentYear + "%' ";
+        String query = "select max(sp.identifier) from StudyProtocol sp where " 
+            + "sp.identifier like '%" + currentYear + "%' ";
         String nciIdentifier;
         
         try {
@@ -366,6 +380,55 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             session.flush();
         }
         return nciIdentifier;
+    }    
+    
+    /**
+     * 
+     * @param ii ii
+     * @return InterventionalStudyProtocolDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public InterventionalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            LOG.error(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
+        }
+        LOG.info("Entering getInterventionalStudyProtocol");
+        Session session = null;
+       
+        List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
+        InterventionalStudyProtocol isp = null;
+        try {
+            Query query = null;
+            session = HibernateUtil.getCurrentSession();
+            // step 1: form the hql
+            String hql = "select isp "
+                       + "from InterventionalStudyProtocol isp "
+                       + "where isp.id =  " + Long.valueOf(ii.getExtension());
+            LOG.info(" query InterventionalStudyProtocol = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            
+            isp = queryList.get(0);
+            session.flush();
+
+            
+        }  catch (HibernateException hbe) {
+            session.flush();
+            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = " 
+                    + ii.getExtension() , hbe);
+            throw new PAException(" Hibernate exception while retrieving " 
+                    + "InterventionalStudyProtocol for id = " + ii.getExtension() , hbe);
+        }
+        InterventionalStudyProtocolDTO ispDTO = 
+            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+
+        LOG.info("Leaving getInterventionalStudyProtocol");
+        return ispDTO;
+        
     }    
 
 }
