@@ -33,7 +33,7 @@ function handleDelete(studyResourcingId){
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
     <s:form><s:actionerror/>
-    <h2>NIH Grant Information</h2>
+    <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <s:if test="trialFundingList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="cbValue" />

@@ -30,7 +30,7 @@ if (page == "Edit"){
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
     <s:form><s:actionerror/>
-    <h2>NIH Grant Information</h2>
+    <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="cbValue" value="${cbValue}" />
     <table class="form">
