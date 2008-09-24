@@ -5,8 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="pa-reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="software.dir" value="${basedir}/../.."/>
-    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="software.dir" value="${basedir}/.."/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     
     <property file="${basedir}/build.properties"/>
@@ -16,13 +15,13 @@
     <property name="pa.checkstyle" value="${pa.resourceDir}/paRegCheckstyle.xml"/>
 
     <property name="pa-reg-web.build.finalName" value="pa-reg-web"/>
-    <property name="pa-reg-web.build.dir" value="${pa.dir}/pa-reg-web/target"/>
+    <property name="pa-reg-web.build.dir" value="${software.dir}/pa-reg-web/target"/>
     <property name="pa-reg-web.build.outputDir" value="${pa-reg-web.build.dir}/classes"/>
-    <property name="pa-reg-web.build.srcDir.0" value="${pa.dir}/pa-reg-web/src/java"/>
-    <property name="pa-reg-web.build.resourceDir.0" value="${pa.dir}/pa-reg-web/src/resources"/>
+    <property name="pa-reg-web.build.srcDir.0" value="${software.dir}/pa-reg-web/src/java"/>
+    <property name="pa-reg-web.build.resourceDir.0" value="${software.dir}/pa-reg-web/src/resources"/>
     <property name="pa-reg-web.build.testOutputDir" value="${pa-reg-web.build.dir}/test-classes"/>
-    <property name="pa-reg-web.build.testDir.0" value="${pa.dir}/pa-reg-web/test/java"/>
-    <property name="pa-reg-web.build.testResourceDir.0" value="${pa.dir}/pa-reg-web/test/resources"/>
+    <property name="pa-reg-web.build.testDir.0" value="${software.dir}/pa-reg-web/test/java"/>
+    <property name="pa-reg-web.build.testResourceDir.0" value="${software.dir}/pa-reg-web/test/resources"/>
     <property name="pa-reg-web.test.reports" value="${pa.report.dir}/pa-reg-web/test-reports"/>
     <property name="pa-reg-web.coverage.reports" value="${pa.report.dir}/pa-reg-web/coverage-reports"/>
     <property name="pa-reg-web.reporting.outputDirectory" value="${pa.report.dir}/pa-reg-web/site"/>
@@ -283,11 +282,11 @@
         
         <war destfile="${pa-reg-web.build.dir}/${pa-reg-web.war}" 
              compress="false" 
-             webxml="${pa.dir}/pa-reg-web/src/webapp/WEB-INF/web.xml">            
+             webxml="${software.dir}/pa-reg-web/src/webapp/WEB-INF/web.xml">            
             <lib dir="${pa-reg-web.build.dir}/${pa-reg-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${pa-reg-web.build.outputDir}"/>
-            <webinf dir="${pa.dir}/pa-reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${pa.dir}/pa-reg-web/src/webapp"/>
+            <webinf dir="${software.dir}/pa-reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
+            <fileset dir="${software.dir}/pa-reg-web/src/webapp"/>
         </war>
     </target>
 
