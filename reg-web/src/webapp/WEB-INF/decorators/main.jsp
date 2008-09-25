@@ -10,7 +10,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title><decorator:title default="Protocol Abstraction (PA)"/></title>  	  
+	<title><decorator:title default="NCI Registry"/></title>  	  
     <link href="<s:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <link href="<s:url value='/styles/displayStyles.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <link href="<s:url value='/struts/niftycorners/niftyCorners.css'/>" rel="stylesheet" type="text/css"/>
