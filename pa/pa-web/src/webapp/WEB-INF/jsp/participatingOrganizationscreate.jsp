@@ -66,7 +66,7 @@
 					<td scope="row" class="label"><label for="name">Organization
 					Name:</label></td>
 					<td class="value" style="width: 250px"><input type="text"
-						name="facOrganizationName" maxlength="200" size="100"
+						name="name" maxlength="200" size="100" value=""
 						style="width: 250px" /> <span class="info">Enter
 					organization name and click <strong>Look Up</strong>.</span> <span
 						class="formErrorMsg"></span></td>
@@ -82,14 +82,14 @@
 					<td scope="row" class="label"><label for="ncinum">NCI
 					number:</label></td>
 					<td class="value" colspan="2"><input type="text" name="ncinum"
-						id="facNCINumber" maxlength="200" size="10"
+						id="ncinum" maxlength="200" size="10" value=""
 						style="width: 100px" disabled="disabled" class="readonly" /></td>
 				</tr>
 				<tr>
 					<td scope="row" class="label"><label for="city">City:</label>
 					</td>
 					<td class="value" colspan="2"><input type="text" name="city"
-						id="facCity" maxlength="200" size="200" style="width: 200px"
+						id="city" maxlength="200" size="200" value="" style="width: 200px"
 						disabled="disabled" class="readonly" /> <span class="formErrorMsg"></span>
 					</td>
 				</tr>
@@ -97,7 +97,7 @@
 					<td scope="row" class="label"><label for="state">State:</label>
 					</td>
 					<td class="value" colspan="2"><input type="text" name="state"
-						name="facState" maxlength="200" size="200"
+						name="state" maxlength="200" size="200" value=""
 						style="width: 200px" disabled="disabled" class="readonly" /> <span
 						class="formErrorMsg"></span></td>
 				</tr>
@@ -105,7 +105,7 @@
 					<td scope="row" class="label"><label for="zip">Zip/Postal
 					Code:</label></td>
 					<td class="value" colspan="2"><input type="text" name="zip"
-						id="facZipPostalCode" maxlength="200" size="200" style="width: 200px"
+						id="zip" maxlength="200" size="200" value="" style="width: 200px"
 						disabled="disabled" class="readonly" /> <span class="formErrorMsg"></span>
 					</td>
 				</tr>
@@ -113,7 +113,7 @@
 					<td scope="row" class="label"><label for="country">Country:</label>
 					</td>
 					<td class="value" colspan="2"><input type="text"
-						name="facCountry" id="country" maxlength="200" size="200" 
+						name="country" id="country" maxlength="200" size="200" value=""
 						style="width: 200px" disabled="disabled" class="readonly" /> <span
 						class="formErrorMsg"></span></td>
 				</tr>
@@ -121,13 +121,13 @@
 					<td scope="row" class="label"><label for="leadorg">Lead
 					Organization:</label></td>
 					<td class="value"><input type="checkbox" name="group2"
-						id="facLeadOrganization" onclick="SetGenericValues1()" />
+						id="leadorg" value="Lead Org" onclick="SetGenericValues1()" />
 					(check box if yes)</td>
 				</tr>
 				<tr>
 					<td scope="row" class="label"><label for="srs">Site
 					Recruitment Status:</label></td>
-					<td class="value" colspan="2"><select name="facSiteRecruitmentStatus" id="facSiteRecruitmentStatus"
+					<td class="value" colspan="2"><select name="status" id="srs"
 						style="width: 200px">
 						<option value="CTEP">Not yet recruiting</option>
 						<option value="CCR">Recruiting</option>
@@ -143,7 +143,7 @@
 					<td scope="row" class="label"><label for="srsd">Site
 					Recruitment Status Date:</label></td>
 					<td class="value" colspan="2"><input type="text"
-						name="facSiteRecruitmentStatusDate" id="facSiteRecruitmentStatusDate" maxlength="10" size="10"
+						name="statusDate1" id="srsd" maxlength="10" size="10" value=" "
 						style="width: 70px; float: left"> <a
 						href="javascript:showCal('Calendar1')"><img
 						src="images/ico_calendar.gif" alt="select date"
