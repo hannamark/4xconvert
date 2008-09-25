@@ -2,8 +2,21 @@
 <html>
 <head>
     <title><fmt:message key="organization.search.title"/></title>
+    <script type="text/javascript">
+        var returnVal;
+	    function markAsDuplicate(url) {
+		     var text = '<s:text name="curation.reject.mark.as.duplicate.confirmation"/>';
+	    	 var result = confirm(text);
+	    	 if (result == true)
+	    	 {
+	    		 returnVal = url;
+	             window.top.hidePopWin(true);
+	    	 }
+	    }
+	</script>
 </head>
-<body>
+<body> 
+<div id="findDuplicates">
 <div class="po_wrapper">
     <div class="po_inner">
         <h1>Find Duplicate Organization(s)</h1>
@@ -11,9 +24,9 @@
             <div class="po_form">
                 <po:successMessages />
                 <s:actionerror/>
-
                 <s:form action="ajax/duplicates/organization/search.action" id="duplicateOrganizationForm">
                     <s:hidden name="rootKey"/>
+                    <s:hidden name="source.id"/>
 			        <div class="boxouter">
 			        <h2>Basic Identifying Information</h2>
 			            <div class="box_white">
@@ -28,7 +41,7 @@
 			        <div class="boxouter">
 			        <h2>Address Information</h2>
 			            <div class="box_white">
-			                <po:addressForm addressKeyBase="organization.postalAddress" address="${criteria.organization.postalAddress}" required="false"/>
+			                <po:addressForm addressKeyBase="criteria.organization.postalAddress" address="${criteria.organization.postalAddress}" required="false"/>
 			                <div class="clear"></div>
 			            </div>
 			        </div>
@@ -44,7 +57,7 @@
                 </s:form>
 				<div style="float:right;">
 				    <po:button href="javascript://nop/" 
-				        onclick="submitAjaxForm('duplicateOrganizationForm', 'duplicateSearchResults', null, true);" 
+				        onclick="$('duplicateSearchResultDetails').hide(); submitAjaxForm('duplicateOrganizationForm', 'duplicateSearchResults', null, true);" 
 				        style="search" text="Search for Duplicates" 
 				        id="submitDuplicateOrganizationForm"/>
 				</div>                
@@ -56,11 +69,25 @@
 <br>
 <br>
 </div>
+
 <div class="po_wrapper">
     <div class="po_inner">
-        <div class="box_white" id="duplicateSearchResults">
-            <h2>Possible Duplicate Organization(s)</h2>
-            <%@ include file="../../duplicates/organization/results.jsp" %>
+        <div class="box_white">
+			<div class="boxouter">
+			<h2>Possible Duplicate Organization(s)</h2>
+				<div id="duplicateSearchResults">     
+	            <%@ include file="results.jsp" %>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="po_wrapper">
+    <div class="po_inner">
+        <div class="box_white" id="duplicateSearchResultDetails" style="display:none;">
+            <%@ include file="detail.jsp" %>
         </div>
     </div>
 </div>

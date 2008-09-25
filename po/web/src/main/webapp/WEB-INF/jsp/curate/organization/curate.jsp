@@ -39,6 +39,22 @@
 		<h2>Basic Identifying Information</h2>
 		    <div class="box_white">
 		        <s:actionerror/>
+                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
+		            <div class="wwlbl" id="wwlbl_curateOrgForm_organization_statusCode">
+		            <label class="label" for="curateOrgForm_organization_statusCode">        
+		            <s:text name="organization.statusCode"/>:
+		            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_statusCode">
+		            ${organization.statusCode} 
+		            </div>
+	            </div>
+                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_id">
+		            <div class="wwlbl" id="wwlbl_curateOrgForm_organization_id">
+		            <label class="label" for="curateOrgForm_organization_id">        
+		            <s:text name="organization.id"/>:
+		            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_id">
+		            ${organization.id} 
+		            </div>
+	            </div>
 				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
 				<s:textfield key="organization.abbreviatedName" required="false" cssClass="required" size="70"/>
 				<s:textfield key="organization.description" required="false" cssClass="required" size="70"/>
@@ -49,7 +65,7 @@
 		<div class="boxouter">
 		<h2>Address Information</h2>
 		    <div class="box_white">
-		        <po:addressForm addressKeyBase="organization.postalAddress" address="${organization.postalAddress}"/>
+		        <po:addressForm addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
 		        <div class="clear"></div>
 		    </div>
 		</div>
@@ -61,23 +77,7 @@
                 <%@ include file="../../contactable/contacts.jsp" %>    		
 		    </div>
 		</div>
-   	    <div class="boxouter">
-        <h2>Entity Information</h2>
-        <div class="box_white">
-			<div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
-			<div class="wwlbl" id="wwlbl_curateOrgForm_organization_statusCode">
-			<label class="label" for="curateOrgForm_organization_statusCode">        
-			<s:text name="organization.statusCode"/>:
-			</label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_statusCode">
-			${organization.statusCode} 
-			</div></div>
-            
-            <s:textfield key="organization.duplicateOf.id" size="10"/>
-        </div>
-		<div class="clearfloat"></div>
-    </div>    
 	</s:form>
-	
     </div>
 </div>
 
@@ -97,12 +97,27 @@
 
 
 <div class="btnwrapper">
-    <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl"/>
+<script type="text/javascript">
+function showPopWinCallback(returnVal) {
+	window.location = '' + returnVal;
+}
+</script>
+
+    <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl">
+        <c:param name="source.id" value="${organization.id}"/>
+    </c:url>
+    <c:url value="/protected/organization/curate/reject.action" var="rejectUrl">
+        <c:param name="organization.id" value="${organization.id}"/>
+    </c:url>
     <po:buttonRow>
-        <po:button href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, null);" style="search" text="Search for Duplicates"/>
         <po:button id="mark_as_accepted_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="confirm" text="Mark as Accepted"/>
-        <po:button id="mark_as_rejected_button" href="${urlNotYetImplemented}" style="reject" text="Mark as Rejected"/>
+        <po:button id="mark_as_rejected_button" href="${rejectUrl}" style="reject" text="Mark as Rejected"/>
+        <po:button href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, showPopWinCallback);" style="search" text="Mark as Duplicate"/>
     </po:buttonRow>
+</div>
+<div style="height=10px;">
+<br>
+<br>
 </div>
 </body>
 </html>

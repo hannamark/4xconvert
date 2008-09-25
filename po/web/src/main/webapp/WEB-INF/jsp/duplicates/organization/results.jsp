@@ -6,10 +6,18 @@
         <display:setProperty name="pagination.sort.param" value="orgs.sortCriterion" />
         <display:setProperty name="pagination.sortdirection.param" value="orgs.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="orgs.pageNumber" />
-
-        <display:column titleKey="organization.name" property="name" sortable="true" sortProperty="ORGANIZATION_NAME" maxLength="30"/>
-        <display:column titleKey="organization.abbreviatedName" property="abbreviatedName" maxLength="30"/>
-        <display:column titleKey="organization.description" property="description" maxLength="30"/>
+        
+        <display:column titleKey="organization.id" sortable="true" sortProperty="ORGANIZATION_ID" >
+            <c:url var="viewDetailsUrl" value="/protected/ajax/duplicates/organization/detail.action">
+                <c:param name="organization.id" value="${row.id}"/>
+            </c:url>
+            <a href="javascript://nop/" onclick="$('findDuplicates').hide(); loadDiv('${viewDetailsUrl}','duplicateSearchResultDetails', true);">
+                ${row.id}
+            </a>
+        </display:column>
+        <display:column titleKey="organization.name" property="name" sortable="true" sortProperty="ORGANIZATION_NAME" maxLength="20"/>
+        <display:column titleKey="organization.abbreviatedName" property="abbreviatedName" maxLength="10"/>
+        <display:column titleKey="organization.description" property="description" maxLength="20"/>
         <display:column titleKey="organization.statusCode" sortable="false">
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">
@@ -20,9 +28,14 @@
             </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">
+	        <c:url var="markAsDuplicateUrl" value="/protected/organization/curate/markAsDuplicate.action">
+	            <c:param name="organization.id" value="${source.id}"/>
+	            <c:param name="duplicateOfId" value="${row.id}"/>
+	        </c:url>
             <po:buttonRow>
-                <po:button href="javascript://nop/" onclick="window.top.document.getElementById('curateOrgForm_organization_duplicateOf_id').value = ${row.id}; window.top.hidePopWin(true);" style="select_person" text="Use As Duplicate" id="org_id_${row.id}" />
+                <po:button href="javascript://nop/" onclick="markAsDuplicate('${markAsDuplicateUrl}');" style="reject" text="Mark As Duplicate" />
             </po:buttonRow>
         </display:column>
     </display:table>
 </ajax:displayTag>
+  

@@ -118,16 +118,30 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
      * {@inheritDoc}
      * @throws EntityValidationException
      */
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void accept(Organization org) {
         Session s = PoHibernateUtil.getCurrentSession();
-        Organization o = (Organization) s.load(Organization.class, org.getId());
-        if (org != o) {
-            o = (Organization) s.merge(org);
-        } else {
-            o = org;
-        }
+        Organization o = loadAndMerge(org, s);
+        removeCRs(o);
+        o.setStatusCode(EntityStatus.CURATED);
+        o.setStatusDate(new Date());
+        s.update(o);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void reject(Organization organization) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Organization o = loadAndMerge(organization, s);
+        removeCRs(o);
+        o.setStatusCode(EntityStatus.REJECTED);
+        o.setStatusDate(new Date());
+        s.update(o);
+    }
+
+    private void removeCRs(Organization o) {
         if (!o.getChangeRequests().isEmpty()) {
             for (OrganizationCR cr : o.getChangeRequests()) {
                 // TODO delete or mark as processed
@@ -135,9 +149,32 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
                 PoHibernateUtil.getCurrentSession().delete(cr);
             }
         }
-        o.setStatusCode(EntityStatus.CURATED);
+    }
+
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    private Organization loadAndMerge(Organization org, Session s) {
+        Organization o = (Organization) s.load(Organization.class, org.getId());
+        if (org != o) {
+            o = (Organization) s.merge(org);
+        } else {
+            o = org;
+        }
+        return o;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void markAsDuplicate(Organization duplicate, Organization duplicateOf) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Organization o = loadAndMerge(duplicate, s);
+        removeCRs(o);
+        o.setStatusCode(EntityStatus.REJECTED);
+        o.setDuplicateOfOrg(duplicateOf);
         o.setStatusDate(new Date());
         s.update(o);
     }
+
 
 }

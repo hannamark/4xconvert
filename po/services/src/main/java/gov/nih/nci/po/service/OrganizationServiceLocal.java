@@ -126,4 +126,15 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      */
     void accept(Organization curatedOrg);
 
+    /**
+     * @param organization to reject
+     */
+    void reject(Organization organization);
+
+    /**
+     * @param duplicate the organization that found to be a duplicate entry in the system
+     * @param duplicateOf the existing organization found 
+     */
+    void markAsDuplicate(Organization duplicate, Organization duplicateOf);
+
 }

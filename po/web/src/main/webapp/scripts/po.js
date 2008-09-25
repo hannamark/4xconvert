@@ -31,6 +31,7 @@ function submitDivAsForm(url, divId) {
 
 function loadDiv(url, divId, showLoadingIcon) {
     var div = document.getElementById(divId);
+    div.show();
     if (showLoadingIcon) {
         div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="' + contextPath + '/images/loading.gif"/>&nbsp;Loading...</div>';
     }

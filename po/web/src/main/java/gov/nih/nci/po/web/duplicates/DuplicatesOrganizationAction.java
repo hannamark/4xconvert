@@ -22,6 +22,11 @@ import com.opensymphony.xwork2.Preparable;
  */
 public class DuplicatesOrganizationAction extends ActionSupport implements Preparable {
 
+    /**
+     * action result to view entity's detail.
+     */
+    static final String DETAIL_RESULT = "detail";
+    
     private static final long serialVersionUID = 1L;
     private final PaginatedList<Organization> orgs = new PaginatedList<Organization>(0, new ArrayList<Organization>(),
             PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, OrganizationSortCriterion.ORGANIZATION_ID.name(),
@@ -29,6 +34,8 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
 
     private DuplicatesOrganizationSearchCriteria criteria = new DuplicatesOrganizationSearchCriteria();
     private String rootKey;
+    private Organization organization = new Organization();
+    private Organization source = new Organization();
 
     /**
      * {@inheritDoc}
@@ -94,5 +101,41 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
      */
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
+    }
+    
+    /**
+     * @return detail page
+     */
+    public String detail() {
+        organization = PoRegistry.getOrganizationService().getById(organization.getId());
+        return DETAIL_RESULT;
+    }
+    
+    /**
+     * @return organization to view detail
+     */
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization to view detail
+     */
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+    
+    /**
+     * @return source organization to find duplicates for.
+     */
+    public Organization getSource() {
+        return source;
+    }
+
+    /**
+     * @param source organization to find duplicates for.
+     */
+    public void setSource(Organization source) {
+        this.source = source;
     }
 }

@@ -329,4 +329,101 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         assertTrue(result.getChangeRequests().isEmpty());
     }
+    
+    @Test
+    public void reject() throws EntityValidationException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        o = getOrgServiceBean().getById(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        getOrgServiceBean().reject(o);
+        
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.REJECTED, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+    }
+    
+    @Test
+    public void rejectWithCRrs() throws EntityValidationException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        
+        OrganizationCRServiceBean organizationCRServiceBean = EjbTestHelper.getOrganizationCRServiceBean();
+        OrganizationCR cr = new OrganizationCR(o);
+        OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o);
+        oDto.setIdentifier(null);
+        PoXsnapshotHelper.copyIntoAbstractModel(oDto, cr);
+        cr.setId(null);
+        cr.setStatusCode(o.getStatusCode());
+        organizationCRServiceBean.create(cr);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        o = getOrgServiceBean().getById(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        assertFalse(o.getChangeRequests().isEmpty());
+        
+        getOrgServiceBean().reject(o);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.REJECTED, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+        
+        assertTrue(result.getChangeRequests().isEmpty());
+    }
+    
+    
+    @Test
+    public void markAsDuplicate() throws EntityValidationException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        o = getOrgServiceBean().getById(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        Organization oo = getBasicOrganization();
+        long id2 = createOrganization(oo);
+        oo = getOrgServiceBean().getById(id2);
+        
+        getOrgServiceBean().markAsDuplicate(o, oo);
+        
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.REJECTED, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+        
+        assertEquals(oo.getId(), result.getDuplicateOf().getId());
+    }
 }

@@ -4,10 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+
+import java.util.Map;
+
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
 
+import org.hibernate.validator.AssertFalse;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +59,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
         assertEquals("name", action.getOrganization().getName());
     }
 
-    @Test (expected = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void testStartNoOrgId() {
         assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
     }
@@ -64,10 +70,59 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
+    public void testReject() {
+        action.getOrganization().setId(1L);
+        assertEquals(Action.SUCCESS, action.reject());
+        assertEquals(EntityStatus.REJECTED, action.getOrganization().getStatusCode());
+    }
+    
+    @Test
+    public void testMarkAsDuplicate() {
+        action.getOrganization().setId(1L);
+        action.setDuplicateOfId(2L);
+        assertEquals(Action.SUCCESS, action.markAsDuplicate());
+        assertEquals(EntityStatus.REJECTED, action.getOrganization().getStatusCode());
+        assertEquals(2L, action.getOrganization().getDuplicateOf().getId().longValue());
+    }
+
+    @Test
     public void changeCurrentChangeRequest() {
         assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
-        
+
         action.getCr().setId(1L);
         assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+    }
+
+    @Test
+    public void testCrProperty() {
+        assertNotNull(action.getCr());
+        action.setCr(null);
+        assertNull(action.getCr());
+    }
+
+    @Test
+    public void testOrganizationProperty() {
+        assertNotNull(action.getOrganization());
+        action.setOrganization(null);
+        assertNull(action.getOrganization());
+    }
+    
+    @Test
+    public void testGetSelectChangeRequests() {
+        action.getOrganization().setId(1L);
+        OrganizationCR cr1 = new OrganizationCR();
+        cr1.setId(1L);
+        action.getOrganization().getChangeRequests().add(cr1);
+        OrganizationCR cr2 = new OrganizationCR();
+        cr2.setId(2L);
+        action.getOrganization().getChangeRequests().add(cr2);
+        Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
+        assertEquals(2, selectChangeRequests.size());
+        selectChangeRequests.values();
+        int i = 1;
+        for (String value : selectChangeRequests.values()) {
+            assertEquals("CR-ID-" + i, value);
+            i++;
+        }
     }
 }

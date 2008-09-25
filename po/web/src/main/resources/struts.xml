@@ -186,6 +186,7 @@
         <action name="ajax/duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/duplicates/organization/results.jsp</result>
+            <result name="detail">/WEB-INF/jsp/duplicates/organization/detail.jsp</result>
         </action>            
     </package>
 </struts>

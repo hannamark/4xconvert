@@ -9,7 +9,7 @@
 
 		<display:column titleKey="organization.id" property="id" sortable="true" sortProperty="ORGANIZATION_ID" />
 		<display:column titleKey="organization.name" property="name" sortable="true" sortProperty="ORGANIZATION_NAME" maxLength="30"/>
-		<display:column titleKey="organization.abbreviatedName" property="abbreviatedName" maxLength="30"/>
+		<display:column titleKey="organization.abbreviatedName" property="abbreviatedName" maxLength="10"/>
 		<display:column titleKey="organization.description" property="description" maxLength="30"/>
         <display:column titleKey="organization.statusCode" sortable="false">
 	        <c:choose>

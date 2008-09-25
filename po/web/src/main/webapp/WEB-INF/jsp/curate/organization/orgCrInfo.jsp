@@ -5,6 +5,20 @@
     <div class="boxouter">
     <h2>Basic Identifying Information</h2>
         <div class="box_white">
+            <div class="wwgrp" id="wwgrp_curateOrgCrForm_cr_statusCode">
+            <div class="wwlbl" id="wwlbl_curateOrgCrForm_cr_statusCode">
+            <label class="label" for="curateOrgCrForm_cr_statusCode">     
+            <s:text name="cr.statusCode"/>:
+            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgCrForm_cr_statusCode">
+            ${cr.statusCode}
+            </div></div>        
+            <div class="wwgrp" id="wwgrp_curateOrgCrForm_cr_id">
+            <div class="wwlbl" id="wwlbl_curateOrgCrForm_cr_id">
+            <label class="label" for="curateOrgCrForm_cr_id">        
+            <s:text name="cr.id"/>:
+            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgCrForm_cr_id">
+            ${cr.id} 
+            </div></div>        
             <s:textfield key="cr.name" required="true" cssClass="required" size="70"/>
             <s:textfield key="cr.abbreviatedName" required="false" cssClass="required" size="70"/>
             <s:textfield key="cr.description" required="false" cssClass="required" size="70"/>
@@ -14,7 +28,7 @@
     <div class="boxouter">
     <h2>Address Information</h2>
         <div class="box_white">
-            <po:addressForm addressKeyBase="cr.postalAddress" address="${cr.postalAddress}"/>
+            <po:addressForm addressKeyBase="cr.postalAddress" address="${cr.postalAddress}" required="false"/>
             <div class="clear"></div>
         </div>
     </div>
@@ -86,5 +100,4 @@
         </div>
     </div>
     </s:form>   
-    <div class="clearfloat"></div>
     </div>

@@ -82,8 +82,10 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -142,6 +144,17 @@ public class MockOrganizationService implements OrganizationServiceLocal {
 
     public void accept(Organization curatedOrg) {
 
+    }
+
+    public void reject(Organization organization) {
+        organization.setStatusCode(EntityStatus.REJECTED);
+        organization.setStatusDate(new Date());
+    }
+
+    public void markAsDuplicate(Organization duplicate, Organization duplicateOf) {
+        duplicate.setStatusCode(EntityStatus.REJECTED);
+        duplicate.setStatusDate(new Date());
+        duplicate.setDuplicateOfOrg(duplicateOf);
     }
 
 }

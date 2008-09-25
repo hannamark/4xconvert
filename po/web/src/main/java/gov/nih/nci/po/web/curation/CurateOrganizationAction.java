@@ -43,6 +43,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     private Organization organization = new Organization();
     private String rootKey;
     private OrganizationCR cr = new OrganizationCR();
+    private Long duplicateOfId;
 
     /**
      * {@inheritDoc}
@@ -99,6 +100,29 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
         return SUCCESS;
     }
 
+    /**
+     * Used to reject a NEW or all Change Requests associated to a particular Organization Entity.
+     * @return success
+     */
+    public String reject() {
+        organization = PoRegistry.getOrganizationService().getById(organization.getId());
+        PoRegistry.getOrganizationService().reject(getOrganization());
+        return SUCCESS;
+    }
+    
+    /**
+     * Used to mark entity as a duplicate.
+     * @return success
+     */
+    public String markAsDuplicate() {
+        if (getDuplicateOfId() != null) {
+            organization = PoRegistry.getOrganizationService().getById(organization.getId());
+            Organization duplicateOf = PoRegistry.getOrganizationService().getById(getDuplicateOfId());
+            PoRegistry.getOrganizationService().markAsDuplicate(organization, duplicateOf);
+        }
+        return SUCCESS;
+    }
+    
     /**
      * @return org to curate
      */
@@ -164,9 +188,23 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
         TreeMap<String, String> treeMap = new TreeMap<String, String>();
         Set<OrganizationCR> unprocessedChangeRequests = organization.getChangeRequests();
         for (OrganizationCR changeRequest : unprocessedChangeRequests) {
-            changeRequest.getId();
             treeMap.put(changeRequest.getId().toString(), "CR-ID-" + changeRequest.getId().toString());
         }
         return treeMap;
     }
+    
+    /**
+     * @return duplicateOf id for rejection
+     */
+    public Long getDuplicateOfId() {
+        return duplicateOfId;
+    }
+
+    /**
+     * @param duplicateOfId id for rejection
+     */
+    public void setDuplicateOfId(Long duplicateOfId) {
+        this.duplicateOfId = duplicateOfId;
+    }
+
 }
