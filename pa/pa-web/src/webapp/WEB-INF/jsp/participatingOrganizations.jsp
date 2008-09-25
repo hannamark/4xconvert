@@ -34,12 +34,16 @@
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2">
     <display:table name="organizationList" class="data">  
-        <display:column property="name" titleKey="participatingOrganizations.name" />
-        <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" />
-        <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" />
-        <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" />
-        <display:column titleKey="participatingOrganizations.edit" />
-        <display:column titleKey="participatingOrganizations.unlink" />
+        <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />
+        <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
+        <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
+        <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
+        <display:column titleKey="participatingOrganizations.edit" class="action">
+        <s:a href="#"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+        </display:column>
+        <display:column titleKey="participatingOrganizations.unlink" class="action" >
+        <s:a href="#"><img src="<%=request.getContextPath()%>/images/ico_cancel.gif" alt="Un-link" width="16" height="16"/></s:a>
+        </display:column>
     </display:table>
     </td></tr>
     </table>
