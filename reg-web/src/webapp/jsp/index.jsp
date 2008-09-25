@@ -7,7 +7,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<jsp:forward page="/jsp/pajsp/login.jsp" /> 
+<jsp:forward page="/WEB-INF/jsp/registryHome.jsp" /> 
 </head>
 </html>
 	
