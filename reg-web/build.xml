@@ -152,15 +152,20 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure login config                                                 -->
+    <!-- Configure tests                                                        -->
     <!-- ====================================================================== -->
     
-    <target name="create-artifacts">    
-        <echo message="creating login.config"/>
+    <target name="create-artifacts">
+        <filter token="reg-web.directory" value="${reg-web.directory}"/>
         <filter token="jdbc.driver" value="${jdbc.driver}"/>
         <filter token="jdbc.url" value="${jdbc.url}"/> 
         <filter token="db.username" value="${db.username}"/>
         <filter token="db.password" value="${db.password}"/>                                            
+
+        <echo message="creating test.properties"/>
+        <copy file="${pa.resourceDir}/test.properties" todir="${reg-web.build.testResourceDir.0}" filtering="true" /> 
+        
+        <echo message="creating login.config"/>
         <copy file="${pa.resourceDir}/login.config" todir="${reg-web.build.testResourceDir.0}" filtering="true" />                             
     </target>
     
