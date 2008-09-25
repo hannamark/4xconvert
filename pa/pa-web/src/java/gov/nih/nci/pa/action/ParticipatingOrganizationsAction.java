@@ -50,6 +50,36 @@ public class ParticipatingOrganizationsAction extends ActionSupport
 
     private Ii spIi;
     private List<OrganizationWebDTO> organizationList;
+    
+    private String facOrganizationName;
+    private String facNCINumber;     
+    private String facCity;   
+    private String facState;  
+    private String facZipPostalCode;
+    private String facCountry;    
+    private String facLeadOrganization;
+    private String facSiteRecruitmentStatus;    
+    private String facSiteRecruitmentStatusDate;
+    
+    /**
+     * @author hreinhart
+     *
+     */
+    private static class PseudoPo {
+        private static final long ID = 99L;
+        public static Ii poOrgIi = IiConverter.convertToIi(ID);
+        public static Ii poHcfIi = IiConverter.convertToIi(ID);
+
+        static HealthCareFacilityDTO getHealthCareFacility(Ii orgIi) {
+            HealthCareFacilityDTO hfDto = new HealthCareFacilityDTO();
+            hfDto.setIi(poHcfIi);
+            hfDto.setOrganizationIi(poOrgIi);
+            return hfDto;
+        }
+        static Ii poCreateHealthCareFacility(HealthCareFacilityDTO newHcf) {
+            return poHcfIi;
+        }
+    }
 
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -83,15 +113,27 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      * @throws Exception exception
      */
     public String create() throws Exception {
-        clearErrorsAndMessages();
-        enforceBusinessRules();
-        if (hasActionErrors()) {
-            return Action.SUCCESS;
+        // Call popup
+
+        // Naveen's pseudo code
+        Ii poOrganizationIi = PseudoPo.poOrgIi;
+        HealthCareFacilityDTO hcf = PseudoPo.getHealthCareFacility(poOrganizationIi);
+        Ii poHealthCareFacilityIi = hcf.getIi();
+        if (PAUtil.isIiNull(poHealthCareFacilityIi)) {
+            poHealthCareFacilityIi = PseudoPo.poCreateHealthCareFacility(hcf);
         }
-        if (!hasActionErrors()) {
-//            addActionError("Create succeeded.");
-        }
-        loadForm();
+
+        // load form beans
+        setFacOrganizationName("Joe's Bar and Grill");
+        setFacNCINumber("NCI009");
+        setFacCity("Ocean City");
+        setFacState("MD");
+        setFacZipPostalCode("20639");
+        setFacCountry("USA");
+        setFacLeadOrganization(null);
+        setFacSiteRecruitmentStatus(null);
+        setFacSiteRecruitmentStatusDate(null);
+
         return Action.SUCCESS;
     }
 
@@ -133,6 +175,132 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      */
     public void setOrganizationList(List<OrganizationWebDTO> organizationList) {
         this.organizationList = organizationList;
+    }
+
+    /**
+     * @return the facOrganizationName
+     */
+    public String getFacOrganizationName() {
+        return facOrganizationName;
+    }
+
+    /**
+     * @param facOrganizationName the facOrganizationName to set
+     */
+    public void setFacOrganizationName(String facOrganizationName) {
+        this.facOrganizationName = facOrganizationName;
+    }
+
+    /**
+     * @return the facNCINumber
+     */
+    public String getFacNCINumber() {
+        return facNCINumber;
+    }
+
+    /**
+     * @param facNCINumber the facNCINumber to set
+     */
+    public void setFacNCINumber(String facNCINumber) {
+        this.facNCINumber = facNCINumber;
+    }
+
+    /**
+     * @return the facCity
+     */
+    public String getFacCity() {
+        return facCity;
+    }
+
+    /**
+     * @param facCity the facCity to set
+     */
+    public void setFacCity(String facCity) {
+        this.facCity = facCity;
+    }
+
+    /**
+     * @return the facState
+     */
+    public String getFacState() {
+        return facState;
+    }
+
+    /**
+     * @param facState the facState to set
+     */
+    public void setFacState(String facState) {
+        this.facState = facState;
+    }
+
+    /**
+     * @return the facZipPostalCode
+     */
+    public String getFacZipPostalCode() {
+        return facZipPostalCode;
+    }
+
+    /**
+     * @param facZipPostalCode the facZipPostalCode to set
+     */
+    public void setFacZipPostalCode(String facZipPostalCode) {
+        this.facZipPostalCode = facZipPostalCode;
+    }
+
+    /**
+     * @return the facCountry
+     */
+    public String getFacCountry() {
+        return facCountry;
+    }
+
+    /**
+     * @param facCountry the facCountry to set
+     */
+    public void setFacCountry(String facCountry) {
+        this.facCountry = facCountry;
+    }
+
+    /**
+     * @return the facLeadOrganization
+     */
+    public String getFacLeadOrganization() {
+        return facLeadOrganization;
+    }
+
+    /**
+     * @param facLeadOrganization the facLeadOrganization to set
+     */
+    public void setFacLeadOrganization(String facLeadOrganization) {
+        this.facLeadOrganization = facLeadOrganization;
+    }
+
+    /**
+     * @return the facSiteRecruitmentStatus
+     */
+    public String getFacSiteRecruitmentStatus() {
+        return facSiteRecruitmentStatus;
+    }
+
+    /**
+     * @param facSiteRecruitmentStatus the facSiteRecruitmentStatus to set
+     */
+    public void setFacSiteRecruitmentStatus(String facSiteRecruitmentStatus) {
+        this.facSiteRecruitmentStatus = facSiteRecruitmentStatus;
+    }
+
+    /**
+     * @return the facSiteRecruitmentStatusDate
+     */
+    public String getFacSiteRecruitmentStatusDate() {
+        return facSiteRecruitmentStatusDate;
+    }
+
+    /**
+     * @param facSiteRecruitmentStatusDate the facSiteRecruitmentStatusDate to set
+     */
+    public void setFacSiteRecruitmentStatusDate(String facSiteRecruitmentStatusDate) {
+        this.facSiteRecruitmentStatusDate = PAUtil.normalizeDateString(facSiteRecruitmentStatusDate);
     }
 
 }
