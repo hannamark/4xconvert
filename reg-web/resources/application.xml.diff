@@ -1,7 +1,0 @@
-6a7,12
->     <module>
->         <web>
->             <web-uri>reg-web.war</web-uri>
->             <context-root>/registry</context-root>
->         </web>
->     </module>
