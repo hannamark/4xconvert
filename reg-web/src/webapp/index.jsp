@@ -1,2 +1,2 @@
 
-<% response.sendRedirect("/registry/protected/studyOverallStatus.action"); %>
+<% response.sendRedirect("/registry/home.action"); %>
