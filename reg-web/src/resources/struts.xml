@@ -15,7 +15,10 @@
         </action>
         <action name="login">
             <result>/jsp/pajsp/login.jsp</result>
-        </action>      
+        </action>
+	<action name="home">
+	    <result>/WEB-INF/jsp/registryHome.jsp</result>
+        </action> 
     </package>
     <package name="protected" namespace="/protected" extends="default"> 
         <action name="studyProtocolQueryHome" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
