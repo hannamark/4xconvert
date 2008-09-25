@@ -6,14 +6,16 @@
 
     <project name="pa" default="package" basedir=".">
     <property file="${basedir}/build.properties"/>
+    <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
     
-	<!-- PATHS -->
-	<path id="macrodef">
-		<fileset dir="${basedir}/lib-temp">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
+    <!-- PATHS -->
+    <path id="macrodef">
+        <fileset dir="${bda-utils}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
+    
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -127,7 +129,7 @@
     <!-- ====================================================================== -->
     <!-- Copies JSP to the tmp folder                                           -->
     <!-- ====================================================================== -->
-    	
+        
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
             <for param="toDir">
               <path>
@@ -137,10 +139,10 @@
                   <copy todir="@{toDir}">
                       <fileset dir="${basedir}/pa-web/src/webapp">                         
                           <include name="WEB-INF/jsp/*.jsp"/>
-                      	  <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                          <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                       </fileset>
                   </copy>
               </sequential>
             </for>
-      </target>	
+      </target> 
 </project>
