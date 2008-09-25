@@ -195,7 +195,8 @@ LEGEND
 { font-weight:normal }
 .lowercase
 { text-transform:none }
-
+.info
+{ font-style:italic; color:#808080 }
 
 /* Homepage Content */
 
@@ -213,22 +214,6 @@ DIV.homepage
 { margin:12px 12px 0 12px; padding-bottom:0 }
 .homepage UL
 { margin:12px 12px 0 10px }
-
-
-/* Confirmation or Error Messages */
-
-.confirm_msg
-{ background:#fff3ad; border:1px solid #d89723; padding:15px; margin-bottom:15px;  }
-.error_msg
-{ background:#fff; color:#c00; border:1px solid #c00; padding:15px; margin-bottom:15px; }
-.error_msg LABEL
-{ font-size:100%; color:#c00; text-decoration:underline }
-
-
-/* Inline Error Messages */
-
-.formErrorMsg
-{ clear:both; font-size:100%; color:#c00; font-style:italic; display:block; }
 
 
 /* Footer */
@@ -419,9 +404,9 @@ TABLE.data TD A IMG.thumbnail:hover
 /* Confirmation or Error Messages */
 
 .confirm_msg
-{ background:#fff3ad; border:1px solid #d89723; padding:15px; margin-bottom:15px;  }
+{ background:#dee9bf; color:#64870f; border:1px solid #94ae6b; padding:15px; margin-bottom:15px;  }
 .error_msg
-{ background:#fff; color:#c00; border:1px solid #c00; padding:15px 15px 0 15px; margin-bottom:15px; }
+{ background:#fff; color:#c00; border:1px solid #c00; padding:15px; margin-bottom:15px; }
 .error_msg LABEL
 { font-size:100%; color:#c00; text-decoration:underline }
 
@@ -430,7 +415,8 @@ TABLE.data TD A IMG.thumbnail:hover
 
 .formErrorMsg
 { clear:both; font-size:100%; color:#c00; font-style:italic; display:block; }
-
+.required
+{ color:#c00; font-weight:bold; }
 
 /* ToolTip Bubble */
 
@@ -484,6 +470,8 @@ A.btn SPAN.add_contact
 { background:url("../images/ico_add_contact_details.gif") no-repeat; }
 A.btn SPAN.select_person
 { background:url("../images/ico_select_person.gif") no-repeat; }
+A.btn SPAN.add_person
+{ background:url("../images/ico_add_person.gif") no-repeat; }
 A.btn SPAN.edit
 { background:url("../images/ico_edit.gif") no-repeat; }
 A.btn SPAN.confirm
@@ -498,16 +486,21 @@ A.btn SPAN.cancel
 { background:url("../images/ico_cancel.gif") no-repeat; }
 A.btn SPAN.copy
 { background:url("../images/ico_copy.gif") no-repeat; }
-A.btn SPAN.delete
+A.btn SPAN.delete, A.btn SPAN.btndelete
 { background:url("../images/ico_delete.gif") no-repeat; }
 A.btn SPAN.upload
 { background:url("../images/ico_upload.gif") no-repeat; }
 A.btn SPAN.history
 { background:url("../images/ico_history.gif") no-repeat; }
+A.btn SPAN.login
+{ background:url("../images/ico_login.gif") no-repeat; }
+A.btn SPAN.lookup
+{ background:url("../images/ico_search.gif") no-repeat; }
+A.btn SPAN.btnhelp
+{ background:url("../images/ico_help.gif") no-repeat; }
+A.btn SPAN.logout
+{ background:url("../images/ico_logout.gif") no-repeat; }
 
-/* Error Messages */
-SPAN.errorMessage
-{ color: red; font-weight:bold; width:20%; white-space:nowrap; padding:5px 5px 5px 0 !important; }
 
 /* Footer */
 
@@ -524,6 +517,26 @@ SPAN.errorMessage
 #partnerlogos
 { padding-top:10px; text-align:center; }
 
-.curate .pa_form
-{ padding-left:0; padding-bottom:15px}
+
+/* Control.Tabs */
+
+#tabboxwrapper
+{ clear:both; padding:5px; background:#5d7ba2 url("../images/bg_tabboxwrapper.gif") repeat-x; border:1px solid #475b82; border-top:0; height:1%; }
+UL#maintabs
+{ height:2.3em; margin:0; font-weight:bold; list-style:none; padding-left:3px; clear:both; font-size:110%;}
+:lang(en) UL#maintabs
+{ height:1.6em; }
+
+UL#maintabs LI
+{ float:left;	margin:0; padding:0 0 0 5px; text-align:center; background:none }
+UL#maintabs LI A 
+{ font-size:115%; text-decoration:none !important; display:block; margin:0; padding:5px 10px; background:#e4e4e4 url("../images/bg_h2.gif") repeat-x 0 -10px; color:#475b82; text-decoration:none; border-top:2px solid #efefef;  border-right:1px solid #ccc;  }
+UL#maintabs LI A:hover 
+{	color:#333;	background:#efefef; text-decoration:none !important; }
+UL#maintabs LI A.active, UL#maintabs LI A.active:hover  
+{ outline:none; color:#fff; background-color:#5d7ba2; border-top:3px solid #475b82; border-left:1px solid #475b82; border-right:0;  background-image:none }
+UL#maintabs LI.active
+{ color:#333; background-color:#5d7ba2; }
+UL#maintabs LI A:focus
+{ -moz-outline-style:none; }
 
