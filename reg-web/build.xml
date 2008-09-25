@@ -7,6 +7,7 @@
 <project name="reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="software.dir" value="${basedir}/.."/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property name="pa.ear.file" value="${software.dir}/pa/pa-ear/target/pa.ear"/>
     
     <property file="${basedir}/build.properties"/>
     <property name="pa.resourceDir" value="${basedir}/resources"/>
@@ -27,6 +28,9 @@
     <property name="reg-web.reporting.outputDirectory" value="${pa.report.dir}/reg-web/site"/>
     <property name="reg-web.war" value="${reg-web.build.finalName}.war"/>
     <property name="reg-web.build.coberturaOutputDir" value="${reg-web.build.dir}/generated-classes"/>
+    
+    <property name="reg-web.ear.dir" value="${reg-web.build.dir}/pa"/>
+    <property name="reg-web.ear.file" value="${reg-web.ear.dir}.ear"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
@@ -123,6 +127,7 @@
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${reg-web.build.outputDir}"/>
         <javac destdir="${reg-web.build.outputDir}" 
                nowarn="false" 
@@ -303,6 +308,43 @@
     <target name="package" depends="clean,ivy-get,compile,test-all,war" 
             description="Package the application"/>
     
+    <!-- ====================================================================== -->
+    <!-- Deploy target                                                          -->
+    <!-- ====================================================================== -->
+
+    <target name="ear">
+        <echo></echo>
+        <available file="${pa.ear.file}" type="file" property="pa.ear.present"/>
+        <fail unless="pa.ear.present" message="File pa.ear not available(should be at ${pa.ear.file}).  Please build pa first before reg-web."/>
+        <available file="${reg-web.build.dir}/${reg-web.war}" type="file" property="reg-web.war.present"/>
+        <fail unless="reg-web.war.present" message="File reg-web.war not available."/>
+        
+        <delete dir="${reg-web.ear.dir}" failonerror="false"/>
+        <unjar src="${pa.ear.file}" dest="${reg-web.ear.dir}"/>
+        <copy file="${reg-web.build.dir}/${reg-web.war}" todir="${reg-web.ear.dir}"/>
+        <patch patchfile="${pa.resourceDir}/application.xml.diff" 
+               originalfile="${reg-web.ear.dir}/META-INF/application.xml" />
+        
+        <ear destfile="${reg-web.ear.file}" 
+             basedir="${reg-web.ear.dir}" 
+             compress="false" 
+             appxml="${reg-web.ear.dir}/META-INF/application.xml"/>
+    </target>
+    
+    <target name="deploy-ear">
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+        <available file="${reg-web.ear.file}" property="reg-web.ear.present"/>
+        <fail unless="reg-web.ear.present" message="Ear file not found."/>
+        <copy todir="${jboss.deploy.directory}" file="${reg-web.ear.file}"/>
+    </target>
+    
+    <target name="deploy" depends="package,ear,deploy-ear" 
+            description="Build test and deploy."/>
+    <target name="deploy-notest" depends="package-notest-noivy,ear,deploy-ear" 
+            description="Build and deploy without testing or getting dependencies."/>
+
+
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
     <!-- ====================================================================== -->
