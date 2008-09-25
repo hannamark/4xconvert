@@ -96,34 +96,35 @@ public enum RoleStatus {
     /**
      * The status a role is initially in.
      */
-    PENDING(RoleStatus.ACTIVE, RoleStatus.NULLIFIED),
+    PENDING,
 
     /**
      * Status a role goes to from pending if it is accepted by the curator.
      */
-    ACTIVE(RoleStatus.SUSPENDED, RoleStatus.NULLIFIED),
+    ACTIVE,
 
     /**
      * Status a role goes in from active to suspend the role.
      */
-    SUSPENDED(RoleStatus.ACTIVE, RoleStatus.NULLIFIED),
+    SUSPENDED,
 
     /**
      * Status a role goes to if it is no longer valid.
      */
     NULLIFIED;
+    
+    static {
+        PENDING.allowedTransitions.add(ACTIVE);
+        PENDING.allowedTransitions.add(NULLIFIED);
+        
+        ACTIVE.allowedTransitions.add(RoleStatus.SUSPENDED);
+        ACTIVE.allowedTransitions.add(RoleStatus.NULLIFIED);
+        
+        SUSPENDED.allowedTransitions.add(RoleStatus.ACTIVE);
+        SUSPENDED.allowedTransitions.add(RoleStatus.NULLIFIED);
+    }
 
     private final Set<RoleStatus> allowedTransitions = new HashSet<RoleStatus>();
-
-    /**
-     * constructor.
-     * @param statuses the allowable state transitions.
-     */
-    RoleStatus(RoleStatus... statuses) {
-        for (RoleStatus status : statuses) {
-            allowedTransitions.add(status);
-        }
-    }
 
     /**
      * determine if this state can transition to the given state.
