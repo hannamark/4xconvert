@@ -30,4 +30,7 @@ public class Constants {
     /** nih Institute Code . */
     public static final String NIH_INSTITUTE = "nihInstitute";
     
+    /** nih Institute Code . */
+    public static final String REQUEST_MESSAGE = "requestMessage";
+    
 }
