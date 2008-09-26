@@ -101,6 +101,10 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         selenium.click("link=Organization");
         waitForPageToLoad();
         
+        // click on item to curate
+        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
+        waitForPageToLoad();
+        
         String crDescription = selenium.getText("wwctrl_curateOrgCrForm_cr_description");
         assertEquals(crDescription, crDescription);
         selenium.type("curateOrgForm_organization_description", crDescription);
