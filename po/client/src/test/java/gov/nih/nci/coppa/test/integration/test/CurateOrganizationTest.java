@@ -35,9 +35,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
     public void testCurateNewOrg() throws Exception {
         // create a new org via remote API.
-        String name = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'Y');
-        String abbrv = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'X');
-        String desc = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'W');
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
+        String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W', 10);
         Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
 
         loginAsCurator();
@@ -60,19 +60,65 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTty();
         verifyUrl();
 
-        markAsAccepted(id);
+        saveAsCurated(id);
     }
 
-    private void markAsAccepted(Ii id) {
-        clickAndWait("//a[@id='mark_as_accepted_button']/span/span");
+    public void testCurateNewOrgThenCurateAfterRemoteUpdate() throws Exception {
+        // create a new org via remote API.
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X',10);
+        String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W',10);
+        Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
+        
+        loginAsCurator();
+        
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("link=Organization");
+        waitForPageToLoad();
+        // click on item to curate
+        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
+        waitForPageToLoad();
+        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
+        assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
+        assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
+        
+        verifyPostalAddress();
+        
+        verifyEmail();
+        verifyPhone();
+        verifyFax();
+        verifyTty();
+        verifyUrl();
+        
+        saveAsCurated(id);
+        
+        OrganizationDTO proposedState = remoteGetOrganization(id);
+        String newCrDescription = "a realistic description";
+        proposedState.setDescription(RemoteApiUtils.convertToSt(newCrDescription));
+        remoteUpdate(proposedState);
+        
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("link=Organization");
+        waitForPageToLoad();
+        
+        String crDescription = selenium.getText("wwctrl_curateOrgCrForm_cr_description");
+        assertEquals(crDescription, crDescription);
+        selenium.type("curateOrgForm_organization_description", crDescription);
+        
+        saveAsCurated(id);
+    }
+
+    private void saveAsCurated(Ii id) {
+        selenium.select("curateOrgForm_organization_statusCode", "label=CURATED");
+        clickAndWait("//a[@id='save_button']/span/span");
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     public void testCurateOrgWithCRs() throws Exception {
         // create a new org via remote API.
-        String name = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'Y');
-        String abbrv = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'X');
-        String desc = DataGeneratorUtil.text(DEFAULT_TEXT_COL_LENGTH, 'W');
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
+        String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W', 10);
         Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
 
         OrganizationDTO orgDTO = getOrgService().getOrganization(id);
@@ -113,6 +159,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTty();
         verifyUrl();
 
+        saveAsCurated(id);
     }
 
     private void verifyPostalAddress() {
@@ -237,5 +284,13 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         org.setDescription(RemoteApiUtils.convertToSt(desc));
         org.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
         return org;
+    }
+
+    private OrganizationDTO remoteGetOrganization(Ii id) {
+        return getOrgService().getOrganization(id);
+    }
+
+    private void remoteUpdate(OrganizationDTO proposedState) throws EntityValidationException {
+        getOrgService().updateOrganization(proposedState);
     }
 }

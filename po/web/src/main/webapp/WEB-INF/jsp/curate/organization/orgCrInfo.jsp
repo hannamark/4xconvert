@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-    <div class="boxouter">
+    <div class="boxouter_nobottom">
     <h2>Change Request Information</h2>
     <s:form action="ajax/organization/curate/no.action" id="curateOrgCrForm" theme="css_xhtml_readonly">
     <div class="boxouter">
@@ -32,7 +32,7 @@
             <div class="clear"></div>
         </div>
     </div>
-    <div class="boxouter">
+    <div class="boxouter_nobottom">
     <h2>Contact Information</h2>
         <div class="box_white">
             <div class="clear"></div>

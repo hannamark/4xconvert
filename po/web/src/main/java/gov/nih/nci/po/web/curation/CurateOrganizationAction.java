@@ -18,7 +18,6 @@ import org.apache.commons.lang.time.FastDateFormat;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
-import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
@@ -43,7 +42,6 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     private Organization organization = new Organization();
     private String rootKey;
     private OrganizationCR cr = new OrganizationCR();
-    private Long duplicateOfId;
 
     /**
      * {@inheritDoc}
@@ -89,37 +87,11 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      */
     @Validations(customValidators = {
                 @CustomValidator(type = "hibernate",
-                    fieldName = "organization",
-                    parameters = {
-                            @ValidationParameter(name = "excludes", value = "statusCode")
-                    }
+                    fieldName = "organization"
                 )
             })
     public String curate() throws EntityValidationException {
-        PoRegistry.getOrganizationService().accept(getOrganization());
-        return SUCCESS;
-    }
-
-    /**
-     * Used to reject a NEW or all Change Requests associated to a particular Organization Entity.
-     * @return success
-     */
-    public String reject() {
-        organization = PoRegistry.getOrganizationService().getById(organization.getId());
-        PoRegistry.getOrganizationService().reject(getOrganization());
-        return SUCCESS;
-    }
-    
-    /**
-     * Used to mark entity as a duplicate.
-     * @return success
-     */
-    public String markAsDuplicate() {
-        if (getDuplicateOfId() != null) {
-            organization = PoRegistry.getOrganizationService().getById(organization.getId());
-            Organization duplicateOf = PoRegistry.getOrganizationService().getById(getDuplicateOfId());
-            PoRegistry.getOrganizationService().markAsDuplicate(organization, duplicateOf);
-        }
+        PoRegistry.getOrganizationService().curate(getOrganization());
         return SUCCESS;
     }
     
@@ -191,20 +163,6 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
             treeMap.put(changeRequest.getId().toString(), "CR-ID-" + changeRequest.getId().toString());
         }
         return treeMap;
-    }
-    
-    /**
-     * @return duplicateOf id for rejection
-     */
-    public Long getDuplicateOfId() {
-        return duplicateOfId;
-    }
-
-    /**
-     * @param duplicateOfId id for rejection
-     */
-    public void setDuplicateOfId(Long duplicateOfId) {
-        this.duplicateOfId = duplicateOfId;
     }
 
 }

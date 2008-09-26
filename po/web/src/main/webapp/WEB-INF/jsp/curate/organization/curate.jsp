@@ -7,6 +7,16 @@
     <c:if test="${fn:length(organization.changeRequests) == 0}">
     <title>Organization Details</title>
     </c:if>
+    <script type="text/javascript">
+    function handleDuplicateOf() {
+    	$('duplicateOfDiv')[$('curateOrgForm_organization_statusCode').value == 'REJECTED' ? 'show' : 'hide'](); 
+            	
+    	if ($('curateOrgForm_organization_statusCode').value != 'REJECTED') {
+    		$('curateOrgForm.organization.duplicateOf.id').value = '';
+    	}
+    	return true;
+    }
+    </script>
 </head>
 <body>
 
@@ -29,7 +39,7 @@
 
 
 <div id="page">
-	<div class="boxouter">
+	<div class="boxouter_nobottom">
 	<h2>Organization Information</h2>
 	<s:form action="organization/curate/curate.action" id="curateOrgForm">
 		<s:hidden key="rootKey"/>
@@ -42,9 +52,9 @@
                 <div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
 		            <div class="wwlbl" id="wwlbl_curateOrgForm_organization_statusCode">
 		            <label class="label" for="curateOrgForm_organization_statusCode">        
-		            <s:text name="organization.statusCode"/>:
+		            Current <s:text name="organization.statusCode"/>:
 		            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_statusCode">
-		            ${organization.statusCode} 
+		            ${organization.priorEntityStatus} 
 		            </div>
 	            </div>
                 <div class="wwgrp" id="wwgrp_curateOrgForm_organization_id">
@@ -55,6 +65,39 @@
 		            ${organization.id} 
 		            </div>
 	            </div>
+			    <s:select
+			       label="New %{getText('organization.statusCode')}"
+			       name="organization.statusCode"
+			       list="organization.priorEntityStatus.allowedTransitions"
+			       value="organization.statusCode" 
+			       headerKey="" headerValue="--Select a Status--" 
+			       onchange="handleDuplicateOf();"
+			       />           
+        	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus.REJECTED@">style="display: none"</s:if>>
+	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
+	                    <div style="float:right;">
+	                        <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl">
+	                            <c:param name="source.id" value="${organization.id}"/>
+	                        </c:url>
+	                        <po:buttonRow>
+	                        <po:button href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Duplicate"/>
+	                        </po:buttonRow>
+                        </div>
+                        
+	                    <div class="wwlbl" id="wwlbl_curateOrgForm_organization_duplicateOf_id">
+		                    <label class="label" for="curateOrgForm_organization_duplicateOf_id">        
+		                    <s:text name="organization.duplicateOf.id"/>:
+		                    </label>
+	                    </div>
+	                    <br/>
+	                    <div class="wwctrl" id="wwctrl_curateOrgForm_organization_duplicateOf_id">
+	                       ${organization.duplicateOf.id} 
+	                    </div>
+	                    
+	                </div>
+				    <s:hidden key="organization.duplicateOf.id" id="curateOrgForm.organization.duplicateOf.id"/>
+	
+			    </div>
 				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
 				<s:textfield key="organization.abbreviatedName" required="false" cssClass="required" size="70"/>
 				<s:textfield key="organization.description" required="false" cssClass="required" size="70"/>
@@ -70,7 +113,7 @@
 		    </div>
 		</div>
 		
-		<div class="boxouter">
+		<div class="boxouter_nobottom">
 		<h2>Contact Information</h2>
 		    <div class="box_white">
 		        <div class="clear"></div>
@@ -82,37 +125,23 @@
 </div>
 
 <c:if test="${fn:length(organization.changeRequests) > 0}">
-<%-- 
-<s:iterator value="organization.changeRequests" id="cr">
---%>
 <div id="page">
 <div id="crinfo">
 <%@ include file="orgCrInfo.jsp" %>
 </div>
 </div>
-<%-- 
-</s:iterator>
---%>
 </c:if>
 
 
 <div class="btnwrapper">
-<script type="text/javascript">
-function showPopWinCallback(returnVal) {
-	window.location = '' + returnVal;
-}
-</script>
-
-    <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl">
-        <c:param name="source.id" value="${organization.id}"/>
-    </c:url>
-    <c:url value="/protected/organization/curate/reject.action" var="rejectUrl">
-        <c:param name="organization.id" value="${organization.id}"/>
-    </c:url>
+	<script type="text/javascript">
+		function showPopWinCallback(returnVal) {
+			$('curateOrgForm.organization.duplicateOf.id').value = returnVal;
+			$('wwctrl_curateOrgForm_organization_duplicateOf_id').innerHTML = $('curateOrgForm.organization.duplicateOf.id').value;
+		}
+	</script>
     <po:buttonRow>
-        <po:button id="mark_as_accepted_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="confirm" text="Mark as Accepted"/>
-        <po:button id="mark_as_rejected_button" href="${rejectUrl}" style="reject" text="Mark as Rejected"/>
-        <po:button href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, showPopWinCallback);" style="search" text="Mark as Duplicate"/>
+        <po:button id="save_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="save" text="Save"/>
     </po:buttonRow>
 </div>
 <div style="height=10px;">

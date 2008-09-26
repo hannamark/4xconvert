@@ -91,10 +91,6 @@
 <div class="btnwrapper">
 	<po:buttonRow>
 	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="" text="Back to Search Results" />
-        <c:url var="markAsDuplicateUrl" value="/protected/organization/curate/markAsDuplicate.action">
-            <c:param name="organization.id" value="${source.id}"/>
-            <c:param name="duplicateOfId" value="${organization.id}"/>
-        </c:url>	
-	    <po:button href="javascript://nop/" onclick="markAsDuplicate('${markAsDuplicateUrl}');" style="reject" text="Mark As Duplicate" />
+	    <po:button href="javascript://nop/" onclick="markAsDuplicate('${organization.id}');" style="reject" text="Mark As Duplicate" />
 	</po:buttonRow>
 </div>

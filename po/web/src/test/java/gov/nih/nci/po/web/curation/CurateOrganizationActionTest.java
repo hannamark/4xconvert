@@ -4,16 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-
-import java.util.Map;
-
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
 
-import org.hibernate.validator.AssertFalse;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,22 +64,6 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     @Test
     public void testCurate() throws EntityValidationException {
         assertEquals(Action.SUCCESS, action.curate());
-    }
-
-    @Test
-    public void testReject() {
-        action.getOrganization().setId(1L);
-        assertEquals(Action.SUCCESS, action.reject());
-        assertEquals(EntityStatus.REJECTED, action.getOrganization().getStatusCode());
-    }
-    
-    @Test
-    public void testMarkAsDuplicate() {
-        action.getOrganization().setId(1L);
-        action.setDuplicateOfId(2L);
-        assertEquals(Action.SUCCESS, action.markAsDuplicate());
-        assertEquals(EntityStatus.REJECTED, action.getOrganization().getStatusCode());
-        assertEquals(2L, action.getOrganization().getDuplicateOf().getId().longValue());
     }
 
     @Test

@@ -124,17 +124,6 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @param curatedOrg method to curate/accept Organization's w/ EntityStatus.NEW and transition to
      *            EntityStatus.CURATED
      */
-    void accept(Organization curatedOrg);
-
-    /**
-     * @param organization to reject
-     */
-    void reject(Organization organization);
-
-    /**
-     * @param duplicate the organization that found to be a duplicate entry in the system
-     * @param duplicateOf the existing organization found 
-     */
-    void markAsDuplicate(Organization duplicate, Organization duplicateOf);
+    void curate(Organization curatedOrg);
 
 }

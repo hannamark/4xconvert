@@ -4,12 +4,12 @@
     <title><fmt:message key="organization.search.title"/></title>
     <script type="text/javascript">
         var returnVal;
-	    function markAsDuplicate(url) {
+	    function markAsDuplicate(id) {
 		     var text = '<s:text name="curation.reject.mark.as.duplicate.confirmation"/>';
 	    	 var result = confirm(text);
 	    	 if (result == true)
 	    	 {
-	    		 returnVal = url;
+	    		 returnVal = id;
 	             window.top.hidePopWin(true);
 	    	 }
 	    }

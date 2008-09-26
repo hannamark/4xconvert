@@ -28,12 +28,8 @@
             </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">
-	        <c:url var="markAsDuplicateUrl" value="/protected/organization/curate/markAsDuplicate.action">
-	            <c:param name="organization.id" value="${source.id}"/>
-	            <c:param name="duplicateOfId" value="${row.id}"/>
-	        </c:url>
             <po:buttonRow>
-                <po:button href="javascript://nop/" onclick="markAsDuplicate('${markAsDuplicateUrl}');" style="reject" text="Mark As Duplicate" />
+                <po:button href="javascript://nop/" onclick="markAsDuplicate('${row.id}');" style="reject" text="Mark As Duplicate" />
             </po:buttonRow>
         </display:column>
     </display:table>

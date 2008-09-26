@@ -142,19 +142,8 @@ public class MockOrganizationService implements OrganizationServiceLocal {
         return null;
     }
 
-    public void accept(Organization curatedOrg) {
+    public void curate(Organization curatedOrg) {
 
-    }
-
-    public void reject(Organization organization) {
-        organization.setStatusCode(EntityStatus.REJECTED);
-        organization.setStatusDate(new Date());
-    }
-
-    public void markAsDuplicate(Organization duplicate, Organization duplicateOf) {
-        duplicate.setStatusCode(EntityStatus.REJECTED);
-        duplicate.setStatusDate(new Date());
-        duplicate.setDuplicateOfOrg(duplicateOf);
     }
 
 }
