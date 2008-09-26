@@ -84,7 +84,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
 
 import java.util.List;
 
@@ -103,27 +103,18 @@ public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, E
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void processCRs(List<CR> crs) {
-        ENTITY target = null;
-        for (CR ocr : crs) {
-            ENTITY crTarget = ocr.getTarget();
-            if (crTarget == null) {
-                throw new IllegalArgumentException("target cannot be null");
+        EntityUpdateCallback<ENTITY> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<ENTITY>() {
+            public void entityUpdate(ENTITY target) {
+                AbstractCRServiceBean.this.entityUpdate(target);
             }
-            if (target == null) {
-                target = crTarget;
-            } else if (!target.equals(crTarget)) {
-                    throw new IllegalArgumentException("all crs must have the same target");
-            }
-            // TODO delete or mark as processed
-            // see https://jira.5amsolutions.com/browse/PO-492
-            PoHibernateUtil.getCurrentSession().delete(ocr);
-        }
-        if (target != null) {
-            entityUpdate(target);
-        }
+        };
+        CRProcessor.processCRs(crs, entityUpdateCallback);
     }
+
+
 
     /**
      * @param entity the entity to update.

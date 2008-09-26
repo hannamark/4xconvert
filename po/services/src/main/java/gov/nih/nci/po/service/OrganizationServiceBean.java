@@ -85,8 +85,10 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.ejb.Stateless;
@@ -120,22 +122,15 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(Organization org) {
-        Session s = PoHibernateUtil.getCurrentSession();
+        final Session s = PoHibernateUtil.getCurrentSession();
         Organization o = loadAndMerge(org, s);
-        removeCRs(o);
         o.setStatusDate(new Date());
-        s.update(o);
-    }
-
-
-    private void removeCRs(Organization o) {
-        if (!o.getChangeRequests().isEmpty()) {
-            for (OrganizationCR cr : o.getChangeRequests()) {
-                // TODO delete or mark as processed
-                // see https://jira.5amsolutions.com/browse/PO-492
-                PoHibernateUtil.getCurrentSession().delete(cr);
+        EntityUpdateCallback<Organization> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<Organization>() {
+            public void entityUpdate(Organization target) {
+                s.update(target);
             }
-        }
+        };
+        CRProcessor.processCRs(new ArrayList<OrganizationCR>(o.getChangeRequests()), entityUpdateCallback);
     }
 
     @SuppressWarnings("PMD.CompareObjectsWithEquals")
