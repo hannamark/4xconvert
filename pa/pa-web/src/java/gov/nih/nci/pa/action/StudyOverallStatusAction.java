@@ -32,6 +32,7 @@ import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
+
 /**
  * Action class for viewing and editing the protocol status.
  * 
@@ -42,6 +43,7 @@ import com.opensymphony.xwork2.Preparable;
  * 
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields", "PMD.SignatureDeclareThrowsException" })
+
 public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
@@ -107,7 +109,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
            updateStudyProtocol();
         }
         if (!hasActionErrors()) {
-            addActionError("Update succeeded.");
+            //addActionError("Update succeeded.");
+            ServletActionContext.getRequest().setAttribute(Constants.REQUEST_MESSAGE, "Update succeeded.");
         }
         loadForm();
         return Action.SUCCESS;
