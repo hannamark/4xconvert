@@ -5,7 +5,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-<body><h2>Login</h2>
+<body onload="setFocusToFirstControl();">
+
+<h2>Login</h2>
 <div class="box"> 
 <form action="j_security_check" method="post" id="loginForm">   
 
