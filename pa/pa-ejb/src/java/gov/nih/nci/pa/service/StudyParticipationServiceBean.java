@@ -28,6 +28,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class StudyParticipationServiceBean implements StudyParticipationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationServiceBean.class);
@@ -48,7 +49,24 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
      */
     public StudyParticipationDTO createStudyParticipation(
             StudyParticipationDTO dto) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
+        if (!PAUtil.isIiNull(dto.getIi())) {
+            LOG.error(" Update method should be used to modify existing. ");
+            throw new PAException(" Update method should be used to modify existing. ");
+        }
+        StudyParticipationDTO resultDto = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.beginTransaction();
+            StudyParticipation bo = StudyParticipationConverter.convertFromDtoToDomain(dto);
+            session.saveOrUpdate(bo);
+            session.flush();
+            resultDto = StudyParticipationConverter.convertFromDomainToDTO(bo);
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception in createStudyParticipation ", hbe);
+            throw new PAException(" Hibernate exception in createStudyParticipation ", hbe);
+        }
+        return resultDto;
     }
 
     /**
@@ -59,6 +77,55 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
     public StudyParticipationDTO updateStudyParticipation(
             StudyParticipationDTO dto) throws PAException {
         throw new PAException(errMsgMethodNotImplemented);
+    }
+    /**
+     * @param ii Index of StudyParticipation object
+     * @throws PAException PAException
+     */
+    public void deleteStudyParticipation(Ii ii)
+            throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            LOG.error(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
+        }
+        LOG.info("Entering deleteStudyParticipation");
+        Session session = null;
+        List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.beginTransaction();
+
+            Query query = null;
+            
+            // step 1: form the hql
+            String hql = "select spart "
+                       + "from StudyParticipation spart "
+                       + "where spart.id =  " + IiConverter.convertToString(ii);
+            LOG.info(" query StudyParticipation = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            
+            // step 3: delete
+            if (queryList.isEmpty()) {
+                LOG.error(" Trying to delete for non-existend Ii. ");
+                throw new PAException(" Trying to delete for non-existent Ii. ");
+            }
+            session.delete(queryList.get(0));
+            session.flush();
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while deleting "
+                    + "StudyParticipation for pid = " + ii.getExtension() , hbe);
+            throw new PAException(" Hibernate exception while deleting " 
+                    + "StudyParticipation for pid = " + ii.getExtension() , hbe);
+        }
+        
+        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
+        for (StudyParticipation sp : queryList) {
+            resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
+        }
+        LOG.info("Leaving deleteStudyParticipation");
     }
     
     /**
@@ -84,7 +151,8 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
             String hql = "select spart "
                        + "from StudyParticipation spart "
                        + "join spart.studyProtocol spro "
-                       + "where spro.id =  " + IiConverter.convertToString(studyProtocolIi);
+                       + "where spro.id =  " + IiConverter.convertToString(studyProtocolIi)
+                       + " order by spart.id ";
             LOG.info(" query StudyParticipation = " + hql);
             
             // step 2: construct query object

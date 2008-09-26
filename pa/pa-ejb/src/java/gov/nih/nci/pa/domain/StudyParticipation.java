@@ -2,12 +2,15 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
@@ -30,6 +33,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
     private StudyParticipationFunctionalCode functionalCode;
     private String localStudyProtocolIdentifier;
     private HealthCareFacility  healthCareFacility;
+    private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     
     /**
      * 
@@ -78,6 +82,20 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      */
     public void setHealthCareFacility(HealthCareFacility healthCareFacility) {
         this.healthCareFacility = healthCareFacility;
+    }
+    /**
+     * @return the studySiteAccrualStatuses
+     */
+    @OneToMany(mappedBy = "studyParticipation")
+    public List<StudySiteAccrualStatus> getStudySiteAccrualStatuses() {
+        return studySiteAccrualStatuses;
+    }
+    /**
+     * @param studySiteAccrualStatuses the studySiteAccrualStatuses to set
+     */
+    public void setStudySiteAccrualStatuses(
+            List<StudySiteAccrualStatus> studySiteAccrualStatuses) {
+        this.studySiteAccrualStatuses = studySiteAccrualStatuses;
     }
     
     

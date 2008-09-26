@@ -40,6 +40,11 @@ public interface StudyParticipationServiceRemote {
      */
     StudyParticipationDTO updateStudyParticipation(StudyParticipationDTO dto) throws PAException;
     /**
+     * @param ii index of StudyParticipation
+     * @throws PAException PAException
+     */
+    void deleteStudyParticipation(Ii ii) throws PAException;
+    /**
      * @param studyProtocolIi id of protocol
      * @return list StudyParticipationDTO   
      * @throws PAException on error 

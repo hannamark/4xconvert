@@ -7,13 +7,19 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.OrganizationWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.Constants;
@@ -45,6 +51,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
 
     private StudyProtocolServiceRemote sProService;
     private StudyParticipationServiceRemote sPartService;
+    private StudySiteAccrualStatusServiceRemote ssasService;
     private PAHealthCareFacilityServiceRemote pahfService;
     private PAOrganizationServiceRemote paoService;
 
@@ -58,6 +65,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     public void prepare() throws Exception {
         sProService = PaRegistry.getStudyProtocolService();
         sPartService = PaRegistry.getStudyParticipationService();
+        ssasService = PaRegistry.getStudySiteAccrualStatusService();
         pahfService = PaRegistry.getPAHealthCareFacilityService();
         paoService = PaRegistry.getPAOrganizationService();
 
@@ -96,20 +104,101 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     }
 
 
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String createTest() throws Exception {
+        clearErrorsAndMessages();
+        enforceBusinessRules();
+        
+        StudyParticipationDTO sp = new StudyParticipationDTO();
+        sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
+        sp.setHealthcareFacilityIi(IiConverter.convertToIi(1L));
+        sp.setIi(IiConverter.convertToIi((Long) null));
+        sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
+        sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+        sp.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2001")));
+        sp.setStudyProtocolIi(spIi);
+        sp = sPartService.createStudyParticipation(sp);
+        
+        StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
+        ssas.setIi(IiConverter.convertToIi((Long) null));
+        ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ENROLLING_BY_INVITATION));
+        ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("10/1/2008")));
+        ssas.setStudyParticipationIi(sp.getIi());
+        ssas = ssasService.createStudySiteAccrualStatus(ssas);
+        
+        addActionError("createTest() completed");
+        loadForm();
+        return Action.SUCCESS;
+    }
+
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String updateTest() throws Exception {
+        clearErrorsAndMessages();
+        enforceBusinessRules();
+        
+        List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
+        if (!spList.isEmpty()) {
+           StudyParticipationDTO sp = spList.get(spList.size() - 1);
+           StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
+           ssas.setIi(IiConverter.convertToIi((Long) null));
+           ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.WITHDRAWN));
+           ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("9/9/2009")));
+           ssas.setStudyParticipationIi(sp.getIi());
+           ssas = ssasService.createStudySiteAccrualStatus(ssas);
+        }
+        
+        addActionError("updateTest() completed");
+        loadForm();
+        return Action.SUCCESS;
+    }
+
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String deleteTest() throws Exception {
+        clearErrorsAndMessages();
+        
+        List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
+        if (spList.size() > 1) {
+           StudyParticipationDTO sp = spList.get(spList.size() - 1);
+           sPartService.deleteStudyParticipation(sp.getIi());
+        }
+        
+        addActionError("deleteTest() completed");
+        loadForm();
+        return Action.SUCCESS;
+    }
+
     private void loadForm() throws Exception {
         organizationList = new ArrayList<OrganizationWebDTO>();
         List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
         for (StudyParticipationDTO sp : spList) {
+            List<StudySiteAccrualStatusDTO> ssasList = 
+                ssasService.getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIi());
             HealthCareFacilityDTO hf = pahfService.getHealthCareFacility(sp.getHealthcareFacilityIi());
             Organization orgBo = new Organization();
             orgBo.setId(IiConverter.convertToLong(hf.getOrganizationIi()));
             orgBo = paoService.getOrganizationByIndetifers(orgBo);
+            
             OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
-            orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(sp.getStatusCode()));
-            orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(
-                    TsConverter.convertToTimestamp(sp.getStatusDateRangeLow()).toString()));
+            if (ssasList.isEmpty()) {
+                orgWebDTO.setRecruitmentStatus("unknown");
+                orgWebDTO.setRecruitmentStatusDate("unknown");
+            } else {
+              orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(ssasList.get(0).getStatusCode()));
+              orgWebDTO.setRecruitmentStatusDate(
+                      PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                              ssasList.get(0).getStatusDate()).toString()));
+            }
             organizationList.add(orgWebDTO);
         }
     }

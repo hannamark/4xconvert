@@ -38,6 +38,7 @@ public class StudyOverallStatusServiceBean implements
         StudyOverallStatusServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyOverallStatusServiceBean.class);
+    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
     /**
      * @param ii index
@@ -46,7 +47,8 @@ public class StudyOverallStatusServiceBean implements
      */
     public StudyOverallStatusDTO getStudyOverallStatus(Ii ii)
             throws PAException {
-        throw new PAException("Method not yet implemented.");
+        LOG.error(errMsgMethodNotImplemented);
+        throw new PAException(errMsgMethodNotImplemented);
     }
 
     /**
@@ -61,7 +63,7 @@ public class StudyOverallStatusServiceBean implements
             throw new PAException(" Existing StudyOverallStatus objects cannot be modified. "
                                 + " Append new object instead. ");
         }
-        
+        StudyOverallStatusDTO resultDto = null;
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -86,12 +88,13 @@ public class StudyOverallStatusServiceBean implements
                 StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
                 session.saveOrUpdate(bo);
                 session.flush();
+                resultDto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
             }
         } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in updateStudyOverallStatus ", hbe);
-            throw new PAException(" Hibernate exception in updateStudyOverallStatus ", hbe);
+            LOG.error(" Hibernate exception in createStudyOverallStatus ", hbe);
+            throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
         }
-        return null;
+        return resultDto;
     }
 
     /**
@@ -101,7 +104,8 @@ public class StudyOverallStatusServiceBean implements
      */
     public StudyOverallStatusDTO updateStudyOverallStatus(
             StudyOverallStatusDTO dto) throws PAException {
-        throw new PAException("Method not yet implemented.");
+        LOG.error(errMsgMethodNotImplemented);
+        throw new PAException(errMsgMethodNotImplemented);
     }
 
     /**
@@ -112,7 +116,6 @@ public class StudyOverallStatusServiceBean implements
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
-
         if (PAUtil.isIiNull(studyProtocolIi)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
@@ -162,7 +165,7 @@ public class StudyOverallStatusServiceBean implements
             Ii studyProtocolIi) throws PAException {
         List<StudyOverallStatusDTO> sosList = this.getStudyOverallStatusByStudyProtocol(studyProtocolIi);
         if (sosList.isEmpty()) {
-            return null;
+            return new StudyOverallStatusDTO();
         }
         return sosList.get(sosList.size() - 1);
     }

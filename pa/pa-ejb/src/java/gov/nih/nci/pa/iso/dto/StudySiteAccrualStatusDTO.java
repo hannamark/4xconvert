@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
@@ -10,18 +7,17 @@ import gov.nih.nci.coppa.iso.Ts;
 /**
  * StudyOverallStatusDTO for transferring StudyOverallStatus object .
  * @author Hugh Reinhart
- * @since 07/22/2008
+ * @since 08/26/2008
  
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class StudyOverallStatusDTO extends BaseDTO {
-    private static final long serialVersionUID = 1234562452L;
+public class StudySiteAccrualStatusDTO extends BaseDTO {
+    private static final long serialVersionUID = 123456276552L;
     
     Cd statusCode;
     Ts statusDate;
-    Ii studyProtocolIi;
-    
+    Ii studyParticipationIi;
     /**
      * @return the statusCode
      */
@@ -47,16 +43,16 @@ public class StudyOverallStatusDTO extends BaseDTO {
         this.statusDate = statusDate;
     }
     /**
-     * @return the studyProtocolidentifier
+     * @return the studyParticipationIi
      */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
+    public Ii getStudyParticipationIi() {
+        return studyParticipationIi;
     }
     /**
-     * @param studyProtocolidentifier the studyProtocolidentifier to set
+     * @param studyParticipationIi the studyParticipationIi to set
      */
-    public void setStudyProtocolIi(Ii studyProtocolidentifier) {
-        this.studyProtocolIi = studyProtocolidentifier;
+    public void setStudyParticipationIi(Ii studyParticipationIi) {
+        this.studyParticipationIi = studyParticipationIi;
     }
-
+    
 }

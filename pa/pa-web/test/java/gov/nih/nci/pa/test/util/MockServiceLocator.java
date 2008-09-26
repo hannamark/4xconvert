@@ -6,6 +6,7 @@ import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -124,6 +125,14 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getStudyParticipationService()
      */
     public StudyParticipationServiceRemote getStudyParticipationService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getStudySiteAccrualStatusService()
+     */
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
         // TODO Auto-generated method stub
         return null;
     }

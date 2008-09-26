@@ -56,6 +56,12 @@
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="nciSpecificInformationquery.action" 
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+            <li><a href="participatingOrganizationscreateTest.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test create()</span></span></a></li>
+            <li><a href="participatingOrganizationsupdateTest.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test update()</span></span></a></li>
+            <li><a href="participatingOrganizationsdeleteTest.action"                
+                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test delete()</span></span></a></li>
         </ul>   
     </del>
 </div>
