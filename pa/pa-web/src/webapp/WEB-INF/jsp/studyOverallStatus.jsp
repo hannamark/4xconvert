@@ -32,17 +32,20 @@ function handleAction(){
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-<!-- <div id="contentwide"> -->
 <h1><fmt:message key="trialStatus.title" /></h1>
 
-<!--Help Content-->
-<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-<div class="box"><s:form name="studyOverallStatus">
+<div class="box">
+<c:if test="${request.requestMessage  != null}">
+<div class="confirm_msg">
+	<strong>Message.</strong> <c:out value="${request.requestMessage }"/>.
+</div>
+<c:remove var="requestMessage" scope="request"/>
+</c:if>
+<s:form name="studyOverallStatus">
     <s:actionerror />
 <h2><fmt:message key="trialStatus.title" /></h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         
         <tr>
             <td scope="row" class="label"><label for="currentTrialStatus"><fmt:message
@@ -56,8 +59,6 @@ function handleAction(){
             	<ul class="btnrow">			
 					<li style="padding-left:0"><a href="#" class="btn" onclick="openPI('studyOverallStatushistory.action', 'popup')"><span class="btn_img"><span class="history">History</span></span></a></li>
 				</ul>
-            <!--<s:submit value="Status History"
-                action='studyOverallStatusHistory' cssClass="button" />-->
             </td>
         </tr>
         <tr>
