@@ -500,6 +500,10 @@ A.btn SPAN.btnhelp
 { background:url("../images/ico_help.gif") no-repeat; }
 A.btn SPAN.logout
 { background:url("../images/ico_logout.gif") no-repeat; }
+A.btn SPAN.person
+{ background:url("../images/ico_person.gif") no-repeat; }
+A.btn SPAN.organization
+{ background:url("../images/ico_organization.gif") no-repeat; }
 
 
 /* Footer */
@@ -523,7 +527,7 @@ A.btn SPAN.logout
 #tabboxwrapper
 { clear:both; padding:5px; background:#5d7ba2 url("../images/bg_tabboxwrapper.gif") repeat-x; border:1px solid #475b82; border-top:0; height:1%; }
 UL#maintabs
-{ height:2.3em; margin:0; font-weight:bold; list-style:none; padding-left:3px; clear:both; font-size:110%;}
+{ height:2.3em; margin:10px 0 0 0; font-weight:bold; list-style:none; padding-left:3px; clear:both; font-size:110%;}
 :lang(en) UL#maintabs
 { height:1.6em; }
 
