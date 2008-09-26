@@ -43,7 +43,7 @@
 <body> 
 <div id="wrapper" class="curate">
     	<jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
-    	<jsp:include page="/WEB-INF/jsp/common/paheader.jsp"/>
+    	<jsp:include page="/WEB-INF/jsp/common/registryheader.jsp"/>
 	     
 	     <div id="main">	
 			<div id="contentwrapper">
@@ -59,7 +59,7 @@
 			</div>
            	<div id="leftnav">
            		<ul class="menu">
-              	 	<jsp:include page="/WEB-INF/jsp/common/pamenu.jsp"/> 
+              	 	<jsp:include page="/WEB-INF/jsp/common/registrymenu.jsp"/> 
 					<jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
 				</ul>
 			</div> 
