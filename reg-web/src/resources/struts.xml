@@ -14,24 +14,16 @@
             <result>/index.jsp</result>
         </action>
         <action name="login">
-            <result>/jsp/pajsp/login.jsp</result>
+	       <result>/WEB-INF/jsp/login.jsp</result>
         </action>
-	<action name="home">
-	    <result>/WEB-INF/jsp/registryHome.jsp</result>
+	   <action name="home">
+	       <result>/WEB-INF/jsp/registryHome.jsp</result>
         </action> 
     </package>
-    <package name="protected" namespace="/protected" extends="default"> 
-        <action name="studyProtocolQueryHome" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
-            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
+    <package name="protected" namespace="/protected" extends="default">
+        <action name="searchTrial" class="gov.nih.nci.registry.action.SearchTrialAction">
+            <interceptor-ref name="nci-commonsParams" />
+            <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
         </action> 
-        <action name="studyOverallStatus" class="gov.nih.nci.pa.action.StudyOverallStatusAction">
-            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
-        </action> 
-        <action name="studyOverallStatusUpdate" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="update">
-            <result>/jsp/pajsp/studyOverallStatus.jsp</result>
-        </action> 
-        <action name="studyOverallStatusHistory" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="history">
-            <result>/jsp/pajsp/studyOverallStatusHistory.jsp</result>
-        </action>   
     </package>
 </struts>
