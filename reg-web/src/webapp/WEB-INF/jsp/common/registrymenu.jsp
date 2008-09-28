@@ -4,17 +4,16 @@
 
 		<li class="stdnav"><div>NCI Registry</div>
 			<ul>
-				<li><a href="#">Home</a></li>			
-				<li><a href="studyProtocolQuery.action" >Search Trials</a></li>
-				<li><a href="studyProtocolQuery.action" >Submit Trial</a></li>
-				<li><a href="studyProtocolQuery.action" >Login</a></li>
-				<li><a href="studyProtocolQuery.action" >Register</a></li>
+				<li><a href="home.action">Home</a></li>			
+				<li><a href="searchTrial.action" >Search Trials</a></li>
+				<li><a href="searchTrial.action" >Submit Trial</a></li>
+				<li><a href="/registry/protected/searchTrial.action" >Login</a></li>
+				<li><a href="searchTrial.action" >Register</a></li>
 <!--        		<c:if test="${sessionScope.loggedUserName  != null}"> -->
         		
 <!--        		</c:if> -->
 
 				<li><a href="#">Help</a></li>
-				<li><a href="#">Logout</a></li>
         	</ul>
         </li>
         <c:if test="${sessionScope.trialSummary  != null}">
