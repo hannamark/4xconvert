@@ -7,6 +7,7 @@
 <head>
     <title><fmt:message key="trialFunding.title"/></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
@@ -21,7 +22,10 @@ if (page == "Edit"){
  document.forms[0].submit();   
  } 
 } 
-
+function tooltip() {
+		BubbleTips.activateTipOn("acronym");
+		BubbleTips.activateTipOn("dfn"); 
+	}
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
@@ -36,7 +40,7 @@ if (page == "Edit"){
     <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="fundingMechanism"><dfn title="Context sensitive help text or tooltip here.">                      
+                        <label for="fundingMechanism"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">                      
                             <fmt:message key="trialFunding.funding.mechanism"/>*</dfn>
                         </label>
                      </td>
@@ -53,7 +57,7 @@ if (page == "Edit"){
                 
                 <tr> 
                      <td scope="row" class="label">
-                          <label for="institutionCode"><dfn title="Context sensitive help text or tooltip here.">
+                          <label for="institutionCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="trialFunding.institution.code"/>*</dfn>
                           </label>
                      </td>              
@@ -69,7 +73,7 @@ if (page == "Edit"){
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="serialNumber"><dfn title="Context sensitive help text or tooltip here.">
+                     <label for="serialNumber"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="trialFunding.serial.number"/>*</dfn>
                      </label>
                      </td>
@@ -79,7 +83,7 @@ if (page == "Edit"){
                 </tr>
                 <tr>
                      <td scope="row" class="label">
-                     <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here.">
+                     <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="studyProtocol.monitorCode"/>*</dfn>
                      </label>
                     </td>
@@ -93,7 +97,7 @@ if (page == "Edit"){
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="fundingTypeCode"><dfn title="Context sensitive help text or tooltip here.">
+                     <label for="fundingTypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="trialFunding.funding.typecode"/></dfn>
                      </label>
                     </td>
@@ -107,7 +111,7 @@ if (page == "Edit"){
                 </tr>                   
                 <tr>
                      <td scope="row" class="label">
-                     <label for="grantYear"><dfn title="Context sensitive help text or tooltip here.">
+                     <label for="grantYear"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="trialFunding.grant.year" /></dfn>
                      </label>
                     </td>
@@ -117,7 +121,7 @@ if (page == "Edit"){
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="suffix"><dfn title="Context sensitive help text or tooltip here.">
+                     <label for="suffix"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="trialFunding.suffix" /></dfn>
                      </label>
                     </td>

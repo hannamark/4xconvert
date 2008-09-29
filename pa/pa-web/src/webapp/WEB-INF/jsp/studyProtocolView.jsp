@@ -7,6 +7,13 @@
 <head>
     <title><fmt:message key="studyProtocol.view.title"/></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+    <script type="text/javascript"> 
+    function tooltip() {
+		BubbleTips.activateTipOn("acronym");
+		BubbleTips.activateTipOn("dfn"); 
+	}
+	</SCRIPT>
 </head>
 
 <body onload="setFocusToFirstControl();">
@@ -26,7 +33,7 @@
             <tr>
             <td scope="row" class="label">
                 <label for="nciAccessionNumber">
-                <dfn title="Context sensitive help text or tooltip here."> 
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.nciIdentifier"/>
                  </dfn>
                 </label>
@@ -38,7 +45,7 @@
             <tr>
             <td scope="row" class="label">
                 <label for="nct">
-                <dfn title="Context sensitive help text or tooltip here.">NCT Number:
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">NCT Number:
                 </dfn></label>
             </td>
             <td class="value"></td>
@@ -46,22 +53,21 @@
             <tr>
             <td scope="row" class="label">
                 <label for="localProtocolIdentifer"> 
-                <dfn title="Context sensitive help text or tooltip here.">
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                     <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
                 </dfn>
                 </label>
             </td>
             <td class="value"></td>
-            </tr>       
+            </tr>  
             <tr>
-            <tr>
-                <td scope="row" class="label"><label for="sectrialid"><dfn title="Context sensitive help text or tooltip here.">Secondary Trial Identifier:</dfn></label></td>
+                <td scope="row" class="label"><label for="sectrialid"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Secondary Trial Identifier:</dfn></label></td>
                 <td class="value"></td>
             </tr>
             <tr>
             <td scope="row" class="label">
                 <label for="leadOrg"> 
-                <dfn title="Context sensitive help text or tooltip here.">
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                     <fmt:message key="studyProtocol.leadOrganization"/>
                 </dfn>
                 </label>
@@ -69,10 +75,11 @@
             <td class="value">
                 <c:out value="${sessionScope.trialSummary.leadOrganizationName }"/> 
             </td>
-            </tr>      
+            </tr> 
+            <tr>     
             <td scope="row" class="label">
                 <label for="officialTitle">
-                <dfn title="Context sensitive help text or tooltip here."> 
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.officialTitle"/>
                  </dfn>
                 </label>
@@ -82,7 +89,7 @@
             </td>
             </tr>       
              <tr>
-                <td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here.">Acronym:</dfn></label></td>
+                <td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Acronym:</dfn></label></td>
                 <td class="value"></td>
             </tr>
 

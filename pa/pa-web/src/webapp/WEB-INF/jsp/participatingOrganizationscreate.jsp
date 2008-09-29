@@ -7,10 +7,10 @@
 <head>
 <title><fmt:message key="participatingOrganizations.title" /></title>
 <s:head />
-<script type="text/javascript" src="scripts/js/calendarpopup.js" />  
-<script type="text/javascript" src="scripts/js/prototype.js"></script>
-<script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
-
+<script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/scriptaculous.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/control.tabs.js"/>"> </script>
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
@@ -30,21 +30,14 @@
 <div class="box"><s:form name="studyOverallStatus">
     <s:actionerror />
 <h2><fmt:message key="participatingOrganizations.title" /></h2>
-    <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
-    <tr><td colspan="2"><!--Tabs -->
-
+   
 			<ul id="maintabs" class="tabs">
 				<li><a href="#facility" class="active">Facility</a></li>
 				<li><a href="#investigators">Investigators</a></li>
 				<li><a href="#contacts">Contacts</a></li>
 			</ul>
 
-			<!--/Tabs --> <!-- 
-                    directions on http://livepipe.net/control/tabs 
-                    - make sure you add control.tabs.js to your scripts directory! 
-                    - Matt 
-                --> <script type="text/javascript">             
+			<script type="text/javascript">             
                     //<![CDATA[
                     Event.observe(window,'load',function(){
                         $$('.tabs').each(function(tabs){
@@ -55,11 +48,10 @@
                 </script>
 
 
-			<div id="tabboxwrapper"><!--Facility-->
-
-			<div id="facility" class="box">
-
-			<h3>Facility</h3>
+	<div id="tabboxwrapper">
+		<!--/Facility-->
+	 	<div id="facility" class="box">
+				<h3>Facility</h3>
 
 			<table class="form">
 				<tr>
@@ -160,12 +152,21 @@
 			</del></div>
 
 
-			</div>
+			</div><!--/Facility-->
+			<!--Investigators-->
+			<div id="investigators" class="box" style="display:none;">
+				<h3>Facility Investigators </h3>
+						<table class="data">
+						</table>
+			</div><!--/Investigators-->
+			<!--Contacts-->
+			<div id="contacts" class="box" style="display:none;">
+				<h3>Contacts</h3>
+					<table class="form">
+					</table>
+			</div><!--/Contacts-->
+		</div>
 
-			<!--/Facility--></div>
-
-			</td></tr>
-    </table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">

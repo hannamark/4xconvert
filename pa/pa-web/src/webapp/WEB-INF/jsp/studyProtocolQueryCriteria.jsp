@@ -7,6 +7,7 @@
 <head>
     <title><fmt:message key="studyProtocol.search.title"/></title>   
     <s:head/>
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 function resetValues () {

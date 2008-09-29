@@ -11,6 +11,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 <c:url value="/protected/ajaxorglookup.action" var="lookupUrl"/>
 <script type="text/javascript">    
     function trim(str) {
@@ -45,6 +46,10 @@
 	    });
 	    return false;
 	}
+	function tooltip() {
+		BubbleTips.activateTipOn("acronym");
+		BubbleTips.activateTipOn("dfn"); 
+	}
 </SCRIPT>
 </head>
 <body onload="setFocusToFirstControl();">
@@ -60,7 +65,7 @@
     	<table class="form" >
 			    <tr>
 			    	  <td scope="row" class="label">
-			               <label for="accrualReportingMethodCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
+			               <label for="accrualReportingMethodCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
 			          </td>
 			    	  <s:set name="accrualReportingMethodCodeValues" value="@gov.nih.nci.pa.enums.AccrualReportingMethodCode@getDisplayNames()" />
 	                  <td class="value">
@@ -72,7 +77,7 @@
 			     </tr>           
 			     <tr>
 			          <td scope="row" class="label">
-			               <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here."> <fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></dfn></label>
+			               <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> <fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></dfn></label>
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
@@ -85,7 +90,7 @@
 			     </tr>	  
 				<tr>
 					<td scope="row" class="label">
-						<label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here."> Summary 4 Funding Source:</dfn></label>
+						<label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> Summary 4 Funding Source:</dfn></label>
 					</td>
 					<td class="value">
 						<div id="loadOrgField">
