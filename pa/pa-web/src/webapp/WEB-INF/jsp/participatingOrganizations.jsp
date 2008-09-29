@@ -7,9 +7,9 @@
 <head>
 <title><fmt:message key="participatingOrganizations.title" /></title>
 <s:head />
-<script type="text/javascript" src="scripts/js/calendarpopup.js" />  
-<script type="text/javascript" src="scripts/js/prototype.js"></script>
-<script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/scriptaculous.js"/>"></script>
 
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
