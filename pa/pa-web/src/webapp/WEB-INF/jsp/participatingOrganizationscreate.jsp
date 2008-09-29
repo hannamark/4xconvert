@@ -6,18 +6,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message key="participatingOrganizations.title" /></title>
-<s:head />
-<script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/scriptaculous.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/control.tabs.js"/>"> </script>
+<s:head/>
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" src="scripts/js/calendarpopup.js" />  
+<script type="text/javascript" src="scripts/js/prototype.js"></script>
+<script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<c:url value="/protected/participatingOrganizationsnodecorlookup.action" var="lookupUrl"/>
+
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
      
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-
+	function lookup(){
+	    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
+	}	
+	function loadDiv(orgid){
+		 
+		 //document.location.href="/pa/protected/participatingOrganizationsdisplayOrg.action?orgId="+orgid;
+		 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
+	     var div = document.getElementById('loadOrgDetails');   
+	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+	     var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	     });
+	     return false;
+	}
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
@@ -30,14 +51,21 @@
 <div class="box"><s:form name="studyOverallStatus">
     <s:actionerror />
 <h2><fmt:message key="participatingOrganizations.title" /></h2>
-   
+    <table class="form">
+        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
+    <tr><td colspan="2"><!--Tabs -->
+
 			<ul id="maintabs" class="tabs">
 				<li><a href="#facility" class="active">Facility</a></li>
 				<li><a href="#investigators">Investigators</a></li>
 				<li><a href="#contacts">Contacts</a></li>
 			</ul>
 
-			<script type="text/javascript">             
+			<!--/Tabs --> <!-- 
+                    directions on http://livepipe.net/control/tabs 
+                    - make sure you add control.tabs.js to your scripts directory! 
+                    - Matt 
+                --> <script type="text/javascript">             
                     //<![CDATA[
                     Event.observe(window,'load',function(){
                         $$('.tabs').each(function(tabs){
@@ -48,70 +76,18 @@
                 </script>
 
 
-	<div id="tabboxwrapper">
-		<!--/Facility-->
-	 	<div id="facility" class="box">
-				<h3>Facility</h3>
+			<div id="tabboxwrapper"><!--Facility-->
+
+			<div id="facility" class="box">
+
+			<h3>Facility</h3>
 
 			<table class="form">
+				<div id="loadOrgDetails">
+					<%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
+				</div>
 				<tr>
-					<td scope="row" class="label"><label for="name">Organization
-					Name:</label></td>
-					<td class="value" style="width: 250px"><input type="text"
-						name="name" maxlength="200" size="100" value=""
-						style="width: 250px" /> <span class="info">Enter
-					organization name and click <strong>Look Up</strong>.</span> <span
-						class="formErrorMsg"></span></td>
-					<td class="value">
-					<ul style="margin-top: -6px;">
-						<li style="padding-left: 0"><a href="#" class="btn"
-							onclick="showPopWin('submodal/modal_search.html', 600, 400, null);" /><span
-							class="btn_img"><span class="search">Look Up</span></span></a></li>
-					</ul>
-					</td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><label for="ncinum">NCI
-					number:</label></td>
-					<td class="value" colspan="2"><input type="text" name="ncinum"
-						id="ncinum" maxlength="200" size="10" value=""
-						style="width: 100px" disabled="disabled" class="readonly" /></td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><label for="city">City:</label>
-					</td>
-					<td class="value" colspan="2"><input type="text" name="city"
-						id="city" maxlength="200" size="200" value="" style="width: 200px"
-						disabled="disabled" class="readonly" /> <span class="formErrorMsg"></span>
-					</td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><label for="state">State:</label>
-					</td>
-					<td class="value" colspan="2"><input type="text" name="state"
-						name="state" maxlength="200" size="200" value=""
-						style="width: 200px" disabled="disabled" class="readonly" /> <span
-						class="formErrorMsg"></span></td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><label for="zip">Zip/Postal
-					Code:</label></td>
-					<td class="value" colspan="2"><input type="text" name="zip"
-						id="zip" maxlength="200" size="200" value="" style="width: 200px"
-						disabled="disabled" class="readonly" /> <span class="formErrorMsg"></span>
-					</td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><label for="country">Country:</label>
-					</td>
-					<td class="value" colspan="2"><input type="text"
-						name="country" id="country" maxlength="200" size="200" value=""
-						style="width: 200px" disabled="disabled" class="readonly" /> <span
-						class="formErrorMsg"></span></td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><label for="leadorg">Lead
-					Organization:</label></td>
+					<td scope="row" class="label"><label for="leadorg">Lead Organization:</label></td>
 					<td class="value"><input type="checkbox" name="group2"
 						id="leadorg" value="Lead Org" onclick="SetGenericValues1()" />
 					(check box if yes)</td>
@@ -152,21 +128,12 @@
 			</del></div>
 
 
-			</div><!--/Facility-->
-			<!--Investigators-->
-			<div id="investigators" class="box" style="display:none;">
-				<h3>Facility Investigators </h3>
-						<table class="data">
-						</table>
-			</div><!--/Investigators-->
-			<!--Contacts-->
-			<div id="contacts" class="box" style="display:none;">
-				<h3>Contacts</h3>
-					<table class="form">
-					</table>
-			</div><!--/Contacts-->
-		</div>
+			</div>
 
+			<!--/Facility--></div>
+
+			</td></tr>
+    </table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">

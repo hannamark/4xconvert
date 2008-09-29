@@ -5,6 +5,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.OrganizationWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -14,6 +15,7 @@ import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -25,6 +27,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +57,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     private StudySiteAccrualStatusServiceRemote ssasService;
     private PAHealthCareFacilityServiceRemote pahfService;
     private PAOrganizationServiceRemote paoService;
-
+    private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
-    private List<OrganizationWebDTO> organizationList;
+    private List<OrganizationWebDTO> organizationList = null; 
+    private OrganizationDTO selectedOrgDTO = null;
+    private static final int THREE = 3;    
+    private static final String DISPLAYJSP = "displayJsp";
 
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -201,6 +207,19 @@ public class ParticipatingOrganizationsAction extends ActionSupport
             }
             organizationList.add(orgWebDTO);
         }
+
+    }
+
+    /**
+     * @return the organizationList
+     * @throws Exception on error.
+     */    
+    public String displayOrg() throws Exception {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));        
+        selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        return DISPLAYJSP;
     }
 
     /**
@@ -222,6 +241,43 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      */
     public void setOrganizationList(List<OrganizationWebDTO> organizationList) {
         this.organizationList = organizationList;
+    }
+    
+    /**
+     * @return result
+     * @throws Exception on error.
+     */    
+    public String nodecorlookup() throws Exception {
+        countryRegDTO = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+        return "lookup";
+    }
+
+    /**
+     * @return the countryRegDTO
+     */
+    public List<CountryRegAuthorityDTO> getCountryRegDTO() {
+        return countryRegDTO;
+    }
+
+    /**
+     * @param countryRegDTO the countryRegDTO to set
+     */
+    public void setCountryRegDTO(List<CountryRegAuthorityDTO> countryRegDTO) {
+        this.countryRegDTO = countryRegDTO;
+    }
+
+    /**
+     * @return the selectedOrgDTO
+     */
+    public OrganizationDTO getSelectedOrgDTO() {
+        return selectedOrgDTO;
+    }
+
+    /**
+     * @param selectedOrgDTO the selectedOrgDTO to set
+     */
+    public void setSelectedOrgDTO(OrganizationDTO selectedOrgDTO) {
+        this.selectedOrgDTO = selectedOrgDTO;
     }
 
 }

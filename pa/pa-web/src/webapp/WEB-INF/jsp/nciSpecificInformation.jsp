@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC  
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
@@ -31,12 +31,12 @@
 	     document.nciSpecificInformationupdate.action="nciSpecificInformationupdate.action";
 	     document.nciSpecificInformationupdate.submit();     
 	}
-	
-	function lookup(){	
-	    showPopWin('${lookupUrl}', 600, 250, '', 'Choose Organization');
-	}
-	
-	function loadDiv(url) {
+	 
+	function lookup(){
+	    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
+	}	
+	function loadDiv(orgid) {
+		var url = '/pa/protected/ajaxorgdisplayOrg.action?orgId='+orgid;
 	    var div = document.getElementById('loadOrgField');   
 	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 	    var aj = new Ajax.Updater(div, url, {
@@ -53,13 +53,9 @@
 </SCRIPT>
 </head>
 <body onload="setFocusToFirstControl();">
-
 <h1><fmt:message key="nciSpecificInformation.title" /></h1>
-
-<!--Help Content-->
-   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
-   <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-  <div class="box">  
+<jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+<div class="box">  
     <s:form action="nciSpecificInformationupdate"><s:actionerror/>
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form" >
@@ -99,8 +95,8 @@
 					</td>
 					
 				</tr>
-				
-			</table> 
+				</table> 
+						
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
@@ -110,8 +106,6 @@
 				</ul>	
 			</del>
 		</div>
-
-		           
   	</s:form>
    </div>
 <!--  </div> -->

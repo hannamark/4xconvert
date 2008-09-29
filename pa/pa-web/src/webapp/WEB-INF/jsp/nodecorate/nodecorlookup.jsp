@@ -6,7 +6,7 @@
 <SCRIPT language="JavaScript">
 	function submitform(orgid)
 	{
-		
+		alert("orgid = "+orgid);
 		top.window.loadDiv(orgid);
 		window.top.hidePopWin(true); 
 	}
@@ -89,7 +89,8 @@
                    </li>
                </ul>   
           </del>
-     </div>  
+     </div>
+  
 </s:form>
 </div>
 <div class="line"></div>

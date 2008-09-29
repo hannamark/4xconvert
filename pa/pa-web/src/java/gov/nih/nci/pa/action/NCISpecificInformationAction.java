@@ -2,6 +2,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -15,6 +16,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
+//import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
@@ -38,8 +41,29 @@ public class NCISpecificInformationAction extends ActionSupport {
     private static final Logger LOG = Logger.getLogger(NCISpecificInformationAction.class);
     private NCISpecificInformationWebDTO nciSpecificInformationWebDTO = new NCISpecificInformationWebDTO();
     private List<OrganizationDTO> orgs = new ArrayList<OrganizationDTO>();
+    private List<CountryRegAuthorityDTO> countryRegDTO = new ArrayList<CountryRegAuthorityDTO>();
     private String chosenOrg;
 
+    /**
+     * @return result
+     */    
+    public String execute() {
+        return SUCCESS;
+    }
+    
+    /**
+     * @return result 
+     */    
+    public String lookup() {
+        try {
+            countryRegDTO = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
+        }
+        return SUCCESS;
+    }
+    
     /**
      * @return result
      */
@@ -73,7 +97,7 @@ public class NCISpecificInformationAction extends ActionSupport {
 
     /**
      * @return res
-     */
+     */    
     public String update() {
         boolean error = false;
         // Step1 : check for any errors
@@ -203,18 +227,24 @@ public class NCISpecificInformationAction extends ActionSupport {
 
     /**
      * 
-     * @return result
+     * @return result   
      */
-    public String lookup() {
-        String orgName = ServletActionContext.getRequest().getParameter("orgName");
-        if (orgName == null) {
-            orgs = null;
+    public String displayOrgList() {
+        try {
+            String orgName = ServletActionContext.getRequest().getParameter("orgName");
+            //String nciOrgName = ServletActionContext.getRequest().getParameter("nciOrgName");
+            //String countryName = ServletActionContext.getRequest().getParameter("countryName");
+            String cityName = ServletActionContext.getRequest().getParameter("cityName");      
+            String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
+            OrganizationDTO criteria = new OrganizationDTO();
+            criteria.setName(EnOnConverter.convertToEnOn(orgName));
+            criteria.setPostalAddress(AddressConverterUtil.create(null, null,  cityName,    null,  zipCode,   "USA"));
+            orgs = PaRegistry.getPoOrganizationEntityService().search(criteria);
             return SUCCESS;
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+            return ERROR;
         }
-        OrganizationDTO criteria = new OrganizationDTO();
-        criteria.setName(EnOnConverter.convertToEnOn(orgName));
-        orgs = PaRegistry.getPoOrganizationEntityService().search(criteria);
-        return SUCCESS;
     }
 
     /**
@@ -224,10 +254,11 @@ public class NCISpecificInformationAction extends ActionSupport {
     public String displayOrg() {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
-        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        chosenOrg = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0).getName().getPart().get(0)
-                .getValue();
-        nciSpecificInformationWebDTO.setOrganizationName(chosenOrg);
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));        
+        OrganizationDTO selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        //OrganizationDTO selectedOrgDTO1 = PaRegistry.getPoOrganizationEntityService().
+        //                                        getOrganization(IiConverter.convertToIi(orgId));
+        nciSpecificInformationWebDTO.setOrganizationName(selectedOrgDTO.getName().getPart().get(0).getValue());
         nciSpecificInformationWebDTO.setOrganizationIi(orgId);
         return DISPLAY_ORG_FLD;
     }
@@ -265,5 +296,19 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String lookup1() {
         return SUCCESS;
+    }
+
+    /**
+     * @return the countryRegDTO
+     */
+    public List<CountryRegAuthorityDTO> getCountryRegDTO() {
+        return countryRegDTO;
+    }
+
+    /**
+     * @param countryRegDTO the countryRegDTO to set
+     */
+    public void setCountryRegDTO(List<CountryRegAuthorityDTO> countryRegDTO) {
+        this.countryRegDTO = countryRegDTO;
     }
 }

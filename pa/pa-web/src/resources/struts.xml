@@ -31,8 +31,12 @@
             <result>/WEB-INF/jsp/participatingOrganizations.jsp</result>
          </action>  
         <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
+        	<result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>        	
             <result>/WEB-INF/jsp/participatingOrganizations{1}.jsp</result>
          </action>  
+        <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">        	
+        	<result name="displayJsp">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>            
+         </action>
          <action name="trialFundingAdd">
 	      	<result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
 			<result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
@@ -73,6 +77,7 @@
 		</action>
 		<action name="ajaxorg*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
 			<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+			<result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
 			<result name="displayOrgFld">/WEB-INF/jsp/nodecorate/orgField.jsp</result>	
 		</action>
 	</package>
