@@ -150,7 +150,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <excludeRoots>
-                        <excludeRoot>target/generated-sources/xsnapshot/java</excludeRoot>
+                        <excludeRoot>target/generated-sources/xsnapshot/</excludeRoot>
                     </excludeRoots>
                 </configuration>
                 <executions>

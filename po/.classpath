@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="services/src/main/java"/>
-	<classpathentry kind="src" path="services/target/generated-sources/xsnapshot/java"/>
+	<classpathentry kind="src" path="services/target/generated-sources/xsnapshot"/>
 	<classpathentry kind="src" path="services/src/main/resources"/>
 	<classpathentry kind="src" path="services/src/test/java"/>
 	<classpathentry kind="src" path="services/src/test/resources"/>

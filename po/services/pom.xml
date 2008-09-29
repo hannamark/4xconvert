@@ -265,7 +265,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <property name="output.dir" value="target/generated-sources/xsnapshot/java" />
+                                <property name="output.dir" value="target/generated-sources/xsnapshot" />
                                 <path id="xsnapshot.classpath">
                                     <pathelement location="src/main/xsnapshotResources" />
                                     <fileset dir="${settings.localRepository}">
@@ -297,7 +297,7 @@
                                     <properties />
                                 </xsnapshotdoclet>
                             </tasks>
-                            <sourceRoot>target/generated-sources/xsnapshot/java</sourceRoot>
+                            <sourceRoot>target/generated-sources/xsnapshot</sourceRoot>
                         </configuration>
                         <goals>
                             <goal>run</goal>
