@@ -35,13 +35,7 @@ function handleAction(){
 <h1><fmt:message key="trialStatus.title" /></h1>
 
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-<div class="box">
-<c:if test="${request.requestMessage  != null}">
-<div class="confirm_msg">
-	<strong>Message.</strong> <c:out value="${request.requestMessage }"/>.
-</div>
-<c:remove var="requestMessage" scope="request"/>
-</c:if>
+<pa:sucessMessage/>
 <s:form name="studyOverallStatus">
     <s:actionerror />
 <h2><fmt:message key="trialStatus.title" /></h2>
