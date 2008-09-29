@@ -170,7 +170,11 @@ public class StudyOverallStatusAction extends ActionSupport implements
  
     private void loadForm() throws Exception {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
-        StudyOverallStatusDTO sosDto = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi); 
+        StudyOverallStatusDTO sosDto = null;
+        List<StudyOverallStatusDTO> sosList = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi);
+        if (!sosList.isEmpty()) {
+            sosDto = sosList.get(0);
+        }
 
         Timestamp tsTemp;
         if (spDto != null) {

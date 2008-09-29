@@ -59,20 +59,25 @@ public class StudyOverallStatusServiceBean implements
     public StudyOverallStatusDTO createStudyOverallStatus(
             StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
-            LOG.error(" Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ");
-            throw new PAException(" Existing StudyOverallStatus objects cannot be modified. "
-                                + " Append new object instead. ");
+            String errMsg = " Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ";
+            LOG.error(errMsg);
+            throw new PAException(errMsg);
         }
         StudyOverallStatusDTO resultDto = null;
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
-            StudyOverallStatusDTO oldStatus = getCurrentStudyOverallStatusByStudyProtocol(
+            List<StudyOverallStatusDTO> oldStatus = getCurrentStudyOverallStatusByStudyProtocol(
                     dto.getStudyProtocolIi());
-            StudyStatusCode oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+            
+            StudyStatusCode oldCode = null;
+            Timestamp oldDate = null;
+            if (!oldStatus.isEmpty()) {
+                oldCode = StudyStatusCode.getByCode(oldStatus.get(0).getStatusCode().getCode());
+                oldDate = TsConverter.convertToTimestamp(oldStatus.get(0).getStatusDate());
+            }
             StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
-            Timestamp oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
             Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
             if (newCode == null) {
                 throw new PAException(" Study status must be set ");
@@ -117,8 +122,9 @@ public class StudyOverallStatusServiceBean implements
     public List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+            String errMsg = " Ii should not be null ";
+            LOG.error(errMsg);
+            throw new PAException(errMsg);
         }
         LOG.info("Entering getStudyOverallStatusByStudyProtocol");
         
@@ -157,16 +163,17 @@ public class StudyOverallStatusServiceBean implements
     
     /**
      * @param studyProtocolIi Primary key assigned to a StudyProtocl.
-     * @return StudyOverallStatusDTO Current status.
+     * @return List Current status StudyOverllStatusDTO.
      * @throws PAException Exception.
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyOverallStatusDTO getCurrentStudyOverallStatusByStudyProtocol(
-            Ii studyProtocolIi) throws PAException {
+    public List<StudyOverallStatusDTO> getCurrentStudyOverallStatusByStudyProtocol(Ii studyProtocolIi) 
+            throws PAException {
         List<StudyOverallStatusDTO> sosList = this.getStudyOverallStatusByStudyProtocol(studyProtocolIi);
-        if (sosList.isEmpty()) {
-            return new StudyOverallStatusDTO();
+        List<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
+        if (!sosList.isEmpty()) {
+            resultList.add(sosList.get(sosList.size() - 1));
         }
-        return sosList.get(sosList.size() - 1);
+        return resultList;
     }
 }

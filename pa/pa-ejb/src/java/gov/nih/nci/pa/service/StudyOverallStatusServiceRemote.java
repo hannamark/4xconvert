@@ -50,9 +50,9 @@ public interface StudyOverallStatusServiceRemote  {
     // Custom methods
     /**
      * @param studyProtocolIi Primary key assigned to a StudyProtocl.
-     * @return StudyOverallStatusDTO Current status.
+     * @return List Current status StudyOverllStatusDTO.
      * @throws PAException Exception.
      */
-    StudyOverallStatusDTO getCurrentStudyOverallStatusByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    List<StudyOverallStatusDTO> getCurrentStudyOverallStatusByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
 }

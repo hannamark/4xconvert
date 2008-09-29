@@ -54,9 +54,9 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
      */
     public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
-            LOG.error(" Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead. ");
-            throw new PAException(" Existing StudySiteAccrualStatus objects cannot be modified. "
-                                + " Append new object instead. ");
+            String errMsg = " Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead. ";
+            LOG.error(errMsg);
+            throw new PAException(errMsg);
         }
         StudySiteAccrualStatusDTO resultDto = null;
         Session session = null;

@@ -40,7 +40,7 @@ public class StudyOverallStatusTest {
     @Test
     public void update() throws Exception {
         StudyOverallStatusDTO dto = 
-            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid);
+            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid).get(0);
         try {
             remoteEjb.createStudyOverallStatus(dto);
             fail("StudyOverallStatus objects cannot be modified.");
@@ -67,7 +67,7 @@ public class StudyOverallStatusTest {
         remoteEjb.createStudyOverallStatus(dto);
         
         StudyOverallStatusDTO result = 
-            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid);
+            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid).get(0);
         assertNotNull (IiConverter.convertToLong(result.getIi()));
         assertEquals (result.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
@@ -84,7 +84,7 @@ public class StudyOverallStatusTest {
         assertEquals(2, statusList.size());
         
         StudyOverallStatusDTO dto = 
-            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid);
+            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid).get(0);
         assertEquals(IiConverter.convertToLong(statusList.get(1).getIi())
                 , (IiConverter.convertToLong(dto.getIi())));
     }
