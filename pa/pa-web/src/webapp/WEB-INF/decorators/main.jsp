@@ -26,10 +26,6 @@
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_controls.js"/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
 	<script language="JavaScript" type="text/javascript" src="<c:url value='/struts/niftycorners/nifty.js'/>"></script>
-	<script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
-	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
-	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/pa.js"/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/js/cal2.js"/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal_conf2.js"/>"></script>

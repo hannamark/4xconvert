@@ -19,14 +19,9 @@
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_controls.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
     <script language="JavaScript" type="text/javascript" src="<s:url value='/struts/niftycorners/nifty.js'/>"></script>
-    <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>        
-    
     <link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
     <link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
     <script language="JavaScript" type="text/javascript">
         window.onload = function(){
             if(!NiftyCheck()) {
