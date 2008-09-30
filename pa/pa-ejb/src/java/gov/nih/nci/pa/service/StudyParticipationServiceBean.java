@@ -28,11 +28,14 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class StudyParticipationServiceBean implements StudyParticipationServiceRemote {
+public class StudyParticipationServiceBean extends AbstractBasePaService implements StudyParticipationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationServiceBean.class);
-    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
+    
+    @Override
+    Logger getLogger() {
+        return LOG;
+    }
     /**
      * @param ii index
      * @return StudyParticipationDTO
@@ -40,7 +43,8 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
      */
     public StudyParticipationDTO getStudyParticipation(Ii ii)
     throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
+        notImplementedError();
+        return null;
     }
     /**
      * @param dto StudyParticipationDTO
@@ -50,9 +54,7 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
     public StudyParticipationDTO createStudyParticipation(
             StudyParticipationDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
-            String errMsg = " Update method should be used to modify existing. ";
-            LOG.error(errMsg);
-            throw new PAException(errMsg);
+            serviceError(" Update method should be used to modify existing. ");
         }
         StudyParticipationDTO resultDto = null;
         Session session = null;
@@ -64,8 +66,7 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
             session.flush();
             resultDto = StudyParticipationConverter.convertFromDomainToDTO(bo);
         } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in createStudyParticipation ", hbe);
-            throw new PAException(" Hibernate exception in createStudyParticipation ", hbe);
+            serviceError(" Hibernate exception in createStudyParticipation ", hbe);
         }
         return resultDto;
     }
@@ -77,7 +78,8 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
      */
     public StudyParticipationDTO updateStudyParticipation(
             StudyParticipationDTO dto) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
+        notImplementedError();
+        return null;
     }
     /**
      * @param ii Index of StudyParticipation object
@@ -86,9 +88,7 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
     public void deleteStudyParticipation(Ii ii)
             throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            String errMsg = " Ii should not be null ";
-            LOG.error(errMsg);
-            throw new PAException(errMsg);
+            serviceError(" Ii should not be null ");
         }
         LOG.info("Entering deleteStudyParticipation");
         Session session = null;
@@ -101,10 +101,8 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
             session.delete(bo);
             session.flush();
         }  catch (HibernateException hbe) {
-            String errMsg = " Hibernate exception while deleting "
-                + "StudyParticipation for pid = " + ii.getExtension();
-            LOG.error(errMsg , hbe);
-            throw new PAException(errMsg, hbe);
+            serviceError(" Hibernate exception while deleting "
+                + "StudyParticipation for pid = " + ii.getExtension(), hbe);
         }
         
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
@@ -122,9 +120,7 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
     public List<StudyParticipationDTO> getStudyParticipationByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            String errMsg = " Ii should not be null ";
-            LOG.error(errMsg);
-            throw new PAException(errMsg);
+            serviceError(" Ii should not be null ");
         }
         LOG.info("Entering getStudyParticipationByStudyProtocol");
         Session session = null;
@@ -148,9 +144,7 @@ public class StudyParticipationServiceBean implements StudyParticipationServiceR
             queryList = query.list();
             
         }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving "
-                    + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving " 
+            serviceError(" Hibernate exception while retrieving "
                     + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
         }
         
