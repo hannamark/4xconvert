@@ -17,6 +17,8 @@ import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.domain.StudyParticipationContact;
+import gov.nih.nci.pa.domain.StudyParticipationContactTelecomAddress;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -68,6 +70,8 @@ public class TestSchema {
             addAnnotatedClass(StudyResourcing.class).
             addAnnotatedClass(FundingMechanism.class).
             addAnnotatedClass(StudySiteAccrualStatus.class).
+            addAnnotatedClass(StudyParticipationContact.class).
+            addAnnotatedClass(StudyParticipationContactTelecomAddress.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").

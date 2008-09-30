@@ -16,6 +16,8 @@ import gov.nih.nci.coppa.iso.Ts;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class FunctionalRoleDTO extends BaseDTO {
+    private static final long serialVersionUID = 123489324790L;
+
     Cd statusCode;
     Ts statusDateRangeLow;
     Ii studyProtocolIi;

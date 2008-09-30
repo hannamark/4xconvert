@@ -12,5 +12,5 @@ package gov.nih.nci.pa.iso.dto;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class OrganizationFunctionalRoleDTO extends FunctionalRoleDTO {
-
+    private static final long serialVersionUID = 1234895624790L;
 }
