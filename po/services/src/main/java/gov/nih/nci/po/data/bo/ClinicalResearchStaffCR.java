@@ -2,15 +2,18 @@ package gov.nih.nci.po.data.bo;
 
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Valid;
 
@@ -46,6 +49,10 @@ public class ClinicalResearchStaffCR extends AbstractClinicalResearchStaff
     /**
      * @return affected Role.
      */
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JoinColumn(name = "target", nullable = false)
+    @Index(name = "crs_target_idx")
+    @ForeignKey(name = "CRSCR_TARGET_CRS_FK")
     public ClinicalResearchStaff getTarget() {
         return target;
     }

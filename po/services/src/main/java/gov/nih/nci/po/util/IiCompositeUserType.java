@@ -136,6 +136,9 @@ public class IiCompositeUserType implements CompositeUserType {
      * {@inheritDoc}
      */
     public Object deepCopy(Object value) {
+        if (value == null) {
+            return null;
+        }
         // TODO PO-535 ideally, Ii would handle this clone operation
         Ii snapshot = new Ii();
         try {
