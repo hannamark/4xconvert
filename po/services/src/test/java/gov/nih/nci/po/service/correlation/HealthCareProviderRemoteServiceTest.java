@@ -82,8 +82,10 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationService;
@@ -98,7 +100,7 @@ import org.junit.Test;
  *
  */
 public class HealthCareProviderRemoteServiceTest
-    extends AbstractStructrualRoleRemoteServiceTest<HealthCareProviderDTO> {
+    extends AbstractStructrualRoleRemoteServiceTest<HealthCareProviderDTO, HealthCareProviderCR> {
 
     /**
      * {@inheritDoc}
@@ -147,4 +149,19 @@ public class HealthCareProviderRemoteServiceTest
     public void testSearch() throws Exception {
         // Do nothing.  Remove this (use superclass impl) when PO-487 is implemented
     }
+
+    @Override
+    protected void alter(HealthCareProviderDTO dto) {
+        dto.setCertificateLicenseText(StringConverter.convertToSt("some new Cert License Text"));
+    }
+
+    @Override
+    protected void verifyAlterations(HealthCareProviderCR cr) {
+        super.verifyAlterations(cr);
+        assertEquals("some new Cert License Text", cr.getCertificateLicenseText());
+    }
+    
+    
+    
+    
 }

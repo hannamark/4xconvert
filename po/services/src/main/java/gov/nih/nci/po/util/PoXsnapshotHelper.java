@@ -1,10 +1,22 @@
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.data.bo.AbstractHealthCareFacility;
+import gov.nih.nci.po.data.bo.AbstractHealthCareProvider;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
+import gov.nih.nci.po.data.bo.AbstractOrganizationResourceProvider;
+import gov.nih.nci.po.data.bo.AbstractOversightCommittee;
 import gov.nih.nci.po.data.bo.AbstractPerson;
+import gov.nih.nci.po.data.bo.AbstractPersonResourceProvider;
+import gov.nih.nci.po.data.bo.AbstractClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.ExtendedPersonRoleDTOHelper;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.OrganizationResourceProviderDTO;
+import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+import gov.nih.nci.services.correlation.PersonResourceProviderDTO;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
 import gov.nih.nci.services.organization.AbstractOrganizationDTO;
 import gov.nih.nci.services.organization.ExtendedOrganizationDTOHelper;
@@ -32,6 +44,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *
  * @author gax
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class PoXsnapshotHelper extends XSnapshotRegistry {
 
     private static final String UNCHECKED = "unchecked";
@@ -187,5 +200,87 @@ public final class PoXsnapshotHelper extends XSnapshotRegistry {
         helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
 
     }
+    
+    /**
+     * Copy properties from snapshot into model.
+     *
+     * @param snapshot the snapshot to translate
+     * @param model the target.
+     */
+    public static void copyIntoAbstractModel(HealthCareProviderDTO snapshot, AbstractHealthCareProvider model) {
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
+                AbstractHealthCareProvider.class,
+                DEFAULT_ISO_SNAPSHOT_NAME);
+        helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
 
+    }
+    
+    /**
+     * Copy properties from snapshot into model.
+     *
+     * @param snapshot the snapshot to translate
+     * @param model the target.
+     */
+    public static void copyIntoAbstractModel(HealthCareFacilityDTO snapshot, AbstractHealthCareFacility model) {
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
+                AbstractHealthCareFacility.class,
+                DEFAULT_ISO_SNAPSHOT_NAME);
+        helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
+    }
+    
+    /**
+     * Copy properties from snapshot into model.
+     *
+     * @param snapshot the snapshot to translate
+     * @param model the target.
+     */
+    public static void copyIntoAbstractModel(
+            OrganizationResourceProviderDTO snapshot,
+            AbstractOrganizationResourceProvider model) {
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
+                AbstractOrganizationResourceProvider.class,
+                DEFAULT_ISO_SNAPSHOT_NAME);
+        helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
+    }
+    
+    /**
+     * Copy properties from snapshot into model.
+     *
+     * @param snapshot the snapshot to translate
+     * @param model the target.
+     */
+    public static void copyIntoAbstractModel(OversightCommitteeDTO snapshot, AbstractOversightCommittee model) {
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
+                AbstractOversightCommittee.class,
+                DEFAULT_ISO_SNAPSHOT_NAME);
+        helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
+    }
+    
+    /**
+     * Copy properties from snapshot into model.
+     *
+     * @param snapshot the snapshot to translate
+     * @param model the target.
+     */
+    public static void copyIntoAbstractModel(PersonResourceProviderDTO snapshot, AbstractPersonResourceProvider model) {
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
+                AbstractPersonResourceProvider.class,
+                DEFAULT_ISO_SNAPSHOT_NAME);
+        helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
+    }
+    
+    /**
+     * Copy properties from snapshot into model.
+     *
+     * @param snapshot the snapshot to translate
+     * @param model the target.
+     */
+    public static void copyIntoAbstractModel(ClinicalResearchStaffDTO snapshot, AbstractClinicalResearchStaff model) {
+        SnapshotHelper helper = REGISTRY.getHelperForModelClass(
+                AbstractClinicalResearchStaff.class,
+                DEFAULT_ISO_SNAPSHOT_NAME);
+        helper.copyIntoModel(snapshot, model, new TransformContext(REGISTRY));
+    }
+
+    
 }

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.data.bo.PersonResourceProviderCR;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -96,7 +97,7 @@ import gov.nih.nci.services.correlation.PersonResourceProviderDTO;
  * Remote service tests.
  */
 public class PersonResourceProviderRemoteServiceTest extends
-        AbstractStructrualRoleRemoteServiceTest<PersonResourceProviderDTO> {
+        AbstractStructrualRoleRemoteServiceTest<PersonResourceProviderDTO, PersonResourceProviderCR> {
 
     @Override
     CorrelationService<PersonResourceProviderDTO> getCorrelationService() {
@@ -160,6 +161,18 @@ public class PersonResourceProviderRemoteServiceTest extends
     @Override
     public void testSearch() throws Exception {
         // Do nothing.  Remove this (use superclass impl) when PO-530 is implemented
+    }
+
+    @Override
+    protected void alter(PersonResourceProviderDTO dto) {
+        dto.getAssignedId().setExtension("9999");
+    }
+
+    @Override
+    protected void verifyAlterations(PersonResourceProviderCR cr) {
+        super.verifyAlterations(cr);
+        
+        assertEquals("9999", cr.getIdentifier().getExtension());
     }
 
 }

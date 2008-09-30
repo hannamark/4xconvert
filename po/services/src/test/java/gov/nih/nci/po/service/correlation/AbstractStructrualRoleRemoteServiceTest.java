@@ -82,6 +82,11 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.RoleStatusConverter;
+import java.lang.reflect.ParameterizedType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ad;
@@ -93,6 +98,7 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
@@ -102,8 +108,8 @@ import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URI;
@@ -118,10 +124,19 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> extends AbstractBeanTest {
+public abstract class AbstractStructrualRoleRemoteServiceTest<T extends CorrelationDto, CR extends CorrelationChangeRequest> extends AbstractBeanTest {
 
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
+    private final Class<CR> typeCRArgument;
+    
+    /**
+     * default constructor.
+     */
+    public AbstractStructrualRoleRemoteServiceTest() {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        typeCRArgument = (Class) parameterizedType.getActualTypeArguments()[1];
+    }
 
     @Before
     public void setUpData() throws Exception {
@@ -257,4 +272,48 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends PoDto> e
         assertEquals(e.getPostalAddress().getItem().size(), a.getPostalAddress().getItem().size());
         assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
     }
+    
+    @Test
+    public void updateCorrelation() throws Exception {
+        CorrelationService<T> service = getCorrelationService();
+        Ii id = service.createCorrelation(getSampleDto());
+        T dto = service.getCorrelation(id);
+        alter(dto);
+        service.updateCorrelation(dto);
+        List<CR> l = PoHibernateUtil.getCurrentSession().createCriteria(typeCRArgument).list();
+        assertEquals(1, l.size());
+        CR cr = l.get(0);
+        verifyAlterations(cr);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void incorrectUpdateCorrelationStatus() throws Exception {
+        CorrelationService<T> service = getCorrelationService();
+        Ii id = service.createCorrelation(getSampleDto());
+        T dto = service.getCorrelation(id);
+        assertEquals(RoleStatus.PENDING, CdConverter.convertToRoleStatus(dto.getStatus()));
+        dto.setStatus(RoleStatusConverter.convertToCd(RoleStatus.SUSPENDED));
+        service.updateCorrelation(dto);
+    }
+    
+    @Test
+    public void updateCorrelationStatus() throws Exception {
+        CorrelationService<T> service = getCorrelationService();
+        Ii id = service.createCorrelation(getSampleDto());
+        T dto = service.getCorrelation(id);
+        Cd newStatus = RoleStatusConverter.convertToCd(RoleStatus.NULLIFIED);
+        service.updateCorrelationStatus(id, newStatus);
+        @SuppressWarnings("unchecked")
+        List<CR> l = PoHibernateUtil.getCurrentSession().createCriteria(typeCRArgument).list();
+        assertEquals(1, l.size());
+        CR cr = l.get(0);
+        assertEquals(cr.getStatus(), RoleStatus.NULLIFIED);
+    }
+    
+    protected abstract void alter(T dto) throws Exception;
+    
+    protected void verifyAlterations(CR cr) {
+        assertEquals(RoleStatus.PENDING, cr.getStatus());
+    }
+    
 }

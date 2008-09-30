@@ -107,7 +107,7 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected PersonRole getExampleTestClass() {
+    public PersonRole getExampleTestClass() {
         HealthCareProvider hcp = new HealthCareProvider();
         fillInExamplePersonRoleFields(hcp);
         hcp.setCertificateLicenseText("testCertLicense");
@@ -138,7 +138,7 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+    public PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         HealthCareProviderDTO dto = new HealthCareProviderDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
 

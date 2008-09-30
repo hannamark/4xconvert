@@ -85,14 +85,14 @@ package gov.nih.nci.po.service;
 import java.util.List;
 import java.util.Map;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.bo.Correlation;
 
 /**
  * Defines the generic methods we expect to implement for all structural role.
  *
  * @param <T> structural role
  */
-public interface GenericStructrualRoleServiceLocal<T extends PersistentObject>
+public interface GenericStructrualRoleServiceLocal<T extends Correlation>
     extends GenericSearchService<T, SearchCriteria<T>> {
 
     /**
@@ -120,4 +120,10 @@ public interface GenericStructrualRoleServiceLocal<T extends PersistentObject>
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(T entity);
+    
+    /**
+     * 
+     * @param updated The structural role to update.
+     */
+    void update(T updated);
 }

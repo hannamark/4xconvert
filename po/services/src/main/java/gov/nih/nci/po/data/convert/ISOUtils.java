@@ -119,4 +119,9 @@ public class ISOUtils {
      * Converts from hibernate ID.
      */
     public static final IdConverter ID_PERSON = new IdConverter.PersonIdConverter();
+    
+    /**
+     * Converts from hibernate ID.
+     */
+    public static final IdConverter ID_HEALTH_CARE_PROVIDER = new IdConverter.HealthCareProviderIdConverter();
 }

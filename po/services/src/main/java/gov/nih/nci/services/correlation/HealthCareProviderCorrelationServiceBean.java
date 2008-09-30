@@ -83,12 +83,15 @@
 package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
+import gov.nih.nci.po.service.HealthCareProviderCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -105,17 +108,27 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ PoHibernateSessionInterceptor.class })
 @SecurityDomain("po")
 public class HealthCareProviderCorrelationServiceBean
-    extends AbstractCorrelationServiceBean<HealthCareProvider, HealthCareProviderDTO>
+    extends AbstractCorrelationServiceBean<HealthCareProvider, HealthCareProviderCR, HealthCareProviderDTO>
     implements HealthCareProviderCorrelationServiceRemote {
 
     private HealthCareProviderServiceLocal hcpService;
+    
+    private HealthCareProviderCRServiceLocal hcpCRService;
 
     /**
-     * @param hcpService the hcpService to set
+     * @param svc the hcpService to set
      */
     @EJB
-    public void setHcpService(HealthCareProviderServiceLocal hcpService) {
-        this.hcpService = hcpService;
+    public void setHcpService(HealthCareProviderServiceLocal svc) {
+        this.hcpService = svc;
+    }
+    
+    /**
+     * @param svc the hcpService to set
+     */
+    @EJB
+    public void setHcpCRService(HealthCareProviderCRServiceLocal svc) {
+        this.hcpCRService = svc;
     }
 
     @Override
@@ -128,6 +141,21 @@ public class HealthCareProviderCorrelationServiceBean
         return new HealthCareProviderIdConverter();
     }
 
+    @Override
+    HealthCareProviderCRServiceLocal getLocalCRService() {
+        return hcpCRService;
+    }
+
+    @Override
+    HealthCareProviderCR newCR(HealthCareProvider t) {
+        return new HealthCareProviderCR(t);
+    }
+
+    @Override
+    void copyIntoAbstractModel(HealthCareProviderDTO proposedState, HealthCareProviderCR cr) {
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+    }
+    
     @Override
     SearchCriteria<HealthCareProvider> getSearchCriteria(HealthCareProvider example) {
         // TODO Auto-generated method stub

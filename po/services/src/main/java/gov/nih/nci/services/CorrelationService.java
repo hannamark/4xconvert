@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -121,7 +122,7 @@ public interface CorrelationService<T extends PoDto> {
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(T dto);
-
+    
     /**
      * Provides the ability to find correlations using conjunctional insensitive substring matching.
      *
@@ -131,4 +132,19 @@ public interface CorrelationService<T extends PoDto> {
      * @return list of matching dto
      */
     List<T> search(T dto);
+    
+    /**
+     * Propose a new entity value to the curator.
+     * @param proposedState the CR containg the proposed stated.
+     * @throws EntityValidationException if the CR proposes an invalid state for the target.
+     */
+    void updateCorrelation(T proposedState) throws EntityValidationException;
+    
+    /**
+     * Propose a new status code to the curator.
+     * @param target the ID of the Correlation to update.
+     * @param status the new status code.
+     * @throws EntityValidationException if the CR proposes an invalid state for the target.
+     */
+    void updateCorrelationStatus(Ii target, Cd status) throws EntityValidationException;
 }

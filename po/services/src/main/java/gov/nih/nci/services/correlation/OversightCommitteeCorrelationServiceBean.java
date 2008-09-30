@@ -83,13 +83,17 @@
 package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeCRServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -106,10 +110,12 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ PoHibernateSessionInterceptor.class })
 @SecurityDomain("po")
 public class OversightCommitteeCorrelationServiceBean
-    extends AbstractCorrelationServiceBean<OversightCommittee, OversightCommitteeDTO>
+    extends AbstractCorrelationServiceBean<OversightCommittee, OversightCommitteeCR, OversightCommitteeDTO>
     implements OversightCommitteeCorrelationServiceRemote {
 
     private OversightCommitteeServiceLocal ocService;
+    
+    private OversightCommitteeCRServiceLocal ocCRService;
 
     /**
      * @param svc service to set
@@ -117,6 +123,14 @@ public class OversightCommitteeCorrelationServiceBean
     @EJB
     public void setOcService(OversightCommitteeServiceLocal svc) {
         ocService = svc;
+    }
+    
+    /**
+     * @param svc service to set
+     */
+    @EJB
+    public void setOcCRService(OversightCommitteeCRServiceLocal svc) {
+        ocCRService = svc;
     }
 
     @Override
@@ -129,6 +143,21 @@ public class OversightCommitteeCorrelationServiceBean
         return ocService;
     }
 
+    @Override
+    GenericStructrualRoleCRServiceLocal<OversightCommitteeCR> getLocalCRService() {
+        return ocCRService;
+    }
+
+    @Override
+    OversightCommitteeCR newCR(OversightCommittee t) {
+        return new OversightCommitteeCR(t);
+    }
+
+    @Override
+    void copyIntoAbstractModel(OversightCommitteeDTO proposedState, OversightCommitteeCR cr) {
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+    }
+    
     @Override
     SearchCriteria<OversightCommittee> getSearchCriteria(OversightCommittee example) {
         // TODO Auto-generated method stub

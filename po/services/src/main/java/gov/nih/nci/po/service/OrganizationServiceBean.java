@@ -118,7 +118,6 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
 
     /**
      * {@inheritDoc}
-     * @throws EntityValidationException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(Organization org) {

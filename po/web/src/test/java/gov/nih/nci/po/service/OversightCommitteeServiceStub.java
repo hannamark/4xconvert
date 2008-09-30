@@ -121,4 +121,8 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
             PageSortParams<OversightCommittee> pageSortParams) {
         return null;
     }
+
+    public void update(OversightCommittee updated) {
+        
+    }
 }

@@ -103,7 +103,7 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
             return null;
         }
         if (returnClass.equals(RoleStatus.class)) {
-            return (TO) converToRoleStatus(value);
+            return (TO) convertToRoleStatus(value);
         } else if (returnClass.equals(OversightCommitteeType.class)) {
             return (TO) convertToOversightCommitteeType(value);
         }
@@ -114,7 +114,12 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
         return PoRegistry.getOversightCommitteeTypeService().getByCode(value.getCode());
     }
 
-    private RoleStatus converToRoleStatus(Cd value) {
+    /**
+     * Convert a Role status code into an emun.
+     * @param value the code.
+     * @return the enum.
+     */
+    public static RoleStatus convertToRoleStatus(Cd value) {
         return RoleStatus.valueOf(value.getCode().toUpperCase());
     }
 }

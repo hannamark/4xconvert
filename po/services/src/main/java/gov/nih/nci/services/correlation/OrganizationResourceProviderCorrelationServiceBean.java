@@ -83,13 +83,17 @@
 package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
+import gov.nih.nci.po.data.bo.OrganizationResourceProviderCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgResourceProviderIdConverter;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.service.OrganizationResourceProviderCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -106,10 +110,13 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ PoHibernateSessionInterceptor.class })
 @SecurityDomain("po")
 public class OrganizationResourceProviderCorrelationServiceBean
-    extends AbstractCorrelationServiceBean<OrganizationResourceProvider, OrganizationResourceProviderDTO>
+    extends AbstractCorrelationServiceBean
+        <OrganizationResourceProvider, OrganizationResourceProviderCR, OrganizationResourceProviderDTO>
     implements OrganizationResourceProviderCorrelationServiceRemote {
 
     private OrganizationResourceProviderServiceLocal orpService;
+    
+    private OrganizationResourceProviderCRServiceLocal orpCRService;
 
     /**
      * @param svc service to set
@@ -117,6 +124,14 @@ public class OrganizationResourceProviderCorrelationServiceBean
     @EJB
     public void setOrpService(OrganizationResourceProviderServiceLocal svc) {
         this.orpService = svc;
+    }
+
+    /**
+     * @param svc service to set
+     */
+    @EJB
+    public void setOrpCRService(OrganizationResourceProviderCRServiceLocal svc) {
+        this.orpCRService = svc;
     }
 
     @Override
@@ -129,6 +144,23 @@ public class OrganizationResourceProviderCorrelationServiceBean
         return orpService;
     }
 
+    @Override
+    GenericStructrualRoleCRServiceLocal<OrganizationResourceProviderCR> getLocalCRService() {
+        return orpCRService;
+    }
+
+    @Override
+    OrganizationResourceProviderCR newCR(OrganizationResourceProvider t) {
+        return new OrganizationResourceProviderCR(t);
+    }
+
+    @Override
+    void copyIntoAbstractModel(
+            OrganizationResourceProviderDTO proposedState, 
+            OrganizationResourceProviderCR cr) {
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+    }
+    
     @Override
     SearchCriteria<OrganizationResourceProvider> getSearchCriteria(OrganizationResourceProvider example) {
         // TODO Auto-generated method stub

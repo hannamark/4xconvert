@@ -111,7 +111,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 /**
- * Organizations.
+ * Persons.
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none"
  *      class="gov.nih.nci.services.person.AbstractPersonDTO"
@@ -121,7 +121,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 @MappedSuperclass
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
 public abstract class AbstractPerson implements PersistentObject, Contactable {
-    private static final long serialVersionUID = 1L;
+    
     private static final int SHORT_COL_LENGTH = 10;
     private static final int LONG_COL_LENGTH = 50;
 

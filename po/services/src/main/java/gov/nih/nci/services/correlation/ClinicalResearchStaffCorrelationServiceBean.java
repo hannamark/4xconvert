@@ -83,13 +83,15 @@
 package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
+import gov.nih.nci.po.service.ClinicalResearchStaffCRServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -107,10 +109,12 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ PoHibernateSessionInterceptor.class })
 @SecurityDomain("po")
 public class ClinicalResearchStaffCorrelationServiceBean
-    extends AbstractCorrelationServiceBean<ClinicalResearchStaff, ClinicalResearchStaffDTO>
+    extends AbstractCorrelationServiceBean<ClinicalResearchStaff, ClinicalResearchStaffCR, ClinicalResearchStaffDTO>
     implements ClinicalResearchStaffCorrelationServiceRemote {
 
     private ClinicalResearchStaffServiceLocal crsService;
+    
+    private ClinicalResearchStaffCRServiceLocal crsCRService;
 
     /**
      * @param crsService the crsService to set
@@ -118,6 +122,14 @@ public class ClinicalResearchStaffCorrelationServiceBean
     @EJB
     public void setCrsService(ClinicalResearchStaffServiceLocal crsService) {
         this.crsService = crsService;
+    }
+    
+    /**
+     * @param svc the crsService to set
+     */
+    @EJB
+    public void setCrsCRService(ClinicalResearchStaffCRServiceLocal svc) {
+        this.crsCRService = svc;
     }
 
     /**
@@ -132,10 +144,25 @@ public class ClinicalResearchStaffCorrelationServiceBean
      * {@inheritDoc}
      */
     @Override
-    GenericStructrualRoleServiceLocal<ClinicalResearchStaff> getLocalService() {
+    ClinicalResearchStaffServiceLocal getLocalService() {
         return crsService;
     }
 
+    @Override
+    ClinicalResearchStaffCRServiceLocal getLocalCRService() {
+        return crsCRService;
+    }
+
+    @Override
+    ClinicalResearchStaffCR newCR(ClinicalResearchStaff t) {
+        return new ClinicalResearchStaffCR(t);
+    }
+
+    @Override
+    void copyIntoAbstractModel(ClinicalResearchStaffDTO proposedState, ClinicalResearchStaffCR cr) {
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -144,4 +171,5 @@ public class ClinicalResearchStaffCorrelationServiceBean
         // TODO Auto-generated method stub
         return null;
     }
+
 }

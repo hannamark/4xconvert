@@ -92,7 +92,6 @@ import gov.nih.nci.services.PoDto;
  */
 @SuppressWarnings("PMD.AbstractNaming")
 public abstract class BaseOrganizationDTO implements PoDto {
-
     private static final long serialVersionUID = 1L;
 
     private DSet<Tel> telecomAddress;

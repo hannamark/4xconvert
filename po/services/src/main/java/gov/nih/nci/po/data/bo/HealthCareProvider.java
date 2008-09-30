@@ -98,7 +98,6 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Length;
 import org.hibernate.validator.Valid;
 
 
@@ -108,16 +107,13 @@ import org.hibernate.validator.Valid;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.HealthCareProviderDTO"
- *      model-extends="gov.nih.nci.po.data.bo.PersonRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractHealthCareProvider"
+ *      implements="gov.nih.nci.services.CorrelationDto"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class HealthCareProvider extends PersonRole {
+public class HealthCareProvider extends AbstractHealthCareProvider implements Correlation {
     private static final long serialVersionUID = 1L;
-
-    private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
-
-    private String certificateLicenseText;
 
     /**
      * {@inheritDoc}
@@ -133,25 +129,6 @@ public class HealthCareProvider extends PersonRole {
     @Searchable
     public Long getId() {
         return super.getId();
-    }
-
-    /**
-     * @return the certificateLicenseText
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
-     */
-    @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
-    @Searchable
-    public String getCertificateLicenseText() {
-        return this.certificateLicenseText;
-    }
-
-    /**
-     * @param certificateLicenseText the certificateLicenseText to set
-     */
-    public void setCertificateLicenseText(String certificateLicenseText) {
-        this.certificateLicenseText = certificateLicenseText;
     }
 
     /**

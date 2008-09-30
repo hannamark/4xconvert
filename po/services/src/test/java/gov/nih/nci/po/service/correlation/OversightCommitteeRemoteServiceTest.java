@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -95,7 +96,7 @@ import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 /**
  * Remote service test.
  */
-public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleRemoteServiceTest<OversightCommitteeDTO> {
+public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleRemoteServiceTest<OversightCommitteeDTO, OversightCommitteeCR> {
 
     @Override
     CorrelationService<OversightCommitteeDTO> getCorrelationService() {
@@ -134,4 +135,19 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
     public void testSearch() throws Exception {
         // Do nothing.  Remove this (use superclass impl) when PO-521 is implemented
     }
+
+    @Override
+    protected void alter(OversightCommitteeDTO dto) {
+        Cd type = new Cd();
+        type.setCode("something else");
+        dto.setType(type);
+    }
+
+    @Override
+    protected void verifyAlterations(OversightCommitteeCR cr) {
+        super.verifyAlterations(cr);
+        
+        assertEquals("something else", cr.getType().getCode());
+    }
+    
 }

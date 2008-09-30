@@ -82,31 +82,46 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
+import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.PoDto;
 
+import gov.nih.nci.services.CorrelationDto;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Generic superclass for correlation services.
  * @param <T> type
- * @param <DTO> the dto type
+ * @param <CR> the CR type for T
+ * @param <DTO> the dto type for T
  */
-public abstract class AbstractCorrelationServiceBean<T extends PersistentObject, DTO extends PoDto> {
+public abstract class AbstractCorrelationServiceBean
+        <T extends Correlation, CR extends CorrelationChangeRequest<T>, DTO extends CorrelationDto> {
+
+    /**
+     * client role.
+     */
+    protected static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
 
     private static final String UNCHECKED = "unchecked";
     abstract GenericStructrualRoleServiceLocal<T> getLocalService();
+    abstract GenericStructrualRoleCRServiceLocal<CR> getLocalCRService();
     abstract IdConverter getIdConverter();
     abstract SearchCriteria<T> getSearchCriteria(T example);
 
@@ -166,4 +181,41 @@ public abstract class AbstractCorrelationServiceBean<T extends PersistentObject,
         List<T> search = getLocalService().search(getSearchCriteria(model));
         return PoXsnapshotHelper.createSnapshotList(search);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public void updateCorrelation(DTO proposedState) throws EntityValidationException {
+        Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
+        T target = getLocalService().getById(pId);
+        CR cr = newCR(target);
+        copyIntoAbstractModel(proposedState, cr);
+        
+        if (cr.getStatus() != target.getStatus()) {
+            throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+        }
+        getLocalCRService().create(cr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
+        Long pId = IiConverter.convertToLong(targetHCP);
+        T target = getLocalService().getById(pId);
+        // lazy way to clone with stripped hibernate IDs.
+        DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
+        CR cr = newCR(target);
+        copyIntoAbstractModel(tmp, cr);
+        cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
+        getLocalCRService().create(cr);
+    }
+    
+    abstract CR newCR(T t);
+    abstract void copyIntoAbstractModel(DTO proposedState, CR cr);
+    
 }

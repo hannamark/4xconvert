@@ -100,7 +100,6 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
- *      implements="gov.nih.nci.services.PoDto"
  */
 @MappedSuperclass
 public abstract class AbstractOrganizationRole implements PersistentObject {

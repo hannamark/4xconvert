@@ -164,4 +164,18 @@ public class PersistentObjectConverter extends AbstractXSnapshotConverter<Persis
             iso.setRoot(IdConverter.PERSON_ROOT);
         }
     }
+    
+     /**
+     * convert the Id of a person.
+     */
+    public static class PersistentHealthCareProviderConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.PERSON_ROOT);
+        }
+    }
 }

@@ -121,4 +121,8 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
         return null;
     }
 
+    public void update(HealthCareFacility updated) {
+        
+    }
+
 }

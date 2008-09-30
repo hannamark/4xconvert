@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
@@ -96,12 +97,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.NotNull;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import javax.persistence.Transient;
 
 /**
  * Base class for all person to org roles.
@@ -191,9 +191,8 @@ public abstract class PersonRole implements PersistentObject, Contactable {
 
     /**
      * @return the postalAddresses
-     * todo add xsnapshot tags
      *
-     * @xsnapshot.property name="postalAddress"
+     @xsnapshot.property name="postalAddress"
      *                     match="iso" type="gov.nih.nci.coppa.iso.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SetConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$DSetConverter"

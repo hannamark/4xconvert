@@ -82,6 +82,15 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -91,13 +100,14 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import java.util.Map;
 
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Scott Miller
  *
  */
 public class ClinicalResearchStaffRemoteServiceTest
-    extends AbstractStructrualRoleRemoteServiceTest<ClinicalResearchStaffDTO> {
+    extends AbstractStructrualRoleRemoteServiceTest<ClinicalResearchStaffDTO, ClinicalResearchStaffCR> {
 
     /**
      * {@inheritDoc}
@@ -142,4 +152,38 @@ public class ClinicalResearchStaffRemoteServiceTest
     public void testSearch() throws Exception {
         // Do nothing.  Remove this (use superclass impl) when PO-527 is implemented
     }
+
+    @Override
+    protected void alter(ClinicalResearchStaffDTO dto) throws Exception {
+        TelPhone email = new TelPhone();
+        String uri = TelPhone.SCHEME_X_TEXT_TEL + ":+1234567890";
+        email.setValue(new URI(uri));
+        dto.getTelecomAddress().getItem().add(email);
+
+        TelUrl url = new TelUrl();
+        uri = "http://example.com";
+        url.setValue(new URI(uri));
+        dto.getTelecomAddress().getItem().add(url);
+    }
+
+    @Override
+    protected void verifyAlterations(ClinicalResearchStaffCR cr) {
+        super.verifyAlterations(cr);
+        
+        assertTrue(CollectionUtils.exists(cr.getTty(), new Predicate(){
+            public boolean evaluate(Object object) {
+                return ((PhoneNumber)object).getValue().equals("+1234567890");
+            }
+        }));
+        
+        assertTrue(CollectionUtils.exists(cr.getUrl(), new Predicate(){
+            public boolean evaluate(Object object) {
+                return ((URL)object).getValue().equals("http://example.com");
+            }
+        }));
+    }
+    
+    
+    
+    
 }

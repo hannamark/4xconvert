@@ -105,10 +105,10 @@ public class RoleStatusConverter extends AbstractXSnapshotConverter<RoleStatus> 
     }
 
     /**
-     * @param cs PO role status.
-     * @return best guess of <code>cs</code>'s ISO equivalent.
+     * @param status PO role status.
+     * @return best guess of <code>status</code>'s ISO equivalent.
      */
-    private Cd convertToCd(RoleStatus status) {
+    public static Cd convertToCd(RoleStatus status) {
         Cd iso = new Cd();
         if (status == null) {
             iso.setNullFlavor(NullFlavor.NI);

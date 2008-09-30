@@ -120,7 +120,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     }
 
     /**
-     * default ctor.
+     * useful ctor.
      * @param target the person that should
      */
     public PersonCR(Person target) {

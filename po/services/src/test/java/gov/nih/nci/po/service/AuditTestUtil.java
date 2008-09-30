@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.audit.AuditLogDetail;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
@@ -51,6 +52,6 @@ public class AuditTestUtil {
                 }
             }
         }
-        assertTrue(false);
+        fail();
     }
 }

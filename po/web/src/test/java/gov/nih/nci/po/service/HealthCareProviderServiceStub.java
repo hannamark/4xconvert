@@ -133,4 +133,8 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
             PageSortParams<HealthCareProvider> pageSortParams) {
         return null;
     }
+
+    public void update(HealthCareProvider updated) {
+        
+    }
 }

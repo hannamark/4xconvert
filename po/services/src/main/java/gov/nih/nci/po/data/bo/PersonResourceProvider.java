@@ -82,44 +82,26 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.util.ValidIi;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * ResourceProvider that has a Person player and Organization scoper.
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.PersonResourceProviderDTO"
- *      implements="gov.nih.nci.services.PoDto"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonResourceProvider"
+ *      implements="gov.nih.nci.services.CorrelationDto"
  */
 @Entity
-public class PersonResourceProvider implements PersistentObject {
+public class PersonResourceProvider extends AbstractPersonResourceProvider implements Correlation {
 
-    private static final long serialVersionUID = -4866225509121969001L;
-    private Long id;
-    private Person player;
-    private Organization scoper;
-    private RoleStatus status;
-    private Ii identifier;
-
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
-
+    private static final long serialVersionUID = 1;
+    
     /**
      * {@inheritDoc}
      * @xsnapshot.property match="iso"
@@ -129,99 +111,8 @@ public class PersonResourceProvider implements PersistentObject {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @NotNull
-    @ForeignKey(name = "personrprole_player_fkey")
-    public Person getPlayer() {
-        return player;
-    }
-
-    /**
-     * @param player the player to set
-     */
-    public void setPlayer(Person player) {
-        this.player = player;
-    }
-
-    /**
-     * @return the scoper. may be null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "personrpnrole_scoper_fkey")
-    public Organization getScoper() {
-        return scoper;
-    }
-
-    /**
-     * @param scoper the scoper to set
-     */
-    public void setScoper(Organization scoper) {
-        this.scoper = scoper;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
-
-    /**
-     * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    public RoleStatus getStatus() {
-        return this.status;
-    }
-
-    /**
-     * @return the Id that <code>scoper</code> uses to identify <code>player</code>.  This is
-     *         distinct from the id of <em>this role</em>, which is system assigned.
-     * @xsnapshot.property match="iso" name="assignedId"
-     */
-    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
-    @Columns(columns = {
-            @Column(name = "identifier_null_flavor"),
-            @Column(name = "identifier_displayable"),
-            @Column(name = "identifier_extension"),
-            @Column(name = "identifier_identifier_name"),
-            @Column(name = "identifier_reliability"),
-            @Column(name = "identifier_root"),
-            @Column(name = "identifier_scope")
-    })
-    @ValidIi
-    public Ii getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
+        return super.getId();
     }
 }

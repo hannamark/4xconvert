@@ -36,6 +36,14 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         
         <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
         <mapping class="gov.nih.nci.po.data.bo.PersonCR" />
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareProviderCR" />
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareFacilityCR" />
+        <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeCR" />
+        <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />
+        <mapping class="gov.nih.nci.po.data.bo.PersonResourceProviderCR" />
+        <mapping class="gov.nih.nci.po.data.bo.HealthCareFacilityCR" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationResourceProviderCR" />
+        
         <event type="pre-update">
             <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
         </event>

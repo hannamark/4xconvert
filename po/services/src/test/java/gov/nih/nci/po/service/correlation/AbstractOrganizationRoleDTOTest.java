@@ -95,6 +95,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -176,7 +177,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
 
         long scoperId = orgTest.createOrganization();
         long playerId = orgTest.createOrganization();
-        AbstractOrganizationRoleDTO dto = getExampleTestClassDTO(scoperId, playerId);
+        PoDto dto = (PoDto) getExampleTestClassDTO(scoperId, playerId);
         AbstractOrganizationRole bo = (AbstractOrganizationRole) PoXsnapshotHelper.createModel(dto);
 
         assertEquals(1L, bo.getId().longValue());
@@ -185,6 +186,5 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         assertEquals(RoleStatus.ACTIVE, bo.getStatus());
 
         verifyTestClassDTOFields(bo);
-
     }
 }
