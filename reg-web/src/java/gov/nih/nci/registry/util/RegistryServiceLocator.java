@@ -19,7 +19,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 /**
  *
- * @author Harsha
+ * @author Bala Nair
  *
  */
 @SuppressWarnings("PMD.UnusedPrivateField")
@@ -29,7 +29,7 @@ public final class RegistryServiceLocator {
      * Number of records to display by default in display tag controlled tables.
      */
     public static final int DEFAULT_RECORDS_PER_PAGE = 20;
-    private static final RegistryServiceLocator regServiceLocator = new RegistryServiceLocator();
+    private static final RegistryServiceLocator REG_REGISTRY = new RegistryServiceLocator();
     private ServiceLocator serviceLocator;
 
     /**
@@ -43,7 +43,7 @@ public final class RegistryServiceLocator {
      * @return the regServiceLocator
      */
     public static RegistryServiceLocator getInstance() {
-        return regServiceLocator;
+        return REG_REGISTRY;
     }
 
     /**
