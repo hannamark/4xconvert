@@ -126,7 +126,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         sp.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2001")));
         sp.setStudyProtocolIi(spIi);
-        sp = sPartService.createStudyParticipation(sp);
+        sp = sPartService.create(sp);
         
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
         ssas.setIi(IiConverter.convertToIi((Long) null));
@@ -148,7 +148,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         clearErrorsAndMessages();
         enforceBusinessRules();
         
-        List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
+        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi);
         if (!spList.isEmpty()) {
            StudyParticipationDTO sp = spList.get(spList.size() - 1);
            StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
@@ -171,10 +171,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     public String deleteTest() throws Exception {
         clearErrorsAndMessages();
         
-        List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
+        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi);
         if (spList.size() > 1) {
            StudyParticipationDTO sp = spList.get(spList.size() - 1);
-           sPartService.deleteStudyParticipation(sp.getIi());
+           sPartService.delete(sp.getIi());
         }
         
         addActionError("deleteTest() completed");
@@ -184,7 +184,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
 
     private void loadForm() throws Exception {
         organizationList = new ArrayList<OrganizationWebDTO>();
-        List<StudyParticipationDTO> spList = sPartService.getStudyParticipationByStudyProtocol(spIi);
+        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi);
         for (StudyParticipationDTO sp : spList) {
             List<StudySiteAccrualStatusDTO> ssasList = 
                 ssasService.getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIi());

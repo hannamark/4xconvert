@@ -26,30 +26,30 @@ public interface StudyParticipationServiceRemote {
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
-    StudyParticipationDTO getStudyParticipation(Ii ii) throws PAException;
+    StudyParticipationDTO get(Ii ii) throws PAException;
     /**
      * @param dto StudyParticipationDTO
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
-    StudyParticipationDTO createStudyParticipation(StudyParticipationDTO dto) throws PAException;
+    StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException;
     /**
      * @param dto StudyParticipationDTO
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
-    StudyParticipationDTO updateStudyParticipation(StudyParticipationDTO dto) throws PAException;
+    StudyParticipationDTO update(StudyParticipationDTO dto) throws PAException;
     /**
      * @param ii index of StudyParticipation
      * @throws PAException PAException
      */
-    void deleteStudyParticipation(Ii ii) throws PAException;
+    void delete(Ii ii) throws PAException;
     /**
      * @param studyProtocolIi id of protocol
      * @return list StudyParticipationDTO   
      * @throws PAException on error 
      */
-    List<StudyParticipationDTO> getStudyParticipationByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
     
 }

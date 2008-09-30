@@ -20,17 +20,17 @@ public interface StudyParticipationContactServiceRemote {
      * @return StudyParticipationContactDTO
      * @throws PAException PAException
      */
-    StudyParticipationContactDTO getStudyParticipationContact(Ii ii) throws PAException;
+    StudyParticipationContactDTO get(Ii ii) throws PAException;
     /**
      * @param dto StudyParticipationContactDTO
      * @return StudyParticipationContactDTO
      * @throws PAException PAException
      */
-    StudyParticipationContactDTO createStudyParticipationContact(StudyParticipationContactDTO dto) throws PAException;
+    StudyParticipationContactDTO create(StudyParticipationContactDTO dto) throws PAException;
     /**
      * @param dto StudyParticipationContactDTO
      * @return StudyParticipationContactDTO
      * @throws PAException PAException
      */
-    StudyParticipationContactDTO updateStudyParticipationContact(StudyParticipationContactDTO dto) throws PAException;
+    StudyParticipationContactDTO update(StudyParticipationContactDTO dto) throws PAException;
 }

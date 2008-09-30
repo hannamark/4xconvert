@@ -28,7 +28,9 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-public class StudyParticipationServiceBean extends AbstractBasePaService implements StudyParticipationServiceRemote {
+public class StudyParticipationServiceBean
+        extends AbstractStudyPaService<StudyParticipationDTO>  
+        implements StudyParticipationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationServiceBean.class);
     
@@ -41,7 +43,7 @@ public class StudyParticipationServiceBean extends AbstractBasePaService impleme
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
-    public StudyParticipationDTO getStudyParticipation(Ii ii)
+    public StudyParticipationDTO get(Ii ii)
     throws PAException {
         notImplementedError();
         return null;
@@ -51,7 +53,7 @@ public class StudyParticipationServiceBean extends AbstractBasePaService impleme
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
-    public StudyParticipationDTO createStudyParticipation(
+    public StudyParticipationDTO create(
             StudyParticipationDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
             serviceError(" Update method should be used to modify existing. ");
@@ -76,7 +78,7 @@ public class StudyParticipationServiceBean extends AbstractBasePaService impleme
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
-    public StudyParticipationDTO updateStudyParticipation(
+    public StudyParticipationDTO update(
             StudyParticipationDTO dto) throws PAException {
         notImplementedError();
         return null;
@@ -85,7 +87,7 @@ public class StudyParticipationServiceBean extends AbstractBasePaService impleme
      * @param ii Index of StudyParticipation object
      * @throws PAException PAException
      */
-    public void deleteStudyParticipation(Ii ii)
+    public void delete(Ii ii)
             throws PAException {
         if (PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
@@ -117,7 +119,7 @@ public class StudyParticipationServiceBean extends AbstractBasePaService impleme
      * @return list StudyParticipationDTO   
      * @throws PAException on error 
      */
-    public List<StudyParticipationDTO> getStudyParticipationByStudyProtocol(
+    public List<StudyParticipationDTO> getByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
             serviceError(" Ii should not be null ");

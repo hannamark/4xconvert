@@ -18,7 +18,8 @@ import org.apache.log4j.Logger;
  * copyright holder, NCI.
  */
 @Stateless
-public class StudyParticipationContactServiceBean extends AbstractBasePaService 
+public class StudyParticipationContactServiceBean 
+        extends AbstractBasePaService<StudyParticipationContactDTO> 
         implements StudyParticipationContactServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationContactServiceBean.class);
@@ -33,7 +34,7 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService
      * @return StudyParticipationContactDTO
      * @throws PAException PAException
      */
-    public StudyParticipationContactDTO createStudyParticipationContact(
+    public StudyParticipationContactDTO create(
             StudyParticipationContactDTO dto) throws PAException {
         this.notImplementedError();
         return null;
@@ -44,7 +45,7 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService
      * @return StudyParticipationContactDTO
      * @throws PAException PAException
      */
-    public StudyParticipationContactDTO getStudyParticipationContact(Ii ii)
+    public StudyParticipationContactDTO get(Ii ii)
             throws PAException {
         this.notImplementedError();
         return null;
@@ -55,7 +56,7 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService
      * @return StudyParticipationContactDTO
      * @throws PAException PAException
      */
-    public StudyParticipationContactDTO updateStudyParticipationContact(
+    public StudyParticipationContactDTO update(
             StudyParticipationContactDTO dto) throws PAException {
         this.notImplementedError();
         return null;
