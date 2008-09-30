@@ -6,6 +6,7 @@
 
 <project name="reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="software.dir" value="${basedir}/.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     <property name="pa.ear.file" value="${software.dir}/pa/pa-ear/target/pa.ear"/>
     
@@ -101,6 +102,11 @@
             <include name="${ivy-core.file}" />
         </fileset>
     </path>
+    <path id="ejb.package.classpath">       
+         <fileset dir="${pa.dir}/pa-ejb/target">
+            <include name="*.jar"/>
+         </fileset>
+    </path> 
 
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
@@ -145,6 +151,7 @@
                 <path refid="compile.classpath"/> 
                 <path refid="jboss.classpath"/>  
                 <path refid="jboss.client.classpath"/>
+                <path refid="ejb.package.classpath"/>    
             </classpath>
         </javac>
         <copy todir="${reg-web.build.outputDir}">
