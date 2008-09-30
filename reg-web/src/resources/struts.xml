@@ -10,7 +10,7 @@
         <interceptors>
             <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
         </interceptors>     
-        <action name="logout" class="gov.nih.nci.pa.action.Logout" method="logout">
+        <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
             <result>/index.jsp</result>
         </action>
         <action name="login">
