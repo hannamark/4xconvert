@@ -75,7 +75,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     private Person makePerson() {
         Person p = new Person();
-        p.setStatusCode(EntityStatus.NEW);
+        p.setStatusCode(EntityStatus.PENDING);
         p.setPrefix("Dr.");
         p.setFirstName("Dixie");
         p.setLastName("Tavela");
@@ -252,7 +252,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         long id = super.createPerson();
         Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
-        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
         //dto.setName(StringConverter.convertToEnOn("newName"));
         Adxp adl = Adxp.createAddressPart(AddressPartType.ADL);
         adl.setValue("additional ADL");
@@ -272,15 +272,15 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
                 return ((Email)object).getValue().equals("another.email@example.com");
             }
         }));
-        assertEquals(EntityStatus.NEW, cr.getStatusCode());
+        assertEquals(EntityStatus.PENDING, cr.getStatusCode());
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void updatePersonChangeCtatus() throws EntityValidationException {
         long id = super.createPerson();
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
-        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
-        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
+        assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.INACTIVE));
         remote.updatePerson(dto);
     }
 
@@ -288,12 +288,12 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     public void updatePersonStatus() throws EntityValidationException {
         long id = super.createPerson();
         Ii ii = ISOUtils.ID_PERSON.convertToIi(id);
-        Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED);
+        Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.INACTIVE);
         remote.updatePersonStatus(ii, newStatus);
         @SuppressWarnings("unchecked")
         List<PersonCR> l = PoHibernateUtil.getCurrentSession().createCriteria(PersonCR.class).list();
         assertEquals(1, l.size());
         PersonCR cr = l.get(0);
-        assertEquals(cr.getStatusCode(), EntityStatus.DEPRECATED);
+        assertEquals(cr.getStatusCode(), EntityStatus.INACTIVE);
     }
 }

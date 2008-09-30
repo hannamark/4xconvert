@@ -106,22 +106,22 @@ public enum EntityStatus  {
     /**
      * A new element that has not yet be curated.
      */
-    NEW,
+    PENDING,
 
     /**
      * A curated element, found to be good data.
      */
-    CURATED,
+    ACTIVE,
 
     /**
      * A curated element, rejected for some reason.
      */
-    REJECTED,
+    NULLIFIED,
 
     /**
      * Indicates a curated element that has been deprecated.
      */
-    DEPRECATED;
+    INACTIVE;
 
     private static final Map<EntityStatus, Set<EntityStatus>> TRANSITIONS;
 
@@ -129,19 +129,21 @@ public enum EntityStatus  {
         Map<EntityStatus, Set<EntityStatus>> tmp = new HashMap<EntityStatus, Set<EntityStatus>>();
         Set<EntityStatus> tmpSet = new HashSet<EntityStatus>();
 
-        tmpSet.add(NEW);
-        tmpSet.add(CURATED);
-        tmpSet.add(REJECTED);
-        tmp.put(NEW, Collections.unmodifiableSet(tmpSet));
+        tmpSet.add(PENDING);
+        tmpSet.add(ACTIVE);
+        tmpSet.add(NULLIFIED);
+        tmp.put(PENDING, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<EntityStatus>();
-        tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
+        tmpSet.add(NULLIFIED);
+        tmp.put(NULLIFIED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<EntityStatus>();
-        tmpSet.add(CURATED);
-        tmpSet.add(DEPRECATED);
-        tmp.put(CURATED, Collections.unmodifiableSet(tmpSet));
-        tmp.put(DEPRECATED, Collections.unmodifiableSet(tmpSet));
+        tmpSet.add(ACTIVE);
+        tmpSet.add(INACTIVE);
+        tmpSet.add(NULLIFIED);
+        tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
+        tmp.put(INACTIVE, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<EntityStatus>();
 

@@ -45,7 +45,7 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
         o.setSex(SexCode.F);
         o.setSuffix("suffix");
 
-        o.setStatusCode(EntityStatus.NEW);
+        o.setStatusCode(EntityStatus.PENDING);
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country);
         o.setPostalAddress(a);
         o.getFax().add(new PhoneNumber("123-123-1234"));

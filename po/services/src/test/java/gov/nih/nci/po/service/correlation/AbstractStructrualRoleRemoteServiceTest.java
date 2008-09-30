@@ -152,7 +152,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         personTest.setDefaultCountry(getDefaultCountry());
         personTest.setUser(getUser());
         basicPerson = personTest.getBasicPerson();
-        basicPerson.setStatusCode(EntityStatus.NEW);
+        basicPerson.setStatusCode(EntityStatus.PENDING);
         PoHibernateUtil.getCurrentSession().save(basicPerson);
         PoHibernateUtil.getCurrentSession().flush();
     }

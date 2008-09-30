@@ -167,7 +167,7 @@ public class GetterSetterTesterUtil {
         DEFAULT_ARGUMENTS.add(true);
 
         DEFAULT_TYPES.add(EntityStatus.class);
-        EntityStatus cs = EntityStatus.REJECTED;
+        EntityStatus cs = EntityStatus.NULLIFIED;
         DEFAULT_ARGUMENTS.add(cs);
 
         DEFAULT_TYPES.add(Person.class);

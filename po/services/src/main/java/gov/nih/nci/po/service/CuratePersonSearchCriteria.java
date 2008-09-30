@@ -21,7 +21,7 @@ public class CuratePersonSearchCriteria extends AbstractPersonSearchCriteria imp
     protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String personAlias) {
         List<String> whereClause = new ArrayList<String>();
         String personAliasDot = personAlias + DOT;
-        whereClause.add(personAliasDot + PERSON_STATUS_PROPERTY + " = '" + EntityStatus.NEW.name() + "'");
+        whereClause.add(personAliasDot + PERSON_STATUS_PROPERTY + " = '" + EntityStatus.PENDING.name() + "'");
         whereClause.add("((select count(*) from " + personAliasDot + PERSON_CHANGEREQUESTS_PROPERTY + " as cr) > 0)");
         return buildWhereClause(whereClause, WhereClauseOperator.DISJUNCTION);
     }

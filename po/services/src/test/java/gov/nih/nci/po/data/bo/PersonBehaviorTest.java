@@ -31,10 +31,10 @@ public class PersonBehaviorTest {
     public void testDuplicateBehavior() {
         Person person = new Person();
         Person dupPerson = new Person();
-        person.setStatusCode(EntityStatus.CURATED);
+        person.setStatusCode(EntityStatus.ACTIVE);
         person.setDuplicateOfPerson(dupPerson);
         assertNull(person.getDuplicateOf());
-        person.setStatusCode(EntityStatus.REJECTED);
+        person.setStatusCode(EntityStatus.NULLIFIED);
         person.setDuplicateOfPerson(dupPerson);
         assertSame(dupPerson, person.getDuplicateOf());
     }

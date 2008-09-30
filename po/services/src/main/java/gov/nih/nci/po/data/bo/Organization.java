@@ -253,8 +253,8 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
      * @param org the organization for which this is a duplicate
      */
     public void setDuplicateOfOrg(Organization org) {
-        if (this.getStatusCode().equals(EntityStatus.REJECTED)
-                || this.getStatusCode().equals(EntityStatus.DEPRECATED)) {
+        if (this.getStatusCode().equals(EntityStatus.NULLIFIED)
+                || this.getStatusCode().equals(EntityStatus.INACTIVE)) {
             this.duplicateOf = org;
         }
     }

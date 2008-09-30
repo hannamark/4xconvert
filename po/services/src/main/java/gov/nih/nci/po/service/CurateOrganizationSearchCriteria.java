@@ -22,7 +22,7 @@ public class CurateOrganizationSearchCriteria extends AbstractOrganizationSearch
     protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String orgAlias) {
         List<String> whereClause = new ArrayList<String>();
         String orgAliasDot = orgAlias + DOT;
-        whereClause.add(orgAliasDot + ORGANIZATION_STATUS_PROPERTY + " = '" + EntityStatus.NEW.name() + "'");
+        whereClause.add(orgAliasDot + ORGANIZATION_STATUS_PROPERTY + " = '" + EntityStatus.PENDING.name() + "'");
         whereClause
                 .add("((select count(*) from " + orgAliasDot + ORGANIZAITON_CHANGEREQUESTS_PROPERTY + " as cr) > 0)");
         return buildWhereClause(whereClause, WhereClauseOperator.DISJUNCTION);

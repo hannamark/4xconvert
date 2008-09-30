@@ -119,7 +119,7 @@ public class OrgEntityServiceSearchCriteriaTest {
 
         yesCrit.setOrganization(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().setStatusCode(EntityStatus.CURATED);
+        yesCrit.getOrganization().setStatusCode(EntityStatus.ACTIVE);
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
         //Not used...

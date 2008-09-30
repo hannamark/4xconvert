@@ -111,11 +111,11 @@ public class GenericServiceTest extends AbstractHibernateTestCase {
         org.setPostalAddress(new Address("test", "test", "test", "test", country));
         org.setName("testOrg");
         org.setAbbreviatedName("abbr");
-        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusCode(EntityStatus.PENDING);
 
         long orgId = (Long) PoHibernateUtil.getCurrentSession().save(org);
         Organization retrievedOrg = genericService.getPersistentObject(Organization.class, orgId);
         assertEquals(org, retrievedOrg);
-        assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
+        assertEquals(EntityStatus.PENDING, retrievedOrg.getStatusCode());
     }
 }

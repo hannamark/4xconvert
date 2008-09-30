@@ -29,7 +29,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     }
 
     @Test
-    public void findByStatusNEW() {
+    public void findByStatusPENDING() {
         @SuppressWarnings("unchecked")
         List<Organization> results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
@@ -37,13 +37,13 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     }
 
     @Test
-    public void findNoneByStatusNotNEW() {
+    public void findNoneByStatusNotPENDING() {
         @SuppressWarnings("unchecked")
         List<Organization> list = PoHibernateUtil.getCurrentSession().createCriteria(Organization.class).list();
         Organization o = list.iterator().next();
-        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
-        o.setStatusCode(EntityStatus.CURATED);
+        assertTrue(EntityStatus.PENDING.canTransitionTo(EntityStatus.ACTIVE));
+        assertTrue(EntityStatus.ACTIVE.canTransitionTo(EntityStatus.INACTIVE));
+        o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
 
@@ -53,13 +53,13 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     }
 
     @Test
-    public void findByStatusNotNEWButHasCRs() throws EntityValidationException {
+    public void findByStatusNotPENDINGButHasCRs() throws EntityValidationException {
         @SuppressWarnings("unchecked")
         List<Organization> list = PoHibernateUtil.getCurrentSession().createCriteria(Organization.class).list();
         Organization o = list.iterator().next();
-        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(EntityStatus.CURATED.canTransitionTo(EntityStatus.DEPRECATED));
-        o.setStatusCode(EntityStatus.CURATED);
+        assertTrue(EntityStatus.PENDING.canTransitionTo(EntityStatus.ACTIVE));
+        assertTrue(EntityStatus.ACTIVE.canTransitionTo(EntityStatus.INACTIVE));
+        o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
 

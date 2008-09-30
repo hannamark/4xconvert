@@ -13,39 +13,39 @@ public class EntityStatusTest {
      * Test canTransitionTo() method
      */
     @Test
-    public void testCanTransitionFromNEWTo() {
-        EntityStatus cs = EntityStatus.NEW;
-        assertTrue(cs.canTransitionTo(EntityStatus.REJECTED));
-        assertTrue(cs.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(cs.canTransitionTo(EntityStatus.NEW));
-        assertFalse(cs.canTransitionTo(EntityStatus.DEPRECATED));
+    public void testCanTransitionFromPENDINGTo() {
+        EntityStatus cs = EntityStatus.PENDING;
+        assertTrue(cs.canTransitionTo(EntityStatus.NULLIFIED));
+        assertTrue(cs.canTransitionTo(EntityStatus.ACTIVE));
+        assertTrue(cs.canTransitionTo(EntityStatus.PENDING));
+        assertFalse(cs.canTransitionTo(EntityStatus.INACTIVE));
     }
 
     @Test
-    public void testCanTransitionFromCURATEDTo() {
-        EntityStatus cs = EntityStatus.CURATED;
-        assertTrue(cs.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
-        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
-        assertFalse(cs.canTransitionTo(EntityStatus.NEW));
+    public void testCanTransitionFromACTIVETo() {
+        EntityStatus cs = EntityStatus.ACTIVE;
+        assertTrue(cs.canTransitionTo(EntityStatus.ACTIVE));
+        assertTrue(cs.canTransitionTo(EntityStatus.INACTIVE));
+        assertTrue(cs.canTransitionTo(EntityStatus.NULLIFIED));
+        assertFalse(cs.canTransitionTo(EntityStatus.PENDING));
     }
     
     @Test
-    public void testCanTransitionFromREJECTEDTo() {
-        EntityStatus cs = EntityStatus.REJECTED;
-        assertFalse(cs.canTransitionTo(EntityStatus.CURATED));
-        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
-        assertFalse(cs.canTransitionTo(EntityStatus.DEPRECATED));
-        assertFalse(cs.canTransitionTo(EntityStatus.NEW));
+    public void testCanTransitionFromNULLIFIEDTo() {
+        EntityStatus cs = EntityStatus.NULLIFIED;
+        assertTrue(cs.canTransitionTo(EntityStatus.NULLIFIED));
+        assertFalse(cs.canTransitionTo(EntityStatus.ACTIVE));
+        assertFalse(cs.canTransitionTo(EntityStatus.INACTIVE));
+        assertFalse(cs.canTransitionTo(EntityStatus.PENDING));
     }
     
     @Test
-    public void testCanTransitionFromDEPRECATEDTo() {
-        EntityStatus cs = EntityStatus.DEPRECATED;
-        assertTrue(cs.canTransitionTo(EntityStatus.CURATED));
-        assertTrue(cs.canTransitionTo(EntityStatus.DEPRECATED));
-        assertFalse(cs.canTransitionTo(EntityStatus.REJECTED));
-        assertFalse(cs.canTransitionTo(EntityStatus.NEW));
+    public void testCanTransitionFromINACTIVETo() {
+        EntityStatus cs = EntityStatus.INACTIVE;
+        assertTrue(cs.canTransitionTo(EntityStatus.ACTIVE));
+        assertTrue(cs.canTransitionTo(EntityStatus.INACTIVE));
+        assertTrue(cs.canTransitionTo(EntityStatus.NULLIFIED));
+        assertFalse(cs.canTransitionTo(EntityStatus.PENDING));
     }
 
     // todo stm Add test to actually test valid transistion statuses

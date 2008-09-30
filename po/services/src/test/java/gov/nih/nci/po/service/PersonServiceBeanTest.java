@@ -161,7 +161,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
 
         // adjust the expected value to NEW
-        person.setStatusCode(EntityStatus.NEW);
+        person.setStatusCode(EntityStatus.PENDING);
         assertNotNull(savedPerson.getStatusDate());
         verifyEquals(person, savedPerson);
         PoHibernateUtil.getCurrentSession().flush();
@@ -175,7 +175,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
     @Test
     public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException {
         Person person = getBasicPerson();
-        person.setStatusCode(EntityStatus.CURATED);
+        person.setStatusCode(EntityStatus.ACTIVE);
         person.setFirstName("fName");
         person.setLastName("lName");
 
@@ -187,7 +187,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         Person savedPerson = personServiceBean.getById(id);
 
         // adjust the expected value to NEW
-        person.setStatusCode(EntityStatus.NEW);
+        person.setStatusCode(EntityStatus.PENDING);
         verifyEquals(person, savedPerson);
     }
 

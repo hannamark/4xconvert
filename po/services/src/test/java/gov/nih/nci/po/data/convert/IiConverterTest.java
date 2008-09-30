@@ -106,7 +106,7 @@ public class IiConverterTest extends AbstractHibernateTestCase {
         PersonServiceBeanTest personTest = new PersonServiceBeanTest();
         personTest.loadData();
         Person basicPerson = personTest.getBasicPerson();
-        basicPerson.setStatusCode(EntityStatus.NEW);
+        basicPerson.setStatusCode(EntityStatus.PENDING);
         Long personId = (Long) PoHibernateUtil.getCurrentSession().save(basicPerson);
         PoHibernateUtil.getCurrentSession().flush();
         IiConverter converter = new IiConverter();

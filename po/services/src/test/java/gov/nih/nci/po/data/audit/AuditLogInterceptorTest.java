@@ -47,7 +47,7 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().save(country);
         Address address1 = new Address("a", "b", "c", "d", country);
         Organization org = new Organization();
-        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusCode(EntityStatus.PENDING);
         org.setPostalAddress(address1);
         org.setName("tstName");
         org.getEmail().add(new Email("foo@zombo.com"));

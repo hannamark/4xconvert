@@ -352,7 +352,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         personTest.setDefaultCountry(orgTest.getDefaultCountry());
         personTest.setUser(orgTest.getUser());
         Person basicPerson = personTest.getBasicPerson();
-        basicPerson.setStatusCode(EntityStatus.NEW);
+        basicPerson.setStatusCode(EntityStatus.PENDING);
         Long personId = (Long) PoHibernateUtil.getCurrentSession().save(basicPerson);
         PoHibernateUtil.getCurrentSession().flush();
 

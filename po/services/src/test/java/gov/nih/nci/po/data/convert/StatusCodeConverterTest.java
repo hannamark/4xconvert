@@ -63,14 +63,14 @@ public class StatusCodeConverterTest {
         }
 
         iso.setCode("inactive");
-        EntityStatus expResult = EntityStatus.DEPRECATED;
+        EntityStatus expResult = EntityStatus.INACTIVE;
         result = StatusCodeConverter.convertToStatusEnum(iso);
         assertEquals(expResult, result);
 
         //case insensitive mapping
         iso.setCode("ActivE");
         assertFalse(StatusCodeConverter.STATUS_MAP.containsKey(iso.getCode()));
-        expResult = EntityStatus.CURATED;
+        expResult = EntityStatus.ACTIVE;
         result = StatusCodeConverter.convertToStatusEnum(iso);
         assertEquals(expResult, result);
     }
@@ -81,7 +81,7 @@ public class StatusCodeConverterTest {
         Cd result = StatusCodeConverter.convertToCd(cs);
         assertNotNull(result.getNullFlavor());
 
-        cs = EntityStatus.NEW;
+        cs = EntityStatus.PENDING;
         result = StatusCodeConverter.convertToCd(cs);
         assertNull(result.getNullFlavor());
         assertEquals("pending", result.getCode());
@@ -101,14 +101,14 @@ public class StatusCodeConverterTest {
 
 
         EntityStatus result = cvt.convert(EntityStatus.class, iso);
-        EntityStatus expected = EntityStatus.REJECTED;
+        EntityStatus expected = EntityStatus.NULLIFIED;
         assertEquals(expected, result);
 
     }
 
     @Test
     public void testEnumConverter() {
-        EntityStatus code = EntityStatus.CURATED;
+        EntityStatus code = EntityStatus.ACTIVE;
         StatusCodeConverter.EnumConverter cvt = new StatusCodeConverter.EnumConverter();
         try {
             cvt.convert(java.net.URI.class, code);

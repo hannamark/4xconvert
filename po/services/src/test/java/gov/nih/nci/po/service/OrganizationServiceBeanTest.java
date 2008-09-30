@@ -138,7 +138,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         org.setName("oName");
         org.setAbbreviatedName("abbrvName");
         org.setDescription("oDesc");
-        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusCode(EntityStatus.PENDING);
 
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         a.setDeliveryAddressLine("deliveryAddressLine");
@@ -168,7 +168,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization saved = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
 
         // adjust the expected value to NEW
-        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusCode(EntityStatus.PENDING);
         verifyEquals(org, saved);
         PoHibernateUtil.getCurrentSession().flush();
 
@@ -202,7 +202,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         org.setName(oName);
         org.setAbbreviatedName(abbrvName);
         org.setDescription(desc);
-        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusCode(EntityStatus.PENDING);
         long orgId = orgServiceBean.create(org);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -227,7 +227,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         org.setAbbreviatedName("abbr");
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
-        org.setStatusCode(EntityStatus.REJECTED);
+        org.setStatusCode(EntityStatus.NULLIFIED);
 
         long orgId = orgServiceBean.create(org);
 
@@ -236,7 +236,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         Organization retrievedOrg = orgServiceBean.getById(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
-        assertEquals(EntityStatus.NEW, retrievedOrg.getStatusCode());
+        assertEquals(EntityStatus.PENDING, retrievedOrg.getStatusCode());
         assertNotNull(retrievedOrg.getStatusDate());
 
         List<Organization> orgs = getAllOrganizations();
@@ -254,10 +254,10 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
         o = getOrgServiceBean().getById(id);
-        o.setStatusCode(EntityStatus.CURATED);
+        o.setStatusCode(EntityStatus.ACTIVE);
         getOrgServiceBean().curate(o);
         Organization result = getOrgServiceBean().getById(id);
-        assertEquals(EntityStatus.CURATED, result.getStatusCode());
+        assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
     }
 
@@ -277,11 +277,11 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         o.getTty().remove(0);
         o.getUrl().remove(0);
 
-        o.setStatusCode(EntityStatus.CURATED);
+        o.setStatusCode(EntityStatus.ACTIVE);
         getOrgServiceBean().curate(o);
 
         Organization result = getOrgServiceBean().getById(id);
-        assertEquals(EntityStatus.CURATED, result.getStatusCode());
+        assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         assertEquals(1, result.getEmail().size());
         assertEquals(1, result.getFax().size());
@@ -316,13 +316,13 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         assertFalse(o.getChangeRequests().isEmpty());
 
-        o.setStatusCode(EntityStatus.CURATED);
+        o.setStatusCode(EntityStatus.ACTIVE);
         getOrgServiceBean().curate(o);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
         Organization result = getOrgServiceBean().getById(id);
-        assertEquals(EntityStatus.CURATED, result.getStatusCode());
+        assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         assertEquals(1, result.getEmail().size());
         assertEquals(1, result.getFax().size());

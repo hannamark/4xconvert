@@ -111,7 +111,7 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Organization org) throws EntityValidationException {
-        org.setStatusCode(EntityStatus.NEW);
+        org.setStatusCode(EntityStatus.PENDING);
         org.setStatusDate(new Date());
         return super.create(org);
     }

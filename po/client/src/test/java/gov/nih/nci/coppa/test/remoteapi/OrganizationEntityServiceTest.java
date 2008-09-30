@@ -221,7 +221,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         String user = config.getProperty("jdbc.user-name");
         String password = config.getProperty("jdbc.password");
         Connection c = DriverManager.getConnection(url, user, password);
-        ResultSet rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension()+" and status = 'DEPRECATED'");
+        ResultSet rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension()+" and status = 'INACTIVE'");
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
@@ -230,7 +230,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         cd.setCode("inactive"); // maps to DEPRECATED
         getOrgService().updateOrganizationStatus(orgId, cd);
 
-        rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension()+" and status = 'DEPRECATED'");
+        rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension()+" and status = 'INACTIVE'");
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();

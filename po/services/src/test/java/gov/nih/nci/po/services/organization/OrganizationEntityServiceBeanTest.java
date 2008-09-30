@@ -139,7 +139,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         org.getFax().add(new PhoneNumber("201-555-0123"));
         org.getPhone().add(new PhoneNumber("+1-201-555-0123;extension=4756"));
         org.getUrl().add(new URL("http://bla"));
-        org.setStatusCode(EntityStatus.CURATED);
+        org.setStatusCode(EntityStatus.ACTIVE);
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(org);
         PoHibernateUtil.getCurrentSession().flush();
 
@@ -186,7 +186,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     public void updateOrganization() throws EntityValidationException, URISyntaxException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
-        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
         dto.setName(StringConverter.convertToEnOn("newName"));
         Adxp adl = Adxp.createAddressPart(AddressPartType.ADL);
         adl.setValue("additional ADL");
@@ -202,15 +202,15 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertEquals("newName", cr.getName());
         assertEquals("additional ADL", cr.getPostalAddress().getDeliveryAddressLine());
         assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
-        assertEquals(EntityStatus.NEW, cr.getStatusCode());
+        assertEquals(EntityStatus.PENDING, cr.getStatusCode());
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void updateOrganizationChangeCtatus() throws EntityValidationException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
-        assertEquals(EntityStatus.NEW, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
-        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED));
+        assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
+        dto.setStatusCode(StatusCodeConverter.convertToCd(EntityStatus.INACTIVE));
         remote.updateOrganization(dto);
     }
 
@@ -218,13 +218,13 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     public void updateOrganizationStatus() throws EntityValidationException {
         long id = super.createOrganization();
         Ii ii = ISOUtils.ID_ORG.convertToIi(id);
-        Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.DEPRECATED);
+        Cd newStatus = StatusCodeConverter.convertToCd(EntityStatus.INACTIVE);
         remote.updateOrganizationStatus(ii, newStatus);
         @SuppressWarnings("unchecked")
         List<OrganizationCR> l = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
         assertEquals(1, l.size());
         OrganizationCR cr = l.get(0);
-        assertEquals(cr.getStatusCode(), EntityStatus.DEPRECATED);
+        assertEquals(cr.getStatusCode(), EntityStatus.INACTIVE);
     }
 
 }

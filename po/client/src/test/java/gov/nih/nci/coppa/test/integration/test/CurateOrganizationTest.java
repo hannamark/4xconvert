@@ -113,7 +113,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private void saveAsCurated(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=CURATED");
+        selenium.select("curateOrgForm_organization_statusCode", "label=ACTIVE");
         clickAndWait("//a[@id='save_button']/span/span");
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }

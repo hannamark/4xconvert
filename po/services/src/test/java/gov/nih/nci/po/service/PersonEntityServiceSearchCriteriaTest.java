@@ -149,7 +149,7 @@ public class PersonEntityServiceSearchCriteriaTest {
 
         yesCrit.setPerson(new Person());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getPerson().setStatusCode(EntityStatus.CURATED);
+        yesCrit.getPerson().setStatusCode(EntityStatus.ACTIVE);
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
         //Not used...
@@ -206,7 +206,7 @@ public class PersonEntityServiceSearchCriteriaTest {
     }
     private void verifyDefaults(StringBuffer queryWhereClause, String expected) {
         assertEquals(expected, queryWhereClause.toString());
-        assertEquals(EntityStatus.REJECTED, namedParams
+        assertEquals(EntityStatus.NULLIFIED, namedParams
                 .remove(AbstractPersonSearchCriteria.PERSON_STATUS_PROPERTY + "1"));
     }
 

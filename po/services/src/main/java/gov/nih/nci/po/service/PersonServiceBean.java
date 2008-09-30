@@ -105,7 +105,7 @@ public class PersonServiceBean extends AbstractBaseServiceBean<Person> implement
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Person p) throws EntityValidationException {
-        p.setStatusCode(EntityStatus.NEW);
+        p.setStatusCode(EntityStatus.PENDING);
         p.setStatusDate(new Date());
         return super.create(p);
     }

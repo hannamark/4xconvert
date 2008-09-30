@@ -38,7 +38,7 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         o.setAbbreviatedName("abbreviatedName");
         o.setDescription("description");
         o.setName("name");
-        o.setStatusCode(EntityStatus.NEW);
+        o.setStatusCode(EntityStatus.PENDING);
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country);
         o.setPostalAddress(a);
         o.getEmail().add(new Email("foo@example.com"));

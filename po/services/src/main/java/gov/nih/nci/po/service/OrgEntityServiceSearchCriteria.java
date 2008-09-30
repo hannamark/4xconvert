@@ -74,7 +74,7 @@ public class OrgEntityServiceSearchCriteria extends AbstractOrganizationSearchCr
         List<String> whereClause = new ArrayList<String>();
         String orgAliasDot = orgAlias + DOT;
         whereClause.add(addNotEqual(orgAliasDot + ORGANIZATION_STATUS_PROPERTY, ORGANIZATION_STATUS_PROPERTY + "1",
-                EntityStatus.REJECTED, namedParameters));
+                EntityStatus.NULLIFIED, namedParameters));
         whereClause.add(addEqual(orgAliasDot + ORGANIZATION_ID_PROPERTY, ORGANIZATION_ID_PROPERTY,
                 organization.getId(), namedParameters));
         whereClause.add(addILike(orgAliasDot + ORGANIZATION_NAME_PROPERTY, ORGANIZATION_NAME_PROPERTY, organization

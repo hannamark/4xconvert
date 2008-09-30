@@ -9,9 +9,9 @@
     </c:if>
     <script type="text/javascript">
     function handleDuplicateOf() {
-    	$('duplicateOfDiv')[$('curateOrgForm_organization_statusCode').value == 'REJECTED' ? 'show' : 'hide'](); 
+    	$('duplicateOfDiv')[$('curateOrgForm_organization_statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
             	
-    	if ($('curateOrgForm_organization_statusCode').value != 'REJECTED') {
+    	if ($('curateOrgForm_organization_statusCode').value != 'NULLIFIED') {
     		$('curateOrgForm.organization.duplicateOf.id').value = '';
     	}
     	return true;
@@ -73,7 +73,7 @@
 			       headerKey="" headerValue="--Select a Status--" 
 			       onchange="handleDuplicateOf();"
 			       />           
-        	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus.REJECTED@">style="display: none"</s:if>>
+        	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus.NULLIFIED@">style="display: none"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
 	                    <div style="float:right;">
 	                        <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl">
@@ -133,7 +133,7 @@
 </c:if>
 
 
-<div class="btnwrapper">
+<div class="btnwrapper" style="clear:both;">
 	<script type="text/javascript">
 		function showPopWinCallback(returnVal) {
 			$('curateOrgForm.organization.duplicateOf.id').value = returnVal;

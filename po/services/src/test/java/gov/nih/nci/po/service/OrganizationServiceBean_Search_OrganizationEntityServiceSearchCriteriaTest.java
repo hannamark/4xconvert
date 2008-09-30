@@ -339,12 +339,12 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         createOrgsWithAddresses();
 
         sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.CURATED);
+        sc.getOrganization().setStatusCode(EntityStatus.ACTIVE);
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
         sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.NEW);
+        sc.getOrganization().setStatusCode(EntityStatus.PENDING);
         assertEquals(3, getOrgServiceBean().count(sc));
         assertEquals(3, getOrgServiceBean().search(sc).size());
     }
@@ -356,19 +356,19 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
         List<Organization> list = query.list();
         Organization o = list.iterator().next();
-        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.REJECTED));
-        o.setStatusCode(EntityStatus.REJECTED);
+        assertTrue(EntityStatus.PENDING.canTransitionTo(EntityStatus.NULLIFIED));
+        o.setStatusCode(EntityStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(o);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
         sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.REJECTED);
+        sc.getOrganization().setStatusCode(EntityStatus.NULLIFIED);
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
         sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.NEW);
+        sc.getOrganization().setStatusCode(EntityStatus.PENDING);
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
     }

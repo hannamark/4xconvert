@@ -294,12 +294,12 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         createPeopleWithAddresses();
 
         sc.setPerson(new Person());
-        sc.getPerson().setStatusCode(EntityStatus.CURATED);
+        sc.getPerson().setStatusCode(EntityStatus.ACTIVE);
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 
         sc.setPerson(new Person());
-        sc.getPerson().setStatusCode(EntityStatus.NEW);
+        sc.getPerson().setStatusCode(EntityStatus.PENDING);
         assertEquals(3, getPersonServiceBean().count(sc));
         assertEquals(3, getPersonServiceBean().search(sc).size());
     }
@@ -311,19 +311,19 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Person p");
         List<Person> list = query.list();
         Person p = list.iterator().next();
-        assertTrue(EntityStatus.NEW.canTransitionTo(EntityStatus.REJECTED));
-        p.setStatusCode(EntityStatus.REJECTED);
+        assertTrue(EntityStatus.PENDING.canTransitionTo(EntityStatus.NULLIFIED));
+        p.setStatusCode(EntityStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(p);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
         sc.setPerson(new Person());
-        sc.getPerson().setStatusCode(EntityStatus.REJECTED);
+        sc.getPerson().setStatusCode(EntityStatus.NULLIFIED);
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 
         sc.setPerson(new Person());
-        sc.getPerson().setStatusCode(EntityStatus.NEW);
+        sc.getPerson().setStatusCode(EntityStatus.PENDING);
         assertEquals(2, getPersonServiceBean().count(sc));
         assertEquals(2, getPersonServiceBean().search(sc).size());
     }

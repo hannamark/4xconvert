@@ -20,10 +20,10 @@ public class OrganizationBehaviorTest {
     public void testDuplicateBehavior() {
         Organization org = new Organization();
         Organization dupOrg = new Organization();
-        org.setStatusCode(EntityStatus.CURATED);
+        org.setStatusCode(EntityStatus.ACTIVE);
         org.setDuplicateOfOrg(dupOrg);
         assertNull(org.getDuplicateOf());
-        org.setStatusCode(EntityStatus.REJECTED);
+        org.setStatusCode(EntityStatus.NULLIFIED);
         org.setDuplicateOfOrg(dupOrg);
         assertSame(dupOrg, org.getDuplicateOf());
     }

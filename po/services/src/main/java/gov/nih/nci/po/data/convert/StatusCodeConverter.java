@@ -106,19 +106,19 @@ public final class StatusCodeConverter {
      * Bidirectional map status codes.
      * <table border="1">
      * <tr><th>Key(String)</th><th>Value(EntityStatus)</th/></tr>
-     * <tr><td>"active"</td><td>{@link EntityStatus#CURATED}</td></tr>
-     * <tr><td>"inactive"</td><td>{@link EntityStatus#DEPRECATED}</td></tr>
-     * <tr><td>"pending"</td><td>{@link EntityStatus#NEW}</td></tr>
-     * <tr><td>"nullified"</td><td>{@link EntityStatus#REJECTED}</td></tr>
+     * <tr><td>"active"</td><td>{@link EntityStatus#ACTIVE}</td></tr>
+     * <tr><td>"inactive"</td><td>{@link EntityStatus#INACTIVE}</td></tr>
+     * <tr><td>"pending"</td><td>{@link EntityStatus#PENDING}</td></tr>
+     * <tr><td>"nullified"</td><td>{@link EntityStatus#NULLIFIED}</td></tr>
      * </table>
      */
     public static final BidiMap STATUS_MAP;
     static {
         DualHashBidiMap map = new DualHashBidiMap();
-        map.put("active", EntityStatus.CURATED);
-        map.put("inactive", EntityStatus.DEPRECATED);
-        map.put("pending", EntityStatus.NEW);
-        map.put("nullified", EntityStatus.REJECTED);
+        map.put("active", EntityStatus.ACTIVE);
+        map.put("inactive", EntityStatus.INACTIVE);
+        map.put("pending", EntityStatus.PENDING);
+        map.put("nullified", EntityStatus.NULLIFIED);
         STATUS_MAP = UnmodifiableBidiMap.decorate(map);
     }
 
