@@ -107,6 +107,7 @@ import org.hibernate.validator.NotNull;
 @MappedSuperclass
 public abstract class AbstractOrganizationResourceProvider implements Correlation {
 
+    private static final long serialVersionUID = -8170845949843804691L;
     private Long id;
     private Organization player;
     private Organization scoper;

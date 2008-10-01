@@ -27,6 +27,7 @@ import org.hibernate.validator.Valid;
 public class HealthCareProviderCR  extends AbstractHealthCareProvider
         implements CorrelationChangeRequest<HealthCareProvider>  {
 
+    private static final long serialVersionUID = -5535663199790394690L;
     private HealthCareProvider target;
 
     /**

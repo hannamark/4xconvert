@@ -96,4 +96,32 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Searchable {
 
+    /**
+     * If this searchable is applied to a collection, setting this property
+     * will cause the generic search interface to extract the named field
+     * (via a getter) and use the values therein for the search.
+     *
+     * <p>Example: Imagine the following code:
+     *
+     * <tt>
+     * @Entity
+     * public class MyClass {
+     *   ...
+     *   @Searchable(field = "value")
+     *   public Collection&lt;Email&gt; getEmails() { ... }
+     * }
+     * </tt>
+     *
+     * The resultant HQL clause will look something like:
+     *
+     * <tt>
+     *   SELECT obj FROM MyClass obj, Email obj_email
+     *   WHERE  obj_email = SOME ELEMENTS(obj.emails)
+     *   AND    obj_email.value IN ('value1', 'value2')
+     * </tt>
+     *
+     * Where value1 and value2 are the <code>value</code> property from
+     * each element of the collection.
+     */
+    String field() default "";
 }

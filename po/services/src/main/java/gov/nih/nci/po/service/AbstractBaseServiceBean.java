@@ -109,7 +109,10 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
     private static final String UNCHECKED = "unchecked";
-    private static final int MAX_NUM_IDS = 500;
+    /**
+     * Maximum number of ids in an IN clause.
+     */
+    public static final int MAX_IN_CLAUSE_SIZE = 500;
     private final Class<T> typeArgument;
 
     /**
@@ -153,8 +156,8 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
             return Collections.EMPTY_LIST;
         }
 
-        if (ids.length > MAX_NUM_IDS) {
-            throw new IllegalArgumentException("getByIds can only search for " + MAX_NUM_IDS + " at once.");
+        if (ids.length > MAX_IN_CLAUSE_SIZE) {
+            throw new IllegalArgumentException("getByIds can only search for " + MAX_IN_CLAUSE_SIZE + " at once.");
         }
 
         Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()

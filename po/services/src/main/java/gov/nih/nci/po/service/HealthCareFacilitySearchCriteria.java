@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.util.SearchableUtils;
 
 import org.hibernate.Query;
 
@@ -109,13 +110,13 @@ public class HealthCareFacilitySearchCriteria extends AbstractSearchCriteria
      */
     @Override
     public boolean hasOneCriterionSpecified() {
-        return hcf != null && hasSearchableCriterion(hcf);
+        return hcf != null && SearchableUtils.hasSearchableCriterion(hcf);
     }
 
     /**
      * {@inheritDoc}
      */
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        return super.getQueryBySearchableFields(hcf, isCountOnly);
+        return SearchableUtils.getQueryBySearchableFields(hcf, isCountOnly);
     }
 }

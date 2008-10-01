@@ -39,6 +39,7 @@ public class OrganizationResourceProviderCR extends AbstractOrganizationResource
     /**
      * {@inheritDoc}
      */
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })

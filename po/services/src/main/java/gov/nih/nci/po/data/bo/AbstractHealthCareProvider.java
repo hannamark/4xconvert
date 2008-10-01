@@ -99,6 +99,8 @@ import org.hibernate.validator.Length;
 @MappedSuperclass
 public abstract class AbstractHealthCareProvider extends PersonRole implements Contactable {
     
+    private static final long serialVersionUID = -4860642172768825033L;
+
     private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
 
     private String certificateLicenseText;

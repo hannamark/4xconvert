@@ -95,6 +95,7 @@ import gov.nih.nci.po.service.HealthCareProviderSearchCriteria;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -178,24 +179,22 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         //
 
 
-        /* Commenting out, because collection types are not yet implements (see AbstractSearchCriteria:393)
-
         // email
         List<Email> emails = new ArrayList<Email>();
         emails.add(new Email(hcp.getEmail().get(0).getValue()));
         doSearch(hcp, null, null, null, null, null, null, emails, 1);
 
         emails.get(0).setValue(emails.get(0).getValue().substring(1));
-        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+        doSearch(hcp, null, null, null, null, null, null, emails, 0);
 
         emails.get(0).setValue(emails.get(0).getValue().substring(0, 3));
-        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+        doSearch(hcp, null, null, null, null, null, null, emails, 0);
 
         emails.add(new Email("idontexist"));
         doSearch(hcp, null, null, null, null, null, null, emails, 0);
 
-        */
-
+        emails.add(new Email(hcp.getEmail().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, emails, 1);
 
         // Fields Remaining to test:
         // - fax

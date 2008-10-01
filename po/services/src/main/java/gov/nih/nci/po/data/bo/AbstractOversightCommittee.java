@@ -98,6 +98,7 @@ import org.hibernate.annotations.ForeignKey;
 @SuppressWarnings("PMD.UselessOverridingMethod")
 public abstract class AbstractOversightCommittee extends AbstractOrganizationRole {
 
+    private static final long serialVersionUID = 8681969088768488475L;
     private OversightCommitteeType type;
 
     

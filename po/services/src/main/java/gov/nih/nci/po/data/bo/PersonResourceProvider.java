@@ -109,6 +109,7 @@ public class PersonResourceProvider extends AbstractPersonResourceProvider imple
      *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
      *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })

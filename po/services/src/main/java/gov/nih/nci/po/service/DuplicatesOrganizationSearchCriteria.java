@@ -15,7 +15,7 @@ import org.hibernate.Query;
 
 /**
  * Criteria class to search for duplicate organizations.
- * NOTE: 
+ * NOTE:
  * NOTE: This criteria class is a placeholder for future duplicate org search requirements.
  * NOTE: This implements Contactable so that it may be used AbstractEditContactListAction
  */
@@ -36,10 +36,11 @@ public class DuplicatesOrganizationSearchCriteria extends OrgEntityServiceSearch
     /**
      * {@inheritDoc}
      */
+    @Override
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         return super.getQuery(orderByProperty, isCountOnly);
     }
-    
+
     /**
      * {@inheritDoc}
      */

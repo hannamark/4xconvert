@@ -108,6 +108,7 @@ public class OrganizationResourceProvider extends AbstractOrganizationResourcePr
      *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgResourceProviderIdConverter"
      *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })

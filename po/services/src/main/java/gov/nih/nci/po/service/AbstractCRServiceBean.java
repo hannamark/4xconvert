@@ -103,7 +103,6 @@ public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, E
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void processCRs(List<CR> crs) {
         EntityUpdateCallback<ENTITY> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<ENTITY>() {

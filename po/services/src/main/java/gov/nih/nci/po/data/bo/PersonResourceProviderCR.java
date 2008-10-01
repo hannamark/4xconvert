@@ -39,6 +39,7 @@ public class PersonResourceProviderCR extends AbstractPersonResourceProvider
     /**
      * {@inheritDoc}
      */
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @SuppressWarnings("PMD.UselessOverridingMethod")

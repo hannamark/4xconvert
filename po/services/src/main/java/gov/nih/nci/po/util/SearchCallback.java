@@ -82,149 +82,102 @@
  */
 package gov.nih.nci.po.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import gov.nih.nci.po.service.AbstractBaseServiceBean;
+import gov.nih.nci.po.service.AbstractSearchCriteria;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
-import org.junit.Test;
+import org.apache.commons.lang.StringUtils;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Exercises the Searchable annotation and AbstractSearchCriteria class that uses it.
+ * Callback implementation.
  */
-@SuppressWarnings({"unused", "serial" })
-public class SearchableTest {
+@SuppressWarnings("PMD.AvoidStringBufferField")
+class SearchCallback implements SearchableUtils.AnnotationCallback {
 
-    @Test
-    public void testBaseCases() throws Exception {
-        // null isn't searchable
-        assertFalse(SearchableUtils.hasSearchableCriterion(null));
+    private final StringBuffer whereClause;
+    private final StringBuffer selectClause;
+    private final Map<String, Object> params;
+    private String whereOrAnd = AbstractSearchCriteria.WHERE;
 
-        // no searchable methods
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object()));
 
-        // searchable method has void return
-        try {
-            SearchableUtils.hasSearchableCriterion(new Object() {
-                @Searchable
-                public void test() {}
-            });
-            fail();
-        } catch (RuntimeException re) {
-            // expected
+    /**
+     * @param whereClause stringbuffer
+     * @param selectClause stringbuffer
+     * @param params params
+     */
+    public SearchCallback(StringBuffer whereClause, StringBuffer selectClause, Map<String, Object> params) {
+        this.whereClause = whereClause;
+        this.selectClause = selectClause;
+        this.params = params;
+    }
+
+    @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "PMD.UseStringBufferForStringAppends" })
+    public void callback(Method m, Object result) throws Exception {
+        String fieldName = StringUtils.uncapitalize(m.getName().substring("get".length()));
+        String paramName = fieldName;
+        Object paramValue = result;
+        if (result instanceof PersistentObject) {
+            paramValue = ((PersistentObject) result).getId();
+            fieldName = fieldName + ".id";
         }
-
-        // cases for method invocation problems
-        try {
-            SearchableUtils.hasSearchableCriterion(new Object() {
-                @Searchable
-                public Object test(Object o) {
-                    return new Object();
-                }
-            });
-            fail();
-        } catch (RuntimeException e) {
-            // expected
+        if (paramValue != null) {
+            whereClause.append(whereOrAnd);
+            if (result instanceof Collection<?>) {
+                handleCollection(m, result, fieldName, paramName);
+            } else {
+                whereClause.append(String.format("obj.%s = :%s", fieldName, paramName));
+                params.put(paramName, paramValue);
+            }
+            whereOrAnd = AbstractSearchCriteria.AND;
         }
     }
 
-    public void testObjectCases() throws Exception {
-        // searchable method with object return returns null
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test() {
-                return null;
-            }
-        }));
+    private void handleCollection(Method m, Object result, String fieldName, String paramName)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Collection<?> col = (Collection<?>) result;
+        if (col.size() > AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE) {
+            throw new IllegalArgumentException(String.format("Cannot query on more than %s elements.",
+                                               AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE));
+        }
+        if (col.isEmpty()) {
+            throw new IllegalArgumentException("Cannot query against empty collection");
+        }
+        // Need to add ", zClass obj_<field>" to select clause
+        selectClause.append(", ");
+        Class<? extends Object> fieldClass = col.iterator().next().getClass();
+        selectClause.append(fieldClass.getName());
+        String alias = " obj_" + fieldName;
+        selectClause.append(alias);
 
-        // another test with no searchable methods
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            public Object test() {
-                return new Object();
-            }
-        }));
+        // now add the where clauses
+        whereClause.append(alias + " IN ELEMENTS(obj." + fieldName + ") ");
+        whereClause.append(AbstractSearchCriteria.AND);
+        String field = m.getAnnotation(Searchable.class).field();
+        whereClause.append(alias);
+        whereClause.append('.');
+        whereClause.append(field);
+        whereClause.append(" IN (");
+        whereClause.append(String.format(":%s", paramName));
+        whereClause.append(')');
 
-        // the simple object case
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test() {
-                return new Object();
-            }
-        }));
-
-        // one of two searchable methods has data
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test1() {
-                return new Object();
-            }
-
-            @Searchable
-            public Object test2() {
-                return null;
-            }
-        }));
-
-        // neither of two searchable methods has data
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Object test1() {
-                return null;
-            }
-
-            @Searchable
-            public Object test2() {
-                return null;
-            }
-        }));
+        // get the collection of values into a nice collection
+        Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(field));
+        Collection<Object> valueCollection = new HashSet<Object>();
+        for (Object collectionObj : col.toArray()) {
+            Object invoke = m2.invoke(collectionObj);
+            valueCollection.add(invoke);
+        }
+        params.put(paramName, valueCollection);
     }
 
-    public void testPersistentObjectCases() throws Exception {
-        // PersistentObject with no id
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public PersistentObject test() {
-                return new PersistentObject() {
-                    public Long getId() {
-                        return null;
-                    }
-                };
-            }
-        }));
-
-        // PersistentObject with id
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public PersistentObject test() {
-                return new PersistentObject() {
-                    public Long getId() {
-                        return 1L;
-                    }
-                };
-            }
-        }));
-    }
-
-    public void testCollectionCases() throws Exception {
-        // empty collection
-        assertFalse(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Collection<?> test() {
-                return new ArrayList<Object>();
-            }
-        }));
-
-        // non empty collection
-        assertTrue(SearchableUtils.hasSearchableCriterion(new Object() {
-            @Searchable
-            public Collection<?> test() {
-                return Arrays.asList(new Object());
-            }
-        }));
+    public Object getSavedState() {
+        return whereOrAnd;
     }
 }

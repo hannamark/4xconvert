@@ -167,7 +167,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_EMAIL_FK", inverseName = "EMAIL_HCP_FK")
     @Valid
-    @Searchable
+    @Searchable(field = "value")
     public List<Email> getEmail() {
         return super.getEmail();
     }
