@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 
 import javax.ejb.Stateless;
@@ -29,37 +28,5 @@ public class StudyParticipationContactServiceBean
         return LOG;
     }
 
-    /**
-     * @param dto StudyParticipationContactDTO
-     * @return StudyParticipationContactDTO
-     * @throws PAException PAException
-     */
-    public StudyParticipationContactDTO create(
-            StudyParticipationContactDTO dto) throws PAException {
-        this.notImplementedError();
-        return null;
-    }
-
-    /**
-     * @param ii index
-     * @return StudyParticipationContactDTO
-     * @throws PAException PAException
-     */
-    public StudyParticipationContactDTO get(Ii ii)
-            throws PAException {
-        this.notImplementedError();
-        return null;
-    }
-
-    /**
-     * @param dto StudyParticipationContactDTO
-     * @return StudyParticipationContactDTO
-     * @throws PAException PAException
-     */
-    public StudyParticipationContactDTO update(
-            StudyParticipationContactDTO dto) throws PAException {
-        this.notImplementedError();
-        return null;
-    }
 
 }

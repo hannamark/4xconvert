@@ -39,20 +39,11 @@ public class StudyParticipationServiceBean
         return LOG;
     }
     /**
-     * @param ii index
-     * @return StudyParticipationDTO
-     * @throws PAException PAException
-     */
-    public StudyParticipationDTO get(Ii ii)
-    throws PAException {
-        notImplementedError();
-        return null;
-    }
-    /**
      * @param dto StudyParticipationDTO
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
+    @Override
     public StudyParticipationDTO create(
             StudyParticipationDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
@@ -73,16 +64,6 @@ public class StudyParticipationServiceBean
         return resultDto;
     }
 
-    /**
-     * @param dto StudyParticipationDTO
-     * @return StudyParticipationDTO
-     * @throws PAException PAException
-     */
-    public StudyParticipationDTO update(
-            StudyParticipationDTO dto) throws PAException {
-        notImplementedError();
-        return null;
-    }
     /**
      * @param ii Index of StudyParticipation object
      * @throws PAException PAException
@@ -119,6 +100,7 @@ public class StudyParticipationServiceBean
      * @return list StudyParticipationDTO   
      * @throws PAException on error 
      */
+    @Override
     public List<StudyParticipationDTO> getByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {

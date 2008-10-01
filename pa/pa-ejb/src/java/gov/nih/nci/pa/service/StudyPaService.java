@@ -4,23 +4,22 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 
-import javax.ejb.Remote;
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
- * @since 09/23/2008
- * 
+ * @since 10/01/2008
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
+ * @param <DTO> dto
  */
-@Remote
-public interface StudyParticipationServiceRemote extends StudyPaService<StudyParticipationDTO> {
+public interface StudyPaService<DTO> extends BasePaService<DTO> {
     /**
-     * @param ii index of StudyParticipation to be deleted.
+     * @param ii index of object
+     * @return null
      * @throws PAException exception
      */
-    void delete(Ii ii) throws PAException;
+    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
 }

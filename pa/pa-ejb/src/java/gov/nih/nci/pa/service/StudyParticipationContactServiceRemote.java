@@ -3,8 +3,9 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
+
+import javax.ejb.Remote;
 
 /**
  * @author Hugh Reinhart
@@ -13,24 +14,7 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface StudyParticipationContactServiceRemote {
-    // Standard methods
-    /**
-     * @param ii index
-     * @return StudyParticipationContactDTO
-     * @throws PAException PAException
-     */
-    StudyParticipationContactDTO get(Ii ii) throws PAException;
-    /**
-     * @param dto StudyParticipationContactDTO
-     * @return StudyParticipationContactDTO
-     * @throws PAException PAException
-     */
-    StudyParticipationContactDTO create(StudyParticipationContactDTO dto) throws PAException;
-    /**
-     * @param dto StudyParticipationContactDTO
-     * @return StudyParticipationContactDTO
-     * @throws PAException PAException
-     */
-    StudyParticipationContactDTO update(StudyParticipationContactDTO dto) throws PAException;
+@Remote
+public interface StudyParticipationContactServiceRemote 
+        extends BasePaService<StudyParticipationContactDTO> {
 }

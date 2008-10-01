@@ -15,17 +15,44 @@ import org.apache.log4j.Logger;
  * copyright holder, NCI.
  * @param <DTO> data transfer object
  */
-public abstract class AbstractBasePaService<DTO> {
+public abstract class AbstractBasePaService<DTO> 
+        implements BasePaService<DTO> {
     
-    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
+    /** Standard error message for empty methods to be overridden. */
+    protected static String errMsgMethodNotImplemented = "Method not yet implemented.";
     
     abstract Logger getLogger();
     
-    abstract DTO get(Ii ii) throws PAException;
+    /**
+     * @param ii index of object
+     * @return null
+     * @throws PAException exception
+     */
+    public DTO get(Ii ii) throws PAException {
+        serviceError(errMsgMethodNotImplemented);
+        return null;
+    }
 
-    abstract DTO create(DTO dto) throws PAException;
+    /**
+     * @param dto dto
+     * @return null
+     * @throws PAException exception
+     */
+    public DTO create(DTO dto) throws PAException {
+        serviceError(errMsgMethodNotImplemented);
+        return null;
+    }
+    
 
-    abstract DTO update(DTO dto) throws PAException;
+    /**
+     * @param dto dto
+     * @return null
+     * @throws PAException exception
+     */
+    public DTO update(DTO dto) throws PAException {
+        serviceError(errMsgMethodNotImplemented);
+        return null;
+    }
     
     /**
      * @param errMsg error string
@@ -44,12 +71,5 @@ public abstract class AbstractBasePaService<DTO> {
     protected void serviceError(String errMsg, Throwable t) throws PAException {
         getLogger().error(errMsg, t);
         throw new PAException(errMsg, t);
-    }
-    
-    /**
-     * @throws PAException exception
-     */
-    protected void notImplementedError() throws PAException {
-        serviceError(errMsgMethodNotImplemented);
-    }
+    }    
 }

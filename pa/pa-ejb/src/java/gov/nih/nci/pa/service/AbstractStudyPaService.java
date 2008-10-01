@@ -15,6 +15,17 @@ import java.util.List;
  * copyright holder, NCI.
  * @param <DTO> data transfer object
  */
-public abstract class AbstractStudyPaService<DTO> extends AbstractBasePaService<DTO> {
-    abstract List<DTO> getByStudyProtocol(Ii ii) throws PAException;
+public abstract class AbstractStudyPaService<DTO> 
+        extends AbstractBasePaService<DTO> 
+        implements StudyPaService<DTO> {
+    
+    /**
+     * @param ii index of object
+     * @return null
+     * @throws PAException exception
+     */
+    public List<DTO> getByStudyProtocol(Ii ii) throws PAException {
+        serviceError(errMsgMethodNotImplemented);
+        return null;        
+    }
 }
