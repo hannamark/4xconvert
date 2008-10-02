@@ -87,6 +87,7 @@ import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -154,4 +155,9 @@ public interface ServiceLocator {
      * @return organization resource provider service
      */
     OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService();
+
+    /**
+     * @return the service.
+     */
+    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
 }

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.po.data.bo.AbstractPersonResourceProvider;
 import gov.nih.nci.po.data.bo.PersonResourceProvider;
 import gov.nih.nci.po.data.bo.PersonResourceProviderCR;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -92,8 +93,8 @@ import gov.nih.nci.po.service.PersonResourceProviderCRServiceLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -114,9 +115,9 @@ public class PersonResourceProviderCorrelationServiceBean
     implements PersonResourceProviderCorrelationServiceRemote {
 
     private PersonResourceProviderServiceLocal prpService;
-    
+
     private PersonResourceProviderCRServiceLocal prpCRService;
-    
+
 
     /**
      * @param svc service to set
@@ -125,7 +126,7 @@ public class PersonResourceProviderCorrelationServiceBean
     public void setPrpService(PersonResourceProviderServiceLocal svc) {
         this.prpService = svc;
     }
-    
+
     /**
      * @param svc service to set
      */
@@ -156,9 +157,9 @@ public class PersonResourceProviderCorrelationServiceBean
 
     @Override
     void copyIntoAbstractModel(PersonResourceProviderDTO proposedState, PersonResourceProviderCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPersonResourceProvider.class);
     }
-    
+
     @Override
     SearchCriteria<PersonResourceProvider> getSearchCriteria(PersonResourceProvider example) {
         // TODO Auto-generated method stub

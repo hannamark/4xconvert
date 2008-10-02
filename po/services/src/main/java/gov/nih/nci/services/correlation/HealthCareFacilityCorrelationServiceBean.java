@@ -82,19 +82,20 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.po.data.bo.AbstractHealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityCRServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilitySearchCriteria;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -124,7 +125,7 @@ public class HealthCareFacilityCorrelationServiceBean
     public void setHcfService(HealthCareFacilityServiceLocal svc) {
         this.hcfService = svc;
     }
-    
+
     /**
      * @param svc service to set
      */
@@ -151,18 +152,16 @@ public class HealthCareFacilityCorrelationServiceBean
 
     @Override
     void copyIntoAbstractModel(HealthCareFacilityDTO proposedState, HealthCareFacilityCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractHealthCareFacility.class);
     }
 
     @Override
     HealthCareFacilityCR newCR(HealthCareFacility t) {
         return new HealthCareFacilityCR(t);
     }
-    
+
     @Override
     SearchCriteria<HealthCareFacility> getSearchCriteria(HealthCareFacility example) {
-        return new HealthCareFacilitySearchCriteria(example);
+        return new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
     }
-
-    
 }

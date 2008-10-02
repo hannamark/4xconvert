@@ -91,9 +91,10 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.HealthCareProviderSearchCriteria;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
+import gov.nih.nci.po.service.SearchCriteria;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -126,7 +127,7 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         HealthCareProvider hcp = getSampleStructuralRole();
         svc.create(hcp);
 
-        HealthCareProviderSearchCriteria sc = new HealthCareProviderSearchCriteria(null);
+        SearchCriteria<HealthCareProvider> sc = new AnnotatedBeanSearchCriteria<HealthCareProvider>(null);
 
         try {
             svc.search(null);
@@ -218,7 +219,7 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         example.setStatus(status);
         example.setStatusDate(statusDate);
         example.setEmail(email);
-        HealthCareProviderSearchCriteria sc = new HealthCareProviderSearchCriteria(example);
+        SearchCriteria<HealthCareProvider> sc = new AnnotatedBeanSearchCriteria<HealthCareProvider>(example);
         List<HealthCareProvider> l = svc.search(sc);
         assertNotNull(l);
         assertEquals(numExpected, l.size());

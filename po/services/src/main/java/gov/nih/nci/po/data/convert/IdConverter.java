@@ -94,6 +94,7 @@ import gov.nih.nci.coppa.iso.NullFlavor;
  *
  * @author gax
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class IdConverter extends AbstractXSnapshotConverter<Long> {
 
     /**
@@ -175,6 +176,16 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The ii root value.
      */
     public static final String ORG_RESOURCE_PROVIDER_ROOT = "UID.for.nci.role.orgresourceprovider";
+
+    /**
+     * The identifier name for.
+     */
+    public static final String IDENTIFIED_ORG_IDENTIFIER_NAME = "Identified org identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String IDENTIFIED_ORG_ROOT = "UID.for.nci.role.identifiedorg";
 
     /**
      * {@inheritDoc}
@@ -338,6 +349,23 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             Ii iso = super.convertToIi(value);
             iso.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
             iso.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+            return iso;
+        }
+    }
+
+    /**
+     * convert the id of a identfied organization.
+     * @author Scott Miller
+     */
+    public static class IdentifiedOrganizationIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
             return iso;
         }
     }

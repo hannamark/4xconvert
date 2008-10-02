@@ -83,8 +83,8 @@
 package gov.nih.nci.po.data.bo;
 
 import javax.persistence.ManyToOne;
-
 import javax.persistence.MappedSuperclass;
+
 import org.hibernate.annotations.ForeignKey;
 
 /**
@@ -98,10 +98,11 @@ import org.hibernate.annotations.ForeignKey;
 @SuppressWarnings("PMD.UselessOverridingMethod")
 public abstract class AbstractOversightCommittee extends AbstractOrganizationRole {
 
-    private static final long serialVersionUID = 8681969088768488475L;
+    private static final long serialVersionUID = 1L;
+
     private OversightCommitteeType type;
 
-    
+
 
     /**
      * @param type the type to set

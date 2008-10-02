@@ -90,6 +90,8 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceBean;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
@@ -162,7 +164,7 @@ public class EjbTestHelper {
         HealthCareProviderServiceBean hcpsb = new HealthCareProviderServiceBean();
         return hcpsb;
     }
-    
+
     public static HealthCareProviderCRServiceBean getHealthCareProviderCRServiceBean() {
         HealthCareProviderCRServiceBean s = new HealthCareProviderCRServiceBean();
         s.setHealthCareProviderServiceBean(getHealthCareProviderServiceBean());
@@ -172,7 +174,7 @@ public class EjbTestHelper {
     public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationServiceRemote() {
         HealthCareProviderCorrelationServiceBean hcpService = new HealthCareProviderCorrelationServiceBean();
         hcpService.setHcpService(EjbTestHelper.getHealthCareProviderServiceBean());
-        hcpService.setHcpCRService(EjbTestHelper.getHealthCareProviderCRServiceBean());        
+        hcpService.setHcpCRService(EjbTestHelper.getHealthCareProviderCRServiceBean());
         return (HealthCareProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(hcpService);
     }
 
@@ -206,8 +208,8 @@ public class EjbTestHelper {
         orpService.setOrpCRService(EjbTestHelper.getOrganizationResourceProviderCRServiceBean());
         return (OrganizationResourceProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(orpService);
     }
-    
-    
+
+
     /**
      * Get a newly created and configured generic service.
      * @return the service
@@ -238,13 +240,13 @@ public class EjbTestHelper {
     public static OversightCommitteeServiceLocal getOversightCommitteeServiceBean() {
         return new OversightCommitteeServiceBean();
     }
-    
+
     public static OversightCommitteeCRServiceBean getOversightCommitteeRCServiceBean() {
         OversightCommitteeCRServiceBean ocService = new OversightCommitteeCRServiceBean();
         ocService.setOcBean(getOversightCommitteeServiceBean());
         return ocService;
     }
-    
+
     public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationServiceRemote() {
         OversightCommitteeCorrelationServiceBean ocService = new OversightCommitteeCorrelationServiceBean();
         ocService.setOcService(EjbTestHelper.getOversightCommitteeServiceBean());
@@ -258,7 +260,7 @@ public class EjbTestHelper {
     public static HealthCareFacilityServiceLocal getHealthCareFacilityServiceBean() {
         return new HealthCareFacilityServiceBean();
     }
-    
+
     /**
      * @return the service
      */
@@ -275,7 +277,7 @@ public class EjbTestHelper {
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
         return new ClinicalResearchStaffServiceBean();
     }
-    
+
     public static ClinicalResearchStaffCRServiceLocal getClinicalResearchStaffCRServiceBean() {
         ClinicalResearchStaffCRServiceBean s = new ClinicalResearchStaffCRServiceBean();
         s.setClinicalResearchStaffServiceBean(getClinicalResearchStaffServiceBean());
@@ -285,22 +287,33 @@ public class EjbTestHelper {
     public static PersonResourceProviderServiceLocal getPersonResourceProviderServiceBean() {
         return new PersonResourceProviderServiceBean();
     }
-    
+
     public static PersonResourceProviderCRServiceLocal getPersonResourceProviderCRServiceBean() {
         PersonResourceProviderCRServiceBean s = new PersonResourceProviderCRServiceBean();
         s.setPersonResourceProviderServiceBean(getPersonResourceProviderServiceBean());
         return s;
     }
-    
+
 
     public static OrganizationResourceProviderServiceLocal getOrganizationResourceProviderServiceBean() {
         return new OrganizationResourceProviderServiceBean();
     }
-    
+
     public static OrganizationResourceProviderCRServiceLocal getOrganizationResourceProviderCRServiceBean() {
         OrganizationResourceProviderCRServiceBean s = new OrganizationResourceProviderCRServiceBean();
         s.setOrganizationResourceProviderBean(getOrganizationResourceProviderServiceBean());
         return s;
+    }
+
+    public static IdentifiedOrganizationServiceLocal getIdentifiedOrganizationServiceBean() {
+        return  new IdentifiedOrganizationServiceBean();
+    }
+
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationServiceBeanAsRemote() {
+        IdentifiedOrganizationCorrelationServiceBean svc = new IdentifiedOrganizationCorrelationServiceBean();
+        svc.setLocalService(getIdentifiedOrganizationServiceBean());
+        svc.setLocalCRService(new IdentifiedOrganizationCrServiceBean());
+        return (IdentifiedOrganizationCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(svc);
     }
 
 }

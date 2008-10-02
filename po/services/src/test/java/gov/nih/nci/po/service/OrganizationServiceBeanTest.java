@@ -88,6 +88,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
+import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -299,7 +300,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         OrganizationCR cr = new OrganizationCR(o);
         OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o);
         oDto.setIdentifier(null);
-        PoXsnapshotHelper.copyIntoAbstractModel(oDto, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(oDto, cr, AbstractOrganization.class);
         cr.setId(null);
         cr.setStatusCode(o.getStatusCode());
         organizationCRServiceBean.create(cr);
@@ -332,5 +333,5 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         assertTrue(result.getChangeRequests().isEmpty());
     }
-    
+
 }

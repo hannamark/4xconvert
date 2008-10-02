@@ -274,7 +274,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void updateCorrelation() throws Exception {
         CorrelationService<T> service = getCorrelationService();
@@ -282,6 +281,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         T dto = service.getCorrelation(id);
         alter(dto);
         service.updateCorrelation(dto);
+        @SuppressWarnings("unchecked")
         List<CR> l = PoHibernateUtil.getCurrentSession().createCriteria(typeCRArgument).list();
         assertEquals(1, l.size());
         CR cr = l.get(0);

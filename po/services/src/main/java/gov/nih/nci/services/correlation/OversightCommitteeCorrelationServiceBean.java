@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.po.data.bo.AbstractOversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -92,8 +93,8 @@ import gov.nih.nci.po.service.OversightCommitteeCRServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -114,7 +115,7 @@ public class OversightCommitteeCorrelationServiceBean
     implements OversightCommitteeCorrelationServiceRemote {
 
     private OversightCommitteeServiceLocal ocService;
-    
+
     private OversightCommitteeCRServiceLocal ocCRService;
 
     /**
@@ -124,7 +125,7 @@ public class OversightCommitteeCorrelationServiceBean
     public void setOcService(OversightCommitteeServiceLocal svc) {
         ocService = svc;
     }
-    
+
     /**
      * @param svc service to set
      */
@@ -155,9 +156,9 @@ public class OversightCommitteeCorrelationServiceBean
 
     @Override
     void copyIntoAbstractModel(OversightCommitteeDTO proposedState, OversightCommitteeCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOversightCommittee.class);
     }
-    
+
     @Override
     SearchCriteria<OversightCommittee> getSearchCriteria(OversightCommittee example) {
         // TODO Auto-generated method stub

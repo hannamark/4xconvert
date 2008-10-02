@@ -84,9 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 /**
  * ResourceProvider that has an Organization player and Organization scoper.
@@ -97,22 +94,8 @@ import javax.persistence.Id;
  *      implements="gov.nih.nci.services.CorrelationDto"
  */
 @Entity
-public class OrganizationResourceProvider extends AbstractOrganizationResourceProvider 
+public class OrganizationResourceProvider extends AbstractOrganizationResourceProvider
         implements Correlation {
 
     private static final long serialVersionUID = -4866225509121969001L;
-    /**
-     * {@inheritDoc}
-     * @xsnapshot.property match="iso"
-     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgResourceProviderIdConverter"
-     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @Override
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    public Long getId() {
-        return super.getId();
-    }
 }

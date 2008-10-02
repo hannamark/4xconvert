@@ -89,9 +89,10 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.HealthCareFacilitySearchCriteria;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
+import gov.nih.nci.po.service.SearchCriteria;
 
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
         HealthCareFacility hcf = getSampleStructuralRole();
         svc.create(hcf);
 
-        HealthCareFacilitySearchCriteria sc = new HealthCareFacilitySearchCriteria(null);
+        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(null);
 
         try {
             svc.search(null);
@@ -167,7 +168,7 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
         example.getScoper().setId(scoperId);
         example.setStatus(rs);
 
-        HealthCareFacilitySearchCriteria sc = new HealthCareFacilitySearchCriteria(example);
+        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
         List<HealthCareFacility> l = svc.search(sc);
         assertNotNull(l);
         assertEquals(numExpected, l.size());

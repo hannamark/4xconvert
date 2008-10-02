@@ -80,118 +80,132 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.ValidIi;
+
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * @author Scott Miller
- *
+ * @param <T> the type of the identify being identified
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *      class="gov.nih.nci.services.correlation.AbstractIdentifiedEntity"
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+@MappedSuperclass
+public abstract class AbstractIdentifiedEntity<T extends PersistentObject> implements PersistentObject {
+
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private T player;
+    private Organization scoper;
+    private RoleStatus status;
+    private Ii assignedIdentifier;
 
     /**
-     * {@inheritDoc}
+     * @return the id
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @Transient
+    public Long getId() {
+        return this.id;
     }
 
     /**
-     * {@inheritDoc}
+     * @param id the id to set
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the player
      */
-    public GenericServiceLocal getGenericService() {
-        return null;
+    @Transient
+    public T getPlayer() {
+        return this.player;
     }
 
     /**
-     * {@inheritDoc}
+     * @param player the player to set
      */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
+    public void setPlayer(T player) {
+        this.player = player;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the scoper
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
+    @ManyToOne
+    @ForeignKey(name = "identifiedentity_scoper_fkey")
+    public Organization getScoper() {
+        return this.scoper;
     }
 
     /**
-     * {@inheritDoc}
+     * @param scoper the scoper to set
      */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
+    public void setScoper(Organization scoper) {
+        this.scoper = scoper;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the status
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public RoleStatus getStatus() {
+        return this.status;
     }
 
     /**
-     * {@inheritDoc}
+     * @param status the status to set
      */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
+    public void setStatus(RoleStatus status) {
+        this.status = status;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the assignedIdentifier
+     * @xsnapshot.property match="iso" name="assignedId"
      */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
+    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "assigned_identifier_null_flavor"),
+            @Column(name = "assigned_identifier_displayable"),
+            @Column(name = "assigned_identifier_extension"),
+            @Column(name = "assigned_identifier_identifier_name"),
+            @Column(name = "assigned_identifier_reliability"),
+            @Column(name = "assigned_identifier_root"),
+            @Column(name = "assigned_identifier_scope")
+    })
+    @ValidIi
+    public Ii getAssignedIdentifier() {
+        return this.assignedIdentifier;
     }
 
     /**
-     * {@inheritDoc}
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
+    public void setAssignedIdentifier(Ii assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
     }
 }

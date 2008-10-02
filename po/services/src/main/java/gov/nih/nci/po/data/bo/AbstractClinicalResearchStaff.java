@@ -96,7 +96,5 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 @SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")
 public abstract class AbstractClinicalResearchStaff extends PersonRole {
-
-    private static final long serialVersionUID = 5859806933300659381L;
-
+    private static final long serialVersionUID = 1L;
 }

@@ -88,10 +88,12 @@ import gov.nih.nci.po.util.ValidIi;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Type;
@@ -106,7 +108,8 @@ import org.hibernate.validator.NotNull;
 @MappedSuperclass
 public abstract class AbstractPersonResourceProvider implements Correlation {
 
-    private static final long serialVersionUID = 8060873888923643314L;
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private Person player;
     private Organization scoper;
@@ -116,9 +119,14 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
     // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
 
     /**
-     * {@inheritDoc}
+     * @return the id
+     * @xsnapshot.property match="iso"
+     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
+     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @Transient    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }
@@ -207,7 +215,7 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
     public Ii getIdentifier() {
         return identifier;
     }
-    
+
     /**
      * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
      */

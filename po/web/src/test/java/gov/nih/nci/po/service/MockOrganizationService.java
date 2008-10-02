@@ -82,10 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

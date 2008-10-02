@@ -80,118 +80,103 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.po.service.IdentifiedOrganizationCrServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.SearchCriteria;
+import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Scott Miller
- *
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({ PoHibernateSessionInterceptor.class })
+@SecurityDomain("po")
+public class IdentifiedOrganizationCorrelationServiceBean
+    extends AbstractCorrelationServiceBean<IdentifiedOrganization, IdentifiedOrganizationCR, IdentifiedOrganizationDTO>
+    implements IdentifiedOrganizationCorrelationServiceRemote {
+
+    private IdentifiedOrganizationServiceLocal localService;
+    private IdentifiedOrganizationCrServiceLocal localCRService;
+
 
     /**
      * {@inheritDoc}
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @Override
+    public IdentifiedOrganizationCrServiceLocal getLocalCRService() {
+        return this.localCRService;
+    }
+
+    /**
+     * @param localCRService the localCRService to set
+     */
+    @EJB
+    public void setLocalCRService(IdentifiedOrganizationCrServiceLocal localCRService) {
+        this.localCRService = localCRService;
     }
 
     /**
      * {@inheritDoc}
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
+    @Override
+    public IdentifiedOrganizationServiceLocal getLocalService() {
+        return this.localService;
+    }
+
+    /**
+     * @param localService the localService to set
+     */
+    @EJB
+    public void setLocalService(IdentifiedOrganizationServiceLocal localService) {
+        this.localService = localService;
     }
 
     /**
      * {@inheritDoc}
      */
-    public GenericServiceLocal getGenericService() {
-        return null;
+    @Override
+    void copyIntoAbstractModel(IdentifiedOrganizationDTO proposedState, IdentifiedOrganizationCR cr) {
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractIdentifiedOrganization.class);
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
+    @Override
+    IdConverter getIdConverter() {
+        return new IdConverter.IdentifiedOrganizationIdConverter();
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
+    @Override
+    SearchCriteria<IdentifiedOrganization> getSearchCriteria(IdentifiedOrganization example) {
+        return new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(example);
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
+    @Override
+    IdentifiedOrganizationCR newCR(IdentifiedOrganization t) {
+        return new IdentifiedOrganizationCR(t);
     }
 }

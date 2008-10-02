@@ -84,6 +84,7 @@ package gov.nih.nci.services.person;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.convert.IiConverter;
@@ -192,7 +193,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         Person target = perService.getById(pId);
         PersonCR cr = new PersonCR(target);
         proposedState.setIdentifier(null);
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPerson.class);
         cr.setId(null);
         if (cr.getStatusCode() != target.getStatusCode()) {
             throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
@@ -211,7 +212,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         // lazy way to clone with stripped hibernate IDs.
         PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
         PersonCR cr = new PersonCR(target);
-        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractPerson.class);
         cr.setId(null);
         cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
         perCRService.create(cr);

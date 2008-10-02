@@ -193,7 +193,7 @@ public abstract class AbstractCorrelationServiceBean
         T target = getLocalService().getById(pId);
         CR cr = newCR(target);
         copyIntoAbstractModel(proposedState, cr);
-
+        cr.setId(null);
         if (cr.getStatus() != target.getStatus()) {
             throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
         }
@@ -213,6 +213,7 @@ public abstract class AbstractCorrelationServiceBean
         DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
         CR cr = newCR(target);
         copyIntoAbstractModel(tmp, cr);
+        cr.setId(null);
         cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
         getLocalCRService().create(cr);
     }

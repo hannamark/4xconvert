@@ -88,10 +88,12 @@ import gov.nih.nci.po.util.ValidIi;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Type;
@@ -107,7 +109,8 @@ import org.hibernate.validator.NotNull;
 @MappedSuperclass
 public abstract class AbstractOrganizationResourceProvider implements Correlation {
 
-    private static final long serialVersionUID = -8170845949843804691L;
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private Organization player;
     private Organization scoper;
@@ -115,9 +118,14 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
     private Ii identifier;
 
     /**
-     * {@inheritDoc}
+     * @return the id.
+     * @xsnapshot.property match="iso"
+     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
+     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @Transient
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }

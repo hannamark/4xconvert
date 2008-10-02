@@ -80,118 +80,114 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 
 /**
  * @author Scott Miller
  *
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+public class IdentifiedOrganizationRemoteServiceTest
+    extends AbstractStructrualRoleRemoteServiceTest<IdentifiedOrganizationDTO, IdentifiedOrganizationCR> {
 
     /**
      * {@inheritDoc}
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @Override
+    IdentifiedOrganizationCorrelationServiceRemote getCorrelationService() {
+        return EjbTestHelper.getIdentifiedOrganizationServiceBeanAsRemote();
     }
 
     /**
      * {@inheritDoc}
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
+    @Override
+    protected IdentifiedOrganizationDTO getSampleDto() throws Exception {
+        IdentifiedOrganizationDTO dto = new IdentifiedOrganizationDTO();
+
+        Ii ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        dto.setPlayerIdentifier(ii);
+
+        ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        dto.setScoperIdentifier(ii);
+
+        Cd status = new Cd();
+        status.setCode("active");
+        dto.setStatus(status);
+
+        ii = new Ii();
+        ii.setExtension("myExtension");
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
+        dto.setAssignedId(ii);
+
+        return dto;
     }
 
     /**
      * {@inheritDoc}
      */
-    public GenericServiceLocal getGenericService() {
-        return null;
+    @Override
+    void verifyDto(IdentifiedOrganizationDTO expected, IdentifiedOrganizationDTO actual) {
+        assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
+        assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
+        assertEquals("pending", actual.getStatus().getCode());
+
+        // really probe the assignedId, since that's different than other StructuralRoles
+        Ii ii1 = expected.getAssignedId();
+        Ii ii2 = actual.getAssignedId();
+        assertEquals(ii1.getExtension(), ii2.getExtension());
+        assertEquals(ii1.getDisplayable(), ii2.getDisplayable());
+        assertEquals(ii1.getScope(), ii2.getScope());
+        assertEquals(ii1.getReliability(), ii2.getReliability());
+        assertEquals(ii1.getIdentifierName(), ii2.getIdentifierName());
+        assertEquals(ii2.getRoot(), ii2.getRoot());
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
+    @Override
+    protected void verifyAlterations(IdentifiedOrganizationCR cr) {
+        super.verifyAlterations(cr);
+        assertEquals("9999", cr.getAssignedIdentifier().getExtension());
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
+    @Override
+    protected void alter(IdentifiedOrganizationDTO dto) throws Exception {
+        dto.getAssignedId().setExtension("9999");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  Remove this (use superclass impl) when PO-530 is implemented
     }
 }

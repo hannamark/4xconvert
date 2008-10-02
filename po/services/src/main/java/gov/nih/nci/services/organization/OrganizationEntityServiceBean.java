@@ -84,6 +84,7 @@ package gov.nih.nci.services.organization;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.convert.IiConverter;
@@ -150,7 +151,6 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-
     public OrganizationDTO getOrganization(Ii id) {
         Organization org = orgService.getById(IiConverter.convertToLong(id));
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
@@ -168,6 +168,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public Map<String, String[]> validate(OrganizationDTO org) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
         return orgService.validate(orgBO);
@@ -195,7 +196,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         Organization target = orgService.getById(oId);
         OrganizationCR cr = new OrganizationCR(target);
         proposedState.setIdentifier(null);
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOrganization.class);
         cr.setId(null);
         if (cr.getStatusCode() != target.getStatusCode()) {
             throw new IllegalArgumentException("use updateOrganizationStatus() to update the statusCode property");
@@ -215,7 +216,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         // lazy way to clone with stripped hibernate IDs.
         OrganizationDTO tmp = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(target);
         OrganizationCR cr = new OrganizationCR(target);
-        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractOrganization.class);
         cr.setId(null);
         cr.setStatusCode(StatusCodeConverter.convertToStatusEnum(statusCode));
         orgCRService.create(cr);

@@ -80,118 +80,63 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.validator.NotNull;
 
 /**
  * @author Scott Miller
- *
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *      class="gov.nih.nci.services.correlation.AbstractIdentifiedOrganizationDTO"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedEntity"
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+@MappedSuperclass
+public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedEntity<Organization> {
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
+     * @xsnapshot.property match="iso"
+     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$IdentifiedOrganizationIdConverter"
+     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @Override
+    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return super.getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
+     */
+    @ManyToOne
+    @NotNull
+    @ForeignKey(name = "identifiedorg_player_fkey")
+    @Override
+    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    public Organization getPlayer() {
+        return super.getPlayer();
     }
 
     /**
      * {@inheritDoc}
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
+    @Override
+    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    public void setPlayer(Organization player) {
+        super.setPlayer(player);
     }
 }

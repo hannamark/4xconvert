@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.po.data.bo.AbstractClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -90,8 +91,8 @@ import gov.nih.nci.po.service.ClinicalResearchStaffCRServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -113,7 +114,7 @@ public class ClinicalResearchStaffCorrelationServiceBean
     implements ClinicalResearchStaffCorrelationServiceRemote {
 
     private ClinicalResearchStaffServiceLocal crsService;
-    
+
     private ClinicalResearchStaffCRServiceLocal crsCRService;
 
     /**
@@ -123,7 +124,7 @@ public class ClinicalResearchStaffCorrelationServiceBean
     public void setCrsService(ClinicalResearchStaffServiceLocal crsService) {
         this.crsService = crsService;
     }
-    
+
     /**
      * @param svc the crsService to set
      */
@@ -160,9 +161,9 @@ public class ClinicalResearchStaffCorrelationServiceBean
 
     @Override
     void copyIntoAbstractModel(ClinicalResearchStaffDTO proposedState, ClinicalResearchStaffCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractClinicalResearchStaff.class);
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -3,6 +3,7 @@ package gov.nih.nci.po.data.bo;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -26,8 +28,7 @@ import org.hibernate.validator.Valid;
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class HealthCareProviderCR  extends AbstractHealthCareProvider
         implements CorrelationChangeRequest<HealthCareProvider>  {
-
-    private static final long serialVersionUID = -5535663199790394690L;
+    private static final long serialVersionUID = 1L;
     private HealthCareProvider target;
 
     /**
@@ -36,7 +37,7 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     public HealthCareProviderCR() {
         super();
     }
-    
+
     /**
      * useful ctor.
      * @param target the HealthCareProvider that should changed.
@@ -44,8 +45,8 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     public HealthCareProviderCR(HealthCareProvider target) {
         this();
         this.target = target;
-    }   
-    
+    }
+
 
     /** {@inheritDoc} */
     @Override
@@ -72,8 +73,8 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     public void setTarget(HealthCareProvider target) {
         this.target = target;
     }
-    
-    
+
+
     /**
      * @return the email
      */

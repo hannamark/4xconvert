@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.po.data.bo.AbstractOrganizationResourceProvider;
 import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
 import gov.nih.nci.po.data.bo.OrganizationResourceProviderCR;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -92,8 +93,8 @@ import gov.nih.nci.po.service.OrganizationResourceProviderCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -115,7 +116,7 @@ public class OrganizationResourceProviderCorrelationServiceBean
     implements OrganizationResourceProviderCorrelationServiceRemote {
 
     private OrganizationResourceProviderServiceLocal orpService;
-    
+
     private OrganizationResourceProviderCRServiceLocal orpCRService;
 
     /**
@@ -156,11 +157,11 @@ public class OrganizationResourceProviderCorrelationServiceBean
 
     @Override
     void copyIntoAbstractModel(
-            OrganizationResourceProviderDTO proposedState, 
+            OrganizationResourceProviderDTO proposedState,
             OrganizationResourceProviderCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOrganizationResourceProvider.class);
     }
-    
+
     @Override
     SearchCriteria<OrganizationResourceProvider> getSearchCriteria(OrganizationResourceProvider example) {
         // TODO Auto-generated method stub

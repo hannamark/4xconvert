@@ -84,7 +84,9 @@ package gov.nih.nci.po.data.bo;
 
 
 import gov.nih.nci.po.util.Searchable;
+
 import javax.persistence.MappedSuperclass;
+
 import org.hibernate.validator.Length;
 
 
@@ -98,9 +100,7 @@ import org.hibernate.validator.Length;
  */
 @MappedSuperclass
 public abstract class AbstractHealthCareProvider extends PersonRole implements Contactable {
-    
-    private static final long serialVersionUID = -4860642172768825033L;
-
+    private static final long serialVersionUID = 1L;
     private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
 
     private String certificateLicenseText;

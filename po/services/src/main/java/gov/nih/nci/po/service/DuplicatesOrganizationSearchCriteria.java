@@ -27,6 +27,7 @@ public class DuplicatesOrganizationSearchCriteria extends OrgEntityServiceSearch
     /**
      * Default Constructor.
      */
+    @SuppressWarnings("deprecation")
     public DuplicatesOrganizationSearchCriteria() {
         setOrganization(new Organization());
         getOrganization().setPostalAddress(new Address());
