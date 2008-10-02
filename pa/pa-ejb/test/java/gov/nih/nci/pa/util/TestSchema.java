@@ -24,6 +24,9 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.YesNoCode;
 
@@ -45,6 +48,9 @@ import org.hibernate.cfg.Configuration;
 public class TestSchema {
         /** . **/
         public static ArrayList<Long> studyProtocolIds;
+        public static ArrayList<Long> studyParticipationIds;
+        public static ArrayList<Long> studyParticipationContactIds;
+        public static ArrayList<Long> healthcareFacilityIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -112,10 +118,17 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
+                        statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                         statement.executeUpdate("delete from STUDY_CONDITIONS");
                         statement.executeUpdate("delete from CONDITIONS");
+                        statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT_TELECOM_ADDRESS");
+                        statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT");
+                        statement.executeUpdate("delete from STUDY_PARTICIPATION");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
+                        statement.executeUpdate("delete from HEALTHCARE_FACILITY");
+                        statement.executeUpdate("delete from ORGANIZATION");
+                        statement.executeUpdate("delete from COUNTRY");
                         connection.commit();
                     } finally {
                         statement.close();
@@ -165,6 +178,9 @@ public class TestSchema {
          */
         public static void primeData() {
             studyProtocolIds = new ArrayList<Long>();
+            studyParticipationIds = new ArrayList<Long>();
+            studyParticipationContactIds = new ArrayList<Long>();
+            healthcareFacilityIds = new ArrayList<Long>();
 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -203,6 +219,58 @@ public class TestSchema {
             con.setStudyProtocol(sp);
             addUpdObject(con);
             con.setId(con.getId());
+            
+            Organization org = new Organization();
+            org.setIdentifier("ORG ID 01");
+            org.setName("Org Name 01");
+            addUpdObject(org);
+            
+            HealthCareFacility hfc = new HealthCareFacility();
+            hfc.setIdentifier("HCF ID 01");
+            hfc.setOrganization(org);
+            addUpdObject(hfc);
+            healthcareFacilityIds.add(hfc.getId());
+            
+            StudyParticipation sPart = new StudyParticipation();
+            sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
+            sPart.setHealthCareFacility(hfc);
+            sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
+            sPart.setStatusCode(StatusCode.ACTIVE);
+            sPart.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("6/1/2008"));
+            sPart.setStudyProtocol(sp);
+            addUpdObject(sPart);
+            studyParticipationIds.add(sPart.getId());
+            
+            Country country = new Country();
+            country.setAlpha2("ZZ");
+            country.setAlpha3("ZZZ");
+            country.setName("Zanzibar");
+            country.setNumeric("67");
+            addUpdObject(country);
+            
+            StudyParticipationContact spc = new StudyParticipationContact();
+            spc.setAddressLine("Address 1");
+            spc.setCity("City");
+            spc.setCountry(country);
+            spc.setDeliveryAddressLine("Del. Address 1");
+            spc.setPostalCode("ZZZZZ");
+            spc.setPrimaryIndicator(true);
+            spc.setRoleCode(StudyContactRoleCode.COORDINATING_INVESTIGATOR);
+            spc.setState("ZZ");
+            spc.setStatusCode(StatusCode.ACTIVE);
+            spc.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/15/2008"));
+            spc.setStudyParticipation(sPart);
+            spc.setStudyProtocol(sp);
+            addUpdObject(spc);
+            studyParticipationContactIds.add(spc.getId());
+            
+            StudyParticipationContactTelecomAddress spcta 
+                    = new StudyParticipationContactTelecomAddress();
+            spcta.setStudyParticipationContact(spc);
+            spcta.setTelecomAddress("java@nci.nih.gov");
+            addUpdObject(spcta);
+            
             HibernateUtil.getCurrentSession().clear();
+            
         }
 }

@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
@@ -24,6 +24,16 @@ public class AddressConverterUtil {
         }
     }
 
+//    private static String getValue(List<Adxp> l, AddressPartType addressPartType) {
+//        String result = null;
+//        for(Adxp lp : l) {
+//            if (lp.getType().equals(addressPartType)) {
+//                result = lp.getValue();
+//            }
+//        }
+//        return result;
+//    }
+    
     /**
      * @param streetAddressLine street address
      * @param deliveryAddressLine delivery address
@@ -53,4 +63,8 @@ public class AddressConverterUtil {
         l.add(x);
         return iso;
     }
+    
+//    public static String getStreetAdressLine(Ad adIn) {
+//        return getValue(AddressPartType.AL);
+//    }    
 }

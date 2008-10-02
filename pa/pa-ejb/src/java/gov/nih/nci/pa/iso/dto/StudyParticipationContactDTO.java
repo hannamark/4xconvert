@@ -7,7 +7,8 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 /**
  * @author Hugh Reinhart
@@ -22,7 +23,8 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     private Ad postalAddress;
     private Bl primaryIndicator;
     private Cd roleCode;
-    private DSet<Tel> telecomAddress;
+    private DSet<St> telecomAddresses;
+    private Ii studyParticipationIi;
     /**
      * @return the postalAddress
      */
@@ -62,13 +64,25 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     /**
      * @return the telecomAddress
      */
-    public DSet<Tel> getTelecomAddress() {
-        return telecomAddress;
+    public DSet<St> getTelecomAddresses() {
+        return telecomAddresses;
     }
     /**
-     * @param telecomAddress the telecomAddress to set
+     * @param telecomAddresses the telecomAddresses to set
      */
-    public void setTelecomAddress(DSet<Tel> telecomAddress) {
-        this.telecomAddress = telecomAddress;
+    public void setTelecomAddresses(DSet<St> telecomAddresses) {
+        this.telecomAddresses = telecomAddresses;
+    }
+    /**
+     * @return the studyParticipationIi
+     */
+    public Ii getStudyParticipationIi() {
+        return studyParticipationIi;
+    }
+    /**
+     * @param studyParticipationIi the studyParticipationIi to set
+     */
+    public void setStudyParticipationIi(Ii studyParticipationIi) {
+        this.studyParticipationIi = studyParticipationIi;
     }
 }

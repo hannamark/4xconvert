@@ -38,6 +38,31 @@ public class StudyParticipationServiceBean
     Logger getLogger() {
         return LOG;
     }
+    /** 
+     * @param ii Index 
+     * @return StudyParticipationDTO
+     * @throws PAException PAException
+     */
+    @Override
+    public StudyParticipationDTO get(Ii ii) throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            serviceError(" Ii should not be null ");
+        }
+        StudyParticipationDTO resultDto = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StudyParticipation bo = (StudyParticipation) session.get(StudyParticipation.class
+                    , IiConverter.convertToLong(ii));
+            if (bo == null) {
+                serviceError("Object not found using get() for id = " + IiConverter.convertToString(ii));
+            }
+            resultDto = StudyParticipationConverter.convertFromDomainToDTO(bo);
+        } catch (HibernateException hbe) {
+            serviceError("Hibernate exception in get().", hbe);
+        }
+        return resultDto;
+    }
     /**
      * @param dto StudyParticipationDTO
      * @return StudyParticipationDTO
@@ -73,9 +98,8 @@ public class StudyParticipationServiceBean
         if (PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
         }
-        LOG.info("Entering deleteStudyParticipation");
+        LOG.info("Entering delete().");
         Session session = null;
-        List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
@@ -87,12 +111,7 @@ public class StudyParticipationServiceBean
             serviceError(" Hibernate exception while deleting "
                 + "StudyParticipation for pid = " + ii.getExtension(), hbe);
         }
-        
-        List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
-        for (StudyParticipation sp : queryList) {
-            resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
-        }
-        LOG.info("Leaving deleteStudyParticipation");
+        LOG.info("Leaving delete().");
     }
     
     /**

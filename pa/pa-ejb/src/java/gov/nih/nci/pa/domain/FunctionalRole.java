@@ -1,8 +1,8 @@
 package gov.nih.nci.pa.domain;
 
-import java.sql.Timestamp;
-
 import gov.nih.nci.pa.enums.StatusCode;
+
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -23,6 +23,7 @@ import org.hibernate.validator.NotNull;
  */
 @MappedSuperclass
 public class FunctionalRole extends AbstractEntity {
+    static final long serialVersionUID = 8492645655L;
     
     private StatusCode statusCode;
     private Timestamp statusDateRangeLow;
@@ -68,7 +69,6 @@ public class FunctionalRole extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
     @NotNull
-    
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }

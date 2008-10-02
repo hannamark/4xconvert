@@ -26,7 +26,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class StudyOverallStatusTest {
+public class StudyOverallStatusServiceTest {
     private StudyOverallStatusServiceRemote remoteEjb = new StudyOverallStatusServiceBean();;
     Ii pid;
     

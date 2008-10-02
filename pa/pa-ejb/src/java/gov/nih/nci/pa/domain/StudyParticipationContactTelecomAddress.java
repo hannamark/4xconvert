@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.NotNull;
+
 /**
  * @author Hugh Reinhart
  * @since 09/29/2008
@@ -24,7 +26,8 @@ public class StudyParticipationContactTelecomAddress extends AbstractEntity {
      * @return the studyParticipationContact
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PARTICIPATION_CONTACT_ID", nullable = false)
+    @JoinColumn(name = "STUDY_PARTICIPATION_CONTACT_ID")
+    @NotNull
     public StudyParticipationContact getStudyParticipationContact() {
         return studyParticipationContact;
     }

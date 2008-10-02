@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -39,6 +41,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
     private Boolean primaryIndicator;
     private StudyContactRoleCode roleCode;
     private List<StudyParticipationContactTelecomAddress> telecomAddresses;
+    private StudyParticipation studyParticipation;
     /**
      * @return the addressLine
      */
@@ -109,7 +112,6 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      */
     @ManyToOne
     @JoinColumn(name = "COUNTRY_ID", updatable = false)
-    @NotNull    
     public Country getCountry() {
         return country;
     }
@@ -150,6 +152,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      * @return the telecomAddresses
      */
     @OneToMany(mappedBy = "studyParticipationContact")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyParticipationContactTelecomAddress> getTelecomAddresses() {
         return telecomAddresses;
     }
@@ -159,5 +162,20 @@ public class StudyParticipationContact extends PersonFunctionalRole {
     public void setTelecomAddresses(
             List<StudyParticipationContactTelecomAddress> telecomAddresses) {
         this.telecomAddresses = telecomAddresses;
+    }
+    /**
+     * @return the studyParticipation
+     */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PARTICIPATION_ID")
+    @NotNull
+    public StudyParticipation getStudyParticipation() {
+        return studyParticipation;
+    }
+    /**
+     * @param studyParticipation the studyParticipation to set
+     */
+    public void setStudyParticipation(StudyParticipation studyParticipation) {
+        this.studyParticipation = studyParticipation;
     }
 }

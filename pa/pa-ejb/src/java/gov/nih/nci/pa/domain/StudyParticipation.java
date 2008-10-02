@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -34,6 +36,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
     private String localStudyProtocolIdentifier;
     private HealthCareFacility  healthCareFacility;
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
+    private List<StudyParticipationContact> studyParticipationContacts;
     
     /**
      * 
@@ -97,9 +100,19 @@ public class StudyParticipation extends OrganizationFunctionalRole {
             List<StudySiteAccrualStatus> studySiteAccrualStatuses) {
         this.studySiteAccrualStatuses = studySiteAccrualStatuses;
     }
-    
-    
-
-    
-    
+    /**
+     * @return the studyParticipationContacts
+     */
+    @OneToMany(mappedBy = "studyParticipation")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<StudyParticipationContact> getStudyParticipationContacts() {
+        return studyParticipationContacts;
+    }
+    /**
+     * @param studyParticipationContacts the studyParticipationContacts to set
+     */
+    public void setStudyParticipationContacts(
+            List<StudyParticipationContact> studyParticipationContacts) {
+        this.studyParticipationContacts = studyParticipationContacts;
+    }
 }
