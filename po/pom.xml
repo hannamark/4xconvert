@@ -136,6 +136,7 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <phase>process-test-classes</phase>
                     </execution>
                 </executions>
                 <dependencies>
@@ -159,6 +160,7 @@
                             <goal>check</goal>
                             <goal>cpd-check</goal>
                         </goals>
+                        <phase>process-test-classes</phase>
                     </execution>
                 </executions>
                 <dependencies>
