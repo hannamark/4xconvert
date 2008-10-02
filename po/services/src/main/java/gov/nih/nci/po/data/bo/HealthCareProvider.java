@@ -188,6 +188,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_FAX_FK", inverseName = "FAX_HCP_FK")
     @Valid
+    @Searchable(field = "value")
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -208,6 +209,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_PHONE_FK", inverseName = "PHONE_HCP_FK")
     @Valid
+    @Searchable(field = "value")
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -228,6 +230,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_TTY_FK", inverseName = "TTY_HCP_FK")
     @Valid
+    @Searchable(field = "value")
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -248,6 +251,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_URL_FK", inverseName = "URL_HCP_FK")
     @Valid
+    @Searchable(field = "value")
     public List<URL> getUrl() {
         return super.getUrl();
     }

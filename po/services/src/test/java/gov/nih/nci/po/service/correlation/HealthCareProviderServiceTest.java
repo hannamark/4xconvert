@@ -90,7 +90,9 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
@@ -148,32 +150,37 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         //
 
         // id
-        doSearch(hcp, hcp.getId(), null, null, null, null, null, null, 1);
-        doSearch(hcp, -1L, null, null, null, null, null, null, 0);
+        doSearch(hcp, hcp.getId(), null, null, null, null, null, null, null, null, null, null, 1);
+        doSearch(hcp, -1L, null, null, null, null, null, null, null, null, null, null, 0);
 
         // license
-        doSearch(hcp, null, null, null, hcp.getCertificateLicenseText(), null, null, null, 1);
-        doSearch(hcp, null, null, null, hcp.getCertificateLicenseText() + "foo", null, null, null, 0);
+        doSearch(hcp, null, null, null, hcp.getCertificateLicenseText(), null, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, null, null, hcp.getCertificateLicenseText() + "foo", null, null, null, null, null, null,
+                null, 0);
 
         // id + license
-        doSearch(hcp, hcp.getId(), null, null, hcp.getCertificateLicenseText(), null, null, null, 1);
-        doSearch(hcp, hcp.getId(), null, null, hcp.getCertificateLicenseText() + "foo", null, null, null, 0);
+        doSearch(hcp, hcp.getId(), null, null, hcp.getCertificateLicenseText(), null, null, null, null, null, null,
+                null, 1);
+        doSearch(hcp, hcp.getId(), null, null, hcp.getCertificateLicenseText() + "foo", null,
+                null, null, null, null, null, null, 0);
 
         // person + org
-        doSearch(hcp, null, hcp.getOrganization().getId(), null, null, null, null, null, 1);
-        doSearch(hcp, null, null, hcp.getPerson().getId(), null, null, null, null, 1);
-        doSearch(hcp, null, -1L, null, null, null, null, null, 0);
-        doSearch(hcp, null, null, -1L, null, null, null, null, 0);
-        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId(), null, null, null, null, 1);
-        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId() + 1, null, null, null, null, 0);
+        doSearch(hcp, null, hcp.getOrganization().getId(), null, null, null, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, null, hcp.getPerson().getId(), null, null, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, -1L, null, null, null, null, null, null, null, null, null, 0);
+        doSearch(hcp, null, null, -1L, null, null, null, null, null, null, null, null, 0);
+        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId(),
+                 null, null, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId() + 1,
+                 null, null, null, null, null, null, null, null, 0);
 
         // status fields
-        doSearch(hcp, null, null, null, null, RoleStatus.PENDING, null, null, 1);
-        doSearch(hcp, null, null, null, null, null, hcp.getStatusDate(), null, 1);
-        doSearch(hcp, null, null, null, null, RoleStatus.ACTIVE, null, null, 0);
-        doSearch(hcp, null, null, null, null, null, new Date(11111L), null, 0);
-        doSearch(hcp, null, hcp.getId(), null, null, RoleStatus.PENDING, null, null, 1);
-        doSearch(hcp, null, -1L, null, null, RoleStatus.PENDING, null, null, 0);
+        doSearch(hcp, null, null, null, null, RoleStatus.PENDING, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, null, null, null, null, hcp.getStatusDate(), null, null, null, null, null, 1);
+        doSearch(hcp, null, null, null, null, RoleStatus.ACTIVE, null, null, null, null, null, null, 0);
+        doSearch(hcp, null, null, null, null, null, new Date(11111L), null, null, null, null, null, 0);
+        doSearch(hcp, null, hcp.getId(), null, null, RoleStatus.PENDING, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, -1L, null, null, RoleStatus.PENDING, null, null, null, null, null, null, 0);
 
         //
         // List fields
@@ -183,31 +190,78 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         // email
         List<Email> emails = new ArrayList<Email>();
         emails.add(new Email(hcp.getEmail().get(0).getValue()));
-        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+        doSearch(hcp, null, null, null, null, null, null, emails, null, null, null, null, 1);
 
         emails.get(0).setValue(emails.get(0).getValue().substring(1));
-        doSearch(hcp, null, null, null, null, null, null, emails, 0);
+        doSearch(hcp, null, null, null, null, null, null, emails, null, null, null, null, 0);
 
         emails.get(0).setValue(emails.get(0).getValue().substring(0, 3));
-        doSearch(hcp, null, null, null, null, null, null, emails, 0);
+        doSearch(hcp, null, null, null, null, null, null, emails, null, null, null, null, 0);
 
         emails.add(new Email("idontexist"));
-        doSearch(hcp, null, null, null, null, null, null, emails, 0);
+        doSearch(hcp, null, null, null, null, null, null, emails, null, null, null, null, 0);
 
         emails.add(new Email(hcp.getEmail().get(0).getValue()));
-        doSearch(hcp, null, null, null, null, null, null, emails, 1);
+        doSearch(hcp, null, null, null, null, null, null, emails, null, null, null, null, 1);
+
+        // phone
+        List<PhoneNumber> phones = new ArrayList<PhoneNumber>();
+        phones.add(new PhoneNumber(hcp.getPhone().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, phones, null, null, null, 1);
+
+        phones.get(0).setValue(phones.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, phones, null, null, null, 0);
+
+        phones.add(new PhoneNumber(hcp.getPhone().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, phones, null, null, null, 1);
+
+        // fax
+        List<PhoneNumber> faxes = new ArrayList<PhoneNumber>();
+        faxes.add(new PhoneNumber(hcp.getFax().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, null, faxes, null, null, 1);
+
+        faxes.get(0).setValue(faxes.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, null, faxes, null, null, 0);
+
+        faxes.add(new PhoneNumber(hcp.getFax().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, null, faxes, null, null, 1);
+
+        // tty
+        List<PhoneNumber> ttys = new ArrayList<PhoneNumber>();
+        ttys.add(new PhoneNumber(hcp.getTty().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, ttys, null, 1);
+
+        ttys.get(0).setValue(ttys.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, ttys, null, 0);
+
+        ttys.add(new PhoneNumber(hcp.getTty().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, ttys, null, 1);
+
+        // url
+        List<URL> urls = new ArrayList<URL>();
+        urls.add(new URL(hcp.getUrl().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, null, urls, 1);
+
+        urls.get(0).setValue(urls.get(0).getValue().substring(1));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, null, urls, 0);
+
+        urls.add(new URL(hcp.getUrl().get(0).getValue()));
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, null, urls, 1);
+
+        // combo url + tty to prove that combos of lists work too
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, ttys, urls, 1);
+        doSearch(hcp, hcp.getId(), null, null, null, null, null, null, null, null, ttys, urls, 1);
+        urls.remove(1);
+        doSearch(hcp, null, null, null, null, null, null, null, null, null, ttys, urls, 0);
+
 
         // Fields Remaining to test:
-        // - fax
-        // - phone
-        // - url
-        // - tty
         // - address (tricky!)
-
     }
 
     private void doSearch(HealthCareProvider hcp, Long id, Long orgId, Long personId, String certTxt,
-                          RoleStatus status, Date statusDate, List<Email> email, int numExpected) {
+                          RoleStatus status, Date statusDate, List<Email> email, List<PhoneNumber> phones,
+                          List<PhoneNumber> faxes, List<PhoneNumber> ttys, List<URL> urls, int numExpected) {
         HealthCareProviderServiceLocal svc = (HealthCareProviderServiceLocal) getService();
         HealthCareProvider example = new HealthCareProvider();
         example.setId(id);
@@ -219,6 +273,10 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         example.setStatus(status);
         example.setStatusDate(statusDate);
         example.setEmail(email);
+        example.setPhone(phones);
+        example.setFax(faxes);
+        example.setTty(ttys);
+        example.setUrl(urls);
         SearchCriteria<HealthCareProvider> sc = new AnnotatedBeanSearchCriteria<HealthCareProvider>(example);
         List<HealthCareProvider> l = svc.search(sc);
         assertNotNull(l);
