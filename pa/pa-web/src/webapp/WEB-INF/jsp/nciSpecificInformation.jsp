@@ -14,18 +14,6 @@
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 <c:url value="/protected/ajaxorglookup.action" var="lookupUrl"/>
 <script type="text/javascript">    
-    function trim(str) {
-	    var newstr;
-	    newstr = str.replace(/^\s*/, "").replace(/\s*$/, "");
-	    newstr = newstr.replace(/\s{2,}/, " ");
-	    return newstr;
-    }
-	function resetValues () {
-	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_accrualReportingMethodCode.value="";
-	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_summaryFourFundingCategoryCode.value="";
-	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_organizationName.value="";
-	    document.forms.updateNCISpecificInformation.updateNCISpecificInformation_nciSpecificInformationWebDTO_monitorCode.value="";
-	}
 	
 	function handleAction(){
 	     document.nciSpecificInformationupdate.action="nciSpecificInformationupdate.action";
@@ -56,7 +44,8 @@
 <h1><fmt:message key="nciSpecificInformation.title" /></h1>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">  
-    <s:form action="nciSpecificInformationupdate"><s:actionerror/>
+<pa:sucessMessage/>
+    <s:form action="nciSpecificInformationupdate">
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form" >
 			    <tr>
@@ -69,6 +58,12 @@
 	                       name="nciSpecificInformationWebDTO.accrualReportingMethodCode" 
 	                       list="#accrualReportingMethodCodeValues"  
 	                       value="nciSpecificInformationWebDTO.accrualReportingMethodCode" cssStyle="width:206px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>nciSpecificInformationWebDTO.accrualReportingMethodCode</s:param>
+                               </s:fielderror>                            
+                             </span>
+	                       
 	                  </td>   			            
 			     </tr>           
 			     <tr>
@@ -82,6 +77,11 @@
                             list="#summaryFourFundingCategoryCodeValues"  
                             value="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
                             cssStyle="width:206px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>nciSpecificInformationWebDTO.summaryFourFundingCategoryCode</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>  			                    
 			     </tr>	  
 				<tr>
@@ -108,6 +108,5 @@
 		</div>
   	</s:form>
    </div>
-<!--  </div> -->
  </body>
  </html>
