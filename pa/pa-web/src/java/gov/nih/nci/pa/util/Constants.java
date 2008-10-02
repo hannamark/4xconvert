@@ -36,4 +36,13 @@ public class Constants {
     /** Failure Message . */
     public static final String FAILURE_MESSAGE = "failureMessage";
 
+    /** Deleted Message . */
+    public static final String DELETE_MESSAGE = "Record Deleted";
+
+    /** Updated Message . */
+    public static final String UPDATE_MESSAGE = "Record Updated";
+
+    /** Create Message . */
+    public static final String CREATE_MESSAGE = "Record Created";
+
 }
