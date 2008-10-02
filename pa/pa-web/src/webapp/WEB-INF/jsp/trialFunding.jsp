@@ -20,8 +20,7 @@ function handleAction(studyResourcingId){
 function handleDelete(studyResourcingId){
 	document.forms[0].cbValue.value = studyResourcingId;
  	document.forms[0].page.value = "Delete";
- 	//openPI('trialFundingDelete.action', 'popup');
- 	document.forms[0].action="trialFundingDelete.action";
+ 	document.forms[0].action="trialFundingdelete.action";
     document.forms[0].submit(); 
 }
 
@@ -32,6 +31,7 @@ function handleDelete(studyResourcingId){
  <h1><fmt:message key="trialFunding.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
+  <pa:sucessMessage/>
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <s:if test="trialFundingList != null">
