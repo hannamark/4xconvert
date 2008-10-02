@@ -53,7 +53,7 @@ function handleDelete(studyResourcingId){
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
-					<li><s:a href="trialFundingAdd.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+					<li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				</ul>	

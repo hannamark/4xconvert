@@ -41,24 +41,24 @@ function tooltip() {
                 <tr>
                     <td scope="row" class="label">
                         <label for="fundingMechanism"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">                      
-                            <fmt:message key="trialFunding.funding.mechanism"/>*</dfn>
+                            <fmt:message key="trialFunding.funding.mechanism"/></dfn><span class="required">*</span>
                         </label>
                      </td>
                      <s:set name="fundingMechanism" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
-                      <td class="value">
+                      <td class="value"> 
                         <s:select headerKey="" headerValue="" 
                            name="trialFundingWebDTO.fundingMechanismCode" 
                            list="#fundingMechanism"  
                            listKey="fundingMechanismCode" 
                            listValue="fundingMechanismCode" 
-                           cssStyle="width:206px"/>
+                           cssStyle="width:60px"/> 
                       </td>         
                 </tr>
                 
                 <tr> 
                      <td scope="row" class="label">
                           <label for="institutionCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.institution.code"/>*</dfn>
+                            <fmt:message key="trialFunding.institution.code"/></dfn><span class="required">*</span>
                           </label>
                      </td>              
                      <s:set name="nihInstitute" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
@@ -68,23 +68,23 @@ function tooltip() {
                            list="#nihInstitute"  
                            listKey="nihInstituteCode" 
                            listValue="nihInstituteCode" 
-                           cssStyle="width:206px"/>
+                           cssStyle="width:60px"/>
                       </td>         
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
                      <label for="serialNumber"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.serial.number"/>*</dfn>
+                            <fmt:message key="trialFunding.serial.number"/></dfn><span class="required">*</span>
                      </label>
                      </td>
                      <td class="value">
-                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="200" cssStyle="width:206px"/>
+                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="200" cssStyle="width:106px"/>
                       </td> 
                 </tr>
                 <tr>
                      <td scope="row" class="label">
                      <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="studyProtocol.monitorCode"/>*</dfn>
+                            <fmt:message key="studyProtocol.monitorCode"/></dfn><span class="required">*</span>
                      </label>
                     </td>
                     <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
@@ -92,7 +92,7 @@ function tooltip() {
                         <s:select headerKey="" headerValue="" 
                            name="trialFundingWebDTO.nciDivisionProgramCode" 
                            list="#monitorCodeValues"  
-                           cssStyle="width:206px"/>
+                           cssStyle="width:100px"/>
                       </td>         
                 </tr> 
                 <tr>
@@ -105,8 +105,8 @@ function tooltip() {
                         
                         <s:select  
                            name="trialFundingWebDTO.fundingTypeCode" 
-                           list="#{'1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" 
-                           cssStyle="width:206px" />                           
+                           list="#{'':'','1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" 
+                           cssStyle="width:70px" />                           
                       </td>         
                 </tr>                   
                 <tr>
@@ -116,7 +116,7 @@ function tooltip() {
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:206px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:100px"/>
                       </td>         
                 </tr> 
                 <tr>
@@ -126,7 +126,7 @@ function tooltip() {
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:206px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:106px"/>
                       </td>         
                 </tr>                 
         </table>
