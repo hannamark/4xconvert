@@ -94,12 +94,13 @@ import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-
 import gov.nih.nci.services.CorrelationDto;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -181,7 +182,7 @@ public abstract class AbstractCorrelationServiceBean
         List<T> search = getLocalService().search(getSearchCriteria(model));
         return PoXsnapshotHelper.createSnapshotList(search);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -192,7 +193,7 @@ public abstract class AbstractCorrelationServiceBean
         T target = getLocalService().getById(pId);
         CR cr = newCR(target);
         copyIntoAbstractModel(proposedState, cr);
-        
+
         if (cr.getStatus() != target.getStatus()) {
             throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
         }
@@ -202,6 +203,7 @@ public abstract class AbstractCorrelationServiceBean
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
@@ -214,8 +216,8 @@ public abstract class AbstractCorrelationServiceBean
         cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
         getLocalCRService().create(cr);
     }
-    
+
     abstract CR newCR(T t);
     abstract void copyIntoAbstractModel(DTO proposedState, CR cr);
-    
+
 }

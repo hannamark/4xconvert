@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
+
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +92,7 @@ import java.util.Map;
  *
  * @param <CR> structural role change request
  */
-public interface GenericStructrualRoleCRServiceLocal<CR extends ChangeRequest> {
+public interface GenericStructrualRoleCRServiceLocal<CR extends ChangeRequest<?>> {
 
     /**
      * get a PersonCR by its hibernate id.

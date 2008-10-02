@@ -92,13 +92,6 @@ import gov.nih.nci.coppa.iso.AdxpCnt;
 import gov.nih.nci.coppa.iso.AdxpCty;
 import gov.nih.nci.coppa.iso.AdxpSta;
 import gov.nih.nci.coppa.iso.AdxpZip;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.CountryTestUtil;
-import java.util.Collections;
-import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -157,7 +150,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
     public Country getDefaultCountry() {
         return defaultCountry;
     }
-    
+
     @Before
     public void setUpTestData() {
         defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG"));
@@ -197,7 +190,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
     public void testCreateFullSnapshotFromModel() {
         PersonRole perRole = getExampleTestClass();
         PersonRoleDTO dto = (PersonRoleDTO) PoXsnapshotHelper.createSnapshot(perRole);
-        
+
         // check person id
         Ii expectedIi = new Ii();
         expectedIi.setExtension("" + 2);

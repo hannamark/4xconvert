@@ -89,7 +89,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -101,8 +100,6 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @see Searchable
  */
 public final class SearchableUtils {
-    private static final Logger LOG = Logger.getLogger(SearchableUtils.class);
-
     /**
      * Callback interface.
      */
