@@ -106,7 +106,7 @@ import org.hibernate.usertype.CompositeUserType;
 /**
  * Hibernate user type to directly persist Ii to the db with full query capability.
  */
-@SuppressWarnings("PMD.CyclomaticComplexity") // switch statements
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" }) // switch statements, implements.
 public class IiCompositeUserType implements CompositeUserType {
 
     // Constants for the position of the attribute in the composite type
@@ -283,17 +283,21 @@ public class IiCompositeUserType implements CompositeUserType {
      */
     public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
             throws SQLException {
-        if (rs.wasNull()) {
+        
+        String nullFlavorStr = rs.getString(names[NULLFLAVOR]);
+        String extensionStr = rs.getString(names[EXTENSION]);
+        
+        if (nullFlavorStr == null && extensionStr == null) {
             return null;
         }
-
+        
         Ii result = new Ii();
-        String nullFlavorStr = rs.getString(names[NULLFLAVOR]);
         if (nullFlavorStr != null) {
             result.setNullFlavor(NullFlavor.valueOf(nullFlavorStr));
         }
+        
+        result.setExtension(extensionStr);
         result.setDisplayable((Boolean) rs.getObject(names[DISPLAYABLE]));
-        result.setExtension(rs.getString(names[EXTENSION]));
         result.setIdentifierName(rs.getString(names[IDENTIFIER_NAME]));
         String reliabilityStr = rs.getString(names[RELIABILITY]);
         if (reliabilityStr != null) {
@@ -319,10 +323,12 @@ public class IiCompositeUserType implements CompositeUserType {
             }
         } else {
             Ii ii = (Ii) value;
-            statement.setString(index + NULLFLAVOR, (ii.getNullFlavor() != null) ? ii.getNullFlavor().toString()
-                                                                                 : null);
-            statement.setObject(index + DISPLAYABLE, ii.getDisplayable());
+            checkValidState(ii);
+            
+            String nullFlavorStr = (ii.getNullFlavor() != null) ? ii.getNullFlavor().toString() : null;
+            statement.setString(index + NULLFLAVOR, nullFlavorStr);
             statement.setString(index + EXTENSION, ii.getExtension());
+            statement.setObject(index + DISPLAYABLE, ii.getDisplayable());            
             statement.setString(index + IDENTIFIER_NAME, ii.getIdentifierName());
             statement.setString(index + RELIABILITY, (ii.getReliability() != null) ? ii.getReliability().toString()
                                                                                    : null);
@@ -350,5 +356,14 @@ public class IiCompositeUserType implements CompositeUserType {
      */
     public Class returnedClass() {
         return Ii.class;
+    }
+
+    /**
+     * when both 'nullFlavor' and 'extension' are null when incodeing a null Ii into columns.
+     */
+    private static void checkValidState(Ii ii) {
+        if (ii.getNullFlavor() == null && ii.getExtension() == null) {
+            throw new IllegalArgumentException("Ii cannot have both 'nullFlavor' and 'extension' be null");
+        }
     }
 }

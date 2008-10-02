@@ -92,16 +92,14 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.coppa.test.TstProperties;
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.Date;
-import java.util.Properties;
 
 import org.junit.Test;
 
@@ -113,6 +111,12 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
 
     private Ii orgId = null;
     private Date preCreate;
+
+    public Ii getOrgId() {
+        return orgId;
+    }
+    
+    
     /*
      * Method to check that the remote service is working.
      * @throws Exception on error.
@@ -172,12 +176,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             createMinimal();
         }
 
-        Properties config = TstProperties.properties;
-        Class.forName(config.getProperty("jdbc.driver-class"));
-        String url = config.getProperty("jdbc.connection-url");
-        String user = config.getProperty("jdbc.user-name");
-        String password = config.getProperty("jdbc.password");
-        Connection c = DriverManager.getConnection(url, user, password);
+        Connection c = DataGeneratorUtil.getJDBCConnection();
         ResultSet rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension());
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
@@ -215,12 +214,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             createMinimal();
         }
 
-        Properties config = TstProperties.properties;
-        Class.forName(config.getProperty("jdbc.driver-class"));
-        String url = config.getProperty("jdbc.connection-url");
-        String user = config.getProperty("jdbc.user-name");
-        String password = config.getProperty("jdbc.password");
-        Connection c = DriverManager.getConnection(url, user, password);
+        Connection c = DataGeneratorUtil.getJDBCConnection();
         ResultSet rs = c.createStatement().executeQuery("select count(*) from organizationcr where target = "+orgId.getExtension()+" and status = 'INACTIVE'");
         assertTrue(rs.next());
         int count0 = rs.getInt(1);

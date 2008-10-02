@@ -1,5 +1,6 @@
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Contact;
 import gov.nih.nci.po.data.bo.Organization;
@@ -164,5 +165,18 @@ public class EqualsByValue {
         assertEquals("url", a.getUrl(), b.getUrl());
 
         assertEquals("postalAddress", a.getPostalAddress(), b.getPostalAddress());
+    }
+    
+    public static void assertEquals(Ii a, Ii b) {
+        if (a == b) { return; }
+        if ((a == null && b != null) || (a != null && b == null)) { Assert.fail("one is null"); }
+        
+        Assert.assertEquals(a.getDisplayable(), b.getDisplayable());
+        Assert.assertEquals(a.getExtension(), b.getExtension());
+        Assert.assertEquals(a.getIdentifierName(), b.getIdentifierName());
+        Assert.assertEquals(a.getNullFlavor(), b.getNullFlavor());
+        Assert.assertEquals(a.getReliability(), b.getReliability());
+        Assert.assertEquals(a.getRoot(), b.getRoot());
+        Assert.assertEquals(a.getScope(), b.getScope());
     }
 }

@@ -100,7 +100,7 @@ public class PersonResourceProviderServiceTest extends AbstractStructrualRoleSer
         prp.setPlayer(basicPerson);
         prp.setScoper(basicOrganization);
 
-        Ii ii = new Ii();;
+        Ii ii = new Ii();
         // we're going to set to nonsense values, to ensure that the whole type can be persisted
         ii.setDisplayable(Boolean.TRUE);
         ii.setExtension("myExtension");

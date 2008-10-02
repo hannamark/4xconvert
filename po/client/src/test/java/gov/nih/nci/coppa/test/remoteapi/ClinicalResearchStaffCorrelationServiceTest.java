@@ -80,88 +80,35 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.coppa.test.remoteapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
-import gov.nih.nci.po.data.bo.OversightCommittee;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
-import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import org.junit.Assert;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+public class ClinicalResearchStaffCorrelationServiceTest
+        extends CorrelationTestBase<ClinicalResearchStaffDTO, ClinicalResearchStaffCorrelationServiceRemote> {
 
-/**
- * @author Todd Parnell
- *
- */
-public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected AbstractOrganizationRole getExampleTestClass() {
-        OversightCommittee oc = new OversightCommittee();
-        fillInExampleOrgRoleFields(oc);
-        OversightCommitteeType oct = new OversightCommitteeType("Ethics Committee");
-        oc.setType(oct);
-        return oc;
+    public ClinicalResearchStaffCorrelationServiceTest() {
+        super("ClinicalResearchStaffCR");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
-        OversightCommitteeDTO dto = new OversightCommitteeDTO();
-        fillInOrgRoleDTOFields(dto, scoperId, playerId);
-        Ii ii = new Ii();
-        ii.setExtension("" + 1L);
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
-        ii.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        dto.setIdentifier(ii);
-        Cd type = new Cd();
-        type.setCode("Ethics Committee");
-        dto.setType(type);
-
+    protected ClinicalResearchStaffDTO makeCorrelation() throws Exception {
+        ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
+        dto.setOrganizationIdentifier(getOrgId());
+        dto.setPersonIdentifier(getPersonId());
         return dto;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void verifyTestClassDTOFields(AbstractOrganizationRole or) {
-        assertEquals("Ethics Committee", ((OversightCommittee) or).getType().getCode());
-
+    protected ClinicalResearchStaffCorrelationServiceRemote getCorrelationService() throws Exception {
+        return RemoteServiceHelper.getClinicalResearchStaffCorrelationService();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
-        assertEquals("Ethics Committee", ((OversightCommitteeDTO) dto).getType().getCode());
-
-        // check id
-        Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 1);
-        expectedIi.setDisplayable(true);
-        expectedIi.setScope(IdentifierScope.OBJ);
-        expectedIi.setReliability(IdentifierReliability.ISS);
-        expectedIi.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        expectedIi.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((OversightCommitteeDTO) dto).getIdentifier()));
+    protected void verifyCreated(ClinicalResearchStaffDTO dto) throws Exception {
+        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
+        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
     }
-
 }

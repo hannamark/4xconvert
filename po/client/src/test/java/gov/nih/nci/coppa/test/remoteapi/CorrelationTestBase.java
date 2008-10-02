@@ -80,88 +80,138 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.coppa.test.remoteapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
-import gov.nih.nci.po.data.bo.OversightCommittee;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
-import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.services.CorrelationService;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 
-/**
- * @author Todd Parnell
- *
- */
-public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected AbstractOrganizationRole getExampleTestClass() {
-        OversightCommittee oc = new OversightCommittee();
-        fillInExampleOrgRoleFields(oc);
-        OversightCommitteeType oct = new OversightCommitteeType("Ethics Committee");
-        oc.setType(oct);
-        return oc;
+import java.sql.Connection;
+import java.sql.ResultSet;
+
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Test;
+
+public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE extends CorrelationService<DTO>> {
+
+    private Ii correlationId;
+    private Ii orgId;
+    private Ii personId;
+    private String tableNameCR;
+    private Connection c;
+    
+    protected CorrelationTestBase(String tableNameCR) {
+        this.tableNameCR = tableNameCR;
     }
 
     /**
-     * {@inheritDoc}
+     * cleanup after test is complete.
+     * 
+     * @throws Exception on error.
      */
-    @Override
-    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
-        OversightCommitteeDTO dto = new OversightCommitteeDTO();
-        fillInOrgRoleDTOFields(dto, scoperId, playerId);
-        Ii ii = new Ii();
-        ii.setExtension("" + 1L);
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
-        ii.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        dto.setIdentifier(ii);
-        Cd type = new Cd();
-        type.setCode("Ethics Committee");
-        dto.setType(type);
-
-        return dto;
+    @After
+    public void cleanup() throws Exception {
+        RemoteServiceHelper.close();
+        if (c != null)
+            c.close();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void verifyTestClassDTOFields(AbstractOrganizationRole or) {
-        assertEquals("Ethics Committee", ((OversightCommittee) or).getType().getCode());
-
+    private void createMinimal() throws Exception {
+        if (correlationId != null) {
+            return; // test already run from another test case.
+        }
+        DTO dto = makeCorrelation();
+        try {
+            correlationId = getCorrelationService().createCorrelation(dto);
+        } catch (EntityValidationException e) {
+            fail(e.getErrorMessages());
+        }
+        assertNotNull(correlationId);
+        assertNotNull(correlationId.getExtension());
+        
+        dto = getCorrelationService().getCorrelation(correlationId);
+        verifyCreated(dto);        
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
-        assertEquals("Ethics Committee", ((OversightCommitteeDTO) dto).getType().getCode());
+    protected abstract DTO makeCorrelation() throws Exception;
+    
+    protected abstract void verifyCreated(DTO dto) throws Exception ;
 
-        // check id
-        Ii expectedIi = new Ii();
-        expectedIi.setExtension("" + 1);
-        expectedIi.setDisplayable(true);
-        expectedIi.setScope(IdentifierScope.OBJ);
-        expectedIi.setReliability(IdentifierReliability.ISS);
-        expectedIi.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        expectedIi.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((OversightCommitteeDTO) dto).getIdentifier()));
+    @Test
+    public void update() throws Exception {
+        if (correlationId == null) {
+            createMinimal();
+        }
+
+        c = DataGeneratorUtil.getJDBCConnection();
+        ResultSet rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
+        assertTrue(rs.next());
+        int count0 = rs.getInt(1);
+        rs.close();
+
+        DTO dto = getCorrelationService().getCorrelation(correlationId);
+        getCorrelationService().updateCorrelation(dto);
+
+        rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
+        assertTrue(rs.next());
+        int count1 = rs.getInt(1);
+        rs.close();
+        assertEquals(count0 + 1, count1);
     }
 
+    @Test
+    public void updateStatus() throws Exception {
+        if (correlationId == null) {
+            createMinimal();
+        }
+
+        c = DataGeneratorUtil.getJDBCConnection();
+        ResultSet rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension() + " and status = 'DEPRECATED'");
+        assertTrue(rs.next());
+        int count0 = rs.getInt(1);
+        rs.close();
+
+        Cd cd = new Cd();
+        cd.setCode("suspended"); // maps to SUSPENDED
+        getCorrelationService().updateCorrelationStatus(correlationId, cd);
+
+        rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension() + " and status = 'SUSPENDED'");
+        assertTrue(rs.next());
+        int count1 = rs.getInt(1);
+        rs.close();
+        assertEquals(count0 + 1, count1);
+    }
+
+
+    protected abstract SERVICE getCorrelationService() throws Exception;
+
+    public Ii getOrgId() throws Exception {
+        if (orgId == null) {
+            OrganizationEntityServiceTest test = new OrganizationEntityServiceTest();
+            test.init();
+            test.createMinimal();
+            orgId = test.getOrgId();
+            assertNotNull(orgId);
+        }
+        return orgId;
+    }
+
+    public Ii getPersonId() throws Exception {
+        if(personId == null) {
+            PersonEntityServiceTest test = new PersonEntityServiceTest();
+            test.init();
+            test.createMinimal();
+            personId = test.getPersonId();
+            assertNotNull(personId);
+        }
+        return personId;
+    }
 }
+
+ 

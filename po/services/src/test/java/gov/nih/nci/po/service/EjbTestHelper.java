@@ -226,12 +226,7 @@ public class EjbTestHelper {
      * @return the service
      */
     public static OversightCommitteeTypeBean getOversightCommitteeTypeServiceBean() {
-        return new OversightCommitteeTypeBean() {
-            @Override
-            public OversightCommitteeType getByCode(String code) {
-                return new OversightCommitteeType(code);
-            }
-        };
+        return new OversightCommitteeTypeBean();
     }
 
     /**

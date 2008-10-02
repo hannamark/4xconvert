@@ -107,8 +107,6 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
     /**
      * @param type the type to set
      */
-    @ManyToOne
-    @ForeignKey(name = "oversight_comm_type_fkey")
     public void setType(OversightCommitteeType type) {
         this.type = type;
     }
@@ -119,6 +117,8 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.OversightCommitteeTypeConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
+    @ManyToOne
+    @ForeignKey(name = "oversight_comm_type_fkey")
     public OversightCommitteeType getType() {
         return type;
     }

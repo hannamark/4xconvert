@@ -1,16 +1,21 @@
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PersonResourceProvider;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.OrganizationCRServiceBeanTest;
 import gov.nih.nci.po.service.PersonCRServiceBeanTest;
+import gov.nih.nci.services.correlation.PersonResourceProviderDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -62,6 +67,22 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         Person clone = (Person) PoXsnapshotHelper.createModel(dto);
 
         EqualsByValue.assertEquals(per, clone);
+    }
+    
+    @Test
+    public void roundTripPersonResourceProvider() {
+        PersonResourceProvider prp = new PersonResourceProvider();
+        Ii ii = new Ii();
+        ii.setDisplayable(Boolean.TRUE);
+        ii.setExtension("extension");
+        ii.setIdentifierName("identifierName");
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot("root");
+        ii.setScope(IdentifierScope.OBJ);
+        prp.setIdentifier(ii);
+        PersonResourceProviderDTO dto = (PersonResourceProviderDTO) PoXsnapshotHelper.createSnapshot(prp);
+        PersonResourceProvider clone = (PersonResourceProvider) PoXsnapshotHelper.createModel(dto);
+        EqualsByValue.assertEquals(ii, clone.getIdentifier());
     }
 
     @Test

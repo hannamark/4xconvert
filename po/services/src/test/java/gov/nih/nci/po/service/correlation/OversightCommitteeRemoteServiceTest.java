@@ -83,6 +83,8 @@
 package gov.nih.nci.po.service.correlation;
 
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
+import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -117,7 +119,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         dto.setScoperIdentifier(ii);
 
         Cd type = new Cd();
-        type.setCode("test");
+        type.setCode("Ethics Committee");
         dto.setType(type);
 
         return dto;
@@ -138,8 +140,12 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
 
     @Override
     protected void alter(OversightCommitteeDTO dto) {
+        OversightCommitteeType other = new OversightCommitteeType("Foo");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
+        PoHibernateUtil.getCurrentSession().flush();
+        
         Cd type = new Cd();
-        type.setCode("something else");
+        type.setCode("Foo");
         dto.setType(type);
     }
 
@@ -147,7 +153,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
     protected void verifyAlterations(OversightCommitteeCR cr) {
         super.verifyAlterations(cr);
         
-        assertEquals("something else", cr.getType().getCode());
+        assertEquals("Foo", cr.getType().getCode());
     }
     
 }

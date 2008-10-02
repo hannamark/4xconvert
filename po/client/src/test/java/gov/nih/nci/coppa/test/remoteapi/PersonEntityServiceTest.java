@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -95,16 +96,13 @@ import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.Date;
-import java.util.Properties;
 
 import org.junit.Test;
 
@@ -117,6 +115,10 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
     private Ii personId;
     private Date preCreate;
 
+    public Ii getPersonId() {
+        return personId;
+    }
+    
     @Test
     public void createMinimal() throws Exception {
         if (personId != null) {
@@ -164,12 +166,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             createMinimal();
         }
 
-        Properties config = TstProperties.properties;
-        Class.forName(config.getProperty("jdbc.driver-class"));
-        String url = config.getProperty("jdbc.connection-url");
-        String user = config.getProperty("jdbc.user-name");
-        String password = config.getProperty("jdbc.password");
-        Connection c = DriverManager.getConnection(url, user, password);
+        Connection c = DataGeneratorUtil.getJDBCConnection();
         ResultSet rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension());
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
@@ -209,12 +206,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
             createMinimal();
         }
 
-        Properties config = TstProperties.properties;
-        Class.forName(config.getProperty("jdbc.driver-class"));
-        String url = config.getProperty("jdbc.connection-url");
-        String user = config.getProperty("jdbc.user-name");
-        String password = config.getProperty("jdbc.password");
-        Connection c = DriverManager.getConnection(url, user, password);
+        Connection c = DataGeneratorUtil.getJDBCConnection();
         ResultSet rs = c.createStatement().executeQuery("select count(*) from personcr where target = "+personId.getExtension()+" and status = 'INACTIVE'");
         assertTrue(rs.next());
         int count0 = rs.getInt(1);

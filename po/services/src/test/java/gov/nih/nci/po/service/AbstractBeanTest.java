@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -14,6 +15,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
     private Country defaultCountry;
+    private OversightCommitteeType oversightCommitee;
 
     public Country getDefaultCountry() {
         return defaultCountry;
@@ -25,6 +27,12 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     public void setDefaultCountry(Country defaultCountry) {
         this.defaultCountry = defaultCountry;
     }
+
+    public void setOversightCommitee(OversightCommitteeType oversightCommitee) {
+        this.oversightCommitee = oversightCommitee;
+    }
+    
+    
 
     User user;
 
@@ -42,6 +50,10 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     @Before
     public void loadData() {
         defaultCountry = CountryTestUtil.save(new Country("United States", "840", "US", "USA"));
+        
+        oversightCommitee = new OversightCommitteeType("Ethics Committee");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
+
 
         user = new User();
         user.setLoginName("unittest" + new Random().nextLong());
@@ -50,5 +62,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         user.setUpdateDate(new Date());
         PoHibernateUtil.getCurrentSession().save(user);
         UsernameHolder.setUser(user.getLoginName());
+        
+        PoHibernateUtil.getCurrentSession().flush();
     }
 }

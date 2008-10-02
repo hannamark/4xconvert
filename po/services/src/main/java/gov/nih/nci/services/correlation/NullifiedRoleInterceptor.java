@@ -100,7 +100,7 @@ import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 /**
  * Interceptor to catch any NULLIFIED roles and throw a NullifiedEntityException.
  */
-class NullifiedRoleInterceptor {
+public class NullifiedRoleInterceptor {
     /**
      * Ensures that no object(s) returned have a NULLIFIED role status.
      * 
