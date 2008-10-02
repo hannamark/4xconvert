@@ -96,6 +96,8 @@ import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
 
 import java.util.List;
 import java.util.Map;
@@ -115,7 +117,7 @@ import org.jboss.annotation.security.SecurityDomain;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class })
+@Interceptors({ PoHibernateSessionInterceptor.class, NullifiedEntityInterceptor.class })
 @SecurityDomain("po")
 public class OrganizationEntityServiceBean implements OrganizationEntityServiceRemote {
 
@@ -151,7 +153,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public OrganizationDTO getOrganization(Ii id) {
+    public OrganizationDTO getOrganization(Ii id) throws NullifiedEntityException {
         Organization org = orgService.getById(IiConverter.convertToLong(id));
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
     }

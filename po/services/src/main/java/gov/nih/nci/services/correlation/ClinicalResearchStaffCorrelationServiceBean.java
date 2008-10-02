@@ -107,7 +107,7 @@ import org.jboss.annotation.security.SecurityDomain;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class })
+@Interceptors({ PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
 @SecurityDomain("po")
 public class ClinicalResearchStaffCorrelationServiceBean
     extends AbstractCorrelationServiceBean<ClinicalResearchStaff, ClinicalResearchStaffCR, ClinicalResearchStaffDTO>

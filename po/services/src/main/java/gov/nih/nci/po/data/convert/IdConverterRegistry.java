@@ -80,92 +80,61 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.correlation;
+package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.po.data.bo.AbstractOrganizationResourceProvider;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
-import gov.nih.nci.po.data.bo.OrganizationResourceProviderCR;
-import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PersonResourceProvider;
+import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgResourceProviderIdConverter;
-import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderCRServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
-import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PersonResourceProviderIdConverter;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.jboss.annotation.security.SecurityDomain;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Service implementation.
+ *  IdConverter registry. 
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
-@SecurityDomain("po")
-public class OrganizationResourceProviderCorrelationServiceBean
-    extends AbstractCorrelationServiceBean
-        <OrganizationResourceProvider, OrganizationResourceProviderCR, OrganizationResourceProviderDTO>
-    implements OrganizationResourceProviderCorrelationServiceRemote {
+public class IdConverterRegistry {
 
-    private OrganizationResourceProviderServiceLocal orpService;
+    private static final Map<Class<? extends PersistentObject>, IdConverter> REGISTRY;
 
-    private OrganizationResourceProviderCRServiceLocal orpCRService;
-
-    /**
-     * @param svc service to set
-     */
-    @EJB
-    public void setOrpService(OrganizationResourceProviderServiceLocal svc) {
-        this.orpService = svc;
+    static {
+        HashMap<Class<? extends PersistentObject>, IdConverter> tmp 
+            = new HashMap<Class<? extends PersistentObject>, IdConverter>();
+        tmp.put(Organization.class, new OrgIdConverter());
+        tmp.put(Person.class, new PersonIdConverter());
+        tmp.put(ClinicalResearchStaff.class, new ClinicalResearchStaffIdConverter());
+        tmp.put(HealthCareProvider.class, new HealthCareProviderIdConverter());
+        tmp.put(HealthCareFacility.class, new HealthCareFacilityIdConverter());
+        tmp.put(PersonResourceProvider.class, new PersonResourceProviderIdConverter());
+        tmp.put(OrganizationResourceProvider.class, new OrgResourceProviderIdConverter());
+        tmp.put(OversightCommittee.class, new OversightCommitteeIdConverter());
+        REGISTRY = Collections.unmodifiableMap(tmp);
     }
 
     /**
-     * @param svc service to set
+     * @param clz converter for given Class
+     * @return IdConverter instance
      */
-    @EJB
-    public void setOrpCRService(OrganizationResourceProviderCRServiceLocal svc) {
-        this.orpCRService = svc;
+    public static IdConverter find(Class<? extends PersistentObject> clz) {
+        IdConverter idConverter = REGISTRY.get(clz);
+        if (idConverter == null) {
+            throw new IllegalArgumentException(clz.getName() + " is unsupported.");
+        }
+        return idConverter;
     }
-
-    @Override
-    IdConverter getIdConverter() {
-        return new OrgResourceProviderIdConverter();
-    }
-
-    @Override
-    GenericStructrualRoleServiceLocal<OrganizationResourceProvider> getLocalService() {
-        return orpService;
-    }
-
-    @Override
-    GenericStructrualRoleCRServiceLocal<OrganizationResourceProviderCR> getLocalCRService() {
-        return orpCRService;
-    }
-
-    @Override
-    OrganizationResourceProviderCR newCR(OrganizationResourceProvider t) {
-        return new OrganizationResourceProviderCR(t);
-    }
-
-    @Override
-    void copyIntoAbstractModel(
-            OrganizationResourceProviderDTO proposedState,
-            OrganizationResourceProviderCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOrganizationResourceProvider.class);
-    }
-
-    @Override
-    SearchCriteria<OrganizationResourceProvider> getSearchCriteria(OrganizationResourceProvider example) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

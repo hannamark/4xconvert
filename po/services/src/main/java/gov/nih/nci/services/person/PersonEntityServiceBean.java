@@ -84,6 +84,7 @@ package gov.nih.nci.services.person;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
@@ -96,6 +97,8 @@ import gov.nih.nci.po.service.PersonEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
 
 import java.util.List;
 import java.util.Map;
@@ -115,7 +118,7 @@ import org.jboss.annotation.security.SecurityDomain;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ PoHibernateSessionInterceptor.class })
+@Interceptors({ PoHibernateSessionInterceptor.class, NullifiedEntityInterceptor.class  })
 @SecurityDomain("po")
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
@@ -146,11 +149,15 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     }
     /**
      * {@inheritDoc}
+     * @throws NullifiedEntityException 
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public PersonDTO getPerson(Ii id) {
+    public PersonDTO getPerson(Ii id) throws NullifiedEntityException {
         Person perBO = perService.getById(IiConverter.convertToLong(id));
+        if (EntityStatus.NULLIFIED.equals(perBO.getStatusCode())) {
+            throw new NullifiedEntityException(id);
+        }
         return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
     }
 

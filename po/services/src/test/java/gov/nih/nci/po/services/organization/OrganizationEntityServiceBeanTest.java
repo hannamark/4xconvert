@@ -31,6 +31,7 @@ import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
@@ -62,9 +63,10 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     /**
      * test get org behavior.
      * @throws EntityValidationException
+     * @throws NullifiedEntityException 
      */
     @Test
-    public void getOrganization() throws EntityValidationException {
+    public void getOrganization() throws EntityValidationException, NullifiedEntityException {
         long id = super.createOrganization();
         Organization org = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
         OrganizationDTO result = remote.getOrganization(new OrgIdConverter().convertToIi(id));
@@ -183,7 +185,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     @Test
-    public void updateOrganization() throws EntityValidationException, URISyntaxException {
+    public void updateOrganization() throws EntityValidationException, URISyntaxException, NullifiedEntityException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
@@ -206,7 +208,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void updateOrganizationChangeCtatus() throws EntityValidationException {
+    public void updateOrganizationChangeCtatus() throws EntityValidationException, NullifiedEntityException {
         long id = super.createOrganization();
         OrganizationDTO dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));

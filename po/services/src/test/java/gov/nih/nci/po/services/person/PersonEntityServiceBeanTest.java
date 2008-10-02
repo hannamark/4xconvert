@@ -28,6 +28,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -64,7 +65,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void getPerson() {
+    public void getPerson() throws NullifiedEntityException {
         Person per = makePerson();
         long id = (Long) PoHibernateUtil.getCurrentSession().save(per);
         PersonDTO result = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
@@ -151,7 +152,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstName() throws EntityValidationException {
+    public void findByFirstName() throws EntityValidationException, NullifiedEntityException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -161,7 +162,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException {
+    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "%a%", null, null));
@@ -170,7 +171,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardsInSitu() throws EntityValidationException {
+    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "b%b", null, null));
@@ -179,7 +180,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt1() throws EntityValidationException {
+    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "?a?", null, null));
@@ -188,7 +189,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt2() throws EntityValidationException {
+    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "_a_", null, null));
@@ -197,7 +198,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameNoMatches() throws EntityValidationException {
+    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
@@ -205,7 +206,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(0, result.size());
     }
 
-    private void init() throws EntityValidationException {
+    private void init() throws EntityValidationException, NullifiedEntityException {
         PersonDTO dto = new PersonDTO();
         dto.setName(PersonNameConverterUtil.convertToEnPn("bab", "m", "a", "c", "d"));
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
@@ -233,7 +234,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByMiddleName() throws EntityValidationException {
+    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -248,7 +249,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void updatePerson() throws EntityValidationException, URISyntaxException {
+    public void updatePerson() throws EntityValidationException, URISyntaxException, NullifiedEntityException {
         long id = super.createPerson();
         Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
@@ -276,7 +277,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void updatePersonChangeCtatus() throws EntityValidationException {
+    public void updatePersonChangeCtatus() throws EntityValidationException, NullifiedEntityException {
         long id = super.createPerson();
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));

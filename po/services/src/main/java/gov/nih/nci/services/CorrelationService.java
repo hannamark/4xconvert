@@ -85,6 +85,7 @@ package gov.nih.nci.services;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.util.List;
 import java.util.Map;
@@ -98,15 +99,17 @@ public interface CorrelationService<T extends PoDto> {
      * Get the dto with the given id.
      * @param id the id.
      * @return the dto
+     * @throws NullifiedRoleException if the requested id has a NULLIFIED role status
      */
-    T getCorrelation(Ii id);
+    T getCorrelation(Ii id) throws NullifiedRoleException;
 
     /**
      * Get the dtos with the given ids.
      * @param ids the id.
      * @return the dtos
+     * @throws NullifiedRoleException if any of the requested ids contain any NULLIFIED role status
      */
-    List<T> getCorrelations(Ii[] ids);
+    List<T> getCorrelations(Ii[] ids) throws NullifiedRoleException;
 
     /**
      * Create the correlationr.
@@ -130,8 +133,9 @@ public interface CorrelationService<T extends PoDto> {
      *
      * @param dto criteria used to find matching dtos
      * @return list of matching dto
+     * @throws NullifiedRoleException if the results contain any NULLIFIED role status
      */
-    List<T> search(T dto);
+    List<T> search(T dto) throws NullifiedRoleException;
     
     /**
      * Propose a new entity value to the curator.

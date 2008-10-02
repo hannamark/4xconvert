@@ -85,6 +85,7 @@ package gov.nih.nci.services.person;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.List;
 import java.util.Map;
@@ -101,8 +102,9 @@ public interface PersonEntityServiceRemote {
     /**
      * @param id person id
      * @return Person
+     * @throws NullifiedEntityException if the requested id has a NULLIFIED entity status
      */
-    PersonDTO getPerson(Ii id);
+    PersonDTO getPerson(Ii id) throws NullifiedEntityException;
 
     /**
      * Remote API to create a person.

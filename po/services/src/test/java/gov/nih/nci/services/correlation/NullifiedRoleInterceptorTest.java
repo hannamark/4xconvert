@@ -82,142 +82,121 @@
  */
 package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
-import gov.nih.nci.po.data.convert.CdConverter;
-import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.services.PoDto;
 
-import java.util.HashSet;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.interceptor.InvocationContext;
 
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * Generic superclass for correlation services.
- * @param <T> type
- * @param <CR> the CR type for T
- * @param <DTO> the dto type for T
- */
-public abstract class AbstractCorrelationServiceBean
-        <T extends Correlation, CR extends CorrelationChangeRequest<T>, DTO extends CorrelationDto> {
+import com.fiveamsolutions.nci.commons.util.HibernateUtil;
 
-    /**
-     * client role.
-     */
-    protected static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
+public class NullifiedRoleInterceptorTest {
+    NullifiedRoleInterceptor interceptor;
+    TestInvocationContext testContext;
 
-    private static final String UNCHECKED = "unchecked";
-    abstract GenericStructrualRoleServiceLocal<T> getLocalService();
-    abstract GenericStructrualRoleCRServiceLocal<CR> getLocalCRService();
-    abstract IdConverter getIdConverter();
-    abstract SearchCriteria<T> getSearchCriteria(T example);
-
-    /**
-     * TODO.
-     * @param dto dto
-     * @return identifier
-     * @throws EntityValidationException on error
-     */
-    @SuppressWarnings(UNCHECKED)
-    public Ii createCorrelation(DTO dto) throws EntityValidationException {
-        T po = (T) PoXsnapshotHelper.createModel(dto);
-        return getIdConverter().convertToIi(getLocalService().create(po));
+    @Before
+    public void init() {
+        interceptor = new NullifiedRoleInterceptor();
+        testContext = new TestInvocationContext();
     }
 
+    @Test
+    public void checkForNullifiedUsingCorrelationDTO() throws Exception {
+        HibernateUtil.getHibernateHelper().beginTransaction();
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings(UNCHECKED)
-    public DTO getCorrelation(Ii id) throws NullifiedRoleException {
-        T bo = getLocalService().getById(IiConverter.convertToLong(id));
-        return (DTO) PoXsnapshotHelper.createSnapshot(bo);
-    }
+        OversightCommittee o1 = new OversightCommittee();
+        o1.setId(-1L);
+        o1.setStatus(RoleStatus.PENDING);
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(o1);
+        assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings(UNCHECKED)
-    public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
-        Set<Long> longIds = new HashSet<Long>();
-        for (Ii id : ids) {
-            longIds.add(IiConverter.convertToLong(id));
+        OversightCommittee o2 = new OversightCommittee();
+        o2.setId(1L);
+        o2.setStatus(RoleStatus.NULLIFIED);
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(o2);
+        try {
+            interceptor.checkForNullified(testContext);
+            fail("Expected NullifiedRoleException for Ii.extension="
+                    + ((PoDto) testContext.returnValue).getIdentifier().getExtension());
+        } catch (NullifiedRoleException e) {
+            assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
         }
-        List<T> hcps = getLocalService().getByIds(longIds.toArray(new Long[longIds.size()]));
-        return PoXsnapshotHelper.createSnapshotList(hcps);
     }
 
-    /**
-     * @param dto dto to convert
-     * @return validation errors
-     */
-    @SuppressWarnings(UNCHECKED)
-    public Map<String, String[]> validate(DTO dto) {
-        T hcpBo = (T) PoXsnapshotHelper.createModel(dto);
-        return getLocalService().validate(hcpBo);
-    }
+    @Test
+    public void checkForNullifiedUsingCollectionWithSupportedTypes() throws Exception {
+        HibernateUtil.getHibernateHelper().beginTransaction();
+        OversightCommittee o1 = new OversightCommittee();
+        o1.setId(-1L);
+        o1.setStatus(RoleStatus.PENDING);
+        ArrayList<PoDto> list = new ArrayList<PoDto>();
+        list.add(PoXsnapshotHelper.createSnapshot(o1));
+        testContext.returnValue = list;
 
-    /**
-     * @param dto query by example dto
-     * @return list of matching dtos
-     */
-    @SuppressWarnings("unchecked")
-    public List<DTO> search(DTO dto) {
-        T model = (T) PoXsnapshotHelper.createModel(dto);
-        List<T> search = getLocalService().search(getSearchCriteria(model));
-        return PoXsnapshotHelper.createSnapshotList(search);
-    }
+        assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
 
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public void updateCorrelation(DTO proposedState) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
-        T target = getLocalService().getById(pId);
-        CR cr = newCR(target);
-        copyIntoAbstractModel(proposedState, cr);
-        cr.setId(null);
-        if (cr.getStatus() != target.getStatus()) {
-            throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+        OversightCommittee o2 = new OversightCommittee();
+        o2.setId(1L);
+        o2.setStatus(RoleStatus.NULLIFIED);
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(o2);
+        try {
+            interceptor.checkForNullified(testContext);
+            fail("Expected NullifiedRoleException");
+        } catch (NullifiedRoleException e) {
+            assertTrue(e.getNullifiedEntities().containsKey(((PoDto)testContext.returnValue).getIdentifier()));
         }
-        getLocalCRService().create(cr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(targetHCP);
-        T target = getLocalService().getById(pId);
-        // lazy way to clone with stripped hibernate IDs.
-        DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
-        CR cr = newCR(target);
-        copyIntoAbstractModel(tmp, cr);
-        cr.setId(null);
-        cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
-        getLocalCRService().create(cr);
+    @Test
+    public void checkForNullifiedUsingCollectionWithUnsupportedTypes() throws Exception {
+        HibernateUtil.getHibernateHelper().beginTransaction();
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("notused");
+        testContext.returnValue = list;
+        assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
     }
 
-    abstract CR newCR(T t);
-    abstract void copyIntoAbstractModel(DTO proposedState, CR cr);
+    public static class TestInvocationContext implements InvocationContext {
+
+        public Object returnValue;
+        public Object target;
+        public Object[] parameters;
+
+        public Map<String, Object> getContextData() {
+            return null;
+        }
+
+        public Method getMethod() {
+            return null;
+        }
+
+        public Object[] getParameters() {
+            return parameters;
+        }
+
+        public Object getTarget() {
+            return target;
+        }
+
+        public Object proceed() {
+            return this.returnValue;
+        }
+
+        public void setParameters(Object[] arg0) {
+            this.parameters = arg0;
+
+        }
+    }
 
 }

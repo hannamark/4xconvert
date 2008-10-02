@@ -85,6 +85,7 @@ package gov.nih.nci.services.organization;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.List;
 import java.util.Map;
@@ -101,8 +102,9 @@ public interface OrganizationEntityServiceRemote {
     /**
      * @param id org id (the Ii.extension must be populated with desired IdentifierReliability.ISS value) 
      * @return organization
+     * @throws NullifiedEntityException if the requested id has a NULLIFIED entity status
      */
-    OrganizationDTO getOrganization(Ii id);
+    OrganizationDTO getOrganization(Ii id) throws NullifiedEntityException;
 
     /**
      * Remote API to create an Organization.

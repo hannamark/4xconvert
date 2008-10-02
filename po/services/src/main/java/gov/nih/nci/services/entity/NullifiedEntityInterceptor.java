@@ -80,144 +80,129 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.correlation;
+package gov.nih.nci.services.entity;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
-import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
+import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceBean;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 
+import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 
 /**
- * Generic superclass for correlation services.
- * @param <T> type
- * @param <CR> the CR type for T
- * @param <DTO> the dto type for T
+ * Interceptor to catch any NULLIFIED entities and throw a NullifiedEntityException.
  */
-public abstract class AbstractCorrelationServiceBean
-        <T extends Correlation, CR extends CorrelationChangeRequest<T>, DTO extends CorrelationDto> {
-
+public class NullifiedEntityInterceptor {
     /**
-     * client role.
+     * Ensures that no object(s) returned have a NULLIFIED entity status.
+     * 
+     * @param invContext the method context
+     * @return the method result
+     * @throws Exception if invoking the method throws an exception.
      */
-    protected static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
-
-    private static final String UNCHECKED = "unchecked";
-    abstract GenericStructrualRoleServiceLocal<T> getLocalService();
-    abstract GenericStructrualRoleCRServiceLocal<CR> getLocalCRService();
-    abstract IdConverter getIdConverter();
-    abstract SearchCriteria<T> getSearchCriteria(T example);
-
-    /**
-     * TODO.
-     * @param dto dto
-     * @return identifier
-     * @throws EntityValidationException on error
-     */
-    @SuppressWarnings(UNCHECKED)
-    public Ii createCorrelation(DTO dto) throws EntityValidationException {
-        T po = (T) PoXsnapshotHelper.createModel(dto);
-        return getIdConverter().convertToIi(getLocalService().create(po));
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings(UNCHECKED)
-    public DTO getCorrelation(Ii id) throws NullifiedRoleException {
-        T bo = getLocalService().getById(IiConverter.convertToLong(id));
-        return (DTO) PoXsnapshotHelper.createSnapshot(bo);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings(UNCHECKED)
-    public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
-        Set<Long> longIds = new HashSet<Long>();
-        for (Ii id : ids) {
-            longIds.add(IiConverter.convertToLong(id));
+    @AroundInvoke
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public Object checkForNullified(InvocationContext invContext) throws Exception {
+        // make the call to the underlying method. This method (checkForNullified) wraps the intended method.
+        Object returnValue = invContext.proceed();
+        if (returnValue instanceof Collection) {
+            handleCollection(invContext, (Collection) returnValue);
+        } else if (returnValue instanceof PersonDTO) {
+            handlePersonDTO(invContext, (PersonDTO) returnValue);
+        } else if (returnValue instanceof OrganizationDTO) {
+            handleOrgDTO(invContext, (OrganizationDTO) returnValue);
         }
-        List<T> hcps = getLocalService().getByIds(longIds.toArray(new Long[longIds.size()]));
-        return PoXsnapshotHelper.createSnapshotList(hcps);
+
+        return returnValue;
     }
 
-    /**
-     * @param dto dto to convert
-     * @return validation errors
-     */
-    @SuppressWarnings(UNCHECKED)
-    public Map<String, String[]> validate(DTO dto) {
-        T hcpBo = (T) PoXsnapshotHelper.createModel(dto);
-        return getLocalService().validate(hcpBo);
-    }
-
-    /**
-     * @param dto query by example dto
-     * @return list of matching dtos
-     */
     @SuppressWarnings("unchecked")
-    public List<DTO> search(DTO dto) {
-        T model = (T) PoXsnapshotHelper.createModel(dto);
-        List<T> search = getLocalService().search(getSearchCriteria(model));
-        return PoXsnapshotHelper.createSnapshotList(search);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public void updateCorrelation(DTO proposedState) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
-        T target = getLocalService().getById(pId);
-        CR cr = newCR(target);
-        copyIntoAbstractModel(proposedState, cr);
-        cr.setId(null);
-        if (cr.getStatus() != target.getStatus()) {
-            throw new IllegalArgumentException("use updateCorrelationStatus() to update the status property");
+    private void handleCollection(InvocationContext invContext, Collection collection) throws NullifiedEntityException {
+        if (collection == null) {
+            return;
         }
-        getLocalCRService().create(cr);
+        Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+        for (Object object : collection) {
+            Entry<Ii, Ii> entry = handleCollectionElement(invContext, object);
+            if (entry != null) {
+                nullifiedEntities.put(entry.getKey(), entry.getValue());
+            }
+        }
+        if (!nullifiedEntities.isEmpty()) {
+            throw new NullifiedEntityException(nullifiedEntities);
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
-        Long pId = IiConverter.convertToLong(targetHCP);
-        T target = getLocalService().getById(pId);
-        // lazy way to clone with stripped hibernate IDs.
-        DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
-        CR cr = newCR(target);
-        copyIntoAbstractModel(tmp, cr);
-        cr.setId(null);
-        cr.setStatus(CdConverter.convertToRoleStatus(statusCode));
-        getLocalCRService().create(cr);
+    private Entry<Ii, Ii> handleCollectionElement(InvocationContext invContext, Object element) {
+        Entry<Ii, Ii> entry = null;
+        if (element instanceof PersonDTO) {
+            entry = handle(invContext, (PersonDTO) element);
+        } else if (element instanceof OrganizationDTO) {
+            entry = handle(invContext, (OrganizationDTO) element);
+        }
+        return entry;
     }
 
-    abstract CR newCR(T t);
-    abstract void copyIntoAbstractModel(DTO proposedState, CR cr);
+    private void handleOrgDTO(InvocationContext invContext, OrganizationDTO dto) throws NullifiedEntityException {
+        Entry<Ii, Ii> entry = handle(invContext, dto);
+        if (entry != null) {
+            throw new NullifiedEntityException(entry.getKey(), entry.getValue());
+        }
+    }
 
+    private Entry<Ii, Ii> handle(InvocationContext invContext, OrganizationDTO dto) {
+        EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
+        if (EntityStatus.NULLIFIED.equals(status)) {
+            OrganizationEntityServiceBean bean = (OrganizationEntityServiceBean) invContext.getTarget();
+            Organization org = bean.getOrganizationServiceBean()
+                    .getById(IiConverter.convertToLong(dto.getIdentifier()));
+
+            Ii duplicateOfIi = null;
+            if (org.getDuplicateOf() != null) {
+                IdConverter idConverter = IdConverterRegistry.find(Organization.class);
+                duplicateOfIi = idConverter.convertToIi(org.getDuplicateOf().getId());
+            }
+            return new UnmodifiableMapEntry(dto.getIdentifier(), duplicateOfIi);
+        }
+        return null;
+    }
+
+    private void handlePersonDTO(InvocationContext invContext, PersonDTO dto) throws NullifiedEntityException {
+        Entry<Ii, Ii> entry = handle(invContext, dto);
+        if (entry != null) {
+            throw new NullifiedEntityException(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private Entry<Ii, Ii> handle(InvocationContext invContext, PersonDTO dto) {
+        EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
+        if (EntityStatus.NULLIFIED.equals(status)) {
+            PersonEntityServiceBean bean = (PersonEntityServiceBean) invContext.getTarget();
+            Person person = bean.getPersonServiceBean().getById(IiConverter.convertToLong(dto.getIdentifier()));
+
+            Ii duplicateOfIi = null;
+            if (person.getDuplicateOf() != null) {
+                IdConverter idConverter = IdConverterRegistry.find(Person.class);
+                duplicateOfIi = idConverter.convertToIi(person.getDuplicateOf().getId());
+            }
+            return new UnmodifiableMapEntry(dto.getIdentifier(), duplicateOfIi);
+        }
+        return null;
+    }
 }

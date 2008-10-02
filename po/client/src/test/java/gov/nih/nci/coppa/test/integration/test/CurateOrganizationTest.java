@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
@@ -60,10 +61,39 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTty();
         verifyUrl();
 
-        saveAsCurated(id);
+        saveAsActive(id);
     }
 
-    public void testCurateNewOrgThenCurateAfterRemoteUpdate() throws Exception {
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToActive() throws Exception {
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+        
+        saveAsActive(id);
+    }
+    
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullify() throws Exception {
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+        
+        saveAsNullified(id);
+        
+        
+        /* Verify PO-469 */
+        try {
+            OrganizationDTO organization = getOrgService().getOrganization(id);
+            fail("Expected NullifiedEntityException for Ii.extension="+id.getExtension());
+        } catch (NullifiedEntityException e) {
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            assertEquals(1, nullifiedEntities.keySet().size());
+            assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
+        }
+    }
+
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToInactive() throws Exception {
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+        
+        saveAsInactive(id);
+    }
+    
+    private Ii curateNewOrgThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException {
         // create a new org via remote API.
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X',10);
@@ -90,7 +120,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTty();
         verifyUrl();
         
-        saveAsCurated(id);
+        saveAsActive(id);
         
         OrganizationDTO proposedState = remoteGetOrganization(id);
         String newCrDescription = "a realistic description";
@@ -108,12 +138,23 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         String crDescription = selenium.getText("wwctrl_curateOrgCrForm_cr_description");
         assertEquals(crDescription, crDescription);
         selenium.type("curateOrgForm_organization_description", crDescription);
-        
-        saveAsCurated(id);
+        return id;
     }
-
-    private void saveAsCurated(Ii id) {
+    
+    private void saveAsActive(Ii id) {
         selenium.select("curateOrgForm_organization_statusCode", "label=ACTIVE");
+        clickAndWait("//a[@id='save_button']/span/span");
+        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
+    }
+    
+    private void saveAsInactive(Ii id) {
+        selenium.select("curateOrgForm_organization_statusCode", "label=INACTIVE");
+        clickAndWait("//a[@id='save_button']/span/span");
+        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
+    }
+    
+    private void saveAsNullified(Ii id) {
+        selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
         clickAndWait("//a[@id='save_button']/span/span");
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
@@ -163,7 +204,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTty();
         verifyUrl();
 
-        saveAsCurated(id);
+        saveAsActive(id);
     }
 
     private void verifyPostalAddress() {
@@ -290,7 +331,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         return org;
     }
 
-    private OrganizationDTO remoteGetOrganization(Ii id) {
+    private OrganizationDTO remoteGetOrganization(Ii id) throws NullifiedEntityException {
         return getOrgService().getOrganization(id);
     }
 
