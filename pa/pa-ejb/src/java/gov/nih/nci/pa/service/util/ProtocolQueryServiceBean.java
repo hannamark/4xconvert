@@ -325,8 +325,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             }
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
                     .getNciIdentifier())) {
-                where.append(" and sp.identifier = '").append(
-                        studyProtocolQueryCriteria.getNciIdentifier() + "'");
+                where.append(" and upper(sp.identifier)  like '%" 
+                       + studyProtocolQueryCriteria.getNciIdentifier().toUpperCase().trim().replaceAll("'", "''")
+                       + "%'");
             }
 
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
