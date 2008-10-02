@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -100,6 +101,7 @@ public class TrialFundingAction extends ActionSupport {
             StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();            
 
             studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
+            studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
             studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
                     trialFundingWebDTO.getFundingMechanismCode()));
             studyResoureDTO.setFundingTypeCode(
@@ -116,6 +118,7 @@ public class TrialFundingAction extends ActionSupport {
             PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
 
             query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             return QUERY_RESULT;    
 
         } catch (Exception e) {
@@ -173,6 +176,7 @@ public class TrialFundingAction extends ActionSupport {
             PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
 
             query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             return QUERY_RESULT;    
 
         } catch (Exception e) {
@@ -206,6 +210,7 @@ public class TrialFundingAction extends ActionSupport {
             PaRegistry.getStudyResourcingService().deleteStudyResourceByID(studyResoureDTO);
 
             query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
             return QUERY_RESULT;    
 
         } catch (Exception e) {
