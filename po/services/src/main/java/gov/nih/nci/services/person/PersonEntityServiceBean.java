@@ -155,9 +155,6 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public PersonDTO getPerson(Ii id) throws NullifiedEntityException {
         Person perBO = perService.getById(IiConverter.convertToLong(id));
-        if (EntityStatus.NULLIFIED.equals(perBO.getStatusCode())) {
-            throw new NullifiedEntityException(id);
-        }
         return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
     }
 
