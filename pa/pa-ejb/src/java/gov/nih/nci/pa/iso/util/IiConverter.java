@@ -41,6 +41,7 @@ public class IiConverter {
             ii.setNullFlavor(NullFlavor.NI);
         } else {
             ii.setExtension(str);
+            ii.setRoot("UID.for.nci.entity.organization");
         }
         return ii;
         

@@ -87,7 +87,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public OrganizationEntityServiceRemote getPoOrganizationEntityService() {
         String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
                 + "/po/OrganizationEntityServiceBean/remote";
-        return (OrganizationEntityServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
     /**

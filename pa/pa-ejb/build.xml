@@ -130,8 +130,9 @@
               tofile="${pa-ejb.build.resourceDir.0}/jndi.properties"
               overwrite="true">
             <filterset>
-                <filter token="jboss.server.jndi.port" 
-                        value="${jboss.server.jndi.port}" />
+                <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+            	<filter token="po.username" value="${po.username}" />
+            	<filter token="po.pass" value="${po.pass}" />
             </filterset>
         </copy>
     </target>

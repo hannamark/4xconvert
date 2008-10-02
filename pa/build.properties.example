@@ -9,3 +9,5 @@ test.schema.showsql=false
 test.java.naming.provider=localhost
 po.server.name=localhost
 po.port.number=1099
+po.username=ejbclient
+po.pass=pass
