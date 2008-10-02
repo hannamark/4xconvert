@@ -219,6 +219,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
                        + " from StudyResourcing sr "
                        + " join sr.studyProtocol sp "
                        + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
+                       + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.FALSE + "'"
                        + " and sr.activeIndicator =  '" + Boolean.TRUE + "'";
 
            LOG.info(" query getstudyResourceByStudyProtocol = " + hql);
