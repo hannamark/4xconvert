@@ -99,17 +99,16 @@ public class NCISpecificInformationAction extends ActionSupport {
      * @return res
      */    
     public String update() {
-        boolean error = false;
         // Step1 : check for any errors
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
-            addActionError(getText("error.studyProtocol.accrualReportingMethodCode"));
-            error = true;
+            addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",
+                    getText("error.studyProtocol.accrualReportingMethodCode"));
         }
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())) {
-            addActionError(getText("error.studyProtocol.summaryFourFundingCategoryCode"));
-            error = true;
+            addFieldError("nciSpecificInformationWebDTO.summaryFourFundingCategoryCode",
+                    getText("error.studyProtocol.summaryFourFundingCategoryCode"));            
         }
-        if (error) {
+        if (hasFieldErrors()) {
             return ERROR;
         }
         // Step2 : retrieve the studyprotocol
@@ -174,6 +173,7 @@ public class NCISpecificInformationAction extends ActionSupport {
                 summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
                 PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
             }
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
             addActionError(e.getMessage());
             return ERROR;
