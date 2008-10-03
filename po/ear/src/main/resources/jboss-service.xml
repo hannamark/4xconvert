@@ -8,16 +8,384 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
         <depends optional-attribute-name="LoginConfigService">jboss.security:service=XMLLoginConfig</depends>
         <depends optional-attribute-name="SecurityManagerService">jboss.security:service=JaasSecurityManager</depends>
     </mbean>
-   <mbean code="org.jboss.logging.Log4jService"
-      name="jboss.system:type=POLog4jService,service=Logging"
-      xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
-      <attribute name="ConfigurationURL">resource:po-log4j.xml</attribute>
-      <!-- Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8
-      this needs to be set to avoid a possible deadlock on exception at the
-      appender level. See bug#696819.
+	<mbean code="org.jboss.logging.Log4jService" name="jboss.system:type=POLog4jService,service=POLogging"
+		xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
+		<attribute name="ConfigurationURL">resource:po-log4j.xml
+		</attribute>
+		<!--
+			Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8 this
+			needs to be set to avoid a possible deadlock on exception at the appender
+			level. See bug#696819.
+		-->
+		<attribute name="Log4jQuietMode">true</attribute>
+        <!-- How frequently in seconds the ConfigurationURL is checked for changes -->
+		<attribute name="RefreshPeriod">60</attribute>
+	</mbean>
+    
+    <!--
+    ################################# START deploy\jms\jbossmq-destinations-service.xml ############################# 
+     -->   
+    <mbean code="org.jboss.mq.server.jmx.Topic" name="jboss.mq.destination:service=POTopic,name=PODurableTopic">
+        <depends optional-attribute-name="DestinationManager">jboss.mq:service=PODestinationManager
+        </depends>
+        <depends optional-attribute-name="SecurityManager">jboss.mq:service=POSecurityManager
+        </depends>
+        <attribute name="SecurityConf">
+            <security>
+                <!--
+                    <role name="guest" read="true" write="true"/> 
+                    <role name="publisher" read="true" write="true" create="false"/> 
+                    <role name="durpublisher" read="true" write="true" create="true"/>
+                -->
+                <role name="Subscriber" read="true" write="false" create="true" />
+                <role name="Publisher" read="true" write="true" create="false" />
+                <role name="guest" read="false" write="false" create="false" />
+            </security>
+        </attribute>
+    </mbean>
+  
+    <!--
+    ################################# START deploy\jms\jbossmq-service.xml ############################# 
+     -->  
+    <!-- ==================================================================== -->
+    <!-- JBossMQ Interceptor chain configuration                              -->
+    <!-- ==================================================================== -->
+    <!-- To tune performance, you can have the Invoker skip over the TracingInterceptor -->
+    <!-- and/or the SecurityManager, but then you loose the ability to trace and/or enforce security. -->
+    <mbean code="org.jboss.mq.server.jmx.Invoker" name="jboss.mq:service=POInvoker">
+      <depends optional-attribute-name="NextInterceptor">jboss.mq:service=POTracingInterceptor</depends>
+      <depends>jboss:service=Naming</depends>
+    </mbean>
+    
+    <mbean code="org.jboss.mq.server.jmx.InterceptorLoader" name="jboss.mq:service=POTracingInterceptor">
+      <attribute name="InterceptorClass">org.jboss.mq.server.TracingInterceptor</attribute>
+      <depends optional-attribute-name="NextInterceptor">jboss.mq:service=POSecurityManager</depends>
+    </mbean>
+    
+    <mbean code="org.jboss.mq.security.SecurityManager" name="jboss.mq:service=POSecurityManager">
+      <attribute name="DefaultSecurityConfig">
+        <security>
+          <role name="guest" read="true" write="true" create="true"/>
+        </security>
+      </attribute>
+      <attribute name="SecurityDomain">java:/jaas/jbossmq</attribute>
+      <depends optional-attribute-name="NextInterceptor">jboss.mq:service=PODestinationManager</depends>
+    </mbean>
+    
+    <!--
+       | The ClientMonitorInterceptor disconnects clients that have been idle for to long.
+       | This interceptor is not enabled by default since the server might disconnect clients
+       | when the it is under high load.
+     -->
+    <!--
+    <mbean code="org.jboss.mq.server.jmx.ClientMonitorInterceptor" name="jboss.mq:service=ClientMonitorInterceptor">
+      <attribute name="ClientTimeout">80000</attribute>
+      <depends optional-attribute-name="NextInterceptor">jboss.mq:service=DestinationManager</depends>
+    </mbean>
+    -->
+    
+    <!-- A Thread pool service -->
+    <mbean code="org.jboss.util.threadpool.BasicThreadPool"
+       name="jboss.mq:service=POThreadPool">
+       <attribute name="Name">JMSThread</attribute>
+       <attribute name="ThreadGroupName">JBossMQ Server Threads</attribute>
+       <!-- The max number of threads in the pool -->
+       <attribute name="MaximumPoolSize">10</attribute>
+       <!-- The max number of tasks before the queue is full -->
+       <attribute name="MaximumQueueSize">1000</attribute>
+       <!-- The behavior of the pool when a task is added and the queue is full.
+       abort - a RuntimeException is thrown
+       run - the calling thread executes the task
+       wait - the calling thread blocks until the queue has room
+       discard - the task is silently discarded without being run
+       discardOldest - check to see if a task is about to complete and enque
+          the new task if possible, else run the task in the calling thread
+       -->
+       <attribute name="BlockingMode">run</attribute>
+    </mbean>
+    
+    <!-- ==================================================================== -->
+    <!-- System Destinations                                                  -->
+    <!-- ==================================================================== -->
+    
+    <!-- Dead Letter Queue -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+       name="jboss.mq.destination:service=Queue,name=PODLQ">
+      <depends optional-attribute-name="DestinationManager">jboss.mq:service=PODestinationManager</depends>
+      <depends optional-attribute-name="SecurityManager">jboss.mq:service=POSecurityManager</depends>
+    </mbean>     
+    
+    <!--
+    ################################# START deploy\jms\jms-ds.xml ############################# 
+     -->    
+    
+    <!-- ==================================================================== -->
+    <!-- JMS Stuff                                                            -->
+    <!-- ==================================================================== -->
+    
+    <!-- The JMS provider loader -->
+    <mbean code="org.jboss.jms.jndi.JMSProviderLoader"
+       name="jboss.mq:service=JMSProviderLoader,name=POJMSProvider">
+      <attribute name="ProviderName">POJMSProvider</attribute>
+      <attribute name="ProviderAdapterClass">
+        org.jboss.jms.jndi.JNDIProviderAdapter
+      </attribute>
+      <!-- The combined connection factory -->
+      <attribute name="FactoryRef">java:/POXAConnectionFactory</attribute>
+      <!-- The queue connection factory -->
+      <attribute name="QueueFactoryRef">java:/POXAConnectionFactory</attribute>
+      <!-- The topic factory -->
+      <attribute name="TopicFactoryRef">java:/POXAConnectionFactory</attribute>
+      <!-- Uncomment to use HAJNDI to access JMS
+      <attribute name="Properties">
+         java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+         java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+         java.naming.provider.url=localhost:1100
+      </attribute>
       -->
-      <attribute name="Log4jQuietMode">true</attribute>
-      <!-- How frequently in seconds the ConfigurationURL is checked for changes -->
-      <attribute name="RefreshPeriod">60</attribute>
-   </mbean>
+    </mbean>
+    
+    <!-- The server session pool for Message Driven Beans -->
+    <mbean code="org.jboss.jms.asf.ServerSessionPoolLoader"
+       name="jboss.mq:service=ServerSessionPoolMBean,name=POStdJMSPool">
+      <depends optional-attribute-name="XidFactory">jboss:service=XidFactory</depends>
+      <attribute name="PoolName">POStdJMSPool</attribute>
+      <attribute name="PoolFactoryClass">
+        org.jboss.jms.asf.StdServerSessionPoolFactory
+      </attribute>
+    </mbean>
+    
+    <!-- JMS XA Resource adapter, use this to get transacted JMS in beans -->
+    <tx-connection-factory>
+      <jndi-name>JmsXA</jndi-name>
+      <xa-transaction/>
+      <rar-name>jms-ra.rar</rar-name>
+      <connection-definition>org.jboss.resource.adapter.jms.JmsConnectionFactory</connection-definition>
+      <config-property name="SessionDefaultType" type="java.lang.String">javax.jms.Topic</config-property>
+      <config-property name="JmsProviderAdapterJNDI" type="java.lang.String">java:/POJMSProvider</config-property>
+      <max-pool-size>20</max-pool-size>
+      <security-domain-and-application>JmsXARealm</security-domain-and-application>
+    </tx-connection-factory>    
+  
+  
+    <!--
+    ################################# START deploy\jms\jvm-il-service.xml ############################# 
+     -->    
+    <!-- JBossMQ in memory "communication -->
+    
+    <mbean code="org.jboss.mq.il.jvm.JVMServerILService"
+       name="jboss.mq:service=POInvocationLayer,type=JVM">
+      <depends optional-attribute-name="Invoker">jboss.mq:service=POInvoker</depends>
+      <attribute name="ConnectionFactoryJNDIRef">java:/POConnectionFactory</attribute>
+      <attribute name="XAConnectionFactoryJNDIRef">java:/POXAConnectionFactory</attribute>
+      <attribute name="PingPeriod">0</attribute>
+    </mbean>  
+    
+      <!--
+     ################################# START deploy\jms\uil2-service.xml ############################# 
+      -->     
+    
+    <!-- JBossMQ using the Unified Invocation Layer
+        All communication uses one socket connection -->
+    
+    <mbean code="org.jboss.mq.il.uil2.UILServerILService"
+       name="jboss.mq:service=POInvocationLayer,type=UIL2">
+    
+      <!-- The server chain -->
+     <depends optional-attribute-name="Invoker">jboss.mq:service=POInvoker</depends>
+     <!-- JNDI binding -->
+     <attribute name="ConnectionFactoryJNDIRef">POConnectionFactory</attribute>
+     <!-- JNDI binding for XA -->
+     <attribute name="XAConnectionFactoryJNDIRef">POXAConnectionFactory</attribute>
+     <!-- The bind address -->
+     <attribute name="BindAddress">${jboss.bind.address}</attribute>
+     <!-- The bind port -->
+     <attribute name="ServerBindPort">${jboss.mq:service.POInvocationLayer.type.UIL2.ServerBindPort}</attribute>
+     <!-- The ping period in millis -->
+     <attribute name="PingPeriod">60000</attribute>
+     <!-- Whether tcp/ip does not wait for buffer fills -->
+     <attribute name="EnableTcpNoDelay">true</attribute>
+     <!-- Used to disconnect the client on the serverside if there is no activity -->
+     <!-- Ensure this is greater than the ping period -->
+     <attribute name="ReadTimeout">120000</attribute>
+     <!-- Used to disconnect the client on the clientside if there is no activity -->
+     <!-- Ensure this is greater than the ping period -->
+     <attribute name="ClientReadTimeout">120000</attribute>
+     <!-- The size of the buffer (in bytes) wrapping the socket -->
+     <!-- The buffer is flushed after each request -->
+     <attribute name="BufferSize">2048</attribute>
+     <!-- Large messages may block the ping/pong -->
+     <!-- A pong is simulated after each chunk (in bytes) for both reading and writing -->
+     <!-- It must be larger than the buffer size -->
+      <attribute name="ChunkSize">1000000</attribute>
+    </mbean>
+    
+    <!-- Aliases UIL -> UIL2 for backwards compatibility 
+        the deprecated UIL deployment can be found in docs/examples/jca -->
+    <mbean code="org.jboss.naming.NamingAlias" name="jboss.mq:service=POInvocationLayer,type=UIL">
+       <attribute name="FromName">POUILConnectionFactory</attribute>
+       <attribute name="ToName">POConnectionFactory</attribute>
+       <depends>jboss:service=Naming</depends>
+    </mbean>
+    <mbean code="org.jboss.naming.NamingAlias" name="jboss.mq:service=POInvocationLayer,type=UILXA">
+       <attribute name="FromName">POUILXAConnectionFactory</attribute>
+       <attribute name="ToName">POXAConnectionFactory</attribute>
+       <depends>jboss:service=Naming</depends>
+    </mbean>
+    <mbean code="org.jboss.naming.NamingAlias"
+       name="jboss.mq:service=POInvocationLayer,type=UIL2,alias=UIL2ConnectionFactory">
+       <attribute name="FromName">POUIL2ConnectionFactory</attribute>
+       <attribute name="ToName">POConnectionFactory</attribute>
+       <depends>jboss:service=Naming</depends>
+    </mbean>
+    <mbean code="org.jboss.naming.NamingAlias"
+       name="jboss.mq:service=POInvocationLayer,type=UIL2XA,alias=UIL2XAConnectionFactory">
+       <attribute name="FromName">POUIL2XAConnectionFactory</attribute>
+       <attribute name="ToName">POXAConnectionFactory</attribute>
+       <depends>jboss:service=Naming</depends>
+    </mbean>
+    
+    <!--
+       Two JNDI bindings that act like jms client connections remotely
+       but have j2ee defined semantics inside JBoss
+    -->
+    <mbean code="org.jboss.naming.LinkRefPairService"
+           name="jboss.jms:alias=POQueueConnectionFactory">
+       <attribute name="JndiName">POQueueConnectionFactory</attribute>
+       <attribute name="RemoteJndiName">POConnectionFactory</attribute>
+       <attribute name="LocalJndiName">java:/POJmsXA</attribute>
+       <depends>jboss:service=Naming</depends>
+    </mbean>
+    <mbean code="org.jboss.naming.LinkRefPairService"
+           name="jboss.jms:alias=POTopicConnectionFactory">
+       <attribute name="JndiName">POTopicConnectionFactory</attribute>
+       <attribute name="RemoteJndiName">POConnectionFactory</attribute>
+       <attribute name="LocalJndiName">java:/POJmsXA</attribute>
+       <depends>jboss:service=Naming</depends>
+    </mbean>
+   
+    <!--
+    ################################# START docs\examples\jms\postgres-jdbc2-service.xml ############################# 
+     -->        
+
+    <!-- ==================================================================== -->
+    <!-- Persistence and caching using Postgres                               -->
+    <!-- IMPORTANT: Remove hsqldb-jdbc2-service.xml                           -->
+    <!-- ==================================================================== -->
+    
+    <!--
+       | The destination manager is the core service within JBossMQ
+    -->
+    <mbean code="org.jboss.mq.server.jmx.DestinationManager" name="jboss.mq:service=PODestinationManager">
+      <depends optional-attribute-name="MessageCache">jboss.mq:service=POMessageCache</depends>
+      <depends optional-attribute-name="PersistenceManager">jboss.mq:service=POPersistenceManager</depends>
+      <depends optional-attribute-name="StateManager">jboss.mq:service=POStateManager</depends>
+    </mbean>
+    
+    <!--
+       | The MessageCache decides where to put JBossMQ message that
+       | are sitting around waiting to be consumed by a client.
+       |
+       | The memory marks are in Megabytes.  Once the JVM memory usage hits
+       | the high memory mark, the old messages in the cache will start getting
+       | stored in the DataDirectory.  As memory usage gets closer to the
+       | Max memory mark, the amount of message kept in the memory cache aproaches 0.
+     -->
+    <mbean code="org.jboss.mq.server.MessageCache"
+       name="jboss.mq:service=POMessageCache">
+      <attribute name="HighMemoryMark">50</attribute>
+      <attribute name="MaxMemoryMark">60</attribute>
+      <attribute name="CacheStore">jboss.mq:service=POPersistenceManager</attribute>
+    </mbean>
+    
+    <!-- The PersistenceManager is used to store messages to disk. -->
+    <!-- 
+       | The jdbc2 PersistenceManager is the new improved JDBC implementation.
+       | This implementation allows you to control how messages are stored in 
+       | the database.
+       | 
+       | This jdbc2 PM configuration has was supplied by Stephane Nicoll in the forums as an example for Postgres
+     -->
+    <mbean code="org.jboss.mq.pm.jdbc2.PersistenceManager"
+       name="jboss.mq:service=POPersistenceManager">
+      <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=po-ds</depends>
+      <attribute name="SqlProperties">
+        BLOB_TYPE=BYTES_BLOB
+        INSERT_TX = INSERT INTO JMS_TRANSACTIONS (TXID) values(?)
+        INSERT_MESSAGE = INSERT INTO JMS_MESSAGES (MESSAGEID, DESTINATION, MESSAGEBLOB, TXID, TXOP) VALUES(?,?,?,?,?)
+        SELECT_ALL_UNCOMMITED_TXS = SELECT TXID FROM JMS_TRANSACTIONS
+        SELECT_MAX_TX = SELECT MAX(TXID) FROM (SELECT MAX(TXID) AS TXID FROM JMS_TRANSACTIONS UNION SELECT MAX(TXID) AS TXID FROM JMS_MESSAGES) AS TXID
+        DELETE_ALL_TX = DELETE FROM JMS_TRANSACTIONS
+        SELECT_MESSAGES_IN_DEST = SELECT MESSAGEID, MESSAGEBLOB FROM JMS_MESSAGES WHERE DESTINATION=?
+        SELECT_MESSAGE_KEYS_IN_DEST = SELECT MESSAGEID FROM JMS_MESSAGES WHERE DESTINATION=?
+        SELECT_MESSAGE = SELECT MESSAGEID, MESSAGEBLOB FROM JMS_MESSAGES WHERE MESSAGEID=? AND DESTINATION=?
+        MARK_MESSAGE = UPDATE JMS_MESSAGES SET TXID=?, TXOP=? WHERE MESSAGEID=? AND DESTINATION=?
+        UPDATE_MESSAGE = UPDATE JMS_MESSAGES SET MESSAGEBLOB=? WHERE MESSAGEID=? AND DESTINATION=?
+        UPDATE_MARKED_MESSAGES = UPDATE JMS_MESSAGES SET TXID=?, TXOP=? WHERE TXOP=?
+        UPDATE_MARKED_MESSAGES_WITH_TX = UPDATE JMS_MESSAGES SET TXID=?, TXOP=? WHERE TXOP=? AND TXID=?
+        DELETE_MARKED_MESSAGES_WITH_TX = DELETE FROM JMS_MESSAGES WHERE TXID IN (SELECT TXID FROM JMS_TRANSACTIONS) AND TXOP=?
+        DELETE_TX = DELETE FROM JMS_TRANSACTIONS WHERE TXID = ?
+        DELETE_MARKED_MESSAGES = DELETE FROM JMS_MESSAGES WHERE TXID=? AND TXOP=?
+        DELETE_TEMPORARY_MESSAGES = DELETE FROM JMS_MESSAGES WHERE TXOP='T'
+        DELETE_MESSAGE = DELETE FROM JMS_MESSAGES WHERE MESSAGEID=? AND DESTINATION=?
+        CREATE_MESSAGE_TABLE = CREATE TABLE JMS_MESSAGES (MESSAGEID INTEGER NOT NULL, DESTINATION VARCHAR(150) NOT NULL, TXID INTEGER, TXOP CHAR(1), MESSAGEBLOB BYTEA, PRIMARY KEY (MESSAGEID, DESTINATION))
+        CREATE_IDX_MESSAGE_TXOP_TXID = CREATE INDEX JMS_MESSAGES_TXOP_TXID ON JMS_MESSAGES (TXOP, TXID)
+        CREATE_IDX_MESSAGE_DESTINATION = CREATE INDEX JMS_MESSAGES_DESTINATION ON JMS_MESSAGES (DESTINATION)
+        CREATE_TX_TABLE = CREATE TABLE JMS_TRANSACTIONS ( TXID INTEGER, PRIMARY KEY (TXID) )
+        CREATE_TABLES_ON_STARTUP = TRUE
+      </attribute>
+      <!-- Uncomment to override the transaction timeout for recovery per queue/subscription, in seconds -->
+      <!--attribute name="RecoveryTimeout">0</attribute-->
+      <!-- The number of blobs to load at once during message recovery -->
+      <attribute name="RecoverMessagesChunk">0</attribute>
+    </mbean> 
+  
+   
+    <!--
+    ################################# START deploy\jms\hsqldb-jdbc-state-service.xml ############################# 
+     -->    
+  
+    <!-- ==================================================================== -->
+    <!-- JBossMQ State Management using HSQLDB                                -->
+    <!-- See docs/examples/jms for other configurations                       -->
+    <!-- ==================================================================== -->
+     
+    <!-- A Statemanager that stores state in the database -->
+    <mbean code="org.jboss.mq.sm.jdbc.JDBCStateManager"
+            name="jboss.mq:service=POStateManager">
+      <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=po-ds</depends>
+      <attribute name="SqlProperties">
+        CREATE_TABLES_ON_STARTUP = TRUE
+        CREATE_USER_TABLE = CREATE TABLE JMS_USERS (USERID VARCHAR(32) NOT NULL, PASSWD VARCHAR(32) NOT NULL, \
+                                                   CLIENTID VARCHAR(128), PRIMARY KEY(USERID))
+        CREATE_ROLE_TABLE = CREATE TABLE JMS_ROLES (ROLEID VARCHAR(32) NOT NULL, USERID VARCHAR(32) NOT NULL, \
+                                                   PRIMARY KEY(USERID, ROLEID))
+        CREATE_SUBSCRIPTION_TABLE = CREATE TABLE JMS_SUBSCRIPTIONS (CLIENTID VARCHAR(128) NOT NULL, \
+                                                   SUBNAME VARCHAR(128) NOT NULL, TOPIC VARCHAR(255) NOT NULL, \
+                                                   SELECTOR VARCHAR(255), PRIMARY KEY(CLIENTID, SUBNAME))
+        GET_SUBSCRIPTION = SELECT TOPIC, SELECTOR FROM JMS_SUBSCRIPTIONS WHERE CLIENTID=? AND SUBNAME=?
+        LOCK_SUBSCRIPTION = SELECT TOPIC, SELECTOR FROM JMS_SUBSCRIPTIONS WHERE CLIENTID=? AND SUBNAME=?
+        GET_SUBSCRIPTIONS_FOR_TOPIC = SELECT CLIENTID, SUBNAME, SELECTOR FROM JMS_SUBSCRIPTIONS WHERE TOPIC=?
+        INSERT_SUBSCRIPTION = INSERT INTO JMS_SUBSCRIPTIONS (CLIENTID, SUBNAME, TOPIC, SELECTOR) VALUES(?,?,?,?)
+        UPDATE_SUBSCRIPTION = UPDATE JMS_SUBSCRIPTIONS SET TOPIC=?, SELECTOR=? WHERE CLIENTID=? AND SUBNAME=?
+        REMOVE_SUBSCRIPTION = DELETE FROM JMS_SUBSCRIPTIONS WHERE CLIENTID=? AND SUBNAME=?
+        GET_USER_BY_CLIENTID = SELECT USERID, PASSWD, CLIENTID FROM JMS_USERS WHERE CLIENTID=?
+        GET_USER = SELECT PASSWD, CLIENTID FROM JMS_USERS WHERE USERID=?
+        POPULATE.TABLES.01 = INSERT INTO JMS_USERS (USERID, PASSWD) VALUES ('guest', 'guest')
+        POPULATE.TABLES.02 = INSERT INTO JMS_USERS (USERID, PASSWD) VALUES ('j2ee', 'j2ee')
+        POPULATE.TABLES.03 = INSERT INTO JMS_USERS (USERID, PASSWD, CLIENTID) VALUES ('john', 'needle', 'DurableSubscriberExample')
+        POPULATE.TABLES.04 = INSERT INTO JMS_USERS (USERID, PASSWD) VALUES ('nobody', 'nobody')
+        POPULATE.TABLES.05 = INSERT INTO JMS_USERS (USERID, PASSWD) VALUES ('dynsub', 'dynsub')
+        POPULATE.TABLES.06 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('guest','guest')
+        POPULATE.TABLES.07 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('j2ee','guest')
+        POPULATE.TABLES.08 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('john','guest')
+        POPULATE.TABLES.09 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('subscriber','john')
+        POPULATE.TABLES.10 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('publisher','john')
+        POPULATE.TABLES.11 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('publisher','dynsub')
+        POPULATE.TABLES.12 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('durpublisher','john')
+        POPULATE.TABLES.13 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('durpublisher','dynsub')
+        POPULATE.TABLES.14 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('noacc','nobody')
+      </attribute>
+    </mbean>  
+      
 </server>
