@@ -24,6 +24,10 @@
         <action name="searchTrial" class="gov.nih.nci.registry.action.SearchTrialAction">
             <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
+        </action>
+        <action name="submitTrial" class="gov.nih.nci.registry.action.SubmitTrialAction">
+            <interceptor-ref name="nci-commonsParams" />
+            <result>/WEB-INF/jsp/submitTrial.jsp</result>
         </action> 
     </package>
 </struts>
