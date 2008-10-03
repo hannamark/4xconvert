@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -105,4 +106,9 @@ public interface ServiceLocator {
      * @return StudySiteAccrualStatusServiceRemote
      */
     StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService();
+    /**
+     * 
+     * @return DocumentServiceRemote
+     */
+    DocumentServiceRemote getDocumentService();
 }

@@ -2,6 +2,7 @@ package gov.nih.nci.pa.util;
 
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -168,5 +169,12 @@ public final class PaRegistry {
     */
     public static StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
     return getInstance().getServiceLocator().getStudySiteAccrualStatusService();
+    }
+    /**
+     * 
+     * @return DocumentServiceRemote
+     */
+    public static DocumentServiceRemote getDocumentService() {
+        return getInstance().getServiceLocator().getDocumentService();
     }
 }

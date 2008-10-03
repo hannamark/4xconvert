@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -134,6 +135,12 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
         // TODO Auto-generated method stub
+        return null;
+    }
+    /** 
+     * return DocumentServiceRemote
+     */
+    public DocumentServiceRemote getDocumentService() {
         return null;
     }
 }
