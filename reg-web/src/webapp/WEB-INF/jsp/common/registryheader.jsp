@@ -1,4 +1,4 @@
-<%@ page import="gov.nih.nci.pa.util.Constants" %>
+<%@ page import="gov.nih.nci.registry.util.Constants" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="header">
    <div id="logo"><a href="./"><img src="<%=request.getContextPath()%>/images/logo_registry.gif" width="264" height="43" alt="Registry | NCI Registry" /></a></div>
