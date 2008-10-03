@@ -29,6 +29,7 @@
 		        		<li><a href="studyOverallStatus.action" >Trial Status</a></li>
 		        		<li><a href="trialFundingquery.action" >Trial Funding</a></li>
                         <li><a href="participatingOrganizations.action" >Participating Sites</a></li>
+                        <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
 		     		</ul>
         		</li>
         	</ul>
