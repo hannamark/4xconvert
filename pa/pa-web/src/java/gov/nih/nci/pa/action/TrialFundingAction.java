@@ -59,7 +59,8 @@ public class TrialFundingAction extends ActionSupport {
                   trialFundingList.add(new TrialFundingWebDTO(dto));
               }
             } else {
-                addActionError(getText("error.trialFunding.noRecords"));
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+                        getText("error.trialDocument.noRecords"));
             }
             return QUERY_RESULT;    
 
