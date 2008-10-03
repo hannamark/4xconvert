@@ -4,14 +4,14 @@
 
 		<li class="stdnav"><div>Protocol Abstraction</div>
 			<ul>
-				<li><a href="#">Home</a></li>			
-				<li><a href="studyProtocolquery.action" >Protocol Search</a></li>			
+			<!--	<li><a href="#">Home</a></li> -->			
+				<li><a href="studyProtocolquery.action" >Trial Search</a></li>			
 <!--        		<c:if test="${sessionScope.loggedUserName  != null}"> -->
         		
 <!--        		</c:if> -->
 
-				<li><a href="#">Help</a></li>
-				<li><a href="#">Logout</a></li>
+<!--				<li><a href="#">Help</a></li>
+				<li><a href="logout.action">Logout</a></li> -->
         	</ul>
         </li>
         <c:if test="${sessionScope.trialSummary  != null}">
@@ -28,7 +28,7 @@
 		        		<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
 		        		<li><a href="studyOverallStatus.action" >Trial Status</a></li>
 		        		<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                        <li><a href="participatingOrganizations.action" >Participating Organizations</a></li>
+                        <li><a href="participatingOrganizations.action" >Participating Sites</a></li>
 		     		</ul>
         		</li>
         	</ul>
