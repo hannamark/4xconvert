@@ -6,6 +6,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyPaService;
 
 import java.util.List;
 
@@ -18,36 +19,11 @@ import javax.ejb.Remote;
  *        holder, NCI.
  */
 @Remote
-public interface PAHealthCareFacilityServiceRemote {
+public interface PAHealthCareFacilityServiceRemote extends StudyPaService<HealthCareFacilityDTO> {
     /**
-     * @param ii index
-     * @return HealthCareFacilityDTO
-     * @throws PAException PAException
-     */ 
-    HealthCareFacilityDTO getHealthCareFacility(Ii ii)
-        throws PAException;
-
-    /**
-     * @param dto HealthCareFacilityDTO
-     * @return HealthCareFacilityDTO
-     * @throws PAException PAException
+     * @param organizationIi pa index of Organization
+     * @return list of HealthCareFacilityDTO
+     * @throws PAException exception
      */
-    HealthCareFacilityDTO createHealthCareFacility(
-            HealthCareFacilityDTO dto) throws PAException;
-
-    /**
-     * @param dto HealthCareFacilityDTO
-     * @return HealthCareFacilityDTO
-     * @throws PAException PAException
-     */
-    HealthCareFacilityDTO updateHealthCareFacility(
-            HealthCareFacilityDTO dto) throws PAException;
-    
-    /**
-     * @param studyProtocolIi id of protocol
-     * @return list HealthCareFacilityDTO   
-     * @throws PAException on error 
-     */
-    List<HealthCareFacilityDTO> getHealthCareFacilityByStudyProtocol(
-            Ii studyProtocolIi) throws PAException;
+    List<HealthCareFacilityDTO> getByOrganization(Ii organizationIi) throws PAException;
 }

@@ -8,6 +8,7 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.iso.convert.HealthCareFacilityConverter;
 import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.AbstractStudyPaService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -29,20 +30,26 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-public class PAHealthCareFacilityServiceBean implements PAHealthCareFacilityServiceRemote {
+public class PAHealthCareFacilityServiceBean 
+        extends AbstractStudyPaService<HealthCareFacilityDTO> 
+        implements PAHealthCareFacilityServiceRemote {
+    
     private static final Logger LOG  = Logger.getLogger(PAHealthCareFacilityServiceBean.class);
-    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
+    
+    /**
+     * @return log4j Logger
+     */
+    @Override
+    protected Logger getLogger() { return LOG; }
 
     /**
      * @param ii index
      * @return HealthCareFacilityDTO
      * @throws PAException PAException
      */ 
-    public HealthCareFacilityDTO getHealthCareFacility(Ii ii)
-    throws PAException {
-        if (PAUtil.isIiNull(ii)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+    public HealthCareFacilityDTO get(Ii ii) throws PAException {
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
+            serviceError(" Ii should not be null ");
         }
         LOG.info("Entering getHealthCareFacility");
         Session session = null;
@@ -63,12 +70,12 @@ public class PAHealthCareFacilityServiceBean implements PAHealthCareFacilityServ
             queryList = query.list();
             
         }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving "
-                    + "StudyParticipation for pid = " + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving " 
+            serviceError(" Hibernate exception while retrieving "
                     + "StudyParticipation for pid = " + ii.getExtension() , hbe);
         }
-        
+        if (queryList.isEmpty()) {
+            serviceError("HealthCareFacility not found for Ii = " + IiConverter.convertToString(ii));
+        }
         HealthCareFacilityDTO result = HealthCareFacilityConverter.convertFromDomainToDTO(queryList.get(0));
 
         LOG.info("Leaving getHealthCareFacility");
@@ -79,28 +86,63 @@ public class PAHealthCareFacilityServiceBean implements PAHealthCareFacilityServ
      * @return HealthCareFacilityDTO
      * @throws PAException PAException
      */
-    public HealthCareFacilityDTO createHealthCareFacility(
+    public HealthCareFacilityDTO create(
             HealthCareFacilityDTO dto) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
+        if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
+            serviceError(" Update method should be used to modify existing. ");
+        }
+        HealthCareFacilityDTO resultDto = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.beginTransaction();
+            HealthCareFacility bo = HealthCareFacilityConverter.convertFromDtoToDomain(dto);
+            session.saveOrUpdate(bo);
+            session.flush();
+            resultDto = HealthCareFacilityConverter.convertFromDomainToDTO(bo);
+        } catch (HibernateException hbe) {
+            serviceError(" Hibernate exception in createStudyParticipation ", hbe);
+        }
+        return resultDto;
     }
 
     /**
-     * @param dto HealthCareFacilityDTO
-     * @return HealthCareFacilityDTO
-     * @throws PAException PAException
+     * @param organizationIi pa index of Organization
+     * @return list of HealthCareFacilityDTO
+     * @throws PAException exception
      */
-    public HealthCareFacilityDTO updateHealthCareFacility(
-            HealthCareFacilityDTO dto) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
-    }
-    
-    /**
-     * @param studyProtocolIi id of protocol
-     * @return list HealthCareFacilityDTO   
-     * @throws PAException on error 
-     */
-    public List<HealthCareFacilityDTO> getHealthCareFacilityByStudyProtocol(
-            Ii studyProtocolIi) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
+    public List<HealthCareFacilityDTO> getByOrganization(Ii organizationIi) throws PAException {
+        if ((organizationIi == null) || PAUtil.isIiNull(organizationIi)) {
+            serviceError("Organization Ii should not be null.  ");
+        }
+        LOG.info("Entering getByOrganization.  ");
+        Session session = null;
+        List<HealthCareFacility> queryList = new ArrayList<HealthCareFacility>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+
+            Query query = null;
+            
+            // step 1: form the hql
+            String hql = "select hf "
+                       + "from HealthCareFacility hf "
+                       + "join hf.organization org "
+                       + "where org.id = " + IiConverter.convertToString(organizationIi);
+            LOG.info(" query HealthCareFacility = " + hql);
+            
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            
+        }  catch (HibernateException hbe) {
+            serviceError(" Hibernate exception while retrieving "
+                    + "HealthCareFacility for org id = " + organizationIi.getExtension() , hbe);
+        }
+        LOG.info("Leaving getByOrganization.  ");
+        ArrayList<HealthCareFacilityDTO> resultList = new ArrayList<HealthCareFacilityDTO>();
+        for (HealthCareFacility hf : queryList) {
+            resultList.add(HealthCareFacilityConverter.convertFromDomainToDTO(hf));
+        }
+        return resultList;
     }
 }
