@@ -80,29 +80,62 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import org.junit.Assert;
 
 /**
  * @author Scott Miller
+ *
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class IdentifiedOrganizationServiceBean extends AbstractBaseServiceBean<IdentifiedOrganization>
-    implements IdentifiedOrganizationServiceLocal {
+public class IdentifiedOrganizationCorrelationServiceTest
+    extends CorrelationTestBase<IdentifiedOrganizationDTO, IdentifiedOrganizationCorrelationServiceRemote> {
+
+    public IdentifiedOrganizationCorrelationServiceTest() {
+        super("IdentifiedOrganizationCR");
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long create(IdentifiedOrganization obj) throws EntityValidationException {
-        obj.setStatus(RoleStatus.PENDING);
-        return super.create(obj);
+    protected IdentifiedOrganizationCorrelationServiceRemote getCorrelationService() throws Exception {
+        return RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IdentifiedOrganizationDTO makeCorrelation() throws Exception {
+        IdentifiedOrganizationDTO dto = new IdentifiedOrganizationDTO();
+        dto.setPlayerIdentifier(getOrgId());
+        dto.setScoperIdentifier(getOrgId());
+
+        Ii ii = new Ii();
+        ii.setExtension("myExtension");
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName("foo");
+        ii.setRoot("bar");
+        dto.setAssignedId(ii);
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void verifyCreated(IdentifiedOrganizationDTO dto) throws Exception {
+        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
+        Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
+        Assert.assertEquals("myExtension", dto.getAssignedId().getExtension());
     }
 }

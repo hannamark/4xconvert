@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
@@ -104,14 +105,13 @@ public class RemoteServiceHelper {
 
     static final String PERSON_SERVICE_BEAN_REMOTE = "po/PersonEntityServiceBean/remote";
     static final String ORG_SERVICE_BEAN_REMOTE = "po/OrganizationEntityServiceBean/remote";
-    
+
     static final String HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareProviderCorrelationServiceBean/remote";
     static final String CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE = "po/ClinicalResearchStaffCorrelationServiceBean/remote";
     static final String HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareFacilityCorrelationServiceBean/remote";
     static final String PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/PersonResourceProviderCorrelationServiceBean/remote";
     static final String ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/OrganizationResourceProviderCorrelationServiceBean/remote";
     static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/OversightCommitteeCorrelationServiceBean/remote";
-
 
     private static String username = "ejbclient";
     private static String password = "pass";
@@ -157,15 +157,15 @@ public class RemoteServiceHelper {
     public static OrganizationEntityServiceRemote getOrganizationEntityService() throws NamingException {
         return (OrganizationEntityServiceRemote) lookup(ORG_SERVICE_BEAN_REMOTE);
     }
-    
+
     public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() throws NamingException {
         return (ClinicalResearchStaffCorrelationServiceRemote)lookup(CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE);
     }
-    
+
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws NamingException {
         return (HealthCareFacilityCorrelationServiceRemote)lookup(HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE);
     }
-    
+
     public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() throws NamingException {
         return (HealthCareProviderCorrelationServiceRemote)lookup(HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
@@ -180,5 +180,9 @@ public class RemoteServiceHelper {
     public static PersonResourceProviderCorrelationServiceRemote getPersonResourceProviderCorrelationService() throws NamingException {
         return (PersonResourceProviderCorrelationServiceRemote)lookup(PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
-    
+
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote() throws NamingException {
+        return (IdentifiedOrganizationCorrelationServiceRemote)lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+    }
+
 }
