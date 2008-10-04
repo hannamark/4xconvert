@@ -21,7 +21,10 @@ public abstract class AbstractBasePaService<DTO>
     /** Standard error message for empty methods to be overridden. */
     protected static String errMsgMethodNotImplemented = "Method not yet implemented.";
     
-    abstract Logger getLogger();
+    /**
+     * @return log4j Logger
+     */
+    protected abstract Logger getLogger();
     
     /**
      * @param ii index of object
