@@ -28,6 +28,9 @@ public class Organization extends AbstractEntity {
     
     private String name;
     private String identifier;
+    private String city;
+    private String countryName;
+    private String postalCode;
     private List<HealthCareFacility> healthCareFacilities = new ArrayList<HealthCareFacility>();
     
     /**
@@ -61,6 +64,51 @@ public class Organization extends AbstractEntity {
      */
     public void setIdentifier(String identifier) {
        this.identifier = identifier;
+    }
+
+    /**
+     * @return the city
+     */
+    @Column(name = "CITY")
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * @param city the city to set
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * @return the country_name
+     */
+    @Column(name = "COUNTRY_NAME")
+    public String getCountryName() {
+        return countryName;
+    }
+
+    /**
+     * @param countryName the countryName to set
+     */
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    /**
+     * @return the postalCode
+     */
+    @Column(name = "POSTAL_CODE")
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    /**
+     * @param postalCode the postalCode to set
+     */
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     /**
