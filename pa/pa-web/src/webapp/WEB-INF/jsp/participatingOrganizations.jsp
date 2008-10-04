@@ -27,8 +27,10 @@
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-<div class="box"><s:form name="studyOverallStatus">
+<div class="box">
+    <pa:sucessMessage/>
     <s:actionerror />
+    <s:form name="studyOverallStatus">
 <h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
@@ -56,8 +58,6 @@
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="nciSpecificInformationquery.action" 
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-            <li><a href="participatingOrganizationscreateTest.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test create()</span></span></a></li>
             <li><a href="participatingOrganizationsupdateTest.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test update()</span></span></a></li>
             <li><a href="participatingOrganizationsdeleteTest.action"                
