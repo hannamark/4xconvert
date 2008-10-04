@@ -15,6 +15,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/control.tabs.js"/>"> </script>
 <c:url value="/protected/participatingOrganizationsnodecorlookup.action" var="lookupUrl"/>
 
 <script type="text/javascript">
@@ -122,7 +123,7 @@
 
 			<div class="actionsrow"><del class="btnwrapper">
 			<ul class="btnrow">
-				<li><a href="#" class="btn" onclick="this.blur();"><span
+				<li><a href="participatingOrganizationsfacilitySave.action"  class="btn" onclick="this.blur();"><span
 					class="btn_img"><span class="save">Save</span></span></a></li>
 			</ul>
 			</del></div>
