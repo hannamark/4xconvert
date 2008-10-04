@@ -44,5 +44,8 @@ public class Constants {
 
     /** Create Message . */
     public static final String CREATE_MESSAGE = "Record Created";
+    
+    /** Participating Organization Tab Data. */
+    public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
 
 }
