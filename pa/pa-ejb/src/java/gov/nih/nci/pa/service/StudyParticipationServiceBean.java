@@ -34,10 +34,12 @@ public class StudyParticipationServiceBean
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationServiceBean.class);
     
+    /**
+     * @return log4j Logger
+     */
     @Override
-    Logger getLogger() {
-        return LOG;
-    }
+    protected Logger getLogger() { return LOG; }
+
     /** 
      * @param ii Index 
      * @return StudyParticipationDTO
@@ -45,7 +47,7 @@ public class StudyParticipationServiceBean
      */
     @Override
     public StudyParticipationDTO get(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
         }
         StudyParticipationDTO resultDto = null;
@@ -71,7 +73,7 @@ public class StudyParticipationServiceBean
     @Override
     public StudyParticipationDTO create(
             StudyParticipationDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIi())) {
+        if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
             serviceError(" Update method should be used to modify existing. ");
         }
         StudyParticipationDTO resultDto = null;
@@ -95,7 +97,7 @@ public class StudyParticipationServiceBean
      */
     public void delete(Ii ii)
             throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
         }
         LOG.info("Entering delete().");
@@ -122,7 +124,7 @@ public class StudyParticipationServiceBean
     @Override
     public List<StudyParticipationDTO> getByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolIi)) {
+        if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
             serviceError(" Ii should not be null ");
         }
         LOG.info("Entering getStudyParticipationByStudyProtocol");

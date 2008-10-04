@@ -31,10 +31,11 @@ public class StudyParticipationContactServiceBean
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationContactServiceBean.class);
 
+    /**
+     * @return log4j Logger
+     */
     @Override
-    Logger getLogger() {
-        return LOG;
-    }
+    protected Logger getLogger() { return LOG; }
 
     /**
      * @param dto dto
@@ -44,7 +45,7 @@ public class StudyParticipationContactServiceBean
     @Override
     public StudyParticipationContactDTO create(StudyParticipationContactDTO dto)
             throws PAException {
-        if (!PAUtil.isIiNull(dto.getIi())) {
+        if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
             serviceError(" Update method should be used to modify existing. ");
         }
         StudyParticipationContactDTO resultDto = null;
@@ -69,7 +70,7 @@ public class StudyParticipationContactServiceBean
      */
     @Override
     public StudyParticipationContactDTO get(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
         }
         StudyParticipationContactDTO resultDto = null;
@@ -108,7 +109,7 @@ public class StudyParticipationContactServiceBean
      * @throws PAException exception
      */
     public void delete(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
         }
         LOG.info("Entering delete().");
