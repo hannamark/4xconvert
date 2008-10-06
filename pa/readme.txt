@@ -65,7 +65,7 @@ IDE - Eclipse
             Displayed tab width = 4
             check insert spaces for tab
             check show print margin
-            set print margin column as 80
+            set print margin column as 120
       
 Setting up the Eclipse IDE
 --------------------------
