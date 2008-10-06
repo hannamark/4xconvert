@@ -88,35 +88,28 @@
 					<%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
 				</div>
 				<tr>
-					<td scope="row" class="label"><label for="leadorg">Lead Organization:</label></td>
-					<td class="value"><input type="checkbox" name="group2"
-						id="leadorg" value="Lead Org" onclick="SetGenericValues1()" />
-					(check box if yes)</td>
-				</tr>
-				<tr>
 					<td scope="row" class="label"><label for="srs">Site
 					Recruitment Status:</label></td>
-					<td class="value" colspan="2"><select name="status" id="srs"
-						style="width: 200px">
-						<option value="CTEP">Not yet recruiting</option>
-						<option value="CCR">Recruiting</option>
-						<option value="CCR">Enrolling by invitation</option>
-						<option value="CCR">Active , not recruiting</option>
-						<option value="CCR">Completed</option>
-						<option value="CCR">Suspended : recruiting</option>
-						<option value="CCR">Terminated : recruiting</option>
-						<option value="CCR">Withdrawn</option>
-					</select></td>
+                    <s:set name="recruitmentStatusValues"
+                           value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
+                    <td class="value" colspan="2"><s:select headerKey="" headerValue=""
+                        name="partOrgData.recruitmentStatus"
+                        list="#recruitmentStatusValues" /></td>
+                    <td>
 				</tr>
 				<tr>
 					<td scope="row" class="label"><label for="srsd">Site
 					Recruitment Status Date:</label></td>
-					<td class="value" colspan="2"><input type="text"
-						name="statusDate1" id="srsd" maxlength="10" size="10" value=" "
-						style="width: 70px; float: left"> <a
-						href="javascript:showCal('Calendar1')"><img
-						src="images/ico_calendar.gif" alt="select date"
-						class="calendaricon" /></a> (mm/dd/yyyy) <span class="formErrorMsg"></span>
+					<td class="value" colspan="2">
+
+                    <s:textfield name="partOrgData.recruitmentStatusDate"
+                        maxlength="10" size="10" cssStyle="width:70px;float:left"/> 
+                           <a href="javascript:;"
+                              onclick="cal.select(document.forms[0].partOrgData.recruitmentStatusDate,'calendarbutton','MM/dd/yyyy'); return false;"
+                              name="calendarbutton" 
+                              id="calendarbutton"> <img
+                              src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                           </a>
 					</td>
 				</tr>
 			</table>
@@ -138,7 +131,7 @@
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">
-            <li><a href="trialFunding.action"                
+            <li><a href=" trialFundingquery.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="nciSpecificInformationquery.action" 
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
