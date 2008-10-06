@@ -56,6 +56,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     private static final int AD_COUNTRY_IDX = 3;
     private static final int AD_ZIP_IDX = 2;
     private static final String ACT_FACILITY_SAVE = "facilitySave";
+    private static final String ACT_DELETE = "delete";
 
     private StudyProtocolServiceRemote sProService;
     private StudyParticipationServiceRemote sPartService;
@@ -68,6 +69,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     private OrganizationDTO selectedOrgDTO = null;
     private static final int THREE = 3;    
     private static final String DISPLAYJSP = "displayJsp";
+    private ParticipatingOrganizationsTabWebDTO partOrgData = new ParticipatingOrganizationsTabWebDTO();
+    private Long cbValue;
+
 
     /** 
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -224,18 +228,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      * @return result
      * @throws Exception exception
      */
-    public String deleteTest() throws Exception {
+    public String delete() throws Exception {
         clearErrorsAndMessages();
         
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi);
-        if (spList.size() > 1) {
-           StudyParticipationDTO sp = spList.get(spList.size() - 1);
-           sPartService.delete(sp.getIi());
-        }
+        sPartService.delete(IiConverter.convertToIi(cbValue));
         
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
-        return Action.SUCCESS;
+        return this.ACT_DELETE;
     }
 
     private void loadForm() throws Exception {
@@ -250,6 +250,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
             orgBo = paoService.getOrganizationByIndetifers(orgBo);
             
             OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
+            orgWebDTO.setId(IiConverter.convertToString(sp.getIi()));
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
             if (ssasList.isEmpty()) {
@@ -346,6 +347,34 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      */
     public void setSelectedOrgDTO(OrganizationDTO selectedOrgDTO) {
         this.selectedOrgDTO = selectedOrgDTO;
+    }
+
+    /**
+     * @return the partOrgData
+     */
+    public ParticipatingOrganizationsTabWebDTO getPartOrgData() {
+        return partOrgData;
+    }
+
+    /**
+     * @param partOrgData the partOrgData to set
+     */
+    public void setPartOrgData(ParticipatingOrganizationsTabWebDTO partOrgData) {
+        this.partOrgData = partOrgData;
+    }
+
+    /**
+     * @return the cbValue
+     */
+    public Long getCbValue() {
+        return cbValue;
+    }
+
+    /**
+     * @param cbValue the cbValue to set
+     */
+    public void setCbValue(Long cbValue) {
+        this.cbValue = cbValue;
     }
 
 }
