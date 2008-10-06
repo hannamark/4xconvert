@@ -1,5 +1,6 @@
 DROP SEQUENCE IF EXISTS serial;
 CREATE SEQUENCE serial START 901;
+DELETE FROM country ;
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'RS', 'SRB', 'Serbia', '688' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'IR', 'IRN', 'Iran (Islamic Republic Of)', '364' );
 INSERT INTO public.country (id, alpha2, alpha3, name, numeric) VALUES ( nextval('serial'), 'IQ', 'IRQ', 'Iraq', '368' );

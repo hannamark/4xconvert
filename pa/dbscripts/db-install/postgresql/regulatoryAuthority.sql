@@ -1,5 +1,6 @@
 DROP SEQUENCE IF EXISTS ra_sequence;
 CREATE SEQUENCE ra_sequence START 1156;
+DELETE FROM regulatory_authority;
 INSERT INTO regulatory_authority(id, authority_name, country_id, date_last_updated, user_last_updated) VALUES (nextval('ra_sequence'), 'Ministry of Public Health', '1040', '2008-09-09', 'Curator');
 INSERT INTO regulatory_authority(id, authority_name, country_id, date_last_updated, user_last_updated) VALUES (nextval('ra_sequence'), 'Ministry of Health', '1042', '2008-09-09', 'Curator');
 INSERT INTO regulatory_authority(id, authority_name, country_id, date_last_updated, user_last_updated) VALUES (nextval('ra_sequence'), 'Administracion Nacional de Medicamentos, Alimentos y Tecnologia Medica', '1049', '2008-09-09', 'Curator');
