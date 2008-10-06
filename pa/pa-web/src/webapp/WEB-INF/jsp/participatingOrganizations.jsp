@@ -17,7 +17,11 @@
      
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-
+function handleDelete(studyResourcingId){
+    document.studyOverallStatus.cbValue.value = studyResourcingId;
+    document.studyOverallStatus.action="participatingOrganizationsdelete.action";
+    document.studyOverallStatus.submit(); 
+}
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
@@ -35,7 +39,8 @@
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2">
-    <display:table name="organizationList" class="data">  
+    <input type="hidden" name="cbValue" />
+    <display:table name="organizationList" id="row" class="data">  
         <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />
         <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
         <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
@@ -44,7 +49,7 @@
         <s:a href="#"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
         <display:column titleKey="participatingOrganizations.unlink" class="action" >
-        <s:a href="#"><img src="<%=request.getContextPath()%>/images/ico_cancel.gif" alt="Un-link" width="16" height="16"/></s:a>
+        <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_cancel.gif" alt="Un-link" width="16" height="16"/></s:a>
         </display:column>
     </display:table>
     </td></tr>
@@ -54,14 +59,12 @@
         <ul class="btnrow">
             <li><a href="participatingOrganizationscreate.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
-            <li><a href="trialFunding.action"                
+            <li><a href="trialFundingquery.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="nciSpecificInformationquery.action" 
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
             <li><a href="participatingOrganizationsupdateTest.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test update()</span></span></a></li>
-            <li><a href="participatingOrganizationsdeleteTest.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Test delete()</span></span></a></li>
         </ul>   
     </del>
 </div>
