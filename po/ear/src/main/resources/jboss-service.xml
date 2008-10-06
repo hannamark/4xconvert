@@ -25,7 +25,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
     <!--
     ################################# START deploy\jms\jbossmq-destinations-service.xml ############################# 
      -->   
-    <mbean code="org.jboss.mq.server.jmx.Topic" name="jboss.mq.destination:service=POTopic,name=PODurableTopic">
+    <mbean code="org.jboss.mq.server.jmx.Topic" name="jboss.mq.destination:service=Topic,name=POTopic">
         <depends optional-attribute-name="DestinationManager">jboss.mq:service=PODestinationManager
         </depends>
         <depends optional-attribute-name="SecurityManager">jboss.mq:service=POSecurityManager
@@ -68,7 +68,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
           <role name="guest" read="true" write="true" create="true"/>
         </security>
       </attribute>
-      <attribute name="SecurityDomain">java:/jaas/jbossmq</attribute>
+      <attribute name="SecurityDomain">java:/jaas/po</attribute>
       <depends optional-attribute-name="NextInterceptor">jboss.mq:service=PODestinationManager</depends>
     </mbean>
     
