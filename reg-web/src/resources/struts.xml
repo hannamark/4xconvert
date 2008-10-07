@@ -25,7 +25,7 @@
             <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
         </action>
-        <action name="submitTrial" class="gov.nih.nci.registry.action.SubmitTrialAction">
+        <action name="submitTrial*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
             <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/submitTrial.jsp</result>
         </action> 
