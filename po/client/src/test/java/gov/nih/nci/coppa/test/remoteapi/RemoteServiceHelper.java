@@ -192,11 +192,14 @@ public class RemoteServiceHelper {
     }
     
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
+        String username = "admin";
+        String password = "admin";
+
         if (jmxCtx == null) {
             Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, "admin");
-            env.setProperty(Context.SECURITY_CREDENTIALS, "admin");
-            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+            env.setProperty(Context.SECURITY_PRINCIPAL, username);
+            env.setProperty(Context.SECURITY_CREDENTIALS, password);
+            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
             jmxCtx = new InitialContext(env);
         }
         return (MBeanServerConnection) jmxCtx.lookup("jmx/invoker/RMIAdaptor");
