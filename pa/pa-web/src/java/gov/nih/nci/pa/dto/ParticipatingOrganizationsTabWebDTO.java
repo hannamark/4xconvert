@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 
 /**
@@ -14,7 +15,49 @@ import gov.nih.nci.pa.domain.Organization;
  *        holder, NCI.
  */
 public class ParticipatingOrganizationsTabWebDTO {
+    private Ii poOrganizationIi;
+    private Ii poHealthCareFacilityIi;
+    private Long studyParticipationId;
     private Organization facilityOrganization;
+
+    /**
+     * @return the organizationIi
+     */
+    public Ii getPoOrganizationIi() {
+        return poOrganizationIi;
+    }
+    /**
+     * @param poOrganizationIi the organizationIi to set
+     */
+    public void setPoOrganizationIi(Ii poOrganizationIi) {
+        this.poOrganizationIi = poOrganizationIi;
+    }
+    /**
+     * @return the poHealthCareFacilityIi
+     */
+    public Ii getPoHealthCareFacilityIi() {
+        return poHealthCareFacilityIi;
+    }
+
+    /**
+     * @param poHealthCareFacilityIi the poHealthCareFacilityIi to set
+     */
+    public void setPoHealthCareFacilityIi(Ii poHealthCareFacilityIi) {
+        this.poHealthCareFacilityIi = poHealthCareFacilityIi;
+    }
+
+    /**
+     * @return the studyParticipationId
+     */
+    public Long getStudyParticipationId() {
+        return studyParticipationId;
+    }
+    /**
+     * @param studyParticipationId the studyParticipationId to set
+     */
+    public void setStudyParticipationId(Long studyParticipationId) {
+        this.studyParticipationId = studyParticipationId;
+    }
 
     /**
      * @return the facilityOrganization
