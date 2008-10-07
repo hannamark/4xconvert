@@ -154,7 +154,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
      */
     @ManyToOne
     @ForeignKey(name = "identifiedentity_scoper_fkey")
-    @Searchable(field = {"id" })
+    @Searchable(fields = {"id" })
     public Organization getScoper() {
         return this.scoper;
     }
@@ -201,7 +201,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
             @Column(name = "assigned_identifier_scope")
     })
     @ValidIi
-    @Searchable(field = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
+    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
     public Ii getAssignedIdentifier() {
         return this.assignedIdentifier;
     }

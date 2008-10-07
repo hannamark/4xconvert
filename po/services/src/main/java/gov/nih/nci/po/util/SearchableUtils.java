@@ -217,7 +217,7 @@ public final class SearchableUtils {
                 return;
             }
 
-            String[] fields = m.getAnnotation(Searchable.class).field();
+            String[] fields = m.getAnnotation(Searchable.class).fields();
 
             boolean alreadyChecked = checkCollection(result, false);
             alreadyChecked |= checkSubfields(result, alreadyChecked, fields);

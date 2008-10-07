@@ -129,7 +129,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @ForeignKey(name = "identifiedorg_player_fkey")
     @Override
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    @Searchable(field = {"id" })
+    @Searchable(fields = {"id" })
     public Organization getPlayer() {
         return super.getPlayer();
     }

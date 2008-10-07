@@ -122,7 +122,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         String fieldName = StringUtils.uncapitalize(m.getName().substring("get".length()));
         String paramName = fieldName;
         if (result != null) {
-            String[] fields = m.getAnnotation(Searchable.class).field();
+            String[] fields = m.getAnnotation(Searchable.class).fields();
 
             if (result instanceof Collection<?>) {
                 processCollectionField(result, fieldName, paramName, fields);

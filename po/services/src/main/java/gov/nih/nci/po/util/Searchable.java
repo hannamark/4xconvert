@@ -100,7 +100,7 @@ public @interface Searchable {
      * If the field being searched has nested properties, you can specify which properties to
      * use in the search criteria using this value.
      *
-     * @Searchable({ "name", "abbreviatedName"})
+     * @Searchable(fields = { "name", "abbreviatedName"})
      * public Organization getOrg.....
      *
      * would result in a search being performed on both name and abbreviatedName.
@@ -115,7 +115,7 @@ public @interface Searchable {
      * @Entity
      * public class MyClass {
      *   ...
-     *   @Searchable(field = "value")
+     *   @Searchable(fields = "value")
      *   public Collection&lt;Email&gt; getEmails() { ... }
      * }
      * </tt>
@@ -131,5 +131,5 @@ public @interface Searchable {
      * Where value1 and value2 are the <code>value</code> property from
      * each element of the collection.
      */
-    String[] field() default { };
+    String[] fields() default { };
 }

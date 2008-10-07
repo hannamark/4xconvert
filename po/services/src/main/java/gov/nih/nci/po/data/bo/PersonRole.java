@@ -155,7 +155,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     @NotNull
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
-    @Searchable(field = {"id" })
+    @Searchable(fields = {"id" })
     public Person getPerson() {
         return this.person;
     }
@@ -177,7 +177,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     @NotNull
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
-    @Searchable(field = {"id" })
+    @Searchable(fields = {"id" })
     public Organization getOrganization() {
         return this.organization;
     }
