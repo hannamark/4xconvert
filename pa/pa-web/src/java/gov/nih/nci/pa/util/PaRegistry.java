@@ -15,6 +15,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 
@@ -176,5 +177,11 @@ public final class PaRegistry {
      */
     public static DocumentServiceRemote getDocumentService() {
         return getInstance().getServiceLocator().getDocumentService();
+    }
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     */
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
+        return getInstance().getServiceLocator().getPoHealthCareProverService();
     }
 }

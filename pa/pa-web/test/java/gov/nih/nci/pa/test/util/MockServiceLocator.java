@@ -18,6 +18,7 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyProtocolService;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 /**
@@ -141,6 +142,14 @@ public class MockServiceLocator implements ServiceLocator {
      * return DocumentServiceRemote
      */
     public DocumentServiceRemote getDocumentService() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getPoHealthCareProverService()
+     */
+    public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() {
+        // TODO Auto-generated method stub
         return null;
     }
 }

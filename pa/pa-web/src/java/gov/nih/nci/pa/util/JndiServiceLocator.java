@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 /**
@@ -130,6 +131,15 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public DocumentServiceRemote getDocumentService() {
         return (DocumentServiceRemote) JNDIUtil.lookup("pa/DocumentServiceBean/remote");
+    }
+
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     */
+    public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() {
+        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+            + "/po/HealthCareFacilityCorrelationServiceBean/remote";
+        return (HealthCareFacilityCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
     
 

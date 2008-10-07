@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 
@@ -111,4 +112,9 @@ public interface ServiceLocator {
      * @return DocumentServiceRemote
      */
     DocumentServiceRemote getDocumentService();
+    /**
+    *
+    * @return PersonEntityServiceRemote
+    */
+    HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService();
 }
