@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -141,7 +142,7 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
             studyResourcing.setSuffixGrantYear(StConverter.convertToString(studyResourcingDTO.getSuffixGrantYear()));
             studyResourcing.setSuffixOther(StConverter.convertToString(studyResourcingDTO.getSuffixOther()));
-            studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
+            studyResourcing.setSerialNumber(IntConverter.convertToInteger(studyResourcingDTO.getSerialNumber()));
             session.update(studyResourcing);
             session.flush();
             studyResourcingRetDTO = StudyResourcingConverter.convertFromDomainToDTO(studyResourcing);
