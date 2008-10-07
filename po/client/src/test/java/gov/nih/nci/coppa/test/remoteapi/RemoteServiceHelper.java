@@ -118,6 +118,7 @@ public class RemoteServiceHelper {
     private static String password = "pass";
 
     private static InitialContext ctx;
+    private static InitialContext jmxCtx;
 
     private static Object lookup(String resource) throws NamingException {
         if (ctx == null) {
@@ -138,6 +139,10 @@ public class RemoteServiceHelper {
         if (ctx != null) {
             ctx.close();
             ctx = null;
+        }
+        if (jmxCtx != null) {
+            jmxCtx.close();
+            jmxCtx = null;
         }
     }
 
@@ -187,6 +192,13 @@ public class RemoteServiceHelper {
     }
     
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
-        return (MBeanServerConnection) lookup("jmx/invoker/RMIAdaptor");
+        if (jmxCtx == null) {
+            Properties env = new Properties();
+            env.setProperty(Context.SECURITY_PRINCIPAL, "admin");
+            env.setProperty(Context.SECURITY_CREDENTIALS, "admin");
+            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+            jmxCtx = new InitialContext(env);
+        }
+        return (MBeanServerConnection) jmxCtx.lookup("jmx/invoker/RMIAdaptor");
     }
 }
