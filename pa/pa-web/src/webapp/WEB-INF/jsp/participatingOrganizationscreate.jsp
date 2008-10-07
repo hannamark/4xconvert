@@ -9,17 +9,22 @@
 <s:head/>
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
-<script type="text/javascript" src="scripts/js/calendarpopup.js" />  
 <script type="text/javascript" src="scripts/js/prototype.js"></script>
 <script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/control.tabs.js"/>"> </script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <c:url value="/protected/participatingOrganizationsnodecorlookup.action" var="lookupUrl"/>
 
 <script type="text/javascript">
-            var siteRecruitmentStatusDate = new CalendarPopup();
+        addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
+        setWidth(90, 1, 15, 1);
+function facilitySave(){
+     document.facility.action="participatingOrganizationsfacilitySave.action#investigators";
+     document.facility.submit();     
+}
 </script>
      
 </head>
@@ -49,7 +54,8 @@
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-<div class="box"><s:form name="studyOverallStatus">
+<div class="box">
+    <pa:sucessMessage/>
     <s:actionerror />
 <h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
@@ -82,7 +88,7 @@
 			<div id="facility" class="box">
 
 			<h3>Facility</h3>
-
+            <s:form name="facility">
 			<table class="form">
 				<div id="loadOrgDetails">
 					<%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
@@ -93,37 +99,32 @@
                     <s:set name="recruitmentStatusValues"
                            value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
                     <td class="value" colspan="2"><s:select headerKey="" headerValue=""
-                        name="partOrgData.recruitmentStatus"
+                        name="recStatus"
                         list="#recruitmentStatusValues" /></td>
                     <td>
 				</tr>
 				<tr>
 					<td scope="row" class="label"><label for="srsd">Site
 					Recruitment Status Date:</label></td>
-					<td class="value" colspan="2">
-
-                    <s:textfield name="partOrgData.recruitmentStatusDate"
-                        maxlength="10" size="10" cssStyle="width:70px;float:left"/> 
-                           <a href="javascript:;"
-                              onclick="cal.select(document.forms[0].partOrgData.recruitmentStatusDate,'calendarbutton','MM/dd/yyyy'); return false;"
-                              name="calendarbutton" 
-                              id="calendarbutton"> <img
-                              src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                           </a>
-					</td>
+                    <td class="value" colspan="2">
+                        <s:textfield name="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal1')">
+                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+                    </td>               
 				</tr>
 			</table>
 
 			<div class="actionsrow"><del class="btnwrapper">
 			<ul class="btnrow">
-				<li><a href="participatingOrganizationsfacilitySave.action"  class="btn" onclick="this.blur();"><span
-					class="btn_img"><span class="save">Save</span></span></a></li>
+				<li>
+				    <s:a href="#" cssClass="btn" onclick="facilitySave()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+				</li>
 			</ul>
 			</del></div>
+            </s:form>
 
 
 			</div>
-
 			<!--/Facility--></div>
 
 			</td></tr>
@@ -138,7 +139,6 @@
         </ul>   
     </del>
 </div>
-</s:form>
 </div>
 </body>
 </html>
