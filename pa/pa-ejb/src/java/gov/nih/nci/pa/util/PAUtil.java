@@ -89,7 +89,8 @@ public class PAUtil {
     static {
         dateFormats = new ValidDateFormat[] { 
                 new ValidDateFormat("MM/dd/yyyy"),
-                new ValidDateFormat("yyyy-MM-dd")
+                new ValidDateFormat("yyyy-MM-dd"),
+                new ValidDateFormat("yyyy/MM/dd")
         };
     }
 
