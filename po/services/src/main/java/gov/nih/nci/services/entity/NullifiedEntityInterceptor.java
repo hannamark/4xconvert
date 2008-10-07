@@ -111,7 +111,7 @@ import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 public class NullifiedEntityInterceptor {
     /**
      * Ensures that no object(s) returned have a NULLIFIED entity status.
-     * 
+     *
      * @param invContext the method context
      * @return the method result
      * @throws Exception if invoking the method throws an exception.
@@ -132,7 +132,6 @@ public class NullifiedEntityInterceptor {
         return returnValue;
     }
 
-    @SuppressWarnings("unchecked")
     private void handleCollection(InvocationContext invContext, Collection collection) throws NullifiedEntityException {
         if (collection == null) {
             return;
@@ -166,6 +165,7 @@ public class NullifiedEntityInterceptor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Entry<Ii, Ii> handle(InvocationContext invContext, OrganizationDTO dto) {
         EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
         if (EntityStatus.NULLIFIED.equals(status)) {
@@ -190,6 +190,7 @@ public class NullifiedEntityInterceptor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Entry<Ii, Ii> handle(InvocationContext invContext, PersonDTO dto) {
         EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
         if (EntityStatus.NULLIFIED.equals(status)) {

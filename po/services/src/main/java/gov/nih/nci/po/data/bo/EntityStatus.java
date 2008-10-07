@@ -102,7 +102,7 @@ import java.util.Set;
  * <li>
  * </ul>
  */
-public enum EntityStatus  {
+public enum EntityStatus {
     /**
      * A new element that has not yet be curated.
      */

@@ -209,7 +209,7 @@ public class IiCompositeUserType implements CompositeUserType {
      * {@inheritDoc}
      */
     public String[] getPropertyNames() {
-        return new String[] {"nullFlavor", "displayable", "extension", "identifier_name",
+        return new String[] {"nullFlavor", "displayable", "extension", "identifierName",
                              "reliability", "root", "scope"};
     }
 
@@ -283,19 +283,19 @@ public class IiCompositeUserType implements CompositeUserType {
      */
     public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
             throws SQLException {
-        
+
         String nullFlavorStr = rs.getString(names[NULLFLAVOR]);
         String extensionStr = rs.getString(names[EXTENSION]);
-        
+
         if (nullFlavorStr == null && extensionStr == null) {
             return null;
         }
-        
+
         Ii result = new Ii();
         if (nullFlavorStr != null) {
             result.setNullFlavor(NullFlavor.valueOf(nullFlavorStr));
         }
-        
+
         result.setExtension(extensionStr);
         result.setDisplayable((Boolean) rs.getObject(names[DISPLAYABLE]));
         result.setIdentifierName(rs.getString(names[IDENTIFIER_NAME]));
@@ -324,11 +324,11 @@ public class IiCompositeUserType implements CompositeUserType {
         } else {
             Ii ii = (Ii) value;
             checkValidState(ii);
-            
+
             String nullFlavorStr = (ii.getNullFlavor() != null) ? ii.getNullFlavor().toString() : null;
             statement.setString(index + NULLFLAVOR, nullFlavorStr);
             statement.setString(index + EXTENSION, ii.getExtension());
-            statement.setObject(index + DISPLAYABLE, ii.getDisplayable());            
+            statement.setObject(index + DISPLAYABLE, ii.getDisplayable());
             statement.setString(index + IDENTIFIER_NAME, ii.getIdentifierName());
             statement.setString(index + RELIABILITY, (ii.getReliability() != null) ? ii.getReliability().toString()
                                                                                    : null);

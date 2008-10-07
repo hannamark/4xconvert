@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -127,6 +129,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @ForeignKey(name = "identifiedorg_player_fkey")
     @Override
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    @Searchable(field = {"id" })
     public Organization getPlayer() {
         return super.getPlayer();
     }

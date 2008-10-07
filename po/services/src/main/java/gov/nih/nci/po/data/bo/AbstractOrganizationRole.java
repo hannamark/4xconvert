@@ -138,7 +138,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
     @ManyToOne
     @NotNull
     @ForeignKey(name = "organizationrole_player_fkey")
-    @Searchable
+    @Searchable(field = {"id" })
     public Organization getPlayer() {
         return player;
     }
@@ -158,7 +158,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
      */
     @ManyToOne
     @ForeignKey(name = "organizationrole_scoper_fkey")
-    @Searchable
+    @Searchable(field = {"id" })
     public Organization getScoper() {
         return scoper;
     }

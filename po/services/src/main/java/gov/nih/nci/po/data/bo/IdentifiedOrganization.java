@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -105,6 +107,7 @@ public class IdentifiedOrganization extends AbstractIdentifiedOrganization imple
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return super.getId();
     }

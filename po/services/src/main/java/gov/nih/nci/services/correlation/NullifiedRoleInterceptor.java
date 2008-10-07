@@ -103,13 +103,13 @@ import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 public class NullifiedRoleInterceptor {
     /**
      * Ensures that no object(s) returned have a NULLIFIED role status.
-     * 
+     *
      * @param invContext the method context
      * @return the method result
      * @throws Exception if invoking the method throws an exception.
      */
     @AroundInvoke
-    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "unchecked" })
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException" })
     // method invocation wrapper requires
     public Object checkForNullified(InvocationContext invContext) throws Exception {
         // make the call to the underlying method. This method (prepareReturnValue) wraps the intended method.
@@ -123,7 +123,6 @@ public class NullifiedRoleInterceptor {
         return returnValue;
     }
 
-    @SuppressWarnings("unchecked")
     private void handleCollection(Collection collection)
             throws NullifiedRoleException {
         if (collection == null) {

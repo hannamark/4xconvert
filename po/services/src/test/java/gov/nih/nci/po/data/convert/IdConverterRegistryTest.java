@@ -96,16 +96,18 @@ public class IdConverterRegistryTest {
     public void unknownClass() {
         IdConverterRegistry.find(Foo.class);
     }
-    
+
     @Test
     public void knownClass() {
         assertEquals(IdConverter.OrgIdConverter.class, IdConverterRegistry.find(Organization.class).getClass());
     }
-    
+
     private static class Foo implements PersistentObject{
+        private static final long serialVersionUID = 1L;
+
         public Long getId() {
             return null;
         }
     }
-    
+
 }

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.po.service.AbstractSearchCriteria;
 
 import java.lang.reflect.Method;
@@ -89,10 +91,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Utility functions for searching.
@@ -145,11 +146,12 @@ public final class SearchableUtils {
             Object value = params.get(key);
             if (value instanceof Collection<?>) {
                 q.setParameterList(key, (Collection<?>) value);
+            } else if (value instanceof IdentifierReliability || value instanceof IdentifierScope) {
+                q.setParameter(key, value.toString());
             } else {
                 q.setParameter(key, value);
             }
         }
-
         return q;
     }
 
@@ -215,8 +217,10 @@ public final class SearchableUtils {
                 return;
             }
 
-            boolean alreadyChecked = checkPersistentObject(result, false);
-            alreadyChecked |= checkCollection(result, alreadyChecked);
+            String[] fields = m.getAnnotation(Searchable.class).field();
+
+            boolean alreadyChecked = checkCollection(result, false);
+            alreadyChecked |= checkSubfields(result, alreadyChecked, fields);
             alreadyChecked |= checkStandard(result, alreadyChecked);
         }
 
@@ -224,14 +228,26 @@ public final class SearchableUtils {
             return hasOneCriterion;
         }
 
-        private boolean checkPersistentObject(Object result, boolean alreadyChecked) {
+        private boolean checkSubfields(Object result, boolean alreadyChecked, String[] fields) {
             if (alreadyChecked) {
                 return false;
             }
 
-            if (result instanceof PersistentObject && ((PersistentObject) result).getId() != null) {
-                hasOneCriterion = true;
-                return true;
+            if (result == null) {
+                return false;
+            }
+
+            for (String field : fields) {
+                Object subPropResult = null;
+                try {
+                    subPropResult = PropertyUtils.getSimpleProperty(result, field);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Unable to process property with name:" + field, e);
+                }
+                if (subPropResult != null) {
+                    hasOneCriterion = true;
+                    return true;
+                }
             }
 
             return false;

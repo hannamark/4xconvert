@@ -97,6 +97,14 @@ import java.lang.annotation.Target;
 public @interface Searchable {
 
     /**
+     * If the field being searched has nested properties, you can specify which properties to
+     * use in the search criteria using this value.
+     *
+     * @Searchable({ "name", "abbreviatedName"})
+     * public Organization getOrg.....
+     *
+     * would result in a search being performed on both name and abbreviatedName.
+     *
      * If this searchable is applied to a collection, setting this property
      * will cause the generic search interface to extract the named field
      * (via a getter) and use the values therein for the search.
@@ -123,5 +131,5 @@ public @interface Searchable {
      * Where value1 and value2 are the <code>value</code> property from
      * each element of the collection.
      */
-    String field() default "";
+    String[] field() default { };
 }

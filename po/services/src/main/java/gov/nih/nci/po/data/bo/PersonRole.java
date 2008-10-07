@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
@@ -97,11 +96,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.NotNull;
 
-import javax.persistence.Transient;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Base class for all person to org roles.
@@ -155,7 +155,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     @NotNull
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
-    @Searchable
+    @Searchable(field = {"id" })
     public Person getPerson() {
         return this.person;
     }
@@ -177,7 +177,7 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     @NotNull
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
-    @Searchable
+    @Searchable(field = {"id" })
     public Organization getOrganization() {
         return this.organization;
     }

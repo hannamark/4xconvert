@@ -83,15 +83,24 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.OneCriterionRequiredException;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Scott Miller
@@ -188,6 +197,107 @@ public class IdentifiedOrganizationRemoteServiceTest
 
     @Override
     public void testSearch() throws Exception {
-        // Do nothing.  Remove this (use superclass impl) when PO-530 is implemented
+        Organization org2 = new Organization();
+        org2.setAbbreviatedName("org2 abbreviated name");
+        org2.setName("org2 name");
+        org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
+        org2.setStatusCode(EntityStatus.ACTIVE);
+        org2.setStatusDate(new Date());
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
+
+        IdentifiedOrganizationDTO correlation1 = getSampleDto();
+        Ii correlation1Id = getCorrelationService().createCorrelation(correlation1);
+
+        IdentifiedOrganizationDTO correlation2 = getSampleDto();
+        Ii ii = new Ii();
+        ii.setExtension("" + org2.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        correlation2.setPlayerIdentifier(ii);
+
+        ii = new Ii();
+        ii.setExtension("" + org2.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        correlation2.setScoperIdentifier(ii);
+        Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        IdentifiedOrganizationDTO searchCriteria = null;
+
+        try {
+            getCorrelationService().search(searchCriteria);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        searchCriteria = new IdentifiedOrganizationDTO();
+        try {
+            getCorrelationService().search(searchCriteria);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        // test search by primary id
+        searchCriteria.setIdentifier(new Ii());
+        searchCriteria.getIdentifier().setExtension(correlation1Id.getExtension());
+        searchCriteria.getIdentifier().setRoot(correlation1Id.getRoot());
+        searchCriteria.getIdentifier().setIdentifierName(correlation1Id.getIdentifierName());
+        searchCriteria.getIdentifier().setDisplayable(correlation1Id.getDisplayable());
+        searchCriteria.getIdentifier().setReliability(correlation1Id.getReliability());
+        searchCriteria.getIdentifier().setScope(correlation1Id.getScope());
+        List<IdentifiedOrganizationDTO> results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
+
+        searchCriteria.getIdentifier().setExtension(correlation2Id.getExtension());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+
+        searchCriteria.getIdentifier().setExtension("999");
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
+
+        // test search by player id
+        searchCriteria.setIdentifier(null);
+        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
+
+        // test search by scoper id
+        searchCriteria.setPlayerIdentifier(null);
+        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+
+        // test by assigned id
+        searchCriteria.setScoperIdentifier(null);
+        searchCriteria.setAssignedId(correlation1.getAssignedId());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+
+        // test by assigned id and scoper id
+        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+
+        // test by invalid assigned id
+        searchCriteria.getAssignedId().setExtension("invalid extension");
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
     }
 }

@@ -91,9 +91,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Callback implementation.
@@ -122,24 +121,57 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
     public void callback(Method m, Object result) throws Exception {
         String fieldName = StringUtils.uncapitalize(m.getName().substring("get".length()));
         String paramName = fieldName;
-        Object paramValue = result;
-        if (result instanceof PersistentObject) {
-            paramValue = ((PersistentObject) result).getId();
-            fieldName = fieldName + ".id";
-        }
-        if (paramValue != null) {
-            whereClause.append(whereOrAnd);
+        if (result != null) {
+            String[] fields = m.getAnnotation(Searchable.class).field();
+
             if (result instanceof Collection<?>) {
-                handleCollection(m, result, fieldName, paramName);
+                processCollectionField(result, fieldName, paramName, fields);
+            } else if (fields != null && fields.length > 0) {
+                processFieldWithSubProp(result, fieldName, paramName, fields);
             } else {
+                whereClause.append(whereOrAnd);
+                whereOrAnd = AbstractSearchCriteria.AND;
                 whereClause.append(String.format("obj.%s = :%s", fieldName, paramName));
-                params.put(paramName, paramValue);
+                params.put(paramName, result);
             }
-            whereOrAnd = AbstractSearchCriteria.AND;
         }
     }
 
-    private void handleCollection(Method m, Object result, String fieldName, String paramName)
+    private void processFieldWithSubProp(Object result, String fieldName, String paramName, String[] fields) {
+        for (String currentProp : fields) {
+            String subPropParamName = paramName + currentProp;
+            Object subPropResult = null;
+            try {
+                subPropResult = PropertyUtils.getSimpleProperty(result, currentProp);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Unable to process property with name:" + currentProp, e);
+            }
+
+            if (subPropResult != null) {
+                whereClause.append(String.format(whereOrAnd + " obj.%s.%s = :%s ", fieldName, currentProp,
+                        subPropParamName));
+                params.put(subPropParamName, subPropResult);
+                whereOrAnd = AbstractSearchCriteria.AND;
+            }
+        }
+    }
+
+    private void processCollectionField(Object result, String fieldName, String paramName, String[] fields)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (fields == null || fields.length != 1) {
+            throw new IllegalArgumentException("Can not use the searchable annotation on a collection without"
+                    + " specifying exactly one field name.");
+        }
+
+        whereClause.append(whereOrAnd);
+        whereOrAnd = AbstractSearchCriteria.AND;
+
+        for (String currentProp : fields) {
+            handleCollection(result, fieldName, paramName, currentProp);
+        }
+    }
+
+    private void handleCollection(Object result, String fieldName, String paramName, String propName)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Collection<?> col = (Collection<?>) result;
         if (col.size() > AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE) {
@@ -156,25 +188,26 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         String alias = " obj_" + fieldName;
         selectClause.append(alias);
 
+        String subParamName = paramName + propName;
+
         // now add the where clauses
         whereClause.append(alias + " IN ELEMENTS(obj." + fieldName + ") ");
         whereClause.append(AbstractSearchCriteria.AND);
-        String field = m.getAnnotation(Searchable.class).field();
         whereClause.append(alias);
         whereClause.append('.');
-        whereClause.append(field);
+        whereClause.append(propName);
         whereClause.append(" IN (");
-        whereClause.append(String.format(":%s", paramName));
+        whereClause.append(String.format(":%s", subParamName));
         whereClause.append(')');
 
         // get the collection of values into a nice collection
-        Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(field));
+        Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(propName));
         Collection<Object> valueCollection = new HashSet<Object>();
         for (Object collectionObj : col.toArray()) {
             Object invoke = m2.invoke(collectionObj);
             valueCollection.add(invoke);
         }
-        params.put(paramName, valueCollection);
+        params.put(subParamName, valueCollection);
     }
 
     public Object getSavedState() {

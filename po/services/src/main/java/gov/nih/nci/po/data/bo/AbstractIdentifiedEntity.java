@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
 
 import javax.persistence.Column;
@@ -153,6 +154,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
      */
     @ManyToOne
     @ForeignKey(name = "identifiedentity_scoper_fkey")
+    @Searchable(field = {"id" })
     public Organization getScoper() {
         return this.scoper;
     }
@@ -172,6 +174,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
      */
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public RoleStatus getStatus() {
         return this.status;
     }
@@ -198,6 +201,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
             @Column(name = "assigned_identifier_scope")
     })
     @ValidIi
+    @Searchable(field = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
     public Ii getAssignedIdentifier() {
         return this.assignedIdentifier;
     }
