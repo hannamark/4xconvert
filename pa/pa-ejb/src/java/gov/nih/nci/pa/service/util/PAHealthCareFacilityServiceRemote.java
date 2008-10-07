@@ -4,7 +4,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
+import gov.nih.nci.pa.iso.dto.PAHealthCareFacilityDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyPaService;
 
@@ -19,11 +19,11 @@ import javax.ejb.Remote;
  *        holder, NCI.
  */
 @Remote
-public interface PAHealthCareFacilityServiceRemote extends StudyPaService<HealthCareFacilityDTO> {
+public interface PAHealthCareFacilityServiceRemote extends StudyPaService<PAHealthCareFacilityDTO> {
     /**
      * @param organizationIi pa index of Organization
      * @return list of HealthCareFacilityDTO
      * @throws PAException exception
      */
-    List<HealthCareFacilityDTO> getByOrganization(Ii organizationIi) throws PAException;
+    List<PAHealthCareFacilityDTO> getByOrganization(Ii organizationIi) throws PAException;
 }

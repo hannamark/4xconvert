@@ -17,7 +17,7 @@ import java.util.List;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class HealthCareFacilityDTO extends BaseDTO {
+public class PAHealthCareFacilityDTO extends BaseDTO {
     private St identifier;
     private Ii organizationIi;
     private List<Ii> studyParticipations = new ArrayList<Ii>();

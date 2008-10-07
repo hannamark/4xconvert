@@ -6,7 +6,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.iso.convert.HealthCareFacilityConverter;
-import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
+import gov.nih.nci.pa.iso.dto.PAHealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.AbstractStudyPaService;
 import gov.nih.nci.pa.service.PAException;
@@ -31,7 +31,7 @@ import org.hibernate.Session;
  */
 @Stateless
 public class PAHealthCareFacilityServiceBean 
-        extends AbstractStudyPaService<HealthCareFacilityDTO> 
+        extends AbstractStudyPaService<PAHealthCareFacilityDTO> 
         implements PAHealthCareFacilityServiceRemote {
     
     private static final Logger LOG  = Logger.getLogger(PAHealthCareFacilityServiceBean.class);
@@ -47,7 +47,7 @@ public class PAHealthCareFacilityServiceBean
      * @return HealthCareFacilityDTO
      * @throws PAException PAException
      */ 
-    public HealthCareFacilityDTO get(Ii ii) throws PAException {
+    public PAHealthCareFacilityDTO get(Ii ii) throws PAException {
         if ((ii == null) || PAUtil.isIiNull(ii)) {
             serviceError(" Ii should not be null ");
         }
@@ -76,7 +76,7 @@ public class PAHealthCareFacilityServiceBean
         if (queryList.isEmpty()) {
             serviceError("HealthCareFacility not found for Ii = " + IiConverter.convertToString(ii));
         }
-        HealthCareFacilityDTO result = HealthCareFacilityConverter.convertFromDomainToDTO(queryList.get(0));
+        PAHealthCareFacilityDTO result = HealthCareFacilityConverter.convertFromDomainToDTO(queryList.get(0));
 
         LOG.info("Leaving getHealthCareFacility");
         return result;
@@ -86,12 +86,12 @@ public class PAHealthCareFacilityServiceBean
      * @return HealthCareFacilityDTO
      * @throws PAException PAException
      */
-    public HealthCareFacilityDTO create(
-            HealthCareFacilityDTO dto) throws PAException {
+    public PAHealthCareFacilityDTO create(
+            PAHealthCareFacilityDTO dto) throws PAException {
         if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
             serviceError(" Update method should be used to modify existing. ");
         }
-        HealthCareFacilityDTO resultDto = null;
+        PAHealthCareFacilityDTO resultDto = null;
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -111,7 +111,7 @@ public class PAHealthCareFacilityServiceBean
      * @return list of HealthCareFacilityDTO
      * @throws PAException exception
      */
-    public List<HealthCareFacilityDTO> getByOrganization(Ii organizationIi) throws PAException {
+    public List<PAHealthCareFacilityDTO> getByOrganization(Ii organizationIi) throws PAException {
         if ((organizationIi == null) || PAUtil.isIiNull(organizationIi)) {
             serviceError("Organization Ii should not be null.  ");
         }
@@ -139,7 +139,7 @@ public class PAHealthCareFacilityServiceBean
                     + "HealthCareFacility for org id = " + organizationIi.getExtension() , hbe);
         }
         LOG.info("Leaving getByOrganization.  ");
-        ArrayList<HealthCareFacilityDTO> resultList = new ArrayList<HealthCareFacilityDTO>();
+        ArrayList<PAHealthCareFacilityDTO> resultList = new ArrayList<PAHealthCareFacilityDTO>();
         for (HealthCareFacility hf : queryList) {
             resultList.add(HealthCareFacilityConverter.convertFromDomainToDTO(hf));
         }

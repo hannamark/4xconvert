@@ -5,7 +5,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
+import gov.nih.nci.pa.iso.dto.PAHealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -26,9 +26,9 @@ public class HealthCareFacilityConverter {
      * @return dto
      * @throws PAException PAException
      */
-    public static HealthCareFacilityDTO convertFromDomainToDTO(
+    public static PAHealthCareFacilityDTO convertFromDomainToDTO(
             HealthCareFacility bo) throws PAException {
-        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
+        PAHealthCareFacilityDTO dto = new PAHealthCareFacilityDTO();
         dto.setIi(IiConverter.convertToIi(bo.getId()));
         dto.setIdentifier(StConverter.convertToSt(bo.getIdentifier()));
         dto.setOrganizationIi(IiConverter.convertToIi(bo.getOrganization().getId()));
@@ -42,7 +42,7 @@ public class HealthCareFacilityConverter {
      * @throws PAException PAException
      */
     public static HealthCareFacility convertFromDtoToDomain(
-            HealthCareFacilityDTO dto) throws PAException {
+            PAHealthCareFacilityDTO dto) throws PAException {
         Organization oBo = new Organization();
         oBo.setId(IiConverter.convertToLong(dto.getOrganizationIi()));
         
