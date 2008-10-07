@@ -37,7 +37,7 @@ public class StudyResourcing extends AbstractEntity {
     private MonitorCode nciDivisionProgramCode;
     private String suffixGrantYear;
     private String suffixOther;
-    private String serialNumber;
+    private Integer serialNumber;
     private StudyProtocol studyProtocol;
     private Boolean activeIndicator;
     private String inactiveCommentText;
@@ -149,13 +149,13 @@ public class StudyResourcing extends AbstractEntity {
      * @return serialNumber
      */
     @Column(name = "SERIAL_NUMBER")
-    public String getSerialNumber() {
+    public Integer getSerialNumber() {
         return serialNumber;
     }
     /**
      * @param serialNumber serialNumber
      */
-    public void setSerialNumber(String serialNumber) {
+    public void setSerialNumber(Integer serialNumber) {
         this.serialNumber = serialNumber;
     }
     

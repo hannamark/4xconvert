@@ -3,6 +3,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 
 
@@ -26,7 +27,7 @@ public class StudyResourcingDTO extends BaseDTO {
     private Cd nihInstitutionCode;
     private St suffixGrantYear;
     private St suffixOther;
-    private St serialNumber;
+    private Int serialNumber;
     private St inactiveCommentText;
     /**
      * 
@@ -139,13 +140,13 @@ public class StudyResourcingDTO extends BaseDTO {
     /**
      * @return serialNumber
      */
-    public St getSerialNumber() {
+    public Int getSerialNumber() {
         return serialNumber;
     }
     /**
      * @param serialNumber serialNumber
      */
-    public void setSerialNumber(St serialNumber) {
+    public void setSerialNumber(Int serialNumber) {
         this.serialNumber = serialNumber;
     }
     /**
