@@ -23,7 +23,7 @@ function handleAction(){
  <h1><fmt:message key="trialFunding.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
-    <s:form><s:actionerror/>
+    <s:form>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
    <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="cbValue" value="${cbValue}" />
@@ -31,11 +31,16 @@ function handleAction(){
                 <tr>
                     <td scope="row" class="label">
                         <label for="deletion"><dfn title="Context sensitive help text or tooltip here.">                      
-                            <fmt:message key="trialFunding.inactiveCommentText"/>*</dfn>
+                            <fmt:message key="trialFunding.inactiveCommentText"/></dfn><span class="required">*</span>
                         </label>
                      </td>                     
                     <td class="value">
                         <s:textarea name="trialFundingWebDTO.inactiveCommentText" rows="4" cssStyle="width:206px"/>
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialFundingWebDTO.inactiveCommentText</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>         
                 </tr>                 
         </table>

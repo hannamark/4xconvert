@@ -33,7 +33,7 @@ function tooltip() {
  <h1><fmt:message key="trialFunding.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
-    <s:form><s:actionerror/>
+    <s:form>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="cbValue" value="${cbValue}" />
@@ -51,7 +51,12 @@ function tooltip() {
                            list="#fundingMechanism"  
                            listKey="fundingMechanismCode" 
                            listValue="fundingMechanismCode" 
-                           cssStyle="width:60px"/> 
+                           cssStyle="width:206px"/> 
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialFundingWebDTO.fundingMechanismCode</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>         
                 </tr>
                 
@@ -68,7 +73,12 @@ function tooltip() {
                            list="#nihInstitute"  
                            listKey="nihInstituteCode" 
                            listValue="nihInstituteCode" 
-                           cssStyle="width:60px"/>
+                           cssStyle="width:206px"/>
+                           <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialFundingWebDTO.nihInstitutionCode</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>         
                 </tr> 
                 <tr>
@@ -78,7 +88,12 @@ function tooltip() {
                      </label>
                      </td>
                      <td class="value">
-                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="200" cssStyle="width:106px"/>
+                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="200" cssStyle="width:206px"/>
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialFundingWebDTO.serialNumber</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td> 
                 </tr>
                 <tr>
@@ -92,7 +107,12 @@ function tooltip() {
                         <s:select headerKey="" headerValue="" 
                            name="trialFundingWebDTO.nciDivisionProgramCode" 
                            list="#monitorCodeValues"  
-                           cssStyle="width:100px"/>
+                           cssStyle="width:206px"/>
+                           <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>         
                 </tr> 
                 <tr>
@@ -106,7 +126,7 @@ function tooltip() {
                         <s:select  
                            name="trialFundingWebDTO.fundingTypeCode" 
                            list="#{'':'','1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" 
-                           cssStyle="width:70px" />                           
+                           cssStyle="width:206px" />                           
                       </td>         
                 </tr>                   
                 <tr>
@@ -116,7 +136,7 @@ function tooltip() {
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:100px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:206px"/>
                       </td>         
                 </tr> 
                 <tr>
@@ -126,7 +146,7 @@ function tooltip() {
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:106px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:206px"/>
                       </td>         
                 </tr>                 
         </table>
