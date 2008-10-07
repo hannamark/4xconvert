@@ -7,6 +7,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -66,7 +67,7 @@ public class TrialFundingAction extends ActionSupport {
 
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            return ERROR;
+            return QUERY_RESULT;
         }
     }
     
@@ -76,24 +77,23 @@ public class TrialFundingAction extends ActionSupport {
     public String create()  {
         
         LOG.info("Entering create");
-        boolean error = false;
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-            addActionError(getText("error.trialFunding.funding.mechanism"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+            addFieldError("trialFundingWebDTO.fundingMechanismCode",
+                    getText("error.trialFunding.funding.mechanism"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
-            addActionError(getText("error.trialFunding.institution.code"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
+            addFieldError("trialFundingWebDTO.nihInstitutionCode",
+                    getText("error.trialFunding.institution.code"));           
         }
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
-            addActionError(getText("error.studyProtocol.monitorCode"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
+            addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
+                    getText("error.studyProtocol.monitorCode"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getSerialNumber())) {
-            addActionError(getText("error.trialFunding.serial.number"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+            addFieldError("trialFundingWebDTO.serialNumber",
+                    getText("error.trialFunding.serial.number"));
         }
-        if (error) {
+        if (hasFieldErrors()) {
             return ERROR;
         }
         try {            
@@ -113,7 +113,7 @@ public class TrialFundingAction extends ActionSupport {
                     trialFundingWebDTO.getNihInstitutionCode()));
             studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
             studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
-            studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+            studyResoureDTO.setSerialNumber(IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
             studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
                     ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
@@ -133,24 +133,23 @@ public class TrialFundingAction extends ActionSupport {
     public String update()  {
         
         LOG.info("Entering update");
-        boolean error = false;
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-            addActionError(getText("error.trialFunding.funding.mechanism"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+            addFieldError("trialFundingWebDTO.fundingMechanismCode",
+                    getText("error.trialFunding.funding.mechanism"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
-            addActionError(getText("error.trialFunding.institution.code"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
+            addFieldError("trialFundingWebDTO.nihInstitutionCode",
+                    getText("error.trialFunding.institution.code"));           
         }
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
-            addActionError(getText("error.studyProtocol.monitorCode"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
+            addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
+                    getText("error.studyProtocol.monitorCode"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getSerialNumber())) {
-            addActionError(getText("error.trialFunding.serial.number"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+            addFieldError("trialFundingWebDTO.serialNumber",
+                    getText("error.trialFunding.serial.number"));
         }
-        if (error) {
+        if (hasFieldErrors()) {
             return ERROR;
         }
         try { 
@@ -171,7 +170,7 @@ public class TrialFundingAction extends ActionSupport {
                     trialFundingWebDTO.getNihInstitutionCode()));
             studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
             studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
-            studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+            studyResoureDTO.setSerialNumber(IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
             studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
                     ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
@@ -191,12 +190,11 @@ public class TrialFundingAction extends ActionSupport {
     public String delete()  {
         
         LOG.info("Entering delete");
-        boolean error = false;
-        if (!PAUtil.isNotNullOrNotEmpty(trialFundingWebDTO.getInactiveCommentText())) {
-            addActionError(getText("error.trialFunding.delete.reason"));
-            error = true;
+        if (PAUtil.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
+            addFieldError("trialFundingWebDTO.inactiveCommentText",
+                    getText("error.trialFunding.delete.reason"));
         }
-        if (error) {
+        if (hasFieldErrors()) {
             return DELETE_RESULT;
         }
         try { 
@@ -216,7 +214,7 @@ public class TrialFundingAction extends ActionSupport {
 
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            return ERROR;
+            return DELETE_RESULT;
         }
     }
     /**  
