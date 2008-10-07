@@ -12,7 +12,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.HealthCareFacilityDTO;
+import gov.nih.nci.pa.iso.dto.PAHealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -28,6 +28,8 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
@@ -63,14 +65,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     private StudySiteAccrualStatusServiceRemote ssasService;
     private PAHealthCareFacilityServiceRemote pahfService;
     private PAOrganizationServiceRemote paoService;
+    private HealthCareFacilityCorrelationServiceRemote pohfService;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
     private List<OrganizationWebDTO> organizationList = null; 
     private OrganizationDTO selectedOrgDTO = null;
     private static final int THREE = 3;    
     private static final String DISPLAYJSP = "displayJsp";
-    private ParticipatingOrganizationsTabWebDTO partOrgData = new ParticipatingOrganizationsTabWebDTO();
     private Long cbValue;
+    private String recStatus;
+    private String recStatusDate;
 
 
     /** 
@@ -83,6 +87,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         ssasService = PaRegistry.getStudySiteAccrualStatusService();
         pahfService = PaRegistry.getPAHealthCareFacilityService();
         paoService = PaRegistry.getPAOrganizationService();
+        pohfService = PaRegistry.getHealthCareFacilityCorrelationService();
 
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
         .getRequest().getSession()
@@ -129,13 +134,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
 
         // 2) using the poIdentifer call po.getHealthcareFacility(poOrganizationid) (this 
-        //      method is NOT yet implemented in PO)
         //
         //  if (poHealthcareFacilityIi == null) {
         //      poHealthcareFacilityIi = pa.regisitry.poCreateHealthcareFacility(poISOHealthcareFacilityDTO) 
         //
-        // note : this method is NOT yet imple. stub it for now
-        String poHfId = null;
+        HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
+        hcf.setPlayerIdentifier(tab.getPoOrganizationIi());
+        List<HealthCareFacilityDTO> poHfList = pohfService.search(hcf);
+        if (poHfList.isEmpty()) {
+            tab.setPoHealthCareFacilityIi(pohfService.createCorrelation(hcf));
+         }
 
         // 3) at this point we have both poOrganizationIi & poHealthcareFacilityIi
         // 4) check if PA has organization and healthcarefacitly (local copy)
@@ -164,12 +172,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         //      paHealthcareFacilityIi = PAHealthcareFacilityServiceRemote.createHealthcareFacility(HealthcareFacility) 
         //          (this method is NOT impemented)
         //    }
-        HealthCareFacilityDTO hfDto = null;
-        List<HealthCareFacilityDTO> hfList = pahfService.getByOrganization(IiConverter.convertToIi(poOrgId));
+        PAHealthCareFacilityDTO hfDto = null;
+        List<PAHealthCareFacilityDTO> hfList = pahfService.getByOrganization(IiConverter.convertToIi(poOrgId));
         if (hfList.size() > 0) {
             hfDto = hfList.get(0);
         } else {
-            hfDto = new HealthCareFacilityDTO();
+            hfDto = new PAHealthCareFacilityDTO();
             hfDto.setIdentifier(StConverter.convertToSt("1234"));
             hfDto.setOrganizationIi(IiConverter.convertToIi(paOrg.getId()));
             hfDto = pahfService.create(hfDto);
@@ -186,15 +194,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         sp.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2001")));
         sp.setStudyProtocolIi(spIi);
         sp = sPartService.create(sp);
+        tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIi()));
         
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
         ssas.setIi(IiConverter.convertToIi((Long) null));
-        ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ENROLLING_BY_INVITATION));
-        ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("10/1/2008")));
+        ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(getRecStatus())));
+        ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getRecStatusDate())));
         ssas.setStudyParticipationIi(sp.getIi());
         ssas = ssasService.createStudySiteAccrualStatus(ssas);
         
-        ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
         return ACT_FACILITY_SAVE;
@@ -244,7 +253,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         for (StudyParticipationDTO sp : spList) {
             List<StudySiteAccrualStatusDTO> ssasList = 
                 ssasService.getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIi());
-            HealthCareFacilityDTO hf = pahfService.get(sp.getHealthcareFacilityIi());
+            PAHealthCareFacilityDTO hf = pahfService.get(sp.getHealthcareFacilityIi());
             Organization orgBo = new Organization();
             orgBo.setId(IiConverter.convertToLong(hf.getOrganizationIi()));
             orgBo = paoService.getOrganizationByIndetifers(orgBo);
@@ -286,6 +295,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         org.setPostalCode(selectedOrgDTO.getPostalAddress().getPart().get(AD_ZIP_IDX).getValue());
         
         ParticipatingOrganizationsTabWebDTO tab =  new ParticipatingOrganizationsTabWebDTO();
+        tab.setPoOrganizationIi(selectedOrgDTO.getIdentifier());
         tab.setFacilityOrganization(org);
         ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
         return DISPLAYJSP;
@@ -348,21 +358,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     public void setSelectedOrgDTO(OrganizationDTO selectedOrgDTO) {
         this.selectedOrgDTO = selectedOrgDTO;
     }
-
-    /**
-     * @return the partOrgData
-     */
-    public ParticipatingOrganizationsTabWebDTO getPartOrgData() {
-        return partOrgData;
-    }
-
-    /**
-     * @param partOrgData the partOrgData to set
-     */
-    public void setPartOrgData(ParticipatingOrganizationsTabWebDTO partOrgData) {
-        this.partOrgData = partOrgData;
-    }
-
     /**
      * @return the cbValue
      */
@@ -375,6 +370,34 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      */
     public void setCbValue(Long cbValue) {
         this.cbValue = cbValue;
+    }
+
+    /**
+     * @return the recStatus
+     */
+    public String getRecStatus() {
+        return recStatus;
+    }
+
+    /**
+     * @param recStatus the recStatus to set
+     */
+    public void setRecStatus(String recStatus) {
+        this.recStatus = recStatus;
+    }
+
+    /**
+     * @return the recStatusDate
+     */
+    public String getRecStatusDate() {
+        return recStatusDate;
+    }
+
+    /**
+     * @param recStatusDate the recStatusDate to set
+     */
+    public void setRecStatusDate(String recStatusDate) {
+        this.recStatusDate = PAUtil.normalizeDateString(recStatusDate);
     }
 
 }
