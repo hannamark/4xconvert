@@ -33,7 +33,7 @@ public class TrialFundingWebDTO {
         this.suffixgrantYear = iso.getSuffixGrantYear().getValue();
         this.suffixOther = iso.getSuffixOther().getValue();
         this.id = iso.getIi().getExtension();
-        this.serialNumber = iso.getSerialNumber().getValue();
+        this.serialNumber = iso.getSerialNumber().getValue().toString();
         //this.inactiveCommentText = iso.getInactiveCommentText().getValue();
     }
     
