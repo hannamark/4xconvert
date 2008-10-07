@@ -21,18 +21,18 @@
  */
 package gov.nih.nci.coppa.test.integration;
 
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
 
 /**
  * A utility class from JBM v1.40.SP3 that was adapted to meet our needs
- *
+ * 
  * @author <a href="mailto:ovidiu@feodorov.com">Ovidiu Feodorov</a>
  * @version <tt>$Revision: 2977 $</tt>
- *
- * $Id: Util.java 2977 2007-08-08 15:32:14Z timfox $
+ * 
+ *          $Id: Util.java 2977 2007-08-08 15:32:14Z timfox $
  */
 public class JBossMbeanUtility {
     // Constants -----------------------------------------------------
@@ -45,93 +45,59 @@ public class JBossMbeanUtility {
         DEFALUT_SERVER_PEER_NAME = name;
     }
 
-    public static boolean doesDestinationExist(String jndiName)
-            throws Exception {
-        return doesDestinationExist(jndiName, null);
-    }
-
-    public static boolean doesDestinationExist(String jndiName,
-            InitialContext ic) throws Exception {
-        if (ic == null) {
-            ic = new InitialContext();
-        }
-        try {
-            ic.lookup(jndiName);
-        } catch (NameNotFoundException e) {
-            return false;
-        }
-        return true;
+    public static boolean doesDestinationExist(String jndiName) throws Exception {
+        return doesDestinationExist(jndiName);
     }
 
     public static void deployTopic(String jndiName) throws Exception {
-        deployTopic(jndiName, null, DEFALUT_SERVER_PEER_NAME);
+        deployTopic(jndiName, DEFALUT_SERVER_PEER_NAME);
     }
 
-    public static void deployTopic(String jndiName, InitialContext ic,
-            String serverPeerName) throws Exception {
-        MBeanServerConnection mBeanServer = lookupMBeanServerProxy(ic);
-        ObjectName serverObjectName = new ObjectName("jboss.mq:service="
-                + serverPeerName);
+    public static void deployTopic(String jndiName, String serverPeerName) throws Exception {
+        MBeanServerConnection mBeanServer = lookupMBeanServerProxy();
+        ObjectName serverObjectName = new ObjectName("jboss.mq:service=" + serverPeerName);
         String queueName = jndiName.substring(jndiName.lastIndexOf('/') + 1);
-        mBeanServer.invoke(serverObjectName, "deployTopic", new Object[] {
-                queueName, jndiName }, new String[] { "java.lang.String",
-                "java.lang.String" });
+        mBeanServer.invoke(serverObjectName, "deployTopic", new Object[] { queueName, jndiName }, new String[] {
+                "java.lang.String", "java.lang.String" });
 
         System.out.println("Queue " + jndiName + " deployed");
     }
 
     public static void destroyTopic(String jndiName) throws Exception {
-        destroyTopic(jndiName, null, DEFALUT_SERVER_PEER_NAME);
+        destroyTopic(jndiName, DEFALUT_SERVER_PEER_NAME);
     }
 
-    public static void destroyTopic(String jndiName, InitialContext ic,
-            String serverPeerName) throws Exception {
-        MBeanServerConnection mBeanServer = lookupMBeanServerProxy(ic);
-        ObjectName serverObjectName = new ObjectName("jboss.mq:service="
-                + serverPeerName);
+    public static void destroyTopic(String jndiName, String serverPeerName) throws Exception {
+        MBeanServerConnection mBeanServer = lookupMBeanServerProxy();
+        ObjectName serverObjectName = new ObjectName("jboss.mq:service=" + serverPeerName);
         String queueName = jndiName.substring(jndiName.lastIndexOf('/') + 1);
 
-        mBeanServer
-                .invoke(serverObjectName, "destroyTopic",
-                        new Object[] { queueName },
-                        new String[] { "java.lang.String" });
+        mBeanServer.invoke(serverObjectName, "destroyTopic", new Object[] { queueName },
+                new String[] { "java.lang.String" });
 
         System.out.println("Queue " + jndiName + " undeployed");
     }
 
-    public static MBeanServerConnection lookupMBeanServerProxy(InitialContext ic)
-            throws Exception {
-        if (ic == null) {
-            ic = new InitialContext();
-        }
-        return (MBeanServerConnection) ic.lookup("jmx/invoker/RMIAdaptor");
+    public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
+        return RemoteServiceHelper.lookupMBeanServerProxy();
     }
 
     public static void removeAllMessagesOnTopic(String jndiName, String topicName) throws Exception {
-        removeAllMessagesOnTopic(jndiName, null, topicName);
-    }
-    public static void removeAllMessagesOnTopic(String jndiName,
-            InitialContext ic, String topicName) throws Exception {
-        MBeanServerConnection mBeanServer = lookupMBeanServerProxy(ic);
-        ObjectName serverObjectName = new ObjectName(
-                "jboss.mq.destination:service=Topic,name=" + topicName);
-        mBeanServer.invoke(serverObjectName, "removeAllMessages",
-                new Object[] {}, new String[] {});
+        MBeanServerConnection mBeanServer = lookupMBeanServerProxy();
+        ObjectName serverObjectName = new ObjectName("jboss.mq.destination:service=Topic,name=" + topicName);
+        mBeanServer.invoke(serverObjectName, "removeAllMessages", new Object[] {}, new String[] {});
 
-        System.out.println("Removed all messages for " + jndiName
-                + " topic/queue");
+        System.out.println("Removed all messages for " + jndiName + " topic/queue");
     }
 
-    public static Object listAllSubscriptionsOnTopic(String jndiName,
-            InitialContext ic, String topicName) throws Exception {
-        MBeanServerConnection mBeanServer = lookupMBeanServerProxy(ic);
-        ObjectName serverObjectName = new ObjectName(
-                "jboss.mq.destination:service=Topic,name=" + topicName);
-        Object invokeResult = mBeanServer.invoke(serverObjectName, "listAllSubscriptions",
-                new Object[] {}, new String[] {});
+    public static Object listAllSubscriptionsOnTopic(String jndiName, String topicName)
+            throws Exception {
+        MBeanServerConnection mBeanServer = lookupMBeanServerProxy();
+        ObjectName serverObjectName = new ObjectName("jboss.mq.destination:service=Topic,name=" + topicName);
+        Object invokeResult = mBeanServer.invoke(serverObjectName, "listAllSubscriptions", new Object[] {},
+                new String[] {});
 
-        System.out.println("Removed all messages for " + jndiName
-                + " topic/queue");
+        System.out.println("Removed all messages for " + jndiName + " topic/queue");
         return invokeResult;
     }
 

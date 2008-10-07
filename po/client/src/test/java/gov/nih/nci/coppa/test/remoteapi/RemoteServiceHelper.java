@@ -94,6 +94,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.Properties;
 
+import javax.management.MBeanServerConnection;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -184,5 +185,8 @@ public class RemoteServiceHelper {
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote() throws NamingException {
         return (IdentifiedOrganizationCorrelationServiceRemote)lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
     }
-
+    
+    public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
+        return (MBeanServerConnection) lookup("jmx/invoker/RMIAdaptor");
+    }
 }
