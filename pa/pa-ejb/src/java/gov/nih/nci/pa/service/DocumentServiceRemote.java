@@ -45,4 +45,18 @@ public interface DocumentServiceRemote {
      */
     DocumentDTO updateTrialDocument(DocumentDTO docDTO) throws PAException;
 
+    /**
+     * @param docDTO DocumentDTO 
+     * @return Boolean
+     * @throws PAException PAException
+     */
+    Boolean deleteTrialDocumentByID(DocumentDTO docDTO) throws PAException;
+    
+    /**
+     * @param docDTO DocumentDTO 
+     * @return Boolean
+     * @throws PAException PAException
+     */
+    Boolean checkTypeCodes(DocumentDTO docDTO) throws PAException;
+
 }

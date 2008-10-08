@@ -6,6 +6,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -88,7 +89,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public DocumentDTO createTrialDocument(DocumentDTO docDTO)
-            throws PAException {
+    throws PAException {
         if (docDTO == null) {
             throw new PAException(" docDTO should not be null ");
         }     
@@ -100,21 +101,22 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         // create Protocol Obj
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));       
-       
-        
+
         doc.setStudyProtocol(studyProtocol);
         doc.setActiveIndicator(true);
         try {
             session = HibernateUtil.getCurrentSession();
+
             session.save(doc);
             session.flush();
         } catch (HibernateException hbe) {
             session.flush();
             LOG.error(" Hibernate exception while createTrialDocument " , hbe);
             throw new PAException(" Hibernate exception while createTrialDocument " , hbe);
-        }
+        }                
+
         LOG.debug("Leaving createStudyResourcing ");
-        return DocumentConverter.convertFromDomainToDTO(doc);
+        return DocumentConverter.convertFromDomainToDTO(doc);  
     }
     
     /**
@@ -209,5 +211,77 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         }    
         LOG.debug("Leaving updateTrialDocument ");
         return docRetDTO;
+    }
+
+    /**
+     * 
+     * @param docDTO DocumentDTO
+     * @return Boolean
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Boolean deleteTrialDocumentByID(DocumentDTO docDTO) throws PAException {
+          
+        LOG.debug("Entering deleteTrialDocumentByID ");
+        Boolean result = false;
+        Session session = null;
+        Document doc = null;
+        List<Document> queryList = new ArrayList<Document>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+
+            Query query = null;
+            
+            // step 1: form the hql
+            String hql = " select d"
+                       + " from Document d"
+                       + " where d.id = " + IiConverter.convertToLong(docDTO.getIi());
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            queryList = query.list();
+            doc = queryList.get(0);
+            // set the values from paramter
+            doc.setActiveIndicator(false);
+            doc.setInactiveCommentText(StConverter.convertToString(
+                    docDTO.getInactiveCommentText()));
+            doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
+            doc.setUserLastUpdated(docDTO.getUserLastUpdated().getValue());
+            session.update(doc);
+            session.flush();
+            result = true;
+        } catch (HibernateException hbe) {
+            session.flush();
+            LOG.error(" Hibernate exception while retrieving deleteTrialDocumentByID" , hbe);
+            throw new PAException(" Hibernate exception while retrieving deleteTrialDocumentByID "  , hbe);
+        }   
+        LOG.debug("Leaving deleteTrialDocumentByID ");
+        return result;
+    } 
+    /**
+     * @param docDTO DocumentDTO 
+     * @return Boolean
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Boolean checkTypeCodes(DocumentDTO docDTO) throws PAException {
+        Boolean result = false;
+        List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
+        resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIi());
+        if (!(resultList.isEmpty())) {
+        for (DocumentDTO check : resultList) {
+            if (check.getTypeCode().getCode().equals("Protocol Document") 
+                    || check.getTypeCode().getCode().equals("IRB Approval Document")) {
+                if (check.getTypeCode().getCode().equals(docDTO.getTypeCode().getCode())) {
+                    result = false;  
+                    break;
+                } else {
+                result = true;
+                }
+            }
+         }
+        } else {
+            result = true;
+        }
+        return result;
     }
 }
