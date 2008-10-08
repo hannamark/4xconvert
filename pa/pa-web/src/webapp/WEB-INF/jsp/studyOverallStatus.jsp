@@ -7,15 +7,15 @@
 <head>
 <title><fmt:message key="trialStatus.title" /></title>
 <s:head />
-<script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/scriptaculous.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
-            var cal = new CalendarPopup();
-            var cal1 = new CalendarPopup();
-            var cal2 = new CalendarPopup();
-     </script>
+        addCalendar("Cal1", "Select Date", "statusDate", "studyOverallStatus");
+        addCalendar("Cal2", "Select Date", "startDate", "studyOverallStatus");
+        addCalendar("Cal3", "Select Date", "completionDate", "studyOverallStatus");
+        setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
+</script>
      
 </head>
 <SCRIPT LANGUAGE="JavaScript">
@@ -60,31 +60,28 @@ function handleAction(){
             <td scope="row" class="label"><label for="statusDate"><fmt:message
                 key="trialStatus.current.trial.status.date" /></label></td>
             <td class="value"><s:textfield name="statusDate"
-                maxlength="10" size="10" cssStyle="width:70px;float:left"/> <a href="javascript:;"
-                onclick="cal.select(document.forms[0].statusDate,'calendarbutton','MM/dd/yyyy'); return false;"
-                name="calendarbutton" id="calendarbutton"> <img
-                src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-            </a></td>
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal1')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                </td>
         </tr>
         <tr>
             <td scope="row" class="label"><label for="startDate"><fmt:message
                 key="trialStatus.trial.start.date" /></label></td>
             <td class="value"><s:textfield name="startDate"
-                maxlength="10" size="10" cssStyle="width:70px;float:left"/> <a href="javascript:;"
-                onclick="cal1.select(document.forms[0].startDate,'calendarbutton','MM/dd/yyyy'); return false;"
-                name="calendarbutton" id="calendarbutton"> <img
-                src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-            </a><s:radio name="startDateType" list="dateTypeList" /></td>
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal2')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                <s:radio name="startDateType" list="dateTypeList" /></td>
         </tr>
         <tr>
             <td scope="row" class="label"><label for="completionDate">
             <fmt:message key="trialStatus.primary.completion.date" /></label></td>
             <td class="value"><s:textfield name="completionDate"
-                maxlength="10" size="10" cssStyle="width:70px;float:left"/> <a href="javascript:;"
-                onclick="cal.select(document.forms[0].completionDate,'calendarbutton','MM/dd/yyyy'); return false;"
-                name="calendarbutton" id="calendarbutton"> <img
-                src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-            </a><s:radio name="completionDateType" list="dateTypeList" /></td>
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal3')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                <s:radio name="completionDateType" list="dateTypeList" /></td>
         </tr>
         <!--<td colspan="2">
           <s:submit value="Save"  action='studyOverallStatusUpdate' cssClass="button" />
