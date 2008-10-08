@@ -27,6 +27,7 @@ public class Document extends AbstractEntity {
     private StudyProtocol studyProtocol;
     private Boolean activeIndicator;
     private String fileName;
+    private String inactiveCommentText;
     
     /**
      * 
@@ -96,5 +97,22 @@ public class Document extends AbstractEntity {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+    
+    /**
+     * 
+     * @return inactiveCommentText
+     */
+    @Column(name = "INACTIVE_COMMENT_TEXT")
+    public String getInactiveCommentText() {
+        return inactiveCommentText;
+    }
+    
+    /**
+     * 
+     * @param inactiveCommentText inactiveCommentText
+     */
+    public void setInactiveCommentText(String inactiveCommentText) {
+        this.inactiveCommentText = inactiveCommentText;
     }
 }
