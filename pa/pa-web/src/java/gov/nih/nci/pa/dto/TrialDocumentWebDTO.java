@@ -14,6 +14,7 @@ public class TrialDocumentWebDTO {
     private String typeCode;
     private String fileName;
     private String id;
+    private String inactiveCommentText;
     
     /**
      * @param iso StudyResourcingDTO object
@@ -74,4 +75,17 @@ public class TrialDocumentWebDTO {
         this.id = id;
     }
 
+    /**
+     * @return inactiveCommentText
+     */
+    public String getInactiveCommentText() {
+        return inactiveCommentText;
+    }
+
+    /**
+     * @param inactiveCommentText inactiveCommentText
+     */
+    public void setInactiveCommentText(String inactiveCommentText) {
+        this.inactiveCommentText = inactiveCommentText;
+    }
 }

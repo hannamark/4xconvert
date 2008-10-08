@@ -8,6 +8,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
@@ -41,10 +42,11 @@ ServletResponseAware {
  
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
     private static final String FILE_PATH = "C:/COPPA/Trial_Documents/";
+    private static final String DELETE_RESULT = "delete";
     private File upload;
     private String uploadFileName;
     private List<TrialDocumentWebDTO> trialDocumentList;
-    private TrialDocumentWebDTO trialDocumentWebDTO;
+    private TrialDocumentWebDTO trialDocumentWebDTO = new TrialDocumentWebDTO();
     private Long id = null;
     private HttpServletResponse servletResponse;
     private String page;
@@ -88,6 +90,17 @@ ServletResponseAware {
       */
      public String create() {
          LOG.info("Entering create");
+         if (PAUtil.isEmpty(trialDocumentWebDTO.getTypeCode())) {
+             addFieldError("trialDocumentWebDTO.typeCode",
+                     getText("error.trialDocument.typeCode"));
+         }
+         if (PAUtil.isEmpty(uploadFileName)) {
+             addFieldError("trialDocumentWebDTO.uploadFileName",
+                     getText("error.trialDocument.uploadFileName"));           
+         }
+         if (hasFieldErrors()) {
+             return INPUT;
+         }
          try {           
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
              getAttribute(Constants.STUDY_PROTOCOL_II); 
@@ -98,6 +111,8 @@ ServletResponseAware {
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
+             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
+             if (status) {
              DocumentDTO doc = PaRegistry.getDocumentService().createTrialDocument(docDTO); 
 
              StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
@@ -108,6 +123,12 @@ ServletResponseAware {
 
              File outputFile = new File(fullFileName);
              FileUtils.copyFile(upload, outputFile);
+             } else {
+                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+                         getText("Active Document with this type already exists,please select a different type"
+                 + " or use replacing functionality for replacing existing document of selected type."));
+                 return INPUT;
+             }
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
              return SUCCESS;
@@ -181,8 +202,19 @@ ServletResponseAware {
       */
      public String update() {
          LOG.info("Entering update");
+         if (PAUtil.isEmpty(trialDocumentWebDTO.getTypeCode())) {
+             addFieldError("trialDocumentWebDTO.typeCode",
+                     getText("error.trialDocument.typeCode"));
+         }
+         if (PAUtil.isEmpty(uploadFileName)) {
+             addFieldError("trialDocumentWebDTO.uploadFileName",
+                     getText("error.trialDocument.uploadFileName"));           
+         }
+         if (hasFieldErrors()) {
+             return INPUT;
+         }
          try {  
-             
+
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
              getAttribute(Constants.STUDY_PROTOCOL_II); 
              DocumentDTO  docDTO = new DocumentDTO();
@@ -193,8 +225,16 @@ ServletResponseAware {
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
-             PaRegistry.getDocumentService().updateTrialDocument(docDTO);
-             create();
+             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
+             if (status) {
+                 PaRegistry.getDocumentService().updateTrialDocument(docDTO);
+                 create();
+             } else {
+                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+                         getText("Active Document with this type already exists,please select a different type" 
+                 + " or use replacing functionality for replacing existing document of select type."));
+                 return INPUT;
+             }
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
          } catch (Exception e) {
@@ -203,6 +243,41 @@ ServletResponseAware {
          }
          return SUCCESS;
      }
+     
+     /**
+      * @return result
+      */
+     public String delete()  {
+         
+         LOG.info("Entering delete");
+         if (PAUtil.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
+             addFieldError("trialDocumentWebDTO.inactiveCommentText",
+                     getText("error.trialDocument.delete.reason"));
+         }
+         if (hasFieldErrors()) {
+             return DELETE_RESULT;
+         }
+         try { 
+             DocumentDTO docDTO = new DocumentDTO();            
+
+             docDTO = PaRegistry.getDocumentService().getTrialDocumentById(
+                     IiConverter.convertToIi(id)); 
+             docDTO.setInactiveCommentText(StConverter.convertToSt(
+                     trialDocumentWebDTO.getInactiveCommentText()));
+             docDTO.setUserLastUpdated((StConverter.convertToSt(
+                     ServletActionContext.getRequest().getRemoteUser())));
+             PaRegistry.getDocumentService().deleteTrialDocumentByID(docDTO);
+
+             query();
+             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+             return SUCCESS;    
+
+         } catch (Exception e) {
+             addActionError(e.getLocalizedMessage());
+             return DELETE_RESULT;
+         }
+     }
+     
      /**
       * @return fileName
       */
