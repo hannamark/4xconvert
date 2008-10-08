@@ -7,7 +7,7 @@
 </head>
 <body onload="setFocusToFirstControl();">
 
-<h2>Login</h2>
+<h1><fmt:message key="login.title" /></h1>
 <div class="box"> 
 <form action="j_security_check" method="post" id="loginForm">   
 
