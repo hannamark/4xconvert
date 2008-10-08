@@ -119,8 +119,6 @@ public class RemoteServiceHelper {
 
     private static InitialContext ctx;
     private static InitialContext jmxCtx;
-    private static InitialContext jmsSubscriberCtx;
-    private static InitialContext jmsPublisherCtx;
 
     private static Object lookup(String resource) throws NamingException {
         if (ctx == null) {
@@ -146,14 +144,6 @@ public class RemoteServiceHelper {
         if (jmxCtx != null) {
             jmxCtx.close();
             jmxCtx = null;
-        }
-        if (jmsSubscriberCtx != null) {
-            jmsSubscriberCtx.close();
-            jmsSubscriberCtx = null;
-        }
-        if (jmsPublisherCtx != null) {
-            jmsPublisherCtx.close();
-            jmsPublisherCtx = null;
         }
     }
 
@@ -225,33 +215,4 @@ public class RemoteServiceHelper {
         }
         return (MBeanServerConnection) jmxCtx.lookup("jmx/invoker/RMIAdaptor");
     }
-    
-    public static final String SUBSCRIBER_ROLE_USER = "subscriber";
-    public static final String SUBSCRIBER_ROLE_USER_PASS = "pass";
-    
-    public static Object lookupSubscriber(String resourceName) throws Exception {
-        if (jmsSubscriberCtx == null) {
-            Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, SUBSCRIBER_ROLE_USER);
-            env.setProperty(Context.SECURITY_CREDENTIALS, SUBSCRIBER_ROLE_USER_PASS);
-            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-            jmsSubscriberCtx = new InitialContext(env);
-        }
-        return jmsSubscriberCtx.lookup(resourceName);
-    }
-    
-    public static final String PUBLISHER_ROLE_USER_PASS = "pass";
-    public static final String PUBLISHER_ROLE_USER = "publisher";
-
-    public static Object lookupPublisher(String resourceName) throws Exception {
-        if (jmsPublisherCtx == null) {
-            Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, PUBLISHER_ROLE_USER);
-            env.setProperty(Context.SECURITY_CREDENTIALS, PUBLISHER_ROLE_USER_PASS);
-            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-            jmsPublisherCtx = new InitialContext(env);
-        }
-        return jmsPublisherCtx.lookup(resourceName);
-    }
-
 }
