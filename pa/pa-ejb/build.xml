@@ -135,6 +135,13 @@
             	<filter token="po.pass" value="${po.pass}" />
             </filterset>
         </copy>
+        <copy file="${pa.resourceDir}/paear.properties" 
+              tofile="${pa-ejb.build.resourceDir.0}/paear.properties"
+              overwrite="true">
+            <filterset>
+                <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}" />
+            </filterset>
+        </copy>
     </target>
     
     <!-- ====================================================================== -->
