@@ -14,13 +14,16 @@
 function handleAction(){
 var page;
 page=document.forms[0].page.value;
-if (page == "Edit"){
- document.forms[0].action="trialDocumentupdate.action";
- document.forms[0].submit(); 
-} else {
- document.forms[0].action="trialDocumentcreate.action";
- document.forms[0].submit();   
- } 
+input_box=confirm("Click OK to save changes or Cancel to Abort.");
+if (input_box==true){
+	if (page == "Edit"){
+ 		document.forms[0].action="trialDocumentupdate.action";
+ 		document.forms[0].submit();  	
+	} else {
+ 		document.forms[0].action="trialDocumentcreate.action";
+ 		document.forms[0].submit();   
+ 	} 
+ }
 } 
 function tooltip() {
 BubbleTips.activateTipOn("acronym");
@@ -32,7 +35,8 @@ BubbleTips.activateTipOn("dfn");
  <h1><fmt:message key="trialDocument.addtitle" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
-    <s:form method="POST" enctype="multipart/form-data"><s:actionerror/>
+   <pa:sucessMessage/>
+    <s:form method="POST" enctype="multipart/form-data"><s:actionerror/>    
     <h2><fmt:message key="trialDocument.addtitle" /></h2>
     <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="id" value="${id}" />
@@ -49,6 +53,11 @@ BubbleTips.activateTipOn("dfn");
                            name="trialDocumentWebDTO.typeCode" 
                            list="#typeCodeValues"  
                            cssStyle="width:206px"/>
+                           <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialDocumentWebDTO.typeCode</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>         
                 </tr>                
                 <tr>
@@ -59,6 +68,11 @@ BubbleTips.activateTipOn("dfn");
                     </td>
                     <td class="value">
                         <s:file name="upload" cssStyle="width:270px"/>
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialDocumentWebDTO.uploadFileName</s:param>
+                               </s:fielderror>                            
+                             </span>
                       </td>         
                 </tr>                 
         </table>

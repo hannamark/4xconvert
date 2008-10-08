@@ -26,12 +26,18 @@
 	    <display:column title="Edit" class="action">
     		<s:url id="url" action="trialDocumentedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
-    	</display:column>
-	    <display:column title="Delete" class="action">
-    		<s:url id="url" action="trialDocumentdelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
-    		<s:a href="#"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>    		
-    	</display:column>
-	</display:table>
+    	</display:column>    	
+    	<display:column title="Delete" class="action">
+		<s:if test="%{#attr.row.typeCode.equals('Protocol Document')}">		    
+		</s:if>
+		<s:elseif test="%{#attr.row.typeCode.equals('IRB Approval Document')}">		    
+		</s:elseif>
+		<s:else>
+			<s:url id="url" action="trialDocumentdelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
+    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
+		</s:else>		 
+    	</display:column>  
+    	</display:table>
   </s:if> 
 		<div class="actionsrow">
 			<del class="btnwrapper">
