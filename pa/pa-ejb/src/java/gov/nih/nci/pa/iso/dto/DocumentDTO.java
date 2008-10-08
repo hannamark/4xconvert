@@ -17,6 +17,7 @@ public class DocumentDTO extends BaseDTO {
     private Ii studyProtocolIi;
     private Bl activeIndicator;
     private St fileName;
+    private St inactiveCommentText;
     
     /**
      * @return typeCode
@@ -73,4 +74,20 @@ public class DocumentDTO extends BaseDTO {
     public void setFileName(St fileName) {
         this.fileName = fileName;
     }
+    
+    /**
+     * 
+     * @return inactiveCommentText
+     */
+    public St getInactiveCommentText() {
+        return inactiveCommentText;
+    }
+    
+    /**
+     * 
+     * @param inactiveCommentText inactiveCommentText
+     */
+    public void setInactiveCommentText(St inactiveCommentText) {
+        this.inactiveCommentText = inactiveCommentText;
+    }    
 }
