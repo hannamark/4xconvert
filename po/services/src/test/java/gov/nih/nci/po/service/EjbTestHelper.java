@@ -83,6 +83,8 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.util.RemoteBeanHandler;
+import gov.nih.nci.po.util.jms.TopicStub;
+import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
@@ -102,6 +104,10 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
+import javax.naming.InitialContext;
+
 /**
  * @author Scott Miller
  */
@@ -109,16 +115,19 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created org service.
+     * 
      * @return the service
      */
     public static OrganizationServiceBean getOrganizationServiceBean() {
         OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
+        organizationServiceBean.setPublisher(getMessageProducer());
         return organizationServiceBean;
     }
 
     public static OrganizationCRServiceBean getOrganizationCRServiceBean() {
         OrganizationCRServiceBean crService = new OrganizationCRServiceBean();
         crService.setOrganizationServiceBean(getOrganizationServiceBean());
+        crService.setPublisher(getMessageProducer());
         return crService;
     }
 
@@ -129,44 +138,49 @@ public class EjbTestHelper {
         return organizationServiceBean;
     }
 
-    public static OrganizationEntityServiceRemote getOrganizationEntityServiceBeanAsRemote () {
+    public static OrganizationEntityServiceRemote getOrganizationEntityServiceBeanAsRemote() {
         return (OrganizationEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getOrganizationEntityServiceBean());
     }
 
     /**
      * Get a newly created person service.
+     * 
      * @return the service
      */
     public static PersonServiceBean getPersonServiceBean() {
         PersonServiceBean personServiceBean = new PersonServiceBean();
+        personServiceBean.setPublisher(getMessageProducer());
         return personServiceBean;
     }
 
     public static PersonCRServiceBean getPersonCRServiceBean() {
         PersonCRServiceBean personCRServiceBean = new PersonCRServiceBean();
         personCRServiceBean.setPersonServiceBean(getPersonServiceBean());
+        personCRServiceBean.setPublisher(getMessageProducer());
         return personCRServiceBean;
     }
 
     public static PersonEntityServiceBean getPersonEntityServiceBean() {
-    	PersonEntityServiceBean personServiceBean = new PersonEntityServiceBean();
-    	personServiceBean.setPersonServiceBean(getPersonServiceBean());
+        PersonEntityServiceBean personServiceBean = new PersonEntityServiceBean();
+        personServiceBean.setPersonServiceBean(getPersonServiceBean());
         personServiceBean.setPersonCRServiceBean(getPersonCRServiceBean());
         return personServiceBean;
     }
 
-    public static PersonEntityServiceRemote getPersonEntityServiceBeanAsRemote () {
+    public static PersonEntityServiceRemote getPersonEntityServiceBeanAsRemote() {
         return (PersonEntityServiceRemote) RemoteBeanHandler.makeRemoteProxy(getPersonEntityServiceBean());
     }
 
     public static HealthCareProviderServiceBean getHealthCareProviderServiceBean() {
         HealthCareProviderServiceBean hcpsb = new HealthCareProviderServiceBean();
+        hcpsb.setPublisher(getMessageProducer());
         return hcpsb;
     }
 
     public static HealthCareProviderCRServiceBean getHealthCareProviderCRServiceBean() {
         HealthCareProviderCRServiceBean s = new HealthCareProviderCRServiceBean();
         s.setHealthCareProviderServiceBean(getHealthCareProviderServiceBean());
+        s.setPublisher(getMessageProducer());
         return s;
     }
 
@@ -198,19 +212,16 @@ public class EjbTestHelper {
         return (PersonResourceProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(prpService);
     }
 
-    public static OrganizationResourceProviderCorrelationServiceRemote
-        getOrganizationResourceProviderCorrelationServiceRemote() {
-
-        OrganizationResourceProviderCorrelationServiceBean orpService =
-            new OrganizationResourceProviderCorrelationServiceBean();
+    public static OrganizationResourceProviderCorrelationServiceRemote getOrganizationResourceProviderCorrelationServiceRemote() {
+        OrganizationResourceProviderCorrelationServiceBean orpService = new OrganizationResourceProviderCorrelationServiceBean();
         orpService.setOrpService(EjbTestHelper.getOrganizationResourceProviderServiceBean());
         orpService.setOrpCRService(EjbTestHelper.getOrganizationResourceProviderCRServiceBean());
         return (OrganizationResourceProviderCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(orpService);
     }
 
-
     /**
      * Get a newly created and configured generic service.
+     * 
      * @return the service
      */
     public static GenericServiceBean getGenericServiceBean() {
@@ -232,12 +243,15 @@ public class EjbTestHelper {
      * @return the service
      */
     public static OversightCommitteeServiceLocal getOversightCommitteeServiceBean() {
-        return new OversightCommitteeServiceBean();
+        OversightCommitteeServiceBean bean = new OversightCommitteeServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     public static OversightCommitteeCRServiceBean getOversightCommitteeRCServiceBean() {
         OversightCommitteeCRServiceBean ocService = new OversightCommitteeCRServiceBean();
         ocService.setOcBean(getOversightCommitteeServiceBean());
+        ocService.setPublisher(getMessageProducer());
         return ocService;
     }
 
@@ -252,55 +266,69 @@ public class EjbTestHelper {
      * @return the service
      */
     public static HealthCareFacilityServiceLocal getHealthCareFacilityServiceBean() {
-        return new HealthCareFacilityServiceBean();
+        HealthCareFacilityServiceBean bean = new HealthCareFacilityServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     /**
      * @return the service
      */
     public static HealthCareFacilityCRServiceLocal getHealthCareFacilityCRServiceBean() {
-         HealthCareFacilityCRServiceBean s = new HealthCareFacilityCRServiceBean();
-         s.setHealthCareFacilityServiceBean(getHealthCareFacilityServiceBean());
-         return s;
+        HealthCareFacilityCRServiceBean s = new HealthCareFacilityCRServiceBean();
+        s.setHealthCareFacilityServiceBean(getHealthCareFacilityServiceBean());
+        s.setPublisher(getMessageProducer());
+        return s;
     }
 
     /**
      * Get the bean.
+     * 
      * @return Get the bean.
      */
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
-        return new ClinicalResearchStaffServiceBean();
+        ClinicalResearchStaffServiceBean bean = new ClinicalResearchStaffServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     public static ClinicalResearchStaffCRServiceLocal getClinicalResearchStaffCRServiceBean() {
         ClinicalResearchStaffCRServiceBean s = new ClinicalResearchStaffCRServiceBean();
         s.setClinicalResearchStaffServiceBean(getClinicalResearchStaffServiceBean());
+        s.setPublisher(getMessageProducer());
         return s;
     }
 
     public static PersonResourceProviderServiceLocal getPersonResourceProviderServiceBean() {
-        return new PersonResourceProviderServiceBean();
+        PersonResourceProviderServiceBean bean = new PersonResourceProviderServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     public static PersonResourceProviderCRServiceLocal getPersonResourceProviderCRServiceBean() {
         PersonResourceProviderCRServiceBean s = new PersonResourceProviderCRServiceBean();
         s.setPersonResourceProviderServiceBean(getPersonResourceProviderServiceBean());
+        s.setPublisher(getMessageProducer());
         return s;
     }
 
-
     public static OrganizationResourceProviderServiceLocal getOrganizationResourceProviderServiceBean() {
-        return new OrganizationResourceProviderServiceBean();
+        OrganizationResourceProviderServiceBean bean = new OrganizationResourceProviderServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     public static OrganizationResourceProviderCRServiceLocal getOrganizationResourceProviderCRServiceBean() {
         OrganizationResourceProviderCRServiceBean s = new OrganizationResourceProviderCRServiceBean();
         s.setOrganizationResourceProviderBean(getOrganizationResourceProviderServiceBean());
+        s.setPublisher(getMessageProducer());
         return s;
     }
 
     public static IdentifiedOrganizationServiceBean getIdentifiedOrganizationServiceBean() {
-        return  new IdentifiedOrganizationServiceBean();
+        IdentifiedOrganizationServiceBean bean = new IdentifiedOrganizationServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationServiceBeanAsRemote() {
@@ -308,6 +336,40 @@ public class EjbTestHelper {
         svc.setLocalService(getIdentifiedOrganizationServiceBean());
         svc.setLocalCRService(new IdentifiedOrganizationCrServiceBean());
         return (IdentifiedOrganizationCorrelationServiceRemote) RemoteBeanHandler.makeRemoteProxy(svc);
+    }
+
+    public static MessageProducerBean getMessageProducer() {
+        try {
+            MessageProducerBean mp = new MessageProducerBean() {
+                private TopicConnectionFactory connectionFactory;
+                private Topic topic;
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                protected TopicConnectionFactory getTopicConnectionFactory(InitialContext ic) {
+                    if (connectionFactory == null) {
+                        connectionFactory = new TopicConnectionFactoryStub();
+                    }
+                    return connectionFactory;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                protected Topic getTopic(InitialContext ic) {
+                    if (topic == null) {
+                        topic = new TopicStub(MessageProducerBean.TOPIC_NAME);
+                    }
+                    return topic;
+                }
+            };
+            return mp;
+        } catch (Exception ex) {
+            throw new Error("bad test init", ex);
+        }
     }
 
 }

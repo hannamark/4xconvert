@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,78 +80,32 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.services;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.coppa.iso.Ii;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.io.Serializable;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+/**
+ * Announcement message for Entity/Role update notifications.
+ */
+public class SubscriberUpdateMessage implements Serializable {
 
-import org.junit.Test;
+    private static final long serialVersionUID = 1L;
+    private final Ii id;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-
-public class IdConverterRegistryTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void unknownClass() {
-        IdConverterRegistry.find(Foo.class);
+    /**
+     * @param id iso data type II
+     */
+    public SubscriberUpdateMessage(Ii id) {
+        this.id = id;
     }
 
-    @Test
-    public void knownClass() {
-        assertEquals(IdConverter.OrgIdConverter.class, IdConverterRegistry.find(Organization.class).getClass());
-    }
-
-    private static class Foo implements PersistentObject {
-        private static final long serialVersionUID = 1L;
-
-        public Long getId() {
-            return null;
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void unEnhanceCBLIBClass() throws ClassNotFoundException {
-        Object enhanced = enhance(Organization.class);
-        Class<? extends PersistentObject> unEnhanceCBLIBClass = IdConverterRegistry
-                .unEnhanceCBLIBClass((Class<? extends PersistentObject>) enhanced.getClass());
-
-        assertEquals(Organization.class.getName(), unEnhanceCBLIBClass.getName());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void unEnhanceClass() throws ClassNotFoundException {
-        Object enhanced = new Organization();
-        Class<? extends PersistentObject> unEnhanceCBLIBClass = IdConverterRegistry
-                .unEnhanceCBLIBClass((Class<? extends PersistentObject>) enhanced.getClass());
-
-        assertEquals(Organization.class.getName(), unEnhanceCBLIBClass.getName());
-    }
-
-    private Object enhance(Class<?> class1) {
-        Object create = Enhancer.create(class1, new Class[] {}, new MethodInterceptor() {
-
-            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-                Object retValFromSuper = null;
-                try {
-                    if (!Modifier.isAbstract(method.getModifiers())) {
-                        retValFromSuper = proxy.invokeSuper(obj, args);
-                    }
-                } finally {
-
-                }
-                return retValFromSuper;
-            }
-        });
-        return create;
+    /**
+     * @return the iso data type II
+     */
+    public Ii getId() {
+        return id;
     }
 
 }

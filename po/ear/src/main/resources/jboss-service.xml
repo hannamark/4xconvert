@@ -10,8 +10,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
     </mbean>
 	<mbean code="org.jboss.logging.Log4jService" name="jboss.system:type=POLog4jService,service=POLogging"
 		xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
-		<attribute name="ConfigurationURL">resource:po-log4j.xml
-		</attribute>
+		<attribute name="ConfigurationURL">resource:po-log4j.xml</attribute>
 		<!--
 			Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8 this
 			needs to be set to avoid a possible deadlock on exception at the appender

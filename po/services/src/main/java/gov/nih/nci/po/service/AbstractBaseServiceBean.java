@@ -90,6 +90,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
@@ -114,7 +115,25 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
      */
     public static final int MAX_IN_CLAUSE_SIZE = 500;
     private final Class<T> typeArgument;
+    /**
+     * message publisher used on update notification.
+     */
+    @EJB
+    private MessageProducerLocal publisher;
 
+    /**
+     * @return the publisher
+     */
+    public MessageProducerLocal getPublisher() {
+        return publisher;
+    }
+
+    /**
+     * @param publisher the publisher to set
+     */
+    public void setPublisher(MessageProducerLocal publisher) {
+        this.publisher = publisher;
+    }
     /**
      * default constructor.
      */

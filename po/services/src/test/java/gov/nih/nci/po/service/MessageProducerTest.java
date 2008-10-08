@@ -80,114 +80,149 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.curation;
+package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationCR;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.web.AbstractPoTest;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.Properties;
+
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
+import gov.nih.nci.po.util.jms.TopicStub;
+import gov.nih.nci.services.SubscriberUpdateMessage;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.Action;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
-public class CurateOrganizationActionTest extends AbstractPoTest {
-    private CurateOrganizationAction action;
+/**
+ *
+ */
+public class MessageProducerTest extends AbstractHibernateTestCase {
+
+    public static <T extends PersistentObject> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service)
+            throws JMSException {
+        TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
+        assertEquals(1, topic.messages.size());
+        Message msg = topic.messages.get(0);
+        assertTrue(msg instanceof ObjectMessage);
+        ObjectMessage om = (ObjectMessage) msg;
+        assertEquals(SubscriberUpdateMessage.class.getName(), om.getObject().getClass().getName());
+        assertEquals(id.getId(), IiConverter.convertToLong(((SubscriberUpdateMessage) om.getObject()).getId()));
+    }
+
+    public static <T extends PersistentObject> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
+        TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
+        assertEquals(0, topic.messages.size());
+    }
+
+    public static <T extends PersistentObject> void clearMessages(AbstractBaseServiceBean<T> service) {
+        TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
+        topic.messages.clear();
+    }
 
     @Before
-    public void setUp() {
-        action = new CurateOrganizationAction();
-        assertNotNull(action.getOrganization());
+    public void init() throws Exception {
+
     }
 
     @Test
-    public void testPrepareNoRootKey() throws Exception {
-        Organization initial = action.getOrganization();
-        action.prepare();
-        assertSame(initial, action.getOrganization());
+    public void constructor() throws NamingException, JMSException, IOException {
+        MessageProducerBean mp = new MessageProducerBean() {
+            private TopicConnectionFactory connectionFactory;
+            private Topic topic;
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected TopicConnectionFactory getTopicConnectionFactory(InitialContext ic) {
+                if (connectionFactory == null) {
+                    connectionFactory = new TopicConnectionFactoryStub();
+                }
+                return connectionFactory;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected Topic getTopic(InitialContext ic) {
+                if (topic == null) {
+                    topic = new TopicStub(MessageProducerBean.TOPIC_NAME);
+                }
+                return topic;
+            }
+
+            @Override
+            protected Properties getJndiProperties() throws IOException {
+                Properties properties = new Properties();
+                properties.put(MessageProducerBean.USERNAME_PROPERTY, "bogus");
+                properties.put(MessageProducerBean.PASSWORD_PROPERTY, "bogus123");
+                return properties;
+            }
+        };
+        TopicConnectionFactoryStub tcf = (TopicConnectionFactoryStub) mp.getTopicConnectionFactory((InitialContext) null);
+        assertEquals("bogus", tcf.lastTopicConnectionCreated.username);
+        assertEquals("bogus123", tcf.lastTopicConnectionCreated.password);
+    }
+
+    private Organization createOrg() throws EntityValidationException {
+        OrganizationServiceBeanTest test = new OrganizationServiceBeanTest();
+        test.loadData();
+        test.setUpData();
+        Organization o = test.getBasicOrganization();
+        long id = test.createOrganization(o);
+        return test.getOrgServiceBean().getById(id);
     }
 
     @Test
-    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
-        action.setRootKey("a");
-        action.prepare();
-        assertNull(action.getOrganization());
+    public void noMessageSentWhenStatusIsPENDING() throws Exception {
+        MessageProducerBean mp = EjbTestHelper.getMessageProducer();
+
+        Organization org = createOrg();
+        assertEquals(org.getStatusCode(), EntityStatus.PENDING);
+        mp.sendUpdate(org);
+
+        TopicStub topic = (TopicStub) mp.getTopic(null);
+        assertEquals(0, topic.messages.size());
     }
 
     @Test
-    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
-        Organization o = new Organization();
-        action.setRootKey("a");
-        getSession().setAttribute(action.getRootKey(), o);
-        action.prepare();
-        assertSame(o, action.getOrganization());
+    public void messagesSentWhenNotPENDING() throws Exception {
+        OrganizationServiceBean bean = EjbTestHelper.getOrganizationServiceBean();
+        MessageProducerBean mp = (MessageProducerBean) bean.getPublisher();
+
+        Organization org = createOrg();
+        long orgId = org.getId();
+        // verify ACTIVE
+        assertEquals(org.getStatusCode(), EntityStatus.PENDING);
+        org.setStatusCode(EntityStatus.ACTIVE);
+        mp.sendUpdate(org);
+        assertMessageCreated(org, bean);
+
+        clearMessages(bean);
+        org.setStatusCode(EntityStatus.INACTIVE);
+        mp.sendUpdate(org);
+        assertMessageCreated(org, bean);
+
+        clearMessages(bean);
+        org.setStatusCode(EntityStatus.NULLIFIED);
+        mp.sendUpdate(org);
+        assertMessageCreated(org, bean);
     }
 
-    @Test
-    public void testStart() {
-        action.getOrganization().setId(1L);
-        assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
-        assertEquals(1l, action.getOrganization().getId().longValue());
-        assertEquals("name", action.getOrganization().getName());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testStartNoOrgId() {
-        assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
-    }
-
-    @Test
-    public void testCurate() throws EntityValidationException, JMSException {
-        assertEquals(Action.SUCCESS, action.curate());
-    }
-
-    @Test
-    public void changeCurrentChangeRequest() {
-        assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
-
-        action.getCr().setId(1L);
-        assertEquals(CurateOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
-    }
-
-    @Test
-    public void testCrProperty() {
-        assertNotNull(action.getCr());
-        action.setCr(null);
-        assertNull(action.getCr());
-    }
-
-    @Test
-    public void testOrganizationProperty() {
-        assertNotNull(action.getOrganization());
-        action.setOrganization(null);
-        assertNull(action.getOrganization());
-    }
-    
-    @Test
-    public void testGetSelectChangeRequests() {
-        action.getOrganization().setId(1L);
-        OrganizationCR cr1 = new OrganizationCR();
-        cr1.setId(1L);
-        action.getOrganization().getChangeRequests().add(cr1);
-        OrganizationCR cr2 = new OrganizationCR();
-        cr2.setId(2L);
-        action.getOrganization().getChangeRequests().add(cr2);
-        Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
-        assertEquals(2, selectChangeRequests.size());
-        selectChangeRequests.values();
-        int i = 1;
-        for (String value : selectChangeRequests.values()) {
-            assertEquals("CR-ID-" + i, value);
-            i++;
-        }
-    }
 }

@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,81 +80,86 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.po.util.jms;
 
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
-import gov.nih.nci.po.data.bo.OversightCommittee;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonResourceProvider;
-import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgResourceProviderIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonResourceProviderIdConverter;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import net.sf.cglib.proxy.Enhancer;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
 
 /**
- * IdConverter registry.
+ *
  */
-public class IdConverterRegistry {
+public class MessageProducerStub implements MessageProducer {
 
-    private static final Map<Class<? extends PersistentObject>, IdConverter> REGISTRY;
+    private TopicStub topic;
 
-    static {
-        HashMap<Class<? extends PersistentObject>, IdConverter> tmp 
-            = new HashMap<Class<? extends PersistentObject>, IdConverter>();
-        tmp.put(Organization.class, new OrgIdConverter());
-        tmp.put(Person.class, new PersonIdConverter());
-        tmp.put(ClinicalResearchStaff.class, new ClinicalResearchStaffIdConverter());
-        tmp.put(HealthCareProvider.class, new HealthCareProviderIdConverter());
-        tmp.put(HealthCareFacility.class, new HealthCareFacilityIdConverter());
-        tmp.put(PersonResourceProvider.class, new PersonResourceProviderIdConverter());
-        tmp.put(OrganizationResourceProvider.class, new OrgResourceProviderIdConverter());
-        tmp.put(OversightCommittee.class, new OversightCommitteeIdConverter());
-        REGISTRY = Collections.unmodifiableMap(tmp);
+    public MessageProducerStub(TopicStub topic) {
+        this.topic = topic;
+    }
+    
+    public void setDisableMessageID(boolean arg0) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @param clz converter for given Class
-     * @return IdConverter instance
-     */
-    @SuppressWarnings("PMD.SystemPrintln")
-    public static IdConverter find(Class<? extends PersistentObject> clz) {
-        Class<? extends PersistentObject> tmp = clz;
-        try {
-            tmp = unEnhanceCBLIBClass(clz);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-        IdConverter idConverter = REGISTRY.get(tmp);
-        if (idConverter == null) {
-            throw new IllegalArgumentException(tmp.getName() + " is unsupported.");
-        }
-        return idConverter;
+    public boolean getDisableMessageID() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @SuppressWarnings("unchecked")
-    static Class<? extends PersistentObject> unEnhanceCBLIBClass(Class<? extends PersistentObject> clz)
-            throws ClassNotFoundException {
-        if (Enhancer.isEnhanced(clz)) {
-            int indexOf = clz.getName().indexOf("$$EnhancerByCGLIB$$");
-            String baseClassName = clz.getName().substring(0, indexOf);
-            return (Class<? extends PersistentObject>) Class.forName(baseClassName);
-        }
-        return clz;
+    public void setDisableMessageTimestamp(boolean arg0) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public boolean getDisableMessageTimestamp() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setDeliveryMode(int arg0) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getDeliveryMode() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setPriority(int arg0) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getPriority() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTimeToLive(long arg0) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public long getTimeToLive() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Destination getDestination() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void close() throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void send(Message msg) throws JMSException {
+        topic.messages.add(msg);
+    }
+
+    public void send(Message arg0, int arg1, int arg2, long arg3) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void send(Destination arg0, Message arg1) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void send(Destination arg0, Message arg1, int arg2, int arg3, long arg4) throws JMSException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

@@ -104,6 +104,8 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.util.Date;
 import java.util.List;
 
+import javax.jms.JMSException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -251,7 +253,20 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     }
 
     @Test
-    public void curateWithNoChanges() throws EntityValidationException {
+    public void curatePENDINGtoPENDINGthenNOAnnouncementMessagePublished() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        long id = createOrganization(o);
+        o = getOrgServiceBean().getById(id);
+        o.setStatusCode(EntityStatus.PENDING);
+        getOrgServiceBean().curate(o);
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.PENDING, result.getStatusCode());
+        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
+    }
+    
+    @Test
+    public void curateWithNoChanges() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
         o = getOrgServiceBean().getById(id);
@@ -260,6 +275,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
         assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
     }
 
     private void assertOnOrBefore(Date left, Date right) {
@@ -267,7 +283,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     }
 
     @Test
-    public void curateWithChanges() throws EntityValidationException {
+    public void curateWithChanges() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
         o = getOrgServiceBean().getById(id);
@@ -289,10 +305,12 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getPhone().size());
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
+        
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
     }
 
     @Test
-    public void curateWithChangesAndCRrs() throws EntityValidationException {
+    public void curateWithChangesAndCRrs() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
 
@@ -332,6 +350,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getUrl().size());
 
         assertTrue(result.getChangeRequests().isEmpty());
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
     }
 
 }

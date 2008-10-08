@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The caarray-app
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This caarray-app Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the caarray-app Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the caarray-app Software; (ii) distribute and
+ * have distributed to and by third parties the caarray-app Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,81 +80,126 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
-import gov.nih.nci.po.data.bo.OversightCommittee;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonResourceProvider;
-import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgResourceProviderIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonResourceProviderIdConverter;
+import gov.nih.nci.po.data.convert.IdConverterRegistry;
+import gov.nih.nci.po.util.JNDIUtil;
+import gov.nih.nci.services.SubscriberUpdateMessage;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Properties;
 
-import net.sf.cglib.proxy.Enhancer;
+import javax.annotation.PreDestroy;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.apache.log4j.Logger;
 
 /**
- * IdConverter registry.
+ * EJB that handles publishing changes to people and organizations to
+ * a JMS queue.
  */
-public class IdConverterRegistry {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class MessageProducerBean implements MessageProducerLocal {
 
-    private static final Map<Class<? extends PersistentObject>, IdConverter> REGISTRY;
+    /**
+     * Name of the topic to which PO publishes.
+     */
+    public static final String TOPIC_NAME = "POTopic";
+    private static final Logger LOG = Logger.getLogger(MessageProducerBean.class);
+    static final String USERNAME_PROPERTY = "jms.publisher.username";
+    static final String PASSWORD_PROPERTY = "jms.publisher.password";
+    private final MessageProducer messageProducer;
+    private final Session session;
 
-    static {
-        HashMap<Class<? extends PersistentObject>, IdConverter> tmp 
-            = new HashMap<Class<? extends PersistentObject>, IdConverter>();
-        tmp.put(Organization.class, new OrgIdConverter());
-        tmp.put(Person.class, new PersonIdConverter());
-        tmp.put(ClinicalResearchStaff.class, new ClinicalResearchStaffIdConverter());
-        tmp.put(HealthCareProvider.class, new HealthCareProviderIdConverter());
-        tmp.put(HealthCareFacility.class, new HealthCareFacilityIdConverter());
-        tmp.put(PersonResourceProvider.class, new PersonResourceProviderIdConverter());
-        tmp.put(OrganizationResourceProvider.class, new OrgResourceProviderIdConverter());
-        tmp.put(OversightCommittee.class, new OversightCommitteeIdConverter());
-        REGISTRY = Collections.unmodifiableMap(tmp);
+    /**
+     * Constructor to create the message publisher.
+     * @throws NamingException on error
+     * @throws JMSException on error
+     * @throws IOException on io error
+     */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    public MessageProducerBean() throws NamingException, JMSException, IOException {
+        Properties p = getJndiProperties();
+        InitialContext ic = new InitialContext(p);
+        TopicConnectionFactory connectionFactory = getTopicConnectionFactory(ic);
+        Topic topic = getTopic(ic);
+
+        String username = (p.getProperty(USERNAME_PROPERTY) == null) ? "publisher" : p.getProperty(USERNAME_PROPERTY);
+        String password = (p.getProperty(PASSWORD_PROPERTY) == null) ? "pass" : p.getProperty(PASSWORD_PROPERTY);
+
+        Connection connection = connectionFactory.createTopicConnection(username, password);
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        messageProducer = session.createProducer(topic);
     }
 
     /**
-     * @param clz converter for given Class
-     * @return IdConverter instance
+     * @return the properties for jndi
+     * @throws IOException if a problem was encountered
      */
-    @SuppressWarnings("PMD.SystemPrintln")
-    public static IdConverter find(Class<? extends PersistentObject> clz) {
-        Class<? extends PersistentObject> tmp = clz;
-        try {
-            tmp = unEnhanceCBLIBClass(clz);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-        IdConverter idConverter = REGISTRY.get(tmp);
-        if (idConverter == null) {
-            throw new IllegalArgumentException(tmp.getName() + " is unsupported.");
-        }
-        return idConverter;
+    protected Properties getJndiProperties() throws IOException {
+        return JNDIUtil.getProperties();
     }
 
-    @SuppressWarnings("unchecked")
-    static Class<? extends PersistentObject> unEnhanceCBLIBClass(Class<? extends PersistentObject> clz)
-            throws ClassNotFoundException {
-        if (Enhancer.isEnhanced(clz)) {
-            int indexOf = clz.getName().indexOf("$$EnhancerByCGLIB$$");
-            String baseClassName = clz.getName().substring(0, indexOf);
-            return (Class<? extends PersistentObject>) Class.forName(baseClassName);
+    /**
+     * Gets the topic connection factory. These are overwritable for unit tests.
+     * @param ic the initial context.
+     * @return the factory.
+     */
+    protected TopicConnectionFactory getTopicConnectionFactory(InitialContext ic) {
+        return (TopicConnectionFactory) JNDIUtil.lookup(ic, "/POConnectionFactory");
+    }
+
+    /**
+     * Get the topic. These are overwritable for unit tests.
+     * @param ic the initial context
+     * @return the topic.
+     */
+    protected Topic getTopic(InitialContext ic) {
+        return (Topic) JNDIUtil.lookup(ic, "/topic/" + MessageProducerBean.TOPIC_NAME);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void sendUpdate(Organization org) throws JMSException {
+        if (!EntityStatus.PENDING.equals(org.getStatusCode())) {
+          SubscriberUpdateMessage msg 
+            = new SubscriberUpdateMessage(IdConverterRegistry.find(org.getClass()).convertToIi(org.getId()));
+          send(msg);
         }
-        return clz;
+    }
+
+    private synchronized void send(Serializable o) throws JMSException {
+        ObjectMessage msg = session.createObjectMessage(o);
+        messageProducer.send(msg);
+    }
+
+    /**
+     * Called as part of the EJB lifecycle, closes the JMS session.
+     */
+    @SuppressWarnings("unused")
+    @PreDestroy
+    private void preDestroy() {
+        try {
+            session.close();
+        } catch (JMSException e) {
+            LOG.error("Unable to close session: " + e.getMessage(), e);
+        }
     }
 }

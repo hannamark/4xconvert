@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.time.FastDateFormat;
@@ -84,13 +85,14 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     /**
      * @return success
      * @throws EntityValidationException if a validation error is found when attempting to update
+     * @throws JMSException if an error occurred while publishing the announcement
      */
     @Validations(customValidators = {
                 @CustomValidator(type = "hibernate",
                     fieldName = "organization"
                 )
             })
-    public String curate() throws EntityValidationException {
+    public String curate() throws EntityValidationException, JMSException {
         PoRegistry.getOrganizationService().curate(getOrganization());
         return SUCCESS;
     }

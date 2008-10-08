@@ -88,6 +88,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import java.util.Map;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 /**
  *
@@ -123,7 +124,8 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
     /**
      * @param curatedOrg method to curate/accept Organization's w/ EntityStatus.NEW and transition to
      *            EntityStatus.CURATED
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
      */
-    void curate(Organization curatedOrg);
+    void curate(Organization curatedOrg) throws JMSException;
 
 }

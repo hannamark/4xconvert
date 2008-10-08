@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.test.integration.TopicIntegrationTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -94,6 +95,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.Properties;
 
+import javax.jms.ConnectionFactory;
 import javax.management.MBeanServerConnection;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -119,6 +121,8 @@ public class RemoteServiceHelper {
 
     private static InitialContext ctx;
     private static InitialContext jmxCtx;
+    private static InitialContext jmsSubscriberCtx;
+    private static InitialContext jmsPublisherCtx;
 
     private static Object lookup(String resource) throws NamingException {
         if (ctx == null) {
@@ -133,6 +137,7 @@ public class RemoteServiceHelper {
 
     /**
      * Closes the context.
+     * 
      * @throws NamingException on error.
      */
     public static void close() throws NamingException {
@@ -144,10 +149,19 @@ public class RemoteServiceHelper {
             jmxCtx.close();
             jmxCtx = null;
         }
+        if (jmsSubscriberCtx != null) {
+            jmsSubscriberCtx.close();
+            jmsSubscriberCtx = null;
+        }
+        if (jmsPublisherCtx != null) {
+            jmsPublisherCtx.close();
+            jmsPublisherCtx = null;
+        }
     }
 
     /**
      * Get the person service.
+     * 
      * @return the service.
      * @throws NamingException on error.
      */
@@ -157,6 +171,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
+     * 
      * @return the service.
      * @throws NamingException on error.
      */
@@ -164,44 +179,75 @@ public class RemoteServiceHelper {
         return (OrganizationEntityServiceRemote) lookup(ORG_SERVICE_BEAN_REMOTE);
     }
 
-    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() throws NamingException {
-        return (ClinicalResearchStaffCorrelationServiceRemote)lookup(CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE);
+    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
+            throws NamingException {
+        return (ClinicalResearchStaffCorrelationServiceRemote) lookup(CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE);
     }
 
-    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws NamingException {
-        return (HealthCareFacilityCorrelationServiceRemote)lookup(HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE);
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
+            throws NamingException {
+        return (HealthCareFacilityCorrelationServiceRemote) lookup(HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
-    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() throws NamingException {
-        return (HealthCareProviderCorrelationServiceRemote)lookup(HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
+    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService()
+            throws NamingException {
+        return (HealthCareProviderCorrelationServiceRemote) lookup(HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
-    public static OrganizationResourceProviderCorrelationServiceRemote getOrganizationResourceProviderCorrelationService() throws NamingException {
-        return (OrganizationResourceProviderCorrelationServiceRemote)lookup(ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
-    }
-    public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() throws NamingException {
-        return (OversightCommitteeCorrelationServiceRemote)lookup(OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE);
+    public static OrganizationResourceProviderCorrelationServiceRemote getOrganizationResourceProviderCorrelationService()
+            throws NamingException {
+        return (OrganizationResourceProviderCorrelationServiceRemote) lookup(ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
-    public static PersonResourceProviderCorrelationServiceRemote getPersonResourceProviderCorrelationService() throws NamingException {
-        return (PersonResourceProviderCorrelationServiceRemote)lookup(PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
+    public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService()
+            throws NamingException {
+        return (OversightCommitteeCorrelationServiceRemote) lookup(OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
-    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote() throws NamingException {
-        return (IdentifiedOrganizationCorrelationServiceRemote)lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+    public static PersonResourceProviderCorrelationServiceRemote getPersonResourceProviderCorrelationService()
+            throws NamingException {
+        return (PersonResourceProviderCorrelationServiceRemote) lookup(PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
-    
+
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote()
+            throws NamingException {
+        return (IdentifiedOrganizationCorrelationServiceRemote) lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+    }
+
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
-        String username = "admin";
-        String password = "admin";
+        String jmxUsername = "admin";
+        String jmxPassword = "admin";
 
         if (jmxCtx == null) {
             Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, username);
-            env.setProperty(Context.SECURITY_CREDENTIALS, password);
+            env.setProperty(Context.SECURITY_PRINCIPAL, jmxUsername);
+            env.setProperty(Context.SECURITY_CREDENTIALS, jmxPassword);
             env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
             jmxCtx = new InitialContext(env);
         }
         return (MBeanServerConnection) jmxCtx.lookup("jmx/invoker/RMIAdaptor");
     }
+
+    public static Object lookupSubscriber(String resourceName) throws Exception {
+        if (jmsSubscriberCtx == null) {
+            Properties env = new Properties();
+            env.setProperty(Context.SECURITY_PRINCIPAL, TopicIntegrationTest.SUBSCRIBER_ROLE_USER);
+            env.setProperty(Context.SECURITY_CREDENTIALS, TopicIntegrationTest.SUBSCRIBER_ROLE_USER_PASS);
+            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
+            jmsSubscriberCtx = new InitialContext(env);
+        }
+        return jmsSubscriberCtx.lookup(resourceName);
+    }
+
+    public static Object lookupPublisher(String resourceName) throws Exception {
+        if (jmsPublisherCtx == null) {
+            Properties env = new Properties();
+            env.setProperty(Context.SECURITY_PRINCIPAL, TopicIntegrationTest.SUBSCRIBER_ROLE_USER);
+            env.setProperty(Context.SECURITY_CREDENTIALS, TopicIntegrationTest.SUBSCRIBER_ROLE_USER_PASS);
+            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
+            jmsPublisherCtx = new InitialContext(env);
+        }
+        return jmsPublisherCtx.lookup(resourceName);
+    }
+
 }

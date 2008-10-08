@@ -94,6 +94,7 @@ import java.util.Date;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 
 import org.hibernate.Session;
 
@@ -118,9 +119,10 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
 
     /**
      * {@inheritDoc}
+     * @throws JMSException 
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void curate(Organization org) {
+    public void curate(Organization org) throws JMSException {
         final Session s = PoHibernateUtil.getCurrentSession();
         Organization o = loadAndMerge(org, s);
         o.setStatusDate(new Date());
@@ -130,6 +132,7 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
             }
         };
         CRProcessor.processCRs(new ArrayList<OrganizationCR>(o.getChangeRequests()), entityUpdateCallback);
+        getPublisher().sendUpdate(org);
     }
 
     @SuppressWarnings("PMD.CompareObjectsWithEquals")

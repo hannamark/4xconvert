@@ -86,6 +86,12 @@
             <version>${hibernate.annotations.version}</version>
             <scope>provided</scope>
         </dependency>        
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>  
         
         <dependency>
             <groupId>org.apache.struts</groupId>
