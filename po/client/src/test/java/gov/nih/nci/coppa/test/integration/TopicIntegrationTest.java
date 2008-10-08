@@ -28,11 +28,8 @@ import org.junit.Test;
  */
 public class TopicIntegrationTest {
 
-    public static final String SUBSCRIBER_ROLE_USER = "subscriber";
-    public static final String SUBSCRIBER_ROLE_USER_PASS = "pass";
+
     public static final String CONNECTION_FACTORY_JNDI_BINDING_NAME = "/POConnectionFactory";
-    private static final String PUBLISHER_ROLE_USER_PASS = "pass";
-    private static final String PUBLISHER_ROLE_USER = "publisher";
     private static final String PO_TOPIC_NAME = "POTopic";
 
     @Before
@@ -42,7 +39,6 @@ public class TopicIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
-        JBossMbeanUtility.removeAllMessagesOnTopic(getDestinationJNDIName(), PO_TOPIC_NAME);
     }
 
     @Test
@@ -88,7 +84,7 @@ public class TopicIntegrationTest {
                     .lookupSubscriber(CONNECTION_FACTORY_JNDI_BINDING_NAME);
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(SUBSCRIBER_ROLE_USER, SUBSCRIBER_ROLE_USER_PASS);
+            connection = cf.createConnection(RemoteServiceHelper.SUBSCRIBER_ROLE_USER, RemoteServiceHelper.SUBSCRIBER_ROLE_USER_PASS);
             connection.setClientID(subscriptionIdentity);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             session.unsubscribe(subscriptionIdentity);
@@ -110,7 +106,7 @@ public class TopicIntegrationTest {
             Topic topic = (Topic) RemoteServiceHelper.lookupSubscriber(getDestinationJNDIName());
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(SUBSCRIBER_ROLE_USER, SUBSCRIBER_ROLE_USER_PASS);
+            connection = cf.createConnection(RemoteServiceHelper.SUBSCRIBER_ROLE_USER, RemoteServiceHelper.SUBSCRIBER_ROLE_USER_PASS);
             connection.setClientID(subscriptionIdentity);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             TopicSubscriber durableSubscriber = session.createDurableSubscriber(topic, subscriptionIdentity);
@@ -132,7 +128,7 @@ public class TopicIntegrationTest {
             Topic topic = (Topic) RemoteServiceHelper.lookupSubscriber(getDestinationJNDIName());
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(SUBSCRIBER_ROLE_USER, SUBSCRIBER_ROLE_USER_PASS);
+            connection = cf.createConnection(RemoteServiceHelper.SUBSCRIBER_ROLE_USER, RemoteServiceHelper.SUBSCRIBER_ROLE_USER_PASS);
             connection.setClientID(subscriptionIdentity);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             TopicSubscriber durableSubscriber = session.createDurableSubscriber(topic, subscriptionIdentity);
@@ -165,7 +161,7 @@ public class TopicIntegrationTest {
             Topic topic = (Topic) RemoteServiceHelper.lookupPublisher(getDestinationJNDIName());
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(PUBLISHER_ROLE_USER, PUBLISHER_ROLE_USER_PASS);
+            connection = cf.createConnection(RemoteServiceHelper.PUBLISHER_ROLE_USER, RemoteServiceHelper.PUBLISHER_ROLE_USER_PASS);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageProducer publisher = session.createProducer(topic);
             connection.start();
@@ -193,7 +189,7 @@ public class TopicIntegrationTest {
             Topic topic = (Topic) RemoteServiceHelper.lookupSubscriber(getDestinationJNDIName());
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(SUBSCRIBER_ROLE_USER, SUBSCRIBER_ROLE_USER_PASS);
+            connection = cf.createConnection(RemoteServiceHelper.SUBSCRIBER_ROLE_USER, RemoteServiceHelper.SUBSCRIBER_ROLE_USER_PASS);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             MessageConsumer subscriber = session.createConsumer(topic);

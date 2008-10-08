@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.coppa.test.integration.TopicIntegrationTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -95,7 +94,6 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.Properties;
 
-import javax.jms.ConnectionFactory;
 import javax.management.MBeanServerConnection;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -227,23 +225,29 @@ public class RemoteServiceHelper {
         }
         return (MBeanServerConnection) jmxCtx.lookup("jmx/invoker/RMIAdaptor");
     }
-
+    
+    public static final String SUBSCRIBER_ROLE_USER = "subscriber";
+    public static final String SUBSCRIBER_ROLE_USER_PASS = "pass";
+    
     public static Object lookupSubscriber(String resourceName) throws Exception {
         if (jmsSubscriberCtx == null) {
             Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, TopicIntegrationTest.SUBSCRIBER_ROLE_USER);
-            env.setProperty(Context.SECURITY_CREDENTIALS, TopicIntegrationTest.SUBSCRIBER_ROLE_USER_PASS);
+            env.setProperty(Context.SECURITY_PRINCIPAL, SUBSCRIBER_ROLE_USER);
+            env.setProperty(Context.SECURITY_CREDENTIALS, SUBSCRIBER_ROLE_USER_PASS);
             env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
             jmsSubscriberCtx = new InitialContext(env);
         }
         return jmsSubscriberCtx.lookup(resourceName);
     }
+    
+    public static final String PUBLISHER_ROLE_USER_PASS = "pass";
+    public static final String PUBLISHER_ROLE_USER = "publisher";
 
     public static Object lookupPublisher(String resourceName) throws Exception {
         if (jmsPublisherCtx == null) {
             Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, TopicIntegrationTest.SUBSCRIBER_ROLE_USER);
-            env.setProperty(Context.SECURITY_CREDENTIALS, TopicIntegrationTest.SUBSCRIBER_ROLE_USER_PASS);
+            env.setProperty(Context.SECURITY_PRINCIPAL, PUBLISHER_ROLE_USER);
+            env.setProperty(Context.SECURITY_CREDENTIALS, PUBLISHER_ROLE_USER_PASS);
             env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
             jmsPublisherCtx = new InitialContext(env);
         }
