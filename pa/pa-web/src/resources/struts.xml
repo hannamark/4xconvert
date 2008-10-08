@@ -80,6 +80,7 @@
  			<result>/WEB-INF/jsp/trialRelatedDouments.jsp</result>
  			<result name="input">/WEB-INF/jsp/trialDocumentAdd.jsp</result>
  			<result name="error">/WEB-INF/jsp/trialRelatedDouments.jsp</result>
+ 			<result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
  		</action>		
 		
 	</package>
