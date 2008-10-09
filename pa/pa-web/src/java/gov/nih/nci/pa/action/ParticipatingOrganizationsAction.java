@@ -58,6 +58,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     private static final int AD_COUNTRY_IDX = 3;
     private static final int AD_ZIP_IDX = 2;
     private static final String ACT_FACILITY_SAVE = "facilitySave";
+    private static final String ACT_EDIT = "edit";
     private static final String ACT_DELETE = "delete";
 
     private StudyProtocolServiceRemote sProService;
@@ -70,11 +71,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport
     private Ii spIi;
     private List<OrganizationWebDTO> organizationList = null; 
     private OrganizationDTO selectedOrgDTO = null;
+    private Organization editOrg;
     private static final int THREE = 3;    
     private static final String DISPLAYJSP = "displayJsp";
     private Long cbValue;
     private String recStatus;
     private String recStatusDate;
+    private boolean newParticipation;
 
 
     /** 
@@ -112,6 +115,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      */
     public String create() throws Exception {
         loadForm();
+        setNewParticipation(true);
         return Action.SUCCESS;
     }
 
@@ -129,7 +133,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport
         if (tab == null) {
             loadForm();
             addActionError("You must select an organization before adding.");
-            return ACT_FACILITY_SAVE;
+            return SUCCESS;
         }
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
 
@@ -213,24 +217,64 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      * @return result
      * @throws Exception exception
      */
-    public String updateTest() throws Exception {
+    public String facilityUpdate() throws Exception {
         clearErrorsAndMessages();
         enforceBusinessRules();
         
-        List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi);
-        if (!spList.isEmpty()) {
-           StudyParticipationDTO sp = spList.get(spList.size() - 1);
-           StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
-           ssas.setIi(IiConverter.convertToIi((Long) null));
-           ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.WITHDRAWN));
-           ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("9/9/2009")));
-           ssas.setStudyParticipationIi(sp.getIi());
-           ssas = ssasService.createStudySiteAccrualStatus(ssas);
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) 
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        if (tab == null) {
+            loadForm();
+            addActionError("System error getting participating orgainzation data from session.");
+            return SUCCESS;
         }
-        
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        List<StudySiteAccrualStatusDTO> currentStatus = ssasService
+                .getCurrentStudySiteAccrualStatusByStudyParticipation(
+                IiConverter.convertToIi(tab.getStudyParticipationId()));
+        if (currentStatus.isEmpty()
+            || !currentStatus.get(0).getStatusCode().getCode().equals(getRecStatus())
+            || !currentStatus.get(0).getStatusDate().equals(PAUtil.dateStringToTimestamp(getRecStatusDate()))) {
+              StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
+              
+              ssas.setIi(IiConverter.convertToIi((Long) null));
+              ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(getRecStatus())));
+              ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getRecStatusDate())));
+              ssas.setStudyParticipationIi(IiConverter.convertToIi(tab.getStudyParticipationId()));
+              ssas = ssasService.createStudySiteAccrualStatus(ssas);
+        }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
-        return Action.SUCCESS;
+        return ACT_FACILITY_SAVE;
+    }
+
+    /**  
+     * @return result
+     * @throws Exception exception
+     */
+    public String edit() throws Exception {
+        StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
+        PAHealthCareFacilityDTO hfDto = pahfService.get(spDto.getHealthcareFacilityIi());
+        Organization org = new Organization();
+        org.setId(IiConverter.convertToLong(hfDto.getOrganizationIi()));
+        editOrg = paoService.getOrganizationByIndetifers(org);
+        List<StudySiteAccrualStatusDTO> statusList = 
+                ssasService.getCurrentStudySiteAccrualStatusByStudyParticipation(spDto.getIi()); 
+        if (!statusList.isEmpty()) {
+            this.setRecStatus(statusList.get(0).getStatusCode().getCode());
+            this.setRecStatusDate(TsConverter.convertToTimestamp(statusList.get(0).getStatusDate()).toString());
+        }
+        setNewParticipation(false);
+        
+        ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
+        tab.setStudyParticipationId(cbValue);
+        tab.setFacilityOrganization(org);
+        tab.setPoHealthCareFacilityIi(null);
+        tab.setPoOrganizationIi(null);
+        tab.setNewParticipation(false);
+
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        return this.ACT_EDIT;
     }
 
     /**  
@@ -398,6 +442,34 @@ public class ParticipatingOrganizationsAction extends ActionSupport
      */
     public void setRecStatusDate(String recStatusDate) {
         this.recStatusDate = PAUtil.normalizeDateString(recStatusDate);
+    }
+
+    /**
+     * @return the newParticipation
+     */
+    public boolean isNewParticipation() {
+        return newParticipation;
+    }
+
+    /**
+     * @param newParticipation the newParticipation to set
+     */
+    public void setNewParticipation(boolean newParticipation) {
+        this.newParticipation = newParticipation;
+    }
+
+    /**
+     * @return the editOrg
+     */
+    public Organization getEditOrg() {
+        return editOrg;
+    }
+
+    /**
+     * @param editOrg the editOrg to set
+     */
+    public void setEditOrg(Organization editOrg) {
+        this.editOrg = editOrg;
     }
 
 }
