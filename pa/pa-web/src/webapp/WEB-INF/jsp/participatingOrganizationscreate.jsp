@@ -21,8 +21,14 @@
 <script type="text/javascript">
         addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
         setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
+        
 function facilitySave(){
      document.facility.action="participatingOrganizationsfacilitySave.action#investigators";
+     document.facility.submit();     
+}
+function facilityUpdate(){
+     document.facility.action="participatingOrganizationsfacilityUpdate.action#investigators";
      document.facility.submit();     
 }
 </script>
@@ -90,12 +96,42 @@ function facilitySave(){
 			<h3>Facility</h3>
             <s:form name="facility">
 			<table class="form">
-				<div id="loadOrgDetails">
-					<%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
-				</div>
+			    <s:if test="%{newParticipation}">
+                    <div id="loadOrgDetails">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
+                    </div>
+                </s:if>
+			    <s:else>
+					<tr>
+					    <td scope="row" class="label"><s:label for="editOrg.name">Organization Name:</s:label></td>
+					    <td class="value" colspan="2">
+					        <s:textfield name="editOrg.name" maxlength="200" size="100"
+					        disabled="disabled" cssStyle="width: 250px" readonly="true"/>
+					    </td>
+					</tr>
+					<tr>
+					    <td scope="row" class="label"><s:label for="editOrg.city">City:</s:label></td>
+					    <td class="value" colspan="2">
+					        <s:textfield name="editOrg.city" maxlength="200" size="200" 
+					        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
+					    </td>
+					</tr>
+					<tr>
+					    <td scope="row" class="label"><s:label for="editOrg.countryName">Country:</s:label></td>
+					    <td class="value" colspan="2">
+					        <s:textfield name="editOrg.countryName" maxlength="200" size="200" 
+					        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
+					</tr>
+					<tr>
+					    <td scope="row" class="label"><s:label for="editOrg.postalCode">Zip/Postal Code:</s:label></td>
+					    <td class="value" colspan="2">
+					        <s:textfield name="editOrg.postalCode" maxlength="200" size="200" 
+					        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
+					    </td>
+					</tr>
+                </s:else>
 				<tr>
-					<td scope="row" class="label"><label for="srs">Site
-					Recruitment Status:</label></td>
+					<td scope="row" class="label"><s:label for="srs">Site Recruitment Status:</s:label></td>
                     <s:set name="recruitmentStatusValues"
                            value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
                     <td class="value" colspan="2"><s:select headerKey="" headerValue=""
@@ -104,8 +140,7 @@ function facilitySave(){
                     <td>
 				</tr>
 				<tr>
-					<td scope="row" class="label"><label for="srsd">Site
-					Recruitment Status Date:</label></td>
+					<td scope="row" class="label"><s:label for="srsd">Site Recruitment Status Date:</s:label></td>
                     <td class="value" colspan="2">
                         <s:textfield name="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                             <a href="javascript:showCal('Cal1')">
@@ -117,7 +152,14 @@ function facilitySave(){
 			<div class="actionsrow"><del class="btnwrapper">
 			<ul class="btnrow">
 				<li>
-				    <s:a href="#" cssClass="btn" onclick="facilitySave()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                    <s:if test="%{newParticipation}">
+				        <s:a href="#" cssClass="btn" onclick="facilitySave()"><span class="btn_img">
+				            <span class="save">Save</span></span></s:a>
+				    </s:if>
+				    <s:else>
+                        <s:a href="#" cssClass="btn" onclick="facilityUpdate()"><span class="btn_img">
+                            <span class="save">Save</span></span></s:a>
+				    </s:else>
 				</li>
 			</ul>
 			</del></div>
