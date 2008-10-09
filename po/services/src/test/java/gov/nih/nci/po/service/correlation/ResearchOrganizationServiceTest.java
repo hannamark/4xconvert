@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The COPPA PO
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This COPPA PO Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the COPPA PO Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the COPPA PO Software; (ii) distribute and
+ * have distributed to and by third parties the COPPA PO Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,53 +80,47 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoHibernateUtil;
+
+import org.junit.Before;
 
 /**
- * @author Scott Miller
- *
+ * Service test.
  */
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServiceTest<ResearchOrganization> {
 
-    /**
-     * {@inheritDoc}
-     */
+    private ResearchOrganizationType sampleType = null;
+
+    @Before
+    public void setupType() throws Exception {
+        sampleType = new ResearchOrganizationType("sampleType");
+        PoHibernateUtil.getCurrentSession().save(sampleType);
+    }
+
     @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
-            return null;
-        }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (returnClass.equals(OversightCommitteeType.class)) {
-            return (TO) convertToOversightCommitteeType(value);
-        } else if (returnClass.equals(ResearchOrganizationType.class)) {
-            return (TO) convertToResearchOrganizationType(value);
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
+    ResearchOrganization getSampleStructuralRole() {
+        ResearchOrganization oc = new ResearchOrganization();
+        oc.setPlayer(basicOrganization);
+        oc.setScoper(basicOrganization);
+        oc.setType(sampleType);
+        oc.setFundingMechanism("foo");
+
+        return oc;
     }
 
-    private OversightCommitteeType convertToOversightCommitteeType(Cd value) {
-        return PoRegistry.getOversightCommitteeTypeService().getByCode(value.getCode());
+    @Override
+    void verifyStructuralRole(ResearchOrganization expected, ResearchOrganization actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(RoleStatus.PENDING, actual.getStatus());
+        assertEquals("foo", actual.getFundingMechanism());
     }
 
-    private ResearchOrganizationType convertToResearchOrganizationType(Cd value) {
-        return PoRegistry.getResearchOrganizationTypeService().getByCode(value.getCode());
-    }
 
-    /**
-     * Convert a Role status code into an emun.
-     * @param value the code.
-     * @return the enum.
-     */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
-    }
 }

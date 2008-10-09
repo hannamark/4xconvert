@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -16,9 +17,18 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
     private Country defaultCountry;
     private OversightCommitteeType oversightCommitee;
+    private ResearchOrganizationType researchOrgType;
 
     public Country getDefaultCountry() {
         return defaultCountry;
+    }
+
+    public ResearchOrganizationType getResearchOrgType() {
+        return researchOrgType;
+    }
+
+    public void setResearchOrgType(ResearchOrganizationType researchOrgType) {
+        this.researchOrgType = researchOrgType;
     }
 
     /**
@@ -53,7 +63,8 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         
         oversightCommitee = new OversightCommitteeType("Ethics Committee");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
-
+        researchOrgType = new ResearchOrganizationType("Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
 
         user = new User();
         user.setLoginName("unittest" + new Random().nextLong());

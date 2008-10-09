@@ -87,8 +87,6 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
-import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeCRServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
@@ -140,12 +138,12 @@ public class OversightCommitteeCorrelationServiceBean
     }
 
     @Override
-    GenericStructrualRoleServiceLocal<OversightCommittee> getLocalService() {
+    OversightCommitteeServiceLocal getLocalService() {
         return ocService;
     }
 
     @Override
-    GenericStructrualRoleCRServiceLocal<OversightCommitteeCR> getLocalCRService() {
+    OversightCommitteeCRServiceLocal getLocalCRService() {
         return ocCRService;
     }
 

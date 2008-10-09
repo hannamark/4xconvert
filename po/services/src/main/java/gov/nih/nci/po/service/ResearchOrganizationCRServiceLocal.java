@@ -80,53 +80,19 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+package gov.nih.nci.po.service;
+
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+
+import javax.ejb.Local;
 
 /**
- * @author Scott Miller
- *
+ * Change Request (CR) management interface.
+ * @author gax
  */
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+@Local
+public interface ResearchOrganizationCRServiceLocal
+        extends GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
-            return null;
-        }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (returnClass.equals(OversightCommitteeType.class)) {
-            return (TO) convertToOversightCommitteeType(value);
-        } else if (returnClass.equals(ResearchOrganizationType.class)) {
-            return (TO) convertToResearchOrganizationType(value);
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
-
-    private OversightCommitteeType convertToOversightCommitteeType(Cd value) {
-        return PoRegistry.getOversightCommitteeTypeService().getByCode(value.getCode());
-    }
-
-    private ResearchOrganizationType convertToResearchOrganizationType(Cd value) {
-        return PoRegistry.getResearchOrganizationTypeService().getByCode(value.getCode());
-    }
-
-    /**
-     * Convert a Role status code into an emun.
-     * @param value the code.
-     * @return the enum.
-     */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
-    }
 }

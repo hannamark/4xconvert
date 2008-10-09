@@ -94,6 +94,8 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -139,6 +141,13 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
+        return (ResearchOrganizationTypeLocal) JNDIUtil.lookup("po/ResearchOrganizationTypeBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public HealthCareProviderServiceLocal getHealthCareProviderService() {
         return (HealthCareProviderServiceLocal) JNDIUtil.lookup("po/HealthCareProviderServiceBean/local");
     }
@@ -148,6 +157,13 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
         return (OversightCommitteeServiceLocal) JNDIUtil.lookup("po/OversightCommitteeServiceBean/local");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
+        return (ResearchOrganizationServiceLocal) JNDIUtil.lookup("po/ResearchOrganizationServiceBean/local");
     }
 
     /**

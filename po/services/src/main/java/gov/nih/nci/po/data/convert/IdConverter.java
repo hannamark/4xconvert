@@ -155,7 +155,17 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String OVERSIGHT_COMMITTEE_FACILITY_ROOT = "UID.for.nci.role.oversightcommittee";
+    public static final String OVERSIGHT_COMMITTEE_ROOT = "UID.for.nci.role.oversightcommittee";
+
+    /**
+     * The identifier name for.
+     */
+    public static final String RESEARCH_ORG_IDENTIFIER_NAME = "NCI Research Organization identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String RESEARCH_ORG_ROOT = "UID.for.nci.role.researchorganization";
 
     /**
      * The identifier name for.
@@ -340,6 +350,23 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * convert the id of a clinical research staff.
      * @author Scott Miller
      */
+    public static class ResearchOrganizationIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.RESEARCH_ORG_ROOT);
+            return iso;
+        }
+    }
+
+    /**
+     * convert the id of a clinical research staff.
+     * @author Scott Miller
+     */
     public static class OversightCommitteeIdConverter extends IdConverter {
         /**
          * {@inheritDoc}
@@ -348,7 +375,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
         public Ii convertToIi(Long value) {
             Ii iso = super.convertToIi(value);
             iso.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-            iso.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+            iso.setRoot(IdConverter.OVERSIGHT_COMMITTEE_ROOT);
             return iso;
         }
     }

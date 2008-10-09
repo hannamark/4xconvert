@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The COPPA PO
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This COPPA PO Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the COPPA PO Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the COPPA PO Software; (ii) distribute and
+ * have distributed to and by third parties the COPPA PO Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,53 +80,84 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.StringConverter;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 /**
- * @author Scott Miller
- *
+ * Remote service test.
  */
-public class CdConverter extends AbstractXSnapshotConverter<Cd> {
+public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRoleRemoteServiceTest<ResearchOrganizationDTO, ResearchOrganizationCR> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Cd value) {
-        if (value == null || value.getNullFlavor() != null) {
-            return null;
-        }
-        if (returnClass.equals(RoleStatus.class)) {
-            return (TO) convertToRoleStatus(value);
-        } else if (returnClass.equals(OversightCommitteeType.class)) {
-            return (TO) convertToOversightCommitteeType(value);
-        } else if (returnClass.equals(ResearchOrganizationType.class)) {
-            return (TO) convertToResearchOrganizationType(value);
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
+    CorrelationService<ResearchOrganizationDTO> getCorrelationService() {
+        return EjbTestHelper.getResearchOrganizationCorrelationServiceRemote();
     }
 
-    private OversightCommitteeType convertToOversightCommitteeType(Cd value) {
-        return PoRegistry.getOversightCommitteeTypeService().getByCode(value.getCode());
+    @Override
+    protected ResearchOrganizationDTO getSampleDto() throws Exception {
+        ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
+        Ii ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        dto.setPlayerIdentifier(ii);
+        dto.setScoperIdentifier(ii);
+
+        Cd type = new Cd();
+        type.setCode("Cancer Center");
+        dto.setType(type);
+        
+        dto.setFundingMechanism(StringConverter.convertToSt("foo"));
+
+        return dto;
     }
 
-    private ResearchOrganizationType convertToResearchOrganizationType(Cd value) {
-        return PoRegistry.getResearchOrganizationTypeService().getByCode(value.getCode());
+    @Override
+    void verifyDto(ResearchOrganizationDTO expected, ResearchOrganizationDTO actual) {
+        assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
+        assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
+        assertEquals("pending", actual.getStatus().getCode());
+        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(expected.getFundingMechanism().getValue(), actual.getFundingMechanism().getValue());
     }
 
-    /**
-     * Convert a Role status code into an emun.
-     * @param value the code.
-     * @return the enum.
-     */
-    public static RoleStatus convertToRoleStatus(Cd value) {
-        return RoleStatus.valueOf(value.getCode().toUpperCase());
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  Remove this (use superclass impl) when PO-521 is implemented
     }
+
+    @Override
+    protected void alter(ResearchOrganizationDTO dto) {
+        ResearchOrganizationType other = new ResearchOrganizationType("Foo");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
+        PoHibernateUtil.getCurrentSession().flush();
+        
+        Cd type = new Cd();
+        type.setCode("Foo");
+        dto.setType(type);
+    }
+
+    @Override
+    protected void verifyAlterations(ResearchOrganizationCR cr) {
+        super.verifyAlterations(cr);
+        
+        assertEquals("Foo", cr.getType().getCode());
+    }
+    
 }

@@ -95,6 +95,8 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -135,6 +137,13 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
         return EjbTestHelper.getOversightCommitteeTypeServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
+        return EjbTestHelper.getResearchOrganizationTypeServiceBean();
     }
 
     /**
@@ -184,5 +193,12 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
         return EjbTestHelper.getIdentifiedOrganizationServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
+        return EjbTestHelper.getResearchOrganizationServiceBean();
     }
 }

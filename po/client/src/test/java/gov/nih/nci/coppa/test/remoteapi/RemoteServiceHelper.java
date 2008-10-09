@@ -89,6 +89,7 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -113,12 +114,17 @@ public class RemoteServiceHelper {
     static final String PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/PersonResourceProviderCorrelationServiceBean/remote";
     static final String ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/OrganizationResourceProviderCorrelationServiceBean/remote";
     static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/OversightCommitteeCorrelationServiceBean/remote";
+    static final String RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE = "po/ResearchOrganizationCorrelationServiceBean/remote";
 
     private static String username = "ejbclient";
     private static String password = "pass";
 
     private static InitialContext ctx;
     private static InitialContext jmxCtx;
+
+    static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() throws NamingException {
+        return (ResearchOrganizationCorrelationServiceRemote) lookup(RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE);
+    }
 
     private static Object lookup(String resource) throws NamingException {
         if (ctx == null) {

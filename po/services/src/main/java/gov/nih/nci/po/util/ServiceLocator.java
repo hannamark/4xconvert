@@ -94,6 +94,8 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -125,6 +127,16 @@ public interface ServiceLocator {
      * @return the Oversight Committee Type service
      */
     OversightCommitteeTypeLocal getOversightCommitteeTypeService();
+    
+    /**
+     * @return the Researh Org Type service
+     */
+    ResearchOrganizationTypeLocal getResearchOrganizationTypeService();
+    
+    /**
+     * @return the Researh Org service
+     */
+    ResearchOrganizationServiceLocal getResearchOrganizationService();
 
     /**
      * @return the health care provider service.

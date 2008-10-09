@@ -40,6 +40,9 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.PersonResourceProvider" />
         <mapping class="gov.nih.nci.po.data.bo.PersonResourceProviderCR" />
         <mapping class="gov.nih.nci.po.data.bo.PhoneNumber"/>
+        <mapping class="gov.nih.nci.po.data.bo.ResearchOrganization"/>
+        <mapping class="gov.nih.nci.po.data.bo.ResearchOrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.ResearchOrganizationType"/>
         <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>
 

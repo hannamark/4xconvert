@@ -100,6 +100,8 @@ import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceBean;
+import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -268,7 +270,37 @@ public class EjbTestHelper {
         ocService.setOcCRService(getOversightCommitteeRCServiceBean());
         return (OversightCommitteeCorrelationServiceRemote) wrapWithProxies(ocService);
     }
+    
+    /**
+     * @return the service
+     */
+    public static ResearchOrganizationTypeBean getResearchOrganizationTypeServiceBean() {
+        return new ResearchOrganizationTypeBean();
+    }
+    /**
+     * @return the service
+     */
+    public static ResearchOrganizationServiceLocal getResearchOrganizationServiceBean() {
+        ResearchOrganizationServiceBean bean = new ResearchOrganizationServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
+    }
 
+    public static ResearchOrganizationCRServiceBean getResearchOrganizationRCServiceBean() {
+        ResearchOrganizationCRServiceBean ocService = new ResearchOrganizationCRServiceBean();
+        ocService.setRoBean(getResearchOrganizationServiceBean());
+        ocService.setPublisher(getMessageProducer());
+        return ocService;
+    }
+
+    public static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationServiceRemote() {
+        ResearchOrganizationCorrelationServiceBean ocService = new ResearchOrganizationCorrelationServiceBean();
+        ocService.setRoService(EjbTestHelper.getResearchOrganizationServiceBean());
+        ocService.setRoCRService(getResearchOrganizationRCServiceBean());
+        return (ResearchOrganizationCorrelationServiceRemote) wrapWithProxies(ocService);
+    }
+    
+    
     /**
      * @return the service
      */

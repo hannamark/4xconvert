@@ -101,6 +101,8 @@ import gov.nih.nci.po.service.OversightCommitteeServiceStub;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 import gov.nih.nci.po.util.ServiceLocator;
 
 /**
@@ -197,6 +199,20 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
         return null;
     }
 }

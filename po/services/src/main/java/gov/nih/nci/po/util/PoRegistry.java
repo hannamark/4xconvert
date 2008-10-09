@@ -87,6 +87,7 @@ import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 
 /**
@@ -152,6 +153,13 @@ public final class PoRegistry {
      */
     public static OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
         return getInstance().getServiceLocator().getOversightCommitteeTypeService();
+    }
+
+    /**
+     * @return the Research Org Type service
+     */
+    public static ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
+        return getInstance().getServiceLocator().getResearchOrganizationTypeService();
     }
 
     /**

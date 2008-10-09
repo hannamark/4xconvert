@@ -127,7 +127,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
         ii.setDisplayable(true);
         ii.setScope(IdentifierScope.OBJ);
         ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+        ii.setRoot(IdConverter.OVERSIGHT_COMMITTEE_ROOT);
         ii.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
         dto.setIdentifier(ii);
         Cd type = new Cd();
@@ -160,7 +160,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
         expectedIi.setScope(IdentifierScope.OBJ);
         expectedIi.setReliability(IdentifierReliability.ISS);
         expectedIi.setIdentifierName(IdConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        expectedIi.setRoot(IdConverter.OVERSIGHT_COMMITTEE_FACILITY_ROOT);
+        expectedIi.setRoot(IdConverter.OVERSIGHT_COMMITTEE_ROOT);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, ((OversightCommitteeDTO) dto).getIdentifier()));
     }
 
