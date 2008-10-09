@@ -84,6 +84,7 @@
 
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.ForeignKey;
@@ -109,6 +110,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
+    @Searchable
     @NotNull
     public String getFundingMechanism() {
         return fundingMechanism;
@@ -130,6 +132,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     @ManyToOne
     @ForeignKey(name = "research_org_type_fkey")
     @NotNull
+    @Searchable
     public ResearchOrganizationType getType() {
         return type;
     }
