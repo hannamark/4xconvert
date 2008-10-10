@@ -328,10 +328,7 @@
         
         <delete dir="${reg-web.ear.dir}" failonerror="false"/>
         <unjar src="${pa.ear.file}" dest="${reg-web.ear.dir}"/>
-        <copy file="${reg-web.build.dir}/${reg-web.war}" todir="${reg-web.ear.dir}"/>
-        <copy file="${pa.resourceDir}/application.xml" 
-               todir="${reg-web.ear.dir}/META-INF" />
-        
+        <copy file="${reg-web.build.dir}/${reg-web.war}" todir="${reg-web.ear.dir}" overwrite="true"/>
         <ear destfile="${reg-web.ear.file}" 
              basedir="${reg-web.ear.dir}" 
              compress="false" 
