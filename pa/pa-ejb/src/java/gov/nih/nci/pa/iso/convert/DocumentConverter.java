@@ -1,6 +1,9 @@
 package gov.nih.nci.pa.iso.convert;
 
+import java.util.Date;
+
 import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -28,8 +31,7 @@ public class DocumentConverter {
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setUserLastUpdated(StConverter.convertToSt(doc.getUserLastUpdated()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
-        
-        
+        docDTO.setStudyProtocolIi(IiConverter.convertToIi(doc.getStudyProtocol().getId()));        
         return docDTO;
     }
     
@@ -40,9 +42,11 @@ public class DocumentConverter {
      */
     public static Document convertFromDTOToDomain(DocumentDTO docDTO) {
         Document doc = new Document();
-        if (docDTO.getIi() != null) {
-            doc.setId(Long.valueOf(docDTO.getIi().getExtension()));
-        }
+
+        StudyProtocol spBo = new StudyProtocol();
+        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));  
+        doc.setDateLastUpdated(new Date());
+        doc.setStudyProtocol(spBo);
         if (docDTO.getTypeCode() != null) {
             doc.setTypeCode(DocumentTypeCode.getByCode(
                     docDTO.getTypeCode().getCode()));
@@ -52,7 +56,7 @@ public class DocumentConverter {
         }
         if (docDTO.getFileName() != null) {
             doc.setFileName(docDTO.getFileName().getValue());
-        }        
+        } 
         return doc;
     }
 

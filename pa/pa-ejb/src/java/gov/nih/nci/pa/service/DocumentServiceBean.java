@@ -2,7 +2,6 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Document;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -95,7 +94,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public DocumentDTO createTrialDocument(DocumentDTO docDTO)
+    public DocumentDTO create(DocumentDTO docDTO)
     throws PAException {
         if (docDTO == null) {
             throw new PAException(" docDTO should not be null ");
@@ -107,10 +106,10 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastUpdated(now);
         // create Protocol Obj
-        StudyProtocol studyProtocol = new StudyProtocol();
+        /*StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));       
 
-        doc.setStudyProtocol(studyProtocol);
+        doc.setStudyProtocol(studyProtocol);*/
         doc.setActiveIndicator(true);
         try {
             session = HibernateUtil.getCurrentSession();
@@ -134,7 +133,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public DocumentDTO getTrialDocumentById(Ii id) throws PAException {
+    public DocumentDTO get(Ii id) throws PAException {
        
         LOG.info("Entering getTrialDocumentById");
         Session session = null;
@@ -181,7 +180,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public DocumentDTO updateTrialDocument(DocumentDTO docDTO) throws PAException {
+    public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         
         if (docDTO == null) {
             LOG.error(" docDTO should not be null ");
@@ -192,7 +191,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         DocumentDTO docRetDTO = null;
         try {
             docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
-            deleteTrialDocumentByID(docDTO);
+            delete(docDTO);
             docDTO.setInactiveCommentText(null);
 //            session = HibernateUtil.getCurrentSession();
 //
@@ -212,7 +211,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
 //            doc.setActiveIndicator(false);
 //            session.update(doc);
 //            session.flush();
-            docRetDTO = createTrialDocument(docDTO);
+            docRetDTO = create(docDTO);
             
         } catch (HibernateException hbe) {
             session.flush();
@@ -230,7 +229,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Boolean deleteTrialDocumentByID(DocumentDTO docDTO) throws PAException {
+    public Boolean delete(DocumentDTO docDTO) throws PAException {
           
         LOG.debug("Entering deleteTrialDocumentByID ");
         Boolean result = false;

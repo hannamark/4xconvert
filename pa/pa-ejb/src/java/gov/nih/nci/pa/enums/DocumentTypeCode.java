@@ -14,13 +14,13 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum DocumentTypeCode implements CodedEnum<String> {
     
     /** Trial_Document.*/
-    Protocol_Document("Protocol Document"), 
+    Protocol_Document("PROTOCOL DOCUMENT"), 
     /**IRB_Approval_Document.*/
-    IRB_Approval_Document("IRB Approval Document"), 
+    IRB_Approval_Document("IRB APPROVAL DOCUMENT"), 
     /**Informed_Consent_Document.*/
-    Informed_Consent_Document("Informed Consent Document"),
+    Informed_Consent_Document("INFORMED CONSENT DOCUMENT"),
     /**Other.*/
-    Other("Other");
+    Other("OTHER");
  
     private String code;
 

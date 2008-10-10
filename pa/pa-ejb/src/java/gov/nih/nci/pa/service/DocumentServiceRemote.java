@@ -29,34 +29,28 @@ public interface DocumentServiceRemote {
      * @return DocumentDTO
      * @throws PAException PAException
      */
-    DocumentDTO createTrialDocument(DocumentDTO docDTO) throws PAException;
+    DocumentDTO create(DocumentDTO docDTO) throws PAException;
     
     /**
      * @param id Ii 
      * @return DocumentDTO
      * @throws PAException PAException
      */
-    DocumentDTO getTrialDocumentById(Ii id) throws PAException;
+    DocumentDTO get(Ii id) throws PAException;
 
     /**
      * @param docDTO DocumentDTO 
      * @return DocumentDTO
      * @throws PAException PAException
      */
-    DocumentDTO updateTrialDocument(DocumentDTO docDTO) throws PAException;
+    DocumentDTO update(DocumentDTO docDTO) throws PAException;
 
     /**
      * @param docDTO DocumentDTO 
      * @return Boolean
      * @throws PAException PAException
      */
-    Boolean deleteTrialDocumentByID(DocumentDTO docDTO) throws PAException;
+    Boolean delete(DocumentDTO docDTO) throws PAException;    
     
-    /**
-     * @param docDTO DocumentDTO 
-     * @return Boolean
-     * @throws PAException PAException
-     */
-    Boolean checkTypeCodes(DocumentDTO docDTO) throws PAException;
 
 }
