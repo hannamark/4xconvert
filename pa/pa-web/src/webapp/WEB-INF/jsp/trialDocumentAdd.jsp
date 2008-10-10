@@ -36,6 +36,7 @@ BubbleTips.activateTipOn("dfn");
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
+   <pa:failureMessage/>
     <s:form method="POST" enctype="multipart/form-data"><s:actionerror/>    
     <h2><fmt:message key="trialDocument.addtitle" /></h2>
     <input type="hidden" name="page" value="${page}" />
@@ -53,6 +54,7 @@ BubbleTips.activateTipOn("dfn");
                            name="trialDocumentWebDTO.typeCode" 
                            list="#typeCodeValues"  
                            cssStyle="width:206px"/>
+                    
                            <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialDocumentWebDTO.typeCode</s:param>

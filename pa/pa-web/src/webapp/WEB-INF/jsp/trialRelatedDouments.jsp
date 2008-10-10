@@ -14,10 +14,11 @@
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div class="box"> 
    <pa:sucessMessage/>
+   <pa:failureMessage/>
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
     <s:if test="trialDocumentList != null">
-    <display:table name="${trialDocumentList}" id="row" class="data" sort="list"  pagesize="5" requestURI="trialDocumentquery.action" export="false">    
+    <display:table name="${trialDocumentList}" id="row" class="data" sort="list"  pagesize="10" requestURI="trialDocumentquery.action" export="false">    
 	    <display:column titleKey="trialDocument.fileName" sortable="true" headerClass="sortable" >
 	    <s:url id="url" action="trialDocumentsaveFile"><s:param name="id" value="%{#attr.row.id}" /></s:url>
 	     <s:a href="%{url}"><s:property value="%{#attr.row.fileName}" /></s:a>
