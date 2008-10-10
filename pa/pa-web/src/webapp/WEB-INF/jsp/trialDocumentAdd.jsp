@@ -45,27 +45,34 @@ BubbleTips.activateTipOn("dfn");
                 <tr>
                      <td scope="row" class="label">
                      <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialDocument.type"/>*</dfn>
+                            <fmt:message key="trialDocument.type"/></dfn><span class="required">*</span>
                      </label>
                     </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.DocumentTypeCode@getDisplayNames()" />
-                      <td class="value">
-                        <s:select headerKey="" headerValue="" 
-                           name="trialDocumentWebDTO.typeCode" 
-                           list="#typeCodeValues"  
-                           cssStyle="width:206px"/>
-                    
-                           <span class="formErrorMsg"> 
+    				<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.DocumentTypeCode@getDisplayNames()" />
+                    <td class="value">
+    					<s:if test="page.equals('Edit')">
+                      		<s:select headerKey="" headerValue="" 
+                           		name="trialDocumentWebDTO.typeCode" 
+                           		list="#typeCodeValues"  
+                           		cssStyle="width:206px" disabled="true"/>                     
+    					</s:if>
+    					<s:else>
+                    		<s:select headerKey="" headerValue="" 
+                        		name="trialDocumentWebDTO.typeCode" 
+                           		list="#typeCodeValues"  
+                           		cssStyle="width:206px"/>                    
+                           	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialDocumentWebDTO.typeCode</s:param>
                                </s:fielderror>                            
-                             </span>
+                            </span>
+						</s:else>    
                       </td>         
                 </tr>                
                 <tr>
                      <td scope="row" class="label">
                      <label for="fileName"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialDocument.fileName"/>*</dfn>
+                            <fmt:message key="trialDocument.fileName"/></dfn><span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">

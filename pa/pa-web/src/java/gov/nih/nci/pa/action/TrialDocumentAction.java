@@ -118,32 +118,12 @@ ServletResponseAware {
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
-//             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
-//             if (status) {
-
              docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
-             PaRegistry.getDocumentService().createTrialDocument(docDTO); 
-
-
-             //StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-             //.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-
-             //String fullFileName = FILE_PATH + "\\" + spDTO.getNciIdentifier() 
-             //+ "\\" + doc.getIi().getExtension() + uploadFileName;
-
-             //File outputFile = new File(fullFileName);
-             //FileUtils.copyFile(upload, outputFile);
-//             } else {
-//                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, 
-//                         getText("Active Document with this type already exists,please select a different type"
-//                 + " or use replacing functionality for replacing existing document of selected type."));
-//                 return INPUT;
-//             }
+             PaRegistry.getDocumentService().create(docDTO); 
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
              return SUCCESS;
          } catch (Exception e) {
-             //addActionError(e.getLocalizedMessage());
              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return INPUT;
          }          
@@ -156,7 +136,7 @@ ServletResponseAware {
          LOG.info("Entering saveFile");
          try {  
              DocumentDTO  docDTO = 
-                 PaRegistry.getDocumentService().getTrialDocumentById(IiConverter.convertToIi(id));
+                 PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
 
              StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
              .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
@@ -187,7 +167,7 @@ ServletResponseAware {
              query();
              return ERROR;
          } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              query();
              return ERROR;
          }
@@ -201,10 +181,10 @@ ServletResponseAware {
          LOG.info("Entering edit");
          try {  
              DocumentDTO  docDTO = 
-                 PaRegistry.getDocumentService().getTrialDocumentById(IiConverter.convertToIi(id));
+                 PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
              trialDocumentWebDTO = new TrialDocumentWebDTO(docDTO);
          } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return INPUT;
          }
          return INPUT;
@@ -240,22 +220,11 @@ ServletResponseAware {
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
              docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
-             
-//             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
-//             if (status) {
-                 PaRegistry.getDocumentService().updateTrialDocument(docDTO);
-//                 create();
-//             } else {
-//                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
-//                         getText("Active Document with this type already exists,please select a different type" 
-//                 + " or use replacing functionality for replacing existing document of select type."));
-//                 return INPUT;
-//             }
+             PaRegistry.getDocumentService().update(docDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-
              query();
          } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return INPUT;
          }
          return SUCCESS;
@@ -277,20 +246,20 @@ ServletResponseAware {
          try { 
              DocumentDTO docDTO = new DocumentDTO();            
 
-             docDTO = PaRegistry.getDocumentService().getTrialDocumentById(
+             docDTO = PaRegistry.getDocumentService().get(
                      IiConverter.convertToIi(id)); 
              docDTO.setInactiveCommentText(StConverter.convertToSt(
                      trialDocumentWebDTO.getInactiveCommentText()));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
-             PaRegistry.getDocumentService().deleteTrialDocumentByID(docDTO);
+             PaRegistry.getDocumentService().delete(docDTO);
 
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
              return SUCCESS;    
 
          } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return DELETE_RESULT;
          }
      }
