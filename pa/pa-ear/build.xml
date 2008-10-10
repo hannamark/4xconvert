@@ -24,6 +24,8 @@
     <property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
     <property name="pa-web.output.dir" value="${pa.dir}/pa-web/target"/>
     <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>   
+    <property name="reg-web.output.dir" value="${software.dir}/reg-web/target"/>
+    <property name="reg-web.package" value="${reg-web.output.dir}/reg-web.war"/>   
     <property name="serverName" value="default"/>
     
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
@@ -185,10 +187,14 @@
         <fail unless="pa-ejb.present" message="EJB jar file not found."/>
         <available file="${pa-web.package}" property="pa-web.present"/>
         <fail unless="pa-web.present" message="War file not found."/>
+        <available file="${reg-web.package}" property="reg-web.present"/>
+        <fail unless="reg-web.present" message="Protocol regestry war not found."/>
         <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <copy file="${pa-ejb.package}" 
              todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <copy file="${pa-web.package}" 
+             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+        <copy file="${reg-web.package}" 
              todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <copy todir="${pa-ear.build.dir}/${pa-ear.build.finalName}">
             <filterset>
@@ -376,7 +382,7 @@
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="container" />
     </target>
     <target name="ivy-get" 
-            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime,ivy-container" 
+            depends="init:ivy,ivy-runtime,ivy-container" 
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">

@@ -5,6 +5,12 @@
 <application>
     <display-name>pa-ear</display-name>
     <module>
+        <web>
+            <web-uri>reg-web.war</web-uri>
+            <context-root>/registry</context-root>
+        </web>
+    </module>
+    <module>
         <java>jboss-service.xml</java>
     </module>   
     <module>
