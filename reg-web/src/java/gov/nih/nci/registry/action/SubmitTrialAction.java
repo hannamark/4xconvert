@@ -9,9 +9,13 @@ import gov.nih.nci.registry.util.RegistryServiceLocator;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
+
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
+import gov.nih.nci.registry.util.Constants;
 
 /**
  * 
@@ -20,10 +24,13 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
  */
 @Validation
 public class SubmitTrialAction extends ActionSupport {
+    private static final String VIEW_TRIAL = "view";
+    private static final Logger LOG  = Logger.getLogger(SubmitTrialAction.class);
     /**
      * create protocol.
+     * @return String
      */
-    public void create() {
+    public String create() {
         try {
             InterventionalStudyProtocolDTO protocolDTO = new InterventionalStudyProtocolDTO();
             String phaseCode = ServletActionContext.getRequest().getParameter("trialPhase");
@@ -33,8 +40,35 @@ public class SubmitTrialAction extends ActionSupport {
             Ii isoIdentifier = RegistryServiceLocator.getStudyProtocolService()
                                     .createInterventionalStudyProtocol(protocolDTO);
             LOG.info("Trial is registered with ID: " + IiConverter.convertToString(isoIdentifier));
+            ServletActionContext.getRequest().getSession().setAttribute(
+                                        Constants.STUDY_PROTOCOL_II, IiConverter.convertToString(isoIdentifier));
+            query();
         } catch (Exception e) {
             LOG.error("Exception occured while submitting trial");
         }
+        return VIEW_TRIAL;
+    }
+    
+    /**
+     * query the created protocol.
+     * @return String
+     */
+    public String query() {
+        try {
+            InterventionalStudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().
+                                                             getInterventionalStudyProtocol(IiConverter.convertToIi(
+                                                               (String) ServletActionContext.getRequest().getSession().
+            
+                                                               getAttribute(Constants.STUDY_PROTOCOL_II)));
+            InterventionalStudyProtocolWebDTO protovolWebDTO =
+                                                          new InterventionalStudyProtocolWebDTO(protocolDTO);
+            // put an entry in the session and store InterventionalStudyProtocolDTO 
+            ServletActionContext.getRequest().getSession().setAttribute(
+                                    Constants.TRIAL_SUMMARY, protovolWebDTO);
+            LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
+        } catch (Exception e) {
+            LOG.error("Exception occured while querying trial");
+        }
+        return VIEW_TRIAL;
     }
 }
