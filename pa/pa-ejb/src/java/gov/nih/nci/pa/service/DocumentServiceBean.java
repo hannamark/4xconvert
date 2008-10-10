@@ -3,13 +3,19 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +35,7 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class DocumentServiceBean implements DocumentServiceRemote {
     
     private static final Logger LOG  = Logger.getLogger(DocumentServiceBean.class);
@@ -94,6 +101,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
             throw new PAException(" docDTO should not be null ");
         }     
         LOG.debug("Entering createTrialDocument ");
+        checkTypeCodes(docDTO);
         Session session = null;
         Document doc = DocumentConverter.convertFromDTOToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
@@ -114,9 +122,10 @@ public class DocumentServiceBean implements DocumentServiceRemote {
             LOG.error(" Hibernate exception while createTrialDocument " , hbe);
             throw new PAException(" Hibernate exception while createTrialDocument " , hbe);
         }                
-
+        docDTO.setIi(IiConverter.convertToIi(doc.getId()));
+        saveFile(docDTO);
         LOG.debug("Leaving createStudyResourcing ");
-        return DocumentConverter.convertFromDomainToDTO(doc);  
+        return docDTO;  
     }
     
     /**
@@ -180,29 +189,30 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         }
         LOG.debug("Entering updateTrialDocument ");
         Session session = null;
-        Document doc = null;
         DocumentDTO docRetDTO = null;
-        List<Document> queryList = new ArrayList<Document>();
         try {
-            session = HibernateUtil.getCurrentSession();
-
-            Query query = null;
-            
-            // step 1: form the hql
-            String hql = " select doc "
-                       + " from Document doc "
-                       + " where doc.id = " + IiConverter.convertToLong(docDTO.getIi());
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-            doc = queryList.get(0);
-            // set the values from paramter
-            doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            doc.setUserLastUpdated(docDTO.getUserLastUpdated().getValue());  
-            doc.setActiveIndicator(false);
-            session.update(doc);
-            session.flush();
-            docRetDTO = DocumentConverter.convertFromDomainToDTO(doc);
+            docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
+            deleteTrialDocumentByID(docDTO);
+            docDTO.setInactiveCommentText(null);
+//            session = HibernateUtil.getCurrentSession();
+//
+//            Query query = null;
+//            
+//            // step 1: form the hql
+//            String hql = " select doc "
+//                       + " from Document doc "
+//                       + " where doc.id = " + IiConverter.convertToLong(docDTO.getIi());
+//            // step 2: construct query object
+//            query = session.createQuery(hql);
+//            queryList = query.list();
+//            doc = queryList.get(0);
+//            // set the values from paramter
+//            doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
+//            doc.setUserLastUpdated(docDTO.getUserLastUpdated().getValue());  
+//            doc.setActiveIndicator(false);
+//            session.update(doc);
+//            session.flush();
+            docRetDTO = createTrialDocument(docDTO);
             
         } catch (HibernateException hbe) {
             session.flush();
@@ -269,11 +279,12 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIi());
         if (!(resultList.isEmpty())) {
         for (DocumentDTO check : resultList) {
-            if (check.getTypeCode().getCode().equals("Protocol Document") 
-                    || check.getTypeCode().getCode().equals("IRB Approval Document")) {
+            if (check.getTypeCode().getCode().equals(DocumentTypeCode.Protocol_Document.getCode()) 
+                    || check.getTypeCode().getCode().equals(DocumentTypeCode.IRB_Approval_Document.getCode())) {
                 if (check.getTypeCode().getCode().equals(docDTO.getTypeCode().getCode())) {
-                    result = false;  
-                    break;
+                    result = false;
+                    throw new PAException("Document with selected type already exists on the trial. ");
+                    //break;
                 } else {
                 result = true;
                 }
@@ -283,5 +294,43 @@ public class DocumentServiceBean implements DocumentServiceRemote {
             result = true;
         }
         return result;
+    }
+
+    
+    private void saveFile(DocumentDTO docDTO) throws PAException {
+        if (docDTO.getText() == null || docDTO.getText().getData() == null) {
+            throw new PAException("Document data cannot be null ");
+        }
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StudyProtocolServiceBean spBean = new StudyProtocolServiceBean();
+        StudyProtocolDTO sp = spBean.getStudyProtocol(docDTO.getStudyProtocolIi());
+        StringBuffer sb  = new StringBuffer(folderPath); 
+        sb.append(File.separator).append(sp.getIdentifier().getExtension());
+        File f = new File(sb.toString());
+        if (!f.exists()) {
+            // create a new directory
+            try {
+                boolean md = f.mkdir(); 
+                if (!md) {
+                    throw new PAException("unable to create a folder  " + sb.toString());
+                }
+            } catch (SecurityException e) {
+                throw new PAException("Security Exception while creating a folder "  
+                        + sb.toString() + e.getMessage(), e);
+            }
+        }
+
+        // create the file
+        sb.append(File.separator).append(docDTO.getIi().getExtension()).
+            append('-').append(docDTO.getFileName().getValue());
+        try {
+            File outFile = new File(sb.toString());
+            FileOutputStream fos = new FileOutputStream(outFile);
+            fos.write(docDTO.getText().getData());
+            fos.flush();
+            fos.close();                    
+        } catch (IOException e) {
+            throw new PAException("Error while creating directory  " + sb.toString() , e);
+        }
     }
 }
