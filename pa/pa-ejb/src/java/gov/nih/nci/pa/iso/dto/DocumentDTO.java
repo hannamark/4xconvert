@@ -2,6 +2,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ed;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 /**
@@ -18,7 +19,7 @@ public class DocumentDTO extends BaseDTO {
     private Bl activeIndicator;
     private St fileName;
     private St inactiveCommentText;
-    
+    private Ed text;
     /**
      * @return typeCode
      */
@@ -89,5 +90,23 @@ public class DocumentDTO extends BaseDTO {
      */
     public void setInactiveCommentText(St inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
+    }
+
+    /**
+     * 
+     * @return text t
+     */
+    public Ed getText() {
+        return text;
+    }
+
+    /**
+     * 
+     * @param text t
+     */
+    public void setText(Ed text) {
+        this.text = text;
     }    
+    
+    
 }
