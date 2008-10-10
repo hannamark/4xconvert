@@ -158,29 +158,31 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
 
     private void processCollectionField(Object result, String fieldName, String paramName, String[] fields)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (fields == null || fields.length != 1) {
+        if (fields == null || fields.length == 0) {
             throw new IllegalArgumentException("Can not use the searchable annotation on a collection without"
-                    + " specifying exactly one field name.");
+                    + " specifying at least one field name.");
+        }
+
+        Collection<?> col = (Collection<?>) result;
+        if (col.isEmpty()) {
+            // empty collection of values means no search criteria.
+            return;
         }
 
         whereClause.append(whereOrAnd);
         whereOrAnd = AbstractSearchCriteria.AND;
 
-        for (String currentProp : fields) {
-            handleCollection(result, fieldName, paramName, currentProp);
-        }
+        handleCollection(col, fieldName, paramName, fields);
     }
 
-    private void handleCollection(Object result, String fieldName, String paramName, String propName)
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
+    private void handleCollection(Collection<?> col, String fieldName, String paramName, String[] propNames)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Collection<?> col = (Collection<?>) result;
         if (col.size() > AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE) {
             throw new IllegalArgumentException(String.format("Cannot query on more than %s elements.",
                                                AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE));
         }
-        if (col.isEmpty()) {
-            throw new IllegalArgumentException("Cannot query against empty collection");
-        }
+
         // Need to add ", zClass obj_<field>" to select clause
         selectClause.append(", ");
         Class<? extends Object> fieldClass = col.iterator().next().getClass();
@@ -188,26 +190,47 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         String alias = " obj_" + fieldName;
         selectClause.append(alias);
 
-        String subParamName = paramName + propName;
 
         // now add the where clauses
         whereClause.append(alias + " IN ELEMENTS(obj." + fieldName + ") ");
         whereClause.append(AbstractSearchCriteria.AND);
-        whereClause.append(alias);
-        whereClause.append('.');
-        whereClause.append(propName);
-        whereClause.append(" IN (");
-        whereClause.append(String.format(":%s", subParamName));
-        whereClause.append(')');
+        whereClause.append(" ( ");
 
-        // get the collection of values into a nice collection
-        Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(propName));
-        Collection<Object> valueCollection = new HashSet<Object>();
-        for (Object collectionObj : col.toArray()) {
-            Object invoke = m2.invoke(collectionObj);
-            valueCollection.add(invoke);
+        processCollectionProperties(paramName, propNames, col, fieldClass, alias);
+
+        whereClause.append(" ) ");
+    }
+
+    private void processCollectionProperties(String paramName, String[] propNames, Collection<?> col,
+            Class<? extends Object> fieldClass, String alias) throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException {
+        String andClause = "";
+        for (String propName : propNames) {
+            // get the collection of values into a nice collection
+            Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(propName));
+            Collection<Object> valueCollection = new HashSet<Object>();
+            for (Object collectionObj : col.toArray()) {
+                Object val = m2.invoke(collectionObj);
+                if (val != null) {
+                    valueCollection.add(val);
+                }
+            }
+
+            if (!valueCollection.isEmpty()) {
+                whereClause.append(andClause);
+                whereClause.append(alias);
+                whereClause.append('.');
+                whereClause.append(propName);
+
+                String subParamName = paramName + propName;
+                whereClause.append(" IN (");
+                whereClause.append(String.format(":%s", subParamName));
+                whereClause.append(')');
+
+                params.put(subParamName, valueCollection);
+                andClause = AbstractSearchCriteria.AND;
+            }
         }
-        params.put(subParamName, valueCollection);
     }
 
     public Object getSavedState() {

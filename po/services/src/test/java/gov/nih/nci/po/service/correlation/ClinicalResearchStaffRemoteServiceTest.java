@@ -148,11 +148,6 @@ public class ClinicalResearchStaffRemoteServiceTest
     }
 
     @Override
-    public void testSearch() throws Exception {
-        // Do nothing.  Remove this (use superclass impl) when PO-527 is implemented
-    }
-
-    @Override
     protected void alter(ClinicalResearchStaffDTO dto) throws Exception {
         TelPhone email = new TelPhone();
         String uri = TelPhone.SCHEME_X_TEXT_TEL + ":+1234567890";
@@ -182,7 +177,8 @@ public class ClinicalResearchStaffRemoteServiceTest
         }));
     }
 
-
-
-
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  PO-527
+    }
 }

@@ -82,16 +82,16 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.OversightCommitteeCR;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.util.PoHibernateUtil;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.OversightCommitteeCR;
+import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
@@ -135,7 +135,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
 
     @Override
     public void testSearch() throws Exception {
-        // Do nothing.  Remove this (use superclass impl) when PO-521 is implemented
+        // Do nothing.  PO-522
     }
 
     @Override
@@ -143,7 +143,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         OversightCommitteeType other = new OversightCommitteeType("Foo");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         PoHibernateUtil.getCurrentSession().flush();
-        
+
         Cd type = new Cd();
         type.setCode("Foo");
         dto.setType(type);
@@ -152,8 +152,8 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
     @Override
     protected void verifyAlterations(OversightCommitteeCR cr) {
         super.verifyAlterations(cr);
-        
+
         assertEquals("Foo", cr.getType().getCode());
     }
-    
+
 }

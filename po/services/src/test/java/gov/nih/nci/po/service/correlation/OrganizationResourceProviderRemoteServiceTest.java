@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.OrganizationResourceProviderCR;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.OrganizationResourceProviderCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.services.CorrelationService;
@@ -159,11 +159,6 @@ public class OrganizationResourceProviderRemoteServiceTest extends
     }
 
     @Override
-    public void testSearch() throws Exception {
-        // Do nothing.  Remove this (use superclass impl) when PO-530 is implemented
-    }
-
-    @Override
     protected void alter(OrganizationResourceProviderDTO dto) {
         dto.getAssignedId().setExtension("9999");
     }
@@ -171,8 +166,12 @@ public class OrganizationResourceProviderRemoteServiceTest extends
     @Override
     protected void verifyAlterations(OrganizationResourceProviderCR cr) {
         super.verifyAlterations(cr);
-        
+
         assertEquals("9999", cr.getIdentifier().getExtension());
     }
-    
+
+    @Override
+    public void testSearch() throws Exception {
+        // Do nothing.  PO-531
+    }
 }

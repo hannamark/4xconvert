@@ -86,12 +86,14 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.po.service.AbstractSearchCriteria;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -210,33 +212,29 @@ public final class SearchableUtils {
      *
      */
     private static final class Callback implements AnnotationCallback {
-        private boolean hasOneCriterion;
+        private boolean hasOneCriterion = false;
 
-        public void callback(Method m, Object result) {
+        public void callback(Method m, Object result)
+                throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
             if (hasOneCriterion) {
+                // previous method had a criteria, so no need to check this one
                 return;
             }
-
-            String[] fields = m.getAnnotation(Searchable.class).fields();
-
-            boolean alreadyChecked = checkCollection(result, false);
-            alreadyChecked |= checkSubfields(result, alreadyChecked, fields);
-            alreadyChecked |= checkStandard(result, alreadyChecked);
+            if (result != null) {
+                String[] fields = m.getAnnotation(Searchable.class).fields();
+                if (result instanceof Collection<?>) {
+                    checkCollectionResultForCriteria(result, fields);
+                } else if (fields != null && fields.length > 0) {
+                    checksubFieldsForCriteria(result, fields);
+                } else {
+                    // not a collection, and no subfields selected, so
+                    // because it is non null, a criteria was found
+                    hasOneCriterion = true;
+                }
+            }
         }
 
-        public Object getSavedState() {
-            return hasOneCriterion;
-        }
-
-        private boolean checkSubfields(Object result, boolean alreadyChecked, String[] fields) {
-            if (alreadyChecked) {
-                return false;
-            }
-
-            if (result == null) {
-                return false;
-            }
-
+        private void checksubFieldsForCriteria(Object result, String[] fields) {
             for (String field : fields) {
                 Object subPropResult = null;
                 try {
@@ -246,37 +244,37 @@ public final class SearchableUtils {
                 }
                 if (subPropResult != null) {
                     hasOneCriterion = true;
-                    return true;
+                    return;
                 }
             }
-
-            return false;
         }
 
-        private boolean checkCollection(Object result, boolean alreadyChecked) {
-            if (alreadyChecked) {
-                return false;
+        private void checkCollectionResultForCriteria(Object result, String[] fields)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+            if (fields != null && fields.length > 0 && !((Collection<?>) result).isEmpty()) {
+                Collection<?> col = (Collection<?>) result;
+                Class<? extends Object> fieldClass = col.iterator().next().getClass();
+                processCollectionProperties(fields, col, fieldClass);
             }
-
-            if (result instanceof Collection<?> && !((Collection<?>) result).isEmpty()) {
-                hasOneCriterion = true;
-                return true;
-            }
-
-            return false;
         }
 
-        private boolean checkStandard(Object result, boolean alreadyChecked) {
-            if (alreadyChecked) {
-                return false;
+        private void processCollectionProperties(String[] fields, Collection<?> col, Class<? extends Object> fieldClass)
+                throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+            for (String propName : fields) {
+                // get the collection of values into a nice collection
+                Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(propName));
+                for (Object collectionObj : col.toArray()) {
+                    Object val = m2.invoke(collectionObj);
+                    if (val != null) {
+                        hasOneCriterion = true;
+                        return;
+                    }
+                }
             }
+        }
 
-            if (result != null) {
-                hasOneCriterion = true;
-                return true;
-            }
-
-            return false;
+        public Object getSavedState() {
+            return hasOneCriterion;
         }
     }
 }

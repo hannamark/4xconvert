@@ -93,6 +93,8 @@ import gov.nih.nci.po.util.PoRegistry;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * Converts for Ad (both simple and set based).
@@ -181,10 +183,8 @@ public class AdConverter {
                     ddelimitor = delivery.length() == 0 ? "" : " ";
                 }
             }
-            a.setStreetAddressLine(street.toString());
-            if (delivery.length() > 0) {
-                a.setDeliveryAddressLine(delivery.toString());
-            }
+            a.setStreetAddressLine(StringUtils.trimToNull(street.toString()));
+            a.setDeliveryAddressLine(StringUtils.trimToNull(delivery.toString()));
             return a;
         }
     }

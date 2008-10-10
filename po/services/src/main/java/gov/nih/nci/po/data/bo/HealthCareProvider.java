@@ -147,6 +147,8 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_ADDRESS_FK", inverseName = "ADDRESS_HCP_FK")
     @Valid
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" })
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -167,7 +169,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_EMAIL_FK", inverseName = "EMAIL_HCP_FK")
     @Valid
-    @Searchable(fields = "value")
+    @Searchable(fields = { "value" })
     public List<Email> getEmail() {
         return super.getEmail();
     }

@@ -82,21 +82,19 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
-import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
-
 
 import org.junit.Test;
 
@@ -160,9 +158,16 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
     @Override
     protected void verifyAlterations(HealthCareFacilityCR cr) {
         super.verifyAlterations(cr);
-        
+
         assertNotSame(cr.getPlayer(), cr.getScoper());
         assertEquals(newOrgId, cr.getScoper().getId().longValue());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void testSearch() throws Exception {
+        // do nothing, PO-578
+    }
 }
