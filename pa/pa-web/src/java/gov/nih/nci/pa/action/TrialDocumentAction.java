@@ -5,22 +5,27 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -35,13 +40,13 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
+@SuppressWarnings({ "PMD.ExcessiveMethodLength" })
+//@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 @Validation
 public class TrialDocumentAction extends ActionSupport implements
 ServletResponseAware {
  
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
-    private static final String FILE_PATH = "C:/COPPA/Trial_Documents/";
     private static final String DELETE_RESULT = "delete";
     private File upload;
     private String uploadFileName;
@@ -50,6 +55,8 @@ ServletResponseAware {
     private Long id = null;
     private HttpServletResponse servletResponse;
     private String page;
+    private static final int MAXF = 1024;     
+
          
     /**  
      * @return result
@@ -111,29 +118,33 @@ ServletResponseAware {
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
-             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
-             if (status) {
-             DocumentDTO doc = PaRegistry.getDocumentService().createTrialDocument(docDTO); 
+//             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
+//             if (status) {
 
-             StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-             .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
+             PaRegistry.getDocumentService().createTrialDocument(docDTO); 
 
-             String fullFileName = FILE_PATH + "\\" + spDTO.getNciIdentifier() 
-             + "\\" + doc.getIi().getExtension() + uploadFileName;
 
-             File outputFile = new File(fullFileName);
-             FileUtils.copyFile(upload, outputFile);
-             } else {
-                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
-                         getText("Active Document with this type already exists,please select a different type"
-                 + " or use replacing functionality for replacing existing document of selected type."));
-                 return INPUT;
-             }
+             //StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+             //.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+
+             //String fullFileName = FILE_PATH + "\\" + spDTO.getNciIdentifier() 
+             //+ "\\" + doc.getIi().getExtension() + uploadFileName;
+
+             //File outputFile = new File(fullFileName);
+             //FileUtils.copyFile(upload, outputFile);
+//             } else {
+//                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, 
+//                         getText("Active Document with this type already exists,please select a different type"
+//                 + " or use replacing functionality for replacing existing document of selected type."));
+//                 return INPUT;
+//             }
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
              return SUCCESS;
          } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
+             //addActionError(e.getLocalizedMessage());
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return INPUT;
          }          
      }
@@ -150,10 +161,12 @@ ServletResponseAware {
              StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
              .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
 
-             String filename = FILE_PATH + "\\" + spDTO.getNciIdentifier() + "\\"  
-             + docDTO.getIi().getExtension() + docDTO.getFileName().getValue();
+             
+             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
+             sb.append(File.separator).append(spDTO.getNciIdentifier()).append(File.separator).
+                 append(docDTO.getIi().getExtension()).append('-').append(docDTO.getFileName().getValue());
 
-             File downloadFile = new File(filename);
+             File downloadFile = new File(sb.toString());
 
              servletResponse.setContentType("application/x-unknown");
              FileInputStream fileToDownload = new FileInputStream(downloadFile);
@@ -218,25 +231,29 @@ ServletResponseAware {
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
              getAttribute(Constants.STUDY_PROTOCOL_II); 
              DocumentDTO  docDTO = new DocumentDTO();
-             docDTO = PaRegistry.getDocumentService().getTrialDocumentById(IiConverter.convertToIi(id));
+             //docDTO = PaRegistry.getDocumentService().getTrialDocumentById(IiConverter.convertToIi(id));
+             docDTO.setIi(IiConverter.convertToIi(id));
              docDTO.setStudyProtocolIi(studyProtocolIi);
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
-             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
-             if (status) {
+             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
+             
+//             Boolean status = PaRegistry.getDocumentService().checkTypeCodes(docDTO);
+//             if (status) {
                  PaRegistry.getDocumentService().updateTrialDocument(docDTO);
-                 create();
-             } else {
-                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
-                         getText("Active Document with this type already exists,please select a different type" 
-                 + " or use replacing functionality for replacing existing document of select type."));
-                 return INPUT;
-             }
-             query();
+//                 create();
+//             } else {
+//                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+//                         getText("Active Document with this type already exists,please select a different type" 
+//                 + " or use replacing functionality for replacing existing document of select type."));
+//                 return INPUT;
+//             }
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+
+             query();
          } catch (Exception e) {
              addActionError(e.getLocalizedMessage());
              return INPUT;
@@ -373,4 +390,41 @@ ServletResponseAware {
         this.page = page;
     }
 
+    /** Read an input stream in its entirety into a byte array. */ 
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+        
+        int bufSize = MAXF * MAXF; 
+        byte[] content; 
+
+        List<byte[]> parts = new LinkedList(); 
+        InputStream in = new BufferedInputStream(inputStream); 
+
+        byte[] readBuffer = new byte[bufSize]; 
+        byte[] part = null; 
+        int bytesRead = 0; 
+
+        // read everyting into a list of byte arrays 
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) { 
+            part = new byte[bytesRead]; 
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead); 
+            parts.add(part); 
+        } 
+
+        // calculate the total size 
+        int totalSize = 0; 
+        for (byte[] partBuffer : parts) { 
+            totalSize += partBuffer.length; 
+        } 
+
+        // allocate the array 
+        content = new byte[totalSize]; 
+        int offset = 0; 
+        for (byte[] partBuffer : parts) { 
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length); 
+            offset += partBuffer.length; 
+        } 
+
+        return content; 
+    }
+    
 }
