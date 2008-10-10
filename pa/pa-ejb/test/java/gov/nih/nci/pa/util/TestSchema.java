@@ -24,11 +24,15 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.YesNoCode;
+import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.domain.Document;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -78,6 +82,7 @@ public class TestSchema {
             addAnnotatedClass(StudySiteAccrualStatus.class).
             addAnnotatedClass(StudyParticipationContact.class).
             addAnnotatedClass(StudyParticipationContactTelecomAddress.class).
+            addAnnotatedClass(Document.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
@@ -129,6 +134,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
                         statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from COUNTRY");
+                        statement.executeUpdate("delete from DOCUMENT");
                         connection.commit();
                     } finally {
                         statement.close();
@@ -269,6 +275,20 @@ public class TestSchema {
             spcta.setStudyParticipationContact(spc);
             spcta.setTelecomAddress("java@nci.nih.gov");
             addUpdObject(spcta);
+            
+            Document doc = new Document();
+            doc.setStudyProtocol(sp);
+            doc.setTypeCode(DocumentTypeCode.Protocol_Document);
+            doc.setActiveIndicator(true);
+            doc.setFileName("Protocol_Document.doc");
+            addUpdObject(doc);
+            doc = new Document();
+            doc.setStudyProtocol(sp);
+            doc.setTypeCode(DocumentTypeCode.IRB_Approval_Document);
+            doc.setActiveIndicator(true);
+            doc.setFileName("IRB_Approval_Document.doc");
+            doc.setInactiveCommentText("Testing");
+            addUpdObject(doc);
             
             HibernateUtil.getCurrentSession().clear();
             
