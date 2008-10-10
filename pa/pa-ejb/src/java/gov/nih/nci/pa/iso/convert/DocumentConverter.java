@@ -28,6 +28,8 @@ public class DocumentConverter {
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setUserLastUpdated(StConverter.convertToSt(doc.getUserLastUpdated()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
+        
+        
         return docDTO;
     }
     
