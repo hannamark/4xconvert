@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
+
 import java.util.List;
 import java.util.Set;
 
@@ -121,6 +123,7 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return super.getId();
     }
@@ -141,6 +144,8 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_ADDRESS_FK", inverseName = "ADDRESS_CRS_FK")
     @Valid
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" })
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -161,6 +166,7 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_EMAIL_FK", inverseName = "EMAIL_CRS_FK")
     @Valid
+    @Searchable(fields = "value")
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -181,6 +187,7 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_FAX_FK", inverseName = "FAX_CRS_FK")
     @Valid
+    @Searchable(fields = "value")
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -201,6 +208,7 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_PHONE_FK", inverseName = "PHONE_CRS_FK")
     @Valid
+    @Searchable(fields = "value")
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -221,6 +229,7 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_TTY_FK", inverseName = "TTY_CRS_FK")
     @Valid
+    @Searchable(fields = "value")
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -241,6 +250,7 @@ public class ClinicalResearchStaff extends AbstractClinicalResearchStaff impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_URL_FK", inverseName = "URL_CRS_FK")
     @Valid
+    @Searchable(fields = "value")
     public List<URL> getUrl() {
         return super.getUrl();
     }

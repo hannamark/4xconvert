@@ -89,6 +89,7 @@ import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
@@ -124,7 +125,15 @@ public abstract class AbstractCorrelationServiceBean
     abstract GenericStructrualRoleServiceLocal<T> getLocalService();
     abstract GenericStructrualRoleCRServiceLocal<CR> getLocalCRService();
     abstract IdConverter getIdConverter();
-    abstract SearchCriteria<T> getSearchCriteria(T example);
+
+    /**
+     * Get the search criteria.
+     * @param example the example to search based off of.
+     * @return the criteria
+     */
+    protected SearchCriteria<T> getSearchCriteria(T example) {
+        return new AnnotatedBeanSearchCriteria<T>(example);
+    }
 
     /**
      * TODO.

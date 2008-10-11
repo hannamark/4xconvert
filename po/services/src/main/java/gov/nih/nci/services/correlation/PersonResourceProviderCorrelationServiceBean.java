@@ -91,7 +91,6 @@ import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.PersonResourceProviderCRServiceLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -159,11 +158,4 @@ public class PersonResourceProviderCorrelationServiceBean
     void copyIntoAbstractModel(PersonResourceProviderDTO proposedState, PersonResourceProviderCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractPersonResourceProvider.class);
     }
-
-    @Override
-    SearchCriteria<PersonResourceProvider> getSearchCriteria(PersonResourceProvider example) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

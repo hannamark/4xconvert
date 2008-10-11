@@ -87,10 +87,8 @@ import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ResearchOrganizationCRServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -156,10 +154,5 @@ public class ResearchOrganizationCorrelationServiceBean
     @Override
     void copyIntoAbstractModel(ResearchOrganizationDTO proposedState, ResearchOrganizationCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractResearchOrganization.class);
-    }
-
-    @Override
-    SearchCriteria<ResearchOrganization> getSearchCriteria(ResearchOrganization example) {
-        return new AnnotatedBeanSearchCriteria<ResearchOrganization>(example);
     }
 }

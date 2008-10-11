@@ -87,12 +87,10 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -158,10 +156,5 @@ public class HealthCareFacilityCorrelationServiceBean
     @Override
     HealthCareFacilityCR newCR(HealthCareFacility t) {
         return new HealthCareFacilityCR(t);
-    }
-
-    @Override
-    SearchCriteria<HealthCareFacility> getSearchCriteria(HealthCareFacility example) {
-        return new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
     }
 }

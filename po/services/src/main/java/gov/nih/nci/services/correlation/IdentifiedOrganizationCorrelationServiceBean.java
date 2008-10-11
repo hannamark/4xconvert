@@ -86,10 +86,8 @@ import gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.IdentifiedOrganizationCrServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -162,14 +160,6 @@ public class IdentifiedOrganizationCorrelationServiceBean
     @Override
     IdConverter getIdConverter() {
         return new IdConverter.IdentifiedOrganizationIdConverter();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    SearchCriteria<IdentifiedOrganization> getSearchCriteria(IdentifiedOrganization example) {
-        return new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(example);
     }
 
     /**

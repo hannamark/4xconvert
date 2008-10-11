@@ -87,10 +87,8 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.HealthCareProviderCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -156,10 +154,5 @@ public class HealthCareProviderCorrelationServiceBean
     @Override
     void copyIntoAbstractModel(HealthCareProviderDTO proposedState, HealthCareProviderCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractHealthCareProvider.class);
-    }
-
-    @Override
-    SearchCriteria<HealthCareProvider> getSearchCriteria(HealthCareProvider example) {
-        return new AnnotatedBeanSearchCriteria<HealthCareProvider>(example);
     }
 }

@@ -89,7 +89,6 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
 import gov.nih.nci.po.service.ClinicalResearchStaffCRServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -163,14 +162,4 @@ public class ClinicalResearchStaffCorrelationServiceBean
     void copyIntoAbstractModel(ClinicalResearchStaffDTO proposedState, ClinicalResearchStaffCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractClinicalResearchStaff.class);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    SearchCriteria<ClinicalResearchStaff> getSearchCriteria(ClinicalResearchStaff example) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

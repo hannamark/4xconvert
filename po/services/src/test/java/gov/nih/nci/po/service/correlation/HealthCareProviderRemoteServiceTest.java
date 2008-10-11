@@ -354,5 +354,16 @@ public class HealthCareProviderRemoteServiceTest
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+
+        // search by sert text
+        searchCriteria.getTelecomAddress().getItem().clear();
+        searchCriteria.setCertificateLicenseText(new St());
+        searchCriteria.getCertificateLicenseText().setValue("text 2");
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+
+        searchCriteria.getCertificateLicenseText().setValue("text 2dfjsd");
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
     }
 }

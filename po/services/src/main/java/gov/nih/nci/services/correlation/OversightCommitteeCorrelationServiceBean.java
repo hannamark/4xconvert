@@ -89,7 +89,6 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.service.OversightCommitteeCRServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
@@ -155,11 +154,5 @@ public class OversightCommitteeCorrelationServiceBean
     @Override
     void copyIntoAbstractModel(OversightCommitteeDTO proposedState, OversightCommitteeCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOversightCommittee.class);
-    }
-
-    @Override
-    SearchCriteria<OversightCommittee> getSearchCriteria(OversightCommittee example) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }
