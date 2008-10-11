@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.ejb.Remote;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.ExcludeClassInterceptors;
@@ -18,7 +19,7 @@ import javax.interceptor.InvocationContext;
 
 /**
  * Build a proxy to a Session EJB, that will invoke declared interceptors.
- * TODO 
+ * TODO
  *  javax.ejb.ExcludeDefaultInterceptors not honored.
  *  javax.ejb.ExcludeClassInterceptors not honored
  * @author gax
@@ -26,23 +27,23 @@ import javax.interceptor.InvocationContext;
 public class EjbInterceptorHandler implements InvocationHandler {
 
     private static final HashMap<Class, Pair<Method[], Object[]>> CACHE = new HashMap<Class, Pair<Method[], Object[]>>();
-    
-    private Class[] defaultInterceptors;
-    private Object bean;
-    
+
+    private final Class[] defaultInterceptors;
+    private final Object bean;
+
 
     public EjbInterceptorHandler(Object bean, Class... defaultInterceptors) {
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
     }
-    
-    
+
+
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Method declaredMethod = bean.getClass().getMethod(method.getName(), method.getParameterTypes());
         if (declaredMethod.getAnnotation(ExcludeDefaultInterceptors.class) != null) { throw new UnsupportedOperationException("TODO"); }
         if (declaredMethod.getAnnotation(ExcludeClassInterceptors.class) != null) { throw new UnsupportedOperationException("TODO"); }
-        
-        
+
+
         Pair<Method[], Object[]> entry = getChain(bean.getClass());
         DefaultContext ctx = new DefaultContext(entry.a, entry.b, bean, method, args);
         try {
@@ -68,7 +69,7 @@ public class EjbInterceptorHandler implements InvocationHandler {
                     ints.add(ic.newInstance());
                 }
             }
-            
+
             // for interceptor methods on the bean itself.
             Method[] ims = getInterceptorMethods(beanClass);
             for (Method m : ims) {
@@ -82,12 +83,13 @@ public class EjbInterceptorHandler implements InvocationHandler {
         }
         return entry;
     }
-    
+
+    @SuppressWarnings("unchecked")
     private static void getInterceptorClasses(ArrayList<Class> list, Class clazz) {
         if (clazz == Object.class) { return; }
         if (clazz.getAnnotation(ExcludeDefaultInterceptors.class) != null) { throw new UnsupportedOperationException("TODO"); }
         if (clazz.getAnnotation(ExcludeClassInterceptors.class) != null) { throw new UnsupportedOperationException("TODO"); }
-        
+
         getInterceptorClasses(list, clazz.getSuperclass());
         Class[] cs = getDeclaredInterceptorClasses(clazz);
         if (cs == null || cs.length == 0) { return; }
@@ -99,9 +101,9 @@ public class EjbInterceptorHandler implements InvocationHandler {
         if (i == null) {
             return null;
         }
-        return i.value();        
+        return i.value();
     }
-    
+
     private static Method[] getInterceptorMethods(Class interceptorClass) {
         Method[] all = interceptorClass.getMethods();
         ArrayList<Method> l = new ArrayList<Method>();
@@ -111,13 +113,13 @@ public class EjbInterceptorHandler implements InvocationHandler {
                 l.add(m);
             }
         }
-        
+
         all = l.toArray(new Method[l.size()]);
-        
+
         Arrays.sort(all, INTERCEPTOR_METHOD_COMPARATOR);
         return all;
     }
-    
+
     public static Object makeInterceptorProxy(Object bean) {
         Class<?>[] remoteInterfaces = ReflectionUtil.getMarkedInterfaces(bean.getClass(), Remote.class);
         if (remoteInterfaces != null && remoteInterfaces.length > 0) {
@@ -129,17 +131,17 @@ public class EjbInterceptorHandler implements InvocationHandler {
         }
 
     }
-    
+
     private static class DefaultContext implements InvocationContext {
 
-        private Method[] chain;
-        private Object[] interceptors;
+        private final Method[] chain;
+        private final Object[] interceptors;
         private int index = 0;
-        
-        private Object target;
+
+        private final Object target;
         private Object[] parameters;
-        private Method method;
-        
+        private final Method method;
+
         Throwable error;
 
         public DefaultContext(Method[] chain, Object[] interceptors, Object target, Method method, Object[] parameters) {
@@ -149,8 +151,8 @@ public class EjbInterceptorHandler implements InvocationHandler {
             this.parameters = parameters;
             this.method = method;
         }
-        
-        
+
+
 
         public Map<String, Object> getContextData() {
             return null;
@@ -171,7 +173,7 @@ public class EjbInterceptorHandler implements InvocationHandler {
         public void setParameters(Object[] arg0) {
             this.parameters = arg0;
         }
-        
+
         public Object proceed() throws Exception {
             try{
                 if(index == chain.length) {
@@ -197,7 +199,7 @@ public class EjbInterceptorHandler implements InvocationHandler {
             }
         }
     }
-    
+
     private static final Comparator<Method> INTERCEPTOR_METHOD_COMPARATOR = new Comparator<Method>() {
 
             public int compare(Method o1, Method o2) {
@@ -213,7 +215,7 @@ public class EjbInterceptorHandler implements InvocationHandler {
                 }
             }
         };
-    
+
     private static class Pair <A, B> {
         public A a;
         public B b;

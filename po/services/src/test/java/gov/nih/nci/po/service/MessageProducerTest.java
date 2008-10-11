@@ -84,16 +84,15 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Properties;
-
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
 import gov.nih.nci.services.SubscriberUpdateMessage;
+
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -207,7 +206,8 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         MessageProducerBean mp = (MessageProducerBean) bean.getPublisher();
 
         Organization org = createOrg();
-        long orgId = org.getId();
+        org.getId();
+
         // verify ACTIVE
         assertEquals(org.getStatusCode(), EntityStatus.PENDING);
         org.setStatusCode(EntityStatus.ACTIVE);
