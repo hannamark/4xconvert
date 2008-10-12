@@ -84,17 +84,27 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -168,6 +178,104 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
      */
     @Override
     public void testSearch() throws Exception {
-        // do nothing, PO-578
+        Organization org2 = new Organization();
+        org2.setAbbreviatedName("org2 abbreviated name");
+        org2.setName("org2 name");
+        org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
+        org2.setStatusCode(EntityStatus.ACTIVE);
+        org2.setStatusDate(new Date());
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
+
+        HealthCareFacilityDTO correlation1 = getSampleDto();
+        Ii id1 = getCorrelationService().createCorrelation(correlation1);
+
+        HealthCareFacilityDTO correlation2 = getSampleDto();
+        Ii org2Ii = new Ii();
+        org2Ii.setExtension("" + org2.getId());
+        org2Ii.setDisplayable(true);
+        org2Ii.setScope(IdentifierScope.OBJ);
+        org2Ii.setReliability(IdentifierReliability.ISS);
+        org2Ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        org2Ii.setRoot(IdConverter.ORG_ROOT);
+        correlation2.setPlayerIdentifier(org2Ii);
+        correlation2.setScoperIdentifier(org2Ii);
+        Ii id2 = getCorrelationService().createCorrelation(correlation2);
+
+        // test search by null / empty criteria
+        HealthCareFacilityDTO searchCriteria = null;
+        try {
+            getCorrelationService().search(searchCriteria);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        searchCriteria = new HealthCareFacilityDTO();
+        try {
+            getCorrelationService().search(searchCriteria);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        // test search by primary id
+        searchCriteria.setIdentifier(new Ii());
+        searchCriteria.getIdentifier().setExtension(id1.getExtension());
+        searchCriteria.getIdentifier().setRoot(id1.getRoot());
+        searchCriteria.getIdentifier().setIdentifierName(id1.getIdentifierName());
+        searchCriteria.getIdentifier().setDisplayable(id1.getDisplayable());
+        searchCriteria.getIdentifier().setReliability(id1.getReliability());
+        searchCriteria.getIdentifier().setScope(id1.getScope());
+        List<HealthCareFacilityDTO> results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+
+        searchCriteria.getIdentifier().setExtension(id2.getExtension());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+
+        // search by status
+        searchCriteria.setIdentifier(null);
+        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.PENDING));
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.ACTIVE));
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
+
+        // search by player id
+        searchCriteria.setStatus(null);
+        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+
+        searchCriteria.setPlayerIdentifier(correlation2.getPlayerIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+
+        // search by scoper
+        searchCriteria.setPlayerIdentifier(null);
+        searchCriteria.setScoperIdentifier(correlation1.getScoperIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+
+        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+
+        // search by scoper and player
+        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
+
+        searchCriteria.setPlayerIdentifier(correlation2.getPlayerIdentifier());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
     }
 }

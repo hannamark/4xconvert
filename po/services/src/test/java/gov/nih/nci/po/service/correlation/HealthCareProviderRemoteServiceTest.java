@@ -355,7 +355,7 @@ public class HealthCareProviderRemoteServiceTest
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
 
-        // search by sert text
+        // search by cert text
         searchCriteria.getTelecomAddress().getItem().clear();
         searchCriteria.setCertificateLicenseText(new St());
         searchCriteria.getCertificateLicenseText().setValue("text 2");

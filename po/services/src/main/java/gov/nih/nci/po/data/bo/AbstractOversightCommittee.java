@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.Searchable;
+
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
@@ -119,6 +121,7 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
      */
     @ManyToOne
     @ForeignKey(name = "oversight_comm_type_fkey")
+    @Searchable
     public OversightCommitteeType getType() {
         return type;
     }

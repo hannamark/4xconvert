@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
 
 import javax.persistence.Column;
@@ -126,6 +127,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }
@@ -145,6 +147,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
      */
     @ManyToOne
     @ForeignKey(name = "orgrpnrole_scoper_fkey")
+    @Searchable(fields = {"id" })
     public Organization getScoper() {
         return scoper;
     }
@@ -165,6 +168,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
     @ManyToOne
     @NotNull
     @ForeignKey(name = "orgrprole_player_fkey")
+    @Searchable(fields = {"id" })
     public Organization getPlayer() {
         return player;
     }
@@ -184,6 +188,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
      */
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public RoleStatus getStatus() {
         return this.status;
     }
@@ -218,6 +223,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
             @Column(name = "identifier_scope")
     })
     @ValidIi
+    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
     public Ii getIdentifier() {
         return identifier;
     }

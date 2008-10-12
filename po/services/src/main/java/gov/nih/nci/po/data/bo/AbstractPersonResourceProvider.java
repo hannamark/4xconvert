@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
 
 import javax.persistence.Column;
@@ -127,6 +128,7 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }
@@ -147,6 +149,7 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
     @ManyToOne
     @NotNull
     @ForeignKey(name = "personrprole_player_fkey")
+    @Searchable(fields = {"id" })
     public Person getPlayer() {
         return player;
     }
@@ -166,6 +169,7 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
      */
     @ManyToOne
     @ForeignKey(name = "personrpnrole_scoper_fkey")
+    @Searchable(fields = {"id" })
     public Organization getScoper() {
         return scoper;
     }
@@ -178,13 +182,6 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
     }
 
     /**
-     * @param status the status to set
-     */
-    public void setStatus(RoleStatus status) {
-        this.status = status;
-    }
-
-    /**
      * @return the status
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
@@ -192,8 +189,16 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
      */
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public RoleStatus getStatus() {
         return this.status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(RoleStatus status) {
+        this.status = status;
     }
 
     /**
@@ -211,6 +216,7 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
             @Column(name = "identifier_root"),
             @Column(name = "identifier_scope")
     })
+    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
     @ValidIi
     public Ii getIdentifier() {
         return identifier;
