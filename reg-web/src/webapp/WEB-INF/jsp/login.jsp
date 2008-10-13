@@ -27,8 +27,9 @@
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li>       
-                           <s:a href="#" cssClass="btn" onclick="document.forms.loginForm.submit();"><span class="btn_img"><span class="search">Login</span></span></s:a>  
-                        </li>
+                        <s:a href="#" cssClass="btn" onclick="document.forms.loginForm.submit();"><span class="btn_img"><span class="login">Login</span></span></s:a>  
+                    </li>  
+ 
                 </ul>   
             </del>
 
