@@ -22,7 +22,7 @@ function resetValues () {
 }
 
 function handleAction(){
-     document.forms[0].action="searchTrial.action";
+     document.forms[0].action="searchTrialquery.action";
      document.forms[0].submit();     
 }
 </SCRIPT>
