@@ -154,10 +154,10 @@ function handleAction(){
           </tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="fundingSource"> <fmt:message key="submit.trial.fundingSource"/></label>
+                    <label for="fundingSponsor"> <fmt:message key="submit.trial.fundingSponsor"/></label>
                 </td>
                 <td>
-                    <s:textfield name="fundingSource"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="fundingSponsor"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>
           </tr>
           
@@ -215,7 +215,7 @@ function handleAction(){
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li><li>            
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Submit Trial Details</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Submit Trial Details</span></span></s:a>  
                         </li>
                 </ul>   
             </del>
