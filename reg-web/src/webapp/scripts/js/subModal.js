@@ -22,7 +22,7 @@ var gPopupContainer = null;
 var gPopFrame = null;
 var gReturnFunc;
 var gPopupIsShown = false;
-var gDefaultPage = "images/loading.gif";
+var gDefaultPage = "../images/loading.gif";
 var gHideSelects = false;
 var gReturnVal = null;
 
@@ -52,7 +52,7 @@ function initPopUp() {
 			'<div id="popupTitleBar">' +
 				'<div id="popupTitle"></div>' +
 				'<div id="popupControls">' +
-					'<img src="images/close.gif" onclick="hidePopWin(false);" id="popCloseBox" />' +
+					'<img src="../images/close.gif" onclick="hidePopWin(false);" id="popCloseBox" />' +
 				'</div>' +
 			'</div>' +
 			'<iframe src="'+ gDefaultPage +'" style="width:100%;height:100%;background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="popupFrame" name="popupFrame" width="100%" height="100%"></iframe>' +
