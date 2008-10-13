@@ -80,142 +80,38 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  * @author Scott Miller
  *
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class IdentifiedPersonCrServiceBean extends AbstractCRServiceBean<IdentifiedPersonCR, IdentifiedPerson>
+        implements IdentifiedPersonCrServiceLocal {
+
+    private IdentifiedPersonServiceLocal boService;
 
     /**
-     * {@inheritDoc}
+     * @param svc injected.
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @EJB
+    void setIdentifiedPersonServiceBean(IdentifiedPersonServiceLocal svc) {
+        this.boService = svc;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return null;
+    /**{@inheritDoc}*/
+    @Override
+    protected void entityUpdate(IdentifiedPerson entity) {
+        boService.update(entity);
     }
 }

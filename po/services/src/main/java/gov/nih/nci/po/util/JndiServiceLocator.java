@@ -88,6 +88,7 @@ import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -158,7 +159,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
         return (OversightCommitteeServiceLocal) JNDIUtil.lookup("po/OversightCommitteeServiceBean/local");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -200,5 +201,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
         return (IdentifiedOrganizationServiceLocal) JNDIUtil.lookup("po/IdentifiedOrganizationServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
+        return (IdentifiedPersonServiceLocal) JNDIUtil.lookup("po/IdentifiedPersonServiceBean/local");
     }
 }

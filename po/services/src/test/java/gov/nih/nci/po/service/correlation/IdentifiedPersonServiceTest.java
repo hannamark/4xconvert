@@ -80,142 +80,54 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
 
 /**
  * @author Scott Miller
  *
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedPerson> {
 
     /**
      * {@inheritDoc}
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @Override
+    IdentifiedPerson getSampleStructuralRole() {
+        IdentifiedPerson ip = new IdentifiedPerson();
+        ip.setPlayer(basicPerson);
+        ip.setScoper(basicOrganization);
+
+        Ii ii = new Ii();;
+        ii.setDisplayable(Boolean.TRUE);
+        ii.setExtension("myExtension");
+        ii.setIdentifierName("myIdName");
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot("myRoot");
+        ii.setScope(IdentifierScope.BUSN);
+        ip.setAssignedIdentifier(ii);
+        return ip;
     }
 
     /**
      * {@inheritDoc}
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return null;
+    @Override
+    void verifyStructuralRole(IdentifiedPerson expected, IdentifiedPerson actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertTrue(actual.getAssignedIdentifier().getDisplayable().booleanValue());
+        assertEquals("myExtension", actual.getAssignedIdentifier().getExtension());
+        assertEquals("myIdName", actual.getAssignedIdentifier().getIdentifierName());
+        assertEquals(IdentifierReliability.ISS, actual.getAssignedIdentifier().getReliability());
+        assertEquals("myRoot", actual.getAssignedIdentifier().getRoot());
+        assertEquals(IdentifierScope.BUSN, actual.getAssignedIdentifier().getScope());
+        assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
+        assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
     }
 }

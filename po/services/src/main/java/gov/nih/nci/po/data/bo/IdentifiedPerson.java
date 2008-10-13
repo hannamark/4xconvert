@@ -80,142 +80,35 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
+import gov.nih.nci.po.util.Searchable;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * @author Scott Miller
- *
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *      class="gov.nih.nci.services.correlation.IdentifiedPersonDTO"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedPerson"
+ *      implements="gov.nih.nci.services.CorrelationDto"
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+@Entity
+public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correlation {
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return null;
+    @Override
+    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
+    public Long getId() {
+        return super.getId();
     }
 }

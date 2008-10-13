@@ -80,142 +80,62 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+
+import org.junit.Assert;
 
 /**
  * @author Scott Miller
  *
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+public class IdentifiedPersonCorrelationServiceTest
+    extends CorrelationTestBase<IdentifiedPersonDTO, IdentifiedPersonCorrelationServiceRemote> {
 
-    /**
-     * {@inheritDoc}
-     */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    public IdentifiedPersonCorrelationServiceTest() {
+        super("IdentifiedPersonCR");
     }
 
     /**
      * {@inheritDoc}
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
+    @Override
+    protected IdentifiedPersonCorrelationServiceRemote getCorrelationService() throws Exception {
+        return RemoteServiceHelper.getIdentifiedPersonCorrelationServiceRemote();
     }
 
     /**
      * {@inheritDoc}
      */
-    public GenericServiceLocal getGenericService() {
-        return null;
+    @Override
+    protected IdentifiedPersonDTO makeCorrelation() throws Exception {
+        IdentifiedPersonDTO dto = new IdentifiedPersonDTO();
+        dto.setPlayerIdentifier(getPersonId());
+        dto.setScoperIdentifier(getOrgId());
+
+        Ii ii = new Ii();
+        ii.setExtension("myExtension");
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName("foo");
+        ii.setRoot("bar");
+        dto.setAssignedId(ii);
+        return dto;
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return null;
+    @Override
+    protected void verifyCreated(IdentifiedPersonDTO dto) throws Exception {
+        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
+        Assert.assertEquals(getPersonId().getExtension(), dto.getPlayerIdentifier().getExtension());
+        Assert.assertEquals("myExtension", dto.getAssignedId().getExtension());
     }
 }

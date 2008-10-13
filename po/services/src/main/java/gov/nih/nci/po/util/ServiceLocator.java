@@ -88,6 +88,7 @@ import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -127,12 +128,12 @@ public interface ServiceLocator {
      * @return the Oversight Committee Type service
      */
     OversightCommitteeTypeLocal getOversightCommitteeTypeService();
-    
+
     /**
      * @return the Researh Org Type service
      */
     ResearchOrganizationTypeLocal getResearchOrganizationTypeService();
-    
+
     /**
      * @return the Researh Org service
      */
@@ -172,4 +173,9 @@ public interface ServiceLocator {
      * @return the service.
      */
     IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
+
+    /**
+     * @return the service.
+     */
+    IdentifiedPersonServiceLocal getIdentifiedPersonService();
 }

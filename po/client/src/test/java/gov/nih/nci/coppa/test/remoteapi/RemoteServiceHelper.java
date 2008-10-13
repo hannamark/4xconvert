@@ -86,6 +86,7 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceR
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
@@ -139,7 +140,7 @@ public class RemoteServiceHelper {
 
     /**
      * Closes the context.
-     * 
+     *
      * @throws NamingException on error.
      */
     public static void close() throws NamingException {
@@ -155,7 +156,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
-     * 
+     *
      * @return the service.
      * @throws NamingException on error.
      */
@@ -165,7 +166,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
-     * 
+     *
      * @return the service.
      * @throws NamingException on error.
      */
@@ -206,6 +207,11 @@ public class RemoteServiceHelper {
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote()
             throws NamingException {
         return (IdentifiedOrganizationCorrelationServiceRemote) lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+    }
+
+    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonCorrelationServiceRemote()
+            throws NamingException {
+        return (IdentifiedPersonCorrelationServiceRemote) lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
     }
 
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {

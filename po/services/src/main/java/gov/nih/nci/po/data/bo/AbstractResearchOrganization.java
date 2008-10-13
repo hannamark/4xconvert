@@ -85,8 +85,10 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.Searchable;
+
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.NotNull;
 
@@ -99,7 +101,9 @@ import org.hibernate.validator.NotNull;
  */
 @MappedSuperclass
 public class AbstractResearchOrganization extends AbstractOrganizationRole {
-    
+
+    private static final long serialVersionUID = 1L;
+
     private String fundingMechanism;
     private ResearchOrganizationType type;
 
@@ -122,7 +126,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     public void setFundingMechanism(String fundingMechanism) {
         this.fundingMechanism = fundingMechanism;
     }
-    
+
     /**
      * @return the type
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
@@ -137,7 +141,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
         return type;
     }
 
-    
+
     /**
      * @param type the type to set
      */
@@ -145,6 +149,6 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
         this.type = type;
     }
 
-    
+
 
 }

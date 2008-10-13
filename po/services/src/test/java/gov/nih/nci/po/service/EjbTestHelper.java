@@ -84,8 +84,8 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.util.EjbInterceptorHandler;
 import gov.nih.nci.po.util.RemoteBeanHandler;
-import gov.nih.nci.po.util.jms.TopicStub;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
+import gov.nih.nci.po.util.jms.TopicStub;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
@@ -94,6 +94,8 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceBean
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceBean;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceBean;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
@@ -115,7 +117,7 @@ import javax.naming.InitialContext;
  * @author Scott Miller
  */
 public class EjbTestHelper {
-    
+
     public static Object wrapWithProxies(Object bean) {
         bean = EjbInterceptorHandler.makeInterceptorProxy(bean);
         bean = RemoteBeanHandler.makeRemoteProxy(bean);
@@ -124,7 +126,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created org service.
-     * 
+     *
      * @return the service
      */
     public static OrganizationServiceBean getOrganizationServiceBean() {
@@ -153,7 +155,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created person service.
-     * 
+     *
      * @return the service
      */
     public static PersonServiceBean getPersonServiceBean() {
@@ -230,7 +232,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created and configured generic service.
-     * 
+     *
      * @return the service
      */
     public static GenericServiceBean getGenericServiceBean() {
@@ -270,7 +272,7 @@ public class EjbTestHelper {
         ocService.setOcCRService(getOversightCommitteeRCServiceBean());
         return (OversightCommitteeCorrelationServiceRemote) wrapWithProxies(ocService);
     }
-    
+
     /**
      * @return the service
      */
@@ -299,8 +301,8 @@ public class EjbTestHelper {
         ocService.setRoCRService(getResearchOrganizationRCServiceBean());
         return (ResearchOrganizationCorrelationServiceRemote) wrapWithProxies(ocService);
     }
-    
-    
+
+
     /**
      * @return the service
      */
@@ -322,7 +324,7 @@ public class EjbTestHelper {
 
     /**
      * Get the bean.
-     * 
+     *
      * @return Get the bean.
      */
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
@@ -370,11 +372,24 @@ public class EjbTestHelper {
         return bean;
     }
 
+    public static IdentifiedPersonServiceBean getIdentifiedPersonServiceBean() {
+        IdentifiedPersonServiceBean bean = new IdentifiedPersonServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
+    }
+
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationServiceBeanAsRemote() {
         IdentifiedOrganizationCorrelationServiceBean svc = new IdentifiedOrganizationCorrelationServiceBean();
         svc.setLocalService(getIdentifiedOrganizationServiceBean());
         svc.setLocalCRService(new IdentifiedOrganizationCrServiceBean());
         return (IdentifiedOrganizationCorrelationServiceRemote) wrapWithProxies(svc);
+    }
+
+    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonServiceBeanAsRemote() {
+        IdentifiedPersonCorrelationServiceBean svc = new IdentifiedPersonCorrelationServiceBean();
+        svc.setLocalService(getIdentifiedPersonServiceBean());
+        svc.setLocalCRService(new IdentifiedPersonCrServiceBean());
+        return (IdentifiedPersonCorrelationServiceRemote) wrapWithProxies(svc);
     }
 
     public static MessageProducerBean getMessageProducer() {
