@@ -21,7 +21,7 @@
         </action> 
     </package>
     <package name="protected" namespace="/protected" extends="default">
-        <action name="searchTrial" class="gov.nih.nci.registry.action.SearchTrialAction">
+        <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
             <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
         </action>
