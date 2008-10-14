@@ -52,10 +52,10 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusService#getCurrentStudyOverallStatusByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
      */
-    public List<StudyOverallStatusDTO> getCurrentStudyOverallStatusByStudyProtocol(
+    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(
             Ii studyProtocolId) throws PAException {
         
-        List<StudyOverallStatusDTO> dtoList = getStudyOverallStatusByStudyProtocol(studyProtocolId);
+        List<StudyOverallStatusDTO> dtoList = getByStudyProtocol(studyProtocolId);
         List<StudyOverallStatusDTO> returnList = new ArrayList<StudyOverallStatusDTO>();
         if(dtoList.size() > 0) {
             returnList.add(dtoList.get(dtoList.size() - 1));
@@ -66,7 +66,7 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusService#getStudyOverallStatusByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
      */
-    public List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(
+    public List<StudyOverallStatusDTO> getByStudyProtocol(
             Ii studyProtocolId) throws PAException {
         ArrayList<StudyOverallStatusDTO> result = new ArrayList<StudyOverallStatusDTO>();
         for (StudyOverallStatus sos : sosList) {
@@ -80,7 +80,7 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusService#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)
      */
-    public StudyOverallStatusDTO createStudyOverallStatus(
+    public StudyOverallStatusDTO create(
             StudyOverallStatusDTO studyOverallStatusDTO) throws PAException {
         // TODO Auto-generated method stub
         return null;
@@ -89,7 +89,7 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#getStudyOverallStatus(gov.nih.nci.coppa.iso.Ii)
      */
-    public StudyOverallStatusDTO getStudyOverallStatus(Ii ii)
+    public StudyOverallStatusDTO get(Ii ii)
             throws PAException {
         // TODO Auto-generated method stub
         return null;
@@ -98,10 +98,18 @@ public class MockStudyOverallStatusService implements StudyOverallStatusServiceR
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)
      */
-    public StudyOverallStatusDTO updateStudyOverallStatus(
+    public StudyOverallStatusDTO update(
             StudyOverallStatusDTO dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
+     */
+    public void delete(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        
     }
 
 }
