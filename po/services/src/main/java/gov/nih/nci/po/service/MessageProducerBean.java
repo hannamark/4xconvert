@@ -176,10 +176,9 @@ public class MessageProducerBean implements MessageProducerLocal {
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public void sendUpdate(Organization org) throws JMSException {
         if (!EntityStatus.PENDING.equals(org.getStatusCode())) {
-          SubscriberUpdateMessage msg 
+          SubscriberUpdateMessage msg
             = new SubscriberUpdateMessage(IdConverterRegistry.find(org.getClass()).convertToIi(org.getId()));
           send(msg);
         }

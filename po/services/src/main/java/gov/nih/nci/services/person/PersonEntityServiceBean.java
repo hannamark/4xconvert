@@ -170,6 +170,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      * {@inheritDoc}
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(PersonDTO person) {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
         return perService.validate(perBO);
@@ -179,6 +180,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<PersonDTO> search(PersonDTO person) {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
@@ -191,7 +193,6 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updatePerson(PersonDTO proposedState) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
@@ -209,7 +210,6 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updatePersonStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(targetOrg);

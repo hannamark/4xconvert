@@ -102,6 +102,7 @@ public class GenericServiceBean implements GenericServiceLocal {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends PersistentObject> T getPersistentObject(Class<T> toClass, Long id) {
         return (T) PoHibernateUtil.getCurrentSession().get(toClass, id);
     }

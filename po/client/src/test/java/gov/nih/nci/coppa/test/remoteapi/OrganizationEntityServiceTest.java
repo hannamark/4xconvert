@@ -101,6 +101,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import javax.ejb.EJBException;
+
 import org.junit.Test;
 
 /**
@@ -115,8 +117,8 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
     public Ii getOrgId() {
         return orgId;
     }
-    
-    
+
+
     /*
      * Method to check that the remote service is working.
      * @throws Exception on error.
@@ -197,7 +199,7 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void updateWithChangedStatus () throws Exception {
+    public void updateWithChangedStatus () throws Throwable {
         if (orgId == null) {
             createMinimal();
         }
@@ -205,7 +207,11 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
         Cd cd = new Cd();
         cd.setCode("nullified");
         dto.setStatusCode(cd);
-        getOrgService().updateOrganization(dto);
+        try {
+            getOrgService().updateOrganization(dto);
+        } catch (EJBException e) {
+            throw e.getCause();
+        }
     }
 
     @Test

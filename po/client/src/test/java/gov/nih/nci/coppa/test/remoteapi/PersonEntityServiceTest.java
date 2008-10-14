@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -96,6 +95,7 @@ import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -103,6 +103,8 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.Date;
+
+import javax.ejb.EJBException;
 
 import org.junit.Test;
 
@@ -118,7 +120,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
     public Ii getPersonId() {
         return personId;
     }
-    
+
     @Test
     public void createMinimal() throws Exception {
         if (personId != null) {
@@ -189,7 +191,7 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void updateWithChangedStatus () throws Exception {
+    public void updateWithChangedStatus () throws Throwable {
         if (personId == null) {
             createMinimal();
         }
@@ -197,7 +199,11 @@ public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
         Cd cd = new Cd();
         cd.setCode("nullified");
         dto.setStatusCode(cd);
-        getPersonService().updatePerson(dto);
+        try {
+            getPersonService().updatePerson(dto);
+        } catch (EJBException e) {
+            throw e.getCause();
+        }
     }
 
     @Test

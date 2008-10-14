@@ -171,6 +171,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      */
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(OrganizationDTO org) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
         return orgService.validate(orgBO);
@@ -181,6 +182,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      */
     @SuppressWarnings("unchecked")
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<OrganizationDTO> search(OrganizationDTO organization) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(organization);
         OrgEntityServiceSearchCriteria criteria = new OrgEntityServiceSearchCriteria();
@@ -192,7 +194,6 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(proposedState.getIdentifier());
@@ -211,7 +212,6 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(targetOrg);

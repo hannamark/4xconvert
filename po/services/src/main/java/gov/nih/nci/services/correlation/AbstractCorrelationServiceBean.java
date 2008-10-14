@@ -153,6 +153,7 @@ public abstract class AbstractCorrelationServiceBean
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public DTO getCorrelation(Ii id) throws NullifiedRoleException {
         T bo = getLocalService().getById(IiConverter.convertToLong(id));
@@ -163,6 +164,7 @@ public abstract class AbstractCorrelationServiceBean
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
         Set<Long> longIds = new HashSet<Long>();
@@ -178,6 +180,7 @@ public abstract class AbstractCorrelationServiceBean
      * @return validation errors
      */
     @SuppressWarnings(UNCHECKED)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public Map<String, String[]> validate(DTO dto) {
         T hcpBo = (T) PoXsnapshotHelper.createModel(dto);
@@ -189,6 +192,7 @@ public abstract class AbstractCorrelationServiceBean
      * @return list of matching dtos
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<DTO> search(DTO dto) {
         T model = (T) PoXsnapshotHelper.createModel(dto);
@@ -199,7 +203,6 @@ public abstract class AbstractCorrelationServiceBean
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public void updateCorrelation(DTO proposedState) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(proposedState.getIdentifier());
