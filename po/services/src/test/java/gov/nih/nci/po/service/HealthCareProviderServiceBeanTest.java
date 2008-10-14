@@ -82,15 +82,14 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.correlation.HealthCareProviderDTOTest;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.correlation.HealthCareProviderDTOTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
@@ -128,7 +127,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         long orgId = os.createOrganization();
         HealthCareProviderDTOTest hcpdto = new HealthCareProviderDTOTest();
         hcpdto.setUpTest();
-        hcpdto.setUpTestData();        
+        hcpdto.setUpTestData();
         HealthCareProvider hcp = (HealthCareProvider)hcpdto.getExampleTestClass();
         hcp.setPerson((Person) PoHibernateUtil.getCurrentSession().load(Person.class, personId));
         hcp.setOrganization((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId));
@@ -154,7 +153,6 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
 
         // adjust the expected value to NEW
         hcp.setStatus(RoleStatus.PENDING);
-        assertNotNull(savedHealthCareProvider.getStatusDate());
         verifyEquals(hcp, savedHealthCareProvider);
         PoHibernateUtil.getCurrentSession().flush();
 
@@ -185,7 +183,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         assertEquals(expected.getId(), found.getId());
         assertEquals(expected.getStatus(), found.getStatus());
         assertEquals(expected.getCertificateLicenseText(), found.getCertificateLicenseText());
-        
+
         assertEquals(expected.getPostalAddresses().size(), found.getPostalAddresses().size());
 
         assertEquals(expected.getEmail().size(), found.getEmail().size());

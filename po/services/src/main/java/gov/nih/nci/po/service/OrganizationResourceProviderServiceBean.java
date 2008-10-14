@@ -103,7 +103,6 @@ public class OrganizationResourceProviderServiceBean extends AbstractBaseService
     @Override
     public long create(OrganizationResourceProvider orp) throws EntityValidationException {
         orp.setStatus(RoleStatus.PENDING);
-        // TODO PO-432 add setting of status date
         return super.create(orp);
     }
 }

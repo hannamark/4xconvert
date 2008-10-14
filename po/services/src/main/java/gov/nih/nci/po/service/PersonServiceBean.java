@@ -85,8 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 
-import java.util.Date;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -106,7 +104,6 @@ public class PersonServiceBean extends AbstractBaseServiceBean<Person> implement
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Person p) throws EntityValidationException {
         p.setStatusCode(EntityStatus.PENDING);
-        p.setStatusDate(new Date());
         return super.create(p);
     }
 }

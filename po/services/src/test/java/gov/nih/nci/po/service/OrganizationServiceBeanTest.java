@@ -84,7 +84,6 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
@@ -101,7 +100,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -240,7 +238,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization retrievedOrg = orgServiceBean.getById(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
         assertEquals(EntityStatus.PENDING, retrievedOrg.getStatusCode());
-        assertNotNull(retrievedOrg.getStatusDate());
 
         List<Organization> orgs = getAllOrganizations();
         assertEquals(1, orgs.size());
@@ -261,10 +258,9 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         getOrgServiceBean().curate(o);
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.PENDING, result.getStatusCode());
-        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
     }
-    
+
     @Test
     public void curateWithNoChanges() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
@@ -274,12 +270,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         getOrgServiceBean().curate(o);
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
-        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
-    }
-
-    private void assertOnOrBefore(Date left, Date right) {
-        assertTrue(left.getTime() <= right.getTime());
     }
 
     @Test
@@ -299,13 +290,12 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
-        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         assertEquals(1, result.getEmail().size());
         assertEquals(1, result.getFax().size());
         assertEquals(1, result.getPhone().size());
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
-        
+
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
     }
 
@@ -342,7 +332,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
-        assertOnOrBefore(o.getStatusDate(), result.getStatusDate());
         assertEquals(1, result.getEmail().size());
         assertEquals(1, result.getFax().size());
         assertEquals(1, result.getPhone().size());

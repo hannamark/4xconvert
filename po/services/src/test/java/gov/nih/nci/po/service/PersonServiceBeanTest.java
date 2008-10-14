@@ -83,7 +83,6 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.Address;
@@ -162,7 +161,6 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
 
         // adjust the expected value to NEW
         person.setStatusCode(EntityStatus.PENDING);
-        assertNotNull(savedPerson.getStatusDate());
         verifyEquals(person, savedPerson);
         PoHibernateUtil.getCurrentSession().flush();
 

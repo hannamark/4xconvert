@@ -103,7 +103,6 @@ public class PersonResourceProviderServiceBean extends AbstractBaseServiceBean<P
     @Override
     public long create(PersonResourceProvider prp) throws EntityValidationException {
         prp.setStatus(RoleStatus.PENDING);
-        // TODO PO-432 add setting of status date
         return super.create(prp);
     }
 }

@@ -84,16 +84,12 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.Searchable;
 
-import java.util.Date;
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.NotNull;
@@ -101,7 +97,7 @@ import org.hibernate.validator.NotNull;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * 
+ *
  * @author gax
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractQualifiedEntityDTO"
@@ -112,16 +108,14 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    
+
     private QualifiedEntityType type;
 
     private Person player;
     private Organization scoper;
 
     private RoleStatus status;
-    private Date statusDate;
 
-    
     /**
      * @return the id
      * @xsnapshot.property match="iso"
@@ -135,7 +129,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     public Long getId() {
         return id;
     }
-    
+
     /**
      * @param id the id to set
      */
@@ -198,7 +192,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     public void setType(QualifiedEntityType type) {
         this.type = type;
     }
-    
+
     /**
      * @return the status
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
@@ -217,25 +211,5 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
      */
     public void setStatus(RoleStatus status) {
         this.status = status;
-    }
-
-    /**
-     * @return the statusDate
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ivl"
-     *                     name="statusDateRange"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Searchable
-    public Date getStatusDate() {
-        return this.statusDate;
-    }
-
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
     }
 }

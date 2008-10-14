@@ -117,8 +117,6 @@ public abstract class AbstractPersonResourceProvider implements Correlation {
     private RoleStatus status;
     private Ii identifier;
 
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
-
     /**
      * @return the id
      * @xsnapshot.property match="iso"

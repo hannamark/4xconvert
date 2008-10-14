@@ -111,8 +111,6 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
     private Organization scoper;
     private RoleStatus status;
 
-    // TODO PO-432 - not including statusDate until jira issue is resolved one way or the other
-
     /**
      * @return the id
      */

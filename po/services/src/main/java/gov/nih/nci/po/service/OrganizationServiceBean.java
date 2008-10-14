@@ -89,7 +89,6 @@ import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -113,19 +112,17 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Organization org) throws EntityValidationException {
         org.setStatusCode(EntityStatus.PENDING);
-        org.setStatusDate(new Date());
         return super.create(org);
     }
 
     /**
      * {@inheritDoc}
-     * @throws JMSException 
+     * @throws JMSException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(Organization org) throws JMSException {
         final Session s = PoHibernateUtil.getCurrentSession();
         Organization o = loadAndMerge(org, s);
-        o.setStatusDate(new Date());
         EntityUpdateCallback<Organization> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<Organization>() {
             public void entityUpdate(Organization target) {
                 s.update(target);
@@ -145,5 +142,5 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
         }
         return o;
     }
-    
+
 }

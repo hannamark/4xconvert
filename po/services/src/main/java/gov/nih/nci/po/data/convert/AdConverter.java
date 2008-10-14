@@ -119,7 +119,6 @@ public class AdConverter {
         }
 
         /**
-         * https://jira.5amsolutions.com/browse/PO-429 .
          * @param iso the address to convert into a BO Address.
          * @return a BO address.
          */

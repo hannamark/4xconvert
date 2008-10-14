@@ -103,7 +103,6 @@ public class HealthCareFacilityServiceBean extends AbstractBaseServiceBean<Healt
     @Override
     public long create(HealthCareFacility obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
-        // TODO PO-432 add setting of status date
         return super.create(obj);
     }
 

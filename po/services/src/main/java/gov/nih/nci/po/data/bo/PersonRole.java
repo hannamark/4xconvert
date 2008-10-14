@@ -85,7 +85,6 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -94,8 +93,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
@@ -128,7 +125,6 @@ public abstract class PersonRole implements PersistentObject, Contactable {
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private RoleStatus status;
-    private Date statusDate;
 
     /**
      * @return the id
@@ -302,25 +298,5 @@ public abstract class PersonRole implements PersistentObject, Contactable {
      */
     public void setStatus(RoleStatus status) {
         this.status = status;
-    }
-
-    /**
-     * @return the statusDate
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ivl"
-     *                     name="statusDateRange"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Searchable
-    public Date getStatusDate() {
-        return this.statusDate;
-    }
-
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
     }
 }

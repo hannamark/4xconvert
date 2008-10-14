@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -96,8 +95,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
@@ -118,7 +115,6 @@ import org.hibernate.validator.Valid;
 public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
 
     private static final long serialVersionUID = 1L;
-    private Date statusDate;
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
 
@@ -230,26 +226,6 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     }
 
     /**
-     * @return the curationStatusDate
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ivl"
-     *                     name="statusDateRange"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
-
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getStatusDate() {
-        return this.statusDate;
-    }
-
-    /**
-     * @param curationStatusDate the curationStatusDate to set
-     */
-    public void setStatusDate(Date curationStatusDate) {
-        this.statusDate = curationStatusDate;
-    }
-
-    /**
      * @param org the organization for which this is a duplicate
      */
     public void setDuplicateOfOrg(Organization org) {
@@ -286,11 +262,8 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
         return changeRequests;
     }
 
-
-
     @SuppressWarnings("unused")
     private void setChangeRequests(Set<OrganizationCR> changeRequests) {
         this.changeRequests = changeRequests;
     }
-
 }

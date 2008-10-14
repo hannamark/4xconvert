@@ -1,11 +1,11 @@
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
-import gov.nih.nci.coppa.iso.Ii;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
@@ -21,7 +21,6 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Date;
 
 import net.sf.xsnapshot.SnapshotHelper;
 
@@ -38,7 +37,6 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         Organization org = new Organization();
         OrganizationCRServiceBeanTest.fill(org, getDefaultCountry());
         org.getPostalAddress().setDeliveryAddressLine("deliveryAddressLine");
-        org.setStatusDate(new Date());
         org.getEmail().add(new Email("222@example.com"));
         org.getFax().add(new PhoneNumber("123-123-1234"));
         org.getPhone().add(new PhoneNumber("123-123-1234"));
@@ -56,7 +54,6 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         Person per = new Person();
         PersonCRServiceBeanTest.fill(per, getDefaultCountry());
         per.getPostalAddress().setDeliveryAddressLine("deliveryAddressLine");
-        per.setStatusDate(new Date());
         per.getEmail().add(new Email("222@example.com"));
         per.getFax().add(new PhoneNumber("123-123-1234"));
         per.getPhone().add(new PhoneNumber("123-123-1234"));
@@ -68,7 +65,7 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
 
         EqualsByValue.assertEquals(per, clone);
     }
-    
+
     @Test
     public void roundTripPersonResourceProvider() {
         PersonResourceProvider prp = new PersonResourceProvider();

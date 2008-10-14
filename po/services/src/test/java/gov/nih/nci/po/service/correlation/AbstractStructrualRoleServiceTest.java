@@ -103,7 +103,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -126,7 +125,6 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     protected void fillinPersonRoleFields(PersonRole pr) {
         pr.setPerson(basicPerson);
         pr.setOrganization(basicOrganization);
-        pr.setStatusDate(new Date());
         pr.setEmail(new ArrayList<Email>());
         pr.getEmail().add(new Email("me@test.com"));
         pr.setPhone(new ArrayList<PhoneNumber>());

@@ -111,7 +111,6 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +186,6 @@ public class HealthCareProviderRemoteServiceTest
         org2.setName("org2 name");
         org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         org2.setStatusCode(EntityStatus.ACTIVE);
-        org2.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
 
         Person person2 = new Person();
@@ -196,7 +194,6 @@ public class HealthCareProviderRemoteServiceTest
         person2.setMiddleName("mname2");
         person2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         person2.setStatusCode(EntityStatus.ACTIVE);
-        person2.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().saveOrUpdate(person2);
 
         HealthCareProviderDTO correlation1 = getSampleDto();

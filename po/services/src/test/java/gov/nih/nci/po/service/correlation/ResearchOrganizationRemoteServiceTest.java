@@ -82,26 +82,26 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import java.util.Date;
-import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.OneCriterionRequiredException;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+
+import java.util.List;
 
 /**
  * Remote service test.
@@ -129,7 +129,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         Cd type = new Cd();
         type.setCode("Cancer Center");
         dto.setType(type);
-        
+
         dto.setFundingMechanism(StringConverter.convertToSt("foo"));
 
         return dto;
@@ -149,7 +149,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ResearchOrganizationType other = new ResearchOrganizationType("Foo");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         PoHibernateUtil.getCurrentSession().flush();
-        
+
         Cd type = new Cd();
         type.setCode("Foo");
         dto.setType(type);
@@ -158,11 +158,11 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
     @Override
     protected void verifyAlterations(ResearchOrganizationCR cr) {
         super.verifyAlterations(cr);
-        
+
         assertEquals("Foo", cr.getType().getCode());
     }
-    
-    
+
+
     @Override
     public void testSearch() throws Exception {
         Organization org2 = new Organization();
@@ -170,7 +170,6 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         org2.setName("org2 name");
         org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         org2.setStatusCode(EntityStatus.ACTIVE);
-        org2.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
 
         ResearchOrganizationDTO correlation1 = getSampleDto();
@@ -194,15 +193,15 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(ii);
-        
+
         ResearchOrganizationType other = new ResearchOrganizationType("Another Type");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         Cd type = new Cd();
         type.setCode(other.getCode());
         correlation2.setType(type);
-        
+
         correlation2.setFundingMechanism(StringConverter.convertToSt("Boold Money"));
-        
+
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
         PoHibernateUtil.getCurrentSession().flush();
@@ -271,7 +270,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         searchCriteria.setFundingMechanism(correlation2.getFundingMechanism());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        
+
         // test by Type id
         searchCriteria.setFundingMechanism(null);
         searchCriteria.setType(type);

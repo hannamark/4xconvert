@@ -12,8 +12,6 @@ import gov.nih.nci.po.data.bo.RaceCode;
 import gov.nih.nci.po.data.bo.SexCode;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.util.Date;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +53,6 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
     public void testGetCR() {
         Person o = new Person();
         fill(o);
-        o.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().save(o);
         PersonCR ocr = new PersonCR(o);
         fill(ocr);

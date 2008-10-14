@@ -103,7 +103,6 @@ public class QualifiedEntityServiceBean extends AbstractBaseServiceBean<Qualifie
     @Override
     public long create(QualifiedEntity prp) throws EntityValidationException {
         prp.setStatus(RoleStatus.PENDING);
-        // TODO PO-432 add setting of status date
         return super.create(prp);
     }
 }

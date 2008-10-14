@@ -85,8 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.RoleStatus;
 
-import java.util.Date;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -105,7 +103,6 @@ public class HealthCareProviderServiceBean extends AbstractBaseServiceBean<Healt
     @Override
     public long create(HealthCareProvider obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
-        obj.setStatusDate(new Date());
         return super.create(obj);
     }
 }

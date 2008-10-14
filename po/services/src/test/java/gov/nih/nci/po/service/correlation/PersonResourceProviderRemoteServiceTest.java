@@ -101,7 +101,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.PersonResourceProviderDTO;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -188,7 +187,6 @@ public class PersonResourceProviderRemoteServiceTest extends
         org2.setName("org2 name");
         org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         org2.setStatusCode(EntityStatus.ACTIVE);
-        org2.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
 
         Person person2 = new Person();
@@ -197,7 +195,6 @@ public class PersonResourceProviderRemoteServiceTest extends
         person2.setMiddleName("mname2");
         person2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         person2.setStatusCode(EntityStatus.ACTIVE);
-        person2.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().saveOrUpdate(person2);
 
         PersonResourceProviderDTO correlation1 = getSampleDto();

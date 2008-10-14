@@ -103,8 +103,6 @@ public class OversightCommitteeServiceBean extends AbstractBaseServiceBean<Overs
     @Override
     public long create(OversightCommittee obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
-        // TODO PO-432 would add setStatusDate if/when OversightCommittee has that field.  otherwise remove this.
-        // see HealthCareProviderServiceBean.create for example
         return super.create(obj);
     }
 }

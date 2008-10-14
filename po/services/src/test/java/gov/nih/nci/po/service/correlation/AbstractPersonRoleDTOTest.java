@@ -97,12 +97,10 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -127,7 +125,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -163,7 +160,6 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         pr.setOrganization(new Organization());
         pr.getOrganization().setId(3L);
         pr.setStatus(RoleStatus.ACTIVE);
-        pr.setStatusDate(new Date());
         pr.setEmail(new ArrayList<Email>());
         pr.getEmail().add(new Email("me@test.com"));
         pr.setPhone(new ArrayList<PhoneNumber>());
@@ -209,9 +205,6 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
 
         // test status code
         assertEquals("active", dto.getStatus().getCode());
-
-        // test status date range
-        assertEquals(perRole.getStatusDate().getTime(), ((Ts) dto.getStatusDateRange().getLow()).getValue().getTime());
 
         // test dest of tel
         boolean emailFound = false;
@@ -289,11 +282,6 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         status.setCode("active");
         pr.setStatus(status);
 
-        Ivl<Ts> range = new Ivl<Ts>();
-        range.setLow(new Ts());
-        range.getLow().setValue(new Date());
-        pr.setStatusDateRange(range);
-
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         TelEmail email = new TelEmail();
@@ -356,7 +344,6 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         assertEquals(orgId, bo.getPerson().getId().longValue());
         assertEquals(personId, bo.getOrganization().getId());
         assertEquals(RoleStatus.ACTIVE, bo.getStatus());
-        assertEquals(((Ts) dto.getStatusDateRange().getLow()).getValue(), bo.getStatusDate());
 
         assertEquals(1, bo.getEmail().size());
         assertEquals("me@test.com", bo.getEmail().get(0).getValue());

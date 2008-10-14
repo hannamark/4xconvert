@@ -13,7 +13,6 @@ import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -52,7 +51,6 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
     public void testGetCR() {
         Organization o = new Organization();
         fill(o);
-        o.setStatusDate(new Date());
         PoHibernateUtil.getCurrentSession().save(o);
         OrganizationCR ocr = new OrganizationCR(o);
         fill(ocr);
@@ -104,7 +102,6 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
     @SuppressWarnings("unchecked")
     public void processCRs() {
         Organization o = new Organization();
-        o.setStatusDate(new Date());
         fill(o);
         PoHibernateUtil.getCurrentSession().save(o);
         OrganizationCR ocr1 = new OrganizationCR(o);
