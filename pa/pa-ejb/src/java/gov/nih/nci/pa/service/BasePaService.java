@@ -32,4 +32,9 @@ public interface BasePaService<DTO> {
      * @throws PAException exception
      */
     DTO update(DTO dto) throws PAException;
+    /**
+     * @param ii index of object
+     * @throws PAException exception
+     */
+    void delete(Ii ii) throws PAException;
 }
