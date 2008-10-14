@@ -122,7 +122,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
      */
     public String history() throws Exception {
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
-        List<StudyOverallStatusDTO> isoList = sosService.getStudyOverallStatusByStudyProtocol(spIdIi);
+        List<StudyOverallStatusDTO> isoList = sosService.getByStudyProtocol(spIdIi);
         for (StudyOverallStatusDTO iso : isoList) {
             overallStatusList.add(new StudyOverallStatusWebDTO(iso));
         }
@@ -137,7 +137,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         dto.setStudyProtocolIi(spIdIi);
         
         try {
-            sosService.createStudyOverallStatus(dto);            
+            sosService.create(dto);            
             // set the current date and status to the session
             StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
             .getRequest().getSession()
@@ -171,7 +171,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private void loadForm() throws Exception {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
         StudyOverallStatusDTO sosDto = null;
-        List<StudyOverallStatusDTO> sosList = sosService.getCurrentStudyOverallStatusByStudyProtocol(spIdIi);
+        List<StudyOverallStatusDTO> sosList = sosService.getCurrentByStudyProtocol(spIdIi);
         if (!sosList.isEmpty()) {
             sosDto = sosList.get(0);
         }
