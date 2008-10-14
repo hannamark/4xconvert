@@ -289,9 +289,14 @@
                                 </path>
                                 <taskdef name="xsnapshotdoclet" classname="net.sf.xsnapshot.ant.XSnapshotDocletTask" classpathref="xsnapshot.classpath" />
                                 <mkdir dir="${output.dir}" />
-                                <fileset dir="${project.build.sourceDirectory}" id="model">
-                                    <include name="gov/nih/nci/po/data/bo/*.java" />
-                                </fileset>
+                                <property name="temp.bo.class.dir" value="target/bo-src" />
+                                <mkdir dir="${temp.bo.class.dir}" />
+                                <copy todir="${temp.bo.class.dir}">
+                                    <fileset dir="${project.build.sourceDirectory}">
+                                       <include name="gov/nih/nci/po/data/bo/*.java" />
+                                    </fileset>
+                                </copy>
+                                <fileset dir="${temp.bo.class.dir}" id="model" />
                                 <xsnapshotdoclet destdir="${output.dir}" verbose="true" mergedir="${output.dir}">
                                     <fileset refid="model" />
                                     <packageSubstitution packages="gov.nih.nci.po.data.bo" substituteWith="gov.nih.nci.po.data.dto" />
