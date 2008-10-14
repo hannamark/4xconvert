@@ -60,11 +60,11 @@ public class SubmitTrialAction extends ActionSupport {
                                                                (String) ServletActionContext.getRequest().getSession().
             
                                                                getAttribute(Constants.STUDY_PROTOCOL_II)));
-            InterventionalStudyProtocolWebDTO protovolWebDTO =
+            InterventionalStudyProtocolWebDTO protocolWebDTO =
                                                           new InterventionalStudyProtocolWebDTO(protocolDTO);
             // put an entry in the session and store InterventionalStudyProtocolDTO 
             ServletActionContext.getRequest().getSession().setAttribute(
-                                    Constants.TRIAL_SUMMARY, protovolWebDTO);
+                                    Constants.TRIAL_SUMMARY, protocolWebDTO);
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial");
