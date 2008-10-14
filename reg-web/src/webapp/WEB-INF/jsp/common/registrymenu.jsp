@@ -1,7 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!--<ul class="cactusmenu"> -->
-
-
 		<li class="stdnav"><div>NCI Registry</div>
 			<ul>
 				<li><a href="home.action">Home</a></li>			
@@ -9,7 +6,7 @@
 				<li><a href="/registry/protected/submitTrial.action" >Submit Trial</a></li>
 				<c:choose>
 				    <c:when test="${pageContext.request.remoteUser != null}">
-                        <li><a href="/logout.action" >Logout</a></li>
+                        <li><a href="/registry/logout.action" >Logout</a></li>
                         <li><a href="registry/protected/searchTrial.action" >My Account</a></li>
 				    </c:when>
 			        <c:otherwise>
