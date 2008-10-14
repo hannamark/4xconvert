@@ -2,6 +2,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
@@ -20,6 +21,7 @@ import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyParticipationContactTelecomAddress;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
@@ -30,9 +32,6 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.YesNoCode;
-import gov.nih.nci.pa.iso.util.EdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.domain.Document;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -83,6 +82,7 @@ public class TestSchema {
             addAnnotatedClass(StudyParticipationContact.class).
             addAnnotatedClass(StudyParticipationContactTelecomAddress.class).
             addAnnotatedClass(Document.class).
+            addAnnotatedClass(StudyRecruitmentStatus.class).
             
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").

@@ -19,40 +19,13 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface StudyOverallStatusServiceRemote  {
-    // Standard methods
-    /**
-     * @param ii index
-     * @return StudyOverallStatusDTO
-     * @throws PAException PAException
-     */
-    StudyOverallStatusDTO getStudyOverallStatus(Ii ii) throws PAException;
-    /**
-     * @param dto studyOverallStatusDTO
-     * @return StudyOverallStatusDTO
-     * @throws PAException PAException
-     */
-    StudyOverallStatusDTO createStudyOverallStatus(StudyOverallStatusDTO dto) throws PAException;
-    /**
-     * @param dto studyOverallStatusDTO
-     * @return StudyOverallStatusDTO
-     * @throws PAException PAException
-     */
-    StudyOverallStatusDTO updateStudyOverallStatus(StudyOverallStatusDTO dto) throws PAException;
-    /**
-     * @param studyProtocolIi id of protocol
-     * @return list StudyOverallStatusDTO   
-     * @throws PAException on error 
-     */
-    List<StudyOverallStatusDTO> getStudyOverallStatusByStudyProtocol(Ii studyProtocolIi) throws PAException;
-    
-    
+public interface StudyOverallStatusServiceRemote extends StudyPaService<StudyOverallStatusDTO> {
     // Custom methods
     /**
      * @param studyProtocolIi Primary key assigned to a StudyProtocl.
      * @return List Current status StudyOverllStatusDTO.
      * @throws PAException Exception.
      */
-    List<StudyOverallStatusDTO> getCurrentStudyOverallStatusByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    List<StudyOverallStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
 }

@@ -40,9 +40,9 @@ public class StudyOverallStatusServiceTest {
     @Test
     public void update() throws Exception {
         StudyOverallStatusDTO dto = 
-            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid).get(0);
+            remoteEjb.getCurrentByStudyProtocol(pid).get(0);
         try {
-            remoteEjb.createStudyOverallStatus(dto);
+            remoteEjb.create(dto);
             fail("StudyOverallStatus objects cannot be modified.");
         } catch (PAException e) {
             // expected behavior
@@ -56,7 +56,7 @@ public class StudyOverallStatusServiceTest {
         try {
             dto.setIi(IiConverter.convertToIi((Long) null)); 
             dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
-            remoteEjb.createStudyOverallStatus(dto);
+            remoteEjb.create(dto);
             fail("StudyOverallStatus transitions must follow business rules.");
         } catch (PAException e) {
             // expected behavior
@@ -64,10 +64,10 @@ public class StudyOverallStatusServiceTest {
         dto.setIi(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
-        remoteEjb.createStudyOverallStatus(dto);
+        remoteEjb.create(dto);
         
         StudyOverallStatusDTO result = 
-            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid).get(0);
+            remoteEjb.getCurrentByStudyProtocol(pid).get(0);
         assertNotNull (IiConverter.convertToLong(result.getIi()));
         assertEquals (result.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
@@ -80,11 +80,11 @@ public class StudyOverallStatusServiceTest {
     @Test 
     public void getByProtocol() throws Exception {
         List<StudyOverallStatusDTO> statusList = 
-            remoteEjb.getStudyOverallStatusByStudyProtocol(pid);
+            remoteEjb.getByStudyProtocol(pid);
         assertEquals(2, statusList.size());
         
         StudyOverallStatusDTO dto = 
-            remoteEjb.getCurrentStudyOverallStatusByStudyProtocol(pid).get(0);
+            remoteEjb.getCurrentByStudyProtocol(pid).get(0);
         assertEquals(IiConverter.convertToLong(statusList.get(1).getIi())
                 , (IiConverter.convertToLong(dto.getIi())));
     }
