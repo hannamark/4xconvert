@@ -209,7 +209,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         }
 
         throw new RuntimeException("There doesn't appear to be a method on the "
-                + "service locator that returns the corret type!!");
+                + "service locator that returns the corret type!! try adding "+myType.getSimpleName()+"ServiceLocal ServiceLocator.get" + myType.getSimpleName()+"Service();");
     }
 
     /**

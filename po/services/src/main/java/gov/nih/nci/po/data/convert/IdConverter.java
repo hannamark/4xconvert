@@ -208,6 +208,16 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     public static final String IDENTIFIED_PERSON_ROOT = "UID.for.nci.role.identifiedperson";
 
     /**
+     * The identifier name for.
+     */
+    public static final String QUALIFIED_ENTITY_IDENTIFIER_NAME = "Qualified entity identifier";
+
+    /**
+     * The ii root value.
+     */
+    public static final String QUALIFIED_ENTITY_ROOT = "UID.for.nci.role.qualifiedentity";
+
+    /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
@@ -420,6 +430,23 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             Ii iso = super.convertToIi(value);
             iso.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
             iso.setRoot(IdConverter.IDENTIFIED_PERSON_ROOT);
+            return iso;
+        }
+    }
+
+    /**
+     * convert the id of a qualified entity.
+     * @author gax
+     */
+    public static class QualifiedEntityIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(QUALIFIED_ENTITY_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.QUALIFIED_ENTITY_ROOT);
             return iso;
         }
     }

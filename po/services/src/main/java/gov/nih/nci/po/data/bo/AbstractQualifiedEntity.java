@@ -80,150 +80,162 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
+import gov.nih.nci.po.util.Searchable;
+
+import java.util.Date;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * @author Scott Miller
- *
+ * 
+ * @author gax
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *      class="gov.nih.nci.services.correlation.AbstractQualifiedEntityDTO"
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+@MappedSuperclass
+public abstract class AbstractQualifiedEntity implements PersistentObject {
 
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    
+    private QualifiedEntityType type;
+
+    private Person player;
+    private Organization scoper;
+
+    private RoleStatus status;
+    private Date statusDate;
+
+    
     /**
-     * {@inheritDoc}
+     * @return the id
+     * @xsnapshot.property match="iso"
+     *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$QualifiedEntityIdConverter"
+     *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return null;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
+    public Long getId() {
+        return id;
+    }
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the person
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
+    @Transient
+    public Person getPlayer() {
+        return player;
     }
 
     /**
-     * {@inheritDoc}
+     * @param player the person to set
      */
-    public GenericServiceLocal getGenericService() {
-        return null;
+    public void setPlayer(Person player) {
+        this.player = player;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the organization
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return null;
+    @Transient
+    public Organization getScoper() {
+        return scoper;
     }
 
     /**
-     * {@inheritDoc}
+     * @param scoper the organization to set
      */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
+    public void setScoper(Organization scoper) {
+        this.scoper = scoper;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the type.
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.QualifiedEntityTypeConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Searchable
+    public QualifiedEntityType getType() {
+        return type;
     }
 
     /**
-     * {@inheritDoc}
+     * @param type the type.
      */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
+    public void setType(QualifiedEntityType type) {
+        this.type = type;
+    }
+    
+    /**
+     * @return the status
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
+     */
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Searchable
+    public RoleStatus getStatus() {
+        return this.status;
     }
 
     /**
-     * {@inheritDoc}
+     * @param status the status to set
      */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
+    public void setStatus(RoleStatus status) {
+        this.status = status;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the statusDate
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ivl"
+     *                     name="statusDateRange"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusDateConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IvlTsConverter"
      */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Searchable
+    public Date getStatusDate() {
+        return this.statusDate;
     }
 
     /**
-     * {@inheritDoc}
+     * @param statusDate the statusDate to set
      */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public QualifiedEntityServiceLocal getQualifiedEntityService() {
-        return null;
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 }

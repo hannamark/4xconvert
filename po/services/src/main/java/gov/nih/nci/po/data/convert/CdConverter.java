@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.bo.QualifiedEntityType;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoRegistry;
@@ -92,6 +93,7 @@ import gov.nih.nci.po.util.PoRegistry;
  * @author Scott Miller
  *
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class CdConverter extends AbstractXSnapshotConverter<Cd> {
 
     /**
@@ -109,6 +111,8 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
             return (TO) convertToOversightCommitteeType(value);
         } else if (returnClass.equals(ResearchOrganizationType.class)) {
             return (TO) convertToResearchOrganizationType(value);
+        } else if (returnClass.equals(QualifiedEntityType.class)) {
+            return (TO) convertToQualifiedEntityType(value);
         }
         throw new UnsupportedOperationException(returnClass.getName());
     }
@@ -128,5 +132,14 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
      */
     public static RoleStatus convertToRoleStatus(Cd value) {
         return RoleStatus.valueOf(value.getCode().toUpperCase());
+    }
+    
+    /**
+     * Convert a QualifiedEntityType code into an emun.
+     * @param value the code.
+     * @return the enum.
+     */
+    public static QualifiedEntityType convertToQualifiedEntityType(Cd value) {
+        return QualifiedEntityType.valueOf(value.getCode());
     }
 }

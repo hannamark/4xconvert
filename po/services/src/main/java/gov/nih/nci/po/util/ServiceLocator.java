@@ -95,6 +95,7 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
@@ -178,4 +179,10 @@ public interface ServiceLocator {
      * @return the service.
      */
     IdentifiedPersonServiceLocal getIdentifiedPersonService();
+    
+    /**
+     * @return the service.
+     */
+    QualifiedEntityServiceLocal getQualifiedEntityService();
+    
 }

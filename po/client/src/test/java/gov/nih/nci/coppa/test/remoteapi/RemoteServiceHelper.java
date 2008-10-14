@@ -90,6 +90,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -116,6 +117,7 @@ public class RemoteServiceHelper {
     static final String ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/OrganizationResourceProviderCorrelationServiceBean/remote";
     static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/OversightCommitteeCorrelationServiceBean/remote";
     static final String RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE = "po/ResearchOrganizationCorrelationServiceBean/remote";
+    static final String QUALIFIED_ENTITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/QualifiedEntityCorrelationServiceBean/remote";
 
     private static String username = "ejbclient";
     private static String password = "pass";
@@ -213,6 +215,12 @@ public class RemoteServiceHelper {
             throws NamingException {
         return (IdentifiedPersonCorrelationServiceRemote) lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
     }
+    
+    public static QualifiedEntityCorrelationServiceRemote getQualifiedEntityCorrelationService() throws NamingException {
+        return (QualifiedEntityCorrelationServiceRemote) lookup(QUALIFIED_ENTITY_CORRELATION_SERVICE_BEAN_REMOTE);
+    }
+
+
 
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
         String jmxUsername = "admin";
