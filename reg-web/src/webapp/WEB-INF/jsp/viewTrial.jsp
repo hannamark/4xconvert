@@ -25,15 +25,16 @@
 
   <div class="box">
     <s:form ><s:actionerror/>
+    <h1><fmt:message key="submit.trial.success.message"/> <c:out value="${sessionScope.trialSummary.nciAccessionNumber }"/> </h1>
 	<h2>Trial Details</h2>
 
         <table class="form">
          
             <tr>
             <td scope="row" class="label">
-                <label for="nciAccessionNumber">
+                <label for="trialPhase">
                 <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="view.trial.identifier"/>
+                    <fmt:message key="view.trial.phase"/>
                  </dfn>
                 </label>
             </td>
