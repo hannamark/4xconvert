@@ -148,7 +148,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     }
     /**
      * {@inheritDoc}
-     * @throws NullifiedEntityException 
+     * @throws NullifiedEntityException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
@@ -169,6 +169,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public Map<String, String[]> validate(PersonDTO person) {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
         return perService.validate(perBO);
@@ -178,6 +179,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<PersonDTO> search(PersonDTO person) {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
         PersonEntityServiceSearchCriteria criteria = new PersonEntityServiceSearchCriteria();

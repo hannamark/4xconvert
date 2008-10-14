@@ -180,6 +180,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<OrganizationDTO> search(OrganizationDTO organization) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(organization);
         OrgEntityServiceSearchCriteria criteria = new OrgEntityServiceSearchCriteria();
