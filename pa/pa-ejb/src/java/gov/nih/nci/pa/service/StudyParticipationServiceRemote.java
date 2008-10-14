@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 
 import javax.ejb.Remote;
@@ -18,9 +17,4 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface StudyParticipationServiceRemote extends StudyPaService<StudyParticipationDTO> {
-    /**
-     * @param ii index of StudyParticipation to be deleted.
-     * @throws PAException exception
-     */
-    void delete(Ii ii) throws PAException;
 }

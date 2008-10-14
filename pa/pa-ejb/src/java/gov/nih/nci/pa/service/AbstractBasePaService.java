@@ -58,6 +58,14 @@ public abstract class AbstractBasePaService<DTO>
     }
     
     /**
+     * @param ii index of object
+     * @throws PAException exception
+     */
+    public void delete(Ii ii) throws PAException {
+        serviceError(errMsgMethodNotImplemented);
+    }
+
+    /**
      * @param errMsg error string
      * @throws PAException exception
      */
