@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
 import org.apache.commons.lang.StringUtils;
@@ -80,7 +81,7 @@ public class RaceCodeConverter {
      */
     @SuppressWarnings("PMD.UseLocaleWithCaseConversions")
     public static Set<RaceCode> convertToRaceCodeSet(DSet<Cd> cds) {
-        if (cds == null || cds.getItem() == null) {
+        if (cds == null || CollectionUtils.isEmpty(cds.getItem())) {
             return null;
         }
         Set<RaceCode> races = new HashSet<RaceCode>();
@@ -119,26 +120,26 @@ public class RaceCodeConverter {
      * @return best guess of <code>DSet&lt;Cd&gt;</code>'s ISO equivalent.
      */
     public static DSet<Cd> convertToDsetOfCd(Set<RaceCode> races) {
-        if (races == null || races.isEmpty()) {
+        if (CollectionUtils.isEmpty(races)) {
             return null;
         }
         DSet<Cd> cds = new DSet<Cd>();
         cds.setItem(new HashSet<Cd>());
         for (RaceCode raceCode : races) {
-            Cd iso = convertToCd(races, raceCode);
+            Cd iso = convertToCd(raceCode);
             cds.getItem().add(iso);
         }
         return cds;
     }
 
-    private static Cd convertToCd(Set<RaceCode> races, RaceCode raceCode) {
+    private static Cd convertToCd(RaceCode raceCode) {
         Cd iso = new Cd();
         if (raceCode == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
             String code = (String) STATUS_MAP.getKey(raceCode);
             if (code == null) {
-                throw new UnsupportedOperationException(races + " not yet handled");
+                throw new UnsupportedOperationException(raceCode + " not yet handled");
             }
             iso.setCode(code);
         }

@@ -206,6 +206,15 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The ii root value.
      */
     public static final String IDENTIFIED_PERSON_ROOT = "UID.for.nci.role.identifiedperson";
+    /**
+     * The identifier name for.
+     */
+    public static final String ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME = "Organizational contact identifier";
+    
+    /**
+     * The ii root value.
+     */
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = "UID.for.nci.role.organizationalcontact";
 
     /**
      * The identifier name for.
@@ -430,6 +439,23 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             Ii iso = super.convertToIi(value);
             iso.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
             iso.setRoot(IdConverter.IDENTIFIED_PERSON_ROOT);
+            return iso;
+        }
+    }
+    
+    /**
+     * convert the id of a organizational contact.
+     * @author smatyas
+     */
+    public static class OrganizationalContactIdConverter extends IdConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.ORGANIZATIONAL_CONTACT_ROOT);
             return iso;
         }
     }

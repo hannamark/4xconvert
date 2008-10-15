@@ -85,6 +85,7 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -92,13 +93,12 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -132,20 +132,6 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public CountryServiceLocal getCountryService() {
         return EjbTestHelper.getCountryServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return EjbTestHelper.getOversightCommitteeTypeServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return EjbTestHelper.getResearchOrganizationTypeServiceBean();
     }
 
     /**
@@ -210,11 +196,22 @@ public class TestServiceLocator implements ServiceLocator {
     public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
         return EjbTestHelper.getIdentifiedPersonServiceBean();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationalContactServiceLocal getOrganizationalContactService() {
+        return EjbTestHelper.getOrganizationalContactService();
+    }
     
     /**
      * {@inheritDoc}
      */
     public QualifiedEntityServiceLocal getQualifiedEntityService() {
         return EjbTestHelper.getQualifiedEntityServiceBean();
+    }
+
+    public GenericCodeValueServiceLocal getGenericCodeValueService() {
+        return EjbTestHelper.getGenericCodeValueServiceBean();
     }
 }

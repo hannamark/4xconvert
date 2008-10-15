@@ -32,6 +32,9 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedPersonCR" />
         <mapping class="gov.nih.nci.po.data.bo.Organization" />
         <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactType" />         
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContact" />      
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactCR" />         
         <mapping class="gov.nih.nci.po.data.bo.OrganizationResourceProvider" />
         <mapping class="gov.nih.nci.po.data.bo.OrganizationResourceProviderCR" />
         <mapping class="gov.nih.nci.po.data.bo.OversightCommittee"/>

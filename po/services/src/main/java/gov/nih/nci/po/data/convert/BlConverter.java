@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,21 +80,45 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-
-import javax.ejb.Local;
+import gov.nih.nci.coppa.iso.Bl;
 
 /**
- * Business methods for oversight committee types.
+ * @author smatyas
  */
-@Local
-public interface OversightCommitteeTypeLocal {
+public class BlConverter extends AbstractXSnapshotConverter<Bl> {
+
     /**
-     * Get a type by code.  Returns null on unknown types.
-     * @param code the code to get
-     * @return the type
+     * {@inheritDoc}
      */
-    OversightCommitteeType getByCode(String code);
+    @Override
+    @SuppressWarnings("unchecked")
+    public <TO> TO convert(Class<TO> returnClass, Bl value) {
+        if (returnClass == Boolean.class) {
+            return (TO) convertToBoolean(value);
+        }
+
+        throw new UnsupportedOperationException(returnClass.getName());
+    }
+
+    /**
+     * Convert an Bl to a Boolean.
+     * @param iso an BL.
+     * @return a boolean.
+     */
+    public static Boolean convertToBoolean(Bl iso) {
+        if (iso == null) {
+            return null;
+        }
+        if (iso.getNullFlavor() != null) {
+            return null;
+        } else {
+            if (iso.getValue() == null) {
+                throw new IllegalArgumentException("nullFlavor or value must be set");
+            }
+            return iso.getValue();
+        }
+    }
+
 }

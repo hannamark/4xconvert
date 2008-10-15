@@ -85,6 +85,7 @@ package gov.nih.nci.po.web.util;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.CountryServiceStub;
+import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.GenericServiceStub;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
@@ -97,18 +98,18 @@ import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.service.MockPersonService;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 import gov.nih.nci.po.util.ServiceLocator;
 
 /**
  * The service locator for the test classes.
+ * 
  * @author Scott Miller
  */
 public class MockServiceLocator implements ServiceLocator {
@@ -151,13 +152,6 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public HealthCareProviderServiceLocal getHealthCareProviderService() {
         return hcpService;
     }
@@ -166,7 +160,7 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return ocService ;
+        return ocService;
     }
 
     /**
@@ -207,13 +201,6 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public ResearchOrganizationServiceLocal getResearchOrganizationService() {
         return null;
     }
@@ -224,10 +211,25 @@ public class MockServiceLocator implements ServiceLocator {
     public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
         return null;
     }
-        /**
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationalContactServiceLocal getOrganizationalContactService() {
+        return null;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public QualifiedEntityServiceLocal getQualifiedEntityService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericCodeValueServiceLocal getGenericCodeValueService() {
         return null;
     }
 

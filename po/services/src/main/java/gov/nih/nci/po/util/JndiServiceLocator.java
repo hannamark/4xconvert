@@ -84,6 +84,7 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -91,13 +92,12 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -131,20 +131,6 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public CountryServiceLocal getCountryService() {
         return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return (OversightCommitteeTypeLocal) JNDIUtil.lookup("po/OversightCommitteeTypeBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return (ResearchOrganizationTypeLocal) JNDIUtil.lookup("po/ResearchOrganizationTypeBean/local");
     }
 
     /**
@@ -214,7 +200,22 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    public OrganizationalContactServiceLocal getOrganizationalContactService() {
+        return (OrganizationalContactServiceLocal) JNDIUtil.lookup("po/OrganizationalContactServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public QualifiedEntityServiceLocal getQualifiedEntityService() {
         return (QualifiedEntityServiceLocal) JNDIUtil.lookup("po/QualifiedEntityServiceBean/local");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericCodeValueServiceLocal getGenericCodeValueService() {
+        return (GenericCodeValueServiceLocal) JNDIUtil.lookup("po/GenericCodeValueServiceBean/local");
+    }
+
 }

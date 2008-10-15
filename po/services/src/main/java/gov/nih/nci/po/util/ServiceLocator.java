@@ -84,6 +84,7 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -91,13 +92,12 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -124,16 +124,6 @@ public interface ServiceLocator {
      * @return the PO country service
      */
     CountryServiceLocal getCountryService();
-
-    /**
-     * @return the Oversight Committee Type service
-     */
-    OversightCommitteeTypeLocal getOversightCommitteeTypeService();
-
-    /**
-     * @return the Researh Org Type service
-     */
-    ResearchOrganizationTypeLocal getResearchOrganizationTypeService();
 
     /**
      * @return the Researh Org service
@@ -183,6 +173,16 @@ public interface ServiceLocator {
     /**
      * @return the service.
      */
+    OrganizationalContactServiceLocal getOrganizationalContactService();
+    
+    /**
+     * @return the service.
+     */
     QualifiedEntityServiceLocal getQualifiedEntityService();
+
+    /**
+     * @return the service.
+     */
+    GenericCodeValueServiceLocal getGenericCodeValueService();
     
 }

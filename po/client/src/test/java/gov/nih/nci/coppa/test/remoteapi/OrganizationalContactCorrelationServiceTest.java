@@ -80,32 +80,37 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import org.junit.Assert;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+public class OrganizationalContactCorrelationServiceTest
+        extends CorrelationTestBase<OrganizationalContactDTO, OrganizationalContactCorrelationServiceRemote> {
 
-/**
- * Implementation of interface.
- */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public class ResearchOrganizationTypeBean implements ResearchOrganizationTypeLocal {
+    public OrganizationalContactCorrelationServiceTest() {
+        super("OrganizationalContactCR");
+    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationType getByCode(String code) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        Query q = s.createQuery("FROM " + ResearchOrganizationType.class.getName() + " oct WHERE oct.code = :code");
-        q.setString("code", code);
-        return (ResearchOrganizationType) q.uniqueResult();
+    @Override
+    protected OrganizationalContactDTO makeCorrelation() throws Exception {
+        OrganizationalContactDTO dto = new OrganizationalContactDTO();
+        dto.setOrganizationIdentifier(getOrgId());
+        dto.setPersonIdentifier(getPersonId());
+        dto.setPrimaryIndicator(RemoteApiUtils.convertToBl(Boolean.TRUE));
+        return dto;
+    }
+
+    @Override
+    protected OrganizationalContactCorrelationServiceRemote getCorrelationService() throws Exception {
+        return RemoteServiceHelper.getOrganizationalContactCorrelationService();
+    }
+
+    @Override
+    protected void verifyCreated(OrganizationalContactDTO dto) throws Exception {
+        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
+        Assert.assertEquals(getPersonId().getExtension(), dto.getPersonIdentifier().getExtension());
     }
 }

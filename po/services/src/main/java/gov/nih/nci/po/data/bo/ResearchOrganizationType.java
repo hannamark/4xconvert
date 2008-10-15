@@ -82,20 +82,10 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.audit.Auditable;
-import gov.nih.nci.po.util.NotEmpty;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.validator.Length;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Lookup class for types of Research Organization.
@@ -103,12 +93,9 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 @Entity
 @org.hibernate.annotations.Entity(mutable = false)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
-public class ResearchOrganizationType implements PersistentObject, Auditable {
+public class ResearchOrganizationType extends AbstractCodeValue {
 
     private static final long serialVersionUID = 1L;
-    private static final int CODE_LENGTH = 254;
-    private Long id;
-    private String code;
 
     /**
      * For unit tests only.
@@ -116,7 +103,7 @@ public class ResearchOrganizationType implements PersistentObject, Auditable {
      * @param code type
      */
     public ResearchOrganizationType(String code) {
-        this.code = code;
+        super(code);
     }
 
     /**
@@ -125,39 +112,7 @@ public class ResearchOrganizationType implements PersistentObject, Auditable {
     @Deprecated
     public ResearchOrganizationType() {
         // for hibernate only - do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * @return the code
-     */
-    @Column(updatable = false, unique = true)
-    @Length(max = CODE_LENGTH)
-    @NotEmpty
-    public String getCode() {
-        return code;
+        super();
     }
 
 }

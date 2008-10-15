@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -107,6 +108,21 @@ import org.apache.commons.lang.StringUtils;
  */
 public class RemoteApiUtils {
 
+    /**
+    *
+    * @param value a boolean to parse.
+    * @return an iso BL
+    */
+   public static Bl convertToBl(Boolean value) {
+       Bl iso = new Bl();
+       if (value == null) {
+           iso.setNullFlavor(NullFlavor.NI);
+       } else {
+           iso.setValue(value);
+       }
+       return iso;
+   }
+    
     /**
      * @param value string to parse.
      * @return a 1 part EnOn.

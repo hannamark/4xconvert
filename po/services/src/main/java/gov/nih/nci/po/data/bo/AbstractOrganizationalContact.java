@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,41 +80,77 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.data.bo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.Searchable;
 
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 /**
- * Tests the bean.
+ * Class that stores organizational contact information.
+ * 
+ * @author smatyas
+ * 
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
+ *                           model-extends="gov.nih.nci.po.data.bo.PersonRole"
  */
-public class OversightCommitteeTypeBeanTest extends AbstractHibernateTestCase {
+@MappedSuperclass
+public abstract class AbstractOrganizationalContact extends PersonRole {
 
-    private static final String TESTTYPE = "testtype";
-    private final OversightCommitteeTypeBean octBean = new OversightCommitteeTypeBean();
+    private static final long serialVersionUID = 1L;
 
-    @Before
-    public void init() {
-        Session s = PoHibernateUtil.getCurrentSession();
-        int n = s.createQuery("FROM " + OversightCommitteeType.class.getName()).list().size();
-        assertEquals(0, n);
+    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private Boolean primaryIndicator;
 
-        OversightCommitteeType oct = new OversightCommitteeType(TESTTYPE);
-        s.save(oct);
+    /**
+     * @return true if primary otherwise, false
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
+     */
+    public Boolean isPrimaryIndicator() {
+        return primaryIndicator;
+    }
+    
+    /**
+     * @return true if primary otherwise, false
+     */
+    @Transient
+    @Searchable
+    public Boolean getPrimaryIndicator() {
+        return isPrimaryIndicator();
     }
 
-    @Test
-    public void testIt() throws Exception {
-        assertNull(octBean.getByCode("foo"));
-        OversightCommitteeType oct = octBean.getByCode(TESTTYPE);
-        assertNotNull(oct);
-        assertEquals(TESTTYPE, oct.getCode());
+    /**
+     * @param primary true if is primary otherwise, false
+     */
+    public void setPrimaryIndicator(Boolean primary) {
+        this.primaryIndicator = primary;
+    }
+
+    /**
+     * Get org contact type codes.
+     * 
+     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
+     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
+     * 
+     * @return a person's set of race code(s)
+     */
+    @Transient
+    public Set<OrganizationalContactType> getTypes() {
+        return types;
+    }
+
+    /**
+     * @param types org type codes
+     */
+    public void setTypes(Set<OrganizationalContactType> types) {
+        this.types = types;
     }
 }

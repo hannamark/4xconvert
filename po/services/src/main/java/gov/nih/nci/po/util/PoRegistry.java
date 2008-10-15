@@ -83,11 +83,10 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 
 /**
@@ -149,20 +148,6 @@ public final class PoRegistry {
     }
 
     /**
-     * @return the Oversight Committee Type service
-     */
-    public static OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return getInstance().getServiceLocator().getOversightCommitteeTypeService();
-    }
-
-    /**
-     * @return the Research Org Type service
-     */
-    public static ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return getInstance().getServiceLocator().getResearchOrganizationTypeService();
-    }
-
-    /**
      * @return the serviceLocator
      */
     public ServiceLocator getServiceLocator() {
@@ -174,5 +159,12 @@ public final class PoRegistry {
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
+    }
+
+    /**
+     * @return the Organizational Contact Type service
+     */
+    public static GenericCodeValueServiceLocal getGenericCodeValueService() {
+        return getInstance().getServiceLocator().getGenericCodeValueService();
     }
 }

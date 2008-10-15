@@ -94,6 +94,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -103,6 +104,8 @@ import org.hibernate.Session;
  * @see Searchable
  */
 public final class SearchableUtils {
+    private static final Logger LOG = Logger.getLogger(SearchableUtils.class);
+    
     /**
      * Callback interface.
      */
@@ -144,6 +147,14 @@ public final class SearchableUtils {
 
         Session session = PoHibernateUtil.getCurrentSession();
         Query q = session.createQuery(selectClause.append(whereClause).toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(q.getQueryString());
+        }
+        setQueryParams(params, q);
+        return q;
+    }
+
+    private static void setQueryParams(final Map<String, Object> params, Query q) {
         for (String key : params.keySet()) {
             Object value = params.get(key);
             if (value instanceof Collection<?>) {
@@ -154,7 +165,6 @@ public final class SearchableUtils {
                 q.setParameter(key, value);
             }
         }
-        return q;
     }
 
     /**

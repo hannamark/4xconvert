@@ -99,6 +99,8 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceBean;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceBean;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceBean;
@@ -130,7 +132,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created org service.
-     *
+     * 
      * @return the service
      */
     public static OrganizationServiceBean getOrganizationServiceBean() {
@@ -159,7 +161,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created person service.
-     *
+     * 
      * @return the service
      */
     public static PersonServiceBean getPersonServiceBean() {
@@ -236,7 +238,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created and configured generic service.
-     *
+     * 
      * @return the service
      */
     public static GenericServiceBean getGenericServiceBean() {
@@ -245,13 +247,6 @@ public class EjbTestHelper {
 
     public static CountryServiceBean getCountryServiceBean() {
         return new CountryServiceBean();
-    }
-
-    /**
-     * @return the service
-     */
-    public static OversightCommitteeTypeBean getOversightCommitteeTypeServiceBean() {
-        return new OversightCommitteeTypeBean();
     }
 
     /**
@@ -280,12 +275,6 @@ public class EjbTestHelper {
     /**
      * @return the service
      */
-    public static ResearchOrganizationTypeBean getResearchOrganizationTypeServiceBean() {
-        return new ResearchOrganizationTypeBean();
-    }
-    /**
-     * @return the service
-     */
     public static ResearchOrganizationServiceLocal getResearchOrganizationServiceBean() {
         ResearchOrganizationServiceBean bean = new ResearchOrganizationServiceBean();
         bean.setPublisher(getMessageProducer());
@@ -305,7 +294,6 @@ public class EjbTestHelper {
         ocService.setRoCRService(getResearchOrganizationRCServiceBean());
         return (ResearchOrganizationCorrelationServiceRemote) wrapWithProxies(ocService);
     }
-
 
     /**
      * @return the service
@@ -328,7 +316,7 @@ public class EjbTestHelper {
 
     /**
      * Get the bean.
-     *
+     * 
      * @return Get the bean.
      */
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
@@ -450,6 +438,33 @@ public class EjbTestHelper {
         } catch (Exception ex) {
             throw new Error("bad test init", ex);
         }
+    }
+
+    public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationServiceRemote() {
+        OrganizationalContactCorrelationServiceBean svc = new OrganizationalContactCorrelationServiceBean();
+        svc.setOcService(getOrganizationalContactService());
+        svc.setOcCRService(getOrganizationalContactCrService());
+        return svc;
+        
+    }
+
+    public static OrganizationalContactCRServiceLocal getOrganizationalContactCrService() {
+        OrganizationalContactCRServiceBean svc = new OrganizationalContactCRServiceBean();
+        OrganizationalContactServiceBean ocs = (OrganizationalContactServiceBean) getOrganizationalContactService();
+        svc.setOrganizationalContactServiceBean(ocs);
+        svc.setPublisher(ocs.getPublisher());
+        return svc;
+    }
+
+    public static OrganizationalContactServiceLocal getOrganizationalContactService() {
+        OrganizationalContactServiceBean svc = new OrganizationalContactServiceBean();
+        svc.setPublisher(getMessageProducer());
+        return svc;
+    }
+
+    public static GenericCodeValueServiceLocal getGenericCodeValueServiceBean() {
+        GenericCodeValueServiceBean bean = new GenericCodeValueServiceBean();
+        return bean;
     }
 
 }

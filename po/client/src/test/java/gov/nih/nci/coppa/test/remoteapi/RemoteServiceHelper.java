@@ -88,6 +88,7 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemo
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceRemote;
@@ -125,7 +126,8 @@ public class RemoteServiceHelper {
     private static InitialContext ctx;
     private static InitialContext jmxCtx;
 
-    static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() throws NamingException {
+    static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService()
+            throws NamingException {
         return (ResearchOrganizationCorrelationServiceRemote) lookup(RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
@@ -142,7 +144,7 @@ public class RemoteServiceHelper {
 
     /**
      * Closes the context.
-     *
+     * 
      * @throws NamingException on error.
      */
     public static void close() throws NamingException {
@@ -158,7 +160,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
-     *
+     * 
      * @return the service.
      * @throws NamingException on error.
      */
@@ -168,7 +170,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
-     *
+     * 
      * @return the service.
      * @throws NamingException on error.
      */
@@ -234,5 +236,10 @@ public class RemoteServiceHelper {
             jmxCtx = new InitialContext(env);
         }
         return (MBeanServerConnection) jmxCtx.lookup("jmx/invoker/RMIAdaptor");
+    }
+
+    public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
+            throws NamingException {
+        return (OrganizationalContactCorrelationServiceRemote) lookup("po/OrganizationalContactCorrelationServiceBean/remote");
     }
 }

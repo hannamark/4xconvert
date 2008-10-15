@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceBean;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -93,13 +94,12 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeTypeLocal;
 import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationTypeLocal;
 
 /**
  * @author Scott Miller
@@ -174,20 +174,6 @@ public class MockCountryServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public OversightCommitteeTypeLocal getOversightCommitteeTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationTypeLocal getResearchOrganizationTypeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
         return null;
     }
@@ -223,7 +209,21 @@ public class MockCountryServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    public OrganizationalContactServiceLocal getOrganizationalContactService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public QualifiedEntityServiceLocal getQualifiedEntityService() {
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public GenericCodeValueServiceLocal getGenericCodeValueService() {
         return null;
     }
 }

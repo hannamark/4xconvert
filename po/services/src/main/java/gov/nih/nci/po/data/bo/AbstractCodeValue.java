@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The COPPA PO
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This COPPA PO Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the COPPA PO Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the COPPA PO Software; (ii) distribute and
- * have distributed to and by third parties the COPPA PO Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,32 +80,79 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.NotEmpty;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.validator.Length;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Implementation of interface.
+ * @author smatyas
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public class OversightCommitteeTypeBean implements OversightCommitteeTypeLocal {
+@MappedSuperclass
+public class AbstractCodeValue implements PersistentObject, Auditable, CodeValue {
+
+    private static final long serialVersionUID = -7321430733371701736L;
+    private static final int CODE_LENGTH = 254;
+    private Long id;
+    private String code;
+
+    /**
+     * For unit tests only.
+     *
+     * @param code type
+     */
+    public AbstractCodeValue(String code) {
+        this.code = code;
+    }
+
+    /**
+     * @deprecated hibernate-only constructor
+     */
+    @Deprecated
+    public AbstractCodeValue() {
+        // for hibernate only - do nothing
+    }
 
     /**
      * {@inheritDoc}
      */
-    public OversightCommitteeType getByCode(String code) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        Query q = s.createQuery("FROM " + OversightCommitteeType.class.getName() + " oct WHERE oct.code = :code");
-        q.setString("code", code);
-        return (OversightCommitteeType) q.uniqueResult();
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id database id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * @return the code
+     */
+    @Column(updatable = false, unique = true)
+    @Length(max = CODE_LENGTH)
+    @NotEmpty
+    public String getCode() {
+        return code;
     }
 }
