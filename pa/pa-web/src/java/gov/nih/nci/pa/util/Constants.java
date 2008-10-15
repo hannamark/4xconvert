@@ -30,6 +30,9 @@ public class Constants {
     /** nih Institute Code . */
     public static final String NIH_INSTITUTE = "nihInstitute";
     
+    /** Country . */
+    public static final String ISO_COUNTRY = "isoCounty";
+    
     /** Success Message . */
     public static final String SUCCESS_MESSAGE = "successMessage";
     
