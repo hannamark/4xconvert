@@ -104,6 +104,7 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
 
     private static final long serialVersionUID = 1L;
 
+    private IdentifiedPersonType type;
     /**
      * {@inheritDoc}
      * @xsnapshot.property match="iso"
@@ -144,4 +145,24 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
         super.setPlayer(player);
     }
 
+    /**
+     * @return the type
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
+     */
+    @ManyToOne
+    @ForeignKey(name = "identifiedperson_type_fkey")
+    @NotNull
+    @Searchable
+    public IdentifiedPersonType getType() {
+        return type;
+    }
+
+    /**
+     * @param type identified entity type for person.
+     */
+    public void setType(IdentifiedPersonType type) {
+        this.type = type;
+    }
 }

@@ -381,6 +381,7 @@
                                 <srcFile>src/main/sql/researchorganizationtypes.sql</srcFile>
                                 <srcFile>src/main/sql/organizationalcontacttypes.sql</srcFile>
                                 <srcFile>src/main/sql/qualifiedentitytypes.sql</srcFile>
+                                <srcFile>src/main/sql/identifiedentitytypes.sql</srcFile>
                                 <srcFile>src/main/sql/csmBootstrapData.sql</srcFile>
                                 <srcFile>src/main/sql/extraCreateSchema.sql</srcFile>
                             </srcFiles>

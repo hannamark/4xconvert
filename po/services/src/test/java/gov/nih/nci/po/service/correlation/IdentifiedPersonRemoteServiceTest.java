@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
+import gov.nih.nci.po.data.bo.IdentifiedPersonType;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -101,6 +102,7 @@ import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 
 import java.util.List;
+import org.junit.Before;
 
 /**
  * @author Scott Miller
@@ -108,6 +110,16 @@ import java.util.List;
  */
 public class IdentifiedPersonRemoteServiceTest
     extends AbstractStructrualRoleRemoteServiceTest<IdentifiedPersonDTO, IdentifiedPersonCR> {
+    
+    IdentifiedPersonType type1, type2;
+    
+    @Before
+    public void initData() {
+        type1 = new IdentifiedPersonType("foo");
+        PoHibernateUtil.getCurrentSession().save(type1);
+        type2 = new IdentifiedPersonType("bar");
+        PoHibernateUtil.getCurrentSession().save(type2);
+    }
 
     /**
      * {@inheritDoc}
@@ -154,6 +166,10 @@ public class IdentifiedPersonRemoteServiceTest
         ii.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
         dto.setAssignedId(ii);
+        
+        Cd typeCd = new Cd();
+        typeCd.setCode(type1.getCode());
+        dto.setType(typeCd);
 
         return dto;
     }
@@ -166,6 +182,7 @@ public class IdentifiedPersonRemoteServiceTest
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
+        assertEquals(type1.getCode(), actual.getType().getCode());
 
         // really probe the assignedId, since that's different than other StructuralRoles
         Ii ii1 = expected.getAssignedId();
@@ -184,6 +201,9 @@ public class IdentifiedPersonRemoteServiceTest
     @Override
     protected void alter(IdentifiedPersonDTO dto) throws Exception {
         dto.getAssignedId().setExtension("9999");
+        Cd t = new Cd();
+        t.setCode(type2.getCode());
+        dto.setType(t);
     }
 
     /**
@@ -193,6 +213,7 @@ public class IdentifiedPersonRemoteServiceTest
     protected void verifyAlterations(IdentifiedPersonCR cr) {
         super.verifyAlterations(cr);
         assertEquals("9999", cr.getAssignedIdentifier().getExtension());
+        assertEquals(type2.getCode(), cr.getType().getCode());
     }
 
     /**
@@ -236,6 +257,7 @@ public class IdentifiedPersonRemoteServiceTest
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(ii);
+        correlation2.getType().setCode(type2.getCode());
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
         PoHibernateUtil.getCurrentSession().flush();
@@ -309,6 +331,14 @@ public class IdentifiedPersonRemoteServiceTest
         searchCriteria.getAssignedId().setExtension("invalid extension");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());
+        
+        // test by type
+        searchCriteria.setAssignedId(null);
+        searchCriteria.setScoperIdentifier(null);
+        searchCriteria.setType(correlation1.getType());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
 
     }
 }

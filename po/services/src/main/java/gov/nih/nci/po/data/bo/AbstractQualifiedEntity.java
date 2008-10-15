@@ -178,7 +178,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     /**
      * @return the type
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.QualifiedEntityTypeConverter"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
     @ManyToOne

@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.data.bo.IdentifiedPersonType;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
@@ -94,6 +97,15 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
  *
  */
 public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedPerson> {
+    
+    IdentifiedPersonType type;
+    
+    @Before
+    public void initData() {
+        type = new IdentifiedPersonType("foo");
+        PoHibernateUtil.getCurrentSession().save(type);
+    }
+
 
     /**
      * {@inheritDoc}
@@ -112,6 +124,8 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
         ii.setRoot("myRoot");
         ii.setScope(IdentifierScope.BUSN);
         ip.setAssignedIdentifier(ii);
+        
+        ip.setType(type);
         return ip;
     }
 
@@ -129,5 +143,6 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
         assertEquals(IdentifierScope.BUSN, actual.getAssignedIdentifier().getScope());
         assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
         assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
+        assertEquals(type.getCode(), actual.getType().getCode());
     }
 }

@@ -84,19 +84,20 @@ package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
+import gov.nih.nci.po.data.bo.CodeValue;
 
 /**
- * Research Organization Type xsnapshot converter.
+ * QualifiedEntityType converter.
+ * @author gax
  */
-public class ResearchOrganizationTypeConverter extends AbstractXSnapshotConverter<ResearchOrganizationType> {
+public class GenericTypeCodeConverter extends AbstractXSnapshotConverter<CodeValue> {
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public <TO> TO convert(Class<TO> returnClass, ResearchOrganizationType value) {
+    @SuppressWarnings("unchecked")
+    public <TO> TO convert(Class<TO> returnClass, CodeValue value) {
         if (returnClass == Cd.class) {
             return (TO) convertToCd(value);
         }
@@ -104,16 +105,17 @@ public class ResearchOrganizationTypeConverter extends AbstractXSnapshotConverte
     }
 
     /**
-     * @param cs PO ResearchOrganization type.
-     * @return local encoding of type
+     * @param status PO role status.
+     * @return best guess of <code>status</code>'s ISO equivalent.
      */
-    private Cd convertToCd(ResearchOrganizationType type) {
+    public static Cd convertToCd(CodeValue status) {
         Cd iso = new Cd();
-        if (type == null) {
+        if (status == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
-            iso.setCode(type.getCode());
+            iso.setCode(status.getCode());
         }
         return iso;
     }
+
 }
