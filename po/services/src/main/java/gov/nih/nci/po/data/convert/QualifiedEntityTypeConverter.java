@@ -113,7 +113,7 @@ public class QualifiedEntityTypeConverter extends AbstractXSnapshotConverter<Qua
         if (status == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
-            iso.setCode(status.toString());
+            iso.setCode(status.getCode());
         }
         return iso;
     }

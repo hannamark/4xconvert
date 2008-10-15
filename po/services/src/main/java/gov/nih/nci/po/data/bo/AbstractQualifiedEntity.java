@@ -89,9 +89,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -174,18 +176,19 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     }
 
     /**
-     * @return the type.
+     * @return the type
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.QualifiedEntityTypeConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @ForeignKey(name = "qualifiedentity_type_fkey")
     @NotNull
     @Searchable
     public QualifiedEntityType getType() {
         return type;
     }
-
+    
     /**
      * @param type the type.
      */

@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.bo.QualifiedEntityType;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -12,12 +13,14 @@ import java.util.Random;
 import org.junit.Before;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import gov.nih.nci.po.data.bo.QualifiedEntity;
 
 public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
     private Country defaultCountry;
     private OversightCommitteeType oversightCommitee;
     private ResearchOrganizationType researchOrgType;
+    private QualifiedEntityType qualifiedEntityType;
 
     public Country getDefaultCountry() {
         return defaultCountry;
@@ -65,6 +68,8 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
         researchOrgType = new ResearchOrganizationType("Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        qualifiedEntityType = new QualifiedEntityType("MD");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(qualifiedEntityType);
 
         user = new User();
         user.setLoginName("unittest" + new Random().nextLong());

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.util.PoHibernateUtil;
+import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.QualifiedEntityType;
@@ -91,19 +93,28 @@ import gov.nih.nci.po.data.bo.QualifiedEntityType;
  */
 public class QualifiedEntityServiceTest extends AbstractStructrualRoleServiceTest<QualifiedEntity> {
 
+    private QualifiedEntityType sampleType = null;
+
+    @Before
+    public void setupType() throws Exception {
+        sampleType = new QualifiedEntityType("sampleType");
+        PoHibernateUtil.getCurrentSession().save(sampleType);
+    }
+
+    
     @Override
     QualifiedEntity getSampleStructuralRole() {
         QualifiedEntity prp = new QualifiedEntity();
         prp.setPlayer(basicPerson);
         prp.setScoper(basicOrganization);
 
-        prp.setType(QualifiedEntityType.MD);
+        prp.setType(sampleType);
 
         return prp;
     }
 
     @Override
     void verifyStructuralRole(QualifiedEntity expected, QualifiedEntity actual) {
-        assertEquals(expected.getType(), actual.getType());
+        assertEquals(expected.getType().getId(), actual.getType().getId());
     }
 }

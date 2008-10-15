@@ -104,7 +104,7 @@ public class ResearchOrganizationTypeConverter extends AbstractXSnapshotConverte
     }
 
     /**
-     * @param cs PO oversight committee type.
+     * @param cs PO ResearchOrganization type.
      * @return local encoding of type
      */
     private Cd convertToCd(ResearchOrganizationType type) {

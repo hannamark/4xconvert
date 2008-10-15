@@ -83,10 +83,7 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.po.data.bo.OrganizationalContactType;
-import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.bo.QualifiedEntityType;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
+import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoRegistry;
 
@@ -108,28 +105,14 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
         }
         if (returnClass.equals(RoleStatus.class)) {
             return (TO) convertToRoleStatus(value);
-        } else if (returnClass.equals(OversightCommitteeType.class)) {
-            return (TO) convertToOversightCommitteeType(value);
-        } else if (returnClass.equals(ResearchOrganizationType.class)) {
-            return (TO) convertToResearchOrganizationType(value);
-        } else if (returnClass.equals(QualifiedEntityType.class)) {
-            return (TO) convertToQualifiedEntityType(value);
-        } else if (returnClass.equals(OrganizationalContactType.class)) {
-            return (TO) convertToOrganizationalContactType(value);
+        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
+            return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
         }
         throw new UnsupportedOperationException(returnClass.getName());
     }
-
-    private OrganizationalContactType convertToOrganizationalContactType(Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(OrganizationalContactType.class, value.getCode());
-    }
-
-    private OversightCommitteeType convertToOversightCommitteeType(Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(OversightCommitteeType.class, value.getCode());
-    }
-
-    private ResearchOrganizationType convertToResearchOrganizationType(Cd value) {
-        return PoRegistry.getGenericCodeValueService().getByCode(ResearchOrganizationType.class, value.getCode());
+    
+    private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
+        return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
     }
 
     /**
@@ -140,15 +123,5 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
      */
     public static RoleStatus convertToRoleStatus(Cd value) {
         return RoleStatus.valueOf(value.getCode().toUpperCase());
-    }
-
-    /**
-     * Convert a QualifiedEntityType code into an emun.
-     * 
-     * @param value the code.
-     * @return the enum.
-     */
-    public static QualifiedEntityType convertToQualifiedEntityType(Cd value) {
-        return QualifiedEntityType.valueOf(value.getCode());
     }
 }

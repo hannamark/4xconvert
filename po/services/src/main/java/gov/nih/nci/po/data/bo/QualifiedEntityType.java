@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po-app
+ * source code form and machine readable, binary, object code form. The COPPA PO
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po-app Software License (the License) is between NCI and You. You (or
+ * This COPPA PO Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po-app Software to (i) use, install, access, operate,
+ * its rights in the COPPA PO Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po-app Software; (ii) distribute and
- * have distributed to and by third parties the po-app Software and any
+ * and prepare derivative works of the COPPA PO Software; (ii) distribute and
+ * have distributed to and by third parties the COPPA PO Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -36,7 +36,7 @@
  * provided with the distribution, if any.
  *
  * Your end-user documentation included with the redistribution, if any, must
- * include the following acknowledgment, This product includes software
+ * include the following acknowledgment: This product includes software
  * developed by 5AM and the National Cancer Institute. If You do not include
  * such end-user documentation, You shall include this acknowledgment in the
  * Software itself, wherever such third-party acknowledgments normally appear.
@@ -82,72 +82,37 @@
  */
 package gov.nih.nci.po.data.bo;
 
-/**
- * TODO this seems like an incomplete list.
- * @author gax
- */
-public enum QualifiedEntityType {
+import javax.persistence.Entity;
 
-    /** Anesthesia Assistant. */
-    AA,
-    /** Ambulance Service Supplier. */
-    AMB,
-    /** Ambulatory Surgical Center. */
-    ASC,
-    /** Audiologist. */
-    AU,
-    /** Chiropractor. */
-    CH,
-    /** Certified Nurse Anesthetist. */
-    CNA,
-    /** Certified Nurse Midwife. */
-    CNM,
-    /** Certified Clinical Nurse Specialist. */
-    CNS,
-    /** Clinical Psychologist. */
-    CP,
-    /** Clinical Social Worker. */
-    CSW,
-    /** Doctor of Dental Medicine. */
-    DDM,
-    /** Doctor of Dental Surgery. */
-    DDS,
-    /** Doctor of Osteopathy. */
-    DO,
-    /** Podiatrist. */
-    DPM,
-    /** Family Nurse Practitioner. */
-    FNP,
-    /** Group. */
-    GRP,
-    /** Independent Diagnostic Facility. */
-    IDF,
-    /** Independent Physiological Lab. */
-    IPL,
-    /** Laboratory. */
-    LAB,
-    /** Medical Doctor. */
-    MD,
-    /** Mammography Screening Center. */
-    MSC,
-    /** Nurse Practitioner. */
-    NP,
-    /** Doctor of Optometry. */
-    OD,
-    /** Occupational Therapist. */
-    OT,
-    /** Physician Assistant. */
-    PA,
-    /** Public Health Service. */
-    PHS,
-    /** Psychologist. */
-    PSY,
-    /** Physical Therapist. */
-    PT,
-    /** Portable XRay Supplier. */
-    PXS,
-    /** Certified Registered Nurse. */
-    RNA,
-    /** Registered Nurse. */
-    RN,
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+/**
+ * Lookup class for types of Qualified Entity.
+ */
+@Entity
+@org.hibernate.annotations.Entity(mutable = false)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
+public class QualifiedEntityType extends AbstractCodeValue {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * For unit tests only.
+     *
+     * @param code type
+     */
+    public QualifiedEntityType(String code) {
+        super(code);
+    }
+
+    /**
+     * @deprecated hibernate-only constructor
+     */
+    @Deprecated
+    public QualifiedEntityType() {
+        // for hibernate only - do nothing
+        super();
+    }
+
 }

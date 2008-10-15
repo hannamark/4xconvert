@@ -1,5 +1,6 @@
 package gov.nih.nci.po.service;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -34,7 +35,15 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
         Session s = PoHibernateUtil.getCurrentSession();
         Query q = s.createQuery("FROM " + clz.getName() + " oct WHERE oct.code = :code");
         q.setString("code", code);
-        return (T) q.uniqueResult();
+        T ret = (T) q.uniqueResult();
+        if (ret == null) {
+            q = s.createQuery("SELECT code FROM " + clz.getName());
+            List<String> values = q.list();
+            throw new IllegalArgumentException("allowed values for " + clz.getSimpleName()
+                    + " are: " + values.toString());
+        } else {
+            return ret;
+        }
     }
 
 }

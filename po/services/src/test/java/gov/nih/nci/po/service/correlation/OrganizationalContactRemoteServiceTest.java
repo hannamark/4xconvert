@@ -421,7 +421,7 @@ public class OrganizationalContactRemoteServiceTest extends
             typeCode.setCode("aaa");
             getCorrelationService().search(searchCriteria);
             fail();
-        } catch (OneCriterionRequiredException e) {
+        } catch (IllegalArgumentException e) {
             // expected
         }
 

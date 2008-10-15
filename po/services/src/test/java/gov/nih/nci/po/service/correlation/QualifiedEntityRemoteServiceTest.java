@@ -156,6 +156,8 @@ public class QualifiedEntityRemoteServiceTest extends
 
     @Override
     protected void alter(QualifiedEntityDTO dto) {
+        QualifiedEntityType t = new QualifiedEntityType("DO");
+        PoHibernateUtil.getCurrentSession().save(t);
         dto.getType().setCode("DO");
     }
 
@@ -163,7 +165,7 @@ public class QualifiedEntityRemoteServiceTest extends
     protected void verifyAlterations(QualifiedEntityCR cr) {
         super.verifyAlterations(cr);
 
-        assertEquals(QualifiedEntityType.DO, cr.getType());
+        assertEquals("DO", cr.getType().getCode());
     }
 
     @Override
@@ -205,8 +207,10 @@ public class QualifiedEntityRemoteServiceTest extends
         org2Ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(org2Ii);
 
+        QualifiedEntityType t = new QualifiedEntityType("FOO");
+        PoHibernateUtil.getCurrentSession().save(t);
         Cd type2 = new Cd();
-        type2.setCode("RN");
+        type2.setCode("FOO");
         correlation2.setType(type2);
 
         Ii id2 = getCorrelationService().createCorrelation(correlation2);
