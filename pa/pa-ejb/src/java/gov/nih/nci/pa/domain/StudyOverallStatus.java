@@ -29,11 +29,27 @@ public class StudyOverallStatus extends AbstractEntity {
     
     private static final long serialVersionUID = 1234567890L;
     
+    private String commentText;
     private StudyStatusCode statusCode;
     private Timestamp statusDate;
     private StudyProtocol studyProtocol;
     
     
+    /**
+     * 
+     * @return commentText
+     */
+    @Column(name = "COMMENT_TEXT")
+    public String getCommentText() {
+        return commentText;
+    }
+    /**
+     * 
+     * @param commentText comment text
+     */
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
     /**
      * @return statusCode
      */
@@ -66,7 +82,6 @@ public class StudyOverallStatus extends AbstractEntity {
     public void setStatusDate(Timestamp statusDate) {
         this.statusDate = statusDate;
     }
-
     /**
      * 
      * @return protocol
