@@ -8,6 +8,15 @@
     <title><fmt:message key="submit.trial.page.title"/></title>   
     <s:head/>
 </head>
+<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript">
+        addCalendar("Cal1", "Select Date", "statusDate", "submitTrial");
+        addCalendar("Cal2", "Select Date", "startDate", "submitTrial");
+        addCalendar("Cal3", "Select Date", "completionDate", "submitTrial");
+        setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
+</script>
 
 <SCRIPT LANGUAGE="JavaScript">
 
@@ -24,8 +33,9 @@ function handleAction(){
 <!-- main content begins-->
     <h1><fmt:message key="submit.trial.page.header"/></h1>
     <div class="box" id="filters">
-    <s:form><s:actionerror/>
+    <s:form name="submitTrial"><s:actionerror/>
         <input type="hidden" name="page" />
+        <p>Add a Trial into NCI Clinical Trials Portal - Powered by (caCTUS) by submitting this form. </p>
         <table class="form"> 
           <tr>
                 <th colspan="2"><h2><fmt:message key="submit.trial.trialDetails"/></h2></th>
@@ -36,7 +46,7 @@ function handleAction(){
   
           <tr>
                 <td scope="row" class="label">
-                    <label for="identifier"> <fmt:message key="submit.trial.identifier"/></label>
+                    <label for="leadOrgIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/></label>
                 </td>
                 <td>
                     <s:textfield name="leadOrgIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -63,7 +73,7 @@ function handleAction(){
                 <td  scope="row" class="label">
                     <label for="trialType"> <fmt:message key="submit.trial.type"/></label> 
                 </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudyTypeCode@getDisplayNames()" />
+                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
                     <s:select headerKey="" headerValue="All" name="trialType" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
                 </td>
@@ -190,13 +200,25 @@ function handleAction(){
 							</td>
 					   </tr>
 					   <tr>
-							<s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+							<s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="All" name="fundingMechanism" list="#phaseCodeValues"  value="trialPhase" cssStyle="width:106px" />
+							    <s:select headerKey="" headerValue="All" 
+							         name="fundingMechanism" 
+							         list="#fundingMechanismValues"                             
+                                     listKey="fundingMechanismCode"  
+                                     listValue="fundingMechanismCode" 
+                                     value="fundingMechanism" 
+                                     cssStyle="width:106px" />
 							</td>
-							<s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+							<s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="All" name="instituteCode" list="#phaseCodeValues"  value="trialPhase" cssStyle="width:106px" />
+							    <s:select headerKey="" headerValue="All" 
+							         name="instituteCode" 
+							         list="#nihInstituteCodes"
+                                     listKey="nihInstituteCode" 
+                                     listValue="nihInstituteCode"   
+							         value="instituteCode" 
+							         cssStyle="width:106px" />
 							</td>
 							<td>
                                 <s:textfield name="serialNumber"  maxlength="200" size="100"  cssStyle="width:100px" />
@@ -209,6 +231,54 @@ function handleAction(){
 					</table>
                 </td>
           </tr>
+          <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          
+          <tr>
+                <th colspan="2"><h2><fmt:message key="submit.trial.statusDates"/></h2></th>
+          </tr>
+          <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          
+          <tr>
+                <td scope="row" class="label">
+                    <label for="leadOrganization"> <fmt:message key="submit.trial.currentTrialStatus"/></label>
+                </td>
+                    <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
+                <td>                                             
+                    <s:select headerKey="" headerValue="All" name="trialStatus" list="#statusCodeValues"  value="trialStatus" cssStyle="width:206px" />
+                </td>
+          </tr>
+        <tr>
+            <td scope="row" class="label"><label for="statusDate"><fmt:message
+                key="submit.trial.currentTrialStatusDate" /></label></td>
+            <td class="value"><s:textfield name="statusDate"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal1')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                </td>
+        </tr>
+        <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
+        <tr>
+            <td scope="row" class="label"><label for="startDate"><fmt:message
+                key="submit.trial.studyStartDate" /></label></td>
+            <td class="value"><s:textfield name="startDate"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal2')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                <s:radio name="startDateType" list="#dateTypeList" /></td>
+        </tr>
+        <tr>
+            <td scope="row" class="label"><label for="completionDate">
+            <fmt:message key="submit.trial.primaryCompletionDate" /></label></td>
+            <td class="value"><s:textfield name="completionDate"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal3')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
+                <s:radio name="completionDateType" list="#dateTypeList" /></td>
+        </tr>
 
         </table>
         <div class="actionsrow">
