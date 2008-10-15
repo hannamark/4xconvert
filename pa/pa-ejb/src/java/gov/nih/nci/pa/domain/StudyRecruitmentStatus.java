@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 
 import java.sql.Timestamp;
 
@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.validator.NotNull;
 
 /**
- * Describes the comprehensive state of the study.
+ * Describes the recruitment state of the study.
  * 
  * @author Hugh Reinhart
  * @since 10/10/2008
@@ -29,9 +29,9 @@ import org.hibernate.validator.NotNull;
 @Entity
 @Table(name = "STUDY_RECRUITMENT_STATUS")
 public class StudyRecruitmentStatus extends AbstractEntity {
-    private static final long serialVersionUID = 1234567890L;
+    private static final long serialVersionUID = 1234568364L;
     
-    private RecruitmentStatusCode statusCode;
+    private StudyRecruitmentStatusCode statusCode;
     private Timestamp statusDate;
     private StudyProtocol studyProtocol;
     
@@ -41,14 +41,14 @@ public class StudyRecruitmentStatus extends AbstractEntity {
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
-    public RecruitmentStatusCode getStatusCode() {
+    public StudyRecruitmentStatusCode getStatusCode() {
         return statusCode;
     }
     /**
      * 
      * @param statusCode status code
      */
-    public void setStatusCode(RecruitmentStatusCode statusCode) {
+    public void setStatusCode(StudyRecruitmentStatusCode statusCode) {
        this.statusCode = statusCode;
     }
 
