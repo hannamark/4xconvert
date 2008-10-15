@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.service.PAException;
@@ -9,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -25,7 +28,7 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
-
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(LookUpTableServiceBean.class);
@@ -79,5 +82,29 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         return nihList;
         
     }
+    
+    /**
+     * 
+     * @return country  Country
+     * @throws PAException PAException
+     */
+    public List<Country> getCountries() throws PAException {    
+        LOG.info("Entering getCountries");
+        Session session = null;
+        List<Country> countries = new ArrayList<Country>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = session.createQuery("select c from Country c order by name");
+            countries = query.list();
+        }  catch (HibernateException hbe) {
+            LOG.error(" Unable to load Country" , hbe);
+            throw new PAException(" Unable to load Country", hbe);
+        } finally {
+            session.flush();
+        } 
+        LOG.info("Leaving getCountries");
+        return countries;
+    }
+    
 
 }

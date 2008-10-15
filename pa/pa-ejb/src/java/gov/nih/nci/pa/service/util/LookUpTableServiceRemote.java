@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.service.PAException;
@@ -33,4 +34,12 @@ public interface LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     List<NIHinstitute> getNihInstitutes() throws PAException;    
+    
+    /**
+     * 
+     * @return country  Country
+     * @throws PAException PAException
+     */
+    List<Country> getCountries() throws PAException;    
+    
 }
