@@ -79,6 +79,11 @@
  			<result name="error">/WEB-INF/jsp/trialDouments.jsp</result>
  			<result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
  		</action>		
-		
+		<action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
+ 			<result>/WEB-INF/jsp/subGroups.jsp</result>
+ 			<result name="input">/WEB-INF/jsp/subGroupsAdd.jsp</result>
+ 			<result name="error">/WEB-INF/jsp/subGroups.jsp</result>
+ 			<result name="delete">/WEB-INF/jsp/subGroupsDelete.jsp</result>
+ 		</action>
 	</package>
 </struts>
