@@ -26,55 +26,31 @@
   <div class="box">
     <s:form ><s:actionerror/>
     <h1><fmt:message key="submit.trial.success.message"/> <c:out value="${sessionScope.trialSummary.nciAccessionNumber }"/> </h1>
-	<h2>Trial Details</h2>
+	<h2><fmt:message key="view.trial.trialDetails"/></h2>
 
         <table class="form">
-         
             <tr>
-            <td scope="row" class="label">
-                <label for="trialPhase">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="view.trial.phase"/>
-                 </dfn>
-                </label>
-            </td>
-            <td class="value">
-                <c:out value="${sessionScope.trialSummary.trialPhase }"/> 
-            </td>
+	            <td scope="row" class="label">
+	                <label for="nct">
+	                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+	                   <fmt:message key="view.trial.nciAccessionNumber"/>
+	                </dfn></label>
+	            </td>
+                <td class="value">
+                    <c:out value="${sessionScope.trialSummary.nciAccessionNumber}"/> 
+                </td>
             </tr>
             <tr>
-            <td scope="row" class="label">
-                <label for="nct">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">NCT Number:
-                </dfn></label>
-            </td>
-            <td class="value"></td>
+            <tr>
+                <td scope="row" class="label">
+                    <label for="nct">
+                    <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+                        <fmt:message key="view.trial.leadOrgTrialIdentifier"/>
+                    </dfn></label>
+                </td>
+                <td class="value">
+                </td>
             </tr>
-            <tr>
-            <td scope="row" class="label">
-                <label for="localProtocolIdentifer"> 
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                    <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
-                </dfn>
-                </label>
-            </td>
-            <td class="value"></td>
-            </tr>  
-            <tr>
-                <td scope="row" class="label"><label for="sectrialid"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Secondary Trial Identifier:</dfn></label></td>
-                <td class="value"></td>
-            </tr>
-            <tr>
-            <td scope="row" class="label">
-                <label for="leadOrg"> 
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                    <fmt:message key="view.trial.leadOrganization"/>
-                </dfn>
-                </label>
-            </td>
-            <td class="value">
-            </td>
-            </tr> 
             <tr>     
             <td scope="row" class="label">
                 <label for="officialTitle">
@@ -91,7 +67,51 @@
                 <td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Acronym:</dfn></label></td>
                 <td class="value"></td>
             </tr>
-
+            <tr>            
+            <td scope="row" class="label">
+                <label for="trialPhase">
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
+                    <fmt:message key="view.trial.phase"/>
+                 </dfn>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${sessionScope.trialSummary.trialPhase }"/> 
+            </td>
+            </tr>
+            <tr>
+            <td scope="row" class="label">
+                <label for="leadOrg"> 
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+                    <fmt:message key="view.trial.leadOrganization"/>
+                </dfn>
+                </label>
+            </td>
+            <td class="value">
+            </td>
+            </tr> 
+            <tr>
+            <td scope="row" class="label">
+                <label for="leadOrg"> 
+                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+                    <fmt:message key="view.trial.principalInvestigator"/>
+                </dfn>
+                </label>
+            </td>
+            <td class="value">
+            </td>
+            </tr>
+            <s:if test="${trialFundingList} != null">
+                <input type="hidden" name="page" />
+                <input type="hidden" name="cbValue" />
+	            <h2><fmt:message key="view.trial.grantInfo"/></h2>
+				<display:table name="${trialFundingList}" id="row" class="data" sort="list"  pagesize="5" export="false">    
+				<display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
+				<display:column titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
+				<display:column titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
+				<display:column titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
+				</display:table>
+		   </s:if>
 
         </table>  
                   
