@@ -4,7 +4,6 @@ package gov.nih.nci.po.data.bo;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -59,7 +58,7 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     /**
      * @return the person that should have this proposed state
      */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "target", nullable = false)
     @Index(name = "hcpcr_target_idx")
     @ForeignKey(name = "HCPCR_TARGET_HCP_FK")

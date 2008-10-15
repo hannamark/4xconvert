@@ -88,7 +88,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -260,7 +259,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     /**
      * @return person
      */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = true)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "duplicate_of", nullable = true)
     @Index(name = "person_duplicateof_idx")
     @ForeignKey(name = "PERSON_DUPLICATE_PERSON_FK")
@@ -271,7 +270,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     /**
      * @return associated CRs
      */
-    @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "target")
     public Set<PersonCR> getChangeRequests() {
         return changeRequests;
     }

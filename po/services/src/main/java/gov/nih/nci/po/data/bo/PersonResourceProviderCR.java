@@ -1,6 +1,5 @@
 package gov.nih.nci.po.data.bo;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,7 +36,7 @@ public class PersonResourceProviderCR extends AbstractPersonResourceProvider
     }
 
     /** {@inheritDoc} */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "target", nullable = false)
     @Index(name = "prp_target_idx")
     @ForeignKey(name = "PRPCR_TARGET_PRP_FK")

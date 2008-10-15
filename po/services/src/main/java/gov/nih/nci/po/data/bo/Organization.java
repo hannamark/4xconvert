@@ -88,7 +88,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -246,7 +245,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     /**
      * @return organization
      */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = true)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "duplicate_of", nullable = true)
     @Index(name = "organization_duplicateof_idx")
     @ForeignKey(name = "ORG_DUPLICATE_ORG_FK")
@@ -257,7 +256,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     /**
      * @return associated CRs
      */
-    @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "target")
     public Set<OrganizationCR> getChangeRequests() {
         return changeRequests;
     }

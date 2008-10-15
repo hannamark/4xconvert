@@ -84,7 +84,6 @@ package gov.nih.nci.po.data.bo;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -229,7 +228,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     /**
      * @return the org that should have this proposed state.
      */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "target", nullable = false)
     @Index(name = "org_target_idx")
     @ForeignKey(name = "ORGCR_TARGET_ORG_FK")

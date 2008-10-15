@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -119,7 +118,7 @@ public class IdentifiedPersonCR extends AbstractIdentifiedPerson implements Corr
     /**
      * @return the target
      */
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "target", nullable = false)
     @Index(name = "identifiedpersoncr_target_idx")
     @ForeignKey(name = "identifiedpersoncr_TARGET_ORP_FK")
