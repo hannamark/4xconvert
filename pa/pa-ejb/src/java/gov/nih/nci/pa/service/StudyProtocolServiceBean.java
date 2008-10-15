@@ -1,9 +1,11 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -342,6 +344,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         } finally {
             session.flush();
         }
+        createDocumentWorkFlowStatus(isp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.convertToIi(isp.getId());
         
@@ -430,5 +433,29 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         return ispDTO;
         
     }    
+    
+    private void createDocumentWorkFlowStatus(StudyProtocol sp) throws PAException {
+        Session session = null;
+        LOG.info("Entering createDocumentWorkFlowStatus");
+        try {
+            session = HibernateUtil.getCurrentSession();
+            DocumentWorkflowStatus wfs = new DocumentWorkflowStatus();
+            wfs.setStudyProtocol(sp);
+            wfs.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
+            wfs.setStatusDateRangeLow(new Timestamp(sp.getDateLastUpdated().getTime()));
+            wfs.setUserLastUpdated(sp.getUserLastUpdated());
+            wfs.setDateLastUpdated(sp.getDateLastUpdated());
+            session.save(wfs);
+            LOG.info("Creating wfs for id = " + wfs.getId());
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while creating DocumentWorkflow statys for protocol id = " 
+                    + sp.getId() , hbe);
+            throw new PAException(" Hibernate exception while creating DocumentWorkflow statys for protocol id = " 
+                    + sp.getId() , hbe);
+        } finally {
+            session.flush();
+        }   
+        LOG.info("Leaving createDocumentWorkFlowStatus");
+    }
 
 }
