@@ -26,6 +26,11 @@
 					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
 				</ul>
 			</li>
+			<li><div>Scientific Data</div>
+				<ul>
+					<li><a href="subGroupsquery.action" >SubGroups</a></li>
+				</ul>
+			</li>
 		</ul>
 	</li>
 </c:if>
