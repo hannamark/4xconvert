@@ -19,6 +19,8 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
     /** On-hold. */
     ON_HOLD("On-hold"),
+    /** On-hold. */
+    SUBMITTED("Submitted"),
     /** Accepted. */
     ACCEPTED("Accepted"),
     /** Rejected. */
