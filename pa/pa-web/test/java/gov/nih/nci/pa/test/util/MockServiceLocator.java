@@ -8,6 +8,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -150,6 +151,12 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() {
         // TODO Auto-generated method stub
+        return null;
+    }
+    /** 
+     * return SubGroupsServiceRemote
+     */
+    public SubGroupsServiceRemote getSubGroupsService() {
         return null;
     }
 }
