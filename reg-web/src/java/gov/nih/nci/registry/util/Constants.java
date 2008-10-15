@@ -32,5 +32,8 @@ public class Constants {
 
     /** nih Institute Code . */
     public static final String REQUEST_MESSAGE = "requestMessage";
+    
+    /** Funding list. */
+    public static final String TRIAL_FUNDING_LIST = "trialFundingList";
 
 }
