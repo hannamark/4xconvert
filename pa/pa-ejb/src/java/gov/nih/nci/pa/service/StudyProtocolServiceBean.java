@@ -107,6 +107,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
+    @SuppressWarnings("PMD.NPathComplexity") 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // enforce business rules
@@ -123,10 +124,20 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
                 studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
         Timestamp now = new Timestamp((new Date()).getTime());
         if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
-            throw new PAException(" Actual start dates cannot be in the future. ");
+            throw new PAException("Actual start dates cannot be in the future.  ");
         }
         if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(cDate)) {
-            throw new PAException(" Actual primary completion dates cannot be in the future. ");
+            throw new PAException("Actual primary completion dates cannot be in the future.  ");
+        }
+        if (sCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(sDate)) {
+            throw new PAException("Anticipated start dates must be in the future.  ");
+        }
+        if (cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(cDate)) {
+            throw new PAException("Anticipated primary completion dates must be in the future.  ");
+        }
+        if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
+            throw new PAException("Primary completion date must be >= start date.");
+            
         }
         
         
