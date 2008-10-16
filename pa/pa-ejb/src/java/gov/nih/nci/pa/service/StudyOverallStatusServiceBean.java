@@ -49,11 +49,15 @@ public class StudyOverallStatusServiceBean
     }
 
     /**
+     * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.  
+     * Note that this is the only method which does this.  StudyRecruitmentStatusService
+     * is used for reporting only.
+     * 
      * @param dto studyOverallStatusDTO
      * @return StudyOverallStatusDTO
      * @throws PAException PAException
      */
-    @Override
+    @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     public StudyOverallStatusDTO create(
             StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIi())) {
@@ -66,6 +70,8 @@ public class StudyOverallStatusServiceBean
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
+            
+            // enforce business rules
             List<StudyOverallStatusDTO> oldStatus = getCurrentByStudyProtocol(
                     dto.getStudyProtocolIi());
             
@@ -78,24 +84,39 @@ public class StudyOverallStatusServiceBean
             StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
             Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
             if (newCode == null) {
-                throw new PAException(" Study status must be set ");
+                throw new PAException("Study status must be set.  ");
             }
             if (newDate == null) {
-                throw new PAException(" Study status date must be set ");
+                throw new PAException("Study status date must be set.  ");
             }
             if (!oldCode.canTransitionTo(newCode)) {
-                throw new PAException(" Illegal study status transition from " + oldCode.getCode()
-                        + " to " + newCode.getCode());
+                throw new PAException("Illegal study status transition from " + oldCode.getCode()
+                        + " to " + newCode.getCode() + ".  ");
             }
-            if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
-                StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
-                session.saveOrUpdate(bo);
-                session.flush();
-                resultDto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
+            if (newDate.before(oldDate)) {
+                throw new PAException("New current status date should be bigger/same as old date.  ");
             }
+            
+            StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
+            if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
+               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
+               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
+               || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
+                if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
+                    serviceError("A reason must be entered when the study status is set to " 
+                             + bo.getStatusCode().getCode() + ".  ");
+                }
+            } else {
+                bo.setCommentText(null);
+            }
+               
+            // update
+            session.saveOrUpdate(bo);
+            session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
+            session.flush();
+            resultDto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
         } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in createStudyOverallStatus ", hbe);
-            throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
+            serviceError(" Hibernate exception in createStudyOverallStatus ", hbe);
         }
         return resultDto;
     }
@@ -137,8 +158,7 @@ public class StudyOverallStatusServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudyProtocolByCriteria ", hbe);
-            throw new PAException(" Hibernate exception in getStudyProtocolByCriteria ", hbe);
+            serviceError("Hibernate exception in getStudyProtocolByCriteria.  ", hbe);
         }
         ArrayList<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
         for (StudyOverallStatus bo : queryList) {
