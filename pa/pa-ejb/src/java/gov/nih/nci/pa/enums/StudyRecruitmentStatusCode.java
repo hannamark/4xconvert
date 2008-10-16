@@ -13,6 +13,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings("PMD.CyclomaticComplexity") 
 public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
 
     /** Not yet recruiting. */
@@ -67,6 +68,45 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
     public static StudyRecruitmentStatusCode getByCode(String code) {
         return getByClassAndCode(StudyRecruitmentStatusCode.class, code);
     }
+
+   /**
+    *
+    * @param code code
+    * @return StudyRecruitmentStatusCode
+    */
+   @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" }) 
+   public static StudyRecruitmentStatusCode getByStudyStatusCode(StudyStatusCode code) {
+       if (code != null) {
+           if (code.equals(StudyStatusCode.APPROVED)) {
+               return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
+           }
+           if (code.equals(StudyStatusCode.ACTIVE)) {
+               return StudyRecruitmentStatusCode.RECRUITING_ACTIVE;
+           }
+           if (code.equals(StudyStatusCode.CLOSED_TO_ACCRUAL)) {
+               return StudyRecruitmentStatusCode.NOT_RECRUITING;
+           }
+           if (code.equals(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION)) {
+               return StudyRecruitmentStatusCode.NOT_RECRUITING;
+           }
+           if (code.equals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL)) {
+               return StudyRecruitmentStatusCode.SUSPENDED;
+           }
+           if (code.equals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION)) {
+               return StudyRecruitmentStatusCode.SUSPENDED;
+           }
+           if (code.equals(StudyStatusCode.WITHDRAWN)) {
+               return StudyRecruitmentStatusCode.WITHDRAWN;
+           }
+           if (code.equals(StudyStatusCode.COMPLETE)) {
+               return StudyRecruitmentStatusCode.COMPLETED;
+           }
+           if (code.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)) {
+               return StudyRecruitmentStatusCode.TERMINATED;
+           }
+       }
+       return null;
+   }
 
     /**
      * @return String[] display names of enums
