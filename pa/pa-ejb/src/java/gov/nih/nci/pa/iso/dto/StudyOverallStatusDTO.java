@@ -5,6 +5,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -18,9 +19,10 @@ import gov.nih.nci.coppa.iso.Ts;
 public class StudyOverallStatusDTO extends BaseDTO {
     private static final long serialVersionUID = 1234562452L;
     
-    Cd statusCode;
-    Ts statusDate;
-    Ii studyProtocolIi;
+    private Cd statusCode;
+    private Ts statusDate;
+    private Ii studyProtocolIi;
+    private St reasonText;
     
     /**
      * @return the statusCode
@@ -45,6 +47,18 @@ public class StudyOverallStatusDTO extends BaseDTO {
      */
     public void setStatusDate(Ts statusDate) {
         this.statusDate = statusDate;
+    }
+    /**
+     * @return the reasonText
+     */
+    public St getReasonText() {
+        return reasonText;
+    }
+    /**
+     * @param reasonText the reasonText to set
+     */
+    public void setReasonText(St reasonText) {
+        this.reasonText = reasonText;
     }
     /**
      * @return the studyProtocolidentifier
