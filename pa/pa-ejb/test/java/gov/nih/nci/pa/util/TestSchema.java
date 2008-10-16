@@ -11,6 +11,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyContactRole;
@@ -83,7 +84,8 @@ public class TestSchema {
             addAnnotatedClass(StudyParticipationContactTelecomAddress.class).
             addAnnotatedClass(Document.class).
             addAnnotatedClass(StudyRecruitmentStatus.class).
-            
+            addAnnotatedClass(StratumGroup.class).
+                        
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
@@ -135,6 +137,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from COUNTRY");
                         statement.executeUpdate("delete from DOCUMENT");
+                        statement.executeUpdate("delete from STRATUM_GROUP");
                         connection.commit();
                     } finally {
                         statement.close();
@@ -289,6 +292,17 @@ public class TestSchema {
             doc.setFileName("IRB_Approval_Document.doc");
             doc.setInactiveCommentText("Testing");
             addUpdObject(doc);
+            
+            StratumGroup sg = new StratumGroup();
+            sg.setStudyProtocol(sp);
+            sg.setDescription("Description1");
+            sg.setGroupNumberText("Code1");
+            addUpdObject(sg);
+            sg = new StratumGroup();
+            sg.setStudyProtocol(sp);
+            sg.setDescription("Description2");
+            sg.setGroupNumberText("Code2");
+            addUpdObject(sg);
             
             HibernateUtil.getCurrentSession().clear();
             
