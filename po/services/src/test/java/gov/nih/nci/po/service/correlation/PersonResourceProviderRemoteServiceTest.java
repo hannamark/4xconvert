@@ -139,15 +139,6 @@ public class PersonResourceProviderRemoteServiceTest extends
         status.setCode("active");
         dto.setStatus(status);
 
-        ii = new Ii();
-        ii.setExtension("myExtension");
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.PERSON_RESOURCE_PROVIDER_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.PERSON_RESOURCE_PROVIDER_ROOT);
-        dto.setAssignedId(ii);
-
         return dto;
     }
 
@@ -157,27 +148,15 @@ public class PersonResourceProviderRemoteServiceTest extends
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
 
-        // really probe the assignedId, since that's different than other StructuralRoles
-        Ii ii1 = expected.getAssignedId();
-        Ii ii2 = actual.getAssignedId();
-        assertEquals(ii1.getExtension(), ii2.getExtension());
-        assertEquals(ii1.getDisplayable(), ii2.getDisplayable());
-        assertEquals(ii1.getScope(), ii2.getScope());
-        assertEquals(ii1.getReliability(), ii2.getReliability());
-        assertEquals(ii1.getIdentifierName(), ii2.getIdentifierName());
-        assertEquals(ii2.getRoot(), ii2.getRoot());
     }
 
     @Override
     protected void alter(PersonResourceProviderDTO dto) {
-        dto.getAssignedId().setExtension("9999");
     }
 
     @Override
     protected void verifyAlterations(PersonResourceProviderCR cr) {
         super.verifyAlterations(cr);
-
-        assertEquals("9999", cr.getIdentifier().getExtension());
     }
 
     @Override
@@ -218,15 +197,6 @@ public class PersonResourceProviderRemoteServiceTest extends
         org2Ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         org2Ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(org2Ii);
-
-        Ii assignedId2 = new Ii();
-        assignedId2.setExtension("differentAssignedId");
-        assignedId2.setDisplayable(true);
-        assignedId2.setScope(IdentifierScope.OBJ);
-        assignedId2.setReliability(IdentifierReliability.ISS);
-        assignedId2.setIdentifierName(IdConverter.ORG_RESOURCE_PROVIDER_IDENTIFIER_NAME);
-        assignedId2.setRoot(IdConverter.ORG_RESOURCE_PROVIDER_ROOT);
-        correlation2.setAssignedId(assignedId2);
 
         Ii id2 = getCorrelationService().createCorrelation(correlation2);
 
@@ -307,17 +277,5 @@ public class PersonResourceProviderRemoteServiceTest extends
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
 
-        // search by assigned id
-        searchCriteria.setPlayerIdentifier(null);
-        searchCriteria.setScoperIdentifier(null);
-        searchCriteria.setAssignedId(correlation1.getAssignedId());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
-
-        searchCriteria.setAssignedId(correlation2.getAssignedId());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
     }
 }

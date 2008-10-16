@@ -82,11 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.Searchable;
-import gov.nih.nci.po.util.ValidIi;
 
-import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -95,9 +92,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
 
 
@@ -116,13 +111,12 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
     private Organization player;
     private Organization scoper;
     private RoleStatus status;
-    private Ii identifier;
 
     /**
      * @return the id.
      * @xsnapshot.property match="iso"
      *         type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonResourceProviderIdConverter"
+     *         snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgResourceProviderIdConverter"
      *         model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Id
@@ -200,31 +194,4 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
         this.status = status;
     }
 
-    /**
-     * @param identifier the Id that <code>scoper</code> uses to identify <code>player</code>
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
-    }
-
-    /**
-     * @return the Id that <code>scoper</code> uses to identify <code>player</code>.  This is
-     *         distinct from the id of <em>this role</em>, which is system assigned.
-     * @xsnapshot.property match="iso" name="assignedId"
-     */
-    @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")
-    @Columns(columns = {
-            @Column(name = "identifier_null_flavor"),
-            @Column(name = "identifier_displayable"),
-            @Column(name = "identifier_extension"),
-            @Column(name = "identifier_identifier_name"),
-            @Column(name = "identifier_reliability"),
-            @Column(name = "identifier_root"),
-            @Column(name = "identifier_scope")
-    })
-    @ValidIi
-    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
-    public Ii getIdentifier() {
-        return identifier;
-    }
 }

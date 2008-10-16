@@ -1,5 +1,6 @@
 package gov.nih.nci.po.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -64,22 +65,6 @@ public class PoXsnapshotHelperTest extends AbstractBeanTest {
         Person clone = (Person) PoXsnapshotHelper.createModel(dto);
 
         EqualsByValue.assertEquals(per, clone);
-    }
-
-    @Test
-    public void roundTripPersonResourceProvider() {
-        PersonResourceProvider prp = new PersonResourceProvider();
-        Ii ii = new Ii();
-        ii.setDisplayable(Boolean.TRUE);
-        ii.setExtension("extension");
-        ii.setIdentifierName("identifierName");
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot("root");
-        ii.setScope(IdentifierScope.OBJ);
-        prp.setIdentifier(ii);
-        PersonResourceProviderDTO dto = (PersonResourceProviderDTO) PoXsnapshotHelper.createSnapshot(prp);
-        PersonResourceProvider clone = (PersonResourceProvider) PoXsnapshotHelper.createModel(dto);
-        EqualsByValue.assertEquals(ii, clone.getIdentifier());
     }
 
     @Test

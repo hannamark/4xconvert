@@ -20,6 +20,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     private OversightCommitteeType oversightCommitee;
     private ResearchOrganizationType researchOrgType;
     private QualifiedEntityType qualifiedEntityType;
+    private User user;
 
     public Country getDefaultCountry() {
         return defaultCountry;
@@ -44,9 +45,9 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         this.oversightCommitee = oversightCommitee;
     }
 
-
-
-    User user;
+    public OversightCommitteeType getOversightCommitee() {
+        return oversightCommitee;
+    }
 
     public User getUser() {
         return user;

@@ -98,7 +98,6 @@ public class OrganizationResourceProviderCorrelationServiceTest
         OrganizationResourceProviderDTO dto = new OrganizationResourceProviderDTO();
         dto.setPlayerIdentifier(getOrgId());
         dto.setScoperIdentifier(getOrgId());
-        dto.setAssignedId(getOrgId());
         return dto;
     }
 
@@ -111,6 +110,5 @@ public class OrganizationResourceProviderCorrelationServiceTest
     protected void verifyCreated(OrganizationResourceProviderDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals(getOrgId().getExtension(), dto.getAssignedId().getExtension());
     }
 }

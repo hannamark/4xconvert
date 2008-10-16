@@ -83,10 +83,6 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
 
 /**
@@ -101,28 +97,11 @@ public class OrganizationResourceProviderServiceTest
         orp.setPlayer(basicOrganization);
         orp.setScoper(basicOrganization);
 
-        Ii ii = new Ii();;
-        // we're going to set to nonsense values, to ensure that the whole type can be persisted
-        ii.setDisplayable(Boolean.TRUE);
-        ii.setExtension("myExtension");
-        ii.setIdentifierName("myIdName");
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setRoot("myRoot");
-        ii.setScope(IdentifierScope.BUSN);
-
-        orp.setIdentifier(ii);
-
         return orp;
     }
 
     @Override
     void verifyStructuralRole(OrganizationResourceProvider expected, OrganizationResourceProvider actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertTrue(actual.getIdentifier().getDisplayable().booleanValue());
-        assertEquals("myExtension", actual.getIdentifier().getExtension());
-        assertEquals("myIdName", actual.getIdentifier().getIdentifierName());
-        assertEquals(IdentifierReliability.ISS, actual.getIdentifier().getReliability());
-        assertEquals("myRoot", actual.getIdentifier().getRoot());
-        assertEquals(IdentifierScope.BUSN, actual.getIdentifier().getScope());
     }
 }

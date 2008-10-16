@@ -98,7 +98,6 @@ public class PersonResourceProviderCorrelationServiceTest
         PersonResourceProviderDTO dto = new PersonResourceProviderDTO();
         dto.setScoperIdentifier(getOrgId());
         dto.setPlayerIdentifier(getPersonId());
-        dto.setAssignedId(getPersonId());
         return dto;
     }
 
@@ -111,6 +110,5 @@ public class PersonResourceProviderCorrelationServiceTest
     protected void verifyCreated(PersonResourceProviderDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals(getPersonId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals(getPersonId().getExtension(), dto.getAssignedId().getExtension());
     }
 }
