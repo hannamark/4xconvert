@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.convert.ContactListConverter;
 import gov.nih.nci.po.data.convert.TelDSetConverter;
 import net.sf.xsnapshot.TransformContext;
@@ -91,7 +91,7 @@ import net.sf.xsnapshot.TransformContext;
  * @author Scott Miller
  *
  */
-public class ExtendedPersonRoleDTOHelper extends PersonRoleDTOHelper {
+public class ExtendedPersonRoleDTOHelper extends AbstractPersonRoleDTOHelper {
 
     /**
      * {@inheritDoc}
@@ -100,8 +100,8 @@ public class ExtendedPersonRoleDTOHelper extends PersonRoleDTOHelper {
     public void copyIntoModel(Object snapshot, Object model, TransformContext context) {
         super.copyIntoModel(snapshot, model, context);
 
-        PersonRoleDTO s = (PersonRoleDTO) snapshot;
-        PersonRole m = (PersonRole) model;
+        AbstractPersonRoleDTO s = (AbstractPersonRoleDTO) snapshot;
+        AbstractPersonRole m = (AbstractPersonRole) model;
         TelDSetConverter.convertToContactList(s.getTelecomAddress(), m);
     }
 
@@ -112,8 +112,8 @@ public class ExtendedPersonRoleDTOHelper extends PersonRoleDTOHelper {
     public void copyIntoSnapshot(Object model, Object snapshot, TransformContext context) {
         super.copyIntoSnapshot(model, snapshot, context);
 
-        PersonRoleDTO s = (PersonRoleDTO) snapshot;
-        PersonRole m = (PersonRole) model;
+        AbstractPersonRoleDTO s = (AbstractPersonRoleDTO) snapshot;
+        AbstractPersonRole m = (AbstractPersonRole) model;
         s.setTelecomAddress(ContactListConverter.convertToDSet(m));
     }
 }

@@ -104,7 +104,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @author Scott Miller
  * @param <T> the type of the identify being identified
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.AbstractIdentifiedEntity"
+ *      class="gov.nih.nci.services.correlation.AbstractIdentifiedEntityDTO"
  */
 @MappedSuperclass
 public abstract class AbstractIdentifiedEntity<T extends PersistentObject> implements PersistentObject {

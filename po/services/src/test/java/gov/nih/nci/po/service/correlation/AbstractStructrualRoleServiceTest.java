@@ -88,7 +88,7 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
@@ -122,7 +122,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
 
-    protected void fillinPersonRoleFields(PersonRole pr) {
+    protected void fillinPersonRoleFields(AbstractPersonRole pr) {
         pr.setPerson(basicPerson);
         pr.setOrganization(basicOrganization);
         pr.setEmail(new ArrayList<Email>());
@@ -140,7 +140,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         pr.getPostalAddresses().add(mailingAddress);
     }
 
-    protected void verifyPersonRole(PersonRole expected, PersonRole actual) {
+    protected void verifyPersonRole(AbstractPersonRole expected, AbstractPersonRole actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getEmail().size(), actual.getEmail().size());
         assertEquals(expected.getPerson().getId(), actual.getPerson().getId());

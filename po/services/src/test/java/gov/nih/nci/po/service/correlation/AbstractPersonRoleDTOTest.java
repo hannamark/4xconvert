@@ -101,13 +101,13 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
@@ -119,7 +119,7 @@ import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.correlation.PersonRoleDTO;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -153,7 +153,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG"));
     }
 
-    protected PersonRole fillInExamplePersonRoleFields(PersonRole pr) {
+    protected AbstractPersonRole fillInExamplePersonRoleFields(AbstractPersonRole pr) {
         pr.setId(1L);
         pr.setPerson(new Person());
         pr.getPerson().setId(2L);
@@ -175,17 +175,17 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         return pr;
     }
 
-    abstract protected PersonRole getExampleTestClass();
+    abstract protected AbstractPersonRole getExampleTestClass();
 
-    abstract protected void verifyTestClassFields(PersonRoleDTO dto);
+    abstract protected void verifyTestClassFields(AbstractPersonRoleDTO dto);
 
     /**
      * Tests creating a snapshot from a model with every field populated.
      */
     @Test
     public void testCreateFullSnapshotFromModel() {
-        PersonRole perRole = getExampleTestClass();
-        PersonRoleDTO dto = (PersonRoleDTO) PoXsnapshotHelper.createSnapshot(perRole);
+        AbstractPersonRole perRole = getExampleTestClass();
+        AbstractPersonRoleDTO dto = (AbstractPersonRoleDTO) PoXsnapshotHelper.createSnapshot(perRole);
 
         // check person id
         Ii expectedIi = new Ii();
@@ -258,7 +258,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
     }
 
     @SuppressWarnings("unchecked")
-    protected PersonRoleDTO fillInPersonRoleDTOFields(PersonRoleDTO pr, Long personId, Long orgId)
+    protected AbstractPersonRoleDTO fillInPersonRoleDTOFields(AbstractPersonRoleDTO pr, Long personId, Long orgId)
             throws URISyntaxException {
         Ii ii = new Ii();
         ii.setExtension("" + personId);
@@ -313,9 +313,9 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         return pr;
     }
 
-    abstract protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException;
+    abstract protected AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException;
 
-    abstract protected void verifyTestClassDTOFields(PersonRole pr);
+    abstract protected void verifyTestClassDTOFields(AbstractPersonRole pr);
 
     /**
      * Test creating the model from the snapshot.
@@ -338,8 +338,8 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         PoHibernateUtil.getCurrentSession().flush();
 
         // create bo from snapshot and verify values
-        PersonRoleDTO dto = getExampleTestClassDTO(personId, orgId);
-        PersonRole bo = (PersonRole) PoXsnapshotHelper.createModel(dto);
+        AbstractPersonRoleDTO dto = getExampleTestClassDTO(personId, orgId);
+        AbstractPersonRole bo = (AbstractPersonRole) PoXsnapshotHelper.createModel(dto);
         assertEquals(1L, bo.getId().longValue());
         assertEquals(orgId, bo.getPerson().getId().longValue());
         assertEquals(personId, bo.getOrganization().getId());

@@ -90,11 +90,11 @@ import javax.persistence.MappedSuperclass;
  * @author Scott Miller
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractClinicalResearchStaffDTO"
- *      model-extends="gov.nih.nci.po.data.bo.PersonRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")
-public abstract class AbstractClinicalResearchStaff extends PersonRole {
+public abstract class AbstractClinicalResearchStaff extends AbstractPersonRole {
     private static final long serialVersionUID = 1L;
 }

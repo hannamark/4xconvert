@@ -90,8 +90,7 @@ import gov.nih.nci.services.CorrelationDto;
  * @author Scott Miller
  *
  */
-@SuppressWarnings("PMD.AbstractNaming")
-public abstract class BasePersonRoleDTO implements CorrelationDto {
+public abstract class AbstractBasePersonRoleDTO implements CorrelationDto {
 
     private static final long serialVersionUID = 1L;
     

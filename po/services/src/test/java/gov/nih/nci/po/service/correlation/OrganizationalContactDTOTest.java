@@ -8,14 +8,14 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
-import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
-import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     }
     
     @Override
-    protected PersonRole getExampleTestClass() {
+    protected AbstractPersonRole getExampleTestClass() {
         OrganizationalContact hcp = new OrganizationalContact();
         fillInExamplePersonRoleFields(hcp);
         hcp.setPrimaryIndicator(Boolean.TRUE);
@@ -60,7 +60,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     
     @Override
     @SuppressWarnings("unchecked")
-    protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+    protected AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
 
@@ -81,7 +81,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     }
 
     @Override
-    protected void verifyTestClassDTOFields(PersonRole pr) {
+    protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
         OrganizationalContact organizationalContact = (OrganizationalContact) pr;
         assertEquals(Boolean.TRUE, organizationalContact.getPrimaryIndicator());
         
@@ -113,7 +113,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void verifyTestClassFields(PersonRoleDTO dto) {
+    protected void verifyTestClassFields(AbstractPersonRoleDTO dto) {
         //verify Ii
         Ii expectedIi = new Ii();
         expectedIi.setExtension("" + 1);

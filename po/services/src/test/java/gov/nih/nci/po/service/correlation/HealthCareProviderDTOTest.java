@@ -88,11 +88,11 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
-import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URISyntaxException;
 
@@ -107,7 +107,7 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    public PersonRole getExampleTestClass() {
+    public AbstractPersonRole getExampleTestClass() {
         HealthCareProvider hcp = new HealthCareProvider();
         fillInExamplePersonRoleFields(hcp);
         hcp.setCertificateLicenseText("testCertLicense");
@@ -118,7 +118,7 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassFields(PersonRoleDTO dto) {
+    protected void verifyTestClassFields(AbstractPersonRoleDTO dto) {
 
         // check id
         Ii expectedIi = new Ii();
@@ -138,7 +138,7 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    public PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+    public AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         HealthCareProviderDTO dto = new HealthCareProviderDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
 
@@ -161,7 +161,7 @@ public class HealthCareProviderDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassDTOFields(PersonRole pr) {
+    protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
         assertEquals("testCertLicense", ((HealthCareProvider) pr).getCertificateLicenseText());
     }
 }

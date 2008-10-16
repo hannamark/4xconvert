@@ -104,12 +104,12 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * Base class for all person to org roles.
  * @author Scott Miller
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.PersonRoleDTO"
- *      extends="gov.nih.nci.services.correlation.BasePersonRoleDTO"
+ *      class="gov.nih.nci.services.correlation.AbstractPersonRoleDTO"
+ *      extends="gov.nih.nci.services.correlation.AbstractBasePersonRoleDTO"
  */
 @MappedSuperclass
-@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.AbstractNaming" })
-public abstract class PersonRole implements PersistentObject, Contactable {
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+public abstract class AbstractPersonRole implements PersistentObject, Contactable {
 
     private static final long serialVersionUID = 1L;
 

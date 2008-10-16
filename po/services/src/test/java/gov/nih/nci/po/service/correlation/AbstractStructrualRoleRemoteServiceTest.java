@@ -108,7 +108,7 @@ import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
-import gov.nih.nci.services.correlation.PersonRoleDTO;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
@@ -200,7 +200,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     public abstract void testSearch() throws Exception;
 
     @SuppressWarnings("unchecked")
-    protected void fillInPersonRoleDate(PersonRoleDTO pr) throws Exception {
+    protected void fillInPersonRoleDate(AbstractPersonRoleDTO pr) throws Exception {
         Ii ii = new Ii();
         ii.setExtension("" + basicPerson.getId());
         ii.setDisplayable(true);
@@ -249,7 +249,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         pr.getPostalAddress().setItem(Collections.singleton(ad));
     }
 
-    protected void verifyPersonRoleDto(PersonRoleDTO e, PersonRoleDTO a) {
+    protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
         assertEquals(e.getOrganizationIdentifier().getExtension(), a.getOrganizationIdentifier().getExtension());
         assertEquals(e.getPersonIdentifier().getExtension(), a.getPersonIdentifier().getExtension());
         assertEquals("pending", a.getStatus().getCode());

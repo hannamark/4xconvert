@@ -86,11 +86,11 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
-import gov.nih.nci.services.correlation.PersonRoleDTO;
 
 import java.net.URISyntaxException;
 
@@ -105,7 +105,7 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected PersonRole getExampleTestClass() {
+    protected AbstractPersonRole getExampleTestClass() {
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
         fillInExamplePersonRoleFields(crs);
         return crs;
@@ -115,7 +115,7 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected PersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
+    protected AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
 
@@ -135,7 +135,7 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassDTOFields(PersonRole pr) {
+    protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
         // do nothing
     }
 
@@ -143,7 +143,7 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected void verifyTestClassFields(PersonRoleDTO dto) {
+    protected void verifyTestClassFields(AbstractPersonRoleDTO dto) {
         // check id
         Ii expectedIi = new Ii();
         expectedIi.setExtension("" + 1);

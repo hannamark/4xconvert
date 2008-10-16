@@ -96,10 +96,10 @@ import org.hibernate.validator.Length;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractHealthCareProviderDTO"
- *      model-extends="gov.nih.nci.po.data.bo.PersonRole"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
  */
 @MappedSuperclass
-public abstract class AbstractHealthCareProvider extends PersonRole implements Contactable {
+public abstract class AbstractHealthCareProvider extends AbstractPersonRole implements Contactable {
     private static final long serialVersionUID = 1L;
     private static final int CERTIFICATE_LICENSE_TEXT_LENGHT = 255;
 
