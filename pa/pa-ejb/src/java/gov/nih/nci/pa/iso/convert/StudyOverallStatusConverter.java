@@ -9,6 +9,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
@@ -40,6 +41,7 @@ public class StudyOverallStatusConverter {
             StudyOverallStatus bo) throws PAException {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setIi(IiConverter.convertToIi(bo.getId()));
+        dto.setReasonText(StConverter.convertToSt(bo.getCommentText()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
         dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
@@ -71,6 +73,7 @@ public class StudyOverallStatusConverter {
 
         StudyOverallStatus bo = new StudyOverallStatus();
         bo.setDateLastUpdated(new Date());
+        bo.setCommentText(StConverter.convertToString(dto.getReasonText()));
         bo.setStatusCode(StudyStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudyProtocol(spBo);
