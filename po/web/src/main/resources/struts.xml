@@ -182,11 +182,16 @@
         <action name="duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
+            <result name="input">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
         </action>      
         <action name="ajax/duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/duplicates/organization/results.jsp</result>
+            <result name="success">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
             <result name="detail">/WEB-INF/jsp/duplicates/organization/detail.jsp</result>
+        </action>            
+        <action name="ajax/duplicates/organization/results/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/duplicates/organization/results.jsp</result>
         </action>            
     </package>
 </struts>

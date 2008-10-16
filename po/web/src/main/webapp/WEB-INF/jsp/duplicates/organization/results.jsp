@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<c:url value="/protected/ajax/duplicates/organization/search.action" var="sortUrl" />
+<c:url value="/protected/ajax/duplicates/organization/results/search.action" var="sortUrl" />
 <ajax:displayTag id="duplicateOrganizationSearchResults" ajaxFlag="true" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="orgs" requestURI="${sortUrl}">
         <po:displayTagProperties/>

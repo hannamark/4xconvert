@@ -16,6 +16,8 @@ import org.displaytag.properties.SortOrderEnum;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action to search for duplicate organizations.
@@ -26,7 +28,7 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
      * action result to view entity's detail.
      */
     static final String DETAIL_RESULT = "detail";
-    
+
     private static final long serialVersionUID = 1L;
     private final PaginatedList<Organization> orgs = new PaginatedList<Organization>(0, new ArrayList<Organization>(),
             PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, OrganizationSortCriterion.ORGANIZATION_ID.name(),
@@ -62,11 +64,13 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
     /**
      * @return success
      */
+    @Validations(customValidators = { @CustomValidator(type = "searchcriteria", fieldName = "criteria") })
     public String search() {
         GenericSearchServiceUtil.search(PoRegistry.getOrganizationService(), criteria, getOrgs(),
                 OrganizationSortCriterion.class);
         return SUCCESS;
     }
+
     /**
      * @return search for duplicates results
      */
@@ -87,8 +91,9 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
     public void setCriteria(DuplicatesOrganizationSearchCriteria criteria) {
         this.criteria = criteria;
     }
+
     /**
-     *
+     * 
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -96,13 +101,13 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
     }
 
     /**
-     *
+     * 
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
-    
+
     /**
      * @return detail page
      */
@@ -110,7 +115,7 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
         organization = PoRegistry.getOrganizationService().getById(organization.getId());
         return DETAIL_RESULT;
     }
-    
+
     /**
      * @return organization to view detail
      */
@@ -124,7 +129,7 @@ public class DuplicatesOrganizationAction extends ActionSupport implements Prepa
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }
-    
+
     /**
      * @return source organization to find duplicates for.
      */
