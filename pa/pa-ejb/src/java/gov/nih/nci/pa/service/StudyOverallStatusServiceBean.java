@@ -89,7 +89,7 @@ public class StudyOverallStatusServiceBean
             if (newDate == null) {
                 throw new PAException("Study status date must be set.  ");
             }
-            if (!oldCode.canTransitionTo(newCode)) {
+            if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
                 throw new PAException("Illegal study status transition from " + oldCode.getCode()
                         + " to " + newCode.getCode() + ".  ");
             }
