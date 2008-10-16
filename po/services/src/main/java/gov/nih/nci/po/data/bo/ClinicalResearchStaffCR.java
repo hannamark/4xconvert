@@ -24,7 +24,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.UselessOverridingMethod", "PMD.AvoidDuplicateLiterals" })
-public class ClinicalResearchStaffCR extends AbstractClinicalResearchStaff
+public class ClinicalResearchStaffCR extends AbstractPersonRole
         implements CorrelationChangeRequest<ClinicalResearchStaff> {
 
     private static final long serialVersionUID = 1L;

@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.po.data.bo.AbstractHealthCareFacility;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -150,7 +150,7 @@ public class HealthCareFacilityCorrelationServiceBean
 
     @Override
     void copyIntoAbstractModel(HealthCareFacilityDTO proposedState, HealthCareFacilityCR cr) {
-        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractHealthCareFacility.class);
+        PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractOrganizationRole.class);
     }
 
     @Override

@@ -104,12 +104,12 @@ import org.hibernate.validator.Valid;
  * @author Scott Miller
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.ClinicalResearchStaffDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractClinicalResearchStaff"
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class ClinicalResearchStaff extends AbstractClinicalResearchStaff implements Correlation {
+public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation {
     private static final long serialVersionUID = 1L;
 
     /**

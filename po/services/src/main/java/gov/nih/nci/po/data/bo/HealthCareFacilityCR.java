@@ -15,7 +15,7 @@ import org.hibernate.annotations.Index;
  * @author gax
  */
 @Entity
-public class HealthCareFacilityCR extends AbstractHealthCareFacility
+public class HealthCareFacilityCR extends AbstractOrganizationRole
         implements CorrelationChangeRequest<HealthCareFacility> {
 
     private static final long serialVersionUID = 1L;
