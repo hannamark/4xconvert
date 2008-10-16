@@ -5,6 +5,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -19,6 +20,7 @@ import gov.nih.nci.pa.util.PAUtil;
 public class StudyOverallStatusWebDTO {
     private String statusCode;
     private String statusDate;
+    private String reason;
 
     /**
      * @param dto The iso dto object.
@@ -28,6 +30,7 @@ public class StudyOverallStatusWebDTO {
         this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getDisplayName();
         this.statusDate = PAUtil.normalizeDateString(
                 TsConverter.convertToTimestamp(dto.getStatusDate()).toString());
+        this.reason = StConverter.convertToString(dto.getReasonText());
     }
     /**
      * @return the statusCode
@@ -52,5 +55,17 @@ public class StudyOverallStatusWebDTO {
      */
     public void setStatusDate(String statusDate) {
         this.statusDate = statusDate;
+    }
+    /**
+     * @return the reason
+     */
+    public String getReason() {
+        return reason;
+    }
+    /**
+     * @param reason the reason to set
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }
