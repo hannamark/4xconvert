@@ -148,7 +148,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return database id
      * @xsnapshot.property match="iso"
      *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonIdConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Id

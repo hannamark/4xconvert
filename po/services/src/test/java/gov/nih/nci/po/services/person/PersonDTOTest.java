@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RaceCode;
 import gov.nih.nci.po.data.bo.SexCode;
@@ -19,6 +20,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.HashSet;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -331,5 +333,14 @@ public class PersonDTOTest {
         } catch (PoIsoConstraintException e) {
             assertEquals("unsupported code " + sex.getCode(), e.getMessage());
         }
+    }
+    
+    // regression test for https://jira.5amsolutions.com/browse/PO-601
+    @Test
+    public void roundTripIdentifier() {
+        dto.setIdentifier(new PersonIdConverter().convertToIi(1l));        
+        Person bo = (Person) PoXsnapshotHelper.createModel(dto);
+        PersonDTO copy = (PersonDTO) PoXsnapshotHelper.createSnapshot(bo);
+        EqualsBuilder.reflectionEquals(dto.getIdentifier(), copy.getIdentifier());
     }
 }
