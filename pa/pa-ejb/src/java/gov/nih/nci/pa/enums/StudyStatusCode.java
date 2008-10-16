@@ -40,15 +40,15 @@ public enum StudyStatusCode implements CodedEnum<String> {
      /**
       * Closed To Accrual And Intervention.
       */
-     CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed To Accrual And Intervention") ,
+     CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention") ,
      /**
       * Temporarily Closed To Accrual.
       */
-     TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed To Accrual") ,
+     TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual") ,
      /**
       * Temporarily Closed To Accrual and Intervention.
       */
-     TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed To Accrual and Intervention") ,
+     TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention") ,
      /**
       * Disapproved.
       */
@@ -128,17 +128,14 @@ public enum StudyStatusCode implements CodedEnum<String> {
          Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
 
          Set<StudyStatusCode> tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(APPROVED);
          tmpSet.add(ACTIVE);
          tmpSet.add(WITHDRAWN);
          tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(WITHDRAWN);
          tmp.put(WITHDRAWN, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(ACTIVE);
          tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL);
          tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmpSet.add(ADMINISTRATIVELY_COMPLETE);
@@ -146,44 +143,36 @@ public enum StudyStatusCode implements CodedEnum<String> {
          tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL);
          tmpSet.add(ACTIVE);
          tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmpSet.add(ADMINISTRATIVELY_COMPLETE);
          tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmpSet.add(ACTIVE);
          tmpSet.add(ADMINISTRATIVELY_COMPLETE);
          tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
          tmp.put(ADMINISTRATIVELY_COMPLETE, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(CLOSED_TO_ACCRUAL);
          tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmpSet.add(ADMINISTRATIVELY_COMPLETE);
          tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmpSet.add(ADMINISTRATIVELY_COMPLETE);
          tmpSet.add(COMPLETE);
          tmp.put(CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(COMPLETE);
          tmp.put(COMPLETE, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(DISAPPROVED);
          tmp.put(DISAPPROVED, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(IN_REVIEW);
          tmpSet.add(APPROVED);
          tmpSet.add(DISAPPROVED);
          tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
