@@ -93,7 +93,7 @@ public class StudyOverallStatusServiceBean
                 throw new PAException("Illegal study status transition from " + oldCode.getCode()
                         + " to " + newCode.getCode() + ".  ");
             }
-            if (newDate.before(oldDate)) {
+            if ((oldDate != null) && newDate.before(oldDate)) {
                 throw new PAException("New current status date should be bigger/same as old date.  ");
             }
             
