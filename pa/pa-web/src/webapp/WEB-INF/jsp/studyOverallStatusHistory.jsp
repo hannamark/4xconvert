@@ -24,6 +24,7 @@
     <display:table name="overallStatusList">  
         <display:column property="statusCode" titleKey="studyOverallStatus.statusCode" />
         <display:column property="statusDate" titleKey="studyOverallStatus.statusDate" />
+        <display:column property="reason" titleKey = "studyOverallStatus.reason" />
     </display:table>
     </td></tr>
     </c:if> 
