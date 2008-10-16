@@ -28,7 +28,7 @@ public class SexCodeConverter {
     static {
         DualHashBidiMap map = new DualHashBidiMap();
         for (SexCode s : SexCode.values()) {
-            map.put(s.getValue(), s);
+            map.put(s.name(), s);
         }
         STATUS_MAP = UnmodifiableBidiMap.decorate(map);
     }
@@ -110,9 +110,6 @@ public class SexCodeConverter {
             iso1.setNullFlavor(NullFlavor.NI);
         } else {
             String code = (String) STATUS_MAP.getKey(sex);
-            if (code == null) {
-                throw new UnsupportedOperationException(sex + " not yet handled");
-            }
             iso1.setCode(code);
         }
         return iso1;

@@ -9,40 +9,39 @@ public enum SexCode {
     /**
      * Female.
      */
-    F("F", "Female", "C16576", null),
+    F("Female", "C16576", null),
     /**
      * Male.
      */
-    M("M", "Male", "C20197", null),
+    M("Male", "C20197", null),
     /**
      * Unknown.
      */
-    U("U", "Unknown", "C17998",
+    U("Unknown", "C17998",
             "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C17998"),
     /**
      * Intersex.
      */
-    UN("UN", "Intersex", "C45908",
+    UN("Intersex", "C45908",
             "http://nciterms.nci.nih.gov/NCIBrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&code=C45908");
 
     private final String valueMeaning;
     private final String valueMeaningConceptCode;
     private final String source;
-    private final String value;
 
 
-    private SexCode(String value, String valueMeaning, String valueMeaningConceptCode, String source) {
-        this.value = value;
+    private SexCode(String valueMeaning, String valueMeaningConceptCode, String source) {
         this.valueMeaning = valueMeaning;
         this.valueMeaningConceptCode = valueMeaningConceptCode;
         this.source = source;
     }
 
     /**
+     * Same as {@link #name()}.
      * @return external value code
      */
     public String getValue() {
-        return value;
+        return name();
     }
 
     /**

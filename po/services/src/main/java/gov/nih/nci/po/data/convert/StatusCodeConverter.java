@@ -115,10 +115,9 @@ public final class StatusCodeConverter {
     public static final BidiMap STATUS_MAP;
     static {
         DualHashBidiMap map = new DualHashBidiMap();
-        map.put("active", EntityStatus.ACTIVE);
-        map.put("inactive", EntityStatus.INACTIVE);
-        map.put("pending", EntityStatus.PENDING);
-        map.put("nullified", EntityStatus.NULLIFIED);
+        for (EntityStatus es : EntityStatus.values()) {
+            map.put(es.name().toLowerCase(), es);
+        }
         STATUS_MAP = UnmodifiableBidiMap.decorate(map);
     }
 
@@ -190,9 +189,6 @@ public final class StatusCodeConverter {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
             String code = (String) STATUS_MAP.getKey(cs);
-            if (code == null) {
-                throw new UnsupportedOperationException(cs + " not yet handled");
-            }
             iso.setCode(code);
         }
         return iso;
