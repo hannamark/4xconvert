@@ -38,21 +38,21 @@ function handleAction(){
                      <label for="title"> <fmt:message key="search.trial.title"/></label>
                 </td>
                 <td>
-                    <s:textfield name="criteria.title"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="criteria.officialTitle"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>
                 <td  scope="row" class="label">
                     <label for="phase"> <fmt:message key="search.trial.phase"/></label> 
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="criteria.phase" list="#phaseCodeValues"  value="criteria.phase" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
                 </td>
                 <td  scope="row" class="label">
                     <label for="phase"> <fmt:message key="search.trial.type"/></label> 
                 </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudyTypeCode@getDisplayNames()" />
+                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="criteria.type" list="#typeCodeValues"  value="criteria.type" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
                 </td>
              </tr>                                               
 
@@ -71,7 +71,7 @@ function handleAction(){
                 </td>
 
                 <td>
-                    <s:textfield name="criteria.identifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>
                 <td scope="row" class="label">
                     <label for="organizationType"> <fmt:message key="search.trial.organizationType"/></label>
