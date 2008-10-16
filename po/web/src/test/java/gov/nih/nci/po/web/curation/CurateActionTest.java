@@ -87,7 +87,7 @@ import gov.nih.nci.po.web.AbstractPoTest;
 
 import org.junit.Test;
 
-import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Action;
 
 /**
  * Tests the curation action.
@@ -100,8 +100,8 @@ public class CurateActionTest extends AbstractPoTest {
     public void testIt() throws Exception {
         CurateAction ca = new CurateAction();
         //skip it
-        assertEquals(ActionSupport.SUCCESS, ca.listAll());
-        assertEquals(ActionSupport.SUCCESS, ca.listOrgs());
-        assertEquals(ActionSupport.SUCCESS, ca.listPersons());
+        assertEquals(Action.SUCCESS, ca.listAll());
+        assertEquals(Action.SUCCESS, ca.listOrgs());
+        assertEquals(Action.SUCCESS, ca.listPersons());
     }
 }

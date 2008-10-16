@@ -13,7 +13,6 @@ import java.util.Random;
 import org.junit.Before;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import gov.nih.nci.po.data.bo.QualifiedEntity;
 
 public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
@@ -44,8 +43,8 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     public void setOversightCommitee(OversightCommitteeType oversightCommitee) {
         this.oversightCommitee = oversightCommitee;
     }
-    
-    
+
+
 
     User user;
 
@@ -63,7 +62,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     @Before
     public void loadData() {
         defaultCountry = CountryTestUtil.save(new Country("United States", "840", "US", "USA"));
-        
+
         oversightCommitee = new OversightCommitteeType("Ethics Committee");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
         researchOrgType = new ResearchOrganizationType("Cancer Center");
@@ -78,7 +77,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         user.setUpdateDate(new Date());
         PoHibernateUtil.getCurrentSession().save(user);
         UsernameHolder.setUser(user.getLoginName());
-        
+
         PoHibernateUtil.getCurrentSession().flush();
     }
 }

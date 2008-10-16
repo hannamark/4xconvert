@@ -155,7 +155,7 @@ public abstract class AbstractCorrelationServiceBean
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public DTO getCorrelation(Ii id) throws NullifiedRoleException {
+    public DTO getCorrelation(Ii id) {
         T bo = getLocalService().getById(IiConverter.convertToLong(id));
         return (DTO) PoXsnapshotHelper.createSnapshot(bo);
     }
@@ -166,7 +166,7 @@ public abstract class AbstractCorrelationServiceBean
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
-    public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
+    public List<DTO> getCorrelations(Ii[] ids) {
         Set<Long> longIds = new HashSet<Long>();
         for (Ii id : ids) {
             longIds.add(IiConverter.convertToLong(id));

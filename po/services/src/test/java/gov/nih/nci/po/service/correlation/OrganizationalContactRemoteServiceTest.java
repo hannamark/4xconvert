@@ -116,7 +116,6 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -127,11 +126,11 @@ import org.junit.Test;
 
 /**
  * @author smatyas
- * 
+ *
  */
 public class OrganizationalContactRemoteServiceTest extends
         AbstractStructrualRoleRemoteServiceTest<OrganizationalContactDTO, OrganizationalContactCR> {
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
 
     private Set<OrganizationalContactType> getTypes() {
         return types;
@@ -174,6 +173,7 @@ public class OrganizationalContactRemoteServiceTest extends
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     void verifyDto(OrganizationalContactDTO e, OrganizationalContactDTO a) {
         assertEquals(e.getPrimaryIndicator().getValue(), a.getPrimaryIndicator().getValue());

@@ -2,7 +2,6 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import gov.nih.nci.po.data.bo.AbstractCodeValue;
 import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
@@ -20,7 +19,7 @@ import org.junit.Test;
 public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
 
     @SuppressWarnings("unchecked")
-    private static Class[] CLASSES = new Class[] {
+    private static Class<? extends AbstractCodeValue>[] CLASSES = new Class[] {
             OversightCommitteeType.class,
             OrganizationalContactType.class,
             ResearchOrganizationType.class,
@@ -32,7 +31,7 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
     @Before
     public void init() throws Exception {
         Session s = PoHibernateUtil.getCurrentSession();
-        for (Class c : CLASSES){
+        for (Class<? extends AbstractCodeValue> c : CLASSES){
             init(s, c);
         }
     }

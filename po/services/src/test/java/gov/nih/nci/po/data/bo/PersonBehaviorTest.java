@@ -1,8 +1,5 @@
 package gov.nih.nci.po.data.bo;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-
 import org.junit.Test;
 
 /**

@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,7 @@ import org.junit.Before;
 
 
 public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
 
     @Before
     public void initDbData() {
@@ -42,11 +41,11 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
     }
-    
+
     private Set<OrganizationalContactType> getTypes() {
         return types;
     }
-    
+
     @Override
     protected AbstractPersonRole getExampleTestClass() {
         OrganizationalContact hcp = new OrganizationalContact();
@@ -54,12 +53,11 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         hcp.setPrimaryIndicator(Boolean.TRUE);
         Set<OrganizationalContactType> types = getTypes();
         hcp.setTypes(types);
-        
+
         return hcp;
     }
-    
+
     @Override
-    @SuppressWarnings("unchecked")
     protected AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
@@ -84,7 +82,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
         OrganizationalContact organizationalContact = (OrganizationalContact) pr;
         assertEquals(Boolean.TRUE, organizationalContact.getPrimaryIndicator());
-        
+
         assertEquals(getTypes().size(), organizationalContact.getTypes().size());
         List<String> expectedValues = getCodeValues(getTypes());
         List<String> actualValues = getCodeValues(organizationalContact.getTypes());
@@ -95,17 +93,17 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
 
     public static List<String> getCodeValues(Collection<OrganizationalContactType> list) {
         List<String> codeValues = new ArrayList<String>();
-        for (Iterator<OrganizationalContactType> iterator = list.iterator(); iterator.hasNext();) {
-            OrganizationalContactType type = (OrganizationalContactType) iterator.next();
+        for (OrganizationalContactType organizationalContactType : list) {
+            OrganizationalContactType type = organizationalContactType;
             codeValues.add(type.getCode());
         }
         return codeValues;
     }
-    
+
     public static List<String> getCodeValues(DSet<Cd> list) {
         List<String> codeValues = new ArrayList<String>();
-        for (Iterator<Cd> iterator = list.getItem().iterator(); iterator.hasNext();) {
-            Cd type = (Cd) iterator.next();
+        for (Cd cd : list.getItem()) {
+            Cd type = cd;
             codeValues.add(type.getCode());
         }
         return codeValues;
@@ -124,15 +122,15 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         expectedIi.setRoot(IdConverter.ORGANIZATIONAL_CONTACT_ROOT);
         OrganizationalContactDTO organizationalContactDTO = (OrganizationalContactDTO) dto;
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, organizationalContactDTO.getIdentifier()));
-        
-        //verify OrganizationalContact 
+
+        //verify OrganizationalContact
         assertEquals(Boolean.TRUE, organizationalContactDTO.getPrimaryIndicator().getValue());
         List<String> expectedValues = getCodeValues(getTypes());
         List<String> actualValues = getCodeValues(organizationalContactDTO.getTypeCode());
         assertEquals(expectedValues.size(), actualValues.size());
         assertTrue(expectedValues.containsAll(actualValues));
         assertTrue(actualValues.containsAll(expectedValues));
-        
+
     }
 
 }

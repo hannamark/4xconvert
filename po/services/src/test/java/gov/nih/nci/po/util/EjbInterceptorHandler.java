@@ -26,13 +26,14 @@ import javax.interceptor.InvocationContext;
  */
 public class EjbInterceptorHandler implements InvocationHandler {
 
-    private static final HashMap<Class, Pair<Method[], Object[]>> CACHE = new HashMap<Class, Pair<Method[], Object[]>>();
+    private static final HashMap<Class<?>, Pair<Method[], Object[]>> CACHE =
+        new HashMap<Class<?>, Pair<Method[], Object[]>>();
 
-    private final Class[] defaultInterceptors;
+    private final Class<?>[] defaultInterceptors;
     private final Object bean;
 
 
-    public EjbInterceptorHandler(Object bean, Class... defaultInterceptors) {
+    public EjbInterceptorHandler(Object bean, Class<?>... defaultInterceptors) {
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
     }
@@ -54,15 +55,15 @@ public class EjbInterceptorHandler implements InvocationHandler {
         }
     }
 
-    private Pair<Method[], Object[]> getChain(Class beanClass) throws InstantiationException, IllegalAccessException {
+    private Pair<Method[], Object[]> getChain(Class<?> beanClass) throws InstantiationException, IllegalAccessException {
         Pair<Method[], Object[]> entry = CACHE.get(beanClass);
         if (entry == null) {
-            ArrayList<Class> ics = new ArrayList<Class>();
+            ArrayList<Class<?>> ics = new ArrayList<Class<?>>();
             ics.addAll(Arrays.asList(defaultInterceptors));
             getInterceptorClasses(ics, beanClass);
             ArrayList<Method> chain = new ArrayList<Method>();
             ArrayList<Object> ints = new ArrayList<Object>();
-            for (Class ic : ics) {
+            for (Class<?> ic : ics) {
                 Method[] ims = getInterceptorMethods(ic);
                 for (Method m : ims) {
                     chain.add(m);
@@ -84,14 +85,13 @@ public class EjbInterceptorHandler implements InvocationHandler {
         return entry;
     }
 
-    @SuppressWarnings("unchecked")
-    private static void getInterceptorClasses(ArrayList<Class> list, Class clazz) {
+    private static void getInterceptorClasses(ArrayList<Class<?>> list, Class<?> clazz) {
         if (clazz == Object.class) { return; }
         if (clazz.getAnnotation(ExcludeDefaultInterceptors.class) != null) { throw new UnsupportedOperationException("TODO"); }
         if (clazz.getAnnotation(ExcludeClassInterceptors.class) != null) { throw new UnsupportedOperationException("TODO"); }
 
         getInterceptorClasses(list, clazz.getSuperclass());
-        Class[] cs = getDeclaredInterceptorClasses(clazz);
+        Class<?>[] cs = getDeclaredInterceptorClasses(clazz);
         if (cs == null || cs.length == 0) { return; }
         list.addAll(Arrays.asList(cs));
     }
@@ -104,7 +104,7 @@ public class EjbInterceptorHandler implements InvocationHandler {
         return i.value();
     }
 
-    private static Method[] getInterceptorMethods(Class interceptorClass) {
+    private static Method[] getInterceptorMethods(Class<?> interceptorClass) {
         Method[] all = interceptorClass.getMethods();
         ArrayList<Method> l = new ArrayList<Method>();
         for(Method m: all) {
@@ -203,8 +203,8 @@ public class EjbInterceptorHandler implements InvocationHandler {
     private static final Comparator<Method> INTERCEPTOR_METHOD_COMPARATOR = new Comparator<Method>() {
 
             public int compare(Method o1, Method o2) {
-                Class c1 = o1.getDeclaringClass();
-                Class c2 = o2.getDeclaringClass();
+                Class<?> c1 = o1.getDeclaringClass();
+                Class<?> c2 = o2.getDeclaringClass();
                 if (c1 == c2) {
                     // sub-order by name for some predicability.
                     return o1.getName().compareTo(o2.getName());

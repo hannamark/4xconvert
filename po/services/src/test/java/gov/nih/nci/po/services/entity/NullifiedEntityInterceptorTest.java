@@ -100,7 +100,6 @@ import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptorTest.TestInvocationContext;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
-import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -132,14 +131,14 @@ public class NullifiedEntityInterceptorTest {
         oesb.setOrganizationServiceBean(svcLocal);
         testContext.target = oesb;
 
-        
+
         Organization o1 = createOrganization(-1L, EntityStatus.PENDING, null);
-        testContext.returnValue = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o1);
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(o1);
         assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
-        
-        
+
+
         Organization o2 = createOrganization(1L, EntityStatus.NULLIFIED, o1);
-        testContext.returnValue = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(o2);
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(o2);
         svcLocal.getById = o2;
         try {
             interceptor.checkForNullified(testContext);
@@ -161,19 +160,19 @@ public class NullifiedEntityInterceptorTest {
         oesb.setPersonServiceBean(svcLocal);
         testContext.target = oesb;
 
-        
+
         Person p1 = new Person();
         p1.setId(-1L);
         p1.setStatusCode(EntityStatus.PENDING);
-        testContext.returnValue = (PersonDTO) PoXsnapshotHelper.createSnapshot(p1);
-        
-        
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(p1);
+
+
         assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
         Person p2 = new Person();
         p2.setStatusCode(EntityStatus.NULLIFIED);
         p2.setId(1L);
         p2.setDuplicateOf(p1);
-        testContext.returnValue = (PersonDTO) PoXsnapshotHelper.createSnapshot(p2);
+        testContext.returnValue = PoXsnapshotHelper.createSnapshot(p2);
         try {
             svcLocal.getById = p2;
             interceptor.checkForNullified(testContext);
@@ -206,7 +205,7 @@ public class NullifiedEntityInterceptorTest {
         oesb.setPersonServiceBean(svcLocal);
         testContext.target = oesb;
 
-        
+
         Person p1 = new Person();
         p1.setId(-1L);
         p1.setStatusCode(EntityStatus.PENDING);
@@ -214,8 +213,8 @@ public class NullifiedEntityInterceptorTest {
         list.add((PersonDTO) PoXsnapshotHelper.createSnapshot(p1));
         testContext.returnValue = list;
         assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
-        
-        
+
+
         Person p2 = new Person();
         p2.setStatusCode(EntityStatus.NULLIFIED);
         p2.setId(1L);
@@ -244,14 +243,14 @@ public class NullifiedEntityInterceptorTest {
         oesb.setOrganizationServiceBean(svcLocal);
         testContext.target = oesb;
 
-        
+
         Organization o1 = createOrganization(-1L, EntityStatus.PENDING, null);
         ArrayList<PoDto> list = new ArrayList<PoDto>();
         list.add(PoXsnapshotHelper.createSnapshot(o1));
         testContext.returnValue = list;
         assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
 
-        
+
         Organization o2  = createOrganization(1L, EntityStatus.NULLIFIED, o1);
         list = new ArrayList<PoDto>();
         PoDto o2dto = PoXsnapshotHelper.createSnapshot(o2);

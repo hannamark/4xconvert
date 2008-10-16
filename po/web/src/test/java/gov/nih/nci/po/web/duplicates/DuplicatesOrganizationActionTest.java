@@ -11,14 +11,14 @@ import gov.nih.nci.po.web.AbstractPoTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Action;
 
 public class DuplicatesOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void search() {
 
-        assertEquals(ActionSupport.SUCCESS, action.search());
+        assertEquals(Action.SUCCESS, action.search());
     }
 
     private DuplicatesOrganizationAction action;
@@ -54,7 +54,7 @@ public class DuplicatesOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testStart() {
-        assertEquals(DuplicatesOrganizationAction.SUCCESS, action.start());
+        assertEquals(Action.SUCCESS, action.start());
     }
 
     @Test

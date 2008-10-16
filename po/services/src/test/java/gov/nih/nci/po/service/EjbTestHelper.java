@@ -86,7 +86,6 @@ import gov.nih.nci.po.util.EjbInterceptorHandler;
 import gov.nih.nci.po.util.RemoteBeanHandler;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
-import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
@@ -107,7 +106,6 @@ import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationService
 import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceBean;
 import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.QualifiedEntityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;

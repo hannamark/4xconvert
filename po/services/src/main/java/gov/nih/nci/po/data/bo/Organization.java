@@ -223,11 +223,10 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
-   
+
     /**
      * @param org the organization for which this is a duplicate
      */
-    @SuppressWarnings("unused")
     public void setDuplicateOf(Organization org) {
         this.duplicateOf = org;
     }
