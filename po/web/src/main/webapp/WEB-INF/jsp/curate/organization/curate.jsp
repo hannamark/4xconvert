@@ -73,14 +73,14 @@
 			       headerKey="" headerValue="--Select a Status--" 
 			       onchange="handleDuplicateOf();"
 			       />           
-        	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus.NULLIFIED@">style="display: none"</s:if>>
+        	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
 	                    <div style="float:right;">
 	                        <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl">
 	                            <c:param name="source.id" value="${organization.id}"/>
 	                        </c:url>
 	                        <po:buttonRow>
-	                        <po:button href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Duplicate"/>
+	                        <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Duplicate"/>
 	                        </po:buttonRow>
                         </div>
                         
@@ -95,7 +95,7 @@
 	                    </div>
 	                    
 	                </div>
-				    <s:hidden key="organization.duplicateOf.id" id="curateOrgForm.organization.duplicateOf.id"/>
+				    <s:hidden key="organization.duplicateOf" id="curateOrgForm.organization.duplicateOf.id"/>
 	
 			    </div>
 				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
@@ -112,6 +112,7 @@
 		        <div class="clear"></div>
 		    </div>
 		</div>
+	</s:form>
 		
 		<div class="boxouter_nobottom">
 		<h2>Contact Information</h2>
@@ -120,7 +121,6 @@
                 <%@ include file="../../contactable/contacts.jsp" %>    		
 		    </div>
 		</div>
-	</s:form>
     </div>
 </div>
 

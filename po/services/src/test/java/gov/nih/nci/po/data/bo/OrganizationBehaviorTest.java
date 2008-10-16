@@ -1,8 +1,5 @@
 package gov.nih.nci.po.data.bo;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-
 import org.junit.Test;
 
 public class OrganizationBehaviorTest {
@@ -16,15 +13,4 @@ public class OrganizationBehaviorTest {
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "statusCode");
     }
 
-    @Test
-    public void testDuplicateBehavior() {
-        Organization org = new Organization();
-        Organization dupOrg = new Organization();
-        org.setStatusCode(EntityStatus.ACTIVE);
-        org.setDuplicateOfOrg(dupOrg);
-        assertNull(org.getDuplicateOf());
-        org.setStatusCode(EntityStatus.NULLIFIED);
-        org.setDuplicateOfOrg(dupOrg);
-        assertSame(dupOrg, org.getDuplicateOf());
-    }
 }

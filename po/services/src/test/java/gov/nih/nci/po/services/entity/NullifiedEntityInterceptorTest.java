@@ -172,7 +172,7 @@ public class NullifiedEntityInterceptorTest {
         Person p2 = new Person();
         p2.setStatusCode(EntityStatus.NULLIFIED);
         p2.setId(1L);
-        p2.setDuplicateOfPerson(p1);
+        p2.setDuplicateOf(p1);
         testContext.returnValue = (PersonDTO) PoXsnapshotHelper.createSnapshot(p2);
         try {
             svcLocal.getById = p2;
@@ -219,7 +219,7 @@ public class NullifiedEntityInterceptorTest {
         Person p2 = new Person();
         p2.setStatusCode(EntityStatus.NULLIFIED);
         p2.setId(1L);
-        p2.setDuplicateOfPerson(p1);
+        p2.setDuplicateOf(p1);
         list = new ArrayList<PersonDTO>();
         PersonDTO p2dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(p2);
         list.add(p2dto);
@@ -273,7 +273,7 @@ public class NullifiedEntityInterceptorTest {
         Organization o1 = new Organization();
         o1.setId(id);
         o1.setStatusCode(entityStatus);
-        o1.setDuplicateOfOrg(duplicateOf);
+        o1.setDuplicateOf(duplicateOf);
         return o1;
     }
 

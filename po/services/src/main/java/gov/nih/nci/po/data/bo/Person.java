@@ -241,18 +241,8 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     /**
      * @param per the Person for which this is a duplicate
      */
-    public void setDuplicateOfPerson(Person per) {
-        if (this.getStatusCode().equals(EntityStatus.NULLIFIED)
-                || this.getStatusCode().equals(EntityStatus.INACTIVE)) {
-            this.duplicateOf = per;
-        }
-    }
-
-    /**
-     * @param per the Person for which this is a duplicate
-     */
     @SuppressWarnings("unused")
-    private void setDuplicateOf(Person per) {
+    public void setDuplicateOf(Person per) {
         this.duplicateOf = per;
     }
 

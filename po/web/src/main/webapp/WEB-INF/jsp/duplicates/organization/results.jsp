@@ -29,7 +29,7 @@
         </display:column>
         <display:column titleKey="th.action" class="action">
             <po:buttonRow>
-                <po:button href="javascript://nop/" onclick="markAsDuplicate('${row.id}');" style="reject" text="Mark As Duplicate" />
+                <po:button id="mark_as_dup_${row.id}"href="javascript://nop/" onclick="markAsDuplicate('${row.id}');" style="reject" text="Mark As Duplicate" />
             </po:buttonRow>
         </display:column>
     </display:table>

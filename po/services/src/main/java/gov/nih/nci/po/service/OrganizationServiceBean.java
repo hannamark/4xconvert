@@ -89,6 +89,8 @@ import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -98,7 +100,7 @@ import javax.jms.JMSException;
 import org.hibernate.Session;
 
 /**
- *
+ * 
  * @author gax
  */
 @Stateless
@@ -117,12 +119,18 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
 
     /**
      * {@inheritDoc}
-     * @throws JMSException
+     * @throws EntityValidationException 
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void curate(Organization org) throws JMSException {
+    public void curate(Organization org) throws JMSException, EntityValidationException {
         final Session s = PoHibernateUtil.getCurrentSession();
         Organization o = loadAndMerge(org, s);
+        if (!EntityStatus.NULLIFIED.equals(o.getStatusCode()) && o.getDuplicateOf() != null) {
+            Map<String, String[]> errors = new HashMap<String, String[]>();
+            errors.put("duplicateOf", new String[] {"Duplicates may only be specified when status is "
+                    + EntityStatus.NULLIFIED });
+            throw new EntityValidationException(errors);
+        }
         EntityUpdateCallback<Organization> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<Organization>() {
             public void entityUpdate(Organization target) {
                 s.update(target);

@@ -65,8 +65,8 @@ public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
         return sb.append('\'').toString();
     }
 
-    protected void clickAndWait(String linkOrButton) {
-        selenium.click(linkOrButton);
+    protected void clickAndWait(String locator) {
+        selenium.click(locator);
         waitForPageToLoad();
     }
 }

@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
@@ -297,6 +298,69 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(1, result.getUrl().size());
 
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+    }
+    
+    @Test
+    public void curateToNullifiedWithDuplicateOf() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        long id = createOrganization(o);
+        long id2 = createOrganization(o2);
+        o = getOrgServiceBean().getById(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        o2 = getOrgServiceBean().getById(id2);
+        o.setDuplicateOf(o2);
+        getOrgServiceBean().curate(o);
+        
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
+        assertEquals(1, result.getEmail().size());
+        assertEquals(1, result.getFax().size());
+        assertEquals(1, result.getPhone().size());
+        assertEquals(1, result.getTty().size());
+        assertEquals(1, result.getUrl().size());
+        
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+    }
+    
+    @Test
+    public void curateToNotNullifiedWithDuplicateOf() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        long id = createOrganization(o);
+        long id2 = createOrganization(o2);
+        o = getOrgServiceBean().getById(id);
+        //remove elements from the different CollectionType properties to ensure proper persistence
+        o.getEmail().remove(0);
+        o.getFax().remove(0);
+        o.getPhone().remove(0);
+        o.getTty().remove(0);
+        o.getUrl().remove(0);
+        
+        verifyCurateThrowsException(o, id2, EntityStatus.ACTIVE);
+        verifyCurateThrowsException(o, id2, EntityStatus.INACTIVE);
+        verifyCurateThrowsException(o, id2, EntityStatus.PENDING);
+    }
+
+    private void verifyCurateThrowsException(Organization orgToBeCurated, long dupId, EntityStatus entityStatus) throws JMSException {
+        Organization o2;
+        orgToBeCurated.setStatusCode(entityStatus);
+        o2 = getOrgServiceBean().getById(dupId);
+        orgToBeCurated.setDuplicateOf(o2);
+        try {
+            getOrgServiceBean().curate(orgToBeCurated);
+            fail();
+        } catch (EntityValidationException e) {
+            assertEquals("duplicateOf=[Duplicates may only be specified when status is NULLIFIED]", e.getErrorMessages());
+        }
+        MessageProducerTest.assertNoMessageCreated(orgToBeCurated, getOrgServiceBean());
     }
 
     @Test

@@ -20,4 +20,8 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         login("curator", "pass");
     }
 
+    protected boolean isLoggedIn() {
+        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
+    }
+    
 }

@@ -35,7 +35,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     public void testCurateNewOrg() throws Exception {
-        // create a new org via remote API.
+        /* create a new org via remote API. */
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
         String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W', 10);
@@ -62,101 +62,6 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyUrl();
 
         saveAsActive(id);
-    }
-
-    public void testCurateNewOrgThenCurateAfterRemoteUpdateToActive() throws Exception {
-        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
-
-        saveAsActive(id);
-    }
-
-    public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullify() throws Exception {
-        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
-
-        saveAsNullified(id);
-
-
-        /* Verify PO-469 */
-        try {
-            getOrgService().getOrganization(id);
-            fail("Expected NullifiedEntityException for Ii.extension="+id.getExtension());
-        } catch (NullifiedEntityException e) {
-            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
-            assertEquals(1, nullifiedEntities.keySet().size());
-            assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
-        }
-    }
-
-    public void testCurateNewOrgThenCurateAfterRemoteUpdateToInactive() throws Exception {
-        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
-
-        saveAsInactive(id);
-    }
-
-    private Ii curateNewOrgThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException {
-        // create a new org via remote API.
-        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
-        String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X',10);
-        String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W',10);
-        Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
-
-        loginAsCurator();
-
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("link=Organization");
-        waitForPageToLoad();
-        // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
-        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
-        assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
-        assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
-
-        verifyPostalAddress();
-
-        verifyEmail();
-        verifyPhone();
-        verifyFax();
-        verifyTty();
-        verifyUrl();
-
-        saveAsActive(id);
-
-        OrganizationDTO proposedState = remoteGetOrganization(id);
-        String newCrDescription = "a realistic description";
-        proposedState.setDescription(RemoteApiUtils.convertToSt(newCrDescription));
-        remoteUpdate(proposedState);
-
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("link=Organization");
-        waitForPageToLoad();
-
-        // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
-
-        String crDescription = selenium.getText("wwctrl_curateOrgCrForm_cr_description");
-        assertEquals(crDescription, crDescription);
-        selenium.type("curateOrgForm_organization_description", crDescription);
-        return id;
-    }
-
-    private void saveAsActive(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=ACTIVE");
-        clickAndWait("//a[@id='save_button']/span/span");
-        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
-    }
-
-    private void saveAsInactive(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=INACTIVE");
-        clickAndWait("//a[@id='save_button']/span/span");
-        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
-    }
-
-    private void saveAsNullified(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
-        clickAndWait("//a[@id='save_button']/span/span");
-        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     public void testCurateOrgWithCRs() throws Exception {
@@ -205,6 +110,149 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyUrl();
 
         saveAsActive(id);
+    }
+    
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToActive() throws Exception {
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+
+        saveAsActive(id);
+    }
+
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullify() throws Exception {
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+
+        saveAsNullified(id);
+
+        /* Verify PO-469 */
+        try {
+            getOrgService().getOrganization(id);
+            fail("Expected NullifiedEntityException for Ii.extension=" + id.getExtension());
+        } catch (NullifiedEntityException e) {
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            assertEquals(1, nullifiedEntities.keySet().size());
+            assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
+        }
+    }
+
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithDuplicateId() throws Exception {
+        /* create an org to serve as a duplicate */
+        Ii dupId = createNewOrgThenCurateAsActive();
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+
+        selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
+        /* wait for in-browser js to execute via select's onchange event */
+        Thread.sleep(1000);
+        selenium.isVisible("//div[@id='duplicateOfDiv']");
+        clickAndWait("//a[@id='select_duplicate']/span/span");
+        selenium.selectFrame("popupFrame");
+
+        selenium.type("duplicateOrganizationForm_criteria_organization_name", "YY");
+        /*search for dups*/
+        selenium.click("//a[@id='submitDuplicateOrganizationForm']/span/span");
+        /*wait for results to load*/
+        waitForElementById("mark_as_dup_" + dupId.getExtension(), 30);
+        /*select record to use at duplicate*/
+        clickAndWait("//a[@id='mark_as_dup_" + dupId.getExtension() + "']/span/span");
+        
+        selenium.selectFrame("relative=parent");
+
+        saveAsNullified(id);
+
+        /* Verify PO-469 */
+        try {
+            getOrgService().getOrganization(id);
+            fail("Expected NullifiedEntityException for Ii.extension=" + id.getExtension());
+        } catch (NullifiedEntityException e) {
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            assertEquals(1, nullifiedEntities.keySet().size());
+            assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
+        }
+    }
+
+    public void testCurateNewOrgThenCurateAfterRemoteUpdateToInactive() throws Exception {
+        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+
+        saveAsInactive(id);
+    }
+
+    private Ii createNewOrgThenCurateAsActive() throws EntityValidationException {
+        // create a new org via remote API.
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
+        String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W', 10);
+        Ii id = remoteCreateAndCatalog(create(name, abbrv, desc));
+
+        if (!isLoggedIn()) {
+            loginAsCurator();
+        }
+
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("link=Organization");
+        waitForPageToLoad();
+        // click on item to curate
+        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
+        waitForPageToLoad();
+        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
+        assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
+        assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
+
+        verifyPostalAddress();
+
+        verifyEmail();
+        verifyPhone();
+        verifyFax();
+        verifyTty();
+        verifyUrl();
+
+        saveAsActive(id);
+        return id;
+    }
+
+    private Ii curateNewOrgThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException {
+        Ii id = createNewOrgThenCurateAsActive();
+
+        OrganizationDTO proposedState = remoteGetOrganization(id);
+        String newCrDescription = "a realistic description";
+        proposedState.setDescription(RemoteApiUtils.convertToSt(newCrDescription));
+        remoteUpdate(proposedState);
+
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("link=Organization");
+        waitForPageToLoad();
+
+        // click on item to curate
+        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
+        waitForPageToLoad();
+
+        String crDescription = selenium.getText("wwctrl_curateOrgCrForm_cr_description");
+        assertEquals(crDescription, crDescription);
+        selenium.type("curateOrgForm_organization_description", crDescription);
+
+        // method exits on certain page
+        verifyEquals("PO: Persons and Organizations - Organization Details - Comparison", selenium.getTitle());
+
+        return id;
+    }
+
+    private void saveAsActive(Ii id) {
+        selenium.select("curateOrgForm_organization_statusCode", "label=ACTIVE");
+        clickAndWait("//a[@id='save_button']/span/span");
+        verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
+        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
+    }
+
+    private void saveAsInactive(Ii id) {
+        selenium.select("curateOrgForm_organization_statusCode", "label=INACTIVE");
+        clickAndWait("//a[@id='save_button']/span/span");
+        verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
+        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
+    }
+
+    private void saveAsNullified(Ii id) {
+        selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
+        clickAndWait("//a[@id='save_button']/span/span");
+        verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
+        assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void verifyPostalAddress() {

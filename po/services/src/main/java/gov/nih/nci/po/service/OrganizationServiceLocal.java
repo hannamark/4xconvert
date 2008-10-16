@@ -125,7 +125,8 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @param curatedOrg method to curate/accept Organization's w/ EntityStatus.NEW and transition to
      *            EntityStatus.CURATED
      * @throws JMSException if problem occurred publishing the announcement message for updates.
+     * @throws EntityValidationException if a validation error occurs
      */
-    void curate(Organization curatedOrg) throws JMSException;
+    void curate(Organization curatedOrg) throws JMSException, EntityValidationException;
 
 }

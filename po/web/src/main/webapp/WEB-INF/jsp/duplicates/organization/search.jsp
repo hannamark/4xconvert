@@ -5,13 +5,8 @@
     <script type="text/javascript">
         var returnVal;
 	    function markAsDuplicate(id) {
-		     var text = '<s:text name="curation.reject.mark.as.duplicate.confirmation"/>';
-	    	 var result = confirm(text);
-	    	 if (result == true)
-	    	 {
-	    		 returnVal = id;
-	             window.top.hidePopWin(true);
-	    	 }
+    		 returnVal = id;
+             window.top.hidePopWin(true);
 	    }
 	</script>
 </head>
