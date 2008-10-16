@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -58,6 +59,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private Ii spIdIi;
     private String currentTrialStatus;
     private String statusDate;
+    private String statusReason;
     private String startDate;
     private String completionDate;
     private String startDateType;
@@ -99,17 +101,19 @@ public class StudyOverallStatusAction extends ActionSupport implements
      */
     public String update() throws Exception {
         clearErrorsAndMessages();
-        enforceBusinessRules();
+        
+        boolean statusChanged = enforceBusinessRules();
         if (hasActionErrors()) {
             return Action.SUCCESS;
         }
         
-        insertStudyOverallStatus();
+        if (statusChanged) {
+            insertStudyOverallStatus();
+        }
         if (!hasActionErrors()) {
            updateStudyProtocol();
         }
         if (!hasActionErrors()) {
-            //addActionError("Update succeeded.");
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         }
         loadForm();
@@ -130,26 +134,28 @@ public class StudyOverallStatusAction extends ActionSupport implements
     }
     
     private void insertStudyOverallStatus() {
-        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setIi(IiConverter.convertToIi((Long) null));
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
-        dto.setStudyProtocolIi(spIdIi);
-        
-        try {
-            sosService.create(dto);            
-            // set the current date and status to the session
-            StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-            .getRequest().getSession()
-            .getAttribute(Constants.TRIAL_SUMMARY);
-            spDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
-            spDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
-            // set the nee object back to session
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.TRIAL_SUMMARY, spDTO);
-
-        } catch (PAException e) {
-            addActionError(e.getMessage());
+        if (currentTrialStatus != null) {
+            StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+            dto.setIi(IiConverter.convertToIi((Long) null));
+            dto.setReasonText(StConverter.convertToSt(this.getStatusReason()));
+            dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
+            dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
+            dto.setStudyProtocolIi(spIdIi);
+            
+            try {
+                sosService.create(dto);            
+                // set the current date and status to the session
+                StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+                .getRequest().getSession()
+                .getAttribute(Constants.TRIAL_SUMMARY);
+                spDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
+                spDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
+                // set the nee object back to session
+                ServletActionContext.getRequest().getSession().setAttribute(
+                        Constants.TRIAL_SUMMARY, spDTO);
+            } catch (PAException e) {
+                addActionError(e.getMessage());
+            }
         }
     }
     
@@ -209,39 +215,69 @@ public class StudyOverallStatusAction extends ActionSupport implements
             } else {
                 setStatusDate(null);
             }
+            setStatusReason(StConverter.convertToString(sosDto.getReasonText()));
         } else {
             setCurrentTrialStatus(null);
             setStatusDate(null);
+            setStatusReason(null);
         }
     }
 
     /**
      * This method is used to enforce the business rules which are form specific or
      * based on an interaction between services.
+     * @return Whether the study status has changed.
      */
-    private void enforceBusinessRules() {
-        // check all fields are not null unless status is withdrawn
+    @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+    private boolean enforceBusinessRules() throws Exception {
         StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
-        if (newCode ==  null) {
-            addActionError("Current trial status must be set.");
+        
+        // enforce date rules related to status transitions
+        Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(statusDate);
+        Timestamp startTimestamp = PAUtil.dateStringToTimestamp(startDate);
+        Timestamp completionTimestamp = PAUtil.dateStringToTimestamp(completionDate);
+        StudyStatusCode oldCode = null;
+        Timestamp oldDate = null;
+        String oldReason = null;
+        List<StudyOverallStatusDTO> sosList = sosService.getCurrentByStudyProtocol(spIdIi);
+        if (!sosList.isEmpty()) {
+            oldCode = StudyStatusCode.getByCode(CdConverter.convertCdToString(sosList.get(0).getStatusCode()));
+            oldDate = TsConverter.convertToTimestamp(sosList.get(0).getStatusDate());
+            oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
         }
-        if (statusDate == null) {
-            addActionError("Current trial status date must be set.");
-        }
-        if (!StudyStatusCode.WITHDRAWN.equals(newCode)) {
-            if (startDate == null) {
-                addActionError("Trial start date must be set.");
+        if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
+            if (startTimestamp.equals(statusTimestamp)) {
+                addActionError("When transitioning from 'Approved' to 'Active' the trial start "
+                        + "date must be the same as the status date.");
             }
-            if (startDateType == null) {
-                addActionError("Trial start date type must be set.");
-            }
-            if (completionDate == null) {
-                addActionError("Primary completion date must be set.");
-            }
-            if (completionDateType == null) {
-                addActionError("Primary completion date type must be set.");
+            if (!startDateType.equals(actualString)) {
+                addActionError("When transitioning from 'Approved' to 'Active the trial start date must be 'Actual'.");
             }
         }
+        if (!StudyStatusCode.APPROVED.equals(newCode) && !StudyStatusCode.WITHDRAWN.equals(newCode)
+                && startDateType.equals(anticipatedString)) {
+            addActionError("Trial start date can be 'Anticipated' only if the status is "
+                        + "'Approved' or 'Withdrawn'.");
+        }
+        if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
+            if (completionDateType.equals(anticipatedString)) {
+                addActionError("Trial completion date can not be 'Anticipated' when the status is "
+                        + "'Complete' or 'Administratively Complete'.");
+            }
+            if (!statusTimestamp.equals(completionTimestamp)) {
+                addActionError("The trial completion date must be the same as the date when status "
+                        + "changed to 'Complete' or 'Administratively Complete'.");
+            }
+        } else {
+            if (!completionDateType.equals(anticipatedString)) {
+                addActionError("Trial completion date must be 'Anticipated' when the status is "
+                        + "not 'Complete' or 'Administratively Complete'.");
+            }
+        }
+        boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);
+        boolean dateChanged = (oldDate == null) ? (statusTimestamp != null) : !oldDate.equals(statusTimestamp);
+        boolean reasonChanged = (oldReason == null) ? (statusReason != null) : !oldReason.equals(statusReason);
+        return (codeChanged || dateChanged || reasonChanged);
     }
 
     /**
@@ -326,6 +362,20 @@ public class StudyOverallStatusAction extends ActionSupport implements
      */
     public void setStatusDate(String statusDate) {
         this.statusDate = PAUtil.normalizeDateString(statusDate);
+    }
+
+    /**
+     * @return the statusReason
+     */
+    public String getStatusReason() {
+        return statusReason;
+    }
+
+    /**
+     * @param statusReason the statusReason to set
+     */
+    public void setStatusReason(String statusReason) {
+        this.statusReason = statusReason;
     }
 
     /**
