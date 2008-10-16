@@ -16,7 +16,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="show_sql">true</property>
      
-		<!-- mapping classes -->
+        <!-- mapping classes -->
         <mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.InterventionalStudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.StudyOverallStatus" />
@@ -42,7 +42,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyParticipationContact" />
         <mapping class="gov.nih.nci.pa.domain.StudyParticipationContactTelecomAddress" />
         <mapping class="gov.nih.nci.pa.domain.Document" />
+        <mapping class="gov.nih.nci.pa.domain.StudyRecruitmentStatus" />
         <mapping class="gov.nih.nci.pa.domain.StratumGroup" />
-    	<mapping class="gov.nih.nci.pa.service.util.SessionEntry" />
+        <mapping class="gov.nih.nci.pa.service.util.SessionEntry" />
     </session-factory>
 </hibernate-configuration>
