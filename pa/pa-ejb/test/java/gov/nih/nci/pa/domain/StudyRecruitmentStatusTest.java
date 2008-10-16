@@ -5,7 +5,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -70,7 +70,7 @@ public class StudyRecruitmentStatusTest {
         StudyRecruitmentStatus create = new StudyRecruitmentStatus();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
-        create.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        create.setStatusCode(StudyRecruitmentStatusCode.RECRUITING_ACTIVE);
         create.setStatusDate(now);
         create.setUserLastUpdated("Abstractor");
         create.setDateLastUpdated(now);
