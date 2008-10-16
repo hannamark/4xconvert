@@ -22,7 +22,7 @@ public class StudyStatusCodeTest {
         assertFalse(StudyStatusCode.ACTIVE.canTransitionTo(null));
         
         cs = StudyStatusCode.ACTIVE;
-        assertTrue(cs.canTransitionTo(StudyStatusCode.ACTIVE));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.ACTIVE));
         assertTrue(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
         assertTrue(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
@@ -36,7 +36,7 @@ public class StudyStatusCodeTest {
         
         cs = StudyStatusCode.ADMINISTRATIVELY_COMPLETE;
         assertFalse(cs.canTransitionTo(StudyStatusCode.ACTIVE));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
@@ -50,7 +50,7 @@ public class StudyStatusCodeTest {
         cs = StudyStatusCode.APPROVED;
         assertTrue(cs.canTransitionTo(StudyStatusCode.ACTIVE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.APPROVED));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.COMPLETE));
@@ -64,7 +64,7 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.ACTIVE));
         assertTrue(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertTrue(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
@@ -78,7 +78,7 @@ public class StudyStatusCodeTest {
         assertTrue(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertTrue(cs.canTransitionTo(StudyStatusCode.COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
@@ -92,7 +92,7 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.COMPLETE));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
@@ -106,7 +106,7 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.COMPLETE));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
@@ -120,7 +120,7 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.COMPLETE));
         assertTrue(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.WITHDRAWN));
@@ -134,7 +134,7 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
         assertTrue(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.WITHDRAWN));
         
@@ -143,7 +143,7 @@ public class StudyStatusCodeTest {
         assertTrue(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.APPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertTrue(cs.canTransitionTo(StudyStatusCode.COMPLETE));
         assertFalse(cs.canTransitionTo(StudyStatusCode.DISAPPROVED));
         assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
@@ -162,7 +162,7 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.IN_REVIEW));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
-        assertTrue(cs.canTransitionTo(StudyStatusCode.WITHDRAWN));
+        assertFalse(cs.canTransitionTo(StudyStatusCode.WITHDRAWN));
     }
 
 }
