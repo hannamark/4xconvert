@@ -93,6 +93,7 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
@@ -109,6 +110,7 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
@@ -299,5 +301,24 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
 
     protected void verifyAlterations(CR cr) {
         assertEquals(RoleStatus.PENDING, cr.getStatus());
+    }
+
+    protected void testNullifiedRoleNotFoundInSearch(Ii id2,
+            T searchCriteria, Class clazz) throws NullifiedRoleException {
+        searchCriteria.setIdentifier(id2);
+        List<T> results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+
+        Correlation role = (Correlation) PoHibernateUtil.getCurrentSession().get(clazz,
+                Long.parseLong(id2.getExtension()));
+        role.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(role);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        searchCriteria.setIdentifier(id2);
+
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
     }
 }

@@ -28,6 +28,22 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     @Test
+    public void verifyNullifiedEntityNotReturned() throws Exception {
+        long id = createPerson();
+
+        personSc.setFirstName("%Nam%");
+        assertEquals(1, getPersonServiceBean().count(sc));
+
+        Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, id);
+        p.setStatusCode(EntityStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(p);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        assertEquals(0, getPersonServiceBean().count(sc));
+    }
+
+    @Test
     public void findByFirstName() throws EntityValidationException {
         createPerson();
         createPerson();
@@ -45,7 +61,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     public void findByEmail() throws EntityValidationException {
         /* create a person with two email addresses */
         createPerson();
-        
+
         personSc.getEmail().add(new Email("abc"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
@@ -54,7 +70,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         personSc.getEmail().add(new Email("def"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
-        
+
         initData2();
         personSc.getEmail().add(new Email("ghi"));
         assertEquals(0, getPersonServiceBean().count(sc));
@@ -286,7 +302,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         createPeopleWithAddresses();
 
         personSc.setPostalAddress(new Address());
-        
+
         personSc.getPostalAddress().setCountry(getDefaultCountry());
         assertEquals(3, getPersonServiceBean().count(sc));
         assertEquals(3, getPersonServiceBean().search(sc).size());
@@ -325,10 +341,6 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         PoHibernateUtil.getCurrentSession().update(p);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-
-        personSc.setStatusCode(EntityStatus.NULLIFIED);
-        assertEquals(1, getPersonServiceBean().count(sc));
-        assertEquals(1, getPersonServiceBean().search(sc).size());
 
         personSc.setStatusCode(EntityStatus.PENDING);
         assertEquals(2, getPersonServiceBean().count(sc));

@@ -92,6 +92,7 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.QualifiedEntityCR;
 import gov.nih.nci.po.data.bo.QualifiedEntityType;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -304,5 +305,7 @@ public class QualifiedEntityRemoteServiceTest extends
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+
+        testNullifiedRoleNotFoundInSearch(id2, searchCriteria, QualifiedEntity.class);
     }
 }

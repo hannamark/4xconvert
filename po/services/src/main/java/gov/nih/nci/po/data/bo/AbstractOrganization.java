@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +120,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 @MappedSuperclass
 @SuppressWarnings({ "PMD.UnusedPrivateMethod" })
 public abstract class AbstractOrganization implements PersistentObject, Contactable {
+    private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 100;
     private Long id;
@@ -145,6 +147,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }
@@ -164,6 +167,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      */
     @NotEmpty
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getName() {
         return name;
     }
@@ -182,6 +186,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getAbbreviatedName() {
         return abbreviatedName;
     }
@@ -200,6 +205,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getDescription() {
         return this.description;
     }
@@ -222,6 +228,8 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @JoinColumn(name = "postal_address_id")
     @ForeignKey(name = "ORG_POSTAL_ADDRESS_FK")
     @Valid
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_START)
     public Address getPostalAddress() {
         return postalAddress;
     }
@@ -245,6 +253,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return email list
      */
     @Transient
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<Email> getEmail() {
         return email;
     }
@@ -261,6 +270,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return fax list
      */
     @Transient
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getFax() {
         return fax;
     }
@@ -278,6 +288,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return phone list
      */
     @Transient
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getPhone() {
         return phone;
     }
@@ -294,6 +305,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return list of urls
      */
     @Transient
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<URL> getUrl() {
         return url;
     }
@@ -310,6 +322,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return list of tty phone numbers.
      */
     @Transient
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getTty() {
         return tty;
     }
@@ -323,6 +336,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "STATUS")
+    @Searchable
     public EntityStatus getStatusCode() {
         return this.statusCode;
     }

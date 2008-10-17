@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.ISOUtils;
@@ -275,5 +276,7 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
+
+        testNullifiedRoleNotFoundInSearch(id2, searchCriteria, HealthCareFacility.class);
     }
 }

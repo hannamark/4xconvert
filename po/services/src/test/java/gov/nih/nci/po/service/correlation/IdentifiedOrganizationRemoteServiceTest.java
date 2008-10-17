@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
 import gov.nih.nci.po.data.bo.Organization;
@@ -335,5 +336,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
+
+        testNullifiedRoleNotFoundInSearch(correlation1Id, searchCriteria, IdentifiedOrganization.class);
     }
 }

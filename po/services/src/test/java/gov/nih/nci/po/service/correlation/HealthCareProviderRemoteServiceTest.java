@@ -85,6 +85,7 @@ package gov.nih.nci.po.service.correlation;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -195,5 +196,8 @@ public class HealthCareProviderRemoteServiceTest
         searchCriteria.getCertificateLicenseText().setValue("text 2dfjsd");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());
+
+        searchCriteria.setCertificateLicenseText(null);
+        testNullifiedRoleNotFoundInSearch(id2, searchCriteria, HealthCareProvider.class);
     }
 }

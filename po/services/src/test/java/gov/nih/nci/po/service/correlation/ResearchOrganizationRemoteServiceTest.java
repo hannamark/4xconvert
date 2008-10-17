@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -281,5 +282,8 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         searchCriteria.setType(type);
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
+
+        searchCriteria.setType(null);
+        testNullifiedRoleNotFoundInSearch(correlation2Id, searchCriteria, ResearchOrganization.class);
     }
 }

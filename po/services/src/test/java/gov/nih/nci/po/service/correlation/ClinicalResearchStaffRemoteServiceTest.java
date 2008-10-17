@@ -87,6 +87,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -203,6 +204,7 @@ public class ClinicalResearchStaffRemoteServiceTest
     @Override
     protected void testSearchOnSubClassSpecificFields(ClinicalResearchStaffDTO correlation1, Ii id2,
             ClinicalResearchStaffDTO searchCriteria) throws NullifiedRoleException {
-        // no fields to handle
+
+        testNullifiedRoleNotFoundInSearch(id2, searchCriteria, ClinicalResearchStaff.class);
     }
 }

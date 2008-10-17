@@ -84,6 +84,10 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
+import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.Curatable;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AbstractSearchCriteria;
 
 import java.lang.reflect.InvocationTargetException;
@@ -105,7 +109,8 @@ import org.hibernate.Session;
  */
 public final class SearchableUtils {
     private static final Logger LOG = Logger.getLogger(SearchableUtils.class);
-    
+    private static final String NULLIFIED_STATUS_PARAM = "nullifiedStatusParam";
+
     /**
      * Callback interface.
      */
@@ -130,9 +135,10 @@ public final class SearchableUtils {
     /**
      * @param obj object to inspect
      * @param isCountOnly do a count query
+     * @param disallowNullified disallow nullified objects
      * @return query object
      */
-    public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly) {
+    public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly, boolean disallowNullified) {
         final StringBuffer selectClause = new StringBuffer(AbstractSearchCriteria.SELECT);
         final StringBuffer whereClause = new StringBuffer();
         final Map<String, Object> params = new HashMap<String, Object>();
@@ -145,6 +151,8 @@ public final class SearchableUtils {
         AnnotationCallback ac = new SearchCallback(whereClause, selectClause, params);
         SearchableUtils.iterateAnnotatedMethods(obj, ac);
 
+        handleNullifiedStatus(obj, disallowNullified, whereClause, params);
+
         Session session = PoHibernateUtil.getCurrentSession();
         Query q = session.createQuery(selectClause.append(whereClause).toString());
         if (LOG.isDebugEnabled()) {
@@ -152,6 +160,17 @@ public final class SearchableUtils {
         }
         setQueryParams(params, q);
         return q;
+    }
+
+    private static void handleNullifiedStatus(final Object obj, boolean disallowNullified,
+            final StringBuffer whereClause, final Map<String, Object> params) {
+        if (disallowNullified && obj instanceof Curatable) {
+            whereClause.append(" and obj.statusCode != :" + NULLIFIED_STATUS_PARAM);
+            params.put(NULLIFIED_STATUS_PARAM, EntityStatus.NULLIFIED);
+        } else if (disallowNullified && obj instanceof Correlation) {
+            whereClause.append(" and obj.status != :" + NULLIFIED_STATUS_PARAM);
+            params.put(NULLIFIED_STATUS_PARAM, RoleStatus.NULLIFIED);
+        }
     }
 
     private static void setQueryParams(final Map<String, Object> params, Query q) {
