@@ -38,4 +38,7 @@ public class Constants {
 
     /** Trial Overall Status. */
     public static final String TRIAL_OVERALL_STATUS = "trialOverallStatus";
+    
+    /** Study Participation. */
+    public static final String STUDY_PARTICIPATION = "studyParticipation";
 }
