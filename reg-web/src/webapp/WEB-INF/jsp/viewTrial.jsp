@@ -47,6 +47,7 @@
                     </label>
                 </td>
                 <td class="value">
+                    <c:out value="${sessionScope.studyParticipation.localProtocolIdentifier }"/> 
                 </td>
             </tr>
             <tr>     
