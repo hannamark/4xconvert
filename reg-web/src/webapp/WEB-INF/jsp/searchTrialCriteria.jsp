@@ -79,7 +79,7 @@ function handleAction(){
                 </td>
                 <s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
                 <td>
-                 	<s:select name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
+                 	<s:select name="criteria.leadOrganizationleId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
                  </td>
             </tr>  
         </table>
@@ -87,8 +87,8 @@ function handleAction(){
             <del class="btnwrapper">
                <ul class="btnrow">         
                 <li>           
-                <s:a href="#" cssClass="btn" onclick=""><span class="btn_img"><span class="">My Trial</span></span></s:a>       
-                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="Search">Search Trial</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick=""><span class="btn_img"><span class="">My Trials</span></span></s:a>       
+                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="Search">Search Trials</span></span></s:a>
                 <s:a href="#" cssClass="btn" onclick="resetValues ()"><span class="btn_img"><span class="Reset">Reset</span></span></s:a>  
                 </li>
                </ul>   
