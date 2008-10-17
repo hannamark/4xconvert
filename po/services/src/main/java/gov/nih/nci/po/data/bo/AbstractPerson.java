@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -169,6 +170,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = LONG_COL_LENGTH)
     @NotEmpty
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getFirstName() {
         return firstName;
     }
@@ -184,6 +186,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return the middleName
      */
     @Length(max = LONG_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getMiddleName() {
         return this.middleName;
     }
@@ -200,6 +203,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = LONG_COL_LENGTH)
     @NotEmpty
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getLastName() {
         return lastName;
     }
@@ -215,6 +219,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return name prefix
      */
     @Length(max = SHORT_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getPrefix() {
         return prefix;
     }
@@ -230,6 +235,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      * @return name suffix
      */
     @Length(max = SHORT_COL_LENGTH)
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getSuffix() {
         return suffix;
     }
@@ -252,6 +258,8 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @JoinColumn(name = "postal_address_id")
     @ForeignKey(name = "PER_POSTAL_ADDRESS_FK")
     @Valid
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_START)
     public Address getPostalAddress() {
         return postalAddress;
     }
@@ -358,6 +366,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "STATUS")
+    @Searchable
     public EntityStatus getStatusCode() {
         return this.statusCode;
     }

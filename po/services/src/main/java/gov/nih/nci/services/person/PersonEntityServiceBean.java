@@ -90,9 +90,9 @@ import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonCRServiceLocal;
-import gov.nih.nci.po.service.PersonEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -184,9 +184,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
     public List<PersonDTO> search(PersonDTO person) {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
-        PersonEntityServiceSearchCriteria criteria = new PersonEntityServiceSearchCriteria();
-        criteria.setPerson(personBO);
-        List<Person> listBOs = getPersonServiceBean().search(criteria);
+        List<Person> listBOs = getPersonServiceBean().search(new AnnotatedBeanSearchCriteria<Person>(personBO));
         return PoXsnapshotHelper.createSnapshotList(listBOs);
     }
 

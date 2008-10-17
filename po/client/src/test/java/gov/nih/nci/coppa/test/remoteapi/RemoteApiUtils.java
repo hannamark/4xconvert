@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -95,34 +96,42 @@ import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.services.PoIsoConstraintException;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Scott Miller
- *
+ * 
  */
 public class RemoteApiUtils {
 
     /**
-    *
-    * @param value a boolean to parse.
-    * @return an iso BL
-    */
-   public static Bl convertToBl(Boolean value) {
-       Bl iso = new Bl();
-       if (value == null) {
-           iso.setNullFlavor(NullFlavor.NI);
-       } else {
-           iso.setValue(value);
-       }
-       return iso;
-   }
-    
+     * 
+     * @param value a boolean to parse.
+     * @return an iso BL
+     */
+    public static Bl convertToBl(Boolean value) {
+        Bl iso = new Bl();
+        if (value == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            iso.setValue(value);
+        }
+        return iso;
+    }
+
     /**
      * @param value string to parse.
      * @return a 1 part EnOn.
@@ -140,7 +149,7 @@ public class RemoteApiUtils {
     }
 
     /**
-     *
+     * 
      * @param value a string to parse.
      * @return an iso ST
      */
@@ -186,10 +195,12 @@ public class RemoteApiUtils {
         setAdxpValue(l, stateOrProvince, AddressPartType.STA);
         setAdxpValue(l, postalCode, AddressPartType.ZIP);
 
-        Adxp x;
-        x = Adxp.createAddressPart(AddressPartType.CNT);
-        x.setCode(countryAlpha3);
-        l.add(x);
+        if (StringUtils.isNotBlank(countryAlpha3)) {
+            Adxp x;
+            x = Adxp.createAddressPart(AddressPartType.CNT);
+            x.setCode(countryAlpha3);
+            l.add(x);
+        }
         return iso;
     }
 
@@ -252,8 +263,8 @@ public class RemoteApiUtils {
      * @param suffix suffix
      * @return ISO EN Person Name
      */
-    public static final EnPn convertToEnPn(String firstName, String middleName,
-            String lastName, String prefix, String suffix) {
+    public static final EnPn convertToEnPn(String firstName, String middleName, String lastName, String prefix,
+            String suffix) {
         EnPn enpn = new EnPn();
         addEnxp(enpn, lastName, EntityNamePartType.FAM);
         addEnxp(enpn, firstName, EntityNamePartType.GIV);
@@ -262,5 +273,55 @@ public class RemoteApiUtils {
         addEnxp(enpn, suffix, EntityNamePartType.SFX);
         return enpn;
     }
+    
+    /**
+     * @param email email
+     * @param fax fax
+     * @param phone phone
+     * @param url url
+     * @param text tty
+     * @return a list containg all the params' content converted to a Tel type.
+     */
+    public static DSet<Tel> convertToDSetTel(List<String> email, List<String> fax,
+            List<String> phone, List<String> url, List<String> text) {
+        DSet<Tel> dset = new DSet<Tel>();
+        @SuppressWarnings("unchecked")
+        Set<Tel> set = new ListOrderedSet();
+        dset.setItem(set);
+        for (String c : email) {
+            TelEmail t = new TelEmail();
+            t.setValue(createURI(TelEmail.SCHEME_MAILTO, c));
+            set.add(t);
+        }
+        for (String c : fax) {
+            TelPhone t = new TelPhone();
+            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c));
+            set.add(t);
+        }
+        for (String c : phone) {
+            TelPhone t = new TelPhone();
+            t.setValue(createURI(TelPhone.SCHEME_TEL, c));
+            set.add(t);
+        }
+        for (String c : url) {
+            TelUrl t = new TelUrl();
+            t.setValue(URI.create(c));
+            set.add(t);
+        }
+        for (String c : text) {
+            TelPhone t = new TelPhone();
+            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c));
+            set.add(t);
+        }
 
+        return dset;
+    }
+    
+    private static URI createURI(String scheme, String schemeSpecificPart) {
+        try {
+            return new URI(scheme, schemeSpecificPart, null);
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
 }

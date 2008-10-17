@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -140,6 +141,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
     @Valid
     @Override
+    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -160,6 +162,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "fax")
     @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
     @Override
+    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -180,6 +183,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "phone")
     @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
     @Override
+    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -200,6 +204,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "url")
     @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
     @Override
+    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -220,6 +225,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "tty")
     @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
     @Override
+    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
