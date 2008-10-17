@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
@@ -92,6 +91,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -101,6 +101,7 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 
 import java.util.List;
+
 import org.junit.Before;
 
 /**
@@ -109,9 +110,9 @@ import org.junit.Before;
  */
 public class IdentifiedOrganizationRemoteServiceTest
     extends AbstractStructrualRoleRemoteServiceTest<IdentifiedOrganizationDTO, IdentifiedOrganizationCR> {
-    
+
     IdentifiedOrganizationType type1, type2;
-    
+
     @Before
     public void initData() {
         type1 = new IdentifiedOrganizationType("foo");
@@ -165,7 +166,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         ii.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
         dto.setAssignedId(ii);
-        
+
         Cd typeCd = new Cd();
         typeCd.setCode(type1.getCode());
         dto.setType(typeCd);
@@ -245,8 +246,8 @@ public class IdentifiedOrganizationRemoteServiceTest
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(ii);
-        
         correlation2.getType().setCode(type2.getCode());
+        correlation2.getAssignedId().setExtension(correlation2.getAssignedId().getExtension() + "2");
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
         PoHibernateUtil.getCurrentSession().flush();
@@ -310,7 +311,13 @@ public class IdentifiedOrganizationRemoteServiceTest
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 
+        searchCriteria.setAssignedId(correlation2.getAssignedId());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+
         // test by assigned id and scoper id
+        searchCriteria.setAssignedId(correlation1.getAssignedId());
         searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
@@ -320,7 +327,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         searchCriteria.getAssignedId().setExtension("invalid extension");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());
-        
+
         // test by type1
         searchCriteria.setAssignedId(null);
         searchCriteria.setScoperIdentifier(null);
