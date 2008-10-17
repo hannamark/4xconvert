@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.Searchable;
-
 import java.util.List;
 import java.util.Set;
 
@@ -108,7 +106,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class OrganizationalContactCR extends AbstractOrganizationalContact 
+public class OrganizationalContactCR extends AbstractOrganizationalContact
     implements CorrelationChangeRequest<OrganizationalContact> {
     private static final long serialVersionUID = 1L;
     private OrganizationalContact target;
@@ -150,8 +148,8 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @Override
     public Set<OrganizationalContactType> getTypes() {
         return super.getTypes();
-    }    
-    
+    }
+
     /**
      * @return the person that should have this proposed state
      */
@@ -186,8 +184,6 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCTCR_ADDRESS_FK", inverseName = "ADDRESS_ORGCNCTCR_FK")
     @Valid
-    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" })
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -208,7 +204,6 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCTCR_EMAIL_FK", inverseName = "EMAIL_ORGCNCTCR_FK")
     @Valid
-    @Searchable(fields = { "value" })
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -229,7 +224,6 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCTCR_FAX_FK", inverseName = "FAX_ORGCNCTCR_FK")
     @Valid
-    @Searchable(fields = "value")
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -250,7 +244,6 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCTCR_PHONE_FK", inverseName = "PHONE_ORGCNCTCR_FK")
     @Valid
-    @Searchable(fields = "value")
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -271,7 +264,6 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCTCR_TTY_FK", inverseName = "TTY_ORGCNCTCR_FK")
     @Valid
-    @Searchable(fields = "value")
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -292,8 +284,7 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCTCR_URL_FK", inverseName = "URL_ORGCNCTCR_FK")
     @Valid
-    @Searchable(fields = "value")
     public List<URL> getUrl() {
         return super.getUrl();
-    }    
+    }
 }

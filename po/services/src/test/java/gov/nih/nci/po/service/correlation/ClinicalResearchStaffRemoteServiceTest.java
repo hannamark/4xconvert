@@ -84,36 +84,19 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.data.convert.StatusCodeConverter;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
-import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -125,7 +108,7 @@ import org.junit.Test;
  *
  */
 public class ClinicalResearchStaffRemoteServiceTest
-    extends AbstractStructrualRoleRemoteServiceTest<ClinicalResearchStaffDTO, ClinicalResearchStaffCR> {
+    extends AbstractPersonRoleDTORemoteServiceTest<ClinicalResearchStaffDTO, ClinicalResearchStaffCR> {
 
     /**
      * {@inheritDoc}
@@ -196,177 +179,30 @@ public class ClinicalResearchStaffRemoteServiceTest
         }));
     }
 
+
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    public void testSearch() throws Exception {
-        Organization org2 = new Organization();
-        org2.setAbbreviatedName("org2 abbreviated name");
-        org2.setName("org2 name");
-        org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
-        org2.setStatusCode(EntityStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
+    protected ClinicalResearchStaffDTO getEmptySearchCriteria() {
+        return new ClinicalResearchStaffDTO();
+    }
 
-        Person person2 = new Person();
-        person2.setFirstName("fname2");
-        person2.setLastName("lname2");
-        person2.setMiddleName("mname2");
-        person2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
-        person2.setStatusCode(EntityStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().saveOrUpdate(person2);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void modifySubClassSpecificFieldsForCorrelation2(ClinicalResearchStaffDTO correlation2) {
+        // no fields to handle
+    }
 
-        ClinicalResearchStaffDTO correlation1 = getSampleDto();
-        Ii id1 = getCorrelationService().createCorrelation(correlation1);
-
-        ClinicalResearchStaffDTO correlation2 = getSampleDto();
-        correlation2.getPersonIdentifier().setExtension("" + person2.getId());
-        correlation2.getOrganizationIdentifier().setExtension("" + org2.getId());
-        Ad ad = AddressConverterUtil.create("1 Tacoma Ave", "Apt 101", "Portland",
-                "OR", "97202", getDefaultCountry().getAlpha3());
-        correlation2.getPostalAddress().setItem(Collections.singleton(ad));
-        correlation2.getTelecomAddress().getItem().clear();
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:me@test.com"));
-        correlation2.getTelecomAddress().getItem().add(email);
-        TelPhone phone = new TelPhone();
-        phone.setValue(new URI("tel:444-555-6666"));
-        correlation2.getTelecomAddress().getItem().add(phone);
-        phone = new TelPhone();
-        phone.setValue(new URI("x-text-fax:777-888-9999"));
-        correlation2.getTelecomAddress().getItem().add(phone);
-        phone = new TelPhone();
-        phone.setValue(new URI("x-text-tel:333-222-1111"));
-        correlation2.getTelecomAddress().getItem().add(phone);
-        TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.microsoft.com"));
-        correlation2.getTelecomAddress().getItem().add(url);
-        Ii id2 = getCorrelationService().createCorrelation(correlation2);
-
-        ClinicalResearchStaffDTO searchCriteria = null;
-
-        try {
-            getCorrelationService().search(searchCriteria);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        searchCriteria = new ClinicalResearchStaffDTO();
-        try {
-            getCorrelationService().search(searchCriteria);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        // test search by primary id
-        searchCriteria.setIdentifier(new Ii());
-        searchCriteria.getIdentifier().setExtension(id1.getExtension());
-        searchCriteria.getIdentifier().setRoot(id1.getRoot());
-        searchCriteria.getIdentifier().setIdentifierName(id1.getIdentifierName());
-        searchCriteria.getIdentifier().setDisplayable(id1.getDisplayable());
-        searchCriteria.getIdentifier().setReliability(id1.getReliability());
-        searchCriteria.getIdentifier().setScope(id1.getScope());
-        List<ClinicalResearchStaffDTO> results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
-
-        searchCriteria.getIdentifier().setExtension(id2.getExtension());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        // search by person id
-        searchCriteria.setIdentifier(null);
-        searchCriteria.setPersonIdentifier(correlation1.getPersonIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
-
-        // search by org id
-        searchCriteria.setPersonIdentifier(null);
-        searchCriteria.setOrganizationIdentifier(correlation2.getOrganizationIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        // test search by address
-        searchCriteria.setOrganizationIdentifier(null);
-        searchCriteria.setPostalAddress(new DSet<Ad>());
-        searchCriteria.getPostalAddress().setItem(Collections.singleton(ad));
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        // remove 1 part of address at a time making sure the search still works
-        while (ad.getPart().size() > 1) {
-            Adxp part = ad.getPart().remove(0);
-            if (part.getType().equals(AddressPartType.CNT)) {
-                // remove country last
-                ad.getPart().remove(0);
-                ad.getPart().add(part);
-            }
-            results = getCorrelationService().search(searchCriteria);
-            if (ad.getPart().size() == 1) {
-                // when on just country there are 2 results
-                assertEquals(2, results.size());
-            } else {
-                assertEquals(1, results.size());
-                assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-            }
-        }
-
-        // no parts left of address, so there should be no criteria.
-        try {
-            ad.getPart().remove(0);
-            results = getCorrelationService().search(searchCriteria);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        // search by status
-        searchCriteria.setPostalAddress(null);
-        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.PENDING));
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(2, results.size());
-        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.ACTIVE));
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
-
-        // search by telco
-        searchCriteria.setStatus(null);
-        searchCriteria.setTelecomAddress(new DSet<Tel>());
-        searchCriteria.getTelecomAddress().setItem(new HashSet<Tel>());
-        try {
-            results = getCorrelationService().search(searchCriteria);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-        searchCriteria.getTelecomAddress().getItem().add(email);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(2, results.size());
-
-        searchCriteria.getTelecomAddress().getItem().add(phone);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        searchCriteria.getTelecomAddress().getItem().add(url);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        phone = new TelPhone();
-        phone.setValue(new URI("tel:111-222-3333"));
-        searchCriteria.getTelecomAddress().getItem().add(phone);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
-
-        searchCriteria.getTelecomAddress().getItem().clear();
-        searchCriteria.getTelecomAddress().getItem().add(phone);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void testSearchOnSubClassSpecificFields(ClinicalResearchStaffDTO correlation1, Ii id2,
+            ClinicalResearchStaffDTO searchCriteria) throws NullifiedRoleException {
+        // no fields to handle
     }
 }

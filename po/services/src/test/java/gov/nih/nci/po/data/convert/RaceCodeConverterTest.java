@@ -1,15 +1,21 @@
 package gov.nih.nci.po.data.convert;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.RaceCode;
 import gov.nih.nci.services.PoIsoConstraintException;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -42,25 +48,26 @@ public class RaceCodeConverterTest {
             assertTrue(s.contains(RaceCodeConverter.STATUS_MAP.get(cd.getCode())));
         }
     }
-    
+
     @Test
+    @SuppressWarnings("unchecked")
     public void testCdConverter() {
         RaceCodeConverter.DSetCdConverter c = new RaceCodeConverter.DSetCdConverter();
-        
+
         assertNull(c.convert(Set.class, null));
-        
+
         DSet<Cd> d = new DSet<Cd>();
         HashSet<Cd> s = new HashSet<Cd>();
         d.setItem(s);
         Set<RaceCode> result = c.convert(Set.class, d);
         assertNull(result);
-        
+
         Cd cd = new Cd();
         cd.setNullFlavor(NullFlavor.NA);
         s.add(cd);
         result = c.convert(Set.class, d);
         assertEquals(0, result.size());
-        
+
         cd.setNullFlavor(null);
         cd.setCode("");
         try {
@@ -68,33 +75,34 @@ public class RaceCodeConverterTest {
             fail();
         } catch(PoIsoConstraintException ex) {
         }
-        
+
         cd.setCode(null);
         try {
             c.convert(Set.class, d);
             fail();
         } catch(PoIsoConstraintException ex) {
         }
-        
+
         cd.setCode(RaceCode.AI_AN.getValue());
         result = c.convert(Set.class, d);
         assertEquals(RaceCode.AI_AN, result.iterator().next());
-        
+
         try {
             c.convert(Thread.class, d);
             fail();
         } catch(UnsupportedOperationException ex) {
         }
-        
+
         s.clear();
-        s.add(null);        
+        s.add(null);
         assertTrue(c.convert(Set.class, d).isEmpty());
     }
-    
+
     @Test
+    @SuppressWarnings("unchecked")
     public void testEnumConverter() {
         RaceCodeConverter.EnumConverter c = new RaceCodeConverter.EnumConverter();
-        
+
         Set<RaceCode> s = null;
         DSet<Cd> result = c.convert(DSet.class, null);
         assertNull(result);
@@ -105,15 +113,15 @@ public class RaceCodeConverterTest {
             fail();
         } catch(UnsupportedOperationException ex) {
         }
-        
+
         result = c.convert(DSet.class, s);
         assertNull(result);
-        
+
         s.add(RaceCode.AI_AN);
         result = c.convert(DSet.class, s);
         assertEquals(1, result.getItem().size());
         assertEquals(RaceCode.AI_AN.getValue(), result.getItem().iterator().next().getCode());
-        
+
         s.clear();
         s.add(null);
         result = c.convert(DSet.class, s);

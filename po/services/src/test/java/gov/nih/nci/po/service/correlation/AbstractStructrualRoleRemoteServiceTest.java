@@ -300,5 +300,4 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     protected void verifyAlterations(CR cr) {
         assertEquals(RoleStatus.PENDING, cr.getStatus());
     }
-
 }

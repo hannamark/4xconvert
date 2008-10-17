@@ -102,6 +102,7 @@ import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 
 import java.util.List;
+
 import org.junit.Before;
 
 /**
@@ -110,9 +111,9 @@ import org.junit.Before;
  */
 public class IdentifiedPersonRemoteServiceTest
     extends AbstractStructrualRoleRemoteServiceTest<IdentifiedPersonDTO, IdentifiedPersonCR> {
-    
+
     IdentifiedPersonType type1, type2;
-    
+
     @Before
     public void initData() {
         type1 = new IdentifiedPersonType("foo");
@@ -166,7 +167,7 @@ public class IdentifiedPersonRemoteServiceTest
         ii.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
         dto.setAssignedId(ii);
-        
+
         Cd typeCd = new Cd();
         typeCd.setCode(type1.getCode());
         dto.setType(typeCd);
@@ -258,6 +259,7 @@ public class IdentifiedPersonRemoteServiceTest
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(ii);
         correlation2.getType().setCode(type2.getCode());
+        correlation2.getAssignedId().setExtension(correlation2.getAssignedId().getExtension() + "2");
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
         PoHibernateUtil.getCurrentSession().flush();
@@ -321,7 +323,13 @@ public class IdentifiedPersonRemoteServiceTest
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 
+        searchCriteria.setAssignedId(correlation2.getAssignedId());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+
         // test by assigned id and scoper id
+        searchCriteria.setAssignedId(correlation1.getAssignedId());
         searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
@@ -331,7 +339,7 @@ public class IdentifiedPersonRemoteServiceTest
         searchCriteria.getAssignedId().setExtension("invalid extension");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(0, results.size());
-        
+
         // test by type
         searchCriteria.setAssignedId(null);
         searchCriteria.setScoperIdentifier(null);
@@ -339,6 +347,5 @@ public class IdentifiedPersonRemoteServiceTest
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
-
     }
 }

@@ -114,7 +114,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
-    @Searchable
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     @NotNull
     public String getFundingMechanism() {
         return fundingMechanism;

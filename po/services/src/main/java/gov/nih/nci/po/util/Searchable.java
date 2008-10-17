@@ -97,6 +97,16 @@ import java.lang.annotation.Target;
 public @interface Searchable {
 
     /**
+     * The constant for the exact match mode.
+     */
+    String MATCH_MODE_EXACT = "exact";
+
+    /**
+     * The constant for the start match mode.
+     */
+    String MATCH_MODE_START = "start";
+
+    /**
      * If the field being searched has nested properties, you can specify which properties to
      * use in the search criteria using this value.
      *
@@ -132,4 +142,10 @@ public @interface Searchable {
      * each element of the collection.
      */
     String[] fields() default { };
+
+    /**
+     * The match mode to use. "exact" and "start" are allowed.
+     * @return
+     */
+    String matchMode() default MATCH_MODE_EXACT;
 }

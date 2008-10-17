@@ -200,7 +200,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         type.setCode(other.getCode());
         correlation2.setType(type);
 
-        correlation2.setFundingMechanism(StringConverter.convertToSt("Boold Money"));
+        correlation2.getFundingMechanism().setValue(correlation2.getFundingMechanism().getValue() + "2");
 
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
@@ -267,15 +267,19 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
         // test by fundintMethod
         searchCriteria.setScoperIdentifier(null);
+        searchCriteria.setFundingMechanism(correlation1.getFundingMechanism());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+
         searchCriteria.setFundingMechanism(correlation2.getFundingMechanism());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
 
         // test by Type id
         searchCriteria.setFundingMechanism(null);
         searchCriteria.setType(type);
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-
     }
 }

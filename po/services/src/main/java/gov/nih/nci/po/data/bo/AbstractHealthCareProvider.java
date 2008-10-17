@@ -112,7 +112,7 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
     @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
-    @Searchable
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getCertificateLicenseText() {
         return this.certificateLicenseText;
     }

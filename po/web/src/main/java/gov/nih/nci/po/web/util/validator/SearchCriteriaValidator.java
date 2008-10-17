@@ -14,10 +14,9 @@ import com.opensymphony.xwork2.validator.validators.FieldValidatorSupport;
  */
 public class SearchCriteriaValidator extends FieldValidatorSupport {
 
-    /** 
+    /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void validate(Object object) throws ValidationException {
         ValueStack stack = ActionContext.getContext().getValueStack();
         String fieldName = getFieldName();

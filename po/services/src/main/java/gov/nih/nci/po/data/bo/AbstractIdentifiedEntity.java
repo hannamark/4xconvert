@@ -201,7 +201,8 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
             @Column(name = "assigned_identifier_scope")
     })
     @ValidIi
-    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" })
+    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" },
+            matchMode = Searchable.MATCH_MODE_START)
     public Ii getAssignedIdentifier() {
         return this.assignedIdentifier;
     }
