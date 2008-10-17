@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 
@@ -34,6 +35,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Long piId;
     private String localStudyProtocolIdentifier;
     private StudyTypeCode studyTypeCode;
+    private PhaseCode phaseCode; 
     
     /**
      * 
@@ -219,7 +221,17 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setStudyTypeCode(StudyTypeCode studyTypeCode) {
         this.studyTypeCode = studyTypeCode;
     }
-    
-    
+    /**
+     * @return the phaseCode
+     */
+    public PhaseCode getPhaseCode() {
+        return phaseCode;
+    }
+    /**
+     * @param phaseCode the phaseCode to set
+     */
+    public void setPhaseCode(PhaseCode phaseCode) {
+        this.phaseCode = phaseCode;
+    }
     
 }
