@@ -171,6 +171,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             .getIdentifier());
                     studyProtocolDto
                             .setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
+                    studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                     // @todo : hardcoded for interventional, its has to be
                     // derived
                 }
