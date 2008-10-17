@@ -1,25 +1,25 @@
 package gov.nih.nci.registry.action;
 
-//import java.io.BufferedInputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.IOException;
-//import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-//import java.util.LinkedList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-//import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-//import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
-//import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -62,7 +62,7 @@ public class SubmitTrialAction extends ActionSupport
     private File upload;
     private String uploadFileName;
     private HttpServletResponse servletResponse;
-    //private static final int MAXF = 1024; 
+    private static final int MAXF = 1024; 
     /**
      * create protocol.
      * @return String
@@ -106,7 +106,7 @@ public class SubmitTrialAction extends ActionSupport
             // create the Study Grants
             createStudyResource(studyProtocolIi);
             //upload protocol document
-            //uploadDocument(studyProtocolIi);
+            uploadDocument(studyProtocolIi);
             query();
         } catch (Exception e) {
             //e.printStackTrace();
@@ -169,7 +169,7 @@ public class SubmitTrialAction extends ActionSupport
      * Uploads documents.
      * @param studyProtocolIi
      */
-/*    private void uploadDocument(Ii studyProtocolIi) {
+    private void uploadDocument(Ii studyProtocolIi) {
         try {
 
             DocumentDTO docDTO = new DocumentDTO();
@@ -183,14 +183,14 @@ public class SubmitTrialAction extends ActionSupport
                         readInputStream(new FileInputStream(upload))));
             RegistryServiceLocator.getDocumentService().create(docDTO);
         } catch (PAException pae) {
-            pae.printStackTrace();
+            //pae.printStackTrace();
             LOG.error("Exception occured while uploading documents: " + pae);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            //ioe.printStackTrace();
             LOG.error("Exception occured reading file " + ioe);
             
         }
-    }*/
+    }
     
     /**
      * query the created protocol and all related associations.
@@ -252,8 +252,8 @@ public class SubmitTrialAction extends ActionSupport
          return INPUT;
      }
     
-/*    *//** Read an input stream in its entirety into a byte array. *//* 
-    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+     // Read an input stream in its entirety into a byte array.
+     private static byte[] readInputStream(InputStream inputStream) throws IOException {
         
         int bufSize = MAXF * MAXF; 
         byte[] content; 
@@ -287,7 +287,7 @@ public class SubmitTrialAction extends ActionSupport
         } 
 
         return content; 
-    } */   
+    }   
     
     /**
      * @return trialFundingList
