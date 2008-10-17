@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 
 /**
@@ -44,10 +45,11 @@ public class InterventionalStudyProtocolConverter extends
                 CdConverter.convertToCd(isp.getMonitorCode()));
         ispDTO.setOfficialTitle(StConverter.convertToSt(isp.getOfficialTitle()));
         ispDTO.setPhaseCode(CdConverter.convertToCd(isp.getPhaseCode()));
-        
+        ispDTO.setStartDateTypeCode(CdConverter.convertToCd(isp.getStartDateTypeCode()));
+        ispDTO.setStartDate(TsConverter.convertToTs(isp.getStartDate()));
         ispDTO.setPrimaryCompletionDateTypeCode(
                 CdConverter.convertToCd(isp.getPrimaryCompletionDateTypeCode()));
-        ispDTO.setStartDateTypeCode(CdConverter.convertToCd(isp.getStartDateTypeCode()));
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(isp.getPrimaryCompletionDate()));        
         ispDTO.setAllocationCode(CdConverter.convertToCd(isp.getAllocationCode()));
         ispDTO.setDelayedpostingIndicator(BlConverter.convertToBl(isp.getDelayedpostingIndicator()));
         ispDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(isp.getFdaRegulatedIndicator()));
@@ -93,6 +95,14 @@ public class InterventionalStudyProtocolConverter extends
             isp.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
                     ispDTO.getStartDateTypeCode().getCode()));
             
+        }
+        if (ispDTO.getStartDate() != null) {
+            isp.setStartDate(
+                    TsConverter.convertToTimestamp(ispDTO.getStartDate()));
+        }
+        if (ispDTO.getPrimaryCompletionDate() != null) {
+            isp.setPrimaryCompletionDate(
+                    TsConverter.convertToTimestamp(ispDTO.getPrimaryCompletionDate()));
         }
         if (ispDTO.getAllocationCode() != null) {
             isp.setAllocationCode(AllocationCode.getByCode(ispDTO.getAllocationCode().getCode()));
