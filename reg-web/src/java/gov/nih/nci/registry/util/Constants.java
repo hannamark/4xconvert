@@ -36,4 +36,6 @@ public class Constants {
     /** Funding list. */
     public static final String TRIAL_FUNDING_LIST = "trialFundingList";
 
+    /** Trial Overall Status. */
+    public static final String TRIAL_OVERALL_STATUS = "trialOverallStatus";
 }
