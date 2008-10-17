@@ -33,7 +33,7 @@ function handleAction(){
 <!-- main content begins-->
     <h1><fmt:message key="submit.trial.page.header"/></h1>
     <div class="box" id="filters">
-    <s:form name="submitTrial"><s:actionerror/>
+    <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <input type="hidden" name="page" />
         <p>Add a Trial into NCI Clinical Trials Portal - Powered by (caCTUS) by submitting this form. </p>
         <table class="form"> 
@@ -77,99 +77,8 @@ function handleAction(){
                 <td>                                             
                     <s:select headerKey="" headerValue="All" name="trialType" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
                 </td>
-          </tr>
-          
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.responsibleParty"/></h2></th>
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <td scope="row" class="label">
-                    <label for="nameOfficialTitle"> <fmt:message key="submit.trial.nameOfficialTitle"/></label>
-                </td>
-                <td>
-                    <s:textfield name="nameOfficialTitle"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="organization"> <fmt:message key="submit.trial.organization"/></label>
-                </td>
-                <td>
-                    <s:textfield name="organization"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="contactInfo"> <fmt:message key="submit.trial.contactInfo"/></label>
-                </td>
-                <td>
-                    <s:textfield name="contactInfo"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
-          
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.leadOrgInvestigator"/></h2></th>
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <td scope="row" class="label">
-                    <label for="leadOrganization"> <fmt:message key="submit.trial.leadOrganization"/></label>
-                </td>
-                <td>
-                    <s:textfield name="leadOrganization"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="principalInvestigator"> <fmt:message key="submit.trial.principalInvestigator"/></label>
-                </td>
-                <td>
-                    <s:textfield name="principalInvestigator"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
-          
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.summary4Info"/></h2></th>
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <td scope="row" class="label">
-                    <label for="fundingCategory"> <fmt:message key="submit.trial.fundingCategory"/></label>
-                </td>
-                <td>
-                    <s:textfield name="fundingCategory"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="fundingSponsor"> <fmt:message key="submit.trial.fundingSponsor"/></label>
-                </td>
-                <td>
-                    <s:textfield name="fundingSponsor"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-          </tr>
+          </tr>          
+
           
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -279,6 +188,33 @@ function handleAction(){
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
                 <s:radio name="completionDateType" list="#dateTypeList" /></td>
         </tr>
+        <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          
+        <tr>
+              <th colspan="2"><h2><fmt:message key="submit.trial.documents"/></h2></th>
+        </tr>
+        <tr>
+              <td colspan="2" class="space">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+               <fmt:message key="submit.trial.docInstructionalText"/>
+            </td>
+        </tr>
+      
+        <tr>
+              <td scope="row" class="label">
+              <label for="protocolDocument">
+                     <fmt:message key="submit.trial.protocolDocument"/>
+              </label>
+             </td>
+             <td class="value">
+                 <s:file name="upload" cssStyle="width:270px"/>
+               </td>         
+         </tr>
+
 
         </table>
         <div class="actionsrow">
