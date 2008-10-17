@@ -16,6 +16,8 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -36,11 +38,13 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
+import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -51,6 +55,8 @@ import gov.nih.nci.registry.util.Constants;
  * 
  */
 @Validation
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", 
+    "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" , "PMD.NPathComplexity" })
 public class SubmitTrialAction extends ActionSupport
                                         implements ServletResponseAware {
     private static final String VIEW_TRIAL = "view";
@@ -93,12 +99,9 @@ public class SubmitTrialAction extends ActionSupport
             
             ServletActionContext.getRequest().getSession().setAttribute(
                                         Constants.STUDY_PROTOCOL_II, IiConverter.convertToString(studyProtocolIi));
-            // create Study Participation record
-            //StudyParticipationDTO studyPartcipationDTO = new StudyParticipationDTO();
-            //studyPartcipationDTO.setStudyProtocolIi(studyProtocolIi);
-            //studyPartcipationDTO.setLocalStudyProtocolIdentifier(
-            //                                            StConverter.convertToSt(leadOrgIdentifier));
-            //RegistryServiceLocator.getStudyParticipationService().create(studyPartcipationDTO);
+            
+            //create study participation
+            createStudyParticipation(studyProtocolIi);
             
             //create study overall status
             createStudyStatus(studyProtocolIi);
@@ -193,6 +196,30 @@ public class SubmitTrialAction extends ActionSupport
     }
     
     /**
+     * @param studyProtocolIi
+     */
+    private void createStudyParticipation(Ii studyProtocolIi) {
+        try {
+        // create Study Participation record
+        String leadOrgIdentifier = ServletActionContext.getRequest().getParameter("leadOrgIdentifier");
+        StudyParticipationDTO studyPartcipationDTO = new StudyParticipationDTO();
+        studyPartcipationDTO.setStudyProtocolIi(studyProtocolIi);
+        studyPartcipationDTO.setLocalStudyProtocolIdentifier(
+                                                    StConverter.convertToSt(leadOrgIdentifier));
+        studyPartcipationDTO.setHealthcareFacilityIi(IiConverter.convertToIi("1"));
+        studyPartcipationDTO.setFunctionalCode(
+                    CdConverter.convertStringToCd(
+                              StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode()));
+        studyPartcipationDTO.setStatusCode(
+                    CdConverter.convertStringToCd(StatusCode.ACTIVE.getCode()));
+        RegistryServiceLocator.getStudyParticipationService().create(studyPartcipationDTO);
+        } catch (PAException pae) {
+            //pae.printStackTrace();
+            LOG.error("Exception occured while creating study participation: " + pae);
+        }
+    }
+    
+    /**
      * query the created protocol and all related associations.
      * @return String
      */
@@ -235,6 +262,22 @@ public class SubmitTrialAction extends ActionSupport
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().getSession().setAttribute(
                                         Constants.TRIAL_OVERALL_STATUS, overallStatusList.get(0));
+            }
+            
+            // query the study participation sites
+            List<StudyParticipationDTO> studyParticipationISOList = 
+                                       RegistryServiceLocator.getStudyParticipationService().
+                                               getByStudyProtocol(studyProtocolIi);
+            
+            List <StudyParticipationWebDTO> studyParticipationList;
+            if (!(studyParticipationISOList.isEmpty())) { 
+                studyParticipationList = new ArrayList<StudyParticipationWebDTO>();                
+                for (StudyParticipationDTO dto : studyParticipationISOList) {
+                    studyParticipationList.add(new StudyParticipationWebDTO(dto));
+                }
+                // put an entry in the session and store TrialFunding
+                ServletActionContext.getRequest().getSession().setAttribute(
+                                        Constants.STUDY_PARTICIPATION, studyParticipationList.get(0));
             }
  
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
