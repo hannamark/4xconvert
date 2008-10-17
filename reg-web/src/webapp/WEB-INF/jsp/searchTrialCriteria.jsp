@@ -17,8 +17,6 @@ function resetValues () {
     document.forms.queryProtocol.queryProtocol_criteria_studyPhaseCode.value="";
     document.forms.queryProtocol.queryProtocol_criteria_studyStatusCode.value="";
     document.forms.queryProtocol.queryProtocol_criteria_documentWorkflowStatusCode.value="";
-
-
 }
 
 function handleAction(){
@@ -45,60 +43,58 @@ function handleAction(){
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
+                   <s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:150px" />
                 </td>
-                <td  scope="row" class="label">
-                    <label for="phase"> <fmt:message key="search.trial.type"/></label> 
+                <td scope="row" class="label">
+                    <label for="type"> <fmt:message key="search.trial.type"/></label> 
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:150px" />
                 </td>
              </tr>                                               
-
-
-            <tr>
+             <tr>
                 <td scope="row" class="label">
                     <label for="identifierType"> <fmt:message key="search.trial.identifierType"/></label>
                 </td>
-                <s:set name="identifierTypeValues" value="@gov.nih.nci.pa.enums.StudyTypeCode@getDisplayNames()" />
+                <s:set name="identifierTypeValues" value="@gov.nih.nci.pa.enums.IdentifierTypeCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" headerValue="All" name="criteria.identifierType"  list="#identifierTypeValues" value="criteria.identifierType" cssStyle="width:206px" />
-                                                                                         
+                    <s:select headerKey="" headerValue="All" name="criteria.identifierType"  list="#identifierTypeValues" value="criteria.identifierType" cssStyle="width:150px" />                                                                    
                 </td>
                 <td scope="row" class="label">
                     <label for="identifier"> <fmt:message key="search.trial.identifier"/></label>
                 </td>
-
                 <td>
-                    <s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                	<s:textfield name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:150px" />
                 </td>
                 <td scope="row" class="label">
                     <label for="organizationType"> <fmt:message key="search.trial.organizationType"/></label>
                 </td>
-                <s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.StudyTypeCode@getDisplayNames()" />
-
+                	<s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.OrganizationTypeCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" headerValue="All" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:206px" />
-                                                                                         
+                    <s:select headerKey="" headerValue="All" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:150px" />
                 </td>
-
+                <td  scope="row" class="label">
+                <label for="organization"> <fmt:message key="search.trial.organization"/></label> 
+                </td>
+                <s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
+                <td>
+                 	<s:select name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
+                 </td>
             </tr>  
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">
-                <ul class="btnrow">         
-                    <li><li>            
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
-                        </li>
-                </ul>   
+               <ul class="btnrow">         
+                <li>           
+                <s:a href="#" cssClass="btn" onclick=""><span class="btn_img"><span class="">My Trial</span></span></s:a>       
+                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="Search">Search Trial</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="resetValues ()"><span class="btn_img"><span class="Reset">Reset</span></span></s:a>  
+                </li>
+               </ul>   
             </del>
-
         </div>
-  
-        
    </s:form>
-
  </div>
  <div class="line"></div>
  
@@ -108,6 +104,5 @@ function handleAction(){
         	<jsp:param name="listName" value="records" />        
    		</jsp:include>
    </c:if>
-   
 </body>
 </html>
