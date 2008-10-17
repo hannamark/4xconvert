@@ -11,7 +11,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
+//import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -397,8 +397,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + studyProtocolQueryCriteria
                                 .getPrincipalInvestigatorId());
             }
-            where.append(" and scr.studyContactRoleCode ='"
-                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+            //where.append(" and scr.studyContactRoleCode ='"
+            //        + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
 
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
