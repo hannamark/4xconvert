@@ -1,34 +1,48 @@
 package gov.nih.nci.registry.action;
 
+//import java.io.BufferedInputStream;
+import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.IOException;
+//import java.io.InputStream;
 import java.util.ArrayList;
+//import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+//import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+//import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
+
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletResponseAware;
 
+//import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
+import gov.nih.nci.registry.dto.TrialFundingWebDTO;
+import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.util.Constants;
 
 /**
@@ -37,13 +51,18 @@ import gov.nih.nci.registry.util.Constants;
  * 
  */
 @Validation
-public class SubmitTrialAction extends ActionSupport {
+public class SubmitTrialAction extends ActionSupport
+                                        implements ServletResponseAware {
     private static final String VIEW_TRIAL = "view";
     private static final Logger LOG  = Logger.getLogger(SubmitTrialAction.class);
     private List<TrialFundingWebDTO> trialFundingList;
     private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
     private Long cbValue;
     private String page;
+    private File upload;
+    private String uploadFileName;
+    private HttpServletResponse servletResponse;
+    //private static final int MAXF = 1024; 
     /**
      * create protocol.
      * @return String
@@ -86,6 +105,8 @@ public class SubmitTrialAction extends ActionSupport {
             
             // create the Study Grants
             createStudyResource(studyProtocolIi);
+            //upload protocol document
+            //uploadDocument(studyProtocolIi);
             query();
         } catch (Exception e) {
             //e.printStackTrace();
@@ -118,6 +139,7 @@ public class SubmitTrialAction extends ActionSupport {
                     ServletActionContext.getRequest().getRemoteUser())));
             RegistryServiceLocator.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
         } catch (PAException pae) {
+            //pae.printStackTrace();
             LOG.error("Exception occured while creating study resource: " + pae);
         }
     }
@@ -132,14 +154,43 @@ public class SubmitTrialAction extends ActionSupport {
             String trialStatus = ServletActionContext.getRequest().getParameter("trialStatus");
             String statusDate = ServletActionContext.getRequest().getParameter("statusDate");
             StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
+            //overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
             overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
             overallStatusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialStatus)));
             overallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
             RegistryServiceLocator.getStudyOverallStatusService().create(overallStatusDTO);
         } catch (PAException pae) {
+            //pae.printStackTrace();
             LOG.error("Exception occured while creating study overall status: " + pae);
         }
     }
+    
+    /**
+     * Uploads documents.
+     * @param studyProtocolIi
+     */
+/*    private void uploadDocument(Ii studyProtocolIi) {
+        try {
+
+            DocumentDTO docDTO = new DocumentDTO();
+            docDTO.setStudyProtocolIi(studyProtocolIi);
+            docDTO.setTypeCode(
+                    CdConverter.convertStringToCd(DocumentTypeCode.Protocol_Document.getCode()));
+            docDTO.setFileName(StConverter.convertToSt(uploadFileName));
+            docDTO.setUserLastUpdated((StConverter.convertToSt(
+                    ServletActionContext.getRequest().getRemoteUser())));
+            docDTO.setText(EdConverter.convertToEd(
+                        readInputStream(new FileInputStream(upload))));
+            RegistryServiceLocator.getDocumentService().create(docDTO);
+        } catch (PAException pae) {
+            pae.printStackTrace();
+            LOG.error("Exception occured while uploading documents: " + pae);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            LOG.error("Exception occured reading file " + ioe);
+            
+        }
+    }*/
     
     /**
      * query the created protocol and all related associations.
@@ -147,36 +198,45 @@ public class SubmitTrialAction extends ActionSupport {
      */
     public String query() {
         try {
+            
+            Ii studyProtocolIi = IiConverter.convertToIi((String) ServletActionContext.
+                                    getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II)); 
+                        
             InterventionalStudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().
-                                                             getInterventionalStudyProtocol(IiConverter.convertToIi(
-                                                               (String) ServletActionContext.getRequest().getSession().
-                                                               
-                                                               getAttribute(Constants.STUDY_PROTOCOL_II)));
+                                                             getInterventionalStudyProtocol(studyProtocolIi);
             InterventionalStudyProtocolWebDTO protocolWebDTO =
                                                           new InterventionalStudyProtocolWebDTO(protocolDTO);
             // put an entry in the session and store InterventionalStudyProtocolDTO 
             ServletActionContext.getRequest().getSession().setAttribute(
                                     Constants.TRIAL_SUMMARY, protocolWebDTO);
             
-            // query the study grants
-            Ii studyProtocolIi = IiConverter.convertToIi(
-                                                (String) ServletActionContext.getRequest().getSession().
-                                                      getAttribute(Constants.STUDY_PROTOCOL_II));  
+            // query the study grants 
             List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService().
                                                  getstudyResourceByStudyProtocol(studyProtocolIi);
             if (!(isoList.isEmpty())) { 
-                LOG.info("Trial funding list not empty");
                 trialFundingList = new ArrayList<TrialFundingWebDTO>();                
                 for (StudyResourcingDTO dto : isoList) {
                     trialFundingList.add(new TrialFundingWebDTO(dto));
-                    LOG.info("Trial funding added to the list");
                 }
+                // put an entry in the session and store TrialFunding
+                ServletActionContext.getRequest().getSession().setAttribute(
+                                        Constants.TRIAL_FUNDING_LIST, trialFundingList.get(0));
             }
             
-            // put an entry in the session and store TrialFunding list 
-            ServletActionContext.getRequest().getSession().setAttribute(
-                                    Constants.TRIAL_FUNDING_LIST, trialFundingList);
-
+            List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.
+                                                        getStudyOverallStatusService().
+                                                            getByStudyProtocol(studyProtocolIi);
+            List <StudyOverallStatusWebDTO> overallStatusList;
+            if (!(overallStatusISOList.isEmpty())) { 
+                overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();                
+                for (StudyOverallStatusDTO dto : overallStatusISOList) {
+                    overallStatusList.add(new StudyOverallStatusWebDTO(dto));
+                }
+                // put an entry in the session and store TrialFunding
+                ServletActionContext.getRequest().getSession().setAttribute(
+                                        Constants.TRIAL_OVERALL_STATUS, overallStatusList.get(0));
+            }
+ 
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
         } catch (Exception e) {
             //e.printStackTrace();
@@ -185,7 +245,49 @@ public class SubmitTrialAction extends ActionSupport {
         return VIEW_TRIAL;
     }
     
+    /**
+     * @return result
+     */
+     public String input() {
+         return INPUT;
+     }
     
+/*    *//** Read an input stream in its entirety into a byte array. *//* 
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+        
+        int bufSize = MAXF * MAXF; 
+        byte[] content; 
+
+        List<byte[]> parts = new LinkedList(); 
+        InputStream in = new BufferedInputStream(inputStream); 
+
+        byte[] readBuffer = new byte[bufSize]; 
+        byte[] part = null; 
+        int bytesRead = 0; 
+
+        // read everything into a list of byte arrays 
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) { 
+            part = new byte[bytesRead]; 
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead); 
+            parts.add(part); 
+        } 
+
+        // calculate the total size 
+        int totalSize = 0; 
+        for (byte[] partBuffer : parts) { 
+            totalSize += partBuffer.length; 
+        } 
+
+        // allocate the array 
+        content = new byte[totalSize]; 
+        int offset = 0; 
+        for (byte[] partBuffer : parts) { 
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length); 
+            offset += partBuffer.length; 
+        } 
+
+        return content; 
+    } */   
     
     /**
      * @return trialFundingList
@@ -216,6 +318,19 @@ public class SubmitTrialAction extends ActionSupport {
     }
     
     /**
+     * @param response servletResponse
+     */
+    public void setServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
+    }
+    /**
+     * @return servletResponse
+     */
+    public HttpServletResponse getServletResponse() {
+        return servletResponse;
+    } 
+    
+    /**
      * @return cbValue
      */
     public Long getCbValue() {
@@ -242,4 +357,33 @@ public class SubmitTrialAction extends ActionSupport {
     public void setPage(String page) {
         this.page = page;
     }
+    
+    /**
+     * @return upload
+     */
+    public File getUpload() {
+        return upload;
+     }
+    
+     /**
+     * @param upload upload
+     */
+    public void setUpload(File upload) {
+         this.upload = upload;
+     }
+    
+    /**
+     * @return fileName
+     */
+    public String getUploadFileName() {
+         return uploadFileName;
+     }
+    
+     /**
+     * @param uploadFileName uploadFileName
+     */
+    public void setUploadFileName(String uploadFileName) {
+        this.uploadFileName = uploadFileName;
+     } 
+
 }
