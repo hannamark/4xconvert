@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.dto.SubGroupsWebDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -69,14 +70,7 @@ public class SubGroupsAction extends ActionSupport {
       */
      public String create() {
          LOG.info("Entering create from SubGroupsAction");
-         if (PAUtil.isEmpty(subGroupsWebDTO.getDescription())) {
-             addFieldError("subGroupsWebDTO.description",
-                     getText("error.subGroups.description"));
-         }
-         if (PAUtil.isEmpty(subGroupsWebDTO.getGroupNumberText())) {
-             addFieldError("subGroupsWebDTO.code",
-                     getText("error.subGroups.code"));           
-         }
+         enforceBusinessRules();
          if (hasFieldErrors()) {
              return INPUT;
          }
@@ -121,14 +115,7 @@ public class SubGroupsAction extends ActionSupport {
       */
      public String update() {
          LOG.info("Entering update from SubGroupsAction");
-         if (PAUtil.isEmpty(subGroupsWebDTO.getDescription())) {
-             addFieldError("subGroupsWebDTO.description",
-                     getText("error.subGroups.description"));
-         }
-         if (PAUtil.isEmpty(subGroupsWebDTO.getGroupNumberText())) {
-             addFieldError("subGroupsWebDTO.code",
-                     getText("error.subGroups.code"));           
-         }
+         enforceBusinessRules();
          if (hasFieldErrors()) {
              return INPUT;
          }
@@ -226,6 +213,26 @@ public class SubGroupsAction extends ActionSupport {
     public void setPage(String page) {
         this.page = page;
     }
-        
+
+    /**
+     * This method is used to enforce the business rules which are form specific or
+     * based on an interaction between services.
+     */
+    private void enforceBusinessRules() {
+        if (PAUtil.isEmpty(subGroupsWebDTO.getDescription())) {
+            addFieldError("subGroupsWebDTO.description",
+                    getText("error.subGroups.description"));
+        }
+        if (PAUtil.isEmpty(subGroupsWebDTO.getGroupNumberText())) {
+            addFieldError("subGroupsWebDTO.code",
+                    getText("error.subGroups.code"));           
+        }
+        if (subGroupsWebDTO.getDescription().length() > AbstractEntity.LONG_TEXT_LENGTH) {
+            addFieldError("subGroupsWebDTO.description",
+                    getText("Cannot enter more than 200 characters"));
+            
+        }
+
+    }
 }
 
