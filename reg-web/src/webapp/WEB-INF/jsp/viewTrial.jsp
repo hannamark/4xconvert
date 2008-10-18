@@ -77,17 +77,9 @@
                 </label>
             </td>
             <td class="value">
+                Organization A
             </td>
             </tr> 
-            <tr>
-            <td scope="row" class="label">
-                <label for="leadOrg"> 
-                    <fmt:message key="view.trial.principalInvestigator"/>
-                </label>
-            </td>
-            <td class="value">
-            </td>
-            </tr>
             <c:if test="${sessionScope.trialFundingList != null}">  
 		        <tr>
 	                <td colspan="2" class="space">&nbsp;</td>
