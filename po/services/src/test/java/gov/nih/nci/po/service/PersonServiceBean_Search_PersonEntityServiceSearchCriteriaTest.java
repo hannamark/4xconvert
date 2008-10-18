@@ -48,11 +48,11 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         createPerson();
         createPerson();
 
-        personSc.setFirstName("%Nam%");
+        personSc.setFirstName("%NAM");
         assertEquals(2, getPersonServiceBean().count(sc));
         assertEquals(2, getPersonServiceBean().search(sc).size());
 
-        personSc.setFirstName("foobar");
+        personSc.setFirstName("fOoBaR");
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
     }
@@ -62,23 +62,23 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         /* create a person with two email addresses */
         createPerson();
 
-        personSc.getEmail().add(new Email("abc"));
+        personSc.getEmail().add(new Email("aBc"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
         initData2();
-        personSc.getEmail().add(new Email("def"));
+        personSc.getEmail().add(new Email("dEf"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
         initData2();
-        personSc.getEmail().add(new Email("ghi"));
+        personSc.getEmail().add(new Email("gHi"));
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 
         initData2();
-        personSc.getEmail().add(new Email("abc"));
-        personSc.getEmail().add(new Email("ghi"));
+        personSc.getEmail().add(new Email("AbC"));
+        personSc.getEmail().add(new Email("Ghi"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
     }
@@ -169,12 +169,12 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         createPerson();
 
         initData2();
-        personSc.getUrl().add(new URL("http://www.example.com/abc"));
+        personSc.getUrl().add(new URL("http://www.eXAmpLe.com/abc"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
         initData2();
-        personSc.getUrl().add(new URL("http://www.example.com/def"));
+        personSc.getUrl().add(new URL("http://www.example.COM/def"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
@@ -185,7 +185,7 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
 
         initData2();
         personSc.getUrl().add(new URL("ghi"));
-        personSc.getUrl().add(new URL("http://www.example.com/def"));
+        personSc.getUrl().add(new URL("http://www.examplE.com/def"));
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
     }
@@ -214,15 +214,15 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         createPeopleWithAddresses();
 
         personSc.setPostalAddress(new Address());
-        personSc.getPostalAddress().setStreetAddressLine("Box");
+        personSc.getPostalAddress().setStreetAddressLine("BoX");
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setStreetAddressLine("P.O.");
+        personSc.getPostalAddress().setStreetAddressLine("P.o.");
         assertEquals(2, getPersonServiceBean().count(sc));
         assertEquals(2, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setStreetAddressLine("P.O. Box 12346");
+        personSc.getPostalAddress().setStreetAddressLine("P.o. BoX 12346");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
@@ -236,15 +236,15 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         createPeopleWithAddresses();
 
         personSc.setPostalAddress(new Address());
-        personSc.getPostalAddress().setDeliveryAddressLine("c/o");
+        personSc.getPostalAddress().setDeliveryAddressLine("c/O");
         assertEquals(2, getPersonServiceBean().count(sc));
         assertEquals(2, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setDeliveryAddressLine("John");
+        personSc.getPostalAddress().setDeliveryAddressLine("JoHn");
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setDeliveryAddressLine("c/o John");
+        personSc.getPostalAddress().setDeliveryAddressLine("c/o JoHn");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
@@ -262,11 +262,11 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         assertEquals(0, getPersonServiceBean().count(sc));
         assertEquals(0, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setCityOrMunicipality("New");
+        personSc.getPostalAddress().setCityOrMunicipality("NeW");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setCityOrMunicipality("Harper'");
+        personSc.getPostalAddress().setCityOrMunicipality("HaRper'");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 

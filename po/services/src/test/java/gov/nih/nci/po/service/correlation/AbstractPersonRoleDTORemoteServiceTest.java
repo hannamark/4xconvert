@@ -257,13 +257,13 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
 
         for (Adxp part : cor1Ad.getPart()) {
             if (!part.getType().equals(AddressPartType.CNT)) {
-                part.setValue(part.getValue() + "2");
+                part.setValue(part.getValue().toUpperCase() + "2");
 
                 results = getCorrelationService().search(searchCriteria);
                 assertEquals(1, results.size());
                 assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
 
-                part.setValue(part.getValue().substring(0, part.getValue().length() - 1));
+                part.setValue(part.getValue().substring(0, part.getValue().length() - 1).toUpperCase());
 
                 results = getCorrelationService().search(searchCriteria);
                 assertEquals(2, results.size());

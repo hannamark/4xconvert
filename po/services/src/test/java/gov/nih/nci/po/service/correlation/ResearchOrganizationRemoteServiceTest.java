@@ -269,6 +269,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         // test by fundintMethod
         searchCriteria.setScoperIdentifier(null);
         searchCriteria.setFundingMechanism(correlation1.getFundingMechanism());
+        searchCriteria.getFundingMechanism().setValue(searchCriteria.getFundingMechanism().getValue().toUpperCase());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 

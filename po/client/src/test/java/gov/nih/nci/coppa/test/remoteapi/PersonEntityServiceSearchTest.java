@@ -30,7 +30,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
     private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress) {
         return create(fName, mName, lName, prefix, suffix, postalAddress, null);
     }
-    
+
     private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress, DSet<Tel> telecomAddress) {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
@@ -56,7 +56,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
                     "http://demos.example.com", "https://mail.example.com", "http://gal.example.com" });
             List<String> email = Arrays.asList(new String[] { "jdoe@example.com", "sales@example.com",
                     "john.doe@example.com", "jdoe@example.net", "jdoe@example.org" });
-            
+
             DSet<Tel> telecomAddress = createDSetTel(email, tels, tels, urls, tels);
 
             remoteCreateAndCatalog(create("Abc", "Mid1", "Klm", "Mr.", "Suf1", createPostalAddress("street",
@@ -167,7 +167,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, "klm", null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, "k", null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -215,7 +215,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn("abc", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -247,7 +247,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn("B", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -263,7 +263,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn("%", "mid1", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -295,7 +295,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn("%", "mID", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(5, results.size());
     }
 
     @Test
@@ -311,7 +311,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "mr.", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -343,7 +343,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "m", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(3, results.size());
     }
 
     @Test
@@ -359,7 +359,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "suf1"));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -391,7 +391,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "suf"));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(4, results.size());
     }
 
     @Test
@@ -407,7 +407,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress("rST", null, null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -439,7 +439,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress("rS", null, null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -455,7 +455,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, "aBC", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -487,7 +487,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, "aB", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -495,7 +495,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, "Reston", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -503,7 +503,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, "rESTON", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -527,7 +527,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, "Res", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -535,7 +535,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, "rES", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -551,7 +551,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, "va", null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -583,7 +583,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, "lou", null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -599,7 +599,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, null, "aBC", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -631,7 +631,7 @@ public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress(null, null, null, null, "aB", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(0, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test

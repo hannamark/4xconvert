@@ -141,8 +141,8 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         whereOrAnd = AbstractSearchCriteria.AND;
 
         if (startsWithSearch && canBeUsedInLikeExpression(result)) {
-            whereClause.append(String.format("obj.%s like :%s", fieldName, paramName));
-            params.put(paramName, result + "%");
+            whereClause.append(String.format("lower(obj.%s) like :%s", fieldName, paramName));
+            params.put(paramName, result.toString().toLowerCase() + "%");
         } else {
             whereClause.append(String.format("obj.%s = :%s", fieldName, paramName));
             params.put(paramName, result);
@@ -162,9 +162,9 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
 
             if (subPropResult != null) {
                 if (startsWithQuery && canBeUsedInLikeExpression(subPropResult)) {
-                    whereClause.append(String.format(whereOrAnd + " obj.%s.%s like :%s ", fieldName, currentProp,
+                    whereClause.append(String.format(whereOrAnd + " lower(obj.%s.%s) like :%s ", fieldName, currentProp,
                             subPropParamName));
-                    params.put(subPropParamName, subPropResult + "%");
+                    params.put(subPropParamName, subPropResult.toString().toLowerCase() + "%");
                 } else {
                     whereClause.append(String.format(whereOrAnd + " obj.%s.%s = :%s ", fieldName, currentProp,
                             subPropParamName));
@@ -257,14 +257,19 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
             }
 
             String subParamName = new String(paramName + propName + i).trim();
-            whereClause.append(alias);
-            whereClause.append('.');
-            whereClause.append(propName);
+
             if (canBeUsedInLikeExpression(val)) {
-                whereClause.append(" like :");
+                whereClause.append("lower(");
+                whereClause.append(alias);
+                whereClause.append('.');
+                whereClause.append(propName);
+                whereClause.append(") like :");
                 whereClause.append(subParamName);
-                params.put(subParamName, val + "%");
+                params.put(subParamName, val.toString().toLowerCase() + "%");
             } else {
+                whereClause.append(alias);
+                whereClause.append('.');
+                whereClause.append(propName);
                 whereClause.append(" = :");
                 whereClause.append(subParamName);
                 params.put(subParamName, val);

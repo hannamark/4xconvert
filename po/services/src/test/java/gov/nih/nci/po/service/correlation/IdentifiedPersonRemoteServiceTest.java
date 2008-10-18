@@ -321,6 +321,7 @@ public class IdentifiedPersonRemoteServiceTest
         // test by assigned id
         searchCriteria.setScoperIdentifier(null);
         searchCriteria.setAssignedId(correlation1.getAssignedId());
+        searchCriteria.getAssignedId().setExtension(searchCriteria.getAssignedId().getExtension().toUpperCase());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 

@@ -188,6 +188,10 @@ public class HealthCareProviderRemoteServiceTest
         List<HealthCareProviderDTO> results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
 
+        searchCriteria.getCertificateLicenseText().setValue(correlation1.getCertificateLicenseText().getValue().toUpperCase());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+
         searchCriteria.getCertificateLicenseText().setValue(correlation1.getCertificateLicenseText().getValue() + "2");
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
