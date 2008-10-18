@@ -35,7 +35,7 @@ function handleAction(){
     <div class="box" id="filters">
     <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <input type="hidden" name="page" />
-        <p>Add a Trial into NCI Clinical Trials Portal - Powered by (caCTUS) by submitting this form. </p>
+        <p>Add Trial into NCI Clinical Trials Portal - Powered by (caCTUS) by submitting this form. Please note: asterisks (<span class="required">*</span>) indicate required fields. </p>
         <table class="form"> 
           <tr>
                 <th colspan="2"><h2><fmt:message key="submit.trial.trialDetails"/></h2></th>
@@ -46,27 +46,42 @@ function handleAction(){
   
           <tr>
                 <td scope="row" class="label">
-                    <label for="leadOrgIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/></label>
+                    <label for="leadOrgIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
                 </td>
                 <td>
-                    <s:textfield name="leadOrgIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
+                    <s:textfield name="participationWebDTO.localProtocolIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>participationWebDTO.localProtocolIdentifier</s:param>
+                       </s:fielderror>                            
+                     </span>
+                </td>                
           </tr>
           <tr>
                 <td scope="row" class="label">
-                     <label for="trialTitle"> <fmt:message key="submit.trial.title"/></label>
+                     <label for="trialTitle"> <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
                 </td>
                 <td>
-                    <s:textarea name="trialTitle"  cols="40" rows="4"  />
+                    <s:textarea name="protocolWebDTO.trialTitle"  cols="75" rows="4"  />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>protocolWebDTO.trialTitle</s:param>
+                       </s:fielderror>                            
+                     </span>
                 </td>
           </tr>
           <tr>
                 <td  scope="row" class="label">
-                    <label for="trialPhase"> <fmt:message key="submit.trial.phase"/></label> 
+                    <label for="trialPhase"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label> 
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="trialPhase" list="#phaseCodeValues"  value="trialPhase" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="protocolWebDTO.trialPhase" list="#phaseCodeValues"  value="trialPhase" cssStyle="width:206px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>protocolWebDTO.trialPhase</s:param>
+                       </s:fielderror>                            
+                     </span>
                 </td>
           </tr>
           <tr>
@@ -112,7 +127,7 @@ function handleAction(){
 							<s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
 							<td>                                             
 							    <s:select headerKey="" headerValue="All" 
-							         name="fundingMechanism" 
+							         name="trialFundingWebDTO.fundingMechanismCode" 
 							         list="#fundingMechanismValues"                             
                                      listKey="fundingMechanismCode"  
                                      listValue="fundingMechanismCode" 
@@ -122,19 +137,34 @@ function handleAction(){
 							<s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
 							<td>                                             
 							    <s:select headerKey="" headerValue="All" 
-							         name="instituteCode" 
+							         name="trialFundingWebDTO.nihInstitutionCode" 
 							         list="#nihInstituteCodes"
                                      listKey="nihInstituteCode" 
                                      listValue="nihInstituteCode"   
 							         value="instituteCode" 
 							         cssStyle="width:106px" />
+						             <span class="formErrorMsg"> 
+				                        <s:fielderror>
+				                        <s:param>trialFundingWebDTO.nihInstitutionCode</s:param>
+				                       </s:fielderror>                            
+				                     </span>
 							</td>
 							<td>
-                                <s:textfield name="serialNumber"  maxlength="200" size="100"  cssStyle="width:100px" />
+                                <s:textfield name="trialFundingWebDTO.serialNumber"  maxlength="200" size="100"  cssStyle="width:100px" />
+	                            <span class="formErrorMsg"> 
+	                                <s:fielderror>
+	                                <s:param>trialFundingWebDTO.serialNumber</s:param>
+	                                </s:fielderror>                            
+	                            </span>
                             </td>
 							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="All" name="divPrgCode" list="#programCodes"  value="trialPhase" cssStyle="width:106px" />
+							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" list="#programCodes"  value="trialPhase" cssStyle="width:106px" />
+		                        <span class="formErrorMsg"> 
+                                   <s:fielderror>
+                                   <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
+                                  </s:fielderror>                            
+                                </span>
 							</td>
 					  </tr>
 					</table>
@@ -153,40 +183,74 @@ function handleAction(){
           
           <tr>
                 <td scope="row" class="label">
-                    <label for="leadOrganization"> <fmt:message key="submit.trial.currentTrialStatus"/></label>
+                    <label for="currentTrialStatus"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
                 </td>
                     <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="trialStatus" list="#statusCodeValues"  value="trialStatus" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="trialStatus" cssStyle="width:206px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>overallStatusWebDTO.statusCode</s:param>
+                        </s:fielderror>                            
+                    </span>
                 </td>
           </tr>
         <tr>
             <td scope="row" class="label"><label for="statusDate"><fmt:message
-                key="submit.trial.currentTrialStatusDate" /></label></td>
-            <td class="value"><s:textfield name="statusDate"
+                key="submit.trial.currentTrialStatusDate" /><span class="required">*</span></label></td>
+            <td class="value"><s:textfield name="overallStatusWebDTO.statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>overallStatusWebDTO.statusDate</s:param>
+                        </s:fielderror>                            
+                    </span>
                 </td>
         </tr>
         <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
         <tr>
             <td scope="row" class="label"><label for="startDate"><fmt:message
-                key="submit.trial.studyStartDate" /></label></td>
-            <td class="value"><s:textfield name="startDate"
+                key="submit.trial.studyStartDate" /><span class="required">*</span></label></td>
+            <td class="value"><s:textfield name="protocolWebDTO.startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal2')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
-                <s:radio name="startDateType" list="#dateTypeList" /></td>
+                <s:radio name="protocolWebDTO.startDateType" list="#dateTypeList" />
+                <span class="formErrorMsg"> 
+                   <s:fielderror>
+                    <s:param>protocolWebDTO.startDate</s:param>
+                   </s:fielderror>                            
+                </span>
+                <span class="formErrorMsg"> 
+                   <s:fielderror>
+                    <s:param>protocolWebDTO.startDateType</s:param>
+                   </s:fielderror>                            
+                </span>
+            </td>
+
         </tr>
         <tr>
             <td scope="row" class="label"><label for="completionDate">
-            <fmt:message key="submit.trial.primaryCompletionDate" /></label></td>
-            <td class="value"><s:textfield name="completionDate"
+            <fmt:message key="submit.trial.primaryCompletionDate" /><span class="required">*</span></label></td>
+            <td class="value"><s:textfield name="protocolWebDTO.completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal3')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
-                <s:radio name="completionDateType" list="#dateTypeList" /></td>
+                <s:radio name="protocolWebDTO.completionDateType" list="#dateTypeList" />
+                <span class="formErrorMsg"> 
+                   <s:fielderror>
+                   <s:param>protocolWebDTO.completionDate</s:param>
+                   </s:fielderror>                            
+                </span>
+                <span class="formErrorMsg"> 
+                   <s:fielderror>
+                    <s:param>protocolWebDTO.completionDateType</s:param>
+                   </s:fielderror>                            
+                </span>
+            </td>
+
         </tr>
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -203,15 +267,24 @@ function handleAction(){
                <fmt:message key="submit.trial.docInstructionalText"/>
             </td>
         </tr>
+        <tr>
+              <td colspan="2" class="space">&nbsp;</td>
+        </tr>
       
         <tr>
               <td scope="row" class="label">
               <label for="protocolDocument">
                      <fmt:message key="submit.trial.protocolDocument"/>
+                     <span class="required">*</span>
               </label>
              </td>
              <td class="value">
                  <s:file name="upload" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.uploadFileName</s:param>
+                   </s:fielderror>                            
+                 </span>
                </td>         
          </tr>
 
