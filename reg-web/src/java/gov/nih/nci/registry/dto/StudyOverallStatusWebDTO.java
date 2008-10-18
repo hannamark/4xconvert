@@ -29,6 +29,14 @@ public class StudyOverallStatusWebDTO {
                 TsConverter.convertToTimestamp(dto.getStatusDate()).toString());
         this.reason = StConverter.convertToString(dto.getReasonText());
     }
+    
+    /** .
+     *  Default Constructor
+     */
+    public StudyOverallStatusWebDTO() {
+        super();
+    }
+    
     /**
      * @return the statusCode
      */

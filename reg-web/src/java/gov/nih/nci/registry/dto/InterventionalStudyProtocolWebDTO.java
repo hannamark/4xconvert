@@ -45,6 +45,12 @@ public class InterventionalStudyProtocolWebDTO {
                                         iso.getPrimaryCompletionDateTypeCode());
         }
     }
+    /** .
+     *  Default Constructor
+     */
+    public InterventionalStudyProtocolWebDTO() {
+        super();
+    }
 
     /**
      * @return result
