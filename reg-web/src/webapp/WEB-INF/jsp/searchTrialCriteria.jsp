@@ -10,13 +10,13 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 function resetValues () {
-    document.forms.queryProtocol.queryProtocol_criteria_nciIdentifier.value="";
     document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_phaseCode.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_primaryPurposeCode.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_identifierType.value="";
     document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationTrialIdentifier.value="";
+    document.forms.queryProtocol.queryProtocol_criteria_organizationType.value="";
     document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationId.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_studyPhaseCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_studyStatusCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_documentWorkflowStatusCode.value="";
 }
 
 function handleAction(){
@@ -79,7 +79,7 @@ function handleAction(){
                 </td>
                 <s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
                 <td>
-                 	<s:select name="criteria.leadOrganizationleId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
+                 	<s:select name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" />
                  </td>
             </tr>  
         </table>
