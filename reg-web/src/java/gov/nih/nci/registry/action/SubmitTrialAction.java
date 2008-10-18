@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -33,8 +31,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.ServletResponseAware;
-
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -47,6 +43,7 @@ import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
 import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
+import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.Constants;
 
 /**
@@ -57,42 +54,50 @@ import gov.nih.nci.registry.util.Constants;
 @Validation
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", 
     "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" , "PMD.NPathComplexity" })
-public class SubmitTrialAction extends ActionSupport
-                                        implements ServletResponseAware {
+public class SubmitTrialAction extends ActionSupport {
     private static final String VIEW_TRIAL = "view";
     private static final Logger LOG  = Logger.getLogger(SubmitTrialAction.class);
-    private List<TrialFundingWebDTO> trialFundingList;
+    private InterventionalStudyProtocolWebDTO protocolWebDTO = new InterventionalStudyProtocolWebDTO();
+    private StudyParticipationWebDTO participationWebDTO = new StudyParticipationWebDTO();
     private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
+    private StudyOverallStatusWebDTO overallStatusWebDTO = new StudyOverallStatusWebDTO();
+    private TrialDocumentWebDTO trialDocumentWebDTO = new TrialDocumentWebDTO();
     private Long cbValue;
     private String page;
     private File upload;
     private String uploadFileName;
-    private HttpServletResponse servletResponse;
     private static final int MAXF = 1024; 
+ 
     /**
      * create protocol.
      * @return String
      */
     public String create() {
-        try {
-            InterventionalStudyProtocolDTO protocolDTO = new InterventionalStudyProtocolDTO();
-            String phaseCode = ServletActionContext.getRequest().getParameter("trialPhase");
-            String officialTitle = ServletActionContext.getRequest().getParameter("trialTitle");
-            String startDate = ServletActionContext.getRequest().getParameter("startDate");
-            String completionDate = ServletActionContext.getRequest().getParameter("completionDate");
-            String startDateType = ServletActionContext.getRequest().getParameter("startDateType");
-            String completionDateType = ServletActionContext.getRequest().getParameter("completionDateType");
+        try {        
+            
+            clearErrorsAndMessages();
+            
+            // validate the form elements
+            validateForm();
+
+            if (hasFieldErrors()) {
+                return ERROR;
+            }
             
             //create Study Protocol
-            protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(phaseCode)));
-            protocolDTO.setOfficialTitle(StConverter.convertToSt(officialTitle));
-            protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(startDate)));
+            InterventionalStudyProtocolDTO protocolDTO = new InterventionalStudyProtocolDTO();
+            protocolDTO.setPhaseCode(CdConverter.convertToCd(
+                                    PhaseCode.getByCode(protocolWebDTO.getTrialPhase())));
+            protocolDTO.setOfficialTitle(StConverter.convertToSt(
+                                    protocolWebDTO.getTrialTitle()));
+            protocolDTO.setStartDate(TsConverter.convertToTs(
+                                    PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
             protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(
-                                    PAUtil.dateStringToTimestamp(completionDate)));
+                                    PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
             protocolDTO.setStartDateTypeCode(CdConverter.convertToCd(
-                                    ActualAnticipatedTypeCode.getByCode(startDateType)));
+                                    ActualAnticipatedTypeCode.getByCode(protocolWebDTO.getStartDateType())));
             protocolDTO.setPrimaryCompletionDateTypeCode(CdConverter
-                    .convertToCd(ActualAnticipatedTypeCode.getByCode(completionDateType)));
+                    .convertToCd(ActualAnticipatedTypeCode.getByCode(protocolWebDTO.getCompletionDateType())));
             Ii studyProtocolIi = RegistryServiceLocator.getStudyProtocolService()
                                     .createInterventionalStudyProtocol(protocolDTO);
             LOG.info("Trial is registered with ID: " + IiConverter.convertToString(studyProtocolIi));
@@ -106,10 +111,14 @@ public class SubmitTrialAction extends ActionSupport
             //create study overall status
             createStudyStatus(studyProtocolIi);
             
-            // create the Study Grants
-            createStudyResource(studyProtocolIi);
+            if (!PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+                // create the Study Grants
+                createStudyResource(studyProtocolIi);
+            }
             //upload protocol document
             uploadDocument(studyProtocolIi);
+            
+            // after creating the study protocol, query the protocol for viewing
             query();
         } catch (Exception e) {
             //e.printStackTrace();
@@ -124,20 +133,21 @@ public class SubmitTrialAction extends ActionSupport
     private void createStudyResource(Ii studyProtocolIi) {
         // create the Study Grants
         try {
-            String fundingMechanism = ServletActionContext.getRequest().getParameter("fundingMechanism");
-            String nihInstituteCode = ServletActionContext.getRequest().getParameter("instituteCode");
-            String serialNumber = ServletActionContext.getRequest().getParameter("serialNumber");
-            String divPrgCode = ServletActionContext.getRequest().getParameter("divPrgCode");
             
             StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();            
     
             studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
-            studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
-            studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(fundingMechanism));
-            studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
-                                                            MonitorCode.getByCode(divPrgCode)));
-            studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(nihInstituteCode));
-            studyResoureDTO.setSerialNumber(IntConverter.convertToInt(serialNumber));
+            studyResoureDTO.setSummary4ReportedResourceIndicator(
+                            BlConverter.convertToBl(Boolean.FALSE));
+            studyResoureDTO.setFundingMechanismCode(
+                            CdConverter.convertStringToCd(trialFundingWebDTO.getFundingMechanismCode()));
+            studyResoureDTO.setNciDivisionProgramCode(
+                            CdConverter.convertToCd(MonitorCode.getByCode(
+                               trialFundingWebDTO.getNciDivisionProgramCode())));
+            studyResoureDTO.setNihInstitutionCode(
+                            CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
+            studyResoureDTO.setSerialNumber(
+                            IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
             studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
                     ServletActionContext.getRequest().getRemoteUser())));
             RegistryServiceLocator.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
@@ -154,13 +164,13 @@ public class SubmitTrialAction extends ActionSupport
         //create study overall status
         try {
 
-            String trialStatus = ServletActionContext.getRequest().getParameter("trialStatus");
-            String statusDate = ServletActionContext.getRequest().getParameter("statusDate");
             StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
             //overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
             overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
-            overallStatusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialStatus)));
-            overallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
+            overallStatusDTO.setStatusCode(CdConverter.convertToCd(
+                        StudyStatusCode.getByCode(overallStatusWebDTO.getStatusCode())));
+            overallStatusDTO.setStatusDate(TsConverter.convertToTs(
+                        PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate())));
             RegistryServiceLocator.getStudyOverallStatusService().create(overallStatusDTO);
         } catch (PAException pae) {
             //pae.printStackTrace();
@@ -201,11 +211,10 @@ public class SubmitTrialAction extends ActionSupport
     private void createStudyParticipation(Ii studyProtocolIi) {
         try {
         // create Study Participation record
-        String leadOrgIdentifier = ServletActionContext.getRequest().getParameter("leadOrgIdentifier");
         StudyParticipationDTO studyPartcipationDTO = new StudyParticipationDTO();
         studyPartcipationDTO.setStudyProtocolIi(studyProtocolIi);
         studyPartcipationDTO.setLocalStudyProtocolIdentifier(
-                                                    StConverter.convertToSt(leadOrgIdentifier));
+                      StConverter.convertToSt(participationWebDTO.getLocalProtocolIdentifier()));
         studyPartcipationDTO.setHealthcareFacilityIi(IiConverter.convertToIi("1"));
         studyPartcipationDTO.setFunctionalCode(
                     CdConverter.convertStringToCd(
@@ -231,15 +240,16 @@ public class SubmitTrialAction extends ActionSupport
                         
             InterventionalStudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().
                                                              getInterventionalStudyProtocol(studyProtocolIi);
-            InterventionalStudyProtocolWebDTO protocolWebDTO =
+            InterventionalStudyProtocolWebDTO trialWebDTO =
                                                           new InterventionalStudyProtocolWebDTO(protocolDTO);
             // put an entry in the session and store InterventionalStudyProtocolDTO 
             ServletActionContext.getRequest().getSession().setAttribute(
-                                    Constants.TRIAL_SUMMARY, protocolWebDTO);
+                                    Constants.TRIAL_SUMMARY, trialWebDTO);
             
             // query the study grants 
             List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService().
                                                  getstudyResourceByStudyProtocol(studyProtocolIi);
+            List <TrialFundingWebDTO> trialFundingList;
             if (!(isoList.isEmpty())) { 
                 trialFundingList = new ArrayList<TrialFundingWebDTO>();                
                 for (StudyResourcingDTO dto : isoList) {
@@ -278,6 +288,7 @@ public class SubmitTrialAction extends ActionSupport
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().getSession().setAttribute(
                                         Constants.STUDY_PARTICIPATION, studyParticipationList.get(0));
+                
             }
  
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
@@ -286,6 +297,82 @@ public class SubmitTrialAction extends ActionSupport
             LOG.error("Exception occured while querying trial " + e);
         }
         return VIEW_TRIAL;
+    }
+    
+    /**
+     * validate the submit trial form elements.
+     */
+    private void validateForm()  {
+        if (PAUtil.isEmpty(participationWebDTO.getLocalProtocolIdentifier())) {
+            addFieldError("participationWebDTO.localProtocolIdentifier",
+                    getText("error.submit.localProtocolIdentifier"));
+        }
+        if (PAUtil.isEmpty(protocolWebDTO.getTrialTitle())) {
+            addFieldError("protocolWebDTO.trialTitle",
+                    getText("error.submit.trialTitle"));
+        }
+        if (PAUtil.isEmpty(protocolWebDTO.getTrialPhase())) {
+            addFieldError("protocolWebDTO.trialPhase",
+                    getText("error.submit.trialPhase"));
+        }
+        
+        // if funding mechanism is selected, make all other 
+        // funding fields required
+        if (!PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {            
+            if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {                
+                addFieldError("trialFundingWebDTO.nihInstitutionCode",
+                        getText("error.submit.nihInstitutionCode"));
+            }
+            if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {                
+                addFieldError("trialFundingWebDTO.serialNumber",
+                        getText("error.submit.serialNumber"));
+            } else if (!PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+                
+                try {
+                    Long.valueOf(trialFundingWebDTO.getSerialNumber());
+                } catch (NumberFormatException nfe) {
+                    // if cannot be converted to long then it's not a number
+                    addFieldError("trialFundingWebDTO.serialNumber",
+                            getText("error.submit.serialNumberType"));
+                }
+                
+            }
+            if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {                
+                addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
+                        getText("error.submit.nciDivisionProgramCode"));
+            }
+        }
+        
+        if (PAUtil.isEmpty(overallStatusWebDTO.getStatusCode())) {
+            addFieldError("overallStatusWebDTO.statusCode",
+                    getText("error.submit.statusCode"));
+        }
+        if (PAUtil.isEmpty(overallStatusWebDTO.getStatusDate())) {
+            addFieldError("overallStatusWebDTO.statusDate",
+                    getText("error.submit.statusDate"));
+        }
+        if (PAUtil.isEmpty(protocolWebDTO.getStartDate())) {
+            addFieldError("protocolWebDTO.startDate",
+                    getText("error.submit.startDate"));
+        }
+        if (PAUtil.isEmpty(protocolWebDTO.getStartDateType())) {
+            addFieldError("protocolWebDTO.startDateType",
+                    getText("error.submit.dateType"));
+        }
+        if (PAUtil.isEmpty(protocolWebDTO.getCompletionDate())) {
+            addFieldError("protocolWebDTO.completionDate",
+                    getText("error.submit.completionDate"));
+        }        
+        if (PAUtil.isEmpty(protocolWebDTO.getCompletionDateType())) {
+            addFieldError("protocolWebDTO.completionDateType",
+                    getText("error.submit.dateType"));
+        }        
+        if (PAUtil.isEmpty(uploadFileName)) {
+            addFieldError("trialDocumentWebDTO.uploadFileName",
+                    getText("error.submit.protocolDocument"));           
+        }
+        
+        
     }
     
     /**
@@ -330,21 +417,50 @@ public class SubmitTrialAction extends ActionSupport
         } 
 
         return content; 
-    }   
-    
-    /**
-     * @return trialFundingList
-     */
-    public List<TrialFundingWebDTO> getTrialFundingList() {
-        return trialFundingList;
     }
+     
+     /**
+      * @return protocolWebDTO
+      */
+     public InterventionalStudyProtocolWebDTO getProtocolWebDTO() {
+         return protocolWebDTO;
+     }
+     
+     /**
+      * @param protocolWebDTO protocolWebDTO
+      */
+     public void setProtocolWebDTO(InterventionalStudyProtocolWebDTO protocolWebDTO) {
+         this.protocolWebDTO = protocolWebDTO;
+     }
+     
+     /**
+      * @return the overallStatusWebDTO
+      */
+     public StudyOverallStatusWebDTO getOverallStatusWebDTO() {
+         return overallStatusWebDTO;
+     }
 
-    /**
-     * @param trialFundingList trialFundingList
-     */
-    public void setTrialFundingList(List<TrialFundingWebDTO> trialFundingList) {
-        this.trialFundingList = trialFundingList;
-    }
+     /**
+      * @param overallStatusWebDTO the overallStatusWebDTO to set
+      */
+     public void setOverallStatusWebDTO(StudyOverallStatusWebDTO overallStatusWebDTO) {
+         this.overallStatusWebDTO = overallStatusWebDTO;
+     }
+
+     
+     /**
+      * @return the participationWebDTO
+      */
+     public StudyParticipationWebDTO getParticipationWebDTO() {
+         return participationWebDTO;
+     }
+
+     /**
+      * @param participationWebDTO the participationWebDTO to set
+      */
+     public void setParticipationWebDTO(StudyParticipationWebDTO participationWebDTO) {
+         this.participationWebDTO = participationWebDTO;
+     }
     
     /**
      * @return trialFundingWebDTO
@@ -361,18 +477,19 @@ public class SubmitTrialAction extends ActionSupport
     }
     
     /**
-     * @param response servletResponse
+     * @return the trialDocumentWebDTO
      */
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
+    public TrialDocumentWebDTO getTrialDocumentWebDTO() {
+        return trialDocumentWebDTO;
     }
+
     /**
-     * @return servletResponse
+     * @param trialDocumentWebDTO the trialDocumentWebDTO to set
      */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
-    } 
-    
+    public void setTrialDocumentWebDTO(TrialDocumentWebDTO trialDocumentWebDTO) {
+        this.trialDocumentWebDTO = trialDocumentWebDTO;
+    }
+   
     /**
      * @return cbValue
      */
