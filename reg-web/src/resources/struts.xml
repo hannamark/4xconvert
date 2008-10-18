@@ -31,6 +31,7 @@
             <interceptor-ref name="fileUpload"/>
             <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/submitTrial.jsp</result>
+            <result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
             <result name="view">/WEB-INF/jsp/viewTrial.jsp</result>
         </action> 
     </package>
