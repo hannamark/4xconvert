@@ -15,6 +15,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
@@ -29,6 +30,7 @@ import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -63,7 +65,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     /**
      * test get org behavior.
      * @throws EntityValidationException
-     * @throws NullifiedEntityException 
+     * @throws NullifiedEntityException
      */
     @Test
     public void getOrganization() throws EntityValidationException, NullifiedEntityException {
@@ -126,6 +128,188 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertEquals(2, errors.size()) ;
         assertTrue(errors.containsKey("name"));
         assertTrue(errors.containsKey("postalAddress"));
+    }
+
+    private Organization createOrg(String name, String abbreviatedName, String desc, String addr1, String addr2,
+            String city, String state, String zip, Country country, String[] emails, String[] phones, String[] faxes,
+            String[] ttys, String[] urls) {
+        Organization org = new Organization();
+        org.setName(name);
+        org.setAbbreviatedName(abbreviatedName);
+        org.setDescription(desc);
+        Address a = new Address(addr1, city, state, zip, getDefaultCountry());
+        a.setDeliveryAddressLine(addr2);
+        org.setPostalAddress(a);
+        for (String email : emails) {
+            org.getEmail().add(new Email(email));
+        }
+        for (String phone : phones) {
+            org.getPhone().add(new PhoneNumber(phone));
+        }
+        for (String fax : faxes) {
+            org.getFax().add(new PhoneNumber(fax));
+        }
+        for (String tty : ttys) {
+            org.getTty().add(new PhoneNumber(tty));
+        }
+        for (String url : urls) {
+            org.getUrl().add(new URL(url));
+        }
+
+        org.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(org);
+        PoHibernateUtil.getCurrentSession().flush();
+        return org;
+    }
+
+    public void testSearch() throws Exception {
+        Organization o1 = createOrg("oRg1", "o1", "The FiRst Org", "1 HaPPy StreEt", "aPt 1", "HaPPyville",
+                "Happyland", "11111", getDefaultCountry(),
+                new String[] { "admin@org1.com", "sAlEs@org1.com" },
+                new String[] { "111-222-3333", "444-555-6666" },
+                new String[] { "999-888-7777", "666-777-8888" },
+                null,
+                new String[] { "www.org1.com", "www.orG1.NET" });
+
+        createOrg("oRg2", "o2", "The SecOnd Org", "2 HaPPy StreEt", "aPt 2", "HaPPyburb",
+                "Happycomonwealth", "11112", getDefaultCountry(),
+                new String[] { "admin@org2.com", "sAlEs@org2.com" },
+                new String[] { "111-222-4444", "444-555-7777" },
+                new String[] { "999-888-6666", "666-777-9999" },
+                null,
+                new String[] { "www.org2.com", "www.orG2.NET" });
+
+        createOrg("oRg3", "o3", "The Third Org", "3 HaPPy StreEt", "aPt 3", "HaPPytown",
+                "Happystate", "11113", getDefaultCountry(),
+                new String[] { "admin@org3.com", "sAlEs@org3.com" },
+                new String[] { "111-222-5555", "444-555-8888" },
+                new String[] { "999-888-5555", "666-777-0000" },
+                null,
+                new String[] { "www.org3.com", "www.orG3.NET" });
+
+
+        try {
+            remote.search(null);
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        try {
+            remote.search(new OrganizationDTO());
+            fail();
+        } catch (OneCriterionRequiredException e) {
+            // expected
+        }
+
+        // search by name
+        OrganizationDTO o1dto = remote.getOrganization(ISOUtils.ID_ORG.convertToIi(o1.getId()));
+        OrganizationDTO sc = new OrganizationDTO();
+        sc.setName(o1dto.getName());
+        sc.getName().getPart().get(0).setValue("OrG");
+        List<OrganizationDTO> results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.getName().getPart().get(0).setValue("org1");
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.getName().getPart().get(0).setValue("noresults");
+        results = remote.search(sc);
+        assertEquals(0, results.size());
+
+        sc.setName(null);
+
+        // search by abbreviation
+        sc.setAbbreviatedName(o1dto.getAbbreviatedName());
+        sc.getAbbreviatedName().getPart().get(0).setValue("O");
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.getAbbreviatedName().getPart().get(0).setValue("o");
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.getAbbreviatedName().getPart().get(0).setValue("o2");
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.getAbbreviatedName().getPart().get(0).setValue("noresults");
+        results = remote.search(sc);
+        assertEquals(0, results.size());
+        sc.setAbbreviatedName(null);
+
+
+        // search by desc
+        sc.setDescription(o1dto.getDescription());
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.getDescription().setValue("The ");
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+        sc.setDescription(null);
+
+        // search by ad
+        sc.setPostalAddress(AddressConverterUtil.create("1 hAp", null, null, null, null, null));
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create("%pp", null, null, null, null, null));
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, "apt ", null, null, null, null));
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, "%3", null, null, null, null));
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happy", null, null, null));
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb", null, null, null));
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, "happyb invalid", null, null, null));
+        results = remote.search(sc);
+        assertEquals(0, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happy", null, null));
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "happyville", null, null));
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, "noresults", null, null));
+        results = remote.search(sc);
+        assertEquals(0, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "111", null));
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "11112", null));
+        results = remote.search(sc);
+        assertEquals(1, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, "2", null));
+        results = remote.search(sc);
+        assertEquals(0, results.size());
+
+        sc.setPostalAddress(AddressConverterUtil.create(null, null, null, null, null,
+                getDefaultCountry().getAlpha3()));
+        results = remote.search(sc);
+        assertEquals(3, results.size());
+
+        sc.setPostalAddress(null);
     }
 
     @Test

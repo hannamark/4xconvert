@@ -68,7 +68,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
         OrganizationDTO crit = new OrganizationDTO();
         crit.setName(RemoteApiUtils.convertToEnOn("A"));
         List<OrganizationDTO> results = getOrgService().search(crit);
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
         OrganizationDTO crit = new OrganizationDTO();
         crit.setName(RemoteApiUtils.convertToEnOn("a"));
         List<OrganizationDTO> results = getOrgService().search(crit);
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test

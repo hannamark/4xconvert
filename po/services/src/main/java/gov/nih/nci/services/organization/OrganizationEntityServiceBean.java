@@ -90,8 +90,8 @@ import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.OrgEntityServiceSearchCriteria;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
@@ -185,9 +185,8 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<OrganizationDTO> search(OrganizationDTO organization) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(organization);
-        OrgEntityServiceSearchCriteria criteria = new OrgEntityServiceSearchCriteria();
-        criteria.setOrganization(orgBO);
-        List<Organization> listBOs = getOrganizationServiceBean().search(criteria);
+        AnnotatedBeanSearchCriteria<Organization> sc = new AnnotatedBeanSearchCriteria<Organization>(orgBO);
+        List<Organization> listBOs = getOrganizationServiceBean().search(sc);
         return PoXsnapshotHelper.createSnapshotList(listBOs);
     }
 
