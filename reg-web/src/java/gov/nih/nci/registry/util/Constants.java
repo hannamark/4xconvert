@@ -41,4 +41,10 @@ public class Constants {
     
     /** Study Participation. */
     public static final String STUDY_PARTICIPATION = "studyParticipation";
+    
+    /** Protocol Document. */
+    public static final String PROTOCOL_DOCUMENT = "protocolDocument";
+    
+    /** IRB Approval Document. */
+    public static final String IRB_APPROVAL = "irbApproval";
 }
