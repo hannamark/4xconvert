@@ -155,9 +155,11 @@ public class NCISpecificInformationAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
             addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;
         }
         // nciSpecificInformationWebDTO = setNCISpecificDTO(spDTO , srDTO);
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
     }
 
