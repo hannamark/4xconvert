@@ -45,6 +45,8 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">  
 <pa:sucessMessage/>
+<pa:failureMessage/>
+
     <s:form action="nciSpecificInformationupdate">
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form" >

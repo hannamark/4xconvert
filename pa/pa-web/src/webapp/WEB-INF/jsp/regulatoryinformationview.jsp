@@ -13,6 +13,9 @@
 <h2><fmt:message key="regulatory.title" /></h2>
 <!--Help Content--> 
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
+   <pa:sucessMessage/>
+   <pa:failureMessage/>
+
 <table class="form">
 	<!--  Trial Oversight Authority Country -->
 	<tr>

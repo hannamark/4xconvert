@@ -45,6 +45,7 @@
 <div class="box">
 <pa:sucessMessage/>
 <s:form name="studyOverallStatus">
+
     <s:actionerror />
 <h2><fmt:message key="trialStatus.title" /></h2>
     <table class="form">
