@@ -279,10 +279,27 @@ function handleAction(){
               </label>
              </td>
              <td class="value">
-                 <s:file name="upload" cssStyle="width:270px"/>
+                 <s:file name="protocolDoc" cssStyle="width:270px"/>
                  <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>trialDocumentWebDTO.uploadFileName</s:param>
+                    <s:param>trialDocumentWebDTO.protocolDocFileName</s:param>
+                   </s:fielderror>                            
+                 </span>
+               </td>         
+         </tr>
+         
+         <tr>
+              <td scope="row" class="label">
+              <label for="irbApproval">
+                     <fmt:message key="submit.trial.irbApproval"/>
+                     <span class="required">*</span>
+              </label>
+             </td>
+             <td class="value">
+                 <s:file name="irbApproval" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.irbApprovalFileName</s:param>
                    </s:fielderror>                            
                  </span>
                </td>         

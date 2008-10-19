@@ -185,6 +185,38 @@
 	                </tr>
                 </c:if>
             </c:if>
+                <tr>
+                    <td colspan="2" class="space">&nbsp;</td>
+                </tr>           
+                <tr>
+                    <th colspan="2"><h2><fmt:message key="view.trial.documents"/></h2></th>
+                </tr>
+                <tr>            
+                    <td scope="row" class="label">
+                        <label for="protocolDocument">
+                            <fmt:message key="view.trial.protocolDocument"/>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:url var="url" value="submitTrialviewDoc.action" >
+						  <c:param name="id " value="${sessionScope.protocolDocument.id}" />
+						</c:url>
+                        <a href="<c:out value="${url}"/>"><c:out value="${sessionScope.protocolDocument.fileName }"/></a>
+                    </td>
+                </tr>
+                <tr>            
+                    <td scope="row" class="label">
+                        <label for="irbApproval">
+                            <fmt:message key="view.trial.irbApproval"/>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:url var="url" value="submitTrialviewDoc.action" >
+                          <c:param name="id " value="${sessionScope.irbApproval.id}" />
+                        </c:url>
+                        <a href="<c:out value="${url}"/>"><c:out value="${sessionScope.irbApproval.fileName }"/></a>
+                    </td>
+                </tr>
         </table>  
                   
     </s:form>
