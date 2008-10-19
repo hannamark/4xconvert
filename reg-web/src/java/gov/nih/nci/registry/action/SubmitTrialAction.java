@@ -3,11 +3,15 @@ package gov.nih.nci.registry.action;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -31,12 +35,15 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletResponseAware;
+
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
@@ -52,9 +59,9 @@ import gov.nih.nci.registry.util.Constants;
  * 
  */
 @Validation
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", 
-    "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" , "PMD.NPathComplexity" })
-public class SubmitTrialAction extends ActionSupport {
+@SuppressWarnings({ "PMD" })
+public class SubmitTrialAction extends ActionSupport implements
+                                                    ServletResponseAware {
     private static final String VIEW_TRIAL = "view";
     private static final Logger LOG  = Logger.getLogger(SubmitTrialAction.class);
     private InterventionalStudyProtocolWebDTO protocolWebDTO = new InterventionalStudyProtocolWebDTO();
@@ -64,8 +71,13 @@ public class SubmitTrialAction extends ActionSupport {
     private TrialDocumentWebDTO trialDocumentWebDTO = new TrialDocumentWebDTO();
     private Long cbValue;
     private String page;
-    private File upload;
-    private String uploadFileName;
+    private File protocolDoc;
+    private String protocolDocFileName;
+    private File irbApproval;
+    private String irbApprovalFileName;
+    private Long id = null;
+    private HttpServletResponse servletResponse;
+
     private static final int MAXF = 1024; 
  
     /**
@@ -116,7 +128,10 @@ public class SubmitTrialAction extends ActionSupport {
                 createStudyResource(studyProtocolIi);
             }
             //upload protocol document
-            uploadDocument(studyProtocolIi);
+            uploadProtocolDocument(studyProtocolIi);
+            
+            //upload IRB Approval document
+            uploadIrbApproval(studyProtocolIi);
             
             // after creating the study protocol, query the protocol for viewing
             query();
@@ -179,28 +194,55 @@ public class SubmitTrialAction extends ActionSupport {
     }
     
     /**
-     * Uploads documents.
+     * Uploads Protocol Document.
      * @param studyProtocolIi
      */
-    private void uploadDocument(Ii studyProtocolIi) {
+    private void uploadProtocolDocument(Ii studyProtocolIi) {
         try {
 
             DocumentDTO docDTO = new DocumentDTO();
             docDTO.setStudyProtocolIi(studyProtocolIi);
             docDTO.setTypeCode(
                     CdConverter.convertStringToCd(DocumentTypeCode.Protocol_Document.getCode()));
-            docDTO.setFileName(StConverter.convertToSt(uploadFileName));
+            docDTO.setFileName(StConverter.convertToSt(protocolDocFileName));
             docDTO.setUserLastUpdated((StConverter.convertToSt(
                     ServletActionContext.getRequest().getRemoteUser())));
             docDTO.setText(EdConverter.convertToEd(
-                        readInputStream(new FileInputStream(upload))));
+                        readInputStream(new FileInputStream(protocolDoc))));
             RegistryServiceLocator.getDocumentService().create(docDTO);
         } catch (PAException pae) {
             //pae.printStackTrace();
-            LOG.error("Exception occured while uploading documents: " + pae);
+            LOG.error("Exception occured while uploading Protocol Document: " + pae);
         } catch (IOException ioe) {
             //ioe.printStackTrace();
-            LOG.error("Exception occured reading file " + ioe);
+            LOG.error("Exception occured reading  Protocol Document " + ioe);
+            
+        }
+    }
+    
+    /**
+     * Uploads IRB Approval Document.
+     * @param studyProtocolIi
+     */
+    private void uploadIrbApproval(Ii studyProtocolIi) {
+        try {
+
+            DocumentDTO docDTO = new DocumentDTO();
+            docDTO.setStudyProtocolIi(studyProtocolIi);
+            docDTO.setTypeCode(
+                    CdConverter.convertStringToCd(DocumentTypeCode.IRB_Approval_Document.getCode()));
+            docDTO.setFileName(StConverter.convertToSt(irbApprovalFileName));
+            docDTO.setUserLastUpdated((StConverter.convertToSt(
+                    ServletActionContext.getRequest().getRemoteUser())));
+            docDTO.setText(EdConverter.convertToEd(
+                        readInputStream(new FileInputStream(irbApproval))));
+            RegistryServiceLocator.getDocumentService().create(docDTO);
+        } catch (PAException pae) {
+            //pae.printStackTrace();
+            LOG.error("Exception occured while uploading IRB Approval Document: " + pae);
+        } catch (IOException ioe) {
+            //ioe.printStackTrace();
+            LOG.error("Exception occured reading  IRB Approval Document " + ioe);
             
         }
     }
@@ -290,6 +332,35 @@ public class SubmitTrialAction extends ActionSupport {
                                         Constants.STUDY_PARTICIPATION, studyParticipationList.get(0));
                 
             }
+            
+            // query the trial documents
+            List<DocumentDTO> documentISOList = 
+                                       RegistryServiceLocator.getDocumentService().
+                                               getDocumentsByStudyProtocol(studyProtocolIi);
+            List <TrialDocumentWebDTO> documentList;
+            if (!(documentISOList.isEmpty())) { 
+                documentList = new ArrayList<TrialDocumentWebDTO>();                
+                for (DocumentDTO dto : documentISOList) {
+                    documentList.add(new TrialDocumentWebDTO(dto));
+                }
+                
+                for (TrialDocumentWebDTO webdto : documentList) {
+                    if (webdto.getTypeCode().equalsIgnoreCase(
+                            DocumentTypeCode.Protocol_Document.getCode())) {
+                        // put an entry in the session and store Protocol Document
+                        ServletActionContext.getRequest().getSession().setAttribute(
+                                                Constants.PROTOCOL_DOCUMENT, webdto);
+                        
+                    }
+                    if (webdto.getTypeCode().equalsIgnoreCase(
+                            DocumentTypeCode.IRB_Approval_Document.getCode())) {
+                        // put an entry in the session and store IRB Approval Document
+                        ServletActionContext.getRequest().getSession().setAttribute(
+                                                Constants.IRB_APPROVAL, webdto);                        
+                    }                    
+                }
+                
+            }
  
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
         } catch (Exception e) {
@@ -298,6 +369,51 @@ public class SubmitTrialAction extends ActionSupport {
         }
         return VIEW_TRIAL;
     }
+    
+    /**
+     * @return result
+     */
+    public String viewDoc() {
+        LOG.info("Entering viewProtocolDoc");
+        try {  
+            DocumentDTO  docDTO = 
+                RegistryServiceLocator.getDocumentService().get(IiConverter.convertToIi(id));
+
+            InterventionalStudyProtocolWebDTO spDTO = (InterventionalStudyProtocolWebDTO) ServletActionContext
+                                .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+
+            
+            StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
+            sb.append(File.separator).append(spDTO.getNciAccessionNumber()).append(File.separator).
+                append(docDTO.getIi().getExtension()).append('-').append(docDTO.getFileName().getValue());
+
+            File downloadFile = new File(sb.toString());
+            servletResponse = ServletActionContext.getResponse();
+            servletResponse.setContentType("application/x-unknown");
+            FileInputStream fileToDownload = new FileInputStream(downloadFile);
+            servletResponse.setHeader("Content-Disposition", "attachment; filename="
+                    + downloadFile.getName());
+            servletResponse.setContentLength(fileToDownload.available());
+            int data;
+            ServletOutputStream out = servletResponse.getOutputStream();
+            while ((data = fileToDownload.read()) != -1) {
+                out.write(data);
+            }
+            out.flush();
+            out.close();             
+        } catch (FileNotFoundException err) {
+            LOG.error("TrialDocumentAction failed with FileNotFoundException: "
+                    + err);
+            this.addActionError("File not found: " + err.getLocalizedMessage());
+            query();
+            return ERROR;
+        } catch (Exception e) {
+            //e.printStackTrace();
+            LOG.error("Exception occured while retrieving document " + e);
+        }
+        return NONE;
+    }
+
     
     /**
      * validate the submit trial form elements.
@@ -367,9 +483,13 @@ public class SubmitTrialAction extends ActionSupport {
             addFieldError("protocolWebDTO.completionDateType",
                     getText("error.submit.dateType"));
         }        
-        if (PAUtil.isEmpty(uploadFileName)) {
-            addFieldError("trialDocumentWebDTO.uploadFileName",
+        if (PAUtil.isEmpty(protocolDocFileName)) {
+            addFieldError("trialDocumentWebDTO.protocolDocFileName",
                     getText("error.submit.protocolDocument"));           
+        }
+        if (PAUtil.isEmpty(irbApprovalFileName)) {
+            addFieldError("trialDocumentWebDTO.irbApprovalFileName",
+                    getText("error.submit.irbApproval"));           
         }
         
         
@@ -489,6 +609,33 @@ public class SubmitTrialAction extends ActionSupport {
     public void setTrialDocumentWebDTO(TrialDocumentWebDTO trialDocumentWebDTO) {
         this.trialDocumentWebDTO = trialDocumentWebDTO;
     }
+    
+    /**
+     * @param response servletResponse
+     */
+    public void setServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
+    }
+    /**
+     * @return servletResponse
+     */
+    public HttpServletResponse getServletResponse() {
+        return servletResponse;
+    }
+    
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
    
     /**
      * @return cbValue
@@ -519,31 +666,59 @@ public class SubmitTrialAction extends ActionSupport {
     }
     
     /**
-     * @return upload
+     * @return protocolDoc
      */
-    public File getUpload() {
-        return upload;
+    public File getProtocolDoc() {
+        return protocolDoc;
      }
     
      /**
-     * @param upload upload
+     * @param protocolDoc protocolDoc
      */
-    public void setUpload(File upload) {
-         this.upload = upload;
+    public void setProtocolDoc(File protocolDoc) {
+         this.protocolDoc = protocolDoc;
      }
     
     /**
-     * @return fileName
+     * @return protocolDocFileName
      */
-    public String getUploadFileName() {
-         return uploadFileName;
+    public String getProtocolDocFileName() {
+         return protocolDocFileName;
      }
     
      /**
-     * @param uploadFileName uploadFileName
+     * @param protocolDocFileName protocolDocFileName
      */
-    public void setUploadFileName(String uploadFileName) {
-        this.uploadFileName = uploadFileName;
+    public void setProtocolDocFileName(String protocolDocFileName) {
+        this.protocolDocFileName = protocolDocFileName;
+     } 
+    
+    /**
+     * @return irbApproval
+     */
+    public File getIrbApproval() {
+        return irbApproval;
+     }
+    
+     /**
+     * @param irbApproval irbApproval
+     */
+    public void setIrbApproval(File irbApproval) {
+         this.irbApproval = irbApproval;
+     }
+    
+    /**
+     * @return irbApprovalFileName
+     */
+    public String getIrbApprovalFileName() {
+         return irbApprovalFileName;
+     }
+    
+     /**
+     * @param irbApprovalFileName irbApprovalFileName
+     */
+    public void setIrbApprovalFileName(String irbApprovalFileName) {
+        this.irbApprovalFileName = irbApprovalFileName;
      } 
 
 }
