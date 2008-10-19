@@ -20,6 +20,7 @@ public class ParticipatingOrganizationsTabWebDTO {
     private Long studyParticipationId;
     private Organization facilityOrganization;
     private boolean newParticipation = true;
+    
 
     /**
      * @return the organizationIi

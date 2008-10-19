@@ -18,6 +18,7 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 function handleEdit(studyResourcingId){
+	
     document.studyOverallStatus.cbValue.value = studyResourcingId;
     document.studyOverallStatus.action="participatingOrganizationsedit.action";
     document.studyOverallStatus.submit(); 

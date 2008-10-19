@@ -12,7 +12,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-<c:url value="/protected/ajaxorglookup.action" var="lookupUrl"/>
+<c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
 <script type="text/javascript">    
 	
 	function handleAction(){

@@ -25,6 +25,7 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     private Cd roleCode;
     private DSet<St> telecomAddresses;
     private Ii studyParticipationIi;
+    private Ii healthCareProvider;
     /**
      * @return the postalAddress
      */
@@ -84,5 +85,17 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
      */
     public void setStudyParticipationIi(Ii studyParticipationIi) {
         this.studyParticipationIi = studyParticipationIi;
+    }
+    /**
+     * @return the healthCareProvider
+     */
+    public Ii getHealthCareProvider() {
+        return healthCareProvider;
+    }
+    /**
+     * @param healthCareProvider the healthCareProvider to set
+     */
+    public void setHealthCareProvider(Ii healthCareProvider) {
+        this.healthCareProvider = healthCareProvider;
     }
 }

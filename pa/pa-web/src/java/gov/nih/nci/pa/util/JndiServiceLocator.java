@@ -3,6 +3,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -11,12 +12,15 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  * 
@@ -27,6 +31,8 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
  * @author hreinhart
  *
  */
+
+@SuppressWarnings("PMD")
 public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return protocol service
@@ -148,5 +154,39 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public SubGroupsServiceRemote getSubGroupsService() {
         return (SubGroupsServiceRemote) JNDIUtil.lookup("pa/SubGroupsServiceBean/remote");
+    }
+    
+    /**
+     * @return PersonEntityServiceRemote
+     */
+    public PersonEntityServiceRemote getPoPersonEntityService() {
+        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+                                + "/po/PersonEntityServiceBean/remote";
+        return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }    
+    
+    /**
+     * @return HealthCareProviderCorrelationServiceRemote
+     */
+    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() {
+        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+                                + "/po/HealthCareProviderCorrelationServiceBean/remote";
+        return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    } 
+    
+    /**
+     * @return PAHealthCareProviderRemote
+     */
+    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
+        return (PAHealthCareProviderRemote) JNDIUtil.lookup(
+                                            "pa/PAHealthCareProviderServiceBean/remote");
+    }
+    
+    /**
+     * @return StudyParticipationService
+     */
+    public StudyParticipationContactServiceRemote getStudyParticipationContactService() {
+        return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(
+                                            "pa/StudyParticipationContactServiceBean/remote");
     }
 }

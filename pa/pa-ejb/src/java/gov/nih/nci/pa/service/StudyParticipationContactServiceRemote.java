@@ -3,6 +3,11 @@
  */
 package gov.nih.nci.pa.service;
 
+
+import java.util.List;
+
+import gov.nih.nci.coppa.iso.Ii;
+
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 
 import javax.ejb.Remote;
@@ -17,4 +22,12 @@ import javax.ejb.Remote;
 @Remote
 public interface StudyParticipationContactServiceRemote 
         extends BasePaService<StudyParticipationContactDTO> {
+    
+    /**
+     * @param studyParticipationIi id of protocol
+     * @return list StudyParticipationContactDTO
+     * @throws PAException on error
+     */    
+    List<StudyParticipationContactDTO> getByStudyParticipation(Ii studyParticipationIi) 
+            throws PAException;
 }

@@ -42,6 +42,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
     private StudyContactRoleCode roleCode;
     private List<StudyParticipationContactTelecomAddress> telecomAddresses;
     private StudyParticipation studyParticipation;
+    private HealthCareProvider healthCareProvider;
     /**
      * @return the addressLine
      */
@@ -177,5 +178,19 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      */
     public void setStudyParticipation(StudyParticipation studyParticipation) {
         this.studyParticipation = studyParticipation;
+    }
+    /**
+     * @return the healthCareProvider
+     */
+    @JoinColumn(name = "health_care_provider_id")
+    @ManyToOne
+    public HealthCareProvider getHealthCareProvider() {
+        return healthCareProvider;
+    }
+    /**
+     * @param healthCareProvider the healthCareProvider to set
+     */
+    public void setHealthCareProvider(HealthCareProvider healthCareProvider) {
+        this.healthCareProvider = healthCareProvider;
     }
 }

@@ -5,6 +5,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyParticipationContactTelecomAddress;
@@ -26,7 +27,7 @@ import java.util.Set;
 /**
  * Convert StudyParticipationContact domain to DTO.
  *
- * @author Hugh Reinhart
+ * @author Hugh Reinhart, Harsha
  * @since 09/23/2008
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the
@@ -52,6 +53,7 @@ public class StudyParticipationContactConverter {
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
         dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
 
         Set<St> telSet = new HashSet<St>();
         List<StudyParticipationContactTelecomAddress> tas = bo.getTelecomAddresses();
@@ -80,7 +82,8 @@ public class StudyParticipationContactConverter {
         protocolBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
         StudyParticipation participationBo = new StudyParticipation();
         participationBo.setId(IiConverter.convertToLong(dto.getStudyParticipationIi()));
-
+        HealthCareProvider healthCareProvider = new HealthCareProvider();
+        healthCareProvider.setId(IiConverter.convertToLong(dto.getHealthCareProvider()));
         StudyParticipationContact bo = new StudyParticipationContact();
 //        bo.setAddressLine(addressLine)
 //        bo.setCity(city)
@@ -95,6 +98,7 @@ public class StudyParticipationContactConverter {
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setStudyParticipation(participationBo);
         bo.setStudyProtocol(protocolBo);
+        bo.setHealthCareProvider(healthCareProvider);
 //        bo.setTelecomAddresses(telecomAddresses)
         bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;

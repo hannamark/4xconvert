@@ -1,9 +1,9 @@
 package gov.nih.nci.pa.util;
 
-
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -12,22 +12,24 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 
 /**
  * 
  * @author Harsha
- *
+ * 
  */
-@SuppressWarnings("PMD.UnusedPrivateField")
+@SuppressWarnings("PMD")
 public final class PaRegistry {
-    
     /**
      * Number of records to display by default in display tag controlled tables.
      */
@@ -41,7 +43,7 @@ public final class PaRegistry {
     private PaRegistry() {
         this.serviceLocator = new JndiServiceLocator();
     }
-    
+
     /**
      * @return the PO_REGISTRY
      */
@@ -57,44 +59,45 @@ public final class PaRegistry {
         return getInstance().getServiceLocator().getDiseaseConditionService();
     }
 
-    
     /**
      * Gets the org service from the service locator.
+     * 
      * @return the service.
      */
     public static StudyProtocolServiceRemote getStudyProtocolService() {
         return getInstance().getServiceLocator().getStudyProtocolService();
     }
-    
+
     /**
      * Gets the org service from the service locator.
+     * 
      * @return PAOrganizationServiceRemote
      */
     public static PAOrganizationServiceRemote getPAOrganizationService() {
         return getInstance().getServiceLocator().getPAOrganizationService();
     }
-    
+
     /**
      * @return the serviceLocator
      */
     public ServiceLocator getServiceLocator() {
         return this.serviceLocator;
     }
-    
+
     /**
      * @param serviceLocator the serviceLocator to set
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
     }
-    
+
     /**
      * @return PAPerson Service.
      */
     public static PAPersonServiceRemote getPAPersonService() {
         return getInstance().getServiceLocator().getPAPersonService();
-    }    
-    
+    }
+
     /**
      * 
      * @return RegulatoryInformationServiceRemote
@@ -118,7 +121,7 @@ public final class PaRegistry {
     public static StudyResourcingServiceRemote getStudyResourcingService() {
         return getInstance().getServiceLocator().getStudyResoucringService();
     }
-    
+
     /**
      * 
      * @return StudyRegulatoryAuthorityServiceRemote
@@ -126,52 +129,55 @@ public final class PaRegistry {
     public static StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
         return getInstance().getServiceLocator().getStudyRegulatoryAuthorityService();
     }
-    
+
     /**
-    *
-    * @return OrganizationEntityServiceRemote
-    */
+     * 
+     * @return OrganizationEntityServiceRemote
+     */
     public static OrganizationEntityServiceRemote getPoOrganizationEntityService() {
-    return getInstance().getServiceLocator().getPoOrganizationEntityService();
-    }
-    
-    /**
-    *
-    * @return LookUpTableServiceRemote
-    */
-    public static LookUpTableServiceRemote getLookUpTableService() {
-    return getInstance().getServiceLocator().getLookUpTableService();
+        return getInstance().getServiceLocator().getPoOrganizationEntityService();
     }
 
     /**
-    *
-    * @return ProtocolQueryServiceRemote
-    */
+     * 
+     * @return LookUpTableServiceRemote
+     */
+    public static LookUpTableServiceRemote getLookUpTableService() {
+        return getInstance().getServiceLocator().getLookUpTableService();
+    }
+
+    /**
+     * 
+     * @return ProtocolQueryServiceRemote
+     */
     public static ProtocolQueryServiceLocal getProtocolQueryService() {
-    return getInstance().getServiceLocator().getProtocolQueryService();
-    }    
-    
+        return getInstance().getServiceLocator().getProtocolQueryService();
+    }
+
     /**
-    *
-    * @return HealthCareFacilityServiceRemote
-    */
+     * 
+     * @return HealthCareFacilityServiceRemote
+     */
     public static PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
-    return getInstance().getServiceLocator().getPAHealthCareFacilityService();
+        return getInstance().getServiceLocator().getPAHealthCareFacilityService();
     }
+
     /**
-    *
-    * @return StudyParticipationService
-    */
+     * 
+     * @return StudyParticipationService
+     */
     public static StudyParticipationServiceRemote getStudyParticipationService() {
-    return getInstance().getServiceLocator().getStudyParticipationService();
+        return getInstance().getServiceLocator().getStudyParticipationService();
     }
+
     /**
-    *
-    * @return StudySiteAccrualStatusService
-    */
+     * 
+     * @return StudySiteAccrualStatusService
+     */
     public static StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-    return getInstance().getServiceLocator().getStudySiteAccrualStatusService();
+        return getInstance().getServiceLocator().getStudySiteAccrualStatusService();
     }
+
     /**
      * 
      * @return DocumentServiceRemote
@@ -179,17 +185,52 @@ public final class PaRegistry {
     public static DocumentServiceRemote getDocumentService() {
         return getInstance().getServiceLocator().getDocumentService();
     }
+
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
      */
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         return getInstance().getServiceLocator().getPoHealthCareProverService();
     }
+
     /**
      * 
      * @return SubGroupsServiceRemote
      */
     public static SubGroupsServiceRemote getSubGroupsService() {
         return getInstance().getServiceLocator().getSubGroupsService();
+    }
+
+    /**
+     * 
+     * @return StudyParticipationService
+     */
+    public static StudyParticipationContactServiceRemote getStudyParticipationContactService() {
+        return getInstance().getServiceLocator().getStudyParticipationContactService();
+    }
+
+    /**
+     * 
+     * @return PersonEntityServiceRemote
+     */
+    public static PersonEntityServiceRemote getPoPersonEntityService() {
+        return getInstance().getServiceLocator().getPoPersonEntityService();
+    }
+
+    /**
+     * 
+     * @return PAHealthCareProviderRemote
+     */
+    public static PAHealthCareProviderRemote getPAHealthCareProviderService() {
+        return getInstance().getServiceLocator().getPAHealthCareProviderService();
+    }
+
+    // public HealthCareProviderCorrelationServiceRemote
+    // getPoPersonCorrelationService() {
+    /**
+     * @return HealthCareProviderCorrelationServiceRemote
+     */
+    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
+        return getInstance().getServiceLocator().getPoPersonCorrelationService();
     }
 }

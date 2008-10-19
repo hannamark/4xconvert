@@ -17,12 +17,7 @@
 			<result>/WEB-INF/jsp/login.jsp</result>
 		</action>	   
 	</package>
-	<package name="protected" namespace="/protected" extends="default">
-		<!-- Future use case -->
-		<action name="diseaseConditions" class="gov.nih.nci.pa.action.DiseaseConditionAction" method="getDiseaseConditions">
-			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/WEB-INF/jsp/protocolDiseaseCondition.jsp</result>
-		</action>        
+	<package name="protected" namespace="/protected" extends="default">      
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
             <result name="history">/WEB-INF/jsp/studyOverallStatusHistory.jsp</result>
@@ -33,17 +28,20 @@
             <result name="delete">/WEB-INF/jsp/participatingOrganizations.jsp</result>
             <result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
             <result>/WEB-INF/jsp/participatingOrganizations{1}.jsp</result>
+            <result name="display_StudyPartipants">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
+            <result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
          </action>  
         <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">        	
-        	<result name="displayJsp">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>            
-         </action>
-       		
+        	<result name="displayJsp">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>  
+        	<result name="display_spContacts">/WEB-INF/jsp/nodecorate/displaySPContactsTable.jsp</result>  
+        	<result name="display_primContacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>        	
+        	<result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>
+         </action>       		
   		<!-- needs to be refactored -->
 		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >
 			<interceptor-ref name="nci-commonsParams" />				         
 			<result>/WEB-INF/jsp/nodecorate/organizations.jsp</result>
-		</action>				
-		<!-- Wildcards -->
+		</action>	
 		<action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />
 			<result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>			
@@ -69,8 +67,7 @@
 			<result name="error">/WEB-INF/jsp/nciSpecificInformation.jsp</result>
 		</action>
 		<action name="ajaxorg*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
-			<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
-			<result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
+			<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>			
 			<result name="displayOrgFld">/WEB-INF/jsp/nodecorate/orgField.jsp</result>	
 		</action>
 		<action name="trialDocument*" class="gov.nih.nci.pa.action.TrialDocumentAction" method="{1}">
@@ -79,11 +76,20 @@
  			<result name="error">/WEB-INF/jsp/trialDouments.jsp</result>
  			<result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
  		</action>		
+
+		<action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
+			<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+			<result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
+			<result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+			<result name="contactpersons">/WEB-INF/jsp/nodecorate/lookupcontactpersons.jsp</result>
+		</action>		
+
 		<action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
  			<result>/WEB-INF/jsp/subGroups.jsp</result>
  			<result name="input">/WEB-INF/jsp/subGroupsAdd.jsp</result>
  			<result name="error">/WEB-INF/jsp/subGroups.jsp</result>
  			<result name="delete">/WEB-INF/jsp/subGroupsDelete.jsp</result>
  		</action>
+
 	</package>
 </struts>

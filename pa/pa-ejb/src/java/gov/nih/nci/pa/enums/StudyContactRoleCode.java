@@ -18,6 +18,8 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
 
     /** Study Principal Investigator. */
     STUDY_PRINCIPAL_INVESTIGATOR("Study Principal Investigator"),
+    /** Study sub Investigator. */
+    STUDY_SUB_INVESTIGATOR("Study Sub Investigator"),
     /** Coordinating Investigator. */
     COORDINATING_INVESTIGATOR("Coordinating Investigator"),
     /** Study Director. */
@@ -29,8 +31,10 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
     /** Scientific Queries. */
     SCIENTIFIC_QUERIES("Scientific Queries"),
     /** Scientific Leadership. */
-    SCIENTIFIC_LEADERSHIP("Scientific Leadership");
-
+    SCIENTIFIC_LEADERSHIP("Scientific Leadership"),
+    /**Contact. */
+    STUDY_PRIMARY_CONTACT("Study Primary Contact");
+    
     private String code;
     /**
      *

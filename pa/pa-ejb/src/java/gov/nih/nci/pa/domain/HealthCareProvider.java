@@ -3,6 +3,7 @@ package gov.nih.nci.pa.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,7 +31,9 @@ public class HealthCareProvider extends AbstractEntity {
     
     private static final long serialVersionUID = 1234567890L;
     private Person person;
+    private Long identifier;
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
+    private List<StudyParticipationContact> studyPartContacts = new ArrayList<StudyParticipationContact>();
 
     
     /**
@@ -50,8 +53,7 @@ public class HealthCareProvider extends AbstractEntity {
      */
     public void setPerson(Person person) {
         this.person = person;
-    }
-    
+    }    
     /**
      * 
      * @return studyContacts studyContacts
@@ -67,9 +69,30 @@ public class HealthCareProvider extends AbstractEntity {
     public void setStudyContacts(List<StudyContact> studyContacts) {
         this.studyContacts = studyContacts;
     }
-    
-    
-    
-    
-
+    /**
+     * @return the studyPartContacts
+     */
+    @OneToMany(mappedBy = "healthCareProvider")
+    public List<StudyParticipationContact> getStudyPartContacts() {
+        return studyPartContacts;
+    }
+    /**
+     * @param studyPartContacts the studyPartContacts to set
+     */
+    public void setStudyPartContacts(List<StudyParticipationContact> studyPartContacts) {
+        this.studyPartContacts = studyPartContacts;
+    }
+    /**
+     * @return the identifier
+     */
+    @Column(name = "identifier")
+    public Long getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
+    }
 }

@@ -3,6 +3,7 @@ package gov.nih.nci.pa.test.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -11,6 +12,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -20,7 +22,9 @@ import gov.nih.nci.service.MockDiseaseConditionService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyProtocolService;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  * adapted from PO.
@@ -153,10 +157,33 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
+
+
+    public StudyParticipationContactServiceRemote getStudyParticipationContactService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public PersonEntityServiceRemote getPoPersonEntityService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /** 
      * return SubGroupsServiceRemote
      */
     public SubGroupsServiceRemote getSubGroupsService() {
         return null;
     }
+
 }
