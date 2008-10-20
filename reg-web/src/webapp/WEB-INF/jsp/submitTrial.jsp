@@ -11,9 +11,9 @@
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
-        addCalendar("Cal1", "Select Date", "statusDate", "submitTrial");
-        addCalendar("Cal2", "Select Date", "startDate", "submitTrial");
-        addCalendar("Cal3", "Select Date", "completionDate", "submitTrial");
+        addCalendar("Cal1", "Select Date", "overallStatusWebDTO.statusDate", "submitTrial");
+        addCalendar("Cal2", "Select Date", "protocolWebDTO.startDate", "submitTrial");
+        addCalendar("Cal3", "Select Date", "protocolWebDTO.completionDate", "submitTrial");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
