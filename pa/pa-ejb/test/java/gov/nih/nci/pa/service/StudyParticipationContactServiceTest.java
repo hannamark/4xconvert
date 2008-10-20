@@ -35,6 +35,8 @@ public class StudyParticipationContactServiceTest {
     Ii participationIi;
     Long contactId;
     Ii contactIi;
+    Long healthCareProviderId;
+    Ii healthCareProviderIi;
     
     @Before
     public void setUp() throws Exception {
@@ -46,6 +48,8 @@ public class StudyParticipationContactServiceTest {
         participationIi = IiConverter.convertToIi(participationId);
         contactId = TestSchema.studyParticipationContactIds.get(0);
         contactIi = IiConverter.convertToIi(contactId);
+        healthCareProviderId = TestSchema.healthCareFacilityIds.get(0);
+        healthCareProviderIi = IiConverter.convertToIi(healthCareProviderId);
     }
     @Test
     public void get() throws Exception {
@@ -65,6 +69,7 @@ public class StudyParticipationContactServiceTest {
         spc.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2005")));
         spc.setStudyParticipationIi(participationIi);
         spc.setStudyProtocolIi(protocolIi);
+        spc.setHealthCareProvider(healthCareProviderIi);
         StudyParticipationContactDTO result = remoteEjb.create(spc);
         assertFalse(PAUtil.isIiNull(result.getIi()));
     }

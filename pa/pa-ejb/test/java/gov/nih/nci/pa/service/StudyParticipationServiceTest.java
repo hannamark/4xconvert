@@ -46,7 +46,7 @@ public class StudyParticipationServiceTest {
         studyIi = IiConverter.convertToIi(studyId);
         participationId = TestSchema.studyParticipationIds.get(0);
         participationIi = IiConverter.convertToIi(participationId);
-        facilityId = TestSchema.healthcareFacilityIds.get(0);
+        facilityId = TestSchema.healthCareFacilityIds.get(0);
         facilityIi = IiConverter.convertToIi(facilityId);
     }
     @Test

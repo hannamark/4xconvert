@@ -54,7 +54,8 @@ public class TestSchema {
         public static ArrayList<Long> studyProtocolIds;
         public static ArrayList<Long> studyParticipationIds;
         public static ArrayList<Long> studyParticipationContactIds;
-        public static ArrayList<Long> healthcareFacilityIds;
+        public static ArrayList<Long> healthCareFacilityIds;
+        public static ArrayList<Long> healthCareProviderIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -135,6 +136,8 @@ public class TestSchema {
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
                         statement.executeUpdate("delete from ORGANIZATION");
+                        statement.executeUpdate("delete from HEALTHCARE_PROVIDER");
+                        statement.executeUpdate("delete from PERSON");
                         statement.executeUpdate("delete from COUNTRY");
                         statement.executeUpdate("delete from DOCUMENT");
                         statement.executeUpdate("delete from STRATUM_GROUP");
@@ -189,7 +192,8 @@ public class TestSchema {
             studyProtocolIds = new ArrayList<Long>();
             studyParticipationIds = new ArrayList<Long>();
             studyParticipationContactIds = new ArrayList<Long>();
-            healthcareFacilityIds = new ArrayList<Long>();
+            healthCareFacilityIds = new ArrayList<Long>();
+            healthCareProviderIds = new ArrayList<Long>();
 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -238,7 +242,19 @@ public class TestSchema {
             hfc.setIdentifier("HCF ID 01");
             hfc.setOrganization(org);
             addUpdObject(hfc);
-            healthcareFacilityIds.add(hfc.getId());
+            healthCareFacilityIds.add(hfc.getId());
+            
+            Person per = new Person();
+            per.setFirstName("Joe");
+            per.setLastName("the Clinician");
+            addUpdObject(per);
+            
+            HealthCareProvider hcp = new HealthCareProvider();
+            hcp.setPerson(per);
+            hcp.setIdentifier(66L);
+            addUpdObject(hcp);
+            healthCareProviderIds.add(hcp.getId());
+            
             
             StudyParticipation sPart = new StudyParticipation();
             sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
@@ -270,6 +286,7 @@ public class TestSchema {
             spc.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/15/2008"));
             spc.setStudyParticipation(sPart);
             spc.setStudyProtocol(sp);
+            spc.setHealthCareProvider(hcp);
             addUpdObject(spc);
             studyParticipationContactIds.add(spc.getId());
             
