@@ -3,6 +3,9 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Entity;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 
 /**
  *  Pa COUNTRY.  
@@ -15,6 +18,8 @@ import javax.persistence.Entity;
  */
 @Entity
 @Table(name =  "COUNTRY")
+@org.hibernate.annotations.Entity(mutable = false)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
 public class Country extends AbstractEntity {
     private static final long serialVersionUID = 1L;
     private String alpha2;
