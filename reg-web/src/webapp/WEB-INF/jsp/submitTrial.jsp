@@ -76,7 +76,7 @@ function handleAction(){
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="protocolWebDTO.trialPhase" list="#phaseCodeValues"  value="trialPhase" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="protocolWebDTO.trialPhase" list="#phaseCodeValues"  value="protocolWebDTO.trialPhase" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.trialPhase</s:param>
@@ -131,7 +131,7 @@ function handleAction(){
 							         list="#fundingMechanismValues"                             
                                      listKey="fundingMechanismCode"  
                                      listValue="fundingMechanismCode" 
-                                     value="fundingMechanism" 
+                                     value="trialFundingWebDTO.fundingMechanismCode" 
                                      cssStyle="width:106px" />
 							</td>
 							<s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
@@ -141,7 +141,7 @@ function handleAction(){
 							         list="#nihInstituteCodes"
                                      listKey="nihInstituteCode" 
                                      listValue="nihInstituteCode"   
-							         value="instituteCode" 
+							         value="trialFundingWebDTO.nihInstitutionCode" 
 							         cssStyle="width:106px" />
 						             <span class="formErrorMsg"> 
 				                        <s:fielderror>
@@ -159,7 +159,7 @@ function handleAction(){
                             </td>
 							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" list="#programCodes"  value="trialPhase" cssStyle="width:106px" />
+							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:106px" />
 		                        <span class="formErrorMsg"> 
                                    <s:fielderror>
                                    <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
@@ -187,7 +187,7 @@ function handleAction(){
                 </td>
                     <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="trialStatus" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="overallStatusWebDTO.statusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>overallStatusWebDTO.statusCode</s:param>
