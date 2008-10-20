@@ -246,7 +246,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
             oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
         }
         if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
-            if (startTimestamp.equals(statusTimestamp)) {
+            if (!startTimestamp.equals(statusTimestamp)) {
                 addActionError("When transitioning from 'Approved' to 'Active' the trial start "
                         + "date must be the same as the status date.");
             }
