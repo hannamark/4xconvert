@@ -45,8 +45,9 @@
 <div class="box">
 <pa:sucessMessage/>
 <s:form name="studyOverallStatus">
-
-    <s:actionerror />
+    <s:if test="hasActionErrors()">
+    <div class="error_msg"><s:actionerror/></div>
+    </s:if>
 <h2><fmt:message key="trialStatus.title" /></h2>
     <table class="form">
         
@@ -87,7 +88,12 @@
                 <td scope="row" class="label"><s:textfield name="statusReason" maxlength="200" size="200" 
                     cssStyle="width:280px;float:left" disabled="true"/></td>
             </s:else>
-        </tr>        
+        </tr>
+        <tr> 
+            <td/>
+            <td colspan="2">(Administratively Complete, Withdrawn, and Temporarily Closed statuses only)</td>
+        </tr>
+        <tr><td>&nbsp</td></tr>
         <tr>
             <td scope="row" class="label"><s:label for="startDate"><fmt:message
                 key="trialStatus.trial.start.date" /></s:label></td>
