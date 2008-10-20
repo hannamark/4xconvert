@@ -77,22 +77,7 @@ public class TrialFundingAction extends ActionSupport {
     public String create()  {
         
         LOG.info("Entering create");
-        if (PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-            addFieldError("trialFundingWebDTO.fundingMechanismCode",
-                    getText("error.trialFunding.funding.mechanism"));
-        }
-        if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
-            addFieldError("trialFundingWebDTO.nihInstitutionCode",
-                    getText("error.trialFunding.institution.code"));           
-        }
-        if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
-            addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
-                    getText("error.studyProtocol.monitorCode"));
-        }
-        if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
-            addFieldError("trialFundingWebDTO.serialNumber",
-                    getText("error.trialFunding.serial.number"));
-        }
+        enforceBusinessRules();
         if (hasFieldErrors()) {
             return ERROR;
         }
@@ -133,22 +118,7 @@ public class TrialFundingAction extends ActionSupport {
     public String update()  {
         
         LOG.info("Entering update");
-        if (PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-            addFieldError("trialFundingWebDTO.fundingMechanismCode",
-                    getText("error.trialFunding.funding.mechanism"));
-        }
-        if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
-            addFieldError("trialFundingWebDTO.nihInstitutionCode",
-                    getText("error.trialFunding.institution.code"));           
-        }
-        if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
-            addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
-                    getText("error.studyProtocol.monitorCode"));
-        }
-        if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
-            addFieldError("trialFundingWebDTO.serialNumber",
-                    getText("error.trialFunding.serial.number"));
-        }
+        enforceBusinessRules();
         if (hasFieldErrors()) {
             return ERROR;
         }
@@ -233,7 +203,34 @@ public class TrialFundingAction extends ActionSupport {
             return ERROR;
         }
     }
-     
+
+    private void enforceBusinessRules() {
+        if (PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+            addFieldError("trialFundingWebDTO.fundingMechanismCode",
+                    getText("error.trialFunding.funding.mechanism"));
+        }
+        if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
+            addFieldError("trialFundingWebDTO.nihInstitutionCode",
+                    getText("error.trialFunding.institution.code"));           
+        }
+        if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
+            addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
+                    getText("error.studyProtocol.monitorCode"));
+        }
+        if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+            addFieldError("trialFundingWebDTO.serialNumber",
+                    getText("error.trialFunding.serial.number"));
+        }
+        if (PAUtil.isNotEmpty(trialFundingWebDTO.getSerialNumber())) {
+            try {
+                Integer i = Integer.valueOf(trialFundingWebDTO.getSerialNumber());
+            } catch (NumberFormatException e) {
+                addFieldError("trialFundingWebDTO.serialNumber",
+                        "Please Enter a numeric value");
+                
+            }
+        }
+    }
     /**
      * @return cbValue
      */
