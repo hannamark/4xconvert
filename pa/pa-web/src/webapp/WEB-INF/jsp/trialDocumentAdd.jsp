@@ -54,7 +54,9 @@ BubbleTips.activateTipOn("dfn");
                       		<s:select headerKey="" headerValue="" 
                            		name="trialDocumentWebDTO.typeCode" 
                            		list="#typeCodeValues"  
-                           		cssStyle="width:206px" disabled="true"/>                     
+                           		cssStyle="width:206px" disabled="true"/>   
+                           		
+                           		<input type="hidden" name="trialDocumentWebDTO.typeCode" value="${trialDocumentWebDTO.typeCode}" />              
     					</s:if>
     					<s:else>
                     		<s:select headerKey="" headerValue="" 
