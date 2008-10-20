@@ -41,6 +41,7 @@
 
     <rule ref="rulesets/coupling.xml">
         <exclude name="ExcessiveImports" />
+        <exclude name="CouplingBetweenObjects" />
     </rule>
 
     <rule ref="rulesets/design.xml">
