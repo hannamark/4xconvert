@@ -51,7 +51,7 @@ function tooltip() {
                            list="#fundingMechanism"  
                            listKey="fundingMechanismCode" 
                            listValue="fundingMechanismCode" 
-                           cssStyle="width:206px"/> 
+                           cssStyle="width:60px"/> 
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialFundingWebDTO.fundingMechanismCode</s:param>
@@ -73,7 +73,7 @@ function tooltip() {
                            list="#nihInstitute"  
                            listKey="nihInstituteCode" 
                            listValue="nihInstituteCode" 
-                           cssStyle="width:206px"/>
+                           cssStyle="width:50px"/>
                            <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialFundingWebDTO.nihInstitutionCode</s:param>
@@ -88,7 +88,7 @@ function tooltip() {
                      </label>
                      </td>
                      <td class="value">
-                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="200" cssStyle="width:206px"/>
+                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="6" cssStyle="width:80px"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialFundingWebDTO.serialNumber</s:param>
@@ -126,7 +126,7 @@ function tooltip() {
                         <s:select  
                            name="trialFundingWebDTO.fundingTypeCode" 
                            list="#{'':'','1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" 
-                           cssStyle="width:206px" />                           
+                           cssStyle="width:40px" />                           
                       </td>         
                 </tr>                   
                 <tr>
@@ -136,7 +136,7 @@ function tooltip() {
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:206px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixgrantYear" maxlength="200"  cssStyle="width:100px"/>
                       </td>         
                 </tr> 
                 <tr>
@@ -146,7 +146,7 @@ function tooltip() {
                      </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:206px"/>
+                        <s:textfield name="trialFundingWebDTO.suffixOther" maxlength="200" cssStyle="width:100px"/>
                       </td>         
                 </tr>                 
         </table>
