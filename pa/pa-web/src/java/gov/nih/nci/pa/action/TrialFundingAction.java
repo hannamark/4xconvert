@@ -223,11 +223,10 @@ public class TrialFundingAction extends ActionSupport {
         }
         if (PAUtil.isNotEmpty(trialFundingWebDTO.getSerialNumber())) {
             try {
-                Integer i = Integer.valueOf(trialFundingWebDTO.getSerialNumber());
+                Integer.valueOf(trialFundingWebDTO.getSerialNumber());
             } catch (NumberFormatException e) {
                 addFieldError("trialFundingWebDTO.serialNumber",
                         "Please Enter a numeric value");
-                
             }
         }
     }
