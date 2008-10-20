@@ -33,6 +33,7 @@ import java.util.Set;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyParticipationContactConverter {
     /**
      * 
@@ -42,6 +43,10 @@ public class StudyParticipationContactConverter {
      */
     public static StudyParticipationContactDTO convertFromDomainToDTO(
             StudyParticipationContact bo) throws PAException {
+        if (bo == null) {
+            throw new PAException("Tried to pass null as argument to converter "
+                    + "StudyParticipationContactDTO.convertFromDomainToDTO().  ");
+        }
         StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
         dto.setIi(IiConverter.convertToIi(bo.getId()));
 //        dto.setPostalAddress(AddressConverterUtil.create(bo.getAddressLine(), bo.getDeliveryAddressLine(),
@@ -51,9 +56,15 @@ public class StudyParticipationContactConverter {
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-        dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
-        dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+        if (bo.getStudyParticipation() != null) {
+            dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
+        }
+        if (bo.getStudyProtocol() != null) {
+            dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        }
+        if (bo.getHealthCareProvider() != null) {
+            dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+        }
 
         Set<St> telSet = new HashSet<St>();
         List<StudyParticipationContactTelecomAddress> tas = bo.getTelecomAddresses();
