@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -27,7 +28,8 @@ import org.junit.Test;
  *
  */
 public class StudyOverallStatusServiceTest {
-    private StudyOverallStatusServiceRemote remoteEjb = new StudyOverallStatusServiceBean();;
+    private StudyOverallStatusServiceRemote remoteEjb = new StudyOverallStatusServiceBean();
+    private StudyProtocolServiceRemote protocolEjb = new StudyProtocolServiceBean();
     Ii pid;
     
     @Before
@@ -38,7 +40,7 @@ public class StudyOverallStatusServiceTest {
     }    
     
     @Test
-    public void update() throws Exception {
+    public void updateTest() throws Exception {
         StudyOverallStatusDTO dto = 
             remoteEjb.getCurrentByStudyProtocol(pid).get(0);
         try {
@@ -78,7 +80,7 @@ public class StudyOverallStatusServiceTest {
     }
     
     @Test 
-    public void getByProtocol() throws Exception {
+    public void getByProtocolTest() throws Exception {
         List<StudyOverallStatusDTO> statusList = 
             remoteEjb.getByStudyProtocol(pid);
         assertEquals(2, statusList.size());
@@ -87,6 +89,24 @@ public class StudyOverallStatusServiceTest {
             remoteEjb.getCurrentByStudyProtocol(pid).get(0);
         assertEquals(IiConverter.convertToLong(statusList.get(1).getIi())
                 , (IiConverter.convertToLong(dto.getIi())));
+    }
+    
+    @Test
+    public void createTest() throws Exception {
+        // simulate creating new protocol using registry
+        StudyProtocol spNew = new StudyProtocol();
+        spNew.setOfficialTitle("New Protocol");
+        TestSchema.addUpdObject(spNew);
+        
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
+        Ii initialIi = null;
+        dto.setIi(initialIi);
+        assertTrue(PAUtil.isIiNull(dto.getIi()));
+        StudyOverallStatusDTO resultDto = remoteEjb.create(dto);
+        assertFalse(PAUtil.isIiNull(resultDto.getIi()));
     }
  
 }

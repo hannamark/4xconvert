@@ -5,6 +5,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -112,7 +113,10 @@ public class StudyOverallStatusServiceBean
                
             // update
             session.saveOrUpdate(bo);
-            session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
+            StudyRecruitmentStatus srs = StudyRecruitmentStatusServiceBean.create(bo);
+            if (srs != null) {
+                session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
+            }
             session.flush();
             resultDto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
         } catch (HibernateException hbe) {
