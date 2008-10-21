@@ -85,21 +85,29 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonResourceProvider;
+import gov.nih.nci.po.data.bo.QualifiedEntity;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.IdentifiedOrganizationIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.IdentifiedPersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgResourceProviderIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrganizationalContactIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonResourceProviderIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.QualifiedEntityIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,7 +125,7 @@ public class IdConverterRegistry {
     private static final Map<Class<? extends PersistentObject>, IdConverter> REGISTRY;
 
     static {
-        HashMap<Class<? extends PersistentObject>, IdConverter> tmp 
+        HashMap<Class<? extends PersistentObject>, IdConverter> tmp
             = new HashMap<Class<? extends PersistentObject>, IdConverter>();
         tmp.put(Organization.class, new OrgIdConverter());
         tmp.put(Person.class, new PersonIdConverter());
@@ -126,8 +134,12 @@ public class IdConverterRegistry {
         tmp.put(HealthCareFacility.class, new HealthCareFacilityIdConverter());
         tmp.put(PersonResourceProvider.class, new PersonResourceProviderIdConverter());
         tmp.put(OrganizationResourceProvider.class, new OrgResourceProviderIdConverter());
+        tmp.put(ResearchOrganization.class, new ResearchOrganizationIdConverter());
         tmp.put(OversightCommittee.class, new OversightCommitteeIdConverter());
+        tmp.put(IdentifiedOrganization.class, new IdentifiedOrganizationIdConverter());
+        tmp.put(IdentifiedPerson.class, new IdentifiedPersonIdConverter());
         tmp.put(OrganizationalContact.class, new OrganizationalContactIdConverter());
+        tmp.put(QualifiedEntity.class, new QualifiedEntityIdConverter());
         REGISTRY = Collections.unmodifiableMap(tmp);
     }
 
