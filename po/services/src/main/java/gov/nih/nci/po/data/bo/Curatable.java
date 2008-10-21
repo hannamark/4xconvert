@@ -92,6 +92,7 @@ import java.io.Serializable;
  * @param <T> type curatable against
  * @author Todd Parnell
  */
+@gov.nih.nci.po.util.DuplicateStatusCheck
 public interface Curatable<T extends Serializable> extends Serializable {
     /**
      * @return the curration status

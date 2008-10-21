@@ -172,4 +172,8 @@ public class IdConverterRegistry {
         }
         return clz;
     }
+    
+    static Map<Class<? extends PersistentObject>, IdConverter> getRegistry() {
+        return REGISTRY;
+    }
 }

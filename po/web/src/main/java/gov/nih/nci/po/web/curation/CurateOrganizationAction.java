@@ -3,7 +3,6 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -84,7 +83,6 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
 
     /**
      * @return success
-     * @throws EntityValidationException if a validation error is found when attempting to update
      * @throws JMSException if an error occurred while publishing the announcement
      */
     @Validations(customValidators = {
@@ -92,7 +90,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
                     fieldName = "organization"
                 )
             })
-    public String curate() throws EntityValidationException, JMSException {
+    public String curate() throws JMSException {
         PoRegistry.getOrganizationService().curate(getOrganization());
         return SUCCESS;
     }
