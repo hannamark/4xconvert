@@ -108,7 +108,7 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
         ResearchOrganization oc = new ResearchOrganization();
         oc.setPlayer(basicOrganization);
         oc.setScoper(basicOrganization);
-        oc.setType(sampleType);
+        oc.setTypeCode(sampleType);
         oc.setFundingMechanism("foo");
 
         return oc;
@@ -117,7 +117,7 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
     @Override
     void verifyStructuralRole(ResearchOrganization expected, ResearchOrganization actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
         assertEquals(RoleStatus.PENDING, actual.getStatus());
         assertEquals("foo", actual.getFundingMechanism());
     }

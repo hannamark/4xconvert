@@ -170,7 +170,7 @@ public class IdentifiedOrganizationRemoteServiceTest
 
         Cd typeCd = new Cd();
         typeCd.setCode(type1.getCode());
-        dto.setType(typeCd);
+        dto.setTypeCode(typeCd);
 
         return dto;
     }
@@ -183,7 +183,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
-        assertEquals(type1.getCode(), actual.getType().getCode());
+        assertEquals(type1.getCode(), actual.getTypeCode().getCode());
 
         // really probe the assignedId, since that's different than other StructuralRoles
         Ii ii1 = expected.getAssignedId();
@@ -203,7 +203,7 @@ public class IdentifiedOrganizationRemoteServiceTest
     protected void verifyAlterations(IdentifiedOrganizationCR cr) {
         super.verifyAlterations(cr);
         assertEquals("9999", cr.getAssignedIdentifier().getExtension());
-        assertEquals(type2.getCode(), cr.getType().getCode());
+        assertEquals(type2.getCode(), cr.getTypeCode().getCode());
     }
 
     /**
@@ -214,7 +214,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         dto.getAssignedId().setExtension("9999");
         Cd t = new Cd();
         t.setCode(type2.getCode());
-        dto.setType(t);
+        dto.setTypeCode(t);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(ii);
-        correlation2.getType().setCode(type2.getCode());
+        correlation2.getTypeCode().setCode(type2.getCode());
         correlation2.getAssignedId().setExtension(correlation2.getAssignedId().getExtension() + "2");
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
@@ -333,7 +333,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         // test by type1
         searchCriteria.setAssignedId(null);
         searchCriteria.setScoperIdentifier(null);
-        searchCriteria.setType(correlation1.getType());
+        searchCriteria.setTypeCode(correlation1.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());

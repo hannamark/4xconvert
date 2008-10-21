@@ -82,24 +82,25 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.IdentifiedPersonType;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.IdentifiedPersonType;
+import gov.nih.nci.po.util.PoHibernateUtil;
+
+import org.junit.Before;
 
 /**
  * @author Scott Miller
  *
  */
 public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedPerson> {
-    
+
     IdentifiedPersonType type;
-    
+
     @Before
     public void initData() {
         type = new IdentifiedPersonType("foo");
@@ -124,8 +125,8 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
         ii.setRoot("myRoot");
         ii.setScope(IdentifierScope.BUSN);
         ip.setAssignedIdentifier(ii);
-        
-        ip.setType(type);
+
+        ip.setTypeCode(type);
         return ip;
     }
 
@@ -143,6 +144,6 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
         assertEquals(IdentifierScope.BUSN, actual.getAssignedIdentifier().getScope());
         assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
         assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
-        assertEquals(type.getCode(), actual.getType().getCode());
+        assertEquals(type.getCode(), actual.getTypeCode().getCode());
     }
 }

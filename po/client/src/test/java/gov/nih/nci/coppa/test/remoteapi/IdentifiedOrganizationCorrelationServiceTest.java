@@ -127,11 +127,11 @@ public class IdentifiedOrganizationCorrelationServiceTest
         ii.setIdentifierName("foo");
         ii.setRoot("bar");
         dto.setAssignedId(ii);
-        
+
         Cd type = new Cd();
         type.setCode("Member");
-        dto.setType(type);
-        
+        dto.setTypeCode(type);
+
         return dto;
     }
 
@@ -143,6 +143,6 @@ public class IdentifiedOrganizationCorrelationServiceTest
         Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
         Assert.assertEquals("myExtension", dto.getAssignedId().getExtension());
-        Assert.assertEquals("Member", dto.getType().getCode());
+        Assert.assertEquals("Member", dto.getTypeCode().getCode());
     }
 }

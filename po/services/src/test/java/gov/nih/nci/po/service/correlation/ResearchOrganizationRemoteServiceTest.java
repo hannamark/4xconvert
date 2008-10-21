@@ -129,7 +129,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
         Cd type = new Cd();
         type.setCode("Cancer Center");
-        dto.setType(type);
+        dto.setTypeCode(type);
 
         dto.setFundingMechanism(StringConverter.convertToSt("foo"));
 
@@ -141,7 +141,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
-        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
         assertEquals(expected.getFundingMechanism().getValue(), actual.getFundingMechanism().getValue());
     }
 
@@ -153,14 +153,14 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
         Cd type = new Cd();
         type.setCode("Foo");
-        dto.setType(type);
+        dto.setTypeCode(type);
     }
 
     @Override
     protected void verifyAlterations(ResearchOrganizationCR cr) {
         super.verifyAlterations(cr);
 
-        assertEquals("Foo", cr.getType().getCode());
+        assertEquals("Foo", cr.getTypeCode().getCode());
     }
 
 
@@ -199,7 +199,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         Cd type = new Cd();
         type.setCode(other.getCode());
-        correlation2.setType(type);
+        correlation2.setTypeCode(type);
 
         correlation2.getFundingMechanism().setValue(correlation2.getFundingMechanism().getValue() + "2");
 
@@ -280,11 +280,11 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
         // test by Type id
         searchCriteria.setFundingMechanism(null);
-        searchCriteria.setType(type);
+        searchCriteria.setTypeCode(type);
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
 
-        searchCriteria.setType(null);
+        searchCriteria.setTypeCode(null);
         testNullifiedRoleNotFoundInSearch(correlation2Id, searchCriteria, ResearchOrganization.class);
     }
 }

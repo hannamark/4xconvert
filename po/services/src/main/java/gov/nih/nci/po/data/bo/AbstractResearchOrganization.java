@@ -105,7 +105,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     private static final long serialVersionUID = 1L;
 
     private String fundingMechanism;
-    private ResearchOrganizationType type;
+    private ResearchOrganizationType typeCode;
 
 
     /**
@@ -137,16 +137,16 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     @ForeignKey(name = "research_org_type_fkey")
     @NotNull
     @Searchable
-    public ResearchOrganizationType getType() {
-        return type;
+    public ResearchOrganizationType getTypeCode() {
+        return typeCode;
     }
 
 
     /**
      * @param type the type to set
      */
-    public void setType(ResearchOrganizationType type) {
-        this.type = type;
+    public void setTypeCode(ResearchOrganizationType type) {
+        this.typeCode = type;
     }
 
 

@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.QualifiedEntityDTO;
+
 import org.junit.Assert;
 
 public class QualifiedEntityCorrelationServiceTest
@@ -101,7 +102,7 @@ public class QualifiedEntityCorrelationServiceTest
         dto.setPlayerIdentifier(getPersonId());
         Cd type = new Cd();
         type.setCode("NP");
-        dto.setType(type);
+        dto.setTypeCode(type);
         return dto;
     }
 
@@ -114,6 +115,6 @@ public class QualifiedEntityCorrelationServiceTest
     protected void verifyCreated(QualifiedEntityDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals(getPersonId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals("NP", dto.getType().getCode());
+        Assert.assertEquals("NP", dto.getTypeCode().getCode());
     }
 }

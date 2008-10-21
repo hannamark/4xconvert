@@ -108,7 +108,7 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
         OversightCommittee oc = new OversightCommittee();
         oc.setPlayer(basicOrganization);
         oc.setScoper(basicOrganization);
-        oc.setType(sampleType);
+        oc.setTypeCode(sampleType);
 
         return oc;
     }
@@ -116,7 +116,7 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
     @Override
     void verifyStructuralRole(OversightCommittee expected, OversightCommittee actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
         assertEquals(RoleStatus.PENDING, actual.getStatus());
     }
 

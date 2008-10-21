@@ -35,7 +35,7 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
     @Before
     public void loadData() {
     }
-    
+
     private static final long ID = 1L;
 
     private Ii getPlayerIi(Long id) {
@@ -80,8 +80,8 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
 
         assertEquals(STATUS.name().toLowerCase(), dto.getStatus().getCode());
-        assertEquals(TYPE.getCode(), dto.getType().getCode());
-        assertTrue(EqualsBuilder.reflectionEquals(buildIdentifier(ID), ((QualifiedEntityDTO) dto).getIdentifier()));
+        assertEquals(TYPE.getCode(), dto.getTypeCode().getCode());
+        assertTrue(EqualsBuilder.reflectionEquals(buildIdentifier(ID), (dto).getIdentifier()));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
 
         long scoperId = orgTest.createOrganization();
         long playerId = pTest.createPerson();
-        PoDto dto = (PoDto) getExampleTestClassDTO(scoperId, playerId);
+        PoDto dto = getExampleTestClassDTO(scoperId, playerId);
         QualifiedEntity bo = (QualifiedEntity) PoXsnapshotHelper.createModel(dto);
 
         assertEquals(ID, bo.getId().longValue());
@@ -130,20 +130,20 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
 
         long scoperId = orgTest.createOrganization();
         long playerId = pTest.createPerson();
-        
+
         QualifiedEntity bo = getExampleTestClass();
         bo.getPlayer().setId(playerId);
         bo.getScoper().setId(scoperId);
-        
+
         QualifiedEntityDTO dto = (QualifiedEntityDTO) PoXsnapshotHelper.createSnapshot(bo);
         QualifiedEntity newBO = (QualifiedEntity) PoXsnapshotHelper.createModel(dto);
         QualifiedEntityDTO newDto = (QualifiedEntityDTO) PoXsnapshotHelper.createSnapshot(newBO);
-        
+
         assertTrue(EqualsBuilder.reflectionEquals(dto.getIdentifier(), newDto.getIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getPlayerIdentifier(), newDto.getPlayerIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getScoperIdentifier(), newDto.getScoperIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getStatus(), newDto.getStatus()));
-        assertTrue(EqualsBuilder.reflectionEquals(dto.getType(), newDto.getType()));
+        assertTrue(EqualsBuilder.reflectionEquals(dto.getTypeCode(), newDto.getTypeCode()));
     }
 
     /**
@@ -157,7 +157,7 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
         bo.getPlayer().setId(2L);
         bo.setScoper(new Organization());
         bo.getScoper().setId(3L);
-        bo.setType(TYPE);
+        bo.setTypeCode(TYPE);
         return bo;
     }
 
@@ -168,15 +168,15 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
         QualifiedEntityDTO dto = new QualifiedEntityDTO();
         dto.setScoperIdentifier(getScoperIi(scoperId));
         dto.setPlayerIdentifier(getPlayerIi(playerId));
-        
+
         Cd status = new Cd();
         status.setCode(STATUS.name().toLowerCase());
         dto.setStatus(status);
-        
+
         Cd type = new Cd();
         type.setCode(TYPE.getCode());
-        dto.setType(type);
-        
+        dto.setTypeCode(type);
+
         dto.setIdentifier(buildIdentifier(ID));
 
         return dto;
@@ -184,7 +184,7 @@ public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
 
     /**
      * Could this just use the IdConverterRegistry instead?
-     * 
+     *
      * @param extensionId
      * @return
      */

@@ -73,10 +73,10 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
 
         assertEquals(STATUS.name().toLowerCase(), dto.getStatus().getCode());
-        assertEquals(TYPE.getCode(), dto.getType().getCode());
+        assertEquals(TYPE.getCode(), dto.getTypeCode().getCode());
         // check id
         Ii expectedIi1 = buildIdentifier(ID);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi1, ((IdentifiedPersonDTO) dto).getIdentifier()));
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi1, (dto).getIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(buildAssignedId(), dto.getAssignedId()));
     }
 
@@ -98,7 +98,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
 
         long scoperId = orgTest.createOrganization();
         long playerId = pTest.createPerson();
-        PoDto dto = (PoDto) getExampleTestClassDTO(scoperId, playerId);
+        PoDto dto = getExampleTestClassDTO(scoperId, playerId);
         PoHibernateUtil.getCurrentSession().save(TYPE);
         IdentifiedPerson bo = (IdentifiedPerson) PoXsnapshotHelper.createModel(dto);
 
@@ -132,7 +132,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         IdentifiedPerson bo = getExampleTestClass();
         bo.getPlayer().setId(playerId);
         bo.getScoper().setId(scoperId);
-        PoHibernateUtil.getCurrentSession().save(bo.getType());
+        PoHibernateUtil.getCurrentSession().save(bo.getTypeCode());
         IdentifiedPersonDTO dto = (IdentifiedPersonDTO) PoXsnapshotHelper.createSnapshot(bo);
         IdentifiedPerson newBO = (IdentifiedPerson) PoXsnapshotHelper.createModel(dto);
         IdentifiedPersonDTO newDto = (IdentifiedPersonDTO) PoXsnapshotHelper.createSnapshot(newBO);
@@ -141,7 +141,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         assertTrue(EqualsBuilder.reflectionEquals(dto.getPlayerIdentifier(), newDto.getPlayerIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getScoperIdentifier(), newDto.getScoperIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getStatus(), newDto.getStatus()));
-        assertTrue(EqualsBuilder.reflectionEquals(dto.getType(), newDto.getType()));
+        assertTrue(EqualsBuilder.reflectionEquals(dto.getTypeCode(), newDto.getTypeCode()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getAssignedId(), newDto.getAssignedId()));
     }
 
@@ -156,7 +156,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         bo.getPlayer().setId(2L);
         bo.setScoper(new Organization());
         bo.getScoper().setId(3L);
-        bo.setType(TYPE);
+        bo.setTypeCode(TYPE);
         bo.setAssignedIdentifier(buildAssignedId());
         return bo;
     }
@@ -186,7 +186,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
 
         Cd type = new Cd();
         type.setCode(TYPE.getCode());
-        dto.setType(type);
+        dto.setTypeCode(type);
 
         dto.setIdentifier(buildIdentifier(ID));
         dto.setAssignedId(buildAssignedId());
@@ -196,7 +196,7 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
 
     /**
      * Could this just use the IdConverterRegistry instead?
-     * 
+     *
      * @param extensionId
      * @return
      */
@@ -210,6 +210,6 @@ public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
         ii.setIdentifierName(IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
         return ii;
     }
-    
+
 
 }

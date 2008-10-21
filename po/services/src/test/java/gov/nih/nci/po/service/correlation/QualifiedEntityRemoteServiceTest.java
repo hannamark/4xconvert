@@ -143,7 +143,7 @@ public class QualifiedEntityRemoteServiceTest extends
 
         Cd type = new Cd();
         type.setCode("MD");
-        dto.setType(type);
+        dto.setTypeCode(type);
         return dto;
     }
 
@@ -152,21 +152,21 @@ public class QualifiedEntityRemoteServiceTest extends
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
-        assertEquals("MD", actual.getType().getCode());
+        assertEquals("MD", actual.getTypeCode().getCode());
     }
 
     @Override
     protected void alter(QualifiedEntityDTO dto) {
         QualifiedEntityType t = new QualifiedEntityType("DO");
         PoHibernateUtil.getCurrentSession().save(t);
-        dto.getType().setCode("DO");
+        dto.getTypeCode().setCode("DO");
     }
 
     @Override
     protected void verifyAlterations(QualifiedEntityCR cr) {
         super.verifyAlterations(cr);
 
-        assertEquals("DO", cr.getType().getCode());
+        assertEquals("DO", cr.getTypeCode().getCode());
     }
 
     @Override
@@ -212,7 +212,7 @@ public class QualifiedEntityRemoteServiceTest extends
         PoHibernateUtil.getCurrentSession().save(t);
         Cd type2 = new Cd();
         type2.setCode("FOO");
-        correlation2.setType(type2);
+        correlation2.setTypeCode(type2);
 
         Ii id2 = getCorrelationService().createCorrelation(correlation2);
 
@@ -296,12 +296,12 @@ public class QualifiedEntityRemoteServiceTest extends
         // search by type
         searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setScoperIdentifier(null);
-        searchCriteria.setType(correlation1.getType());
+        searchCriteria.setTypeCode(correlation1.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
 
-        searchCriteria.setType(correlation2.getType());
+        searchCriteria.setTypeCode(correlation2.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());

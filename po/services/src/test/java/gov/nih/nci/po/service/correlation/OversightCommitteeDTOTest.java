@@ -111,7 +111,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
         OversightCommittee oc = new OversightCommittee();
         fillInExampleOrgRoleFields(oc);
         OversightCommitteeType oct = new OversightCommitteeType("Ethics Committee");
-        oc.setType(oct);
+        oc.setTypeCode(oct);
         return oc;
     }
 
@@ -132,7 +132,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
         dto.setIdentifier(ii);
         Cd type = new Cd();
         type.setCode("Ethics Committee");
-        dto.setType(type);
+        dto.setTypeCode(type);
 
         return dto;
     }
@@ -142,7 +142,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      */
     @Override
     protected void verifyTestClassDTOFields(AbstractOrganizationRole or) {
-        assertEquals("Ethics Committee", ((OversightCommittee) or).getType().getCode());
+        assertEquals("Ethics Committee", ((OversightCommittee) or).getTypeCode().getCode());
 
     }
 
@@ -151,7 +151,7 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      */
     @Override
     protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
-        assertEquals("Ethics Committee", ((OversightCommitteeDTO) dto).getType().getCode());
+        assertEquals("Ethics Committee", ((OversightCommitteeDTO) dto).getTypeCode().getCode());
 
         // check id
         Ii expectedIi = new Ii();

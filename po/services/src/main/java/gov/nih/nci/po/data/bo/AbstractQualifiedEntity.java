@@ -111,7 +111,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
 
     private Long id;
 
-    private QualifiedEntityType type;
+    private QualifiedEntityType typeCode;
 
     private Person player;
     private Organization scoper;
@@ -185,15 +185,15 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     @ForeignKey(name = "qualifiedentity_type_fkey")
     @NotNull
     @Searchable
-    public QualifiedEntityType getType() {
-        return type;
+    public QualifiedEntityType getTypeCode() {
+        return typeCode;
     }
-    
+
     /**
      * @param type the type.
      */
-    public void setType(QualifiedEntityType type) {
-        this.type = type;
+    public void setTypeCode(QualifiedEntityType type) {
+        this.typeCode = type;
     }
 
     /**

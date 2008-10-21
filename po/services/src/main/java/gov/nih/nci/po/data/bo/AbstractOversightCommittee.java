@@ -102,15 +102,15 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
 
     private static final long serialVersionUID = 1L;
 
-    private OversightCommitteeType type;
+    private OversightCommitteeType typeCode;
 
 
 
     /**
      * @param type the type to set
      */
-    public void setType(OversightCommitteeType type) {
-        this.type = type;
+    public void setTypeCode(OversightCommitteeType type) {
+        this.typeCode = type;
     }
 
     /**
@@ -122,7 +122,7 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
     @ManyToOne
     @ForeignKey(name = "oversight_comm_type_fkey")
     @Searchable
-    public OversightCommitteeType getType() {
-        return type;
+    public OversightCommitteeType getTypeCode() {
+        return typeCode;
     }
 }

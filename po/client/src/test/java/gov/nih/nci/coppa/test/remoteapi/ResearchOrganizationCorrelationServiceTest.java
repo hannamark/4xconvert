@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+
 import org.junit.Assert;
 
 public class ResearchOrganizationCorrelationServiceTest
@@ -102,7 +103,7 @@ public class ResearchOrganizationCorrelationServiceTest
         dto.setFundingMechanism(RemoteApiUtils.convertToSt("Magical"));
         Cd type = new Cd();
         type.setCode("Cancer Center");
-        dto.setType(type);
+        dto.setTypeCode(type);
         return dto;
     }
 
@@ -116,6 +117,6 @@ public class ResearchOrganizationCorrelationServiceTest
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
         Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals("Magical", dto.getFundingMechanism().getValue());
-        Assert.assertEquals("Cancer Center", dto.getType().getCode());
+        Assert.assertEquals("Cancer Center", dto.getTypeCode().getCode());
     }
 }

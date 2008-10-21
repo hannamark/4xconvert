@@ -102,8 +102,8 @@ import org.hibernate.validator.NotNull;
 @MappedSuperclass
 public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedEntity<Organization> {
     private static final long serialVersionUID = 1L;
-    
-    private IdentifiedOrganizationType type;
+
+    private IdentifiedOrganizationType typeCode;
 
     /**
      * {@inheritDoc}
@@ -145,7 +145,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
         super.setPlayer(player);
     }
 
-    
+
     /**
      * @return the type
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
@@ -156,15 +156,15 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @ForeignKey(name = "identifiedorg_type_fkey")
     @NotNull
     @Searchable
-    public IdentifiedOrganizationType getType() {
-        return type;
+    public IdentifiedOrganizationType getTypeCode() {
+        return typeCode;
     }
 
     /**
      * @param type identified entity type for org.
      */
-    public void setType(IdentifiedOrganizationType type) {
-        this.type = type;
+    public void setTypeCode(IdentifiedOrganizationType type) {
+        this.typeCode = type;
     }
-    
+
 }

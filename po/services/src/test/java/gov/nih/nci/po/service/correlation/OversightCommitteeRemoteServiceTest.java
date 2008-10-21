@@ -129,7 +129,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
 
         Cd type = new Cd();
         type.setCode("Ethics Committee");
-        dto.setType(type);
+        dto.setTypeCode(type);
 
         return dto;
     }
@@ -139,7 +139,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
-        assertEquals(expected.getType().getCode(), actual.getType().getCode());
+        assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
     }
 
     @Override
@@ -150,14 +150,14 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
 
         Cd type = new Cd();
         type.setCode("Foo");
-        dto.setType(type);
+        dto.setTypeCode(type);
     }
 
     @Override
     protected void verifyAlterations(OversightCommitteeCR cr) {
         super.verifyAlterations(cr);
 
-        assertEquals("Foo", cr.getType().getCode());
+        assertEquals("Foo", cr.getTypeCode().getCode());
     }
 
     @Override
@@ -188,7 +188,7 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         correlation2.setScoperIdentifier(org2Ii);
         Cd type = new Cd();
         type.setCode("Foo");
-        correlation2.setType(type);
+        correlation2.setTypeCode(type);
         Ii id2 = getCorrelationService().createCorrelation(correlation2);
 
         // test search by null / empty criteria
@@ -271,12 +271,12 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         // search by type code
         searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setScoperIdentifier(null);
-        searchCriteria.setType(correlation1.getType());
+        searchCriteria.setTypeCode(correlation1.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
 
-        searchCriteria.setType(correlation2.getType());
+        searchCriteria.setTypeCode(correlation2.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());

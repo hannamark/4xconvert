@@ -104,7 +104,7 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
 
     private static final long serialVersionUID = 1L;
 
-    private IdentifiedPersonType type;
+    private IdentifiedPersonType typeCode;
     /**
      * {@inheritDoc}
      * @xsnapshot.property match="iso"
@@ -155,14 +155,14 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
     @ForeignKey(name = "identifiedperson_type_fkey")
     @NotNull
     @Searchable
-    public IdentifiedPersonType getType() {
-        return type;
+    public IdentifiedPersonType getTypeCode() {
+        return typeCode;
     }
 
     /**
      * @param type identified entity type for person.
      */
-    public void setType(IdentifiedPersonType type) {
-        this.type = type;
+    public void setTypeCode(IdentifiedPersonType type) {
+        this.typeCode = type;
     }
 }
