@@ -19,6 +19,7 @@ public class ParticipatingOrganizationsTabWebDTO {
     private Ii poHealthCareFacilityIi;
     private Long studyParticipationId;
     private Organization facilityOrganization;
+    private Organization researchOrganization;
     private boolean newParticipation = true;
     
 
@@ -73,6 +74,18 @@ public class ParticipatingOrganizationsTabWebDTO {
      */
     public void setFacilityOrganization(Organization facilityOrganization) {
         this.facilityOrganization = facilityOrganization;
+    }
+    /**
+     * @return the researchOrganization
+     */
+    public Organization getResearchOrganization() {
+        return researchOrganization;
+    }
+    /**
+     * @param researchOrganization the researchOrganization to set
+     */
+    public void setResearchOrganization(Organization researchOrganization) {
+        this.researchOrganization = researchOrganization;
     }
     /**
      * @return the newParticipation
