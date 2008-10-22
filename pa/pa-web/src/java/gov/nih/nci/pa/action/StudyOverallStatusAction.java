@@ -49,6 +49,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
     private static final String ACTION_HISTORY = "history";
+    private static final int MAX_REASON_LENGTH = 200;
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
 
@@ -375,7 +376,12 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * @param statusReason the statusReason to set
      */
     public void setStatusReason(String statusReason) {
-        this.statusReason = statusReason;
+        if (statusReason == null) {
+            this.statusReason = null;
+        } else {
+            this.statusReason = (statusReason.length() > MAX_REASON_LENGTH) 
+                    ? statusReason.substring(0, MAX_REASON_LENGTH) : statusReason;
+        }
     }
 
     /**
