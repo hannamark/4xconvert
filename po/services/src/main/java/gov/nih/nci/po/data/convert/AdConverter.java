@@ -131,13 +131,21 @@ public class AdConverter {
 
         }
 
-        @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity",
-                            "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "fallthrough" })
         private static Address processParts(Ad iso) {
             Address a = new Address();
 
             StringBuffer street = new StringBuffer();
             StringBuffer delivery = new StringBuffer();
+
+            processParts(iso, a, street, delivery);
+
+            a.setStreetAddressLine(StringUtils.trimToNull(street.toString()));
+            a.setDeliveryAddressLine(StringUtils.trimToNull(delivery.toString()));
+            return a;
+        }
+
+        @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity" })
+        private static void processParts(Ad iso, Address a, StringBuffer street, StringBuffer delivery) {
             String sdelimitor = "";
             String ddelimitor = "";
 
@@ -182,9 +190,6 @@ public class AdConverter {
                     ddelimitor = delivery.length() == 0 ? "" : " ";
                 }
             }
-            a.setStreetAddressLine(StringUtils.trimToNull(street.toString()));
-            a.setDeliveryAddressLine(StringUtils.trimToNull(delivery.toString()));
-            return a;
         }
     }
 
