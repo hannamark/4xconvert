@@ -7,6 +7,7 @@
 <head>
 <title><fmt:message key="trialStatus.title" /></title>
 <s:head />
+<script type="text/javascript" src="<c:url value="/scripts/js/coppa.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
@@ -23,22 +24,24 @@
            || (newStatus=="Temporarily Closed to Accrual")
            || (newStatus=="Temporarily Closed to Accrual and Intervention")) {
           document.studyOverallStatus.statusReason.disabled=false;
+          document.studyOverallStatus.statusReason.readonly=false;
         } else {
           document.studyOverallStatus.statusReason.disabled=true;
+          document.studyOverallStatus.statusReason.readonly=true;
         }
     }
 
     function handleAction() {
         input_box=confirm("Click OK to save changes or Cancel to Abort.");
         if (input_box==true){
-         document.studyOverallStatus.action="studyOverallStatusupdate.action";
-         document.studyOverallStatus.submit();
+          document.studyOverallStatus.action="studyOverallStatusupdate.action";
+          document.studyOverallStatus.submit();
         }
-    }
+    }    
 </script>
      
 </head>
-<body onload="setFocusToFirstControl();statusChange();">
+<body onload="setFocusToFirstControl();">
 <h1><fmt:message key="trialStatus.title" /></h1>
 
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
@@ -56,7 +59,7 @@
                 key="trialStatus.current.trial.status" /></s:label></td>
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-            <td class="value"><s:select headerKey="" headerValue="" onchange="statusChange()"
+            <td class="value"><s:select headerKey="" headerValue="" onchange="statusChange()"  onfocus="statusChange()"
                 name="currentTrialStatus"
                 list="#currentTrialStatusValues" /></td>
             <td>
@@ -78,16 +81,8 @@
             <td scope="row" class="label"><s:label name="statusReasonLabel" for="statusReason">
                 <fmt:message key="trialStatus.current.trial.status.reason"/>
             </s:label></td>
-            <s:if test="(currentTrialStatus=='Administratively Complete')||(currentTrialStatus=='Withdrawn')
-                        ||(currentTrialStatus=='Temporarily Closed to Accrual')
-                        ||(currentTrialStatus=='Temporarily Closed to Accrual and Intervention')">
-                <td scope="row" class="label"><s:textfield name="statusReason" maxlength="200" size="200" 
-                    cssStyle="width:280px;float:left" disabled="false"/></td>
-            </s:if>
-            <s:else>
-                <td scope="row" class="label"><s:textfield name="statusReason" maxlength="200" size="200" 
-                    cssStyle="width:280px;float:left" disabled="true"/></td>
-            </s:else>
+            <td scope="row" class="label"><s:textarea name="statusReason" rows="3"
+                    cssStyle="width:280px;float:left" /></td>
         </tr>
         <tr> 
             <td/>
@@ -112,10 +107,6 @@
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
                 <s:radio name="completionDateType" list="dateTypeList" /></td>
         </tr>
-        <!--<td colspan="2">
-          <s:submit value="Save"  action='studyOverallStatusUpdate' cssClass="button" />
-          <s:submit value="Next" action='nciSpecificInformation' cssClass="button" />
-        </td> -->
     </table>
 <div class="actionsrow">
     <del class="btnwrapper">
