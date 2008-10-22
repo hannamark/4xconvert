@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<li class="stdnav"><div>Protocol Abstraction</div>
+<li class="stdnav"><div>Protocol Abstraction</div> 
 	<ul>
 		<li><a href="#">Home</a></li>			
 		<li><a href="studyProtocolquery.action" >Trial Search</a></li>			
@@ -22,7 +22,12 @@
 					<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
 					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
 					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-					<li><a href="participatingOrganizations.action" >Participating Sites</a></li>
+                    <li class="sub"><a href="participatingOrganizations.action" style="color: black;">Participating Sites</a>
+                        <ul>
+                            <li><a href="participatingOrganizations.action" style="text-indent: .5cm">Treating Sites</a></li>
+                            <li><a href="collaborators.action" style="text-indent: .5cm">Collaborators</a></li>
+                        </ul>
+                    </li>    
 					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
 				</ul>
 			</li>
