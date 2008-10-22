@@ -18,30 +18,43 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
     /**
      * Treating Site.
      */
-    TREATING_SITE("Treating Site"), 
-     /**
-      * Data Management Center.
-      */
-    DATA_MANAGEMENT_CENTER("Data Management Center"),
+    TREATING_SITE("Treating Site", false), 
+    /**
+     * Data Management Center.
+     */
+    DATA_MANAGEMENT_CENTER("Data Management Center", false),
     /**
      * Lead organization.
      */
-    LEAD_ORAGANIZATION("Lead Organization"),
-    
-     /**
-      * Protocol Management Center.
-      */
-    PROTOCOL_MANAGEMENT_CENTER("Protocol Management Center");
+    LEAD_ORAGANIZATION("Lead Organization", false),
+    /**
+     * Protocol Management Center.
+     */
+    PROTOCOL_MANAGEMENT_CENTER("Protocol Management Center", false),
+    /**
+     * Fundtion Source.
+     */
+    FUNDING_SOURCE("Funding Source", true),
+    /**
+     * Agent Source.
+     */
+    AGENT_SOURCE("Agent Source", true),
+    /**
+     * Laboratory.
+     */
+    LABORATORY("Laboratory", true);
      
           
      private String code;
+     private boolean collaboratorCode;
 
      /**
       * Constructor for StudyParticipationFunctionalCode.
       * @param code
       */
-     private StudyParticipationFunctionalCode(String code) {
+     private StudyParticipationFunctionalCode(String code, boolean isCollaboratorCode) {
          this.code = code;
+         this.collaboratorCode = isCollaboratorCode;
          register(this);
      }
 
@@ -67,8 +80,14 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
          return name();
      }
 
-
      /**
+     * @return the collaboratorCode
+     */
+    public boolean isCollaboratorCode() {
+        return collaboratorCode;
+    }
+
+    /**
       * @param code code
       * @return StudyParticipationFunctionalCode 
       */
@@ -85,6 +104,28 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
          String[] codedNames = new String[codes.length];
          for (int i = 0; i < codes.length; i++) {
              codedNames[i] = codes[i].getCode();
+         }
+         return codedNames;
+     }        
+     /**
+      * construct a array of display names for StudyParticipationFunctionalCode Enum.
+      * @return String[] display names for StudyParticipationFunctionalCode
+      */
+     public static String[]  getCollaboratorDisplayNames() {
+         StudyParticipationFunctionalCode[] codes = StudyParticipationFunctionalCode.values();
+         int resultSize = 0;
+         for (StudyParticipationFunctionalCode fc : codes) {
+             if (fc.collaboratorCode) {
+                 resultSize++;
+             }
+         }
+         
+         String[] codedNames = new String[resultSize];
+         int index = 0;
+         for (int i = 0; i < codes.length; i++) {
+             if (codes[i].collaboratorCode) {
+               codedNames[index++] = codes[i].getCode();
+             }
          }
          return codedNames;
      }        
