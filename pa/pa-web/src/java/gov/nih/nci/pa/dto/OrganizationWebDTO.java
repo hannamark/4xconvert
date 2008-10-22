@@ -17,6 +17,7 @@ public class OrganizationWebDTO {
     String nciNumber;
     String recruitmentStatus;
     String recruitmentStatusDate;
+    String functionalRole;
     /**
      * @return the id
      */
@@ -76,5 +77,17 @@ public class OrganizationWebDTO {
      */
     public void setRecruitmentStatusDate(String recruitmentStatusDate) {
         this.recruitmentStatusDate = recruitmentStatusDate;
+    }
+    /**
+     * @return the functionalRole
+     */
+    public String getFunctionalRole() {
+        return functionalRole;
+    }
+    /**
+     * @param functionalRole the functionalRole to set
+     */
+    public void setFunctionalRole(String functionalRole) {
+        this.functionalRole = functionalRole;
     }
 }
