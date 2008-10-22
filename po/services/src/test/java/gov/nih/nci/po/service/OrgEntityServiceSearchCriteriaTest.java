@@ -17,112 +17,121 @@ public class OrgEntityServiceSearchCriteriaTest {
 
     @Test
     public void testGettersAndSetters() throws Exception {
-        AbstractOrganizationSearchCriteria osc = new OrgEntityServiceSearchCriteria();
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(osc);
+        AnnotatedBeanSearchCriteria<Organization> sc = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(sc);
     }
 
     @Test
     @SuppressWarnings("deprecation")
     public void testHasAtLeastOneCriterionSpecified() {
-        OrgEntityServiceSearchCriteria noCrit = new OrgEntityServiceSearchCriteria();
+        AnnotatedBeanSearchCriteria<Organization> noCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(noCrit.hasOneCriterionSpecified());
 
-        OrgEntityServiceSearchCriteria yesCrit = new OrgEntityServiceSearchCriteria();
-        yesCrit.setOrganization(new Organization());
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().setName("name");
+        yesCrit.getCriteria().setName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().setAbbreviatedName("name");
+        yesCrit.getCriteria().setAbbreviatedName("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().setDescription("name");
+        yesCrit.getCriteria().setDescription("name");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPhone().add(new PhoneNumber("123-123-1234"));
+        yesCrit.getCriteria().getPhone().add(new PhoneNumber("123-123-1234"));
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getFax().add(new PhoneNumber("123-123-1234"));
+        yesCrit.getCriteria().getFax().add(new PhoneNumber("123-123-1234"));
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getTty().add(new PhoneNumber("123-123-1234"));
+        yesCrit.getCriteria().getTty().add(new PhoneNumber("123-123-1234"));
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getEmail().add(new Email("test@example.com"));
+        yesCrit.getCriteria().getEmail().add(new Email("test@example.com"));
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getUrl().add(new URL("http://www.example.com/"));
+        yesCrit.getCriteria().getUrl().add(new URL("http://www.example.com/"));
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setCityOrMunicipality("a");
+        yesCrit.getCriteria().getPostalAddress().setCityOrMunicipality("a");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setDeliveryAddressLine("a");
+        yesCrit.getCriteria().getPostalAddress().setDeliveryAddressLine("a");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setPostalCode("a");
+        yesCrit.getCriteria().getPostalAddress().setPostalCode("a");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setStateOrProvince("a");
+        yesCrit.getCriteria().getPostalAddress().setStateOrProvince("a");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setStreetAddressLine("a");
+        yesCrit.getCriteria().getPostalAddress().setStreetAddressLine("a");
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setCountry(new Country());
-        assertFalse(yesCrit.hasOneCriterionSpecified());
-
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
-        assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setCountry(new Country(null, null, null, "a"));
+        Country country = new Country();
+        country.setId(1L);
+        yesCrit.getCriteria().getPostalAddress().setCountry(country);
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        yesCrit.setOrganization(new Organization());
-        yesCrit.getOrganization().setPostalAddress(new Address());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().getPostalAddress().setCountry(new Country(null, null, null, null));
-        yesCrit.getOrganization().getPostalAddress().getCountry().setId(new Long(1));
-        assertFalse(yesCrit.hasOneCriterionSpecified());
-
-        yesCrit.setOrganization(new Organization());
-        assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getOrganization().setStatusCode(EntityStatus.ACTIVE);
+        yesCrit.getCriteria().setStatusCode(EntityStatus.ACTIVE);
         assertTrue(yesCrit.hasOneCriterionSpecified());
 
-        //Not used...
     }
 
+    
+    @Test
+    public void test1() {
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getCriteria().getPostalAddress().setCountry(new Country());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+    }
+    
+    @Test
+    public void test2() {
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().setPostalAddress(new Address());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+        yesCrit.getCriteria().getPostalAddress().setCountry(new Country(null, null, null, "a"));
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+    }
 }

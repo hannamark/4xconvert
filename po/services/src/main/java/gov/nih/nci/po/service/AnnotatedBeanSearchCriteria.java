@@ -94,7 +94,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends AbstractSearchCriteria
         implements SearchCriteria<T> {
-    private final T obj;
+    private final T criteria;
     private boolean disallowNullified = true;
 
     /**
@@ -102,7 +102,7 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends Abs
      * @param o the example.
      */
     public AnnotatedBeanSearchCriteria(T o) {
-        this.obj = o;
+        this.criteria = o;
     }
 
     /**
@@ -111,7 +111,7 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends Abs
      * @param disallowNullified should we disallow nullified
      */
     public AnnotatedBeanSearchCriteria(T o, boolean disallowNullified) {
-        this.obj = o;
+        this.criteria = o;
         this.disallowNullified = disallowNullified;
     }
 
@@ -120,13 +120,20 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends Abs
      */
     @Override
     public boolean hasOneCriterionSpecified() {
-        return obj != null && SearchableUtils.hasSearchableCriterion(obj);
+        return criteria != null && SearchableUtils.hasSearchableCriterion(criteria);
     }
 
     /**
      * {@inheritDoc}
      */
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        return SearchableUtils.getQueryBySearchableFields(obj, isCountOnly, disallowNullified);
+        return SearchableUtils.getQueryBySearchableFields(criteria, isCountOnly, disallowNullified);
+    }
+
+    /**
+     * @return criteria used to build query based on @Searchable annotation.
+     */
+    protected T getCriteria() {
+        return criteria;
     }
 }

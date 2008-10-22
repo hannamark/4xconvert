@@ -114,6 +114,7 @@ import org.hibernate.validator.Valid;
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
+    private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Person duplicateOf;
     private Set<PersonCR> changeRequests = new HashSet<PersonCR>();
@@ -141,7 +142,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -162,7 +163,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "fax")
     @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
     @Override
-    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -183,7 +184,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "phone")
     @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
     @Override
-    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -204,7 +205,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "url")
     @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
     @Override
-    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -225,7 +226,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
     @Column(name = "tty")
     @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
     @Override
-    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_START)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }

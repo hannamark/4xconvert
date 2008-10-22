@@ -1,72 +1,73 @@
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Contact;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Abstract search criteria class for Entity types.
  */
-public abstract class AbstractEntitySearchCriteria extends AbstractSearchCriteria {
+public abstract class AbstractEntitySearchCriteria extends AbstractHQLSearchCriteria {
+    private static final Logger LOG = Logger.getLogger(AbstractEntitySearchCriteria.class);
+    /**
+     * root object alias type.
+     */
+    protected static final String ROOT_OBJ_ALIAS = "_root_obj";
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasOneCriterionSpecified() {
+        return true;
+    }
 
     /**
-     * @param namedParameters map to use to set named parameter values in the Query
-     * @param values list of criterion values
-     * @param entityType criterion type
-     * @param inElementsProperty the root entity type's collection property to find matches
-     * @param rootType root entity type
-     * @return HQL select to identify matching entries of type Contact
+     * @return the root object type within the from clause of the hql query
      */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AvoidDeeplyNestedIfStmts" })
-    protected StringBuffer findMatchingContact(Map<String, Object> namedParameters, List<? extends Contact> values,
-            Class<? extends Contact> entityType, String inElementsProperty,
-            Class<? extends PersistentObject> rootType) {
-        StringBuffer subselect = new StringBuffer();
-        if (CollectionUtils.isNotEmpty(values)) {
-            String rootTypeTableAlias = "p_" + inElementsProperty;
-            String contactEntityAlias = "_" + inElementsProperty;
-            subselect.append(SELECT).append(rootTypeTableAlias).append(DOT).append(ID).append(FROM).append(
-                    tableAlias(rootType, rootTypeTableAlias));
-            subselect.append(COMMA);
-            List<String> subselectWhereClause = new ArrayList<String>();
-            int j = 0;
-            for (Iterator<? extends Contact> eAliasItr = values.iterator(); eAliasItr.hasNext();) {
-                Contact e = eAliasItr.next();
-                if (isValueSpecified(e.getValue())) {
-                    String entityTableAlias = contactEntityAlias + j++;
-                    subselect.append(tableAlias(entityType, entityTableAlias));
-                    if (eAliasItr.hasNext()) {
-                        subselect.append(COMMA);
-                    }
-                    String parameterName = "_param" + j;
-                    subselectWhereClause.add(entityTableAlias + " in elements (" + rootTypeTableAlias + "."
-                            + inElementsProperty + ")");
-                    subselectWhereClause.add(addILike(entityTableAlias + ".value", parameterName, e.getValue(),
-                            namedParameters));
-                }
-            }
-            subselect.append(buildWhereClause(subselectWhereClause, WhereClauseOperator.CONJUNCTION));
+    protected abstract Class<? extends PersistentObject> getRootObjectType();
+
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        Map<String, Object> namedParameters = new HashMap<String, Object>();
+
+        StringBuffer queryString = new StringBuffer();
+
+        queryString.append(SELECT);
+        if (isCountOnly) {
+            queryString.append("COUNT(*)");
+        } else {
+            queryString.append(ROOT_OBJ_ALIAS);
+            queryString.append(' ');
         }
-        return subselect;
+        queryString.append(FROM);
+        queryString.append(tableAlias(getRootObjectType(), ROOT_OBJ_ALIAS));
+
+        queryString.append(getQueryWhereClause(namedParameters, ROOT_OBJ_ALIAS));
+
+        // ADD ORDER BY CLAUSE
+        queryString.append(orderByProperty);
+
+        Session session = PoHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(queryString.toString());
+
+        setNamedParameters(namedParameters, query);
+        LOG.debug("queryString=" + query.getQueryString());
+        return query;
     }
 
     /**
      * @param namedParameters map to use to set named parameter values in the Query
-     * @param sc search criteria
-     * @param rootType root entity type that references the Address type
-     * @param rootTypeAddressPropertyName property name referencing the Address type
-     * @return HQL-based select statement to find Address(s) that match the root type (Person or Organization)
+     * @param rootTypeAlias the table alias
+     * @return HQL-based where clause
      */
-    protected StringBuffer findMatchingAddress(Map<String, Object> namedParameters, AddressSearchCriteria sc,
-            Class<? extends PersistentObject> rootType, String rootTypeAddressPropertyName) {
-        return sc.findMatchingAddress(namedParameters, sc, rootType, rootTypeAddressPropertyName);
-    }
-
+    protected abstract StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String rootTypeAlias);
 }

@@ -19,11 +19,11 @@ import org.junit.Test;
 
 public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCriteriaTest extends OrganizationServiceBeanTest {
 
-    OrgEntityServiceSearchCriteria sc;
+    AnnotatedBeanSearchCriteria<Organization> sc;
 
     @Before
     public void initData2() {
-        sc = new OrgEntityServiceSearchCriteria();
+        sc = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
     }
 
     @Override
@@ -33,56 +33,46 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByName() throws EntityValidationException {
-        OrgEntityServiceSearchCriteria sc2 = new OrgEntityServiceSearchCriteria();
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
         createOrganization("abc", "defaultCity", "defaultOrgCode", "defaultDescription");
-        Organization o = new Organization();
-        sc2.setOrganization(o);
 
+        sc.getCriteria().setName("%Nam%");
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        o.setName("%Nam%");
-        assertEquals(1, getOrgServiceBean().count(sc2));
-        assertEquals(1, getOrgServiceBean().search(sc2).size());
+        sc.getCriteria().setName("%a%");
+        assertEquals(2, getOrgServiceBean().count(sc));
+        assertEquals(2, getOrgServiceBean().search(sc).size());
 
-        o.setName("%a%");
-        assertEquals(2, getOrgServiceBean().count(sc2));
-        assertEquals(2, getOrgServiceBean().search(sc2).size());
-
-        o.setName("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc2));
-        assertEquals(0, getOrgServiceBean().search(sc2).size());
+        sc.getCriteria().setName("foobar");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
     }
 
     @Test
     public void findByDesc() throws EntityValidationException {
-        OrgEntityServiceSearchCriteria sc2 = new OrgEntityServiceSearchCriteria();
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-        Organization o = new Organization();
-        sc2.setOrganization(o);
 
-        o.setDescription("%Desc%");
-        assertEquals(1, getOrgServiceBean().count(sc2));
-        assertEquals(1, getOrgServiceBean().search(sc2).size());
+        sc.getCriteria().setDescription("%Desc%");
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        o.setDescription("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc2));
-        assertEquals(0, getOrgServiceBean().search(sc2).size());
+        sc.getCriteria().setDescription("foobar");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
     }
 
     @Test
     public void findByAbbrvName() throws EntityValidationException {
-        OrgEntityServiceSearchCriteria sc2 = new OrgEntityServiceSearchCriteria();
         createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-        Organization o = new Organization();
-        sc2.setOrganization(o);
 
-        o.setAbbreviatedName("%Org%");
-        assertEquals(1, getOrgServiceBean().count(sc2));
-        assertEquals(1, getOrgServiceBean().search(sc2).size());
+        sc.getCriteria().setAbbreviatedName("%Org%");
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        o.setAbbreviatedName("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc2));
-        assertEquals(0, getOrgServiceBean().search(sc2).size());
+        sc.getCriteria().setAbbreviatedName("foobar");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
     }
 
     @Test
@@ -90,24 +80,27 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         /* create a person with two email addresses */
         createOrganization();
 
-        sc.setOrganization(new Organization());
         /* find a person with a matching email address */
-        sc.getOrganization().getEmail().add(new Email("abc"));
+        sc.getCriteria().getEmail().add(new Email("abc"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
+        
+        initData2();
         /* then find a person with another matching email address */
-        sc.getOrganization().getEmail().add(new Email("def"));
+        sc.getCriteria().getEmail().add(new Email("def"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getEmail().add(new Email("ghi"));
+        initData2();
+        sc.getCriteria().getEmail().add(new Email("ghi"));
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getEmail().add(new Email("ghi"));
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        initData2();
+        sc.getCriteria().getEmail().add(new Email("def"));
+        sc.getCriteria().getEmail().add(new Email("ghi"));
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
     }
 
     @Test
@@ -115,23 +108,26 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         /* create a person with two phone numbers */
         createOrganization();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getPhone().add(new PhoneNumber("111"));
+        initData2();
+        sc.getCriteria().getPhone().add(new PhoneNumber("111"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPhone().add(new PhoneNumber("123"));
+        initData2();
+        sc.getCriteria().getPhone().add(new PhoneNumber("123"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPhone().add(new PhoneNumber("345"));
+        initData2();
+        sc.getCriteria().getPhone().add(new PhoneNumber("345"));
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getPhone().add(new PhoneNumber("345"));
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        initData2();
+        sc.getCriteria().getPhone().add(new PhoneNumber("345"));
+        sc.getCriteria().getPhone().add(new PhoneNumber("123"));
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
     }
 
     @Test
@@ -139,23 +135,26 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         /* create a person with two phone numbers */
         createOrganization();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getFax().add(new PhoneNumber("222"));
+        initData2();
+        sc.getCriteria().getFax().add(new PhoneNumber("222"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getFax().add(new PhoneNumber("234"));
+        initData2();
+        sc.getCriteria().getFax().add(new PhoneNumber("234"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getFax().add(new PhoneNumber("456"));
+        initData2();
+        sc.getCriteria().getFax().add(new PhoneNumber("456"));
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getFax().add(new PhoneNumber("456"));
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        initData2();
+        sc.getCriteria().getFax().add(new PhoneNumber("234"));
+        sc.getCriteria().getFax().add(new PhoneNumber("456"));
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
     }
 
     @Test
@@ -163,23 +162,26 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         /* create a person with two phone numbers */
         createOrganization();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getTty().add(new PhoneNumber("333"));
+        initData2();
+        sc.getCriteria().getTty().add(new PhoneNumber("333"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getTty().add(new PhoneNumber("345"));
+        initData2();
+        sc.getCriteria().getTty().add(new PhoneNumber("345"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getTty().add(new PhoneNumber("567"));
+        initData2();
+        sc.getCriteria().getTty().add(new PhoneNumber("567"));
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getTty().add(new PhoneNumber("567"));
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        initData2();
+        sc.getCriteria().getTty().add(new PhoneNumber("345"));
+        sc.getCriteria().getTty().add(new PhoneNumber("567"));
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
     }
 
     @Test
@@ -187,23 +189,26 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         /* create a person with two phone numbers */
         createOrganization();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getUrl().add(new URL("abc"));
+        initData2();
+        sc.getCriteria().getUrl().add(new URL("http://www.example.com/abc"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getUrl().add(new URL("def"));
+        initData2();
+        sc.getCriteria().getUrl().add(new URL("http://www.example.com/def"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getUrl().add(new URL("ghi"));
+        initData2();
+        sc.getCriteria().getUrl().add(new URL("http://www.example.com/ghi"));
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().getUrl().add(new URL("ghi"));
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
+        initData2();
+        sc.getCriteria().getUrl().add(new URL("http://www.example.com/d"));
+        sc.getCriteria().getUrl().add(new URL("http://www.example.com/g"));
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
     }
 
     private void createOrgsWithAddresses() throws EntityValidationException {
@@ -220,7 +225,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         createOrganization(p);
 
         p = getBasicOrganization();
-        pa = new Address("P.O. Box 12345", "Old-City", "PA", "12345-6789", getDefaultCountry());
+        pa = new Address("P.O. Box 12364", "Old-City", "PA", "12345-6789", getDefaultCountry());
         p.setPostalAddress(pa);
         createOrganization(p);
     }
@@ -228,22 +233,21 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     @Test
     public void findByAddressStreetAddressLine() throws EntityValidationException {
         createOrgsWithAddresses();
+        sc.getCriteria().setPostalAddress(new Address());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setPostalAddress(new Address());
-        sc.getOrganization().getPostalAddress().setStreetAddressLine("123");
+        sc.getCriteria().getPostalAddress().setStreetAddressLine("P.O. Box");
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setStreetAddressLine("P.O.");
-        assertEquals(2, getOrgServiceBean().count(sc));
-        assertEquals(2, getOrgServiceBean().search(sc).size());
+        sc.getCriteria().getPostalAddress().setStreetAddressLine("P.O. Box 1234");
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setStreetAddressLine("345");
-        assertEquals(2, getOrgServiceBean().count(sc));
-        assertEquals(2, getOrgServiceBean().search(sc).size());
+        sc.getCriteria().getPostalAddress().setStreetAddressLine("345");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setStreetAddressLine("Z");
+        sc.getCriteria().getPostalAddress().setStreetAddressLine("Z");
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
     }
@@ -251,45 +255,51 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     @Test
     public void findByAddressDeliveryAddressLine() throws EntityValidationException {
         createOrgsWithAddresses();
+        sc.getCriteria().setPostalAddress(new Address());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setPostalAddress(new Address());
-        sc.getOrganization().getPostalAddress().setDeliveryAddressLine("c/o");
+        sc.getCriteria().getPostalAddress().setDeliveryAddressLine("c/o");
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setDeliveryAddressLine("John");
+        sc.getCriteria().getPostalAddress().setDeliveryAddressLine("c/o John");
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setDeliveryAddressLine("Mark Wild");
+        sc.getCriteria().getPostalAddress().setDeliveryAddressLine("c/o Mark");
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setDeliveryAddressLine("%");
+        sc.getCriteria().getPostalAddress().setDeliveryAddressLine("%");
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
+
+        sc.getCriteria().getPostalAddress().setDeliveryAddressLine("Z");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
     }
 
     @Test
     public void findByAddressCity() throws EntityValidationException {
         createOrgsWithAddresses();
+        sc.getCriteria().setPostalAddress(new Address());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setPostalAddress(new Address());
-        sc.getOrganization().getPostalAddress().setCityOrMunicipality("-");
-        assertEquals(2, getOrgServiceBean().count(sc));
-        assertEquals(2, getOrgServiceBean().search(sc).size());
-
-        sc.getOrganization().getPostalAddress().setCityOrMunicipality("City");
-        assertEquals(2, getOrgServiceBean().count(sc));
-        assertEquals(2, getOrgServiceBean().search(sc).size());
-
-        sc.getOrganization().getPostalAddress().setCityOrMunicipality("'");
+        sc.getCriteria().getPostalAddress().setCityOrMunicipality("New-");
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setCityOrMunicipality("%");
+        sc.getCriteria().getPostalAddress().setCityOrMunicipality("-City");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
+
+        sc.getCriteria().getPostalAddress().setCityOrMunicipality("'");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
+
+        sc.getCriteria().getPostalAddress().setCityOrMunicipality("Harper'");
+        assertEquals(1, getOrgServiceBean().count(sc));
+        assertEquals(1, getOrgServiceBean().search(sc).size());
+
+        sc.getCriteria().getPostalAddress().setCityOrMunicipality("%");
         assertEquals(3, getOrgServiceBean().count(sc));
         assertEquals(3, getOrgServiceBean().search(sc).size());
     }
@@ -297,22 +307,25 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     @Test
     public void findByAddressPostalCode() throws EntityValidationException {
         createOrgsWithAddresses();
+        sc.getCriteria().setPostalAddress(new Address());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setPostalAddress(new Address());
-        sc.getOrganization().getPostalAddress().setPostalCode("-");
-        assertEquals(3, getOrgServiceBean().count(sc));
-        assertEquals(3, getOrgServiceBean().search(sc).size());
+        sc.getCriteria().getPostalAddress().setPostalCode("12345-");
+        assertEquals(2, getOrgServiceBean().count(sc));
+        assertEquals(2, getOrgServiceBean().search(sc).size());
+        
+        sc.getCriteria().getPostalAddress().setPostalCode("-");
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setPostalCode("123");
+        sc.getCriteria().getPostalAddress().setPostalCode("123");
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setPostalCode("987");
+        sc.getCriteria().getPostalAddress().setPostalCode("987");
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
 
-        sc.getOrganization().getPostalAddress().setPostalCode("%");
+        sc.getCriteria().getPostalAddress().setPostalCode("%");
         assertEquals(3, getOrgServiceBean().count(sc));
         assertEquals(3, getOrgServiceBean().search(sc).size());
     }
@@ -321,13 +334,16 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     public void findByAddressCountry() throws EntityValidationException {
         createOrgsWithAddresses();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setPostalAddress(new Address());
-        sc.getOrganization().getPostalAddress().setCountry(new Country(null, null, null, "USA"));
-        assertEquals(3, getOrgServiceBean().count(sc));
-        assertEquals(3, getOrgServiceBean().search(sc).size());
-
-        sc.getOrganization().getPostalAddress().setCountry(new Country(null, null, null, "USA"));
+        sc.getCriteria().setPostalAddress(new Address());
+        Country c = new Country();
+        c.setId(getDefaultCountry().getId() - 1L);
+        sc.getCriteria().getPostalAddress().setCountry(c);
+        assertEquals(0, getOrgServiceBean().count(sc));
+        assertEquals(0, getOrgServiceBean().search(sc).size());
+        
+        c = new Country();
+        c.setId(getDefaultCountry().getId());
+        sc.getCriteria().getPostalAddress().setCountry(c);
         assertEquals(3, getOrgServiceBean().count(sc));
         assertEquals(3, getOrgServiceBean().search(sc).size());
 
@@ -338,13 +354,11 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     public void findByStatusCode() throws EntityValidationException {
         createOrgsWithAddresses();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.ACTIVE);
+        sc.getCriteria().setStatusCode(EntityStatus.ACTIVE);
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.PENDING);
+        sc.getCriteria().setStatusCode(EntityStatus.PENDING);
         assertEquals(3, getOrgServiceBean().count(sc));
         assertEquals(3, getOrgServiceBean().search(sc).size());
     }
@@ -362,13 +376,11 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.NULLIFIED);
+        sc.getCriteria().setStatusCode(EntityStatus.NULLIFIED);
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
 
-        sc.setOrganization(new Organization());
-        sc.getOrganization().setStatusCode(EntityStatus.PENDING);
+        sc.getCriteria().setStatusCode(EntityStatus.PENDING);
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
     }

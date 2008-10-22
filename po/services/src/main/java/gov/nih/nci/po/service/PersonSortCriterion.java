@@ -84,36 +84,37 @@
 package gov.nih.nci.po.service;
 
 
+import gov.nih.nci.po.data.bo.Person;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import gov.nih.nci.po.data.bo.Person;
 
 /**
  * Enum of possible sort criterion for Person.
  */
 public enum PersonSortCriterion implements SortCriterion<Person> {
+    
     /**
      * Sort by person's id.
      */
-    PERSON_ID(AbstractPersonSearchCriteria.PERSON_ALIAS 
-            + "." + AbstractPersonSearchCriteria.PERSON_ID_PROPERTY),
+    PERSON_ID(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS 
+            + "." + CuratePersonSearchCriteria.PERSON_ID_PROPERTY),
     /**
      * Sort by person's first name.
      */
-    PERSON_FIRSTNAME(AbstractPersonSearchCriteria.PERSON_ALIAS + "."
-            + AbstractPersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY),
+    PERSON_FIRSTNAME(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS + "."
+            + CuratePersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY),
     /**
      * Sort by person's middle name.
      */
-    PERSON_MIDDLENAME(AbstractPersonSearchCriteria.PERSON_ALIAS + "."
-            + AbstractPersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY),
+    PERSON_MIDDLENAME(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS + "."
+            + CuratePersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY),
     /**
      * Sort by person's last name.
      */
-    PERSON_LASTNAME(AbstractPersonSearchCriteria.PERSON_ALIAS + "."
-            + AbstractPersonSearchCriteria.PERSON_LAST_NAME_PROPERTY),
+    PERSON_LASTNAME(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS + "."
+            + CuratePersonSearchCriteria.PERSON_LAST_NAME_PROPERTY),
     /**
      * Sort by person's full name.
      */        
@@ -121,13 +122,13 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
     /**
      * Sort by person's suffix.
      */
-    PERSON_SUFFIX(AbstractPersonSearchCriteria.PERSON_ALIAS 
-            + "." + AbstractPersonSearchCriteria.PERSON_SUFFIX_PROPERTY),
+    PERSON_SUFFIX(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS 
+            + "." + CuratePersonSearchCriteria.PERSON_SUFFIX_PROPERTY),
     /**
      * Sort by person's prefix.
      */
-    PERSON_PREFIX(AbstractPersonSearchCriteria.PERSON_ALIAS 
-            + "." + AbstractPersonSearchCriteria.PERSON_PREFIX_PROPERTY);
+    PERSON_PREFIX(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS 
+            + "." + CuratePersonSearchCriteria.PERSON_PREFIX_PROPERTY);
     
 
     private final String orderField;

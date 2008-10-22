@@ -120,7 +120,6 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 @MappedSuperclass
 @SuppressWarnings({ "PMD.UnusedPrivateMethod" })
 public abstract class AbstractOrganization implements PersistentObject, Contactable {
-    private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 100;
     private Long id;
@@ -253,7 +252,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return email list
      */
     @Transient
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<Email> getEmail() {
         return email;
     }
@@ -270,7 +268,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return fax list
      */
     @Transient
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getFax() {
         return fax;
     }
@@ -288,7 +285,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return phone list
      */
     @Transient
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getPhone() {
         return phone;
     }
@@ -305,7 +301,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return list of urls
      */
     @Transient
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<URL> getUrl() {
         return url;
     }
@@ -322,7 +317,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      * @return list of tty phone numbers.
      */
     @Transient
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getTty() {
         return tty;
     }

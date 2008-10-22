@@ -83,7 +83,7 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.AbstractSearchCriteria;
+import gov.nih.nci.po.service.AbstractHQLSearchCriteria;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -103,7 +103,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
     private final StringBuffer whereClause;
     private final StringBuffer selectClause;
     private final Map<String, Object> params;
-    private String whereOrAnd = AbstractSearchCriteria.WHERE;
+    private String whereOrAnd = AbstractHQLSearchCriteria.WHERE;
 
 
     /**
@@ -138,7 +138,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
 
     private void processSimpleField(Object result, String fieldName, String paramName, boolean startsWithSearch) {
         whereClause.append(whereOrAnd);
-        whereOrAnd = AbstractSearchCriteria.AND;
+        whereOrAnd = AbstractHQLSearchCriteria.AND;
 
         if (startsWithSearch && canBeUsedInLikeExpression(result)) {
             whereClause.append(String.format("lower(obj.%s) like :%s", fieldName, paramName));
@@ -170,7 +170,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
                             subPropParamName));
                     params.put(subPropParamName, subPropResult);
                 }
-                whereOrAnd = AbstractSearchCriteria.AND;
+                whereOrAnd = AbstractHQLSearchCriteria.AND;
             }
         }
     }
@@ -189,7 +189,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         }
 
         whereClause.append(whereOrAnd);
-        whereOrAnd = AbstractSearchCriteria.AND;
+        whereOrAnd = AbstractHQLSearchCriteria.AND;
 
         handleCollection(col, fieldName, paramName, fields, startsWithSearch);
     }
@@ -211,7 +211,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
 
         // now add the where clauses
         whereClause.append(alias + " IN ELEMENTS(obj." + fieldName + ") ");
-        whereClause.append(AbstractSearchCriteria.AND);
+        whereClause.append(AbstractHQLSearchCriteria.AND);
         whereClause.append(" ( ");
 
         processCollectionProperties(paramName, propNames, col, fieldClass, alias, startsWithSearch);
@@ -242,7 +242,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
                 } else {
                     addInClauseForCollectionProp(paramName, alias, propName, valueCollection);
                 }
-                andClause = AbstractSearchCriteria.AND;
+                andClause = AbstractHQLSearchCriteria.AND;
             }
         }
     }

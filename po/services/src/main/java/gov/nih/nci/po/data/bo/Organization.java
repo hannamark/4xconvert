@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -112,7 +113,7 @@ import org.hibernate.validator.Valid;
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Organization extends AbstractOrganization implements Auditable, Curatable<Organization> {
-
+    private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
@@ -140,6 +141,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
     @Valid
     @Override
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -160,6 +162,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     @Column(name = "fax")
     @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
     @Override
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -180,6 +183,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     @Column(name = "phone")
     @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
     @Override
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -200,6 +204,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     @Column(name = "url")
     @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
     @Override
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -220,6 +225,7 @@ public class Organization extends AbstractOrganization implements Auditable, Cur
     @Column(name = "tty")
     @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
     @Override
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }

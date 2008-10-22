@@ -88,7 +88,7 @@ import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.AbstractSearchCriteria;
+import gov.nih.nci.po.service.AbstractHQLSearchCriteria;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -101,6 +101,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Utility functions for searching.
@@ -139,12 +141,12 @@ public final class SearchableUtils {
      * @return query object
      */
     public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly, boolean disallowNullified) {
-        final StringBuffer selectClause = new StringBuffer(AbstractSearchCriteria.SELECT);
+        final StringBuffer selectClause = new StringBuffer(AbstractHQLSearchCriteria.SELECT);
         final StringBuffer whereClause = new StringBuffer();
         final Map<String, Object> params = new HashMap<String, Object>();
 
         selectClause.append((isCountOnly ? "COUNT(obj) " : "obj"));
-        selectClause.append(AbstractSearchCriteria.FROM);
+        selectClause.append(AbstractHQLSearchCriteria.FROM);
         selectClause.append(obj.getClass().getName());
         selectClause.append(" obj");
 
@@ -272,8 +274,15 @@ public final class SearchableUtils {
                     throw new IllegalArgumentException("Unable to process property with name:" + field, e);
                 }
                 if (subPropResult != null) {
-                    hasOneCriterion = true;
-                    return;
+                    if (subPropResult instanceof PersistentObject) {
+                        if (((PersistentObject) subPropResult).getId() != null) {
+                            hasOneCriterion = true;
+                            return;
+                        }
+                    } else {
+                        hasOneCriterion = true;
+                        return;
+                    }
                 }
             }
         }
