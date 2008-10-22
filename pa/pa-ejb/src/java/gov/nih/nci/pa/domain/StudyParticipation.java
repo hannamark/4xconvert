@@ -15,7 +15,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.NotNull;
 
 /**
  * StudySite bean for managing StudySite.
@@ -26,15 +25,14 @@ import org.hibernate.validator.NotNull;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 @Entity
-//@SuppressWarnings("PMD.UselessOverridingMethod")
 @Table(name = "STUDY_PARTICIPATION")
-
 public class StudyParticipation extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
 
     private StudyParticipationFunctionalCode functionalCode;
     private String localStudyProtocolIdentifier;
-    private HealthCareFacility  healthCareFacility;
+    private HealthCareFacility healthCareFacility;
+    private ResearchOrganization researchOrganization;
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     private List<StudyParticipationContact> studyParticipationContacts;
     
@@ -73,9 +71,8 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      * 
      * @return healthCareFacility
      */
-    @ManyToOne
-    @JoinColumn(name = "HEALTHCARE_FACILITY_ID", updatable = false)
-    @NotNull
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "HEALTHCARE_FACILITY_ID", nullable = true, updatable = false)
     public HealthCareFacility getHealthCareFacility() {
         return healthCareFacility;
     }
@@ -85,6 +82,22 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      */
     public void setHealthCareFacility(HealthCareFacility healthCareFacility) {
         this.healthCareFacility = healthCareFacility;
+    }
+    /**
+     * 
+     * @return researchOrganization
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "RESEARCH_ORGANIZATION_ID", nullable = true, updatable = false)
+    public ResearchOrganization getResearchOrganization() {
+        return researchOrganization;
+    }
+    /**
+     * 
+     * @param researchOrganization ResearchOrganization
+     */
+    public void setResearchOrganization(ResearchOrganization researchOrganization) {
+        this.researchOrganization = researchOrganization;
     }
     /**
      * @return the studySiteAccrualStatuses
