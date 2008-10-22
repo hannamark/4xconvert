@@ -15,6 +15,7 @@ import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -107,6 +108,10 @@ public interface ServiceLocator {
      * @return PAHealthCareFacilityServiceRemote
      */
     PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService();
+    /**
+     * @return PAHealthCareProviderRemote
+     */    
+    PAResearchOrganizationServiceRemote getPAResearchOrganizationService();
 
     /**
      * @return StudySiteAccrualStatusServiceRemote
@@ -119,9 +124,14 @@ public interface ServiceLocator {
     DocumentServiceRemote getDocumentService();
     /**
     *
-    * @return PersonEntityServiceRemote
+    * @return HealthCareFacilityCorrelationServiceRemote
     */
     HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService();
+//    /**
+//    *
+//    * @return HealthCareFacilityCorrelationServiceRemote
+//    */
+//    ResearchOrganizationCorrelationServiceRemote getPoResearchOrganizationService();
     /**
      * 
      * @return SubGroupsServiceRemote

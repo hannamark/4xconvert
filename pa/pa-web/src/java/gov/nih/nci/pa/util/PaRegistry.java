@@ -15,6 +15,7 @@ import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -161,6 +162,13 @@ public final class PaRegistry {
     public static PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
         return getInstance().getServiceLocator().getPAHealthCareFacilityService();
     }
+    /**
+     * 
+     * @return ResearchOrganizationServiceRemote
+     */
+    public static PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
+        return getInstance().getServiceLocator().getPAResearchOrganizationService();
+    }
 
     /**
      * 
@@ -193,6 +201,13 @@ public final class PaRegistry {
         return getInstance().getServiceLocator().getPoHealthCareProverService();
     }
 
+//    /**
+//     * @return ResearchOrganizationCorrelationServiceRemote
+//     */
+//    public static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
+//        return getInstance().getServiceLocator().getPoResearchOrganizationService();
+//    }
+
     /**
      * 
      * @return SubGroupsServiceRemote
@@ -224,9 +239,7 @@ public final class PaRegistry {
     public static PAHealthCareProviderRemote getPAHealthCareProviderService() {
         return getInstance().getServiceLocator().getPAHealthCareProviderService();
     }
-
-    // public HealthCareProviderCorrelationServiceRemote
-    // getPoPersonCorrelationService() {
+    
     /**
      * @return HealthCareProviderCorrelationServiceRemote
      */
