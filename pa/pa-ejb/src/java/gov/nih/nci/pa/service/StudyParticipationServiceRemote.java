@@ -29,4 +29,12 @@ public interface StudyParticipationServiceRemote extends StudyPaService<StudyPar
      */
     List<StudyParticipationDTO> getByStudyProtocol(
             Ii studyProtocolIi , StudyParticipationDTO spDTO) throws PAException;
+    /**
+     * @param studyProtocolIi id of protocol
+     * @param spDTOList List of StudyParticipationDTO containing criteria
+     * @return list StudyParticipationDTO   
+     * @throws PAException on error 
+     */
+    List<StudyParticipationDTO> getByStudyProtocol(
+            Ii studyProtocolIi , List<StudyParticipationDTO> spDTOList) throws PAException;
 }

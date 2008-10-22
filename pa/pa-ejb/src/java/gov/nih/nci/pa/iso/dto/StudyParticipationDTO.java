@@ -17,6 +17,7 @@ import gov.nih.nci.coppa.iso.St;
  */
 public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
     Ii healthcareFacilityIi;
+    Ii researchOrganizationIi;
     Cd functionalCode;
     St localStudyProtocolIdentifier;
     
@@ -31,6 +32,18 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
      */
     public void setHealthcareFacilityIi(Ii healthcareFacilityIi) {
         this.healthcareFacilityIi = healthcareFacilityIi;
+    }
+    /**
+     * @return the researchOrganizationIi
+     */
+    public Ii getResearchOrganizationIi() {
+        return researchOrganizationIi;
+    }
+    /**
+     * @param researchOrganizationIi the researchOrganizationIi to set
+     */
+    public void setResearchOrganizationIi(Ii researchOrganizationIi) {
+        this.researchOrganizationIi = researchOrganizationIi;
     }
     /**
      * @return the functionalCode
