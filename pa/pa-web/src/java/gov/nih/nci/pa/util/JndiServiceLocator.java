@@ -15,6 +15,7 @@ import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -27,11 +28,6 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
  * @author Harsha
  * 
  */
-/**
- * @author hreinhart
- *
- */
-
 @SuppressWarnings("PMD")
 public class JndiServiceLocator implements ServiceLocator {
     /**
@@ -119,7 +115,12 @@ public class JndiServiceLocator implements ServiceLocator {
     public PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
         return (PAHealthCareFacilityServiceRemote) JNDIUtil.lookup("pa/PAHealthCareFacilityServiceBean/remote");
     }
-
+    /**
+     * @return ResearchOrganizationService
+     */
+    public PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
+        return (PAResearchOrganizationServiceRemote) JNDIUtil.lookup("pa/PAResearchOrganizationServiceBean/remote");
+    }
     /**
      * @return StudyParticipationService
      */
