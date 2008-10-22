@@ -123,8 +123,8 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     protected Organization basicOrganization = null;
 
     protected void fillinPersonRoleFields(AbstractPersonRole pr) {
-        pr.setPerson(basicPerson);
-        pr.setOrganization(basicOrganization);
+        pr.setPlayer(basicPerson);
+        pr.setScoper(basicOrganization);
         pr.setEmail(new ArrayList<Email>());
         pr.getEmail().add(new Email("me@test.com"));
         pr.setPhone(new ArrayList<PhoneNumber>());
@@ -143,8 +143,8 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     protected void verifyPersonRole(AbstractPersonRole expected, AbstractPersonRole actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getEmail().size(), actual.getEmail().size());
-        assertEquals(expected.getPerson().getId(), actual.getPerson().getId());
-        assertEquals(expected.getOrganization().getId(), actual.getOrganization().getId());
+        assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
+        assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
         assertEquals(expected.getFax().size(), actual.getFax().size());
         assertEquals(expected.getPhone().size(), actual.getPhone().size());
         assertEquals(expected.getTty().size(), actual.getTty().size());

@@ -190,13 +190,13 @@ public class OrganizationalContactServiceTest extends AbstractStructrualRoleServ
         doSearch(oc, oc.getId(), null, null, !oc.getPrimaryIndicator(), null, null, null, null, null, null, 0);
 
         // person + org
-        doSearch(oc, null, oc.getOrganization().getId(), null, null, null, null, null, null, null, null, 1);
-        doSearch(oc, null, null, oc.getPerson().getId(), null, null, null, null, null, null, null, 1);
+        doSearch(oc, null, oc.getScoper().getId(), null, null, null, null, null, null, null, null, 1);
+        doSearch(oc, null, null, oc.getPlayer().getId(), null, null, null, null, null, null, null, 1);
         doSearch(oc, null, -1L, null, null, null, null, null, null, null, null, 0);
         doSearch(oc, null, null, -1L, null, null, null, null, null, null, null, 0);
-        doSearch(oc, null, oc.getOrganization().getId(), oc.getPerson().getId(), null, null, null, null, null, null,
+        doSearch(oc, null, oc.getScoper().getId(), oc.getPlayer().getId(), null, null, null, null, null, null,
                 null, 1);
-        doSearch(oc, null, oc.getOrganization().getId(), oc.getPerson().getId() + 1, null, null, null, null, null,
+        doSearch(oc, null, oc.getScoper().getId(), oc.getPlayer().getId() + 1, null, null, null, null, null,
                 null, null, 0);
 
         // status fields
@@ -287,10 +287,10 @@ public class OrganizationalContactServiceTest extends AbstractStructrualRoleServ
         OrganizationalContactServiceLocal svc = (OrganizationalContactServiceLocal) getService();
         OrganizationalContact example = new OrganizationalContact();
         example.setId(id);
-        example.setPerson(new Person());
-        example.getPerson().setId(personId);
-        example.setOrganization(new Organization());
-        example.getOrganization().setId(orgId);
+        example.setPlayer(new Person());
+        example.getPlayer().setId(personId);
+        example.setScoper(new Organization());
+        example.getScoper().setId(orgId);
         example.setPrimaryIndicator(primaryIndicator);
         example.setStatus(status);
         example.setEmail(email);

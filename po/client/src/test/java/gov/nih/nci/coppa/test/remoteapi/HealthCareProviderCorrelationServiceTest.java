@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+
 import org.junit.Assert;
 
 public class HealthCareProviderCorrelationServiceTest
@@ -96,9 +97,9 @@ public class HealthCareProviderCorrelationServiceTest
     @Override
     protected HealthCareProviderDTO makeCorrelation() throws Exception {
         HealthCareProviderDTO dto = new HealthCareProviderDTO();
-        dto.setOrganizationIdentifier(getOrgId());
-        dto.setPersonIdentifier(getPersonId());
-        
+        dto.setScoperIdentifier(getOrgId());
+        dto.setPlayerIdentifier(getPersonId());
+
         return dto;
     }
 
@@ -109,8 +110,8 @@ public class HealthCareProviderCorrelationServiceTest
 
     @Override
     protected void verifyCreated(HealthCareProviderDTO dto) throws Exception {
-        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
-        Assert.assertEquals(getPersonId().getExtension(), dto.getPersonIdentifier().getExtension());
+        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
+        Assert.assertEquals(getPersonId().getExtension(), dto.getPlayerIdentifier().getExtension());
 
     }
 }

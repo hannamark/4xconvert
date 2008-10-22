@@ -115,8 +115,8 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
 
     private Long id;
 
-    private Person person;
-    private Organization organization;
+    private Person player;
+    private Organization scoper;
 
     private Set<Address> postalAddresses;
     private List<Email> email = new ArrayList<Email>();
@@ -143,7 +143,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
 
     /**
      * @return the person
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="personIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
@@ -152,20 +152,20 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
     @Searchable(fields = {"id" })
-    public Person getPerson() {
-        return this.person;
+    public Person getPlayer() {
+        return this.player;
     }
 
     /**
      * @param person the person to set
      */
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setPlayer(Person person) {
+        this.player = person;
     }
 
     /**
      * @return the organization
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="organizationIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
@@ -174,15 +174,15 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
     @Searchable(fields = {"id" })
-    public Organization getOrganization() {
-        return this.organization;
+    public Organization getScoper() {
+        return this.scoper;
     }
 
     /**
      * @param organization the organization to set
      */
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
+    public void setScoper(Organization organization) {
+        this.scoper = organization;
     }
 
     /**

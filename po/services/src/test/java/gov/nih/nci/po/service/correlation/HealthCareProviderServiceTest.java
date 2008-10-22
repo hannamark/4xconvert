@@ -164,13 +164,13 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
                 null, null, null, null, null, 0);
 
         // person + org
-        doSearch(hcp, null, hcp.getOrganization().getId(), null, null, null, null, null, null, null, null, 1);
-        doSearch(hcp, null, null, hcp.getPerson().getId(), null, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, hcp.getScoper().getId(), null, null, null, null, null, null, null, null, 1);
+        doSearch(hcp, null, null, hcp.getPlayer().getId(), null, null, null, null, null, null, null, 1);
         doSearch(hcp, null, -1L, null, null, null, null, null, null, null, null, 0);
         doSearch(hcp, null, null, -1L, null, null, null, null, null, null, null, 0);
-        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId(),
+        doSearch(hcp, null, hcp.getScoper().getId(), hcp.getPlayer().getId(),
                  null, null, null, null, null, null, null, 1);
-        doSearch(hcp, null, hcp.getOrganization().getId(), hcp.getPerson().getId() + 1,
+        doSearch(hcp, null, hcp.getScoper().getId(), hcp.getPlayer().getId() + 1,
                  null, null, null, null, null, null, null, 0);
 
         // status fields
@@ -262,10 +262,10 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         HealthCareProviderServiceLocal svc = (HealthCareProviderServiceLocal) getService();
         HealthCareProvider example = new HealthCareProvider();
         example.setId(id);
-        example.setPerson(new Person());
-        example.getPerson().setId(personId);
-        example.setOrganization(new Organization());
-        example.getOrganization().setId(orgId);
+        example.setPlayer(new Person());
+        example.getPlayer().setId(personId);
+        example.setScoper(new Organization());
+        example.getScoper().setId(orgId);
         example.setCertificateLicenseText(certTxt);
         example.setStatus(status);
         example.setEmail(email);

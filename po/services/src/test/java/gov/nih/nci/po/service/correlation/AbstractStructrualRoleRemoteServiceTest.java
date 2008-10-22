@@ -210,7 +210,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         ii.setReliability(IdentifierReliability.ISS);
         ii.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.PERSON_ROOT);
-        pr.setPersonIdentifier(ii);
+        pr.setPlayerIdentifier(ii);
 
         ii = new Ii();
         ii.setExtension("" + basicOrganization.getId());
@@ -219,7 +219,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         ii.setReliability(IdentifierReliability.ISS);
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
-        pr.setOrganizationIdentifier(ii);
+        pr.setScoperIdentifier(ii);
 
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
@@ -252,8 +252,8 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     }
 
     protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
-        assertEquals(e.getOrganizationIdentifier().getExtension(), a.getOrganizationIdentifier().getExtension());
-        assertEquals(e.getPersonIdentifier().getExtension(), a.getPersonIdentifier().getExtension());
+        assertEquals(e.getScoperIdentifier().getExtension(), a.getScoperIdentifier().getExtension());
+        assertEquals(e.getPlayerIdentifier().getExtension(), a.getPlayerIdentifier().getExtension());
         assertEquals("pending", a.getStatus().getCode());
         assertEquals(e.getPostalAddress().getItem().size(), a.getPostalAddress().getItem().size());
         assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());

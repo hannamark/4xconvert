@@ -97,8 +97,8 @@ public class OrganizationalContactCorrelationServiceTest
     @Override
     protected OrganizationalContactDTO makeCorrelation() throws Exception {
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
-        dto.setOrganizationIdentifier(getOrgId());
-        dto.setPersonIdentifier(getPersonId());
+        dto.setScoperIdentifier(getOrgId());
+        dto.setPlayerIdentifier(getPersonId());
         dto.setPrimaryIndicator(RemoteApiUtils.convertToBl(Boolean.TRUE));
         return dto;
     }
@@ -110,7 +110,7 @@ public class OrganizationalContactCorrelationServiceTest
 
     @Override
     protected void verifyCreated(OrganizationalContactDTO dto) throws Exception {
-        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
-        Assert.assertEquals(getPersonId().getExtension(), dto.getPersonIdentifier().getExtension());
+        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
+        Assert.assertEquals(getPersonId().getExtension(), dto.getPlayerIdentifier().getExtension());
     }
 }

@@ -129,8 +129,8 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         hcpdto.setUpTest();
         hcpdto.setUpTestData();
         HealthCareProvider hcp = (HealthCareProvider)hcpdto.getExampleTestClass();
-        hcp.setPerson((Person) PoHibernateUtil.getCurrentSession().load(Person.class, personId));
-        hcp.setOrganization((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId));
+        hcp.setPlayer((Person) PoHibernateUtil.getCurrentSession().load(Person.class, personId));
+        hcp.setScoper((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId));
         hcp.setId(null);
         PoHibernateUtil.getCurrentSession().flush();
         return hcp;

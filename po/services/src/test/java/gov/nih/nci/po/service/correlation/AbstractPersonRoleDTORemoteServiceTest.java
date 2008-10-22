@@ -157,8 +157,8 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
         Ii id1 = getCorrelationService().createCorrelation(correlation1);
 
         T correlation2 = getSampleDto();
-        correlation2.getPersonIdentifier().setExtension("" + person2.getId());
-        correlation2.getOrganizationIdentifier().setExtension("" + org2.getId());
+        correlation2.getPlayerIdentifier().setExtension("" + person2.getId());
+        correlation2.getScoperIdentifier().setExtension("" + org2.getId());
         setUpCorrelation2Address(correlation1, correlation2);
         setUpCorrelation2Tels(correlation2);
         modifySubClassSpecificFieldsForCorrelation2(correlation2);
@@ -200,21 +200,21 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
 
         // search by person id
         searchCriteria.setIdentifier(null);
-        searchCriteria.setPersonIdentifier(correlation1.getPersonIdentifier());
+        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
 
         // search by org id
-        searchCriteria.setPersonIdentifier(null);
-        searchCriteria.setOrganizationIdentifier(correlation2.getOrganizationIdentifier());
+        searchCriteria.setPlayerIdentifier(null);
+        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
 
         // test search by address
         Ad ad = (Ad) correlation2.getPostalAddress().getItem().iterator().next();
-        searchCriteria.setOrganizationIdentifier(null);
+        searchCriteria.setScoperIdentifier(null);
         searchCriteria.setPostalAddress(new DSet<Ad>());
         searchCriteria.getPostalAddress().setItem(Collections.singleton(ad));
         results = getCorrelationService().search(searchCriteria);

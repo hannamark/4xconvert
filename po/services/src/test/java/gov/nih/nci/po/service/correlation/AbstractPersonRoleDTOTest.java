@@ -155,10 +155,10 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
 
     protected AbstractPersonRole fillInExamplePersonRoleFields(AbstractPersonRole pr) {
         pr.setId(1L);
-        pr.setPerson(new Person());
-        pr.getPerson().setId(2L);
-        pr.setOrganization(new Organization());
-        pr.getOrganization().setId(3L);
+        pr.setPlayer(new Person());
+        pr.getPlayer().setId(2L);
+        pr.setScoper(new Organization());
+        pr.getScoper().setId(3L);
         pr.setStatus(RoleStatus.ACTIVE);
         pr.setEmail(new ArrayList<Email>());
         pr.getEmail().add(new Email("me@test.com"));
@@ -195,13 +195,13 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         expectedIi.setReliability(IdentifierReliability.ISS);
         expectedIi.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.PERSON_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPersonIdentifier()));
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPlayerIdentifier()));
 
         // check org id
         expectedIi.setExtension("" + 3);
         expectedIi.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         expectedIi.setRoot(IdConverter.ORG_ROOT);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getOrganizationIdentifier()));
+        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
 
         // test status code
         assertEquals("active", dto.getStatus().getCode());
@@ -267,7 +267,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         ii.setReliability(IdentifierReliability.ISS);
         ii.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.PERSON_ROOT);
-        pr.setPersonIdentifier(ii);
+        pr.setPlayerIdentifier(ii);
 
         ii = new Ii();
         ii.setExtension("" + orgId);
@@ -276,7 +276,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         ii.setReliability(IdentifierReliability.ISS);
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
-        pr.setOrganizationIdentifier(ii);
+        pr.setScoperIdentifier(ii);
 
         Cd status = new Cd();
         status.setCode("active");
@@ -341,8 +341,8 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         AbstractPersonRoleDTO dto = getExampleTestClassDTO(personId, orgId);
         AbstractPersonRole bo = (AbstractPersonRole) PoXsnapshotHelper.createModel(dto);
         assertEquals(1L, bo.getId().longValue());
-        assertEquals(orgId, bo.getPerson().getId().longValue());
-        assertEquals(personId, bo.getOrganization().getId());
+        assertEquals(orgId, bo.getPlayer().getId().longValue());
+        assertEquals(personId, bo.getScoper().getId());
         assertEquals(RoleStatus.ACTIVE, bo.getStatus());
 
         assertEquals(1, bo.getEmail().size());

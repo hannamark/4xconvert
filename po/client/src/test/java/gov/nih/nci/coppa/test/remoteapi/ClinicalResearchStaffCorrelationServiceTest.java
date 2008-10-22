@@ -96,8 +96,8 @@ public class ClinicalResearchStaffCorrelationServiceTest
     @Override
     protected ClinicalResearchStaffDTO makeCorrelation() throws Exception {
         ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
-        dto.setOrganizationIdentifier(getOrgId());
-        dto.setPersonIdentifier(getPersonId());
+        dto.setScoperIdentifier(getOrgId());
+        dto.setPlayerIdentifier(getPersonId());
         return dto;
     }
 
@@ -108,7 +108,7 @@ public class ClinicalResearchStaffCorrelationServiceTest
 
     @Override
     protected void verifyCreated(ClinicalResearchStaffDTO dto) throws Exception {
-        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
-        Assert.assertEquals(getOrgId().getExtension(), dto.getOrganizationIdentifier().getExtension());
+        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
+        Assert.assertEquals(getPersonId().getExtension(), dto.getPlayerIdentifier().getExtension());
     }
 }
