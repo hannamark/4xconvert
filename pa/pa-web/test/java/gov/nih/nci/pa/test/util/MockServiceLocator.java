@@ -15,6 +15,7 @@ import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -183,6 +184,14 @@ public class MockServiceLocator implements ServiceLocator {
      * return SubGroupsServiceRemote
      */
     public SubGroupsServiceRemote getSubGroupsService() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getPAResearchOrganizationService()
+     */
+    public PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
+        // TODO Auto-generated method stub
         return null;
     }
 
