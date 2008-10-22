@@ -30,7 +30,9 @@
             <result>/WEB-INF/jsp/participatingOrganizations{1}.jsp</result>
             <result name="display_StudyPartipants">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
             <result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
+            <result name="display_spContacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
          </action>  
+
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
             <result name="create">/WEB-INF/jsp/collaboratorscreate.jsp</result>
@@ -39,9 +41,12 @@
             <result name="facilitySave">/WEB-INF/jsp/collaborators.jsp</result>
             <result name="facilityUpdate">//WEB-INF/jsp/collaborators.jsp</result>
             <result>/WEB-INF/jsp/collaborators.jsp</result>
-         </action>  
+         </action> 
+
         <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">        	
-        	<result name="displayJsp">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>  
+        	<result name="edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
+        	<result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
+        	<result name="displayJsp">/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp</result>  
         	<result name="display_spContacts">/WEB-INF/jsp/nodecorate/displaySPContactsTable.jsp</result>  
         	<result name="display_primContacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>        	
         	<result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>

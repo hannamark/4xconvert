@@ -24,12 +24,24 @@
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 	function facilitySave(){
-	     document.facility.action="participatingOrganizationsfacilitySave.action#investigators";
-	     document.facility.submit();     
+		
+	     document.facility.action="participatingOrganizationsfacilitySave.action";
+	     document.facility.submit();   
+	
 	}
-	function facilityUpdate(){
-	     document.facility.action="participatingOrganizationsfacilityUpdate.action#investigators";
-	     document.facility.submit();     
+	function facilityUpdate(){		 
+		 var recStatus = document.participatingOrganizationsedit.recStatus.value;
+		 var recStatusDate = document.participatingOrganizationsedit.recStatusDate.value;
+	     var div = document.getElementById('loadOrgDetails'); 
+	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+	     var url;
+	     url = '/pa/protected/ajaxptpOrgfacilityUpdate.action?recStatus='+recStatus+'&resStatusDate='+recStatusDate;
+      	 var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	     });
+	     return false;	     
 	}	
 	function lookup(){
 	    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
@@ -42,8 +54,8 @@
 	    showPopWin('${lookupContactPersonsUrl}', 1050, 400, '', 'Persons');
 	}
 	function loadDiv(orgid){
-		 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
-	     var div = document.getElementById('loadOrgDetails');   
+			 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
+	     var div = document.getElementById('orgDetailsDiv');   
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 	     var aj = new Ajax.Updater(div, url, {
 	        asynchronous: true,
@@ -51,12 +63,13 @@
 	        evalScripts: false
 	     });
 	     return false;
+		 //document.location.href= '/pa/protected/participatingOrganizationsdisplayOrg.action?orgId='+orgid;
 	}	
 	function setAsPrimaryContact(persId) {		
 	     var div = document.getElementById('saveAndShowContacts');   
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
 	     var url;
-	     url = '/pa/protected/ajaxptpOrgsetAsPrimaryContact.action?contactpersid='+persId;
+	     url = '/pa/protected/ajaxptpOrgsetAsPrimaryContact.action?contactpersid='+persId+"'#contacts";
       	 var aj = new Ajax.Updater(div, url, {
 	        asynchronous: true,
 	        method: 'get',
@@ -163,67 +176,18 @@
 			<div id="facility" class="box">
 			<h3>Facility</h3>
             <s:form name="facility">
-			<table class="form">	<s:if test="%{newParticipation}">		   
                 <div id="loadOrgDetails">
                      <%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
                 </div>
-                </s:if>
-		<s:else>
-			<tr>
-			    <td scope="row" class="label"><s:label for="editOrg.name">Organization Name:</s:label></td>
-			    <td class="value" colspan="2">
-			        <s:textfield name="editOrg.name" maxlength="200" size="100"
-			        disabled="disabled" cssStyle="width: 250px" readonly="true"/>
-			    </td>
-			</tr>
-			<tr>
-			    <td scope="row" class="label"><s:label for="editOrg.city">City:</s:label></td>
-			    <td class="value" colspan="2">
-			        <s:textfield name="editOrg.city" maxlength="200" size="200" 
-			        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
-			    </td>
-			</tr>
-			<tr>
-			    <td scope="row" class="label"><s:label for="editOrg.countryName">Country:</s:label></td>
-			    <td class="value" colspan="2">
-			        <s:textfield name="editOrg.countryName" maxlength="200" size="200" 
-			        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
-			</tr>
-			<tr>
-			    <td scope="row" class="label"><s:label for="editOrg.postalCode">Zip/Postal Code:</s:label></td>
-			    <td class="value" colspan="2">
-			        <s:textfield name="editOrg.postalCode" maxlength="200" size="200" 
-			        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
-			    </td>
-			</tr>
-		 </s:else>
-				<tr>
-					<td scope="row" class="label"><s:label for="srs">Site Recruitment Status:</s:label></td>
-                    <s:set name="recruitmentStatusValues"
-                           value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
-                    <td class="value" colspan="2"><s:select headerKey="" headerValue=""
-                        name="recStatus"
-                        list="#recruitmentStatusValues" /></td>
-                    <td>
-				</tr>
-				<tr>
-					<td scope="row" class="label"><s:label for="srsd">Site Recruitment Status Date:</s:label></td>
-                    <td class="value" colspan="2">
-                        <s:textfield name="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                            <a href="javascript:showCal('Cal1')">
-                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
-                    </td>               
-				</tr>
-			</table>
 			<div class="actionsrow"><del class="btnwrapper">
 			<ul class="btnrow">
 				<li>
-                    <s:if test="%{newParticipation}">
-				        <s:a href="#" cssClass="btn" onclick="facilitySave()"><span class="btn_img">
+                    <s:if test="%{currentAction == 'edit'}">
+				        <s:a href="#" cssClass="btn" onclick="facilityUpdate();"><span class="btn_img">
 				            <span class="save">Save</span></span></s:a>
 				    </s:if>
 				    <s:else>
-                        <s:a href="#" cssClass="btn" onclick="facilityUpdate()"><span class="btn_img">
+                        <s:a href="#" cssClass="btn" onclick="facilitySave();"><span class="btn_img">
                             <span class="save">Save</span></span></s:a>
 				    </s:else>
 				</li>

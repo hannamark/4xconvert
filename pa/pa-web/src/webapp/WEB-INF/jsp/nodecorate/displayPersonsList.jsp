@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<pa:failureMessage/>
 <c:if test="${persons != null}">
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row"  
 	name="persons" export="false" requestURI="/pa/protected/popupdisplayPersonsListDisplayTag.action">

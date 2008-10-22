@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
 <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
@@ -18,13 +19,13 @@
 	}
 	
 	
-	function loadDiv() {
-		var orgName = document.forms[0].orgName.value;
-		var nciOrgName = document.forms[0].nciOrgName.value;
-        var countryName = document.forms[0].countryName.value;
-        var cityName = document.forms[0].cityName.value;    
-        var zipCode = document.forms[0].zipCode.value;
-		var url = '/pa/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciOrgName='+nciOrgName+'&countryName='+countryName+'&cityName='+cityName+'&zipCode='+zipCode;
+	function loadDiv() {		
+		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_orgName").value;
+		var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;
+		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
+		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_orgCity").value;
+		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;		
+		var url = '/pa/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciNumber='+orgNumber+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip;
 	    var div = document.getElementById('getOrgs');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 	    var aj = new Ajax.Updater(div,url, {
@@ -34,13 +35,14 @@
 	    });
 	    return false;
 	}
-</SCRIPT> 
+</SCRIPT>
+
 </head> 
 <body>
 <div class="box">
 <s:form id="poOrganizations" name="poOrganizations" >
 <h2>Search Organizations</h2>
-
+<s:label name="orgErrorMessage"/>
 
 <table  class="form">  
    	<tr> 	
@@ -48,22 +50,23 @@
             <label for="name"> <fmt:message key="popUpOrg.name"/></label>
         </td>
  		<td>
- 			<s:textfield name="orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield name="orgSearchCriteria.orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
  		<td scope="row" class="label">
             <label for="nciorgname"> <fmt:message key="popUpOrg.nciorgnumber"/></label>
         </td>
  		<td> 			
- 			<s:textfield name="nciOrgName"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield name="orgSearchCriteria.nciOrgNumber"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
+ 		
  		<td scope="row" class="label">
             <label for="country"> <fmt:message key="popUpOrg.country"/></label>
         </td>
         <td>
-             <s:select  
-                name="countryName" 
-                list="countryRegDTO"  
-                listKey="id" listValue="name"  />
+              	<s:select  
+                name="orgSearchCriteria.orgCountry" 
+                list="countryList"  
+                listKey="alpha3" listValue="name" headerKey="aaa" headerValue="-Select--" cssStyle="width:206px" />
         </td>		
 	</tr>
 	<tr>  
@@ -71,13 +74,13 @@
             <label for="city"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
- 			<s:textfield name="cityName"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:200px" />
 		</td>
  		 <td scope="row" class="label">
             <label for="zip"> <fmt:message key="popUpOrg.zip"/></label>
         </td>
  		<td>
- 			<input type="text" name="zipCode" maxlength="75" size="20">
+ 			<s:textfield name="orgSearchCriteria.orgZip" maxlength="75" size="20"/>
 		</td>
 	</tr>
 	</table>

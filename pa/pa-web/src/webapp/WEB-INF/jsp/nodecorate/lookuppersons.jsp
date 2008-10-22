@@ -11,8 +11,7 @@
 	}
 	 
 	function callCreatePerson(persid, rolecode)
-	{
-		
+	{		
 		top.window.loadPersDiv(persid, rolecode, 'add');
 		window.top.hidePopWin(true); 
 	}

@@ -4,7 +4,6 @@ import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.dto.PAHealthCareProviderDTO;
-
 import gov.nih.nci.pa.iso.dto.PersonWebDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -185,7 +184,8 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO = new PersonWebDTO();
             personWebDTO.setFirstName(((Person) searchResult[THREE]).getFirstName());
             personWebDTO.setLastName(((Person) searchResult[THREE]).getLastName());
-            personWebDTO.setId(((StudyParticipationContact) searchResult[1]).getId());
+            personWebDTO.setId(((StudyParticipationContact) searchResult[1]).getId());           
+            personWebDTO.setRoleName((((StudyParticipationContact) searchResult[1]).getRoleCode()));
             retList.add(personWebDTO);
         }
         return retList;

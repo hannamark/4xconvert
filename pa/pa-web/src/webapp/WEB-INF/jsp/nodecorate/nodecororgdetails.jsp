@@ -1,11 +1,26 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
-	<b>Organization Name:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<s:textfield label="Organization Name" name="selectedOrgDTO.name.part[0].value" size="30"  readonly="true"/> <input type="button" value="Look Up" onclick="lookup();"/>
-	<br><br>
-	<b>City:</b><s:textfield name="selectedOrgDTO.postalAddress.part[1].value" size="30"  readonly="true"/>
-	<br><br>
-	<b>Country:</b><s:textfield name="selectedOrgDTO.postalAddress.part[3].code" size="30"  readonly="true"/>
-	<br><br>
-	<b>Zip:<color>:<color></b><s:textfield name="selectedOrgDTO.postalAddress.part[2].value" size="30"  readonly="true"/>
-	<br><br>
+<div id="orgDetailsDiv">
+<%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
+</div>
+<table class="form">	
+               		<tr>
+					<td scope="row" class="label"><s:label for="srs">Site Recruitment Status:</s:label></td>
+                    <s:set name="recruitmentStatusValues"
+                           value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
+                    <td class="value" colspan="2"><s:select headerKey="" headerValue=""
+                        name="recStatus"
+                        list="#recruitmentStatusValues" /></td>
+                    <td>
+				</tr>
+				<tr>
+					<td scope="row" class="label"><s:label for="srsd">Site Recruitment Status Date:</s:label></td>
+                    <td class="value" colspan="2">
+                        <s:textfield name="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal1')">
+                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+                    </td>               
+				</tr>
 
-				
+			</table>
+
+
