@@ -173,6 +173,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <delete dir="${jboss.home}" quiet="false" />
         <delete dir="${tomcat.home}" quiet="false" />
         <delete dir="${doc.upload.filepath.loc}" quiet="false" failonerror="false" />
+        <mkdir dir="${doc.upload.filepath.loc}" />
     </target>
 
     <!-- Does directory management and copy some files with filtering to ensure token expansion -->

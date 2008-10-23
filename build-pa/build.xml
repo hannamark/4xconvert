@@ -317,7 +317,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${pa-ejb.base.dir}" >
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
-            <property name="doc.upload.filepath.loc" location="${doc.upload.filepath.loc}"/>
+            <property name="doc.upload.filepath.loc" location="${doc.upload.filepath.loc}/doc"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
