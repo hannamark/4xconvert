@@ -40,7 +40,7 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.CyclomaticComplexity" })
 public class CollaboratorsAction extends ActionSupport 
         implements Preparable {
 
@@ -60,11 +60,11 @@ public class CollaboratorsAction extends ActionSupport
     private Ii spIi;
     private List<OrganizationWebDTO> organizationList = null; 
     private OrganizationDTO selectedOrgDTO = null;
-    private Organization editOrg;
     private static final String DISPLAYJSP = "displayJsp";
     private Long cbValue;
     private String functionalCode;
-    private boolean newParticipation;
+    private String currentAction;
+    private OrgSearchCriteria orgFromPO = new OrgSearchCriteria();
 
 
     /** 
@@ -98,7 +98,7 @@ public class CollaboratorsAction extends ActionSupport
      * @throws Exception exception
      */
     public String create() throws Exception {
-        setNewParticipation(true);
+        setCurrentAction(ACT_CREATE);
         return ACT_CREATE;
     }
 
@@ -106,15 +106,21 @@ public class CollaboratorsAction extends ActionSupport
      * @return result
      * @throws Exception exception
      */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public String facilitySave() throws Exception {
         clearErrorsAndMessages();
         
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) 
                 ServletActionContext.getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab == null) {
-            loadForm();
-            addActionError("You must select an organization before adding.");
-            return SUCCESS;
+            addActionError("You must select an organization.");
+        }
+        if ((getFunctionalCode() == null) || (getFunctionalCode().trim().length() < 1)) {
+            addActionError("You must select a functional role.");
+        }
+        if (hasActionErrors()) {
+            setCurrentAction(ACT_CREATE);
+            return ACT_CREATE;
         }
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
 
@@ -171,6 +177,11 @@ public class CollaboratorsAction extends ActionSupport
             addActionError("System error getting participating orgainzation data from session.");
             return SUCCESS;
         }
+        if ((getFunctionalCode() == null) || (getFunctionalCode().trim().length() < 1)) {
+            addActionError("You must select a functional role.");
+            setCurrentAction(ACT_EDIT);
+            return ACT_EDIT;
+        }
         StudyParticipationDTO sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
         sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.getByCode(functionalCode)));
         sp = sPartService.update(sp);
@@ -185,11 +196,16 @@ public class CollaboratorsAction extends ActionSupport
      * @throws Exception exception
      */
     public String edit() throws Exception {
+        setCurrentAction(ACT_EDIT);
         StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
         PAResearchOrganizationDTO roDto = paroService.get(IiConverter.convertToLong(spDto.getResearchOrganizationIi()));
         Organization org = new Organization();
         org.setId(roDto.getOrganizationId());
-        editOrg = paoService.getOrganizationByIndetifers(org);
+        Organization editOrg = paoService.getOrganizationByIndetifers(org);
+        orgFromPO.setOrgCity(editOrg.getCity());
+        orgFromPO.setOrgCountry(editOrg.getCountryName());
+        orgFromPO.setOrgName(editOrg.getName());
+        orgFromPO.setOrgZip(editOrg.getPostalCode());            
         setFunctionalCode(spDto.getFunctionalCode().getCode());
         
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
@@ -335,34 +351,6 @@ public class CollaboratorsAction extends ActionSupport
     }
 
     /**
-     * @return the newParticipation
-     */
-    public boolean isNewParticipation() {
-        return newParticipation;
-    }
-
-    /**
-     * @param newParticipation the newParticipation to set
-     */
-    public void setNewParticipation(boolean newParticipation) {
-        this.newParticipation = newParticipation;
-    }
-
-    /**
-     * @return the editOrg
-     */
-    public Organization getEditOrg() {
-        return editOrg;
-    }
-
-    /**
-     * @param editOrg the editOrg to set
-     */
-    public void setEditOrg(Organization editOrg) {
-        this.editOrg = editOrg;
-    }
-
-    /**
      * @return the functionalCode
      */
     public String getFunctionalCode() {
@@ -374,6 +362,34 @@ public class CollaboratorsAction extends ActionSupport
      */
     public void setFunctionalCode(String functionalCode) {
         this.functionalCode = functionalCode;
+    }
+
+    /**
+     * @return the currentAction
+     */
+    public String getCurrentAction() {
+        return currentAction;
+    }
+
+    /**
+     * @param currentAction the currentAction to set
+     */
+    public void setCurrentAction(String currentAction) {
+        this.currentAction = currentAction;
+    }
+
+    /**
+     * @return the orgFromPO
+     */
+    public OrgSearchCriteria getOrgFromPO() {
+        return orgFromPO;
+    }
+
+    /**
+     * @param orgFromPO the orgFromPO to set
+     */
+    public void setOrgFromPO(OrgSearchCriteria orgFromPO) {
+        this.orgFromPO = orgFromPO;
     }
 
 }
