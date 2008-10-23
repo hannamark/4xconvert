@@ -123,6 +123,12 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         ActualAnticipatedTypeCode cCode = ActualAnticipatedTypeCode.getByCode(
                 studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
         Timestamp now = new Timestamp((new Date()).getTime());
+        if (sDate == null) {
+            throw new PAException("Start date must be set.  ");
+        }
+        if (cDate == null) {
+            throw new PAException("Completion date must be set.  ");
+        }
         if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
             throw new PAException("Actual start dates cannot be in the future.  ");
         }
