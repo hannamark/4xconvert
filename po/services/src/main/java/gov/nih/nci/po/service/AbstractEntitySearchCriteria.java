@@ -17,11 +17,6 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 public abstract class AbstractEntitySearchCriteria extends AbstractHQLSearchCriteria {
     private static final Logger LOG = Logger.getLogger(AbstractEntitySearchCriteria.class);
     /**
-     * root object alias type.
-     */
-    protected static final String ROOT_OBJ_ALIAS = "_root_obj";
-    
-    /**
      * {@inheritDoc}
      */
     public boolean hasOneCriterionSpecified() {
@@ -45,13 +40,12 @@ public abstract class AbstractEntitySearchCriteria extends AbstractHQLSearchCrit
         if (isCountOnly) {
             queryString.append("COUNT(*)");
         } else {
-            queryString.append(ROOT_OBJ_ALIAS);
-            queryString.append(' ');
+            queryString.append(getRootAlias());
         }
         queryString.append(FROM);
-        queryString.append(tableAlias(getRootObjectType(), ROOT_OBJ_ALIAS));
+        queryString.append(tableAlias(getRootObjectType(), getRootAlias()));
 
-        queryString.append(getQueryWhereClause(namedParameters, ROOT_OBJ_ALIAS));
+        queryString.append(getQueryWhereClause(namedParameters, getRootAlias()));
 
         // ADD ORDER BY CLAUSE
         queryString.append(orderByProperty);

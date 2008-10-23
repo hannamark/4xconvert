@@ -281,6 +281,8 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
                 if (!first) {
                     orderBy.append(", ");
                 }
+                orderBy.append(criteria.getRootAlias());
+                orderBy.append('.');
                 orderBy.append(sc.getOrderField());
                 orderBy.append((pageSortParams.isDesc() ? " DESC" : " ASC"));
 

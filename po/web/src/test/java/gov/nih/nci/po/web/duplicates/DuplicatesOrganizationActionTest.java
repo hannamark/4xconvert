@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.service.DuplicatesOrganizationSearchCriteria;
+import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import org.junit.Before;
@@ -31,7 +31,7 @@ public class DuplicatesOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepareNoRootKey() throws Exception {
-        DuplicatesOrganizationSearchCriteria initial = action.getCriteria();
+        StrutsOrganizationSearchCriteria initial = action.getCriteria();
         action.prepare();
         assertSame(initial, action.getCriteria());
     }
@@ -45,7 +45,7 @@ public class DuplicatesOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
-        DuplicatesOrganizationSearchCriteria c = new DuplicatesOrganizationSearchCriteria();
+        StrutsOrganizationSearchCriteria c = new StrutsOrganizationSearchCriteria();
         action.setRootKey("a");
         getSession().setAttribute(action.getRootKey(), c);
         action.prepare();

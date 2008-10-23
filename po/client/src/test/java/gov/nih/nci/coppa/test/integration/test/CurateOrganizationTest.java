@@ -35,7 +35,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     public void testCurateNewOrg() throws Exception {
-        /* create a new org via remote API. */
+        /* create a new org via remote API.*/
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
         String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W', 10);
@@ -43,9 +43,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         loginAsCurator();
 
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("link=Organization");
-        waitForPageToLoad();
+        openEntityInboxOrganization();
+        
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
@@ -91,9 +90,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         loginAsCurator();
 
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("link=Organization");
-        waitForPageToLoad();
+        openEntityInboxOrganization();
+        
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
@@ -145,8 +143,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         selenium.isVisible("//div[@id='duplicateOfDiv']");
         clickAndWait("//a[@id='select_duplicate']/span/span");
         selenium.selectFrame("popupFrame");
-
-        selenium.type("duplicateOrganizationForm_criteria_organization_name", "YY");
+        selenium.type("duplicateOrganizationForm_criteria_organization_id", dupId.getExtension());
+        
         /*search for dups*/
         selenium.click("//a[@id='submitDuplicateOrganizationForm']/span/span");
         /*wait for results to load*/
@@ -186,9 +184,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
             loginAsCurator();
         }
 
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("link=Organization");
-        waitForPageToLoad();
+        openEntityInboxOrganization();
+        
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
@@ -216,9 +213,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         proposedState.setDescription(RemoteApiUtils.convertToSt(newCrDescription));
         remoteUpdate(proposedState);
 
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("link=Organization");
-        waitForPageToLoad();
+        openEntityInboxOrganization();
 
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
@@ -232,6 +227,12 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyEquals("PO: Persons and Organizations - Organization Details - Comparison", selenium.getTitle());
 
         return id;
+    }
+
+    private void openEntityInboxOrganization() {
+        selenium.open("/po-web/protected/curate/search/listOrgs.action");
+        selenium.click("id=EntityInboxOrganization");
+        waitForPageToLoad();
     }
 
     private void saveAsActive(Ii id) {

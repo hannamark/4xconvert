@@ -88,6 +88,11 @@ package gov.nih.nci.po.service;
 public abstract class AbstractSearchCriteria {
 
     /**
+     * root object alias name.
+     */
+    private static final String ROOT_OBJ_ALIAS = "_root_obj";
+
+    /**
      * {@inheritDoc}
      */
     public boolean isValid() {
@@ -101,4 +106,11 @@ public abstract class AbstractSearchCriteria {
      * {@inheritDoc}
      */
     public abstract boolean hasOneCriterionSpecified();
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getRootAlias() {
+        return ROOT_OBJ_ALIAS;
+    }
 }

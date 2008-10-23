@@ -24,6 +24,17 @@
 				        <div class="boxouter">
 				        <h2>Basic Identifying Information</h2>
 				            <div class="box_white">
+		                        <s:textfield label="%{getText('organization.id')}" name="criteria.organization.id" size="10"/>
+		                        <s:set name="statusValues" value="@gov.nih.nci.po.data.bo.EntityStatus@values()" />
+		                        <s:select
+		                           label="%{getText('organization.statusCode')}"
+		                           name="criteria.organization.statusCode"
+		                           list="#statusValues"
+		                           listKey="name()"
+		                           listValue="name()"
+		                           value="criteria.organization.statusCode" 
+		                           headerKey="" headerValue="--Select a Status--" 
+		                           />				            
 				                <s:textfield label="%{getText('organization.name')}" name="criteria.organization.name" size="70"/>
 				                <s:textfield label="%{getText('organization.abbreviatedName')}" name="criteria.organization.abbreviatedName" size="70"/>
 				                <s:textfield label="%{getText('organization.description')}" name="criteria.organization.description" size="70"/>

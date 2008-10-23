@@ -193,5 +193,19 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/duplicates/organization/results.jsp</result>
         </action>            
+        
+        <action name="search/organization/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/search/organization/search.jsp</result>
+            <result name="input">/WEB-INF/jsp/search/organization/search.jsp</result>
+        </action>      
+        <action name="ajax/search/organization/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/search/organization/search.jsp</result>
+        </action>            
+        <action name="ajax/search/organization/results/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/search/organization/results.jsp</result>
+        </action>            
     </package>
 </struts>

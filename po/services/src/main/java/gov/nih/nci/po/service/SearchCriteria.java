@@ -27,4 +27,9 @@ public interface SearchCriteria<T extends PersistentObject> {
      * @return the generated Hibernate Query
      */
     Query getQuery(String orderByProperty, boolean isCountOnly);
+    
+    /**
+     * @return the root object alias
+     */
+    String getRootAlias();
 }

@@ -3,7 +3,7 @@ package gov.nih.nci.po.web.util.validator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.service.DuplicatesOrganizationSearchCriteria;
+import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction;
 
@@ -33,7 +33,7 @@ public class SearchCriteriaValidatorTest extends AbstractPoTest {
     @Test
     public void validate() throws ValidationException {
         ValueStack valueStack = ActionContext.getContext().getValueStack();
-        valueStack.set(fieldName, new DuplicatesOrganizationSearchCriteria());
+        valueStack.set(fieldName, new StrutsOrganizationSearchCriteria());
         validator.setFieldName(fieldName);
         validator.validate(null);
         assertTrue(validatorContext.hasActionErrors());

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.DuplicatesOrganizationSearchCriteria;
+import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.ArrayList;
@@ -47,8 +47,8 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
     
     @Test
     public void testAddAttribute_DOSC() {
-        DuplicatesOrganizationSearchCriteria x = new DuplicatesOrganizationSearchCriteria();
-        DuplicatesOrganizationSearchCriteria y = new DuplicatesOrganizationSearchCriteria();
+        StrutsOrganizationSearchCriteria x = new StrutsOrganizationSearchCriteria();
+        StrutsOrganizationSearchCriteria y = new StrutsOrganizationSearchCriteria();
         String resultX = PoHttpSessionUtil.addAttribute(x);
         String resultY = PoHttpSessionUtil.addAttribute(y);
         assertFalse(resultX.equals(resultY));

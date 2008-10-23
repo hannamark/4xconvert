@@ -84,7 +84,7 @@ package gov.nih.nci.po.web.util;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.DuplicatesOrganizationSearchCriteria;
+import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -177,7 +177,7 @@ public class PoHttpSessionUtil {
      * @param criteria the duplicate org search criteria to add to the session
      * @return the key used to add the objects
      */
-    public static String addAttribute(DuplicatesOrganizationSearchCriteria criteria) {
+    public static String addAttribute(StrutsOrganizationSearchCriteria criteria) {
         return addUniqueAttribute("dosc-", criteria);
     }
 }

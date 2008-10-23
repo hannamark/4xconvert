@@ -1,13 +1,12 @@
-
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po-common-jar
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po-common-jar Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -18,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po-common-jar Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po-common-jar Software; (ii) distribute and
- * have distributed to and by third parties the po-common-jar Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -83,79 +82,75 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Contactable;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 
-import gov.nih.nci.po.data.bo.Person;
-
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * Enum of possible sort criterion for Person.
+ * Criteria class to search for organizations. NOTE: This implements Contactable so that it may be used
+ * AbstractEditContactListAction
  */
-public enum PersonSortCriterion implements SortCriterion<Person> {
-    
-    /**
-     * Sort by person's id.
-     */
-    PERSON_ID(CuratePersonSearchCriteria.PERSON_ID_PROPERTY),
-    /**
-     * Sort by person's status.
-     */
-    PERSON_STATUS("statusCode"),
-    /**
-     * Sort by person's first name.
-     */
-    PERSON_FIRSTNAME(CuratePersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY),
-    /**
-     * Sort by person's middle name.
-     */
-    PERSON_MIDDLENAME(CuratePersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY),
-    /**
-     * Sort by person's last name.
-     */
-    PERSON_LASTNAME(CuratePersonSearchCriteria.PERSON_LAST_NAME_PROPERTY),
-    /**
-     * Sort by person's full name.
-     */        
-    PERSON_FULLNAME(PERSON_LASTNAME, PERSON_FIRSTNAME, PERSON_MIDDLENAME),
-    /**
-     * Sort by person's suffix.
-     */
-    PERSON_SUFFIX(CuratePersonSearchCriteria.PERSON_SUFFIX_PROPERTY),
-    /**
-     * Sort by person's prefix.
-     */
-    PERSON_PREFIX(CuratePersonSearchCriteria.PERSON_PREFIX_PROPERTY);
-    
+public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteria<Organization> implements
+        Serializable, Contactable {
 
-    private final String orderField;
-    private final List<PersonSortCriterion> fields;
+    private static final long serialVersionUID = 1L;
 
-    private PersonSortCriterion(String orderField) {
-        this.orderField = orderField;
-        this.fields = null;
+    /**
+     * Default Constructor.
+     */
+    @SuppressWarnings("deprecation")
+    public StrutsOrganizationSearchCriteria() {
+        super(new Organization());
+        getOrganization().setPostalAddress(new Address());
+        getOrganization().getPostalAddress().setCountry(new Country());
     }
 
-    private PersonSortCriterion(PersonSortCriterion... fields) {
-        this.orderField = null;
-        this.fields = Arrays.asList(fields);
+    /**
+     * @return organization used to find matches
+     */
+    public Organization getOrganization() {
+        return getCriteria();
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getOrderField() {
-        return this.orderField;
+    public List<Email> getEmail() {
+        return getOrganization().getEmail();
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public List<PersonSortCriterion> getOrderByList() {
-        if (orderField != null) {
-            return Collections.singletonList(this);
-        } 
-        return fields;
+    public List<PhoneNumber> getFax() {
+        return getOrganization().getFax();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<PhoneNumber> getPhone() {
+        return getOrganization().getPhone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<PhoneNumber> getTty() {
+        return getOrganization().getTty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<URL> getUrl() {
+        return getOrganization().getUrl();
     }
 }

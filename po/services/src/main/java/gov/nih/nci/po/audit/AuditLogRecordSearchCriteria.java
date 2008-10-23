@@ -97,6 +97,7 @@ import org.hibernate.Session;
  */
 public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria implements SearchCriteria<AuditLogRecord> {
 
+    private static final String ROOT_ALIAS = "alr";
     private final Long id;
     private final Set<Long> transactionId;
 
@@ -149,21 +150,22 @@ public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria impleme
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends") // Can't satisify this AND line length at the same time
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
+    // Can't satisify this AND line length at the same time
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         Session session = PoHibernateUtil.getCurrentSession();
-        StringBuffer query = new StringBuffer("SELECT " + (isCountOnly ? "COUNT(distinct alr) " : "distinct alr")
-                                               + " FROM "
-                                               + AuditLogRecord.class.getName() + " alr,"
-                                               + AuditLogDetail.class.getName() + " ald WHERE ");
+        StringBuffer query = new StringBuffer("SELECT "
+                + (isCountOnly ? "COUNT(distinct " + ROOT_ALIAS + ") " : "distinct " + ROOT_ALIAS) + " FROM "
+                + AuditLogRecord.class.getName() + " " + ROOT_ALIAS + "," + AuditLogDetail.class.getName()
+                + " ald WHERE ");
 
         if (id != null) {
-            query.append(" alr.entityId = :entityId OR ");
-            query.append("  (ald in elements(alr.details) ");
+            query.append(String.format(" %s.entityId = :entityId OR ", ROOT_ALIAS));
+            query.append(String.format("  (ald in elements(%s.details) ", ROOT_ALIAS));
             query.append("    AND (ald.oldValue = :entityIdStr OR ald.newValue = :entityIdStr) ");
             query.append("    AND ald.foreignKey = :foreignKey)");
         } else {
-            query.append(" alr.transactionId in (:transactionIds) ");
+            query.append(String.format(" %s.transactionId in (:transactionIds) ", ROOT_ALIAS));
         }
 
         query.append(orderByProperty);
@@ -178,5 +180,13 @@ public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria impleme
         }
 
         return q;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRootAlias() {
+        return ROOT_ALIAS;
     }
 }

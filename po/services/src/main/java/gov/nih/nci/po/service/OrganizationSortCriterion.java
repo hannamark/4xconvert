@@ -96,11 +96,15 @@ public enum OrganizationSortCriterion implements SortCriterion<Organization> {
     /**
      * Sort by organization's id.
      */
-    ORGANIZATION_ID(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS + ".id"),
+    ORGANIZATION_ID("id"),
+    /**
+     * Sort by organization's status.
+     */
+    ORGANIZATION_STATUS("statusCode"),
     /**
      * Sort by organization's name.
      */
-    ORGANIZATION_NAME(AbstractEntitySearchCriteria.ROOT_OBJ_ALIAS + ".name");
+    ORGANIZATION_NAME("name");
     private final String orderField;
     private final List<OrganizationSortCriterion> fields;
 

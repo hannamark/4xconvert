@@ -106,10 +106,14 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Utility functions for searching.
- *
+ * 
  * @see Searchable
  */
 public final class SearchableUtils {
+    /**
+     * root object alias name.
+     */
+    public static final String ROOT_OBJ_ALIAS = "obj";
     private static final Logger LOG = Logger.getLogger(SearchableUtils.class);
     private static final String NULLIFIED_STATUS_PARAM = "nullifiedStatusParam";
 
@@ -124,6 +128,7 @@ public final class SearchableUtils {
          */
         @SuppressWarnings("PMD.SignatureDeclareThrowsException")
         void callback(Method m, Object result) throws Exception;
+
         /**
          * @return any callback saved state
          */
@@ -138,17 +143,20 @@ public final class SearchableUtils {
      * @param obj object to inspect
      * @param isCountOnly do a count query
      * @param disallowNullified disallow nullified objects
+     * @param orderByClause hql order by clause, if none leave blank 
      * @return query object
      */
-    public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly, boolean disallowNullified) {
+    public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly, boolean disallowNullified,
+            String orderByClause) {
         final StringBuffer selectClause = new StringBuffer(AbstractHQLSearchCriteria.SELECT);
         final StringBuffer whereClause = new StringBuffer();
         final Map<String, Object> params = new HashMap<String, Object>();
 
-        selectClause.append((isCountOnly ? "COUNT(obj) " : "obj"));
+        selectClause.append((isCountOnly ? "COUNT(" + ROOT_OBJ_ALIAS + ") " : ROOT_OBJ_ALIAS));
         selectClause.append(AbstractHQLSearchCriteria.FROM);
         selectClause.append(obj.getClass().getName());
-        selectClause.append(" obj");
+        selectClause.append(' ');
+        selectClause.append(ROOT_OBJ_ALIAS);
 
         AnnotationCallback ac = new SearchCallback(whereClause, selectClause, params);
         SearchableUtils.iterateAnnotatedMethods(obj, ac);
@@ -156,7 +164,11 @@ public final class SearchableUtils {
         handleNullifiedStatus(obj, disallowNullified, whereClause, params);
 
         Session session = PoHibernateUtil.getCurrentSession();
-        Query q = session.createQuery(selectClause.append(whereClause).toString());
+        selectClause.append(whereClause);
+        if (StringUtils.isNotBlank(orderByClause)) {
+            selectClause.append(orderByClause);
+        }
+        Query q = session.createQuery(selectClause.toString());
         if (LOG.isDebugEnabled()) {
             LOG.debug(q.getQueryString());
         }
@@ -167,10 +179,10 @@ public final class SearchableUtils {
     private static void handleNullifiedStatus(final Object obj, boolean disallowNullified,
             final StringBuffer whereClause, final Map<String, Object> params) {
         if (disallowNullified && obj instanceof Curatable) {
-            whereClause.append(" and obj.statusCode != :" + NULLIFIED_STATUS_PARAM);
+            whereClause.append(String.format(" and %s.statusCode != :%s", ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
             params.put(NULLIFIED_STATUS_PARAM, EntityStatus.NULLIFIED);
         } else if (disallowNullified && obj instanceof Correlation) {
-            whereClause.append(" and obj.status != :" + NULLIFIED_STATUS_PARAM);
+            whereClause.append(String.format(" and %s.status != :%s", ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
             params.put(NULLIFIED_STATUS_PARAM, RoleStatus.NULLIFIED);
         }
     }
@@ -199,34 +211,32 @@ public final class SearchableUtils {
         for (Method m : o.getClass().getMethods()) {
             if (m.getAnnotation(Searchable.class) != null) {
                 if (m.getReturnType().equals(Void.TYPE)) {
-                    throw new IllegalArgumentException(
-                                String.format("The @Searchable annotation cannot be applied to %s.%s() [void return]",
-                                o.getClass(), m));
+                    throw new IllegalArgumentException(String.format(
+                            "The @Searchable annotation cannot be applied to %s.%s() [void return]", o.getClass(), m));
                 }
                 try {
                     cb.callback(m, m.invoke(o));
                 } catch (Exception e) {
-                    throw new IllegalArgumentException(
-                            String.format("The @Searchable annotation cannot be applied to %s.%s()",
-                            o.getClass(), m), e);
+                    throw new IllegalArgumentException(String.format(
+                            "The @Searchable annotation cannot be applied to %s.%s()", o.getClass(), m), e);
                 }
             }
         }
     }
 
     /**
-     * Looks through all Searchable methods and determines if the example object has at least
-     * one method that participates in the query by example.  For each method marked as searchable,
-     * the result of invoking the method is examined as follows:
+     * Looks through all Searchable methods and determines if the example object has at least one method that
+     * participates in the query by example. For each method marked as searchable, the result of invoking the method is
+     * examined as follows:
      * <ul>
-     *   <li>Null results do not participate in query by example.
-     *   <li>If the result is a <code>PersistentObject</code> and the <code>getId</code>
-     *       method returns a non-null value, the object is considered to have a criteria.
-     *   <li>If the result is a <code>Collection</code> and the <code>isEmpty</code> method
-     *       returns false, the object is considered to have a criterion.
-     *   <li>Otherwise, if the result is non-null, the object is considered to have a criterion.
+     * <li>Null results do not participate in query by example.
+     * <li>If the result is a <code>PersistentObject</code> and the <code>getId</code> method returns a non-null value,
+     * the object is considered to have a criteria.
+     * <li>If the result is a <code>Collection</code> and the <code>isEmpty</code> method returns false, the object is
+     * considered to have a criterion.
+     * <li>Otherwise, if the result is non-null, the object is considered to have a criterion.
      * </ul>
-     *
+     * 
      * @param o the object to examine
      * @return whether one (or more) methods participate in the criteria
      */
@@ -240,13 +250,13 @@ public final class SearchableUtils {
 
     /**
      * @author Todd Parnell
-     *
+     * 
      */
     private static final class Callback implements AnnotationCallback {
         private boolean hasOneCriterion = false;
 
-        public void callback(Method m, Object result)
-                throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        public void callback(Method m, Object result) throws NoSuchMethodException, IllegalAccessException,
+                InvocationTargetException {
             if (hasOneCriterion) {
                 // previous method had a criteria, so no need to check this one
                 return;
@@ -287,8 +297,8 @@ public final class SearchableUtils {
             }
         }
 
-        private void checkCollectionResultForCriteria(Object result, String[] fields)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        private void checkCollectionResultForCriteria(Object result, String[] fields) throws NoSuchMethodException,
+                IllegalAccessException, InvocationTargetException {
             if (fields != null && fields.length > 0 && !((Collection<?>) result).isEmpty()) {
                 Collection<?> col = (Collection<?>) result;
                 Class<? extends Object> fieldClass = col.iterator().next().getClass();

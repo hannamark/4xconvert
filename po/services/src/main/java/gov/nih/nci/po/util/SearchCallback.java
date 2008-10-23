@@ -105,7 +105,6 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
     private final Map<String, Object> params;
     private String whereOrAnd = AbstractHQLSearchCriteria.WHERE;
 
-
     /**
      * @param whereClause stringbuffer
      * @param selectClause stringbuffer
@@ -117,7 +116,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         this.params = params;
     }
 
-    @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "PMD.UseStringBufferForStringAppends" })
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.UseStringBufferForStringAppends" })
     public void callback(Method m, Object result) throws Exception {
         String fieldName = StringUtils.uncapitalize(m.getName().substring("get".length()));
         String paramName = fieldName;
@@ -141,10 +140,11 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         whereOrAnd = AbstractHQLSearchCriteria.AND;
 
         if (startsWithSearch && canBeUsedInLikeExpression(result)) {
-            whereClause.append(String.format("lower(obj.%s) like :%s", fieldName, paramName));
+            whereClause.append(String.format("lower(%s.%s) like :%s", SearchableUtils.ROOT_OBJ_ALIAS, fieldName,
+                    paramName));
             params.put(paramName, result.toString().toLowerCase() + "%");
         } else {
-            whereClause.append(String.format("obj.%s = :%s", fieldName, paramName));
+            whereClause.append(String.format("%s.%s = :%s", SearchableUtils.ROOT_OBJ_ALIAS, fieldName, paramName));
             params.put(paramName, result);
         }
     }
@@ -162,12 +162,12 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
 
             if (subPropResult != null) {
                 if (startsWithQuery && canBeUsedInLikeExpression(subPropResult)) {
-                    whereClause.append(String.format(whereOrAnd + " lower(obj.%s.%s) like :%s ", fieldName, currentProp,
-                            subPropParamName));
+                    whereClause.append(String.format(whereOrAnd + " lower(%s.%s.%s) like :%s ",
+                            SearchableUtils.ROOT_OBJ_ALIAS, fieldName, currentProp, subPropParamName));
                     params.put(subPropParamName, subPropResult.toString().toLowerCase() + "%");
                 } else {
-                    whereClause.append(String.format(whereOrAnd + " obj.%s.%s = :%s ", fieldName, currentProp,
-                            subPropParamName));
+                    whereClause.append(String.format(whereOrAnd + " %s.%s.%s = :%s ", SearchableUtils.ROOT_OBJ_ALIAS,
+                            fieldName, currentProp, subPropParamName));
                     params.put(subPropParamName, subPropResult);
                 }
                 whereOrAnd = AbstractHQLSearchCriteria.AND;
@@ -199,7 +199,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
             boolean startsWithSearch) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (col.size() > AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE) {
             throw new IllegalArgumentException(String.format("Cannot query on more than %s elements.",
-                                               AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE));
+                    AbstractBaseServiceBean.MAX_IN_CLAUSE_SIZE));
         }
 
         // Need to add ", zClass obj_<field>" to select clause
@@ -210,7 +210,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         selectClause.append(alias);
 
         // now add the where clauses
-        whereClause.append(alias + " IN ELEMENTS(obj." + fieldName + ") ");
+        whereClause.append(String.format("%s IN ELEMENTS(%s.%s) ", alias, SearchableUtils.ROOT_OBJ_ALIAS, fieldName));
         whereClause.append(AbstractHQLSearchCriteria.AND);
         whereClause.append(" ( ");
 
@@ -221,8 +221,8 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private void processCollectionProperties(String paramName, String[] propNames, Collection<?> col,
-            Class<? extends Object> fieldClass, String alias, boolean startsWithSearch)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+            Class<? extends Object> fieldClass, String alias, boolean startsWithSearch) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException {
         String andClause = "";
         for (String propName : propNames) {
             // get the collection of values into a nice collection

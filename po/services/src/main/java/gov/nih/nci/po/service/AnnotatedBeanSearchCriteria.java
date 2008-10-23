@@ -127,7 +127,7 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends Abs
      * {@inheritDoc}
      */
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        return SearchableUtils.getQueryBySearchableFields(criteria, isCountOnly, disallowNullified);
+        return SearchableUtils.getQueryBySearchableFields(criteria, isCountOnly, disallowNullified, orderByProperty);
     }
 
     /**
@@ -135,5 +135,13 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends Abs
      */
     protected T getCriteria() {
         return criteria;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRootAlias() {
+        return SearchableUtils.ROOT_OBJ_ALIAS;
     }
 }
