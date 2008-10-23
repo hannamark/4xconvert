@@ -246,8 +246,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             return SUCCESS;
         }
         Organization org = new Organization(); 
-        org.setId(tab.getFacilityOrganization().getId());
-        org = paoService.getOrganizationByIndetifers(org);
+        if (tab.getFacilityOrganization().getId() != null) {
+            org.setId(tab.getFacilityOrganization().getId());
+            org = paoService.getOrganizationByIndetifers(org);
+        } else {
+            org = tab.getFacilityOrganization();
+        }
+        
         //These are the only two fields that will be updated!
         String resStatus = ServletActionContext.getRequest().getParameter("recStatus");
         String resStatusDate = ServletActionContext.getRequest().getParameter("resStatusDate");
@@ -270,8 +275,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         orgFromPO.setOrgCountry(org.getCountryName());
         orgFromPO.setOrgName(org.getName());
         orgFromPO.setOrgZip(org.getPostalCode());  
-        setRecStatus(resStatus);
-        setRecStatusDate(resStatusDate);
+        this.setRecStatus(resStatus);
+        this.setRecStatusDate(resStatusDate);
         return this.ACT_EDIT;
         //return ACT_FACILITY_SAVE;
         //return "displayJsp";

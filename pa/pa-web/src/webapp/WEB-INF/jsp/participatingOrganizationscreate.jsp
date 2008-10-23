@@ -29,9 +29,20 @@
 	     document.facility.submit();   
 	
 	}
-	function facilityUpdate(){		 
-		 var recStatus = document.participatingOrganizationsedit.recStatus.value;
-		 var recStatusDate = document.participatingOrganizationsedit.recStatusDate.value;
+	function facilityUpdate(){
+		var recStatus;
+		var recStatusDate;
+		try{
+		 	recStatus = document.facility.recStatus.value;		 
+		 } catch (err) {		 	
+		 	recStatus = document.getElementById('participatingOrganizationsedit_recStatus').value;
+		 }
+		try{
+		 	recStatusDate = document.facility.recStatusDate.value;
+		 } catch (err) {
+		 	recStatusDate = document.getElementById('participatingOrganizationsedit_recStatusDate').value;
+		 }
+		
 	     var div = document.getElementById('loadOrgDetails'); 
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
 	     var url;
@@ -184,7 +195,7 @@
 				<li>
                     <s:if test="%{currentAction == 'edit'}">
 				        <s:a href="#" cssClass="btn" onclick="facilityUpdate();"><span class="btn_img">
-				            <span class="save">Save</span></span></s:a>
+				            <span class="save">Save.</span></span></s:a>
 				    </s:if>
 				    <s:else>
                         <s:a href="#" cssClass="btn" onclick="facilitySave();"><span class="btn_img">
