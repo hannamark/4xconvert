@@ -1,6 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<%-- page conditional variable --%>
-<c:url value="/notYetImplemented.jsp" var="urlNotYetImplemented"/>
 
 <c:url value="/protected/ajax/search/organization/results/search.action" var="sortUrl"/>
 <ajax:displayTag id="organizationSearchResults" ajaxFlag="true" tableClass="data">
@@ -25,9 +23,12 @@
             <c:otherwise>NONE</c:otherwise>
             </c:choose>
         </display:column>
-        <display:column titleKey="th.action" class="action" >
+        <display:column titleKey="th.action" class="action">
+            <c:url var="curateUrl" value="/protected/organization/curate/start.action">
+                <c:param name="organization.id" value="${row.id}"/>
+            </c:url>
             <po:buttonRow>
-                <po:button href="${urlNotYetImplemented}" style="select_person" text="Edit" id="org_id_${row.id}"/>
+                <po:button href="${curateUrl}" style="select_person" text="Curate" id="org_id_${row.id}"/>
             </po:buttonRow>
         </display:column>
     </display:table>
