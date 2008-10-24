@@ -199,7 +199,7 @@
                     <ejbVersion>3.0</ejbVersion>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
+                            <addClasspath>false</addClasspath>
                         </manifest>
                     </archive>
                     <generateClient>true</generateClient>
