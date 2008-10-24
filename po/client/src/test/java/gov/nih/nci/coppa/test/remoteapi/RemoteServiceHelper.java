@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -225,8 +226,8 @@ public class RemoteServiceHelper {
 
 
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
-        String jmxUsername = "admin";
-        String jmxPassword = "admin";
+        String jmxUsername = TstProperties.getJmxUsername();
+        String jmxPassword = TstProperties.getJmxPassword();
 
         if (jmxCtx == null) {
             Properties env = new Properties();

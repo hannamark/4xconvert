@@ -1,10 +1,8 @@
 package gov.nih.nci.coppa.test;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
 
 /**
  * Environment properties passed in to tests.
@@ -25,6 +23,11 @@ public final class TstProperties {
     public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
     public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
 
+    public static final String JMX_USERNAME_KEY = "jboss.jmx.username";
+    public static final String JMS_USERNAME_DEFAULT = "admin";
+
+    public static final String JMX_PASSWORD_KEY = "jboss.jmx.password";
+    public static final String JMS_PASSWORD_DEFAULT = "admin";
 
     public static Properties properties = new Properties();
     static {
@@ -54,5 +57,13 @@ public final class TstProperties {
 
     public static String getSeleniumBrowser() {
         return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
+    }
+
+    public static String getJmxUsername() {
+        return properties.getProperty(JMX_USERNAME_KEY, JMS_USERNAME_DEFAULT);
+    }
+
+    public static String getJmxPassword() {
+        return properties.getProperty(JMX_PASSWORD_KEY, JMS_PASSWORD_DEFAULT);
     }
 }

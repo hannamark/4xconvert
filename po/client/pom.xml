@@ -18,6 +18,8 @@
         <test.selenium.browser>*chrome</test.selenium.browser>
         <selenium-maven-plugin.version>1.0-rc-1-SNAPSHOT</selenium-maven-plugin.version>
         <deployedArtifact>${jboss.home}/server/${jboss.configuration}/deploy/po.ear</deployedArtifact>
+        <jboss.jmx.username>admin</jboss.jmx.username>
+        <jboss.jmx.password>admin</jboss.jmx.password>
     </properties>
     
     <dependencies>
