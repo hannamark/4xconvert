@@ -8,7 +8,7 @@ import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Tel;
 
 /**
  * @author Hugh Reinhart
@@ -23,7 +23,7 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     private Ad postalAddress;
     private Bl primaryIndicator;
     private Cd roleCode;
-    private DSet<St> telecomAddresses;
+    private DSet<Tel> telecomAddresses;
     private Ii studyParticipationIi;
     private Ii healthCareProvider;
     /**
@@ -62,17 +62,24 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     public void setRoleCode(Cd roleCode) {
         this.roleCode = roleCode;
     }
+
     /**
-     * @return the telecomAddress
+     * @return the telecomAddresses
      */
-    public DSet<St> getTelecomAddresses() {
+    public DSet<Tel> getTelecomAddresses() {
         return telecomAddresses;
     }
     /**
      * @param telecomAddresses the telecomAddresses to set
      */
-    public void setTelecomAddresses(DSet<St> telecomAddresses) {
+    public void setTelecomAddresses(DSet<Tel> telecomAddresses) {
         this.telecomAddresses = telecomAddresses;
+    }
+    /**
+     * @return the serialVersionUID
+     */
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
     /**
      * @return the studyParticipationIi

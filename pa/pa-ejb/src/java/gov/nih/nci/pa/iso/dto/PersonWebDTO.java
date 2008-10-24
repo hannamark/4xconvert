@@ -3,15 +3,34 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 
 /**
+ * This class is used to display results to the browser.
  * 
  * @author Harsha
  * 
  */
 public class PersonWebDTO {
-    private String firstName;
-    private String lastName;
     private Long id;
     private StudyContactRoleCode roleName;
+    private String firstName;
+    private String lastName;    
+    private String middleName;
+    private String telephone;
+    private String email;
+    private Long selectedPersId; //PO-ID
+
+    /**
+     * @return the selectedPersId
+     */
+    public Long getSelectedPersId() {
+        return selectedPersId;
+    }
+
+    /**
+     * @param selectedPersId the selectedPersId to set
+     */
+    public void setSelectedPersId(Long selectedPersId) {
+        this.selectedPersId = selectedPersId;
+    }
 
     /**
      * @return the roleName
@@ -67,5 +86,47 @@ public class PersonWebDTO {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    /**
+     * @return the middleName
+     */
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    /**
+     * @param middleName the middleName to set
+     */
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    /**
+     * @return the telephone
+     */
+    public String getTelephone() {
+        return telephone;
+    }
+
+    /**
+     * @param telephone the telephone to set
+     */
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

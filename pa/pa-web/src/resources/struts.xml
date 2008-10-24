@@ -31,6 +31,8 @@
             <result name="display_StudyPartipants">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
             <result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
             <result name="display_spContacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
+            <result name="input">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
+            <result name="error">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
          </action>  
 
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
@@ -48,8 +50,11 @@
         	<result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
         	<result name="displayJsp">/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp</result>  
         	<result name="display_spContacts">/WEB-INF/jsp/nodecorate/displaySPContactsTable.jsp</result>  
-        	<result name="display_primContacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>        	
-        	<result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>
+        	<result name="display_primContacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>
+        	<result name="error_prim_contacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>
+        	<result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/nodecorate/selectedName.jsp</result>
+        	<result name="input">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
+        	<result name="error">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
          </action>       		
   		<!-- needs to be refactored -->
 		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >

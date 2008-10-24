@@ -66,7 +66,7 @@
               	<s:select  
                 name="orgSearchCriteria.orgCountry" 
                 list="countryList"  
-                listKey="alpha3" listValue="name" headerKey="aaa" headerValue="-Select--" cssStyle="width:206px" />
+                listKey="alpha3" listValue="name" headerKey="aaa" headerValue="--Select--" cssStyle="width:206px" />
         </td>		
 	</tr>
 	<tr>  
@@ -92,14 +92,14 @@
                    </li>
                </ul>   
           </del>
-     </div>  
+    </div>
+	<div id="getOrgs" align="center">	
+	   	<jsp:include page="/WEB-INF/jsp/nodecorate/displayOrgList.jsp"/>        	      
+   	</div>
+	  
 </s:form>
 </div>
-<div class="line"></div>
-	<div class="box" align="center">
-		<div id="getOrgs">	
-		   	<jsp:include page="/WEB-INF/jsp/nodecorate/displayOrgList.jsp"/>        	      
-	   	</div>
-	</div>
+
+
 </body>
 </html>

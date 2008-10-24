@@ -12,9 +12,10 @@
 					<option value="Study Sub Investigator">Study Sub Investigator</option>				
 			</select>
   	</display:column>
-	<display:column title="Action" class="action" sortable="false">	
-		<input type="button" value="Select" name="${row.identifier.extension}btn" onclick="callCreatePerson('${row.identifier.extension}', 
+	<display:column title="Action" class="action" sortable="false">
+	<s:a href="#" cssClass="btn" onclick="callCreatePerson('${row.identifier.extension}', 
 							document.getElementById('${row.identifier.extension}').value)">
+							<span class="btn_img"><span class="add">Select</span></span></s:a>	
 					
 	</display:column>
 </display:table>

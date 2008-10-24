@@ -19,15 +19,20 @@
 <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
 <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
+<style type="text/css"> 
+.disabled 
+{ 
+ background-color: #CCC; 
+} 
+</style> 
+
 <script type="text/javascript">
-        addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
-        setWidth(90, 1, 15, 1);
-        setFormat("mm/dd/yyyy");
-	function facilitySave(){
-		
-	     document.facility.action="participatingOrganizationsfacilitySave.action";
-	     document.facility.submit();   
-	
+    addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
+    setWidth(90, 1, 15, 1);
+    setFormat("mm/dd/yyyy");
+	function facilitySave(){		
+		document.facility.action="participatingOrganizationsfacilitySave.action";
+		document.facility.submit();
 	}
 	function facilityUpdate(){
 		var recStatus;
@@ -73,21 +78,9 @@
 	        method: 'get',
 	        evalScripts: false
 	     });
-	     return false;
-		 //document.location.href= '/pa/protected/participatingOrganizationsdisplayOrg.action?orgId='+orgid;
+	     return false;		
 	}	
-	function setAsPrimaryContact(persId) {		
-	     var div = document.getElementById('saveAndShowContacts');   
-	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-	     var url;
-	     url = '/pa/protected/ajaxptpOrgsetAsPrimaryContact.action?contactpersid='+persId+"'#contacts";
-      	 var aj = new Ajax.Updater(div, url, {
-	        asynchronous: true,
-	        method: 'get',
-	        evalScripts: false
-	     });
-	     return false;
-	}	
+	
 	function loadPersDiv(persid, rolecode, func){
 	     var div = document.getElementById('saveAndShowContacts');   
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
@@ -108,25 +101,16 @@
 			     });
 			     setTimeout("refreshPrimaryContact();",1000);	     
 		 }
-	 
-	            
 	     return false;
 	}
-	function loadContactPersDivEditMode(persid) {
-	    var div = document.getElementById('saveAndShowPersons');   
-	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-	    var url = '/pa/protected/ajaxptpOrgsetAsPrimaryContact.action?contactpersid='+persid+"&editmode=yes";
-	    	var aj = new Ajax.Updater(div, url, {
-	        asynchronous: true,
-	        method: 'get',
-	        evalScripts: false
-	    });
-	    return false;	
-	}	
+	
+	/**
+	 * This function is called when a primary contact is chosen from the person search pop up.
+	 */
 	function loadContactPersDiv(persid){	
-	    var div = document.getElementById('saveAndShowPersons');   
+	    var div = document.getElementById('showPrimaryContacts');   
 	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-	    var url = '/pa/protected/ajaxptpOrgsaveStudyParticipationContact.action?contactpersid='+persid;
+	    var url = '/pa/protected/ajaxptpOrgdisplayStudyParticipationPrimContact.action?contactpersid='+persid;
 	    	var aj = new Ajax.Updater(div, url, {
 	        asynchronous: true,
 	        method: 'get',
@@ -134,22 +118,62 @@
 	    });
 	    return false;
 	}
-	function refreshPrimaryContact(){	
-	
-	 		 var div = document.getElementById('saveAndShowPersons');   
-		     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-		     var url = '/pa/protected/ajaxptpOrggetStudyParticipationPrimContact.action';
-		    	var aj = new Ajax.Updater(div, url, {
-		        asynchronous: true,
-		        method: 'get',
-		        evalScripts: false
-		     });
-		    return false;
-		
+	/**
+	 * Not sure if this one below is called ever!
+	 */
+	function setAsPrimaryContact(persId) {	
+	    var div = document.getElementById('saveAndShowPersons');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+	    var url;
+	    var url = '/pa/protected/ajaxptpOrgdisplayStudyParticipationPrimContact.action?contactpersid='+persId;
+	   
+	    	 var aj = new Ajax.Updater(div, url, {
+	       asynchronous: true,
+	       method: 'get',
+	       evalScripts: false
+	    });
+	    return false;
 	}
+	function loadContactPersDivEditMode(persid) {		
+	    var div = document.getElementById('showPrimaryContacts');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+	    var url = '/pa/protected/ajaxptpOrgdisplayStudyParticipationPrimContact.action?contactpersid='+persid+"&editmode=yes";
+	    	var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	    });
+	    return false;	
+	}
+	function refreshPrimaryContact(){	
+	 	var contactpersid = document.getElementById('personContactWebDTO_selectedPersId').value;
+ 		 var div = document.getElementById('showPrimaryContacts');   
+	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+	     var url = '/pa/protected/ajaxptpOrgrefreshPrimaryContact.action?contactpersid='+contactpersid;
+	    	var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	     });
+	    return false;		
+	}
+	function savePrimaryContact(){	
+		 var contactpersid = document.getElementById('personContactWebDTO_selectedPersId').value;
+		 var email = document.getElementById('personContactWebDTO_email').value;
+		 var tel = document.getElementById('personContactWebDTO_telephone').value;
+ 		 var div = document.getElementById('showPrimaryContacts');   
+	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+	     var url = '/pa/protected/ajaxptpOrgsaveStudyParticipationContact.action?contactpersid='+contactpersid+"&tel="+tel+"&email="+email;
+	    	var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	     });
+	    return false;
+	}
+
 </script>      
 </head>
-
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.title" /></h1>
@@ -167,8 +191,20 @@
 
 			<ul id="maintabs" class="tabs">
 			<li><a href="#facility">Facility</a></li>
-			<li><a href="#investigators">Investigators</a></li>
-			<li><a href="#contacts">Contacts</a></li>
+			
+			
+			         <s:if test="%{currentAction == 'edit'}">
+							<li><a href="#investigators">Investigators</a></li>
+							<li><a href="#contacts">Contacts</a></li>
+				    </s:if>
+				    <s:else>
+							<li><a class="disabled">Investigators</a></li>
+							<li><a class="disabled">Contacts</a></li>				    
+				    </s:else>
+			
+			
+			
+
 			</ul>
 			<!--/Tabs --> <!-- 
                     directions on http://livepipe.net/control/tabs 
@@ -195,7 +231,7 @@
 				<li>
                     <s:if test="%{currentAction == 'edit'}">
 				        <s:a href="#" cssClass="btn" onclick="facilityUpdate();"><span class="btn_img">
-				            <span class="save">Save.</span></span></s:a>
+				            <span class="save">Save</span></span></s:a>
 				    </s:if>
 				    <s:else>
                         <s:a href="#" cssClass="btn" onclick="facilitySave();"><span class="btn_img">
@@ -225,11 +261,18 @@
 	  <!-----------------------------------------------End Investigators Tab------------------->
 	  <!-----------------------------------------------Begin Contact Tab------------------->
 	  	   <div id="contacts" class="box" style="display:none;">						
-				<h3>Primary Contacts <c:out value="${organizationName}"/></h3>
-				
-					<div id="saveAndShowPersons">
+				<h3>Primary Contacts <c:out value="${organizationName}"/></h3>				
+			
+					<div id="showPrimaryContacts">
 						<%@ include file="/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp" %>
 					</div>	
+			<div class="actionsrow"><del class="btnwrapper">
+			<ul class="btnrow">
+				<li>                   
+ 						<s:a href="#" cssClass="btn" onclick="savePrimaryContact();"><span class="btn_img">
+                            <span class="save">Save</span></span></s:a>						  
+			</ul>
+			</del></div>
 			</div>
 	  <!-----------------------------------------------End Contact Tab------------------->
 			</div>

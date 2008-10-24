@@ -1,60 +1,98 @@
 package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
+
+import java.util.List;
+
 
 /**
  * 
- * @author NAmiruddin
- *
+ * @author NAmiruddin, HArsha
+ * 
  */
-public class DSetConverter {
-
+@SuppressWarnings("PMD")
+public class DSetConverter { 
     /**
-     * 
-     * @param phones list of emails 
-     * @return dSet
+     * @param dsetList list of DSets
+     * @param type denoting email, telephone, fax, url, etc.,
+     * @param list of Tel objects
+     * @return dSet collection
      */
-    public static DSet<TelPhone> convertPhoneListToDSet(List<String> phones) {
-        DSet<TelPhone> dSet = new DSet<TelPhone>();
-        Set<TelPhone> set = new HashSet<TelPhone>();
-        dSet.setItem(set);
-        if (phones == null || phones.isEmpty()) {
+    public static DSet<Tel> convertListToDSet(List<String> list, String type, DSet<Tel> dsetList) {
+        Set<Tel> telSet = new HashSet<Tel>();
+        DSet<Tel> dSet = null;
+        if (dsetList == null) {
+            dSet = new DSet<Tel>();
+        } else {
+            dSet = dsetList;
+            if (dsetList.getItem() != null && dsetList.getItem().size() > 0) {
+                Iterator val = dsetList.getItem().iterator();
+                while (val.hasNext()) {
+                    telSet.add((Tel) val.next());
+                }            
+            }
+        }
+        if (list == null || list.isEmpty()) {
             return dSet;
         }
-        TelPhone t = null;
-
-        for (String phone : phones) {
-            t = new TelPhone();
-            t.setValue(URI.create("tel:" + phone));
-            set.add(t);
+        if (type.equals("PHONE")) {
+            TelPhone t = null;
+            for (String phone : list) {
+                t = new TelPhone();
+                t.setValue(URI.create("tel:" + phone));
+                telSet.add(t);
+            }            
+        } else if (type.equals("EMAIL")) {
+            TelEmail t = null;
+            for (String email : list) {
+                t = new TelEmail();
+                t.setValue(URI.create("mailto:" + email));
+                telSet.add(t);
+            }         
         }
-            
+        dSet.setItem(telSet); 
         return dSet;
     }
-    
+
     /**
-     * 
+     * @param type to be returned
      * @param dSet set of iso phones
      * @return phones
      */
-    public static List<String> convertDsetPhoneToList(DSet<TelPhone> dSet) {
-        List<String> phones = new ArrayList<String>();
-        if (dSet == null ||  dSet.getItem() == null) {
-            return phones;
+    public static List<String> convertDSetToList(DSet<Tel> dSet, String type) {
+        List<String> retList = new ArrayList<String>();
+        if (dSet == null || dSet.getItem() == null) {
+            return retList;
         }
-        for (TelPhone t : dSet.getItem()) {
-            if (t.getNullFlavor() != null) {
-                continue;
+        if (type.equals("PHONE")) {
+            for (Tel t : dSet.getItem()) {
+                if (t.getNullFlavor() != null) {
+                    continue;
+                }
+                if (t instanceof TelPhone) {
+                    retList.add((t.getValue().getSchemeSpecificPart()));
+                }
             }
-            phones.add((t.getValue().getSchemeSpecificPart()));
         }
-        return phones;
+        if (type.equals("EMAIL")) {
+            for (Tel t : dSet.getItem()) {
+                if (t.getNullFlavor() != null) {
+                    continue;
+                }
+                if (t instanceof TelEmail) {
+                    retList.add((t.getValue().getSchemeSpecificPart()));
+                }
+            }
+        }        
+        return retList;
     }
 }

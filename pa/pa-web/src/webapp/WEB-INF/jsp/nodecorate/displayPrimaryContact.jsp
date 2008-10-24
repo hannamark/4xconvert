@@ -1,6 +1,35 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>	
-<b>First Name:</b><s:textfield name="personContactWebDTO.firstName" size="30"  readonly="true"/> <input type="button" value="Look Up" onClick="lookupcontactperson();"/>
-<br><br>
-<b>Middle Name:</b><s:textfield size="30"  readonly="true"/>
-<br><br>
-<b>Last Name: </b><s:textfield name="personContactWebDTO.lastName" size="30"  readonly="true"/>
+
+<div id="saveAndShowPersons">
+	<%@ include file="/WEB-INF/jsp/nodecorate/selectedName.jsp" %>
+</div>	
+<table class="form">
+	<tr>
+	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Telephone:</s:label><span class="required">*</span></td>
+	  
+	    <td class="value" colspan="2">
+	    	
+	        <s:textfield name="personContactWebDTO.telephone" maxlength="200" size="200"				         
+	        cssStyle="width: 200px" />
+                     <span class="formErrorMsg"> 
+                           <s:fielderror>
+                           <s:param>personContactWebDTO.telephone</s:param>
+                           </s:fielderror>                            
+                     </span>				        
+	    </td>				    
+	</tr>
+		<tr>
+	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Email:</s:label><span class="required">*</span></td>
+	 
+	    <td class="value" colspan="2">
+	        <s:textfield name="personContactWebDTO.email" maxlength="200" size="200" 
+	         cssStyle="width: 200px" />
+                     <span class="formErrorMsg"> 
+                           <s:fielderror>
+                           <s:param>personContactWebDTO.email</s:param>
+                           </s:fielderror>                            
+                     </span>				          
+	    </td>
+	     
+	</tr>
+</table>

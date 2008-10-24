@@ -29,6 +29,7 @@ import org.hibernate.Session;
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final Logger LOG = Logger.getLogger(PAHealthCareProviderServiceBean.class);
     private static final int THREE = 3;
+    private static final int TWO = 2;
    
 
     /**
@@ -184,8 +185,12 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO = new PersonWebDTO();
             personWebDTO.setFirstName(((Person) searchResult[THREE]).getFirstName());
             personWebDTO.setLastName(((Person) searchResult[THREE]).getLastName());
+            personWebDTO.setMiddleName(((Person) searchResult[THREE]).getMiddleName());
             personWebDTO.setId(((StudyParticipationContact) searchResult[1]).getId());           
             personWebDTO.setRoleName((((StudyParticipationContact) searchResult[1]).getRoleCode()));
+            personWebDTO.setTelephone((((StudyParticipationContact) searchResult[1]).getPhone()));
+            personWebDTO.setEmail((((StudyParticipationContact) searchResult[1]).getEmail()));
+            personWebDTO.setSelectedPersId(((HealthCareProvider) searchResult[TWO]).getIdentifier());
             retList.add(personWebDTO);
         }
         return retList;

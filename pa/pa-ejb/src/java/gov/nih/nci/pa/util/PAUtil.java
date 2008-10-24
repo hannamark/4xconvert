@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Protocol DAO for accessing DAO.
@@ -187,5 +189,17 @@ public class PAUtil {
     public static boolean isNotEmpty(String aString) { 
         return !isEmpty(aString); 
     } 
-    
+
+    /**
+     * Util method to validate email addresses.
+     * 
+     * @param email to check the string
+     * @return boolean whether email is valid or not
+     */
+    public static boolean isValidEmail(String email) {
+       Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+       Matcher m = p.matcher(email);
+       return  m.matches();
+    }
+
 }

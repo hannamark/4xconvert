@@ -43,6 +43,34 @@ public class StudyParticipationContact extends PersonFunctionalRole {
     private List<StudyParticipationContactTelecomAddress> telecomAddresses;
     private StudyParticipation studyParticipation;
     private HealthCareProvider healthCareProvider;
+    private String phone;
+    private String email;
+    /**
+     * @return the phone
+     */
+    @Column(name = "telephone")
+    public String getPhone() {
+        return phone;
+    }
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    /**
+     * @return the email
+     */
+    @Column(name = "email")
+    public String getEmail() {
+        return email;
+    }
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
     /**
      * @return the addressLine
      */

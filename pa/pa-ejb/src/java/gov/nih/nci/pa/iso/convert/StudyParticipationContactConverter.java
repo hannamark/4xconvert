@@ -5,6 +5,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
@@ -15,11 +16,13 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,9 +77,16 @@ public class StudyParticipationContactConverter {
             }
             DSet<St> telDSet = new DSet<St>();
             telDSet.setItem(telSet);
-            dto.setTelecomAddresses(telDSet);
+            //dto.setTelecomAddresses(telDSet);
         }
-        
+        DSet<Tel> telAddresses = new DSet<Tel>();
+        ArrayList<String> emailList = new ArrayList<String>();
+        emailList.add(bo.getEmail());
+        DSetConverter.convertListToDSet(emailList, "EMAIL", telAddresses);
+        ArrayList<String> telList = new ArrayList<String>();
+        telList.add(bo.getPhone());
+        DSetConverter.convertListToDSet(telList, "PHONE", telAddresses);
+        dto.setTelecomAddresses(telAddresses);
         dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
@@ -112,6 +122,13 @@ public class StudyParticipationContactConverter {
         bo.setHealthCareProvider(healthCareProvider);
 //        bo.setTelecomAddresses(telecomAddresses)
         bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
+        List retList = null;
+        if (dto.getTelecomAddresses() != null) {
+            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
+            bo.setEmail(retList.get(0).toString());        
+            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
+            bo.setPhone(retList.get(0).toString());
+        }
         return bo;
     }
 
