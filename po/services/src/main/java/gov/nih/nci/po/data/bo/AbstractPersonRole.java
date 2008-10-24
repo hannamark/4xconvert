@@ -96,6 +96,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -152,6 +153,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = "")
     public Person getPlayer() {
         return this.player;
     }

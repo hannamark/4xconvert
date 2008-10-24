@@ -32,7 +32,6 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
 
         AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(
                 new Organization());
-
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getCriteria().setName("name");
@@ -118,8 +117,8 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
 
     }
 
-    @SuppressWarnings("deprecation")
     @Test
+    @SuppressWarnings("deprecation")
     public void test1() {
         AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(
                 new Organization());
@@ -219,7 +218,7 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
                 + "gov.nih.nci.po.data.bo.Email obj_email "
                 + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 )  ) ",
                 query.getQueryString());
-        
+
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
         yesCrit.getCriteria().getEmail().add(new Email("a"));
         yesCrit.getCriteria().getEmail().add(new Email("b"));

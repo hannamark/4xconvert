@@ -84,7 +84,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getCriteria().getEmail().add(new Email("abc"));
         assertEquals(1, getOrgServiceBean().count(sc));
         assertEquals(1, getOrgServiceBean().search(sc).size());
-        
+
         initData2();
         /* then find a person with another matching email address */
         sc.getCriteria().getEmail().add(new Email("def"));
@@ -312,7 +312,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getCriteria().getPostalAddress().setPostalCode("12345-");
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
-        
+
         sc.getCriteria().getPostalAddress().setPostalCode("-");
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
@@ -331,6 +331,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void findByAddressCountry() throws EntityValidationException {
         createOrgsWithAddresses();
 
@@ -340,7 +341,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         sc.getCriteria().getPostalAddress().setCountry(c);
         assertEquals(0, getOrgServiceBean().count(sc));
         assertEquals(0, getOrgServiceBean().search(sc).size());
-        
+
         c = new Country();
         c.setId(getDefaultCountry().getId());
         sc.getCriteria().getPostalAddress().setCountry(c);
