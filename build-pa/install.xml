@@ -172,13 +172,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <sleep seconds="5" />
         <delete dir="${jboss.home}" quiet="false" />
         <delete dir="${tomcat.home}" quiet="false" />
-        <delete includeemptydirs="true">
-           <fileset dir="${doc.upload.filepath.loc}" includes="**/*"/>
-        </delete>
     </target>
 
     <!-- Does directory management and copy some files with filtering to ensure token expansion -->
     <target name="install:init" description="Does directory management to initialize install">
+        <delete includeemptydirs="true">
+           <fileset dir="${doc.upload.filepath.loc}" includes="**/*"/>
+        </delete>
         <mkdir dir="${working.dir}" />
         <delete dir="${working.dir}"/>
         <mkdir dir="${working.dir}" />
