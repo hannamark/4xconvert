@@ -8,16 +8,18 @@
     <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
             <li><a href="<c:url value="/login/logout.action"/>">Logout</a></li>
-            <li class="lisubheader">Entity Search</li>
-	            <li><a id="SearchOrganization" href="<c:url value="/protected/search/organization/start.action"/>">Organization</a></li>
-            <li class="lisubheader">Entity Inboxes</li>
-	            <li><a id="EntityInboxOrganization" href="<c:url value="/protected/curate/search/listOrgs.action"/>">Organization</a></li>
-	            <li><a id="EntityInboxPerson" href="<c:url value="/protected/curate/search/listPersons.action"/>">Person</a></li>
-            <li class="lisubheader">Role Inboxes</li>
+            <li class="lisubheader">Organization</li>
+	            <li><a id="EntityInboxOrganization" href="<c:url value="/protected/curate/search/listOrgs.action"/>">Inbox</a></li>
+	            <li><a id="SearchOrganization" href="<c:url value="/protected/search/organization/start.action"/>">Search</a></li>
+	            <li><a id="CreateOrganization" href="<c:url value="/notYetImplemented.jsp"/>">Create</a></li>
+            <li class="lisubheader">Person</li>
+	            <li><a id="EntityInboxPerson" href="<c:url value="/protected/curate/search/listPersons.action"/>">Inbox</a></li>
+                <li><a id="SearchPerson" href="<c:url value="/notYetImplemented.jsp"/>">Search</a></li>
+                <li><a id="CreatePerson" href="<c:url value="/notYetImplemented.jsp"/>">Create</a></li>	            
         </c:when>
         <c:otherwise>
             <li><a href="<c:url value="/protected/home.action"/>">Login</a></li>
         </c:otherwise>
     </c:choose>
-    <li><a href="helpTK.html">Help</a></li>
+    <li><a href="<c:url value="/notYetImplemented.jsp"/>">Help</a></li>
 </ul>

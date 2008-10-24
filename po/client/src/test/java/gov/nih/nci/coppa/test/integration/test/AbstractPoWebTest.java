@@ -12,8 +12,12 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.type("j_password", password);
         clickAndWait("id=enableEnterSubmit");
         verifyTrue(selenium.isElementPresent("link=Logout"));
-        verifyTrue(selenium.isElementPresent("link=Organization"));
-        verifyTrue(selenium.isElementPresent("link=Person"));
+        verifyTrue(selenium.isElementPresent("id=EntityInboxOrganization"));
+        verifyTrue(selenium.isElementPresent("id=SearchOrganization"));
+        verifyTrue(selenium.isElementPresent("id=CreateOrganization"));
+        verifyTrue(selenium.isElementPresent("id=EntityInboxPerson"));
+        verifyTrue(selenium.isElementPresent("id=SearchPerson"));
+        verifyTrue(selenium.isElementPresent("id=CreatePerson"));
     }
 
     public void loginAsCurator() {
