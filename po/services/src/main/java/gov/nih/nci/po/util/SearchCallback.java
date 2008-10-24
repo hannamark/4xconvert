@@ -97,7 +97,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Callback implementation.
  */
-@SuppressWarnings("PMD.AvoidStringBufferField")
+@SuppressWarnings({"PMD.AvoidStringBufferField", "PMD.TooManyMethods" })
 class SearchCallback implements SearchableUtils.AnnotationCallback {
 
     private final StringBuffer whereClause;
