@@ -38,7 +38,7 @@
 </c:if>
 
 
-<div id="page">
+<div id="page" style="margin-top:10px;">
 	<div class="boxouter_nobottom">
 	<h2>Organization Information</h2>
 	<s:form action="organization/curate/curate.action" id="curateOrgForm">
@@ -125,15 +125,17 @@
 </div>
 
 <c:if test="${fn:length(organization.changeRequests) > 0}">
-<div id="page">
+<div id="page" style="margin-top:10px;">
 <div id="crinfo">
 <%@ include file="orgCrInfo.jsp" %>
 </div>
 </div>
 </c:if>
 
+<div style="clear:left;">
+</div>
 
-<div class="btnwrapper" style="clear:both;">
+<div class="btnwrapper" style="margin-bottom:20px;">
 	<script type="text/javascript">
 		function showPopWinCallback(returnVal) {
 			$('curateOrgForm.organization.duplicateOf.id').value = returnVal;
@@ -144,9 +146,6 @@
         <po:button id="save_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="save" text="Save"/>
     </po:buttonRow>
 </div>
-<div style="height=10px;">
-<br>
-<br>
-</div>
+
 </body>
 </html>

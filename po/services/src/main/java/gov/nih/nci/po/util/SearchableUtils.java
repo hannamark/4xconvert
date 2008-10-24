@@ -90,19 +90,15 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AbstractHQLSearchCriteria;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Utility functions for searching.
@@ -178,13 +174,26 @@ public final class SearchableUtils {
 
     private static void handleNullifiedStatus(final Object obj, boolean disallowNullified,
             final StringBuffer whereClause, final Map<String, Object> params) {
+        String operator = determineOperator(whereClause);
         if (disallowNullified && obj instanceof Curatable) {
-            whereClause.append(String.format(" and %s.statusCode != :%s", ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
+            whereClause.append(String.format("%s %s.statusCode != :%s", operator, ROOT_OBJ_ALIAS,
+                    NULLIFIED_STATUS_PARAM));
             params.put(NULLIFIED_STATUS_PARAM, EntityStatus.NULLIFIED);
         } else if (disallowNullified && obj instanceof Correlation) {
-            whereClause.append(String.format(" and %s.status != :%s", ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
+            whereClause.append(String.format("%s %s.status != :%s", operator, ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
             params.put(NULLIFIED_STATUS_PARAM, RoleStatus.NULLIFIED);
         }
+    }
+
+    private static String determineOperator(final StringBuffer whereClause) {
+        String operator = "";
+        if (StringUtils.isBlank(whereClause.toString())) {
+            operator = AbstractHQLSearchCriteria.WHERE;
+        } else if (!AbstractHQLSearchCriteria.WHERE.equals(whereClause.toString())) {
+            //handle case when no criterion are provided. 
+            operator = AbstractHQLSearchCriteria.AND;
+        }
+        return operator;
     }
 
     private static void setQueryParams(final Map<String, Object> params, Query q) {
@@ -242,87 +251,10 @@ public final class SearchableUtils {
      */
     public static boolean hasSearchableCriterion(final Object o) {
 
-        AnnotationCallback ac = new Callback();
+        AnnotationCallback ac = new OneCriterionSpecifiedCallback();
 
         iterateAnnotatedMethods(o, ac);
         return (Boolean) ac.getSavedState();
     }
 
-    /**
-     * @author Todd Parnell
-     * 
-     */
-    private static final class Callback implements AnnotationCallback {
-        private boolean hasOneCriterion = false;
-
-        public void callback(Method m, Object result) throws NoSuchMethodException, IllegalAccessException,
-                InvocationTargetException {
-            if (hasOneCriterion) {
-                // previous method had a criteria, so no need to check this one
-                return;
-            }
-            if (result != null) {
-                String[] fields = m.getAnnotation(Searchable.class).fields();
-                if (result instanceof Collection<?>) {
-                    checkCollectionResultForCriteria(result, fields);
-                } else if (fields != null && fields.length > 0) {
-                    checksubFieldsForCriteria(result, fields);
-                } else {
-                    // not a collection, and no subfields selected, so
-                    // because it is non null, a criteria was found
-                    hasOneCriterion = true;
-                }
-            }
-        }
-
-        private void checksubFieldsForCriteria(Object result, String[] fields) {
-            for (String field : fields) {
-                Object subPropResult = null;
-                try {
-                    subPropResult = PropertyUtils.getSimpleProperty(result, field);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Unable to process property with name:" + field, e);
-                }
-                if (subPropResult != null) {
-                    if (subPropResult instanceof PersistentObject) {
-                        if (((PersistentObject) subPropResult).getId() != null) {
-                            hasOneCriterion = true;
-                            return;
-                        }
-                    } else {
-                        hasOneCriterion = true;
-                        return;
-                    }
-                }
-            }
-        }
-
-        private void checkCollectionResultForCriteria(Object result, String[] fields) throws NoSuchMethodException,
-                IllegalAccessException, InvocationTargetException {
-            if (fields != null && fields.length > 0 && !((Collection<?>) result).isEmpty()) {
-                Collection<?> col = (Collection<?>) result;
-                Class<? extends Object> fieldClass = col.iterator().next().getClass();
-                processCollectionProperties(fields, col, fieldClass);
-            }
-        }
-
-        private void processCollectionProperties(String[] fields, Collection<?> col, Class<? extends Object> fieldClass)
-                throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-            for (String propName : fields) {
-                // get the collection of values into a nice collection
-                Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(propName));
-                for (Object collectionObj : col.toArray()) {
-                    Object val = m2.invoke(collectionObj);
-                    if (val != null) {
-                        hasOneCriterion = true;
-                        return;
-                    }
-                }
-            }
-        }
-
-        public Object getSavedState() {
-            return hasOneCriterion;
-        }
-    }
 }

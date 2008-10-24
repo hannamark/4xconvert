@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The COPPA PO
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This COPPA PO Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the COPPA PO Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the COPPA PO Software; (ii) distribute and
+ * have distributed to and by third parties the COPPA PO Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,90 +80,119 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.PhoneNumber;
-import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.util.SearchableUtils.AnnotationCallback;
 
-import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 /**
- * Criteria class to search for organizations. NOTE: This implements Contactable so that it may be used
- * AbstractEditContactListAction
+ * Callback used to validate a annotated search criteria to ensure that one criterion is specified.
+ * @author Todd Parnell
  */
-public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteria<Organization> implements
-        Serializable {
+final class OneCriterionSpecifiedCallback implements AnnotationCallback {
+    private boolean hasOneCriterion = false;
 
-    private static final long serialVersionUID = 1L;
-    private final Email emailEntry;
-    private final PhoneNumber faxEntry;
-    private final PhoneNumber phoneEntry;
-    private final PhoneNumber ttyEntry;
-    private final URL urlEntry;
-
-    /**
-     * Default Constructor.
+    /** 
+     * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation")
-    public StrutsOrganizationSearchCriteria() {
-        super(new Organization());
-        getOrganization().setPostalAddress(new Address());
-        getOrganization().getPostalAddress().setCountry(new Country());
-        emailEntry = new Email();
-        getOrganization().getEmail().add(emailEntry);
-        faxEntry = new PhoneNumber();
-        getOrganization().getFax().add(faxEntry);
-        phoneEntry = new PhoneNumber();
-        getOrganization().getPhone().add(phoneEntry);
-        ttyEntry = new PhoneNumber();
-        getOrganization().getTty().add(ttyEntry);
-        urlEntry = new URL();
-        getOrganization().getUrl().add(urlEntry);
+    public void callback(Method m, Object result) throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException {
+        if (hasOneCriterion) {
+            // previous method had a criteria, so no need to check this one
+            return;
+        }
+        if (result != null) {
+            checkFields(m, result);
+        }
     }
 
-    /**
-     * @return organization used to find matches
-     */
-    public Organization getOrganization() {
-        return getCriteria();
+    private void checkFields(Method m, Object result) throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException {
+        String[] fields = m.getAnnotation(Searchable.class).fields();
+        if (result instanceof Collection<?>) {
+            checkCollectionResultForCriteria(result, fields);
+        } else if (fields != null && fields.length > 0) {
+            checkSubFieldsForCriteria(result, fields);
+        } else {
+            // not a collection, and no subfields selected, so
+            // because it is non null, a criteria was found
+            if (isStringAndBlank(result)) {
+                return;
+            }
+            hasOneCriterion = true;
+        }
     }
 
-    /**
-     * @return email entry 
-     */
-    public Email getEmailEntry() {
-        return emailEntry;
+    private void checkSubFieldsForCriteria(Object result, String[] fields) {
+        for (String field : fields) {
+            Object subPropValue = getSimpleProperty(result, field);
+            if (subPropValue == null) {
+                continue;
+            }
+            if (subPropValue instanceof PersistentObject) {
+                if (((PersistentObject) subPropValue).getId() != null) {
+                    hasOneCriterion = true;
+                    return;
+                }
+            } else {
+                if (isStringAndBlank(subPropValue)) {
+                    continue;
+                }
+                hasOneCriterion = true;
+                return;
+            }
+        }
     }
 
-    /**
-     * @return fax entry
-     */
-    public PhoneNumber getFaxEntry() {
-        return faxEntry;
+    private boolean isStringAndBlank(Object value) {
+        return value instanceof String && StringUtils.isBlank((String) value);
     }
 
-    /**
-     * @return phone entry
-     */
-    public PhoneNumber getPhoneEntry() {
-        return phoneEntry;
+    private Object getSimpleProperty(Object bean, String name) {
+        Object propertyValue = null;
+        try {
+            propertyValue = PropertyUtils.getSimpleProperty(bean, name);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to process property with name:" + name, e);
+        }
+        return propertyValue;
     }
 
-    /**
-     * @return tty entry
-     */
-    public PhoneNumber getTtyEntry() {
-        return ttyEntry;
+    private void checkCollectionResultForCriteria(Object result, String[] fields) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException {
+        if (fields != null && fields.length > 0 && !((Collection<?>) result).isEmpty()) {
+            Collection<?> col = (Collection<?>) result;
+            Class<? extends Object> fieldClass = col.iterator().next().getClass();
+            processCollectionProperties(fields, col, fieldClass);
+        }
     }
 
-    /**
-     * @return url entry
-     */
-    public URL getUrlEntry() {
-        return urlEntry;
+    private void processCollectionProperties(String[] fields, Collection<?> col, Class<? extends Object> fieldClass)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        for (String propName : fields) {
+            // get the collection of values into a nice collection
+            Method m2 = fieldClass.getMethod("get" + StringUtils.capitalize(propName));
+            for (Object collectionObj : col.toArray()) {
+                Object val = m2.invoke(collectionObj);
+                if (val != null) {
+                    if (isStringAndBlank(val)) {
+                        continue;
+                    }
+                    hasOneCriterion = true;
+                    return;
+                }
+            }
+        }
+    }
+
+    public Object getSavedState() {
+        return hasOneCriterion;
     }
 }

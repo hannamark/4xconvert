@@ -54,7 +54,11 @@
 				        <h2>Contact Information</h2>
 				            <div class="box_white">
 				                <div class="clear"></div>
-				                <%@ include file="../../contactable/contacts.jsp" %>            
+	                            <s:textfield label="%{getText('emailEntry.value')}" name="criteria.emailEntry.value" size="20"/>
+	                            <s:textfield label="%{getText('urlEntry.value')}" name="criteria.urlEntry.value" size="20"/>
+	                            <s:textfield label="%{getText('phoneEntry.value')}" name="criteria.phoneEntry.value" size="20"/>
+	                            <s:textfield label="%{getText('faxEntry.value')}" name="criteria.faxEntry.value" size="20"/>
+	                            <s:textfield label="%{getText('ttyEntry.value')}" name="criteria.ttyEntry.value" size="20"/>
 				            </div>
 				        </div>
 				        <div class="clearfloat"></div>

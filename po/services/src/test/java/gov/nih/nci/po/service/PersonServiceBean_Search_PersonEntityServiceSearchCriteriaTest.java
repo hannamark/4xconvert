@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -248,9 +249,14 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setDeliveryAddressLine("");
-        assertEquals(2, getPersonServiceBean().count(sc));
-        assertEquals(2, getPersonServiceBean().search(sc).size());
+        try {
+            personSc.getPostalAddress().setDeliveryAddressLine("");
+            assertEquals(2, getPersonServiceBean().count(sc));
+            assertEquals(2, getPersonServiceBean().search(sc).size());
+            fail();
+        } catch (OneCriterionRequiredException e) {
+
+        }
     }
 
     @Test
@@ -270,9 +276,14 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
 
-        personSc.getPostalAddress().setCityOrMunicipality("");
-        assertEquals(3, getPersonServiceBean().count(sc));
-        assertEquals(3, getPersonServiceBean().search(sc).size());
+        try {
+            personSc.getPostalAddress().setCityOrMunicipality("");
+            assertEquals(3, getPersonServiceBean().count(sc));
+            assertEquals(3, getPersonServiceBean().search(sc).size());
+            fail();
+        } catch (OneCriterionRequiredException e) {
+
+        }
     }
 
     @Test
@@ -291,10 +302,15 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
         personSc.getPostalAddress().setPostalCode("987");
         assertEquals(1, getPersonServiceBean().count(sc));
         assertEquals(1, getPersonServiceBean().search(sc).size());
+        
+        try {
+            personSc.getPostalAddress().setPostalCode("");
+            assertEquals(3, getPersonServiceBean().count(sc));
+            assertEquals(3, getPersonServiceBean().search(sc).size());
+            fail();
+        } catch (OneCriterionRequiredException e) {
 
-        personSc.getPostalAddress().setPostalCode("");
-        assertEquals(3, getPersonServiceBean().count(sc));
-        assertEquals(3, getPersonServiceBean().search(sc).size());
+        }
     }
 
     @Test

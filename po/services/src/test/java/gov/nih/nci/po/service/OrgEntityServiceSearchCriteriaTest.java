@@ -1,5 +1,6 @@
 package gov.nih.nci.po.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
@@ -11,9 +12,10 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 
+import org.hibernate.Query;
 import org.junit.Test;
 
-public class OrgEntityServiceSearchCriteriaTest {
+public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCase {
 
     @Test
     public void testGettersAndSetters() throws Exception {
@@ -24,11 +26,13 @@ public class OrgEntityServiceSearchCriteriaTest {
     @Test
     @SuppressWarnings("deprecation")
     public void testHasAtLeastOneCriterionSpecified() {
-        AnnotatedBeanSearchCriteria<Organization> noCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        AnnotatedBeanSearchCriteria<Organization> noCrit = new AnnotatedBeanSearchCriteria<Organization>(
+                new Organization());
         assertFalse(noCrit.hasOneCriterionSpecified());
 
-        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
-        
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(
+                new Organization());
+
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getCriteria().setName("name");
@@ -114,24 +118,117 @@ public class OrgEntityServiceSearchCriteriaTest {
 
     }
 
-    
+    @SuppressWarnings("deprecation")
     @Test
     public void test1() {
-        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(
+                new Organization());
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getCriteria().getPostalAddress().setCountry(new Country());
         assertFalse(yesCrit.hasOneCriterionSpecified());
     }
-    
+
     @Test
     public void test2() {
-        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(
+                new Organization());
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         yesCrit.getCriteria().setPostalAddress(new Address());
         assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getCriteria().getPostalAddress().setCountry(new Country(null, null, null, "a"));
         assertFalse(yesCrit.hasOneCriterionSpecified());
     }
+
+    @Test
+    public void testHasAtLeastOneCriterionSpecified_TelecomAddressFields() {
+
+        AnnotatedBeanSearchCriteria<Organization> yesCrit = new AnnotatedBeanSearchCriteria<Organization>(
+                new Organization());
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().getEmail().add(new Email());
+        yesCrit.getCriteria().getEmail().add(new Email());
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().getEmail().add(new Email(null));
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().getEmail().add(new Email(""));
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().getEmail().add(new Email(null));
+        yesCrit.getCriteria().getEmail().add(new Email(""));
+        assertFalse(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().getEmail().add(new Email(null));
+        yesCrit.getCriteria().getEmail().add(new Email("a"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
+        yesCrit.getCriteria().getEmail().add(new Email(""));
+        yesCrit.getCriteria().getEmail().add(new Email("a"));
+        assertTrue(yesCrit.hasOneCriterionSpecified());
+
+    }
+
+    @Test
+    public void getQuery_TelecomAddressFields1() {
+
+        AnnotatedBeanSearchCriteria<Organization> yesCrit;
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email());
+        yesCrit.getCriteria().getEmail().add(new Email());
+        Query query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj", query.getQueryString());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email(null));
+        query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj", query.getQueryString());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email(""));
+        query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj", query.getQueryString());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email(null));
+        yesCrit.getCriteria().getEmail().add(new Email(""));
+        query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj", query.getQueryString());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email(null));
+        yesCrit.getCriteria().getEmail().add(new Email("a"));
+        query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
+                + "gov.nih.nci.po.data.bo.Email obj_email "
+                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 )  ) ",
+                query.getQueryString());
+
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email(""));
+        yesCrit.getCriteria().getEmail().add(new Email("a"));
+        query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
+                + "gov.nih.nci.po.data.bo.Email obj_email "
+                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 )  ) ",
+                query.getQueryString());
+        
+        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization(), false);
+        yesCrit.getCriteria().getEmail().add(new Email("a"));
+        yesCrit.getCriteria().getEmail().add(new Email("b"));
+        query = yesCrit.getQuery("", false);
+        assertEquals(" SELECT obj FROM gov.nih.nci.po.data.bo.Organization obj, "
+                + "gov.nih.nci.po.data.bo.Email obj_email "
+                + "WHERE  obj_email IN ELEMENTS(obj.email)  AND  (  ( lower( obj_email.value) like :emailvalue0 OR lower( obj_email.value) like :emailvalue1 )  ) ",
+                query.getQueryString());
+
+    }
+
 }
