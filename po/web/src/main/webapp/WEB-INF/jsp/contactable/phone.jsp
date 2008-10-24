@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<po:successMessages />
+<po:errorMessages />
 <ul>
     <s:iterator value="contactable.phone" status="e">
         <c:url var="removeAction" value="../../contactable/phone/remove.action">

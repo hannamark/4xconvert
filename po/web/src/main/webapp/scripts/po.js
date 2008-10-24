@@ -77,3 +77,54 @@ function setFocusToFirstControl() {
     }
 }
 
+//Fires an event for the element passed in.
+//Params:
+//       1. eventElement - If contextName is not blank or null, the topic will be appended.
+//       2. includeNav - If true, the left navigation pane appears. Else, the navigation pane is not displayed.
+function fireEvent(eventElement, firefoxEvent, ieEvent) {
+	if (document.createEvent) {
+		var e = document.createEvent('Events');
+		e.initEvent(firefoxEvent, true, true);
+	} else if (document.createEventObject) {
+		var e = document.createEventObject();
+	}
+
+	if (eventElement.dispatchEvent) {
+		eventElement.dispatchEvent(e);
+	} else if (eventElement.fireEvent) {
+		eventElement.fireEvent(ieEvent, e);
+	}
+}
+
+
+function copyValueToTextField(value, textFieldId) {
+    $(textFieldId).value = value;
+}
+
+function selectValueInSelectField(value, selectBoxId, firefoxEvent, ieEvent) {
+	var found = false;
+    for ( var i = 0; i <= $(selectBoxId).length - 1; i = i + 1) {
+		var selectedText = $(selectBoxId).options[i].value;
+		if (selectedText == value) {
+			var isFireEvent = false;
+			if ($(selectBoxId).selectedIndex != i) {
+				isFireEvent = true;
+			}
+			$(selectBoxId).selectedIndex = i;
+			found = true;
+			if (isFireEvent) {
+				if (firefoxEvent == null) {
+					firefoxEvent = 'change';
+				}
+				if (ieEvent == null) {
+					ieEvent = 'onchange';
+				}
+				fireEvent($(selectBoxId), firefoxEvent, ieEvent);
+			}
+			break;
+		}
+	}     
+    if (!found) {
+    	alert('' + value + ' not found!');
+    }
+}

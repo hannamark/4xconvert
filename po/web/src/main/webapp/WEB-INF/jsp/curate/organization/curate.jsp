@@ -35,7 +35,7 @@
        onchange="document.getElementById('curateOrgForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
        />
 </s:form>
-</c:if>
+</c:if> 
 
 
 <div id="page" style="margin-top:10px;">
@@ -72,7 +72,7 @@
 			       value="organization.statusCode" 
 			       headerKey="" headerValue="--Select a Status--" 
 			       onchange="handleDuplicateOf();"
-			       />           
+			       />         
         	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
 	                    <div style="float:right;">
