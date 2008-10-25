@@ -61,7 +61,7 @@ public class TrialFundingAction extends ActionSupport {
               }
             } else {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
-                        getText("error.trialDocument.noRecords"));
+                        getText("error.trialFunding.noRecords"));
             }
             return QUERY_RESULT;    
 
