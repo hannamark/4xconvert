@@ -27,6 +27,7 @@
 </style> 
 
 <script type="text/javascript">
+
     addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
@@ -63,11 +64,14 @@
 	    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
 	}	
 	function lookupperson(){
-		
 	    showPopWin('${lookupPersonsUrl}', 1050, 400, '', 'Persons');
 	}	
 	function lookupcontactperson(){
-	    showPopWin('${lookupContactPersonsUrl}', 1050, 400, '', 'Persons');
+		var tel = document.getElementById('personContactWebDTO_telephone').value;
+		var email = document.getElementById('personContactWebDTO_email').value;
+		var url = '${lookupContactPersonsUrl}?tel='+tel+'&email='+email;
+		
+	    showPopWin(url, 1050, 400, '', 'Persons');
 	}
 	function loadDiv(orgid){
 			 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;

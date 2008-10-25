@@ -1,9 +1,14 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>	
 <table class="form">
 	<tr>
-	    <td scope="row" class="label"><s:label for="editOrg.name">First Name:</s:label></td>
+	    <td scope="row" class="label"><s:label for="editOrg.name">First Name:</s:label><span class="required">*</span></td>
 		<td class="value" style="width:250px">
-		<s:textfield name="personContactWebDTO.firstName" maxlength="80" size="80" cssStyle="width: 200px" disabled="disabled" readonly="true"/>
+		<s:textfield name="personContactWebDTO.firstName" maxlength="80" size="80" cssStyle="width: 200px" disabled="disabled" readonly="true" />                            
+		<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>personContactWebDTO.firstName</s:param>
+                               </s:fielderror>                            
+                             </span>
 		</td>			        
 		<td class="value">
 			<ul style="margin-top:-6px;">			

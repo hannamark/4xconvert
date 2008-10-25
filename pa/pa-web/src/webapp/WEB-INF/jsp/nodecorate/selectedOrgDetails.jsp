@@ -1,13 +1,21 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <table  class="form">
 		<tr>
-		    <td scope="row" class="label"><s:label for="editOrg.name">Organization Name:</s:label></td>
+		    <td scope="row" class="label"><s:label for="editOrg.name">Organization Name:</s:label><span class="required">*</span>
+	    
+		    
+		    </td>
 			<td class="value" style="width:250px">
 				<s:textfield name="orgFromPO.orgName" maxlength="80" size="80" cssStyle="width: 300px" disabled="disabled" readonly="true"/>
 				<s:if test="%{currentAction == 'create'}">
 				<span class="info">Click <strong>Look Up</strong> to choose an organization.</span>
 				<span class="formErrorMsg"></span>
 				</s:if>
+				         <span class="formErrorMsg"> 
+                              <s:fielderror>
+                              <s:param>editOrg.name</s:param>
+                              </s:fielderror>                            
+                        </span>	
 			</td>			        
 			<td class="value">
 			         <s:if test="%{currentAction == 'create'}">

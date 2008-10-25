@@ -49,6 +49,7 @@ public class PopUpAction extends ActionSupport {
      */
     public String lookuppersons() {
         persons = null;
+        
         return "persons";
     }
 
@@ -58,6 +59,14 @@ public class PopUpAction extends ActionSupport {
      */
     public String lookupcontactpersons() {
         persons = null;
+        String email = ServletActionContext.getRequest().getParameter("email");
+        String telephone = ServletActionContext.getRequest().getParameter("tel");
+        if (email != null) {
+            ServletActionContext.getRequest().getSession().setAttribute("emailEntered", email);
+        }
+        if (telephone != null) {
+            ServletActionContext.getRequest().getSession().setAttribute("telephoneEntered", telephone);
+        }          
         return "contactpersons";
     }
 
@@ -114,6 +123,7 @@ public class PopUpAction extends ActionSupport {
      * @return result
      */
     public String displaycontactPersonsList() {
+
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
         if (firstName.equals("") && lastName.equals("")) {
