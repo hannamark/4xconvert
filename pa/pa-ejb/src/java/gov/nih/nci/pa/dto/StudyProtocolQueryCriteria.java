@@ -37,6 +37,11 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String documentWorkflowStatusCode;
     private Long principalInvestigatorId;
     private String primaryPurposeCode;
+    private String identifierType;
+    private String organizationType;
+    
+    
+    
     
     /**
      * 
@@ -180,7 +185,31 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setPrimaryPurposeCode(String primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
-    
+    /**
+     * @return the identifierType
+     */
+    public String getIdentifierType() {
+        return identifierType;
+    }
+    /**
+     * @param identifierType the identifierType to set
+     */
+    public void setIdentifierType(String identifierType) {
+        this.identifierType = identifierType;
+    }
+    /**
+     * @return the organizationType
+     */
+    public String getOrganizationType() {
+        return organizationType;
+    }
+    /**
+     * @param organizationType the organizationType to set
+     */
+    public void setOrganizationType(String organizationType) {
+        this.organizationType = organizationType;
+    }
+
     
     
 }
