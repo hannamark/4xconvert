@@ -18,63 +18,206 @@
 
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
- <h1><fmt:message key="search.trial.view.title" /></h1>
+ <h1><fmt:message key="view.trial.page.title" /></h1>
 
 <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 
   <div class="box">
     <s:form ><s:actionerror/>
-	<h2><fmt:message key="search.trial.view.trialDetails"/></h2>
+	<h2><fmt:message key="view.trial.trialDetails"/></h2>
 
-       <table class="form">
-        <tr>
-        <td scope="row" class="label">
-            <label for="nciAccessionNumber">
-            <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                <fmt:message key="search.trial.nciIdentifier"/>
-             </dfn>
-            </label>
-        </td>
-        <td class="value">
-            <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
-        </td>
-        </tr>
-        <tr>
-            <td scope="row" class="label">
-                <label for="leadOrgTrialIdentifier">
-                        <fmt:message key="search.trial.localStudyProtocolIdentifier"/>
-                </label>
+        <table class="form">
+            <tr>
+	            <td scope="row" class="label">
+	                <label for="nct">	                
+	                   <fmt:message key="view.trial.nciAccessionNumber"/>
+	                </label>
+	            </td>
+                <td class="value">
+                    <c:out value="${sessionScope.trialSummary.nciAccessionNumber}"/> 
                 </td>
-            <td class="value">
-               <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/> 
+            </tr>
+            <tr>
+            <tr>
+                <td scope="row" class="label">
+                    <label for="nct">
+                        <fmt:message key="view.trial.leadOrgTrialIdentifier"/>
+                    </label>
+                </td>
+                <td class="value">
+                    <c:out value="${sessionScope.studyParticipation.localProtocolIdentifier }"/> 
+                </td>
+            </tr>
+            <tr>     
+            <td scope="row" class="label">
+                <label for="officialTitle">
+                    <fmt:message key="view.trial.title"/>                
+                </label>
             </td>
-         </tr>
-         <tr>     
-         <td scope="row" class="label">
-             <label for="officialTitle">
-             <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                 <fmt:message key="search.trial.view.officialTitle"/>
-              </dfn>
-             </label>
-         </td>
-         <td class="value">
-              <c:out value="${sessionScope.trialSummary.officialTitle }"/> 
-         </td>
-         </tr>
-         <tr>     
-         <td scope="row" class="label">
-             <label for="officialTitle">
-             <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                 <fmt:message key="search.trial.view.studyStatusCode"/>
-              </dfn>
-             </label>
-         </td>
-         <td class="value">
-              <c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/> 
-         </td>
-         </tr>
-        </table>         
+            <td class="value">
+                 <c:out value="${sessionScope.trialSummary.trialTitle }"/> 
+            </td>
+            </tr>       
+            <tr>            
+            <td scope="row" class="label">
+                <label for="trialPhase">
+                    <fmt:message key="view.trial.phase"/>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${sessionScope.trialSummary.trialPhase }"/> 
+            </td>
+            </tr>
+            <tr>
+            <td scope="row" class="label">
+                <label for="leadOrg"> 
+                    <fmt:message key="view.trial.leadOrganization"/>
+                </label>
+            </td>
+            <td class="value">
+                Organization A
+            </td>
+            </tr> 
+            <c:if test="${sessionScope.trialFundingList != null}">  
+		        <tr>
+	                <td colspan="2" class="space">&nbsp;</td>
+		        </tr>	        
+		        <tr>
+	                <th colspan="2"><h2><fmt:message key="view.trial.grantInfo"/></h2></th>
+		        </tr>
+	            <tr>
+	                <td>
+	                    <table>
+	                        <tr>
+	                           <td scope="row" class="label">
+					                <label for="leadOrg"> 
+					                    <fmt:message key="view.trial.fundingMechanism"/>
+					                </label>
+					            </td>
+					            <td scope="row" class="label">
+	                                <label for="leadOrg"> 
+	                                    <fmt:message key="view.trial.instituteCode"/>
+	                                </label>
+	                            </td>
+	                            <td scope="row" class="label">
+	                                <label for="leadOrg"> 
+	                                    <fmt:message key="view.trial.serialNumber"/>
+	                                </label>
+	                            </td>
+	                            <td scope="row" class="label">
+	                                <label for="leadOrg"> 
+	                                    <fmt:message key="view.trial.divProgram"/>
+	                                </label>
+	                            </td>
+	                        
+	                        </tr>
+	                        <tr>
+	                          <td class="value">
+	                            <c:out value="${sessionScope.trialFundingList.fundingMechanismCode }"/> 
+	                          </td>
+	                          <td class="value">
+	                            <c:out value="${sessionScope.trialFundingList.nihInstitutionCode }"/> 
+	                          </td>
+	                          <td class="value">
+	                            <c:out value="${sessionScope.trialFundingList.serialNumber }"/> 
+	                          </td>
+	                          <td class="value">
+	                            <c:out value="${sessionScope.trialFundingList.nciDivisionProgramCode }"/> 
+	                          </td>
+	                        </tr>
+	                    </table>
+	                </td>
+	            </tr>
+            </c:if>
+            <c:if test="${sessionScope.trialOverallStatus != null}">  
+                <tr>
+                    <td colspan="2" class="space">&nbsp;</td>
+                </tr>           
+                <tr>
+                    <th colspan="2"><h2><fmt:message key="view.trial.statusDates"/></h2></th>
+                </tr>
+                <tr>            
+		            <td scope="row" class="label">
+		                <label for="currentTrialStatus">
+		                    <fmt:message key="view.trial.currentTrialStatus"/>
+		                </label>
+		            </td>
+		            <td class="value">
+		                <c:out value="${sessionScope.trialOverallStatus.statusCode }"/> 
+		            </td>
+	            </tr>
+	            <tr>            
+	                <td scope="row" class="label">
+	                    <label for="currentTrialStatusDate">
+	                        <fmt:message key="view.trial.currentTrialStatusDate"/>
+	                    </label>
+	                </td>
+	                <td class="value">
+	                    <c:out value="${sessionScope.trialOverallStatus.statusDate }"/> 
+	                </td>
+                </tr>
+                <c:if test="${sessionScope.trialSummary.startDate != null}">
+	                <tr>            
+		                <td scope="row" class="label">
+		                    <label for="studyStartDate">
+		                        <fmt:message key="view.trial.studyStartDate"/>
+		                    </label>
+		                </td>
+		                <td class="value">
+		                    <c:out value="${sessionScope.trialSummary.startDate }"/>
+		                    <c:out value="${sessionScope.trialSummary.startDateType }"/>  
+		                </td>
+	                </tr>
+                </c:if>
+                <c:if test="${sessionScope.trialSummary.completionDate != null}">
+	                <tr>       
+	                    <td scope="row" class="label">
+	                        <label for="primaryCompletionDate">
+	                            <fmt:message key="view.trial.primaryCompletionDate"/>
+	                        </label>
+	                    </td>
+	                    <td class="value">
+	                        <c:out value="${sessionScope.trialSummary.completionDate }"/>
+	                        <c:out value="${sessionScope.trialSummary.completionDateType }"/>  
+	                    </td>
+	                </tr>
+                </c:if>
+            </c:if>
+                <tr>
+                    <td colspan="2" class="space">&nbsp;</td>
+                </tr>           
+                <tr>
+                    <th colspan="2"><h2><fmt:message key="view.trial.documents"/></h2></th>
+                </tr>
+                <tr>            
+                    <td scope="row" class="label">
+                        <label for="protocolDocument">
+                            <fmt:message key="view.trial.protocolDocument"/>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:url var="url" value="submitTrialviewDoc.action" >
+						  <c:param name="id " value="${sessionScope.protocolDocument.id}" />
+						</c:url>
+                        <a href="<c:out value="${url}"/>"><c:out value="${sessionScope.protocolDocument.fileName }"/></a>
+                    </td>
+                </tr>
+                <tr>            
+                    <td scope="row" class="label">
+                        <label for="irbApproval">
+                            <fmt:message key="view.trial.irbApproval"/>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:url var="url" value="submitTrialviewDoc.action" >
+                          <c:param name="id " value="${sessionScope.irbApproval.id}" />
+                        </c:url>
+                        <a href="<c:out value="${url}"/>"><c:out value="${sessionScope.irbApproval.fileName }"/></a>
+                    </td>
+                </tr>
+        </table>  
+                  
     </s:form>
    </div>
 
