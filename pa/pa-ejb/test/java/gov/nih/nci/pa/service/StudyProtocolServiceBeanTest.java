@@ -3,20 +3,19 @@ package gov.nih.nci.pa.service;
 //import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-//import gov.nih.nci.coppa.iso.Ii;
-//import gov.nih.nci.pa.domain.StudyProtocol;
-//import gov.nih.nci.pa.domain.StudyProtocolTest;
-//import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
-import gov.nih.nci.pa.enums.AllocationCode;
-import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
-//import gov.nih.nci.pa.util.IsoConverter;
-//import org.hibernate.Session;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -105,4 +104,45 @@ public class StudyProtocolServiceBeanTest {
         assertNotNull(update.getIdentifier().getExtension());
     }
 
+    @Test
+    public void nullInDatesTest() throws Exception {
+        StudyProtocol sp = new StudyProtocol();   
+        sp.setOfficialTitle("cacncer for THOLA");
+        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        TestSchema.addUpdObject(sp);
+        
+        StudyProtocolDTO spDto = remoteEjb.getStudyProtocol(IiConverter.convertToIi(sp.getId()));
+        spDto.setStartDate(null);
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("PAException should have been thrown for null in start date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        spDto.setStartDate(TsConverter.convertToTs(null));
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("PAException should have been thrown for Ts null in start date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        spDto = remoteEjb.getStudyProtocol(IiConverter.convertToIi(sp.getId()));
+        spDto.setPrimaryCompletionDate(null);
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("PAException should have been thrown for null in completion date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        spDto.setPrimaryCompletionDate(TsConverter.convertToTs(null));
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("PAException should have been thrown for Ts null in completion date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+    }
 }

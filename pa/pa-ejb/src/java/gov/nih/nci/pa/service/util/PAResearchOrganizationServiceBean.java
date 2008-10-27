@@ -92,7 +92,7 @@ public class PAResearchOrganizationServiceBean
     public PAResearchOrganizationDTO get(Long researchOrganizationId)
             throws PAException {
         if (researchOrganizationId == null) {
-            throw new PAException("Attempted to call getget(Long researchOrganizationId) with null argument.  ");
+            throw new PAException("Attempted to call get(Long researchOrganizationId) with null argument.  ");
         }
         LOG.debug("Entering getByOrganization.  ");
         try {

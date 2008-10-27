@@ -108,5 +108,34 @@ public class StudyOverallStatusServiceTest {
         StudyOverallStatusDTO resultDto = remoteEjb.create(dto);
         assertFalse(PAUtil.isIiNull(resultDto.getIi()));
     }
+    
+    @Test
+    public void nullInDateTest() throws Exception {
+        StudyProtocol spNew = new StudyProtocol();
+        spNew.setOfficialTitle("New Protocol");
+        TestSchema.addUpdObject(spNew);
+        
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusDate(null);
+        dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
+        dto.setIi(null);
+        try {
+            remoteEjb.create(dto);
+            fail("PAException should have been thrown for null in status date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setStatusDate(TsConverter.convertToTs(null));
+        try {
+            remoteEjb.create(dto);
+            fail("PAException should have been thrown for Ts null in status date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
+        dto = remoteEjb.create(dto);
+        assertFalse(PAUtil.isIiNull(dto.getIi()));
+    }
  
 }
