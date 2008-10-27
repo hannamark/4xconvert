@@ -20,6 +20,10 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
      */
     TREATING_SITE("Treating Site", false), 
     /**
+     * Identifier Assigner.
+     */
+    IDENTIFIER_ASSIGNER("Identifier Assigner", false), 
+    /**
      * Data Management Center.
      */
     DATA_MANAGEMENT_CENTER("Data Management Center", false),
@@ -43,6 +47,8 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
      * Laboratory.
      */
     LABORATORY("Laboratory", true);
+    
+    
      
           
      private String code;
