@@ -26,6 +26,7 @@
             <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
             <result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
+            <result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
         </action>
         <action name="submitTrial*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
             <interceptor-ref name="fileUpload"/>
