@@ -59,7 +59,7 @@ function handleAction(){
                 </td>
                 <s:set name="identifierTypeValues" value="@gov.nih.nci.pa.enums.IdentifierTypeCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" headerValue="All" name="criteria.identifierType"  list="#identifierTypeValues" value="criteria.identifierType" cssStyle="width:150px" />                                                                    
+                    <s:select headerKey="" headerValue="NCI" name="criteria.identifierType"  list="#identifierTypeValues" value="criteria.identifierType" cssStyle="width:150px" />                                                                    
                 </td>
                 <td scope="row" class="label">
                     <label for="identifier"> <fmt:message key="search.trial.identifier"/></label>
@@ -72,7 +72,7 @@ function handleAction(){
                 </td>
                 	<s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.OrganizationTypeCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" headerValue="All" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:150px" />
+                    <s:select headerKey="" headerValue="Lead" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:150px" />
                 </td>
                 <td  scope="row" class="label">
                 <label for="organization"> <fmt:message key="search.trial.organization"/></label> 
