@@ -19,8 +19,20 @@ public enum InterventionTypeCode implements CodedEnum<String> {
     DRUG("Drug"),
     /** Device. */
     DEVICE("Device"),
+    /** Biological/Vaccine. */
+    BIOLOGICAL_VACCINE("Biological/Vaccine"),
+    /** Procedure/Surgery. */
+    PROCEDURE_SURGERY("Procedure/Surgery "),
     /** Radiation. */
-    RADIATION("Radiation");    
+    RADIATION("Radiation"),
+    /** Behavioral. */
+    BEHAVIORAL("Behavioral"),
+    /** Genetic. */
+    GENETIC("Genetic"),
+    /** Dietary Supplement. */
+    DIETARY_SUPPLEMENT("Dietary Supplement"),
+    /** Other. */
+    OTHER("Other");
     
     private String code;
     /**
