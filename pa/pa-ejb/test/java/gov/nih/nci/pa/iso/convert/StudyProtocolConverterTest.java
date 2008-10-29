@@ -67,7 +67,7 @@ public class StudyProtocolConverterTest  {
                 spDTO.getAccrualReportingMethodCode().getCode());
         assertEquals("Expanded Access Indicator does not  match " , 
                 sp.getExpandedAccessIndicator(), spDTO.getExpandedAccessIndicator().getValue());
-        assertEquals("Identifer does not match " , sp.getIdentifier() , spDTO.getIdentifier().getExtension());
+        assertEquals("Identifer does not match " , sp.getIdentifier() , spDTO.getAssignedIdentifier().getExtension());
         assertEquals("Monitor code does not match " , sp.getMonitorCode().getCode(), spDTO.getMonitorCode().getCode());
         assertEquals("Official Title does not match " , sp.getOfficialTitle() , spDTO.getOfficialTitle().getValue());
         assertEquals("Phase code does not match " , sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());

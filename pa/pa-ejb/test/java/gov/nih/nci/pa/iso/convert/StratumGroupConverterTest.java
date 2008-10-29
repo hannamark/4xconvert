@@ -15,13 +15,13 @@ import org.junit.Test;
 public class StratumGroupConverterTest {
 
     private Session sess;
-        
+
         @Before
         public void setUp() throws Exception {
             TestSchema.reset1();
             TestSchema.primeData();
             sess = TestSchema.getSession();
-        }    
+        }
 
         @Test
         public void convertFromDomainToDTO() throws Exception {
@@ -31,25 +31,25 @@ public class StratumGroupConverterTest {
             bo.setDescription("Description");
             bo.setGroupNumberText("Code");
             bo.setStudyProtocol(sp);
-            
+
             StratumGroupDTO dto = StratumGroupConverter.convertFromDomainToDTO(bo);
-            assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIi()));
+            assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
             assertEquals(bo.getDescription(), dto.getDescription().getValue());
             assertEquals(bo.getGroupNumberText(), dto.getGroupNumberText().getValue());
             assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
         }
-        
+
         @Test
         public void convertFromDTOToDomain() throws Exception {
             StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
             StratumGroupDTO dto = new StratumGroupDTO();
-            dto.setIi(IiConverter.convertToIi((Long) null));
+            dto.setIdentifier(IiConverter.convertToIi((Long) null));
             dto.setDescription(StConverter.convertToSt("Description"));
             dto.setGroupNumberText(StConverter.convertToSt("Code"));
             dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
-            
+
             StratumGroup bo = StratumGroupConverter.convertFromDTOToDomain(dto);
-            assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIi()));
+            assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
             assertEquals(bo.getDescription(), dto.getDescription().getValue());
             assertEquals(bo.getGroupNumberText(), dto.getGroupNumberText().getValue());
             assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.convert;
 
@@ -24,13 +24,13 @@ import org.junit.Test;
  */
 public class StudyOverallStatusConverterTest {
     private Session sess;
-    
+
     @Before
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
         sess = TestSchema.getSession();
-    }    
+    }
 
     @Test
     public void convertFromDomainToDTO() throws Exception {
@@ -40,25 +40,25 @@ public class StudyOverallStatusConverterTest {
         bo.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
         bo.setStatusDate(PAUtil.dateStringToTimestamp("1/1/2008"));
         bo.setStudyProtocol(sp);
-        
+
         StudyOverallStatusDTO dto = StudyOverallStatusConverter.convertFromDomainToDTO(bo);
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIi()));
+        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(bo.getStatusDate(), TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
     }
-    
+
     @Test
     public void convertFromDTOToDomain() throws Exception {
         StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setIi(IiConverter.convertToIi((Long) null));
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/11/2002")));
         dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
-        
+
         StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIi()));
+        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(bo.getStatusDate(), TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
