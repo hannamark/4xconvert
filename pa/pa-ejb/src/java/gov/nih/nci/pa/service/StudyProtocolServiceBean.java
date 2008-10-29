@@ -3,12 +3,15 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -40,7 +43,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" })
 public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
@@ -306,7 +309,15 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             isp.setSection801Indicator(upd.getSection801Indicator());
             isp.setStartDate(upd.getStartDate());
             isp.setStartDateTypeCode(upd.getStartDateTypeCode());
-
+            isp.setDesignConfigurationCode(upd.getDesignConfigurationCode());
+            isp.setNumberOfInterventionGroups(upd.getNumberOfInterventionGroups());
+            isp.setBlindingSchemaCode(upd.getBlindingSchemaCode());
+            isp.setAllocationCode(upd.getAllocationCode());
+            isp.setPhaseOtherText(upd.getPhaseOtherText());
+            isp.setPrimaryPurposeOtherText(upd.getPrimaryPurposeOtherText());
+            //isp.setBlindingRoleCode(upd.getBlindingRoleCode());
+            isp.setStudyClassificationCode(upd.getStudyClassificationCode());
+            isp.setMaximumTargetAccrualNumber(upd.getMaximumTargetAccrualNumber());
             isp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
             isp.setDateLastUpdated(now);
 
@@ -405,51 +416,153 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
     /**
      *
      * @param ii ii
-     * @return InterventionalStudyProtocolDTO
+     * @return ObservationalStudyProtocolDTO
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public InterventionalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
+    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getInterventionalStudyProtocol");
+        LOG.info("Entering getObservationalStudyProtocol");
         Session session = null;
 
-        List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
-        InterventionalStudyProtocol isp = null;
+        List<ObservationalStudyProtocol> queryList = new ArrayList<ObservationalStudyProtocol>();
+        ObservationalStudyProtocol osp = null;
         try {
             Query query = null;
             session = HibernateUtil.getCurrentSession();
             // step 1: form the hql
             String hql = "select isp "
-                       + "from InterventionalStudyProtocol isp "
+                       + "from ObservationalStudyProtocol isp "
                        + "where isp.id =  " + Long.valueOf(ii.getExtension());
-            LOG.info(" query InterventionalStudyProtocol = " + hql);
+            LOG.info(" query ObservationalStudyProtocol = " + hql);
 
             // step 2: construct query object
             query = session.createQuery(hql);
             queryList = query.list();
 
-            isp = queryList.get(0);
+            osp = queryList.get(0);
             session.flush();
 
 
         }  catch (HibernateException hbe) {
             session.flush();
-            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = "
+            LOG.error(" Hibernate exception while retrieving getObservationalStudyProtocol for id = " 
                     + ii.getExtension() , hbe);
             throw new PAException(" Hibernate exception while retrieving "
-                    + "InterventionalStudyProtocol for id = " + ii.getExtension() , hbe);
+                    + "getObservationalStudyProtocol for id = " + ii.getExtension() , hbe);
         }
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        ObservationalStudyProtocolDTO ospDTO = 
+            ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
 
-        LOG.info("Leaving getInterventionalStudyProtocol");
-        return ispDTO;
+        LOG.info("Leaving getObservationalStudyProtocol");
+        return ospDTO;
+        
+    }  
+    
+    /**
+     * 
+     * @param ospDTO ObservationalStudyProtocolDTO
+     * @return ObservationalStudyProtocolDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
+            ObservationalStudyProtocolDTO ospDTO) throws PAException {
+        // enforce business rules
+        if (ospDTO == null) {
+            LOG.error(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null ");
+            
+        }
+        Timestamp now = new Timestamp((new Date()).getTime());
+        ObservationalStudyProtocolDTO  ospRetDTO = null;
+        Session session = null;
+        List<ObservationalStudyProtocol> queryList = new ArrayList<ObservationalStudyProtocol>();
+        
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select isp "
+                       + "from ObservationalStudyProtocol isp "
+                       + "where isp.id =  " + Long.valueOf(ospDTO.getIdentifier().getExtension());
+            LOG.info(" query ObservationalStudyProtocol = " + hql);
+            query = session.createQuery(hql);
+            queryList = query.list();
+            ObservationalStudyProtocol osp = queryList.get(0);
+            
+            ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.
+                                convertFromDTOToDomain(ospDTO);
+            // overwrite the values
+            osp.setSamplingMethodCode(upd.getSamplingMethodCode());
+            osp.setStudyModelCode(upd.getStudyModelCode());
+            osp.setStudyModelOtherText(upd.getStudyModelOtherText());
+            osp.setTimePerspectiveCode(upd.getTimePerspectiveCode());
+            osp.setTimePerspectiveOtherText(upd.getTimePerspectiveOtherText());
+            osp.setBiospecimenDescription(upd.getBiospecimenDescription());
+            osp.setBiospecimenRetentionCode(upd.getBiospecimenRetentionCode());
+            osp.setNumberOfGroups(upd.getNumberOfGroups());
+            osp.setMaximumTargetAccrualNumber(upd.getMaximumTargetAccrualNumber());
+            osp.setUserLastUpdated(StConverter.convertToString(ospDTO.getUserLastUpdated()));
+            osp.setDateLastUpdated(now);
 
+            session.update(osp);
+            session.flush();
+            ospRetDTO =  ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while updating ObservationalStudyProtocol for id = " 
+                    + ospDTO.getIdentifier().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating ObservationalStudyProtocol for id = " 
+                    + ospDTO.getIdentifier().getExtension() , hbe);
+        }
+        return ospRetDTO;
+        
     }
+    
+    /**
+     * for creating a new OSP.
+     * @param ispDTO  for osp
+     * @return ii ii
+     * @throws PAException exception
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ispDTO)
+    throws PAException {
+        if (ispDTO == null) {
+            LOG.error(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null ");
+            
+        }
+        if (ispDTO.getIdentifier() != null && ispDTO.getIdentifier().getExtension() != null) {
+            LOG.error(" Extension should be null = " + ispDTO.getIdentifier().getExtension());
+            throw new PAException("  Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
+            
+        }
+        LOG.debug("Entering createObservationalStudyProtocol");
+        ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
+        convertFromDTOToDomain(ispDTO);
+        osp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+        osp.setIdentifier(generateNciIdentifier());
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.save(osp);
+            LOG.info("Creating osp for id = " + osp.getId());
+        }  catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while creating createObservationalStudyProtocol for id = " 
+                    + ispDTO.getIdentifier().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while createObservationalStudyProtocol for id = " 
+                    + ispDTO.getIdentifier().getExtension() , hbe);
+        } finally {
+            session.flush();
+        }
+        LOG.debug("Leaving createInterventionalStudyProtocol");
+        return IiConverter.convertToIi(osp.getId());
+        
+    }
+
 
     private void createDocumentWorkFlowStatus(StudyProtocol sp) throws PAException {
         Session session = null;

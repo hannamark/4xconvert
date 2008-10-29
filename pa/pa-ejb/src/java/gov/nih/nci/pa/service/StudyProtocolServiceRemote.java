@@ -5,6 +5,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import javax.ejb.Remote;
@@ -59,5 +60,28 @@ public interface StudyProtocolServiceRemote {
      * @throws PAException exception
      */
     Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO) throws PAException;    
+    /**
+     * 
+     * @param ii ii
+     * @return ObservationalStudyProtocolDTO
+     * @throws PAException PAException
+     */
+    ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException;
     
+    /**
+     * 
+     * @param ospDTO ObservationalStudyProtocolDTO
+     * @return ObservationalStudyProtocolDTO
+     * @throws PAException PAException
+     */     
+    ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
+            ObservationalStudyProtocolDTO ospDTO) throws PAException;
+    
+    /**
+     * for creating a new OSP.
+     * @param ospDTO  for osp
+     * @return ii ii
+     * @throws PAException exception
+     */
+    Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO) throws PAException; 
 }
