@@ -31,7 +31,9 @@ public enum PhaseCode implements CodedEnum<String> {
     /*** Phase IV trial is a randomized, controlled trial that is designed . */
     IV("IV"),
     /*** Not Applicable . */
-    NA("NA");
+    NA("NA"),
+    /*** Other. */
+    OTHER("Other");
     
     private String code;
     /**
