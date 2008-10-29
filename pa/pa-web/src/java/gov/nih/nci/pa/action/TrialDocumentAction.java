@@ -33,7 +33,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 09/30/2008
  * copyright NCI 2008.  All rights reserved.
@@ -45,7 +45,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 public class TrialDocumentAction extends ActionSupport implements
 ServletResponseAware {
- 
+
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
     private static final String DELETE_RESULT = "delete";
     private File upload;
@@ -55,43 +55,43 @@ ServletResponseAware {
     private Long id = null;
     private HttpServletResponse servletResponse;
     private String page;
-    private static final int MAXF = 1024;     
+    private static final int MAXF = 1024;
 
-         
-    /**  
+
+    /**
      * @return result
      */
     public String query()  {
         LOG.info("Entering query");
-        try { 
+        try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);             
+            getAttribute(Constants.STUDY_PROTOCOL_II);
             List<DocumentDTO> isoList = PaRegistry.getDocumentService().
             getDocumentsByStudyProtocol(studyProtocolIi);
-            if (!(isoList.isEmpty())) {                
-                trialDocumentList = new ArrayList<TrialDocumentWebDTO>();                
+            if (!(isoList.isEmpty())) {
+                trialDocumentList = new ArrayList<TrialDocumentWebDTO>();
                 for (DocumentDTO dto : isoList) {
                     trialDocumentList.add(new TrialDocumentWebDTO(dto));
                 }
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("error.trialDocument.noRecords"));
             }
-            return SUCCESS;    
+            return SUCCESS;
 
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
     }
-    
+
     /**
      * @return result
      */
      public String input() {
          return INPUT;
      }
-     
+
      /**
       * @return result
       */
@@ -103,14 +103,14 @@ ServletResponseAware {
          }
          if (PAUtil.isEmpty(uploadFileName)) {
              addFieldError("trialDocumentWebDTO.uploadFileName",
-                     getText("error.trialDocument.uploadFileName"));           
+                     getText("error.trialDocument.uploadFileName"));
          }
          if (hasFieldErrors()) {
              return INPUT;
          }
-         try {           
+         try {
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-             getAttribute(Constants.STUDY_PROTOCOL_II); 
+             getAttribute(Constants.STUDY_PROTOCOL_II);
              DocumentDTO docDTO = new DocumentDTO();
              docDTO.setStudyProtocolIi(studyProtocolIi);
              docDTO.setTypeCode(
@@ -119,32 +119,32 @@ ServletResponseAware {
              docDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
              docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
-             PaRegistry.getDocumentService().create(docDTO); 
+             PaRegistry.getDocumentService().create(docDTO);
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
              return SUCCESS;
          } catch (Exception e) {
              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return INPUT;
-         }          
+         }
      }
-     
+
      /**
       * @return result
       */
      public String saveFile() {
          LOG.info("Entering saveFile");
-         try {  
-             DocumentDTO  docDTO = 
+         try {
+             DocumentDTO  docDTO =
                  PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
 
              StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
              .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
 
-             
+
              StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
              sb.append(File.separator).append(spDTO.getNciIdentifier()).append(File.separator).
-                 append(docDTO.getIi().getExtension()).append('-').append(docDTO.getFileName().getValue());
+                 append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
 
              File downloadFile = new File(sb.toString());
 
@@ -159,7 +159,7 @@ ServletResponseAware {
                  out.write(data);
              }
              out.flush();
-             out.close();             
+             out.close();
          } catch (FileNotFoundException err) {
              LOG.error("TrialDocumentAction failed with FileNotFoundException: "
                      + err);
@@ -173,14 +173,14 @@ ServletResponseAware {
          }
          return NONE;
      }
-     
+
      /**
       * @return result
       */
      public String edit() {
          LOG.info("Entering edit");
-         try {  
-             DocumentDTO  docDTO = 
+         try {
+             DocumentDTO  docDTO =
                  PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
              trialDocumentWebDTO = new TrialDocumentWebDTO(docDTO);
          } catch (Exception e) {
@@ -189,7 +189,7 @@ ServletResponseAware {
          }
          return INPUT;
      }
-     
+
      /**
       * @return result
       */
@@ -201,18 +201,18 @@ ServletResponseAware {
          }
          if (PAUtil.isEmpty(uploadFileName)) {
              addFieldError("trialDocumentWebDTO.uploadFileName",
-                     getText("error.trialDocument.uploadFileName"));           
+                     getText("error.trialDocument.uploadFileName"));
          }
          if (hasFieldErrors()) {
              return INPUT;
          }
-         try {  
+         try {
 
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-             getAttribute(Constants.STUDY_PROTOCOL_II); 
+             getAttribute(Constants.STUDY_PROTOCOL_II);
              DocumentDTO  docDTO = new DocumentDTO();
              //docDTO = PaRegistry.getDocumentService().getTrialDocumentById(IiConverter.convertToIi(id));
-             docDTO.setIi(IiConverter.convertToIi(id));
+             docDTO.setIdentifier(IiConverter.convertToIi(id));
              docDTO.setStudyProtocolIi(studyProtocolIi);
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
@@ -229,12 +229,12 @@ ServletResponseAware {
          }
          return SUCCESS;
      }
-     
+
      /**
       * @return result
       */
      public String delete()  {
-         
+
          LOG.info("Entering delete");
          if (PAUtil.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
              addFieldError("trialDocumentWebDTO.inactiveCommentText",
@@ -243,11 +243,11 @@ ServletResponseAware {
          if (hasFieldErrors()) {
              return DELETE_RESULT;
          }
-         try { 
-             DocumentDTO docDTO = new DocumentDTO();            
+         try {
+             DocumentDTO docDTO = new DocumentDTO();
 
              docDTO = PaRegistry.getDocumentService().get(
-                     IiConverter.convertToIi(id)); 
+                     IiConverter.convertToIi(id));
              docDTO.setInactiveCommentText(StConverter.convertToSt(
                      trialDocumentWebDTO.getInactiveCommentText()));
              docDTO.setUserLastUpdated((StConverter.convertToSt(
@@ -256,42 +256,42 @@ ServletResponseAware {
 
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-             return SUCCESS;    
+             return SUCCESS;
 
          } catch (Exception e) {
              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return DELETE_RESULT;
          }
      }
-     
+
      /**
       * @return fileName
       */
      public String getUploadFileName() {
           return uploadFileName;
       }
-     
+
       /**
       * @param uploadFileName uploadFileName
       */
      public void setUploadFileName(String uploadFileName) {
          this.uploadFileName = uploadFileName;
-      } 
-     
+      }
+
       /**
       * @return upload
       */
      public File getUpload() {
          return upload;
       }
-     
+
       /**
       * @param upload upload
       */
      public void setUpload(File upload) {
           this.upload = upload;
       }
-     
+
     /**
      * @return trialDocumentList
      */
@@ -344,7 +344,7 @@ ServletResponseAware {
      */
     public HttpServletResponse getServletResponse() {
         return servletResponse;
-    } 
+    }
     /**
      * @return page
      */
@@ -359,41 +359,41 @@ ServletResponseAware {
         this.page = page;
     }
 
-    /** Read an input stream in its entirety into a byte array. */ 
+    /** Read an input stream in its entirety into a byte array. */
     private static byte[] readInputStream(InputStream inputStream) throws IOException {
-        
-        int bufSize = MAXF * MAXF; 
-        byte[] content; 
 
-        List<byte[]> parts = new LinkedList(); 
-        InputStream in = new BufferedInputStream(inputStream); 
+        int bufSize = MAXF * MAXF;
+        byte[] content;
 
-        byte[] readBuffer = new byte[bufSize]; 
-        byte[] part = null; 
-        int bytesRead = 0; 
+        List<byte[]> parts = new LinkedList();
+        InputStream in = new BufferedInputStream(inputStream);
 
-        // read everyting into a list of byte arrays 
-        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) { 
-            part = new byte[bytesRead]; 
-            System.arraycopy(readBuffer, 0, part, 0, bytesRead); 
-            parts.add(part); 
-        } 
+        byte[] readBuffer = new byte[bufSize];
+        byte[] part = null;
+        int bytesRead = 0;
 
-        // calculate the total size 
-        int totalSize = 0; 
-        for (byte[] partBuffer : parts) { 
-            totalSize += partBuffer.length; 
-        } 
+        // read everyting into a list of byte arrays
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
+            part = new byte[bytesRead];
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
+            parts.add(part);
+        }
 
-        // allocate the array 
-        content = new byte[totalSize]; 
-        int offset = 0; 
-        for (byte[] partBuffer : parts) { 
-            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length); 
-            offset += partBuffer.length; 
-        } 
+        // calculate the total size
+        int totalSize = 0;
+        for (byte[] partBuffer : parts) {
+            totalSize += partBuffer.length;
+        }
 
-        return content; 
+        // allocate the array
+        content = new byte[totalSize];
+        int offset = 0;
+        for (byte[] partBuffer : parts) {
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
+            offset += partBuffer.length;
+        }
+
+        return content;
     }
-    
+
 }

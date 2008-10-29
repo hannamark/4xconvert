@@ -25,46 +25,46 @@ import com.opensymphony.xwork2.ActionSupport;
  * copyright holder, NCI.
  */
 public class SubGroupsAction extends ActionSupport {
- 
+
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
     private List<SubGroupsWebDTO> subGroupsList;
     private SubGroupsWebDTO subGroupsWebDTO = new SubGroupsWebDTO();
-    private Long id = null;    
-    private String page;      
-    /**  
+    private Long id = null;
+    private String page;
+    /**
      * @return result
      */
     public String query()  {
         LOG.info("Entering query from SubGroupsAction");
-        try { 
+        try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);             
+            getAttribute(Constants.STUDY_PROTOCOL_II);
             List<StratumGroupDTO> isoList = PaRegistry.getSubGroupsService().
             getDocumentsByStudyProtocol(studyProtocolIi);
-            if (!(isoList.isEmpty())) {                
-                subGroupsList = new ArrayList<SubGroupsWebDTO>();                
+            if (!(isoList.isEmpty())) {
+                subGroupsList = new ArrayList<SubGroupsWebDTO>();
                 for (StratumGroupDTO dto : isoList) {
                     subGroupsList.add(new SubGroupsWebDTO(dto));
                 }
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("error.subGroups.noRecords"));
             }
-            return SUCCESS;    
+            return SUCCESS;
 
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return ERROR;
         }
     }
-    
+
     /**
      * @return result
      */
      public String input() {
          return INPUT;
      }
-     
+
      /**
       * @return result
       */
@@ -74,33 +74,33 @@ public class SubGroupsAction extends ActionSupport {
          if (hasFieldErrors()) {
              return INPUT;
          }
-         try {           
+         try {
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-             getAttribute(Constants.STUDY_PROTOCOL_II); 
+             getAttribute(Constants.STUDY_PROTOCOL_II);
              StratumGroupDTO sgDTO = new StratumGroupDTO();
              sgDTO.setStudyProtocolIi(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
              sgDTO.setUserLastUpdated((StConverter.convertToSt(
                      ServletActionContext.getRequest().getRemoteUser())));
-             PaRegistry.getSubGroupsService().create(sgDTO); 
+             PaRegistry.getSubGroupsService().create(sgDTO);
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
              return SUCCESS;
          } catch (Exception e) {
              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return INPUT;
-         }          
+         }
      }
-     
-    
+
+
      /**
       * @return result
       */
      public String edit() {
          LOG.info("Entering edit from SubGroupsAction");
-         try {  
-             StratumGroupDTO  sgDTO = 
+         try {
+             StratumGroupDTO  sgDTO =
                  PaRegistry.getSubGroupsService().get(IiConverter.convertToIi(id));
              subGroupsWebDTO = new SubGroupsWebDTO(sgDTO);
          } catch (Exception e) {
@@ -109,7 +109,7 @@ public class SubGroupsAction extends ActionSupport {
          }
          return INPUT;
      }
-     
+
      /**
       * @return result
       */
@@ -119,12 +119,12 @@ public class SubGroupsAction extends ActionSupport {
          if (hasFieldErrors()) {
              return INPUT;
          }
-         try {  
+         try {
 
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-             getAttribute(Constants.STUDY_PROTOCOL_II); 
+             getAttribute(Constants.STUDY_PROTOCOL_II);
              StratumGroupDTO  sgDTO = new StratumGroupDTO();
-             sgDTO.setIi(IiConverter.convertToIi(id));
+             sgDTO.setIdentifier(IiConverter.convertToIi(id));
              sgDTO.setStudyProtocolIi(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
@@ -139,25 +139,25 @@ public class SubGroupsAction extends ActionSupport {
          }
          return SUCCESS;
      }
-     
+
      /**
       * @return result
       */
      public String delete()  {
-         
-         LOG.info("Entering delete from SubGroupsAction");         
-         try { 
+
+         LOG.info("Entering delete from SubGroupsAction");
+         try {
              PaRegistry.getSubGroupsService().delete(IiConverter.convertToIi(id));
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-             return SUCCESS;    
+             return SUCCESS;
 
          } catch (Exception e) {
              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
              return SUCCESS;
          }
      }
-       
+
     /**
      * @return id
      */
@@ -225,12 +225,12 @@ public class SubGroupsAction extends ActionSupport {
         }
         if (PAUtil.isEmpty(subGroupsWebDTO.getGroupNumberText())) {
             addFieldError("subGroupsWebDTO.code",
-                    getText("error.subGroups.code"));           
+                    getText("error.subGroups.code"));
         }
         if (subGroupsWebDTO.getDescription().length() > AbstractEntity.LONG_TEXT_LENGTH) {
             addFieldError("subGroupsWebDTO.description",
                     getText("Cannot enter more than 200 characters"));
-            
+
         }
 
     }

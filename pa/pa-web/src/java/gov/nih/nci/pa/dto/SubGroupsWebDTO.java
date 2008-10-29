@@ -21,7 +21,7 @@ public class SubGroupsWebDTO {
         super();
         this.description = iso.getDescription().getValue();
         this.groupNumberText = iso.getGroupNumberText().getValue(); 
-        this.id = iso.getIi().getExtension();
+        this.id = iso.getIdentifier().getExtension();
     }
     
     /** .

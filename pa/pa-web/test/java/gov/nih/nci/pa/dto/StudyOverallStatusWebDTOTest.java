@@ -29,7 +29,7 @@ public class StudyOverallStatusWebDTOTest {
         StudyStatusCode sCode = StudyStatusCode.ADMINISTRATIVELY_COMPLETE;
         
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setIi(IiConverter.convertToIi(sId));
+        dto.setIdentifier(IiConverter.convertToIi(sId));
         dto.setStatusCode(CdConverter.convertToCd(sCode));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(sString)));
         

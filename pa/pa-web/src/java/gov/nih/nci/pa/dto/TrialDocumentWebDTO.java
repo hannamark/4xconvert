@@ -23,7 +23,7 @@ public class TrialDocumentWebDTO {
         super();
         this.typeCode = iso.getTypeCode().getCode();
         this.fileName = iso.getFileName().getValue(); 
-        this.id = iso.getIi().getExtension();
+        this.id = iso.getIdentifier().getExtension();
     }
     
     /** .

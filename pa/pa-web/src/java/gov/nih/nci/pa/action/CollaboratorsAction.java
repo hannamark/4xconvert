@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -34,14 +34,14 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for viewing and editing the collaborating organizations.
- * 
+ *
  * @author Hugh Reinhart
  * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
 @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.CyclomaticComplexity" })
-public class CollaboratorsAction extends ActionSupport 
+public class CollaboratorsAction extends ActionSupport
         implements Preparable {
 
     private static final long serialVersionUID = 123412653L;
@@ -58,7 +58,7 @@ public class CollaboratorsAction extends ActionSupport
     private PAOrganizationServiceRemote paoService;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
-    private List<OrganizationWebDTO> organizationList = null; 
+    private List<OrganizationWebDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
     private static final String DISPLAYJSP = "displayJsp";
     private Long cbValue;
@@ -67,7 +67,7 @@ public class CollaboratorsAction extends ActionSupport
     private OrgSearchCriteria orgFromPO = new OrgSearchCriteria();
 
 
-    /** 
+    /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws Exception e
      */
@@ -93,7 +93,7 @@ public class CollaboratorsAction extends ActionSupport
         return SUCCESS;
     }
 
-    /**  
+    /**
      * @return result
      * @throws Exception exception
      */
@@ -102,15 +102,15 @@ public class CollaboratorsAction extends ActionSupport
         return ACT_CREATE;
     }
 
-    /**  
+    /**
      * @return result
      * @throws Exception exception
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     public String facilitySave() throws Exception {
         clearErrorsAndMessages();
-        
-        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) 
+
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO)
                 ServletActionContext.getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab == null) {
             addActionError("You must select an organization.");
@@ -138,7 +138,7 @@ public class CollaboratorsAction extends ActionSupport
 
         PAResearchOrganizationDTO roDto = null;
         List<PAResearchOrganizationDTO> roList = paroService.getByOrganization(paOrg.getId());
-        
+
         if (!roList.isEmpty()) {
             roDto = roList.get(0);
         } else {
@@ -152,18 +152,18 @@ public class CollaboratorsAction extends ActionSupport
         sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.getByCode(functionalCode)));
         sp.setHealthcareFacilityIi(null);
         sp.setResearchOrganizationIi(IiConverter.convertToIi(roDto.getId()));
-        sp.setIi(null);
+        sp.setIdentifier(null);
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
         sp.setStudyProtocolIi(spIi);
         sp = sPartService.create(sp);
-        
+
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
         return ACT_FACILITY_SAVE;
     }
 
-    /**  
+    /**
      * @return result
      * @throws Exception exception
      */
@@ -191,7 +191,7 @@ public class CollaboratorsAction extends ActionSupport
         return ACT_FACILITY_SAVE;
     }
 
-    /**  
+    /**
      * @return result
      * @throws Exception exception
      */
@@ -205,9 +205,9 @@ public class CollaboratorsAction extends ActionSupport
         orgFromPO.setOrgCity(editOrg.getCity());
         orgFromPO.setOrgCountry(editOrg.getCountryName());
         orgFromPO.setOrgName(editOrg.getName());
-        orgFromPO.setOrgZip(editOrg.getPostalCode());            
+        orgFromPO.setOrgZip(editOrg.getPostalCode());
         setFunctionalCode(spDto.getFunctionalCode().getCode());
-        
+
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
         tab.setFacilityOrganization(null);
@@ -220,15 +220,15 @@ public class CollaboratorsAction extends ActionSupport
         return ACT_EDIT;
     }
 
-    /**  
+    /**
      * @return result
      * @throws Exception exception
      */
     public String delete() throws Exception {
         clearErrorsAndMessages();
-        
+
         sPartService.delete(IiConverter.convertToIi(cbValue));
-        
+
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
         return ACT_DELETE;
@@ -250,9 +250,9 @@ public class CollaboratorsAction extends ActionSupport
             Organization orgBo = new Organization();
             orgBo.setId(ro.getOrganizationId());
             orgBo = paoService.getOrganizationByIndetifers(orgBo);
-            
+
             OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
-            orgWebDTO.setId(IiConverter.convertToString(sp.getIi()));
+            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
             orgWebDTO.setNciNumber(orgBo.getIdentifier());
             orgWebDTO.setFunctionalRole(sp.getFunctionalCode().getCode());
@@ -264,11 +264,11 @@ public class CollaboratorsAction extends ActionSupport
     /**
      * @return the organizationList
      * @throws Exception on error.
-     */    
+     */
     public String displayOrg() throws Exception {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
-        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));        
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
 
         // store selection
@@ -278,7 +278,7 @@ public class CollaboratorsAction extends ActionSupport
         org.setIdentifier(IiConverter.convertToString(selectedOrgDTO.getIdentifier()));
         org.setName(selectedOrgDTO.getName().getPart().get(0).getValue());
         org.setPostalCode(selectedOrgDTO.getPostalAddress().getPart().get(AD_ZIP_IDX).getValue());
-        
+
         ParticipatingOrganizationsTabWebDTO tab =  new ParticipatingOrganizationsTabWebDTO();
         tab.setPoOrganizationIi(selectedOrgDTO.getIdentifier());
         tab.setFacilityOrganization(org);
@@ -299,11 +299,11 @@ public class CollaboratorsAction extends ActionSupport
     public void setOrganizationList(List<OrganizationWebDTO> organizationList) {
         this.organizationList = organizationList;
     }
-    
+
     /**
      * @return result
      * @throws Exception on error.
-     */    
+     */
     public String nodecorlookup() throws Exception {
         countryRegDTO = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
         return "lookup";

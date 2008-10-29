@@ -55,7 +55,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
     public StudyProtocolDTO updateStudyProtocol(
             StudyProtocolDTO dto) throws PAException {
         for (StudyProtocol bo : spList) {
-            if (bo.getId().equals(IiConverter.convertToLong(dto.getIi()))) {
+            if (bo.getId().equals(IiConverter.convertToLong(dto.getIdentifier()))) {
                 bo.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getStartDateTypeCode().getCode()));
                 bo.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getPrimaryCompletionDateTypeCode().getCode()));
                 bo.setStartDate(TsConverter.convertToTimestamp(dto.getStartDate()));

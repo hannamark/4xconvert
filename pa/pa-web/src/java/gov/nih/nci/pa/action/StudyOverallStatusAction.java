@@ -36,12 +36,12 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for viewing and editing the protocol status.
- * 
+ *
  * @author Hugh Reinhart
  * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
- * 
+ *
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields", "PMD.SignatureDeclareThrowsException" })
 
@@ -66,8 +66,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private String startDateType;
     private String completionDateType;
     private List<StudyOverallStatusWebDTO> overallStatusList;
-    
-    /** 
+
+    /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws Exception e
      */
@@ -75,14 +75,14 @@ public class StudyOverallStatusAction extends ActionSupport implements
         dateTypeList = new HashMap<String, String>();
         dateTypeList.put(actualString, actualString);
         dateTypeList.put(anticipatedString, anticipatedString);
-        
+
         spService = PaRegistry.getStudyProtocolService();
         sosService = PaRegistry.getStudyOverallStatusService();
 
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
-        
+
         spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
     }
 
@@ -96,18 +96,18 @@ public class StudyOverallStatusAction extends ActionSupport implements
         return Action.SUCCESS;
     }
 
-    /**  
+    /**
      * @return result
      * @throws Exception exception
      */
     public String update() throws Exception {
         clearErrorsAndMessages();
-        
+
         boolean statusChanged = enforceBusinessRules();
         if (hasActionErrors()) {
             return Action.SUCCESS;
         }
-        
+
         if (statusChanged) {
             insertStudyOverallStatus();
         }
@@ -120,8 +120,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
         }
         return Action.SUCCESS;
     }
-    
-    /**  
+
+    /**
      * @return result
      * @throws Exception exception
      */
@@ -133,18 +133,18 @@ public class StudyOverallStatusAction extends ActionSupport implements
         }
         return ACTION_HISTORY;
     }
-    
+
     private void insertStudyOverallStatus() {
         if (currentTrialStatus != null) {
             StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-            dto.setIi(IiConverter.convertToIi((Long) null));
+            dto.setIdentifier(IiConverter.convertToIi((Long) null));
             dto.setReasonText(StConverter.convertToSt(this.getStatusReason()));
             dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
             dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
             dto.setStudyProtocolIi(spIdIi);
-            
+
             try {
-                sosService.create(dto);            
+                sosService.create(dto);
                 // set the current date and status to the session
                 StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession()
@@ -159,7 +159,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
             }
         }
     }
-    
+
     private void updateStudyProtocol() {
         StudyProtocolDTO dto;
         try {
@@ -174,7 +174,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
             addActionError(e.getMessage());
         }
     }
- 
+
     private void loadForm() throws Exception {
         StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
         StudyOverallStatusDTO sosDto = null;
@@ -191,7 +191,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
             } else {
                 setStartDate(null);
             }
-            
+
             tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
             if (tsTemp != null) {
                 setCompletionDate(tsTemp.toString());
@@ -232,7 +232,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
     @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private boolean enforceBusinessRules() throws Exception {
         StudyStatusCode newCode = StudyStatusCode.getByCode(currentTrialStatus);
-        
+
         // enforce date rules related to status transitions
         Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(statusDate);
         Timestamp startTimestamp = PAUtil.dateStringToTimestamp(startDate);
@@ -379,7 +379,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (statusReason == null) {
             this.statusReason = null;
         } else {
-            this.statusReason = (statusReason.length() > MAX_REASON_LENGTH) 
+            this.statusReason = (statusReason.length() > MAX_REASON_LENGTH)
                     ? statusReason.substring(0, MAX_REASON_LENGTH) : statusReason;
         }
     }
