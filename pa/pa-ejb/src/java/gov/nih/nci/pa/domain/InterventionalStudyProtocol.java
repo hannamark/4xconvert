@@ -1,6 +1,9 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DesignConfigurationCode;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -30,7 +33,10 @@ public class InterventionalStudyProtocol extends StudyProtocol {
     private Boolean delayedpostingIndicator;
     private Boolean fdaRegulatedIndicator;
     private Boolean section801Indicator;
-    
+    private Integer numberOfInterventionGroups;
+    private DesignConfigurationCode designConfigurationCode;
+    private BlindingSchemaCode blindingSchemaCode;
+    private BlindingRoleCode blindingRoleCode;
     /**
     *
     * @return allocationCode
@@ -95,5 +101,69 @@ public class InterventionalStudyProtocol extends StudyProtocol {
    public void setSection801Indicator(Boolean section801Indicator) {
       this.section801Indicator = section801Indicator;
    }
+   
+   /**
+    * @return numberOfInterventionGroups
+    */
+    @Column(name = "NUMBEROF_INTERVENTION_GROUPS")
+    public Integer getNumberOfInterventionGroups() {
+        return numberOfInterventionGroups;
+    }
+   
+   /**
+    * @param numberOfInterventionGroups numberOfInterventionGroups
+    */
+    public void setNumberOfInterventionGroups(Integer numberOfInterventionGroups) {
+        this.numberOfInterventionGroups = numberOfInterventionGroups;
+    }
+    /**
+    *
+    * @return designConfigurationCode
+    */
+    @Column(name = "DESIGN_CONFIGURATION_CODE")
+    @Enumerated(EnumType.STRING)
+    public DesignConfigurationCode getDesignConfigurationCode() {
+        return designConfigurationCode;
+    }
+    /**
+    *
+    * @param designConfigurationCode designConfigurationCode
+    */
+    public void setDesignConfigurationCode(
+            DesignConfigurationCode designConfigurationCode) {
+        this.designConfigurationCode = designConfigurationCode;
+    }
+    /**
+    *
+    * @return blindingSchemaCode
+    */
+    @Column(name = "BLINDING_SCHEMA_CODE")
+    @Enumerated(EnumType.STRING)
+    public BlindingSchemaCode getBlindingSchemaCode() {
+        return blindingSchemaCode;
+    }
+    /**
+    *
+    * @param blindingSchemaCode blindingSchemaCode
+    */
+    public void setBlindingSchemaCode(BlindingSchemaCode blindingSchemaCode) {
+        this.blindingSchemaCode = blindingSchemaCode;
+    }
+    /**
+    *
+    * @return blindingRoleCode
+    */
+    @Column(name = "BLINDING_ROLE_CODE")
+    @Enumerated(EnumType.STRING)
+    public BlindingRoleCode getBlindingRoleCode() {
+        return blindingRoleCode;
+    }
+    /**
+    *
+    * @param blindingRoleCode blindingRoleCode
+    */
+    public void setBlindingRoleCode(BlindingRoleCode blindingRoleCode) {
+        this.blindingRoleCode = blindingRoleCode;
+    }
   
 }

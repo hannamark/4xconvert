@@ -2,9 +2,11 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyClassificationCode;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,10 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
+    private String primaryPurposeOtherText;
+    private String phaseOtherText;
+    private Integer maximumTargetAccrualNumber;
+    private StudyClassificationCode studyClassificationCode;
 
     /**
      * 
@@ -383,5 +389,67 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setIndIdeIndicator(Boolean indIdeIndicator) {
         this.indIdeIndicator = indIdeIndicator;
+    }
+    /**
+     * 
+     * @return primaryPurposeOtherText
+     */
+    @Column(name = "PRIMARY_PURPOSE_OTHER_TEXT")
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
+
+    /**
+     * @param primaryPurposeOtherText primaryPurposeOtherText
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+    /**
+     * 
+     * @return phaseOtherText
+     */
+    @Column(name = "PHASE_OTHER_TEXT")
+    public String getPhaseOtherText() {
+        return phaseOtherText;
+    }
+
+    /**
+     * @param phaseOtherText phaseOtherText
+     */
+    public void setPhaseOtherText(String phaseOtherText) {
+        this.phaseOtherText = phaseOtherText;
+    }
+
+    /**
+     * @return maximumTargetAccrualNumber
+     */
+    @Column(name = "MAXIMUM_TARGET_ACCRUAL_NUMBER")
+    public Integer getMaximumTargetAccrualNumber() {
+        return maximumTargetAccrualNumber;
+    }
+
+    /**
+     * @param maximumTargetAccrualNumber maximumTargetAccrualNumber
+     */
+    public void setMaximumTargetAccrualNumber(Integer maximumTargetAccrualNumber) {
+        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
+    }
+
+    /**
+     * @return studyClassificationCode
+     */
+    @Column(name = "STUDY_CLASSIFICATION_CODE")
+    @Enumerated(EnumType.STRING)
+    public StudyClassificationCode getStudyClassificationCode() {
+        return studyClassificationCode;
+    }
+
+    /**
+     * @param studyClassificationCode studyClassificationCode
+     */
+    public void setStudyClassificationCode(
+            StudyClassificationCode studyClassificationCode) {
+        this.studyClassificationCode = studyClassificationCode;
     }
 }
