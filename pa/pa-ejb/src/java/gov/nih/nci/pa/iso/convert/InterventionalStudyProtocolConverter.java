@@ -4,12 +4,17 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -59,6 +64,18 @@ public class InterventionalStudyProtocolConverter extends
         ispDTO.setDataMonitoringCommitteInd(BlConverter.convertToBl(
                 isp.getDataMonitoringCommitteeAppointedIndicator()));
         ispDTO.setIndIdeIndicator(BlConverter.convertToBl(isp.getIndIdeIndicator()));
+        ispDTO.setNumberOfInterventionGroups(IntConverter.convertToInt(isp.getNumberOfInterventionGroups()));
+        ispDTO.setDesignConfigurationCode(CdConverter.convertToCd(isp.getDesignConfigurationCode()));
+        ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(isp.getBlindingSchemaCode()));
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(isp.getPrimaryPurposeCode()));
+        ispDTO.setPrimaryPurposeOtherText(
+                StConverter.convertToSt(isp.getPrimaryPurposeOtherText()));
+        ispDTO.setPhaseOtherText(StConverter.convertToSt(isp.getPhaseOtherText()));
+        ispDTO.setStudyClassificationCode(
+                CdConverter.convertToCd(isp.getStudyClassificationCode()));
+        ispDTO.setMaximumTargetAccrualNumber(
+                IntConverter.convertToInt(isp.getMaximumTargetAccrualNumber()));
+        //ispDTO.setBlindingRoleCode(CdConverter.convertToCd(isp.getBlindingRoleCode()));
         //@todo: convert iso timestamp
         return ispDTO;
     }
@@ -128,6 +145,39 @@ public class InterventionalStudyProtocolConverter extends
         if (ispDTO.getIndIdeIndicator() != null) {
             isp.setIndIdeIndicator(BlConverter.covertToBoolean(ispDTO.getIndIdeIndicator()));
         }
+        if (ispDTO.getDesignConfigurationCode() != null) {
+            isp.setDesignConfigurationCode(DesignConfigurationCode.getByCode(
+                    ispDTO.getDesignConfigurationCode().getCode()));
+        } 
+        if (ispDTO.getBlindingSchemaCode() != null) {
+            isp.setBlindingSchemaCode(BlindingSchemaCode.getByCode(
+                    ispDTO.getBlindingSchemaCode().getCode()));
+        } 
+        if (ispDTO.getNumberOfInterventionGroups() != null) {
+            isp.setNumberOfInterventionGroups(ispDTO.getNumberOfInterventionGroups().getValue());
+        } 
+        if (ispDTO.getPrimaryPurposeCode() != null) {
+            isp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
+                    ispDTO.getPrimaryPurposeCode().getCode()));
+        }
+        if (ispDTO.getPrimaryPurposeOtherText() != null) {
+            isp.setPrimaryPurposeOtherText(StConverter.convertToString(
+                    ispDTO.getPrimaryPurposeOtherText()));
+        }
+        if (ispDTO.getPhaseOtherText() != null) {
+            isp.setPhaseOtherText(StConverter.convertToString(ispDTO.getPhaseOtherText()));
+        }
+        if (ispDTO.getMaximumTargetAccrualNumber() != null) {
+            isp.setMaximumTargetAccrualNumber(ispDTO.getMaximumTargetAccrualNumber().getValue());
+        } 
+        if (ispDTO.getStudyClassificationCode() != null) {
+            isp.setStudyClassificationCode(
+                    StudyClassificationCode.getByCode(ispDTO.getStudyClassificationCode().getCode()));
+        }
+        /*if (ispDTO.getBlindingRoleCode() != null) {
+            isp.setBlindingRoleCode(BlindingRoleCode.getByCode(
+                    ispDTO.getBlindingRoleCode().getCode()));
+        }*/        
         //@todo: calculate TS convertion
         return isp;
     }

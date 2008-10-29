@@ -2,6 +2,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Int;
 
 
 /**
@@ -18,6 +19,11 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
     Bl delayedpostingIndicator;
     Bl fdaRegulatedIndicator;
     Bl section801Indicator;
+    Int numberOfInterventionGroups;
+    Cd designConfigurationCode;
+    Cd blindingSchemaCode;
+    Cd blindingRoleCode;
+        
     
     /**
      * @return allocationCode
@@ -72,7 +78,54 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
      */
     public void setSection801Indicator(Bl section801Indicator) {
         this.section801Indicator = section801Indicator;
-    }   
-    
-    
+    }
+    /**
+     * @return numberOfInterventionGroups
+     */
+    public Int getNumberOfInterventionGroups() {
+        return numberOfInterventionGroups;
+    }
+    /**
+     * @param numberOfInterventionGroups numberOfInterventionGroups
+     */
+    public void setNumberOfInterventionGroups(Int numberOfInterventionGroups) {
+        this.numberOfInterventionGroups = numberOfInterventionGroups;
+    }
+    /**
+     * @return designConfigurationCode
+     */
+    public Cd getDesignConfigurationCode() {
+        return designConfigurationCode;
+    }
+    /** 
+     * @param designConfigurationCode designConfigurationCode
+     */
+    public void setDesignConfigurationCode(Cd designConfigurationCode) {
+        this.designConfigurationCode = designConfigurationCode;
+    }
+    /**
+     * @return blindingSchemaCode
+     */
+    public Cd getBlindingSchemaCode() {
+        return blindingSchemaCode;
+    }
+    /**
+     * @param blindingSchemaCode blindingSchemaCode
+     */
+    public void setBlindingSchemaCode(Cd blindingSchemaCode) {
+        this.blindingSchemaCode = blindingSchemaCode;
+    }
+    /**
+     * @return blindingRoleCode
+     */
+    public Cd getBlindingRoleCode() {
+        return blindingRoleCode;
+    }
+    /**
+     * @param blindingRoleCode blindingRoleCode
+     */
+    public void setBlindingRoleCode(Cd blindingRoleCode) {
+        this.blindingRoleCode = blindingRoleCode;
+    }
+        
 }

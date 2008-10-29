@@ -6,10 +6,13 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -23,7 +26,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength"  })
 public class StudyProtocolConverter {
 
     /**
@@ -51,6 +54,14 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(studyProtocol.getStartDateTypeCode()));
         studyProtocolDTO.setStartDate(TsConverter.convertToTs(studyProtocol.getStartDate()));
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));
+        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(studyProtocol.getPrimaryPurposeCode()));
+        studyProtocolDTO.setPrimaryPurposeOtherText(
+                StConverter.convertToSt(studyProtocol.getPrimaryPurposeOtherText()));
+        studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
+        studyProtocolDTO.setStudyClassificationCode(
+                CdConverter.convertToCd(studyProtocol.getStudyClassificationCode()));
+        studyProtocolDTO.setMaximumTargetAccrualNumber(
+                IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));
         return studyProtocolDTO;
     }
 
@@ -100,6 +111,24 @@ public class StudyProtocolConverter {
         if (studyProtocolDTO.getPrimaryCompletionDate() != null) {
             studyProtocol.setPrimaryCompletionDate(
                     TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate()));
+        }
+        if (studyProtocolDTO.getPrimaryPurposeCode() != null) {
+            studyProtocol.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
+                    studyProtocolDTO.getPrimaryPurposeCode().getCode()));
+        }
+        if (studyProtocolDTO.getPrimaryPurposeOtherText() != null) {
+            studyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(
+                    studyProtocolDTO.getPrimaryPurposeOtherText()));
+        }
+        if (studyProtocolDTO.getPhaseOtherText() != null) {
+            studyProtocol.setPhaseOtherText(StConverter.convertToString(studyProtocolDTO.getPhaseOtherText()));
+        }
+        if (studyProtocolDTO.getMaximumTargetAccrualNumber() != null) {
+            studyProtocol.setMaximumTargetAccrualNumber(studyProtocolDTO.getMaximumTargetAccrualNumber().getValue());
+        } 
+        if (studyProtocolDTO.getStudyClassificationCode() != null) {
+            studyProtocol.setStudyClassificationCode(
+                    StudyClassificationCode.getByCode(studyProtocolDTO.getStudyClassificationCode().getCode()));
         }
         return studyProtocol;
     }

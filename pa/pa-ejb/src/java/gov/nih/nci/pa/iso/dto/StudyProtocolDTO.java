@@ -3,6 +3,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -15,7 +16,7 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-
+@SuppressWarnings({"PMD.TooManyFields" })
 public class StudyProtocolDTO extends BaseDTO {
     
     private St acronym;
@@ -26,13 +27,17 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd monitorCode;
     private St officialTitle;
     private Cd phaseCode;
+    private Cd primaryPurposeCode;
     private Ts primaryCompletionDate;
     private Cd primaryCompletionDateTypeCode;
     private Ts startDate;
     private Cd startDateTypeCode;
     private Bl dataMonitoringCommitteInd;
     private Bl indIdeIndicator;
-    
+    private St primaryPurposeOtherText;
+    private St phaseOtherText;
+    private Cd studyClassificationCode;
+    private Int maximumTargetAccrualNumber;
     
     /**
      * @return the indIdeIndicator
@@ -253,6 +258,76 @@ public class StudyProtocolDTO extends BaseDTO {
      */
     public void setDataMonitoringCommitteInd(Bl dataMonitoringCommitteInd) {
         this.dataMonitoringCommitteInd = dataMonitoringCommitteInd;
+    }
+
+    /**
+     * @return primaryPurposeCode
+     */
+    public Cd getPrimaryPurposeCode() {
+        return primaryPurposeCode;
+    }
+
+    /**
+     * @param primaryPurposeCode primaryPurposeCode
+     */
+    public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
+        this.primaryPurposeCode = primaryPurposeCode;
+    }
+
+    /**
+     * @return primaryPurposeOtherText
+     */
+    public St getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
+
+    /**
+     * @param primaryPurposeOtherText primaryPurposeOtherText
+     */
+    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+
+    /**
+     * @return phaseOtherText
+     */
+    public St getPhaseOtherText() {
+        return phaseOtherText;
+    }
+
+    /**
+     * @param phaseOtherText phaseOtherText
+     */
+    public void setPhaseOtherText(St phaseOtherText) {
+        this.phaseOtherText = phaseOtherText;
+    }
+
+    /**
+     * @return studyClassificationCode
+     */
+    public Cd getStudyClassificationCode() {
+        return studyClassificationCode;
+    }
+
+    /** 
+     * @param studyClassificationCode studyClassificationCode
+     */
+    public void setStudyClassificationCode(Cd studyClassificationCode) {
+        this.studyClassificationCode = studyClassificationCode;
+    }
+
+    /**
+     * @return maximumTargetAccrualNumber
+     */
+    public Int getMaximumTargetAccrualNumber() {
+        return maximumTargetAccrualNumber;
+    }
+
+    /**
+     * @param maximumTargetAccrualNumber maximumTargetAccrualNumber
+     */
+    public void setMaximumTargetAccrualNumber(Int maximumTargetAccrualNumber) {
+        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
     }
 }
 
