@@ -11,7 +11,7 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
  * 
  */
 public class PAHealthCareProviderDTO extends BaseDTO {
-    private Long identifier;
+    private Long assignedIdentifier;
     private Long personId;
     private String fullName;
     private String firstName;
@@ -77,15 +77,15 @@ public class PAHealthCareProviderDTO extends BaseDTO {
     /**
      * @return the identifier
      */
-    public Long getIdentifier() {
-        return identifier;
+    public Long getAssignedIdentifier() {
+        return assignedIdentifier;
     }
 
     /**
      * @param identifier the identifier to set
      */
-    public void setIdentifier(Long identifier) {
-        this.identifier = identifier;
+    public void setAssignedIdentifier(Long identifier) {
+        this.assignedIdentifier = identifier;
     }
 
     /**
