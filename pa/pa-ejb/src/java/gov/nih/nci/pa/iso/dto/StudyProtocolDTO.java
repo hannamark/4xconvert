@@ -22,7 +22,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd allocationCode;
     private Cd accrualReportingMethodCode;
     private Bl expandedAccessIndicator;
-    private Ii identifier; // used to store nci-accession number
+    private Ii assignedIdentifier; // used to store nci-accession number
     private Cd monitorCode;
     private St officialTitle;
     private Cd phaseCode;
@@ -147,18 +147,18 @@ public class StudyProtocolDTO extends BaseDTO {
 
     /**
      * 
-     * @return identifier
+     * @return assignedIdentifier
      */
-    public Ii getIdentifier() {
-        return identifier;
+    public Ii getAssignedIdentifier() {
+        return assignedIdentifier;
     }
 
     /**
      * 
-     * @param identifier identifier
+     * @param assignedIdentifier assignedIdentifier
      */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
+    public void setAssignedIdentifier(Ii assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
     }
 
     /**

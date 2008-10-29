@@ -18,22 +18,22 @@ import gov.nih.nci.pa.iso.util.StConverter;
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
 public class StratumGroupConverter {
-    
+
     /**
      * @param sg StratumGroup
      * @return SubGroupsDTO
      */
     public static StratumGroupDTO convertFromDomainToDTO(StratumGroup sg) {
         StratumGroupDTO sgDTO = new StratumGroupDTO();
-        sgDTO.setIi(IiConverter.convertToIi(sg.getId()));
+        sgDTO.setIdentifier(IiConverter.convertToIi(sg.getId()));
         sgDTO.setUserLastUpdated(StConverter.convertToSt(sg.getUserLastUpdated()));
         sgDTO.setDescription(StConverter.convertToSt(sg.getDescription()));
         sgDTO.setGroupNumberText(StConverter.convertToSt(sg.getGroupNumberText()));
-        sgDTO.setStudyProtocolIi(IiConverter.convertToIi(sg.getStudyProtocol().getId()));        
+        sgDTO.setStudyProtocolIi(IiConverter.convertToIi(sg.getStudyProtocol().getId()));
         return sgDTO;
     }
-    
-    
+
+
     /**
      * @param sgDTO SubGroupsDTO
      * @return StratumGroup
@@ -42,7 +42,7 @@ public class StratumGroupConverter {
         StratumGroup sg = new StratumGroup();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIi()));  
+        spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIi()));
         sg.setDateLastUpdated(new Date());
         sg.setStudyProtocol(spBo);
         if (sgDTO.getUserLastUpdated() != null) {
@@ -50,7 +50,7 @@ public class StratumGroupConverter {
         }
         if (sgDTO.getDescription() != null) {
             sg.setDescription(sgDTO.getDescription().getValue());
-        } 
+        }
         if (sgDTO.getGroupNumberText() != null) {
             sg.setGroupNumberText(sgDTO.getGroupNumberText().getValue());
         }

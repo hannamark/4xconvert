@@ -17,7 +17,7 @@ import gov.nih.nci.coppa.iso.St;
 public class BaseDTO implements Serializable {
     
     private static final long serialVersionUID = 1234567890L;
-    private Ii ii;
+    private Ii identifier;
     private Ivl statusDateRange;
     private St userLastUpdated;
     
@@ -25,16 +25,16 @@ public class BaseDTO implements Serializable {
      * 
      * @return ii
      */
-    public Ii getIi() {
-        return ii;
+    public Ii getIdentifier() {
+        return identifier;
     }
 
     /**
      * 
      * @param ii ii
      */
-    public void setIi(Ii ii) {
-        this.ii = ii;
+    public void setIdentifier(Ii ii) {
+        this.identifier = ii;
     }
 
     /**

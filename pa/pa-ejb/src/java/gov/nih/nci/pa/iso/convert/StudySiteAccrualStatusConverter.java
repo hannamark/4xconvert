@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.convert;
 
@@ -30,7 +30,7 @@ public class StudySiteAccrualStatusConverter {
     private static final Logger LOG  = Logger.getLogger(StudySiteAccrualStatusConverter.class);
 
     /**
-     * 
+     *
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
@@ -38,7 +38,7 @@ public class StudySiteAccrualStatusConverter {
     public static StudySiteAccrualStatusDTO convertFromDomainToDTO(
             StudySiteAccrualStatus bo) throws PAException {
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-        dto.setIi(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
         dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
@@ -53,7 +53,7 @@ public class StudySiteAccrualStatusConverter {
      */
     public static StudySiteAccrualStatus convertFromDtoToDomain(
             StudySiteAccrualStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIi())) {
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
             String errmsg = " convertFromDtoToDomain has been implemented for new domain"
                           + " objects only.  StudySiteAccrualStatusDTO.ii must be null. ";
             LOG.error(errmsg);

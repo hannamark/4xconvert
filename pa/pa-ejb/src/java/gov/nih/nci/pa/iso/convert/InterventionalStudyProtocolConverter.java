@@ -26,21 +26,23 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 @SuppressWarnings({"PMD.NPathComplexity" , "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
 public class InterventionalStudyProtocolConverter extends
         StudyProtocolConverter {
-    
+
     /**
-     * 
+     *
      * @param isp InterventionalStudyProtocol
      * @return InterventionalStudyProtocolDTO InterventionalStudyProtocolDTO
      */
     public static InterventionalStudyProtocolDTO convertFromDomainToDTO(InterventionalStudyProtocol isp) {
         InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
+        ispDTO.setAssignedIdentifier(IiConverter.convertToIi(isp.getIdentifier()));
+        ispDTO.setIdentifier(IiConverter.convertToIi(isp.getId()));
+
         ispDTO.setAcronym(StConverter.convertToSt(isp.getAcronym()));
         ispDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(isp.getAccrualReportingMethodCode()));
         ispDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(isp.getExpandedAccessIndicator()));
-        ispDTO.setIdentifier(IiConverter.convertToIi(isp.getIdentifier()));
-        ispDTO.setIi(IiConverter.convertToIi(isp.getId()));
+
         ispDTO.setMonitorCode(
                 CdConverter.convertToCd(isp.getMonitorCode()));
         ispDTO.setOfficialTitle(StConverter.convertToSt(isp.getOfficialTitle()));
@@ -49,7 +51,7 @@ public class InterventionalStudyProtocolConverter extends
         ispDTO.setStartDate(TsConverter.convertToTs(isp.getStartDate()));
         ispDTO.setPrimaryCompletionDateTypeCode(
                 CdConverter.convertToCd(isp.getPrimaryCompletionDateTypeCode()));
-        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(isp.getPrimaryCompletionDate()));        
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(isp.getPrimaryCompletionDate()));
         ispDTO.setAllocationCode(CdConverter.convertToCd(isp.getAllocationCode()));
         ispDTO.setDelayedpostingIndicator(BlConverter.convertToBl(isp.getDelayedpostingIndicator()));
         ispDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(isp.getFdaRegulatedIndicator()));
@@ -62,27 +64,30 @@ public class InterventionalStudyProtocolConverter extends
     }
 
     /**
-     * 
-     * @param ispDTO InterventionalStudyProtocolDTO 
+     *
+     * @param ispDTO InterventionalStudyProtocolDTO
      * @return InterventionalStudyProtocol InterventionalStudyProtocol
      */
     public static InterventionalStudyProtocol convertFromDTOToDomain(InterventionalStudyProtocolDTO ispDTO) {
         InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
+        if (ispDTO.getIdentifier() != null) {
+            isp.setId(IiConverter.convertToLong(ispDTO.getIdentifier()));
+        }
+        if (ispDTO.getAssignedIdentifier() != null) {
+            isp.setIdentifier(ispDTO.getAssignedIdentifier().getExtension());
+        }
+
         if (ispDTO.getAccrualReportingMethodCode() != null) {
             isp.setAccrualReportingMethodCode(
                     AccrualReportingMethodCode.getByCode(ispDTO.getAccrualReportingMethodCode().getCode()));
         }
         isp.setAcronym(StConverter.convertToString(ispDTO.getAcronym()));
-        if (ispDTO.getIdentifier() != null) {
-            isp.setIdentifier(ispDTO.getIdentifier().getExtension());
-        }
         isp.setExpandedAccessIndicator(
                 BlConverter.covertToBoolean(ispDTO.getExpandedAccessIndicator()));
-        isp.setId(IiConverter.convertToLong(ispDTO.getIi()));
         if (ispDTO.getMonitorCode() != null) {
             isp.setMonitorCode(MonitorCode.getByCode(ispDTO.getMonitorCode().getCode()));
         }
-        
+
         isp.setOfficialTitle(StConverter.convertToString(ispDTO.getOfficialTitle()));
         if (ispDTO.getPhaseCode() != null) {
             isp.setPhaseCode(PhaseCode.getByCode(ispDTO.getPhaseCode().getCode()));
@@ -94,7 +99,7 @@ public class InterventionalStudyProtocolConverter extends
         if (ispDTO.getStartDateTypeCode() != null) {
             isp.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
                     ispDTO.getStartDateTypeCode().getCode()));
-            
+
         }
         if (ispDTO.getStartDate() != null) {
             isp.setStartDate(
@@ -122,7 +127,7 @@ public class InterventionalStudyProtocolConverter extends
         }
         if (ispDTO.getIndIdeIndicator() != null) {
             isp.setIndIdeIndicator(BlConverter.covertToBoolean(ispDTO.getIndIdeIndicator()));
-        }        
+        }
         //@todo: calculate TS convertion
         return isp;
     }

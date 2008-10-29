@@ -18,20 +18,20 @@ import java.util.List;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class PAHealthCareFacilityDTO extends BaseDTO {
-    private St identifier;
+    private St assignedIdentifier;
     private Ii organizationIi;
     private List<Ii> studyParticipations = new ArrayList<Ii>();
     /**
      * @return the identifier
      */
-    public St getIdentifier() {
-        return identifier;
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
     }
     /**
      * @param identifier the identifier to set
      */
-    public void setIdentifier(St identifier) {
-        this.identifier = identifier;
+    public void setAssignedIdentifier(St identifier) {
+        this.assignedIdentifier = identifier;
     }
     /**
      * @return the organizationIi

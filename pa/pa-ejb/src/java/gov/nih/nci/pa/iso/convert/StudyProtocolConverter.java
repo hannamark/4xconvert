@@ -27,24 +27,25 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 public class StudyProtocolConverter {
 
     /**
-     * 
+     *
      * @param studyProtocol study Protocol
      * @return studyProtocolDTO
      */
     public static StudyProtocolDTO convertFromDomainToDTO(StudyProtocol studyProtocol) {
         StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+
+        studyProtocolDTO.setAssignedIdentifier(IiConverter.convertToIi(studyProtocol.getIdentifier()));
+        studyProtocolDTO.setIdentifier(IiConverter.convertToIi(studyProtocol.getId()));
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
-        studyProtocolDTO.setIdentifier(IiConverter.convertToIi(studyProtocol.getIdentifier()));
-        studyProtocolDTO.setIi(IiConverter.convertToIi(studyProtocol.getId()));
         studyProtocolDTO.setMonitorCode(
                 CdConverter.convertToCd(studyProtocol.getMonitorCode()));
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(studyProtocol.getOfficialTitle()));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
-        
+
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(
                 CdConverter.convertToCd(studyProtocol.getPrimaryCompletionDateTypeCode()));
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(studyProtocol.getStartDateTypeCode()));
@@ -52,32 +53,33 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));
         return studyProtocolDTO;
     }
-    
+
     /**
-     * 
-     * @param studyProtocolDTO studyProtocolDTO 
+     *
+     * @param studyProtocolDTO studyProtocolDTO
      * @return StudyProtocol StudyProtocol
      */
     public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO) {
         StudyProtocol studyProtocol = new StudyProtocol();
-        if (studyProtocolDTO.getIi() != null) {
-            studyProtocol.setId(Long.valueOf(studyProtocolDTO.getIi().getExtension()));
+        if (studyProtocolDTO.getIdentifier() != null) {
+            studyProtocol.setId(Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
         }
+        if (studyProtocolDTO.getAssignedIdentifier() != null) {
+            studyProtocol.setIdentifier(studyProtocolDTO.getAssignedIdentifier().getExtension());
+        }
+
         if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
             studyProtocol.setAccrualReportingMethodCode(
                     AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
         }
         studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
-        if (studyProtocolDTO.getIdentifier() != null) {
-            studyProtocol.setIdentifier(studyProtocolDTO.getIdentifier().getExtension());
-        }
         studyProtocol.setExpandedAccessIndicator(
                 BlConverter.covertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
-        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIi()));
+        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
         if (studyProtocolDTO.getMonitorCode() != null) {
             studyProtocol.setMonitorCode(MonitorCode.getByCode(studyProtocolDTO.getMonitorCode().getCode()));
         }
-        
+
         studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
         if (studyProtocolDTO.getPhaseCode() != null) {
             studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));
@@ -89,7 +91,7 @@ public class StudyProtocolConverter {
         if (studyProtocolDTO.getStartDateTypeCode() != null) {
             studyProtocol.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
                     studyProtocolDTO.getStartDateTypeCode().getCode()));
-            
+
         }
         if (studyProtocolDTO.getStartDate() != null) {
             studyProtocol.setStartDate(

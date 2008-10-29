@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.convert;
 
@@ -28,7 +28,7 @@ import gov.nih.nci.pa.util.PAUtil;
  */
 public class StudyParticipationConverter {
     /**
-     * 
+     *
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
@@ -43,7 +43,7 @@ public class StudyParticipationConverter {
         if (bo.getResearchOrganization() != null) {
             dto.setResearchOrganizationIi(IiConverter.convertToIi(bo.getResearchOrganization().getId()));
         }
-        dto.setIi(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(bo.getLocalStudyProtocolIdentifier()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
@@ -62,7 +62,7 @@ public class StudyParticipationConverter {
             StudyParticipationDTO dto) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
-        
+
         HealthCareFacility hfBo = null;
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
             hfBo = new HealthCareFacility();
@@ -74,14 +74,14 @@ public class StudyParticipationConverter {
             roBo = new ResearchOrganization();
             roBo.setId(IiConverter.convertToLong(dto.getResearchOrganizationIi()));
         }
-        
-        
+
+
         StudyParticipation bo = new StudyParticipation();
         bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setFunctionalCode(StudyParticipationFunctionalCode.getByCode(dto.getFunctionalCode().getCode()));
         bo.setHealthCareFacility(hfBo);
         bo.setResearchOrganization(roBo);
-        bo.setId(IiConverter.convertToLong(dto.getIi()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
         bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));

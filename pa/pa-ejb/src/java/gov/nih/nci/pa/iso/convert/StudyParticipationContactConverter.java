@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.convert;
 
@@ -39,7 +39,7 @@ import java.util.Set;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyParticipationContactConverter {
     /**
-     * 
+     *
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
@@ -51,9 +51,9 @@ public class StudyParticipationContactConverter {
                     + "StudyParticipationContactDTO.convertFromDomainToDTO().  ");
         }
         StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
-        dto.setIi(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
 //        dto.setPostalAddress(AddressConverterUtil.create(bo.getAddressLine(), bo.getDeliveryAddressLine(),
-//                bo.getCity(), bo.getState(), bo.getPostalCode(), 
+//                bo.getCity(), bo.getState(), bo.getPostalCode(),
 //                (bo.getCountry() == null) ? "" : bo.getCountry().getAlpha3()));
         dto.setPrimaryIndicator(BlConverter.convertToBl(bo.getPrimaryIndicator()));
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
@@ -110,7 +110,7 @@ public class StudyParticipationContactConverter {
 //        bo.setCity(city)
 //        bo.setCountry(country)
 //        bo.setDeliveryAddressLine(deliveryAddressLine)
-        bo.setId(IiConverter.convertToLong(dto.getIi()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
 //        bo.setPostalCode(postalCode)
         bo.setPrimaryIndicator(BlConverter.covertToBoolean(dto.getPrimaryIndicator()));
         bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
@@ -125,7 +125,7 @@ public class StudyParticipationContactConverter {
         List retList = null;
         if (dto.getTelecomAddresses() != null) {
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
-            bo.setEmail(retList.get(0).toString());        
+            bo.setEmail(retList.get(0).toString());
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
             bo.setPhone(retList.get(0).toString());
         }

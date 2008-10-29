@@ -21,15 +21,15 @@ import gov.nih.nci.pa.iso.util.StConverter;
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
 public class StudyResourcingConverter {
-    
+
     /**
-     * 
+     *
      * @param studyResourcing sr
      * @return InterventionalStudyProtocolDTO InterventionalStudyProtocolDTO
      */
     public static StudyResourcingDTO convertFromDomainToDTO(StudyResourcing studyResourcing) {
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
-        srDTO.setIi(IiConverter.convertToIi(studyResourcing.getId()));
+        srDTO.setIdentifier(IiConverter.convertToIi(studyResourcing.getId()));
         srDTO.setOrganizationIdentifier(IiConverter.convertToIi(studyResourcing.getOrganizationIdentifier()));
         srDTO.setResourceProviderIdentifier(IiConverter.convertToIi(studyResourcing.getResourceProviderIdentifier()));
         srDTO.setSummary4ReportedResourceIndicator(
@@ -43,19 +43,19 @@ public class StudyResourcingConverter {
         srDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcing.getSuffixGrantYear()));
         srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
         srDTO.setSerialNumber(IntConverter.convertToInt(studyResourcing.getSerialNumber()));
-        //@tdo: date range 
+        //@tdo: date range
         return srDTO;
     }
-    
+
     /**
-     * 
+     *
      * @param studyResourcingDTO studyResourcingDTO
      * @return StudyResourcing
      */
     public static StudyResourcing convertFromDTOToDomain(StudyResourcingDTO studyResourcingDTO) {
         StudyResourcing studyResourcing = new StudyResourcing();
-        if (studyResourcingDTO.getIi() != null) {
-            studyResourcing.setId(Long.valueOf(studyResourcingDTO.getIi().getExtension()));
+        if (studyResourcingDTO.getIdentifier() != null) {
+            studyResourcing.setId(Long.valueOf(studyResourcingDTO.getIdentifier().getExtension()));
         }
         if (studyResourcingDTO.getOrganizationIdentifier() != null) {
             studyResourcing.setOrganizationIdentifier(studyResourcingDTO.getOrganizationIdentifier().getExtension());

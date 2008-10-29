@@ -20,22 +20,22 @@ import gov.nih.nci.pa.iso.util.StConverter;
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
 public class DocumentConverter {
-    
+
     /**
      * @param doc Document
      * @return DocumentDTO
      */
     public static DocumentDTO convertFromDomainToDTO(Document doc) {
         DocumentDTO docDTO = new DocumentDTO();
-        docDTO.setIi(IiConverter.convertToIi(doc.getId()));
+        docDTO.setIdentifier(IiConverter.convertToIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setUserLastUpdated(StConverter.convertToSt(doc.getUserLastUpdated()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
-        docDTO.setStudyProtocolIi(IiConverter.convertToIi(doc.getStudyProtocol().getId()));        
+        docDTO.setStudyProtocolIi(IiConverter.convertToIi(doc.getStudyProtocol().getId()));
         return docDTO;
     }
-    
-    
+
+
     /**
      * @param docDTO DocumentDTO
      * @return Document
@@ -44,7 +44,7 @@ public class DocumentConverter {
         Document doc = new Document();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));  
+        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));
         doc.setDateLastUpdated(new Date());
         doc.setStudyProtocol(spBo);
         if (docDTO.getTypeCode() != null) {
@@ -56,7 +56,7 @@ public class DocumentConverter {
         }
         if (docDTO.getFileName() != null) {
             doc.setFileName(docDTO.getFileName().getValue());
-        } 
+        }
         return doc;
     }
 

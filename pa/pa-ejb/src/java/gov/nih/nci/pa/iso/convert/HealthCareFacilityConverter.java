@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.convert;
 
@@ -21,7 +21,7 @@ import gov.nih.nci.pa.service.PAException;
  */
 public class HealthCareFacilityConverter {
     /**
-     * 
+     *
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
@@ -29,8 +29,8 @@ public class HealthCareFacilityConverter {
     public static PAHealthCareFacilityDTO convertFromDomainToDTO(
             HealthCareFacility bo) throws PAException {
         PAHealthCareFacilityDTO dto = new PAHealthCareFacilityDTO();
-        dto.setIi(IiConverter.convertToIi(bo.getId()));
-        dto.setIdentifier(StConverter.convertToSt(bo.getIdentifier()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setAssignedIdentifier(StConverter.convertToSt(bo.getIdentifier()));
         dto.setOrganizationIi(IiConverter.convertToIi(bo.getOrganization().getId()));
         dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
@@ -45,10 +45,10 @@ public class HealthCareFacilityConverter {
             PAHealthCareFacilityDTO dto) throws PAException {
         Organization oBo = new Organization();
         oBo.setId(IiConverter.convertToLong(dto.getOrganizationIi()));
-        
+
         HealthCareFacility bo = new HealthCareFacility();
-        bo.setId(IiConverter.convertToLong(dto.getIi()));
-        bo.setIdentifier(StConverter.convertToString(dto.getIdentifier()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setIdentifier(StConverter.convertToString(dto.getAssignedIdentifier()));
         bo.setOrganization(oBo);
         bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
