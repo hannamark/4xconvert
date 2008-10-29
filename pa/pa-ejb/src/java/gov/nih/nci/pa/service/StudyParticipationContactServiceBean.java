@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -50,7 +50,7 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService<
      */
     @Override
     public StudyParticipationContactDTO create(StudyParticipationContactDTO dto) throws PAException {
-//        if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
+//        if ((dto.getIdentifier() != null) && !PAUtil.isIiNull(dto.getIdentifier())) {
 //            serviceError(" Update method should be used to modify existing. ");
 //        }
         StudyParticipationContactDTO resultDto = null;

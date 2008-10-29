@@ -30,19 +30,19 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class StudyParticipationServiceBean
-        extends AbstractStudyPaService<StudyParticipationDTO>  
+        extends AbstractStudyPaService<StudyParticipationDTO>
         implements StudyParticipationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyParticipationServiceBean.class);
-    
+
     /**
      * @return log4j Logger
      */
     @Override
     protected Logger getLogger() { return LOG; }
 
-    /** 
-     * @param ii Index 
+    /**
+     * @param ii Index
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
@@ -74,7 +74,7 @@ public class StudyParticipationServiceBean
     @Override
     public StudyParticipationDTO create(
             StudyParticipationDTO dto) throws PAException {
-        if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
+        if ((dto.getIdentifier() != null) && !PAUtil.isIiNull(dto.getIdentifier())) {
             serviceError(" Update method should be used to modify existing. ");
         }
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
@@ -110,24 +110,24 @@ public class StudyParticipationServiceBean
         if (dto == null) {
             serviceError("StudyParticipationDTO should not be null ");
         }
-        
+
         Session session = null;
         StudyParticipationDTO resultDto = null;
         List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
-        
+
         try {
             session = HibernateUtil.getCurrentSession();
             String hql = "select sp "
                        + "from StudyParticipation sp "
-                       + "where sp.id =  " + Long.valueOf(dto.getIi().getExtension());
+                       + "where sp.id =  " + Long.valueOf(dto.getIdentifier().getExtension());
             LOG.info(" query StudyParticipation = " + hql);
-            
+
             Query query = session.createQuery(hql);
             queryList = query.list();
-            
+
             StudyParticipation sp = queryList.get(0);
             StudyParticipation spNew = StudyParticipationConverter.convertFromDtoToDomain(dto);
-            
+
             sp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             sp.setUserLastUpdated(spNew.getUserLastUpdated());
             if (spNew.getFunctionalCode() != null) {
@@ -149,8 +149,8 @@ public class StudyParticipationServiceBean
             session.flush();
             resultDto =  StudyParticipationConverter.convertFromDomainToDTO(sp);
         }  catch (HibernateException hbe) {
-            serviceError("Hibernate exception while updating StudyParticipation for id = " 
-                    + IiConverter.convertToString(dto.getIi()) + ".  ", hbe);
+            serviceError("Hibernate exception while updating StudyParticipation for id = "
+                    + IiConverter.convertToString(dto.getIdentifier()) + ".  ", hbe);
         }
         return resultDto;
     }
@@ -180,11 +180,11 @@ public class StudyParticipationServiceBean
         }
         LOG.info("Leaving delete().");
     }
-    
+
     /**
      * @param studyProtocolIi id of protocol
-     * @return list StudyParticipationDTO   
-     * @throws PAException on error 
+     * @return list StudyParticipationDTO
+     * @throws PAException on error
      */
     @Override
     public List<StudyParticipationDTO> getByStudyProtocol(
@@ -199,25 +199,25 @@ public class StudyParticipationServiceBean
             session = HibernateUtil.getCurrentSession();
 
             Query query = null;
-            
+
             // step 1: form the hql
             String hql = "select spart "
                        + "from StudyParticipation spart "
                        + "join spart.studyProtocol spro "
-                       + "where spro.id = :studyProtocolId " 
+                       + "where spro.id = :studyProtocolId "
                        + " order by spart.id ";
             LOG.info(" query StudyParticipation = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
             queryList = query.list();
-            
+
         }  catch (HibernateException hbe) {
             serviceError(" Hibernate exception while retrieving "
                     + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
         }
-        
+
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipation sp : queryList) {
             resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
@@ -229,8 +229,8 @@ public class StudyParticipationServiceBean
     /**
      * @param studyProtocolIi id of protocol
      * @param spDTO StudyParticipationDTO
-     * @return list StudyParticipationDTO   
-     * @throws PAException on error 
+     * @return list StudyParticipationDTO
+     * @throws PAException on error
      */
     public List<StudyParticipationDTO> getByStudyProtocol(
             Ii studyProtocolIi , StudyParticipationDTO spDTO) throws PAException {
@@ -244,27 +244,27 @@ public class StudyParticipationServiceBean
             session = HibernateUtil.getCurrentSession();
 
             Query query = null;
-            
+
             // step 1: form the hql
             String hql = "select spart "
                        + "from StudyParticipation spart "
                        + "join spart.studyProtocol spro "
-                       + "where spro.id = :studyProtocolId " 
-                       + " and spart.functionalCode = '" 
-                       + StudyParticipationFunctionalCode.getByCode(spDTO.getFunctionalCode().getCode()) + "'" 
+                       + "where spro.id = :studyProtocolId "
+                       + " and spart.functionalCode = '"
+                       + StudyParticipationFunctionalCode.getByCode(spDTO.getFunctionalCode().getCode()) + "'"
                        + " order by spart.id ";
             LOG.info(" query StudyParticipation = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
             queryList = query.list();
-            
+
         }  catch (HibernateException hbe) {
             serviceError(" Hibernate exception while retrieving "
                     + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
         }
-        
+
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipation sp : queryList) {
             resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
@@ -273,12 +273,12 @@ public class StudyParticipationServiceBean
         LOG.info("Leaving etStudyParticipationByStudyProtocol");
         return resultList;
     }
-    
+
     /**
      * @param studyProtocolIi id of protocol
      * @param spDTOList List containing desired codes
-     * @return list StudyParticipationDTO   
-     * @throws PAException on error 
+     * @return list StudyParticipationDTO
+     * @throws PAException on error
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     public List<StudyParticipationDTO> getByStudyProtocol(
@@ -307,21 +307,21 @@ public class StudyParticipationServiceBean
                 } else {
                     hql.append("or ");
                 }
-                hql.append("spart.functionalCode = '" 
+                hql.append("spart.functionalCode = '"
                     + StudyParticipationFunctionalCode.getByCode(crit.getFunctionalCode().getCode()) + "' ");
             }
             hql.append(") order by spart.id ");
             LOG.info(" query StudyParticipation = " + hql);
-            
+
             Query query = session.createQuery(hql.toString());
             query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
             queryList = query.list();
-            
+
         }  catch (HibernateException hbe) {
             serviceError(" Hibernate exception while retrieving "
                     + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
         }
-        
+
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipation sp : queryList) {
             resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));

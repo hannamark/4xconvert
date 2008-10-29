@@ -132,7 +132,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             person.setMiddleName(dto.getMiddleName());
             session.saveOrUpdate(person);
             HealthCareProvider careProvider = new HealthCareProvider();
-            Long temp = dto.getIdentifier();
+            Long temp = dto.getAssignedIdentifier();
             careProvider.setIdentifier(temp);
             careProvider.setPerson(person);
             session.saveOrUpdate(careProvider);

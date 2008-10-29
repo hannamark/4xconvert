@@ -88,7 +88,7 @@ public class PAHealthCareFacilityServiceBean
      */
     public PAHealthCareFacilityDTO create(
             PAHealthCareFacilityDTO dto) throws PAException {
-        if ((dto.getIi() != null) && !PAUtil.isIiNull(dto.getIi())) {
+        if ((dto.getIdentifier() != null) && !PAUtil.isIiNull(dto.getIdentifier())) {
             serviceError(" Update method should be used to modify existing. ");
         }
         PAHealthCareFacilityDTO resultDto = null;

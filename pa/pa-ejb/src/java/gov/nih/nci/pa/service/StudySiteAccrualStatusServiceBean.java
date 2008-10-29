@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -53,7 +53,7 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
      * @throws PAException PAException
      */
     public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIi())) {
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
             String errMsg = " Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead. ";
             LOG.error(errMsg);
             throw new PAException(errMsg);
@@ -63,7 +63,7 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
-            List<StudySiteAccrualStatusDTO> currentList 
+            List<StudySiteAccrualStatusDTO> currentList
                     = getCurrentStudySiteAccrualStatusByStudyParticipation(dto.getStudyParticipationIi());
             RecruitmentStatusCode oldCode = null;
             Timestamp oldDate = null;
@@ -71,10 +71,10 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
                 oldCode = RecruitmentStatusCode.getByCode(currentList.get(0).getStatusCode().getCode());
                 oldDate = TsConverter.convertToTimestamp(currentList.get(0).getStatusDate());
             }
-            
+
             RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
             Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
-            
+
             if (newCode == null) {
                 throw new PAException(" Study site accrual status must be set ");
             }
@@ -104,28 +104,28 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
         throw new PAException(errMsgMethodNotImplemented);
     }
 
-    
-    
+
+
     // Custom methods
     /**
      * @param studyParticipationIi id of Participation
-     * @return list StudySiteAccrualStatusDTO   
-     * @throws PAException on error 
+     * @return list StudySiteAccrualStatusDTO
+     * @throws PAException on error
      */
-    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi) 
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
             throws PAException {
         if (PAUtil.isIiNull(studyParticipationIi)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
         LOG.info("Entering getStudySiteAccrualStatusByStudyParticipation");
-        
+
         Session session = null;
         List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
             // step 1: form the hql
             String hql = "select ssas "
                        + "from StudySiteAccrualStatus ssas "
@@ -133,11 +133,11 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
                        + "where sp.id = :studyParticipationId "
                        + "order by ssas.id ";
             LOG.info(" query StudySiteAccrualStatus = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             query.setParameter("studyParticipationId", IiConverter.convertToLong(studyParticipationIi));
-            
+
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
@@ -148,8 +148,8 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
         for (StudySiteAccrualStatus bo : queryList) {
             resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
         }
-        
-        LOG.info("Leaving getStudySiteAccrualStatusByStudyParticipation, returning " 
+
+        LOG.info("Leaving getStudySiteAccrualStatusByStudyParticipation, returning "
                 + resultList.size() + " object(s).");
         return resultList;
     }
@@ -161,9 +161,9 @@ public class StudySiteAccrualStatusServiceBean implements StudySiteAccrualStatus
      */
     public List<StudySiteAccrualStatusDTO> getCurrentStudySiteAccrualStatusByStudyParticipation(
             Ii studyParticipationIi) throws PAException {
-        List<StudySiteAccrualStatusDTO> ssasList = 
+        List<StudySiteAccrualStatusDTO> ssasList =
                 this.getStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
-        ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();        
+        ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
         if (!ssasList.isEmpty()) {
             resultList.add(ssasList.get(ssasList.size() - 1));
         }

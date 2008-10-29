@@ -32,11 +32,11 @@ import org.hibernate.Session;
 @SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class SubGroupsServiceBean implements SubGroupsServiceRemote {
 
-    
+
     private static final Logger LOG  = Logger.getLogger(DocumentServiceBean.class);
-    
+
     /**
-     * @param studyProtocolIi Ii 
+     * @param studyProtocolIi Ii
      * @return DocumentDTO
      * @throws PAException PAException
      */
@@ -52,22 +52,22 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
         List<StratumGroup> queryList = new ArrayList<StratumGroup>();
         try {
             session = HibernateUtil.getCurrentSession();
-            Query query = null;            
+            Query query = null;
             String hql = " select sg from StratumGroup sg "
                        + " join sg.studyProtocol sp "
                        + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi);
 
            LOG.info(" query getDocumentsByStudyProtocol from SubGroupsServiceBean= " + hql);
-            
+
             query = session.createQuery(hql);
-            queryList = query.list();            
-            
+            queryList = query.list();
+
         }  catch (HibernateException hbe) {
             session.flush();
             LOG.error(" Hibernate exception while retrieving getDocumentsByStudyProtocol" , hbe);
             throw new PAException(" Hibernate exception while retrieving getDocumentsByStudyProtocol "  , hbe);
         }
-        
+
         ArrayList<StratumGroupDTO> resultList = new ArrayList<StratumGroupDTO>();
         for (StratumGroup bo : queryList) {
             resultList.add(StratumGroupConverter.convertFromDomainToDTO(bo));
@@ -76,9 +76,9 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
         LOG.info("Leaving getDocumentsByStudyProtocol from SubGroupsServiceBean");
         return resultList;
     }
-    
+
     /**
-     * @param sgDTO DocumentDTO 
+     * @param sgDTO DocumentDTO
      * @return SubGroupsDTO
      * @throws PAException PAException
      */
@@ -87,13 +87,13 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
     throws PAException {
         if (sgDTO == null) {
             throw new PAException(" sgDTO should not be null ");
-        }     
+        }
         LOG.debug("Entering create from SubGroupsServiceBean");
         Session session = null;
         StratumGroup sg = StratumGroupConverter.convertFromDTOToDomain(sgDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sg.setDateLastUpdated(now);
-        
+
         try {
             session = HibernateUtil.getCurrentSession();
             session.save(sg);
@@ -102,19 +102,19 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
             session.flush();
             LOG.error(" Hibernate exception while create" , hbe);
             throw new PAException(" Hibernate exception while create" , hbe);
-        }                
+        }
         LOG.debug("Leaving create from SubGroupsServiceBean");
-        return sgDTO;  
+        return sgDTO;
     }
-    
+
     /**
-     * @param id Ii 
+     * @param id Ii
      * @return SubGroupsDTO
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StratumGroupDTO get(Ii id) throws PAException {
-       
+
         LOG.info("Entering get from SubGroupsServiceBean");
         Session session = null;
         StratumGroupDTO sgDTO = null;
@@ -128,17 +128,17 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
 
            LOG.info(" query get = " + hql);
            query = session.createQuery(hql);
-           queryList = query.list();            
-            
+           queryList = query.list();
+
         }  catch (HibernateException hbe) {
             session.flush();
             LOG.error(" Hibernate exception while retrieving get" , hbe);
             throw new PAException(" Hibernate exception while retrieving get"  , hbe);
         }
-        
+
         if (!queryList.isEmpty()) {
             sg = queryList.get(0);
-            sgDTO = StratumGroupConverter.convertFromDomainToDTO(sg);            
+            sgDTO = StratumGroupConverter.convertFromDomainToDTO(sg);
         }
         session.flush();
         LOG.info("Leaving get from SubGroupsServiceBean");
@@ -146,7 +146,7 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
     }
 
     /**
-     * 
+     *
      * @param sgDTO SubGroupsDTO
      * @return SubGroupsDTO
      * @throws PAException PAException
@@ -159,7 +159,7 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
             throw new PAException(" docDTO should not be null ");
         }
         LOG.debug("Entering update");
-        Session session = null;        
+        Session session = null;
         StratumGroup sg = null;
         StratumGroupDTO sgRetDTO = null;
         List<StratumGroup> queryList = new ArrayList<StratumGroup>();
@@ -167,17 +167,17 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = " select sg from StratumGroup sg "
-                + " where sg.id = " + IiConverter.convertToLong(sgDTO.getIi());
-            
+                + " where sg.id = " + IiConverter.convertToLong(sgDTO.getIdentifier());
+
             query = session.createQuery(hql);
             queryList = query.list();
             sg = queryList.get(0);
-            
+
             sg.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
             sg.setUserLastUpdated(sgDTO.getUserLastUpdated().getValue());
             sg.setDescription(StConverter.convertToString(sgDTO.getDescription()));
             sg.setGroupNumberText(StConverter.convertToString(sgDTO.getGroupNumberText()));
-            
+
             session.update(sg);
             session.flush();
             sgRetDTO = StratumGroupConverter.convertFromDomainToDTO(sg);
@@ -185,20 +185,20 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
             session.flush();
             LOG.error(" Hibernate exception while retrieving update" , hbe);
             throw new PAException(" Hibernate exception while retrieving update "  , hbe);
-        }    
+        }
         LOG.debug("Leaving update from SubGroupsServiceBean");
         return sgRetDTO;
     }
 
     /**
-     * 
-     * @param id Ii 
+     *
+     * @param id Ii
      * @return Boolean
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Boolean delete(Ii id) throws PAException {
-          
+
         LOG.debug("Entering delete from SubGroupsServiceBean");
         Boolean result = false;
         Session session = null;
@@ -206,14 +206,14 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
         List<StratumGroup> queryList = new ArrayList<StratumGroup>();
         try {
             session = HibernateUtil.getCurrentSession();
-            Query query = null; 
+            Query query = null;
             String hql = " select s from StratumGroup s"
                        + " where s.id = " + IiConverter.convertToLong(id);
-            
+
             query = session.createQuery(hql);
             queryList = query.list();
             sg = queryList.get(0);
-            
+
             session.delete(sg);
             session.flush();
             result = true;
@@ -221,10 +221,10 @@ public class SubGroupsServiceBean implements SubGroupsServiceRemote {
             session.flush();
             LOG.error(" Hibernate exception while retrieving delete" , hbe);
             throw new PAException(" Hibernate exception while retrieving delete"  , hbe);
-        }   
+        }
         LOG.debug("Leaving delete from SubGroupsServiceBean ");
         return result;
     }
-    
-    
+
+
 }

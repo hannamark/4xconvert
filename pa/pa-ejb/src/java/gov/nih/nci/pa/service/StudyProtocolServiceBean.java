@@ -39,15 +39,15 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", 
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
     private static final int FIVE_5 = 5;
-    
+
     /**
-     * 
+     *
      * @param ii primary id of StudyProtocol
      * @return StudyProtocolDTO
      * @throws PAException PAException
@@ -65,56 +65,56 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         try {
             session = HibernateUtil.getCurrentSession();
             //@todo : session.load is not working, so using query to retrieve
-            // studyProtocol = (StudyProtocol) 
+            // studyProtocol = (StudyProtocol)
             // session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
             //session.flush();
 
             Query query = null;
-            
+
             // step 1: form the hql
             String hql = "select sp "
                        + "from StudyProtocol sp "
                        + "where sp.id =  " + Long.valueOf(ii.getExtension());
             LOG.info(" query StudyOverallStatus = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             queryList = query.list();
-            
+
             studyProtocol = queryList.get(0);
             session.flush();
-            
+
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving " 
+            throw new PAException(" Hibernate exception while retrieving "
                     + "StudyProtocol for id = " + ii.getExtension() , hbe);
         }
-        
-        StudyProtocolDTO studyProtocolDTO =  
+
+        StudyProtocolDTO studyProtocolDTO =
             StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
-        
+
 
         LOG.info("Leaving getStudyProtocol");
         return studyProtocolDTO;
-        
+
     }
-    
+
 
 
     /**
-     * 
+     *
      * @param studyProtocolDTO studyProtocolDTO
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
-    @SuppressWarnings("PMD.NPathComplexity") 
+    @SuppressWarnings("PMD.NPathComplexity")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // enforce business rules
         if (studyProtocolDTO == null) {
             LOG.error(" studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
-            
+
         }
         Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
         Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
@@ -143,33 +143,33 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         }
         if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
             throw new PAException("Primary completion date must be >= start date.");
-            
+
         }
-        
-        
+
+
         StudyProtocolDTO  spDTO = null;
         Session session = null;
         List<StudyProtocol> queryList = new ArrayList<StudyProtocol>();
-        
+
         try {
             session = HibernateUtil.getCurrentSession();
             //@todo : session.load is not working, so using query to retrieve
-            //StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, 
-            //        Long.valueOf(studyProtocolDTO.getIi().getExtension()));
+            //StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
+            //        Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
-            
+
             Query query = null;
-            
+
             // step 1: form the hql
             String hql = "select sp "
                        + "from StudyProtocol sp "
-                       + "where sp.id =  " + Long.valueOf(studyProtocolDTO.getIi().getExtension());
+                       + "where sp.id =  " + Long.valueOf(studyProtocolDTO.getIdentifier().getExtension());
             LOG.info(" query StudyOverallStatus = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             queryList = query.list();
-            
+
             StudyProtocol sp = queryList.get(0);
 
             StudyProtocol studyProtocol = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
@@ -195,20 +195,20 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             //spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
             spDTO =  StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
         }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while updating StudyProtocol for id = " 
-                    + studyProtocolDTO.getIi().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating StudyProtocol for id = " 
-                    + studyProtocolDTO.getIi().getExtension() , hbe);
+            LOG.error(" Hibernate exception while updating StudyProtocol for id = "
+                    + studyProtocolDTO.getIdentifier().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating StudyProtocol for id = "
+                    + studyProtocolDTO.getIdentifier().getExtension() , hbe);
         }
 
         return spDTO;
-        
-    }
-    
 
-    
+    }
+
+
+
     /**
-     * 
+     *
      * @param ii ii
      * @return InterventionalStudyProtocolDTO
      * @throws PAException PAException
@@ -221,7 +221,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         }
         LOG.info("Entering getInterventionalStudyProtocol");
         Session session = null;
-       
+
         List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
         InterventionalStudyProtocol isp = null;
         try {
@@ -232,33 +232,33 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
                        + "from InterventionalStudyProtocol isp "
                        + "where isp.id =  " + Long.valueOf(ii.getExtension());
             LOG.info(" query InterventionalStudyProtocol = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             queryList = query.list();
-            
+
             isp = queryList.get(0);
             session.flush();
 
-            
+
         }  catch (HibernateException hbe) {
             session.flush();
-            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = " 
+            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = "
                     + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving " 
+            throw new PAException(" Hibernate exception while retrieving "
                     + "InterventionalStudyProtocol for id = " + ii.getExtension() , hbe);
         }
-        InterventionalStudyProtocolDTO ispDTO = 
+        InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
         LOG.info("Leaving getInterventionalStudyProtocol");
         return ispDTO;
-        
+
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param ispDTO studyProtocolDTO
      * @return InterventionalStudyProtocolDTO
      * @throws PAException PAException
@@ -270,24 +270,24 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         if (ispDTO == null) {
             LOG.error(" studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
-            
+
         }
         Timestamp now = new Timestamp((new Date()).getTime());
         InterventionalStudyProtocolDTO  ispRetDTO = null;
         Session session = null;
         List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
-        
+
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = "select isp "
                        + "from InterventionalStudyProtocol isp "
-                       + "where isp.id =  " + Long.valueOf(ispDTO.getIi().getExtension());
+                       + "where isp.id =  " + Long.valueOf(ispDTO.getIdentifier().getExtension());
             LOG.info(" query InterventionalStudyProtocol = " + hql);
             query = session.createQuery(hql);
             queryList = query.list();
             InterventionalStudyProtocol isp = queryList.get(0);
-            
+
             InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.
                                 convertFromDTOToDomain(ispDTO);
             // overwrite the values
@@ -306,7 +306,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             isp.setSection801Indicator(upd.getSection801Indicator());
             isp.setStartDate(upd.getStartDate());
             isp.setStartDateTypeCode(upd.getStartDateTypeCode());
-            
+
             isp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
             isp.setDateLastUpdated(now);
 
@@ -315,15 +315,15 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             //spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
             ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
         }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
-                    + ispDTO.getIi().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
-                    + ispDTO.getIi().getExtension() , hbe);
+            LOG.error(" Hibernate exception while updating InterventionalStudyProtocol for id = "
+                    + ispDTO.getIdentifier().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = "
+                    + ispDTO.getIdentifier().getExtension() , hbe);
         }
         return ispRetDTO;
-        
+
     }
-    
+
     /**
      * for creating a new ISP.
      * @param ispDTO  for isp
@@ -336,12 +336,12 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         if (ispDTO == null) {
             LOG.error(" studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
-            
+
         }
-        if (ispDTO.getIi() != null && ispDTO.getIi().getExtension() != null) {
-            LOG.error(" Extension should be null = " + ispDTO.getIi().getExtension());
-            throw new PAException("  Extension should be null, but got  = " + ispDTO.getIi().getExtension());
-            
+        if (ispDTO.getIdentifier() != null && ispDTO.getIdentifier().getExtension() != null) {
+            LOG.error(" Extension should be null = " + ispDTO.getIdentifier().getExtension());
+            throw new PAException("  Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
+
         }
         LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
@@ -354,31 +354,31 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             session.save(isp);
             LOG.info("Creating isp for id = " + isp.getId());
         }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while creating InterventionalStudyProtocol for id = " 
-                    + ispDTO.getIi().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = " 
-                    + ispDTO.getIi().getExtension() , hbe);
+            LOG.error(" Hibernate exception while creating InterventionalStudyProtocol for id = "
+                    + ispDTO.getIdentifier().getExtension() , hbe);
+            throw new PAException(" Hibernate exception while updating InterventionalStudyProtocol for id = "
+                    + ispDTO.getIdentifier().getExtension() , hbe);
         } finally {
             session.flush();
         }
         createDocumentWorkFlowStatus(isp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.convertToIi(isp.getId());
-        
+
     }
 
-    
-    
+
+
     private String generateNciIdentifier() throws PAException {
         Session session = null;
         Calendar today = Calendar.getInstance();
         int currentYear  = today.get(Calendar.YEAR);
-        String query = "select max(sp.identifier) from StudyProtocol sp where " 
+        String query = "select max(sp.identifier) from StudyProtocol sp where "
             + "sp.identifier like '%" + currentYear + "%' ";
         String nciIdentifier;
-        
+
         try {
-            session = HibernateUtil.getCurrentSession(); 
+            session = HibernateUtil.getCurrentSession();
             Query queryObject = session.createQuery(query);
             List result = queryObject.list();
             String maxValue = (String) result.get(0);
@@ -388,9 +388,9 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
                 while (nextNumber.length() < FIVE_5) {
                     nextNumber.insert(0, "0");
                 }
-                nciIdentifier = "NCI-" + currentYear + "-" + nextNumber;                
+                nciIdentifier = "NCI-" + currentYear + "-" + nextNumber;
             } else {
-                nciIdentifier = "NCI-" + currentYear + "-00001"; 
+                nciIdentifier = "NCI-" + currentYear + "-00001";
             }
 
         }  catch (HibernateException hbe) {
@@ -400,10 +400,10 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             session.flush();
         }
         return nciIdentifier;
-    }    
-    
+    }
+
     /**
-     * 
+     *
      * @param ii ii
      * @return InterventionalStudyProtocolDTO
      * @throws PAException PAException
@@ -416,7 +416,7 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         }
         LOG.info("Entering getInterventionalStudyProtocol");
         Session session = null;
-       
+
         List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
         InterventionalStudyProtocol isp = null;
         try {
@@ -427,30 +427,30 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
                        + "from InterventionalStudyProtocol isp "
                        + "where isp.id =  " + Long.valueOf(ii.getExtension());
             LOG.info(" query InterventionalStudyProtocol = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             queryList = query.list();
-            
+
             isp = queryList.get(0);
             session.flush();
 
-            
+
         }  catch (HibernateException hbe) {
             session.flush();
-            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = " 
+            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = "
                     + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving " 
+            throw new PAException(" Hibernate exception while retrieving "
                     + "InterventionalStudyProtocol for id = " + ii.getExtension() , hbe);
         }
-        InterventionalStudyProtocolDTO ispDTO = 
+        InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
         LOG.info("Leaving getInterventionalStudyProtocol");
         return ispDTO;
-        
-    }    
-    
+
+    }
+
     private void createDocumentWorkFlowStatus(StudyProtocol sp) throws PAException {
         Session session = null;
         LOG.info("Entering createDocumentWorkFlowStatus");
@@ -465,13 +465,13 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
             session.save(wfs);
             LOG.info("Creating wfs for id = " + wfs.getId());
         }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while creating DocumentWorkflow statys for protocol id = " 
+            LOG.error(" Hibernate exception while creating DocumentWorkflow statys for protocol id = "
                     + sp.getId() , hbe);
-            throw new PAException(" Hibernate exception while creating DocumentWorkflow statys for protocol id = " 
+            throw new PAException(" Hibernate exception while creating DocumentWorkflow statys for protocol id = "
                     + sp.getId() , hbe);
         } finally {
             session.flush();
-        }   
+        }
         LOG.info("Leaving createDocumentWorkFlowStatus");
     }
 

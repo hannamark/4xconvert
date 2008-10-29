@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -35,7 +35,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class StudyOverallStatusServiceBean 
+public class StudyOverallStatusServiceBean
         extends AbstractStudyPaService<StudyOverallStatusDTO>
         implements StudyOverallStatusServiceRemote {
 
@@ -50,10 +50,10 @@ public class StudyOverallStatusServiceBean
     }
 
     /**
-     * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.  
+     * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.
      * Note that this is the only method which does this.  StudyRecruitmentStatusService
      * is used for reporting only.
-     * 
+     *
      * @param dto studyOverallStatusDTO
      * @return StudyOverallStatusDTO
      * @throws PAException PAException
@@ -61,7 +61,7 @@ public class StudyOverallStatusServiceBean
     @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     public StudyOverallStatusDTO create(
             StudyOverallStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIi())) {
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
             String errMsg = " Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ";
             LOG.error(errMsg);
             throw new PAException(errMsg);
@@ -71,11 +71,11 @@ public class StudyOverallStatusServiceBean
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
-            
+
             // enforce business rules
             List<StudyOverallStatusDTO> oldStatus = getCurrentByStudyProtocol(
                     dto.getStudyProtocolIi());
-            
+
             StudyStatusCode oldCode = null;
             Timestamp oldDate = null;
             if (!oldStatus.isEmpty()) {
@@ -97,20 +97,20 @@ public class StudyOverallStatusServiceBean
             if ((oldDate != null) && newDate.before(oldDate)) {
                 throw new PAException("New current status date should be bigger/same as old date.  ");
             }
-            
+
             StudyOverallStatus bo = StudyOverallStatusConverter.convertFromDtoToDomain(dto);
             if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
                 if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
-                    serviceError("A reason must be entered when the study status is set to " 
+                    serviceError("A reason must be entered when the study status is set to "
                              + bo.getStatusCode().getCode() + ".  ");
                 }
             } else {
                 bo.setCommentText(null);
             }
-               
+
             // update
             session.saveOrUpdate(bo);
             StudyRecruitmentStatus srs = StudyRecruitmentStatusServiceBean.create(bo);
@@ -140,13 +140,13 @@ public class StudyOverallStatusServiceBean
             throw new PAException(errMsg);
         }
         LOG.info("Entering getStudyOverallStatusByStudyProtocol");
-        
+
         Session session = null;
         List<StudyOverallStatus> queryList = new ArrayList<StudyOverallStatus>();
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
+
             // step 1: form the hql
             String hql = "select sos "
                        + "from StudyOverallStatus sos "
@@ -154,11 +154,11 @@ public class StudyOverallStatusServiceBean
                        + "where sp.id = :studyProtocolId "
                        + "order by sos.id ";
             LOG.info(" query StudyOverallStatus = " + hql);
-            
+
             // step 2: construct query object
             query = session.createQuery(hql);
             query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
-            
+
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
@@ -168,18 +168,18 @@ public class StudyOverallStatusServiceBean
         for (StudyOverallStatus bo : queryList) {
             resultList.add(StudyOverallStatusConverter.convertFromDomainToDTO(bo));
         }
-        
+
         LOG.info("Leaving getStudyOverallStatusByStudyProtocol, returning " + resultList.size() + " object(s).");
         return resultList;
     }
-    
+
     /**
      * @param studyProtocolIi Primary key assigned to a StudyProtocl.
      * @return List Current status StudyOverllStatusDTO.
      * @throws PAException Exception.
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi) 
+    public List<StudyOverallStatusDTO> getCurrentByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
         List<StudyOverallStatusDTO> sosList = this.getByStudyProtocol(studyProtocolIi);
         List<StudyOverallStatusDTO> resultList = new ArrayList<StudyOverallStatusDTO>();
