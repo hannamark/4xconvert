@@ -46,5 +46,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StratumGroup" />
         <mapping class="gov.nih.nci.pa.domain.ResearchOrganization" />
         <mapping class="gov.nih.nci.pa.service.util.SessionEntry" />
+        <mapping class="gov.nih.nci.pa.domain.ObservationalStudyProtocol" />
     </session-factory>
 </hibernate-configuration>
