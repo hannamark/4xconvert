@@ -34,6 +34,20 @@
 			<li><div>Scientific Data</div>
 				<ul>
 					<li><a href="subGroupsquery.action" >SubGroups</a></li>
+					<li class="sub"><a href="interventionalStudyDesigndetailsQuery.action" style="color: black;">Interventional Trial Design </a>
+                        <ul>
+                            <li><a href="interventionalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
+                            <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
+                            <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
+                        </ul>
+					</li>
+					<li class="sub"><a href="observationalStudyDesigndetailsQuery.action" style="color: black;">Observational Trial Design </a>
+                        <ul>
+                            <li><a href="observationalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
+                            <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
+                            <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
+                        </ul>
+					</li>
 				</ul>
 			</li>
 		</ul>

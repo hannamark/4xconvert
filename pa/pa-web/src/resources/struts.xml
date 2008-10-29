@@ -67,6 +67,7 @@
 			<result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>			
 			<result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
 			<result name="criteria">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
+			<result name="design">/WEB-INF/jsp/designDetails.jsp</result>
 		</action>		
 		<action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />			
@@ -110,6 +111,14 @@
  			<result name="error">/WEB-INF/jsp/subGroups.jsp</result>
  			<result name="delete">/WEB-INF/jsp/subGroupsDelete.jsp</result>
  		</action>
-
+	 		
+		<action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
+			<interceptor-ref name="nci-commonsParams" />
+			<result name="details">/WEB-INF/jsp/isdesignDetails.jsp</result>
+		</action>
+		<action name="observationalStudyDesign*" class="gov.nih.nci.pa.action.ObservationalStudyDesignAction" method="{1}">
+			<interceptor-ref name="nci-commonsParams" />
+			<result name="details">/WEB-INF/jsp/osdesignDetails.jsp</result>
+		</action>
 	</package>
 </struts>
