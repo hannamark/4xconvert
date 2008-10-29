@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -42,7 +42,7 @@ public class StudyParticipationContactServiceTest {
     Ii contactIi;
     Long healthCareProviderId;
     Ii healthCareProviderIi;
-    
+
     @Before
     public void setUp() throws Exception {
         TestSchema.reset1();
@@ -60,7 +60,7 @@ public class StudyParticipationContactServiceTest {
     public void getPersons() throws Exception {
         //List a = paRemote.getPersonsByStudyParticpationId(participationId);
         assertEquals("", "");
-        
+
     }
    // @Test
     public void get() throws Exception {
@@ -72,7 +72,7 @@ public class StudyParticipationContactServiceTest {
    // @Test
     public void create() throws Exception {
         StudyParticipationContactDTO spc = new StudyParticipationContactDTO();
-        spc.setIi(IiConverter.convertToIi((Long) null));
+        spc.setIdentifier(IiConverter.convertToIi((Long) null));
         spc.setPostalAddress(AddressConverterUtil.create("1", "2", "3", "4", "5", "ZZZ"));
         spc.setPrimaryIndicator(BlConverter.convertToBl(true));
         spc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.COORDINATING_INVESTIGATOR));
@@ -82,11 +82,11 @@ public class StudyParticipationContactServiceTest {
         spc.setStudyProtocolIi(protocolIi);
         spc.setHealthCareProvider(healthCareProviderIi);
         StudyParticipationContactDTO result = remoteEjb.create(spc);
-        assertFalse(PAUtil.isIiNull(result.getIi()));
+        assertFalse(PAUtil.isIiNull(result.getIdentifier()));
     }
 
-    
-    
+
+
    // @Test
     public void delete() throws Exception {
         remoteEjb.delete(contactIi);

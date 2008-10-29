@@ -29,37 +29,37 @@ import org.junit.Test;
 public class StudyProtocolServiceBeanTest {
 
     private StudyProtocolServiceRemote remoteEjb = new StudyProtocolServiceBean();
-    
+
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
     }
-    
-    //@Test(expected=PAException.class) 
+
+    //@Test(expected=PAException.class)
     public void nullParameter() throws Exception {
         //InterventionalStudyProtocolDTO ispDTO ;
         remoteEjb.createInterventionalStudyProtocol(null);
     }
-    
-    //@Test(expected=PAException.class) 
+
+    //@Test(expected=PAException.class)
     public void nullExtension() throws Exception {
         InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
         Ii ii = new Ii();
         ii.setExtension("xxx");
-        ispDTO.setIi(ii);
+        ispDTO.setIdentifier(ii);
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
     @Test
     public void createInterventionalStudyProtocol() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO = 
+        InterventionalStudyProtocolDTO ispDTO =
                 InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         assertNotNull(ii.getExtension());
     }
-    
+
     @Test
     public void getInterventionalStudyProtocol() throws Exception {
-        InterventionalStudyProtocolDTO create = 
+        InterventionalStudyProtocolDTO create =
                 InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(create);
         assertNotNull(ii.getExtension());
@@ -77,17 +77,17 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(create.getPhaseCode().getCode(),saved.getPhaseCode().getCode());
         assertNotNull(saved.getIdentifier().getExtension());
     }
-    
+
     @Test
     public void updateInterventionalStudyProtocol() throws Exception {
-        InterventionalStudyProtocolDTO create = 
+        InterventionalStudyProtocolDTO create =
                 InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(create);
         assertNotNull(ii.getExtension());
         InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
-        
+
         saved.setAcronym(StConverter.convertToSt("1234"));
-        
+
         InterventionalStudyProtocolDTO update =  remoteEjb.updateInterventionalStudyProtocol(saved);
 
         assertNotNull(saved);

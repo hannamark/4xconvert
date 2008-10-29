@@ -16,45 +16,45 @@ public class SubGroupsServiceBeanTest {
 
     private SubGroupsServiceRemote remoteEjb = new SubGroupsServiceBean();;
     Ii pid;
-    
+
     @Before
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
         pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-    }    
-    
-    @Test 
+    }
+
+    @Test
     public void get() throws Exception {
-        List<StratumGroupDTO> statusList = 
+        List<StratumGroupDTO> statusList =
             remoteEjb.getDocumentsByStudyProtocol(pid);
         assertEquals(2, statusList.size());
-        
-        StratumGroupDTO dto = 
-            remoteEjb.get(statusList.get(1).getIi());
-        assertEquals(IiConverter.convertToLong(statusList.get(1).getIi())
-                , (IiConverter.convertToLong(dto.getIi())));
+
+        StratumGroupDTO dto =
+            remoteEjb.get(statusList.get(1).getIdentifier());
+        assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier())
+                , (IiConverter.convertToLong(dto.getIdentifier())));
         StratumGroupDTO dto2 = null;
-        
+
             dto2 = new StratumGroupDTO();
             dto2 = remoteEjb.update(dto);
-            assertEquals(IiConverter.convertToLong(dto.getIi())
-                    , (IiConverter.convertToLong(dto2.getIi())));
-        
-         remoteEjb.delete(dto.getIi());
+            assertEquals(IiConverter.convertToLong(dto.getIdentifier())
+                    , (IiConverter.convertToLong(dto2.getIdentifier())));
+
+         remoteEjb.delete(dto.getIdentifier());
     }
-    
+
     @Test
     public void create() throws Exception {
         StratumGroupDTO dto = new StratumGroupDTO();
         dto.setStudyProtocolIi(pid);
         dto.setDescription(StConverter.convertToSt("Description"));
         dto.setGroupNumberText(StConverter.convertToSt("Code"));
-        StratumGroupDTO dto2 = null;        
+        StratumGroupDTO dto2 = null;
         dto2 = new StratumGroupDTO();
         dto2 = remoteEjb.create(dto);
-        assertEquals(IiConverter.convertToLong(dto.getIi())
-                , (IiConverter.convertToLong(dto2.getIi())));
+        assertEquals(IiConverter.convertToLong(dto.getIdentifier())
+                , (IiConverter.convertToLong(dto2.getIdentifier())));
     }
 
 

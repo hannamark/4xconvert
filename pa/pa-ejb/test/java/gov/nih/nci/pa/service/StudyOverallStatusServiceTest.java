@@ -56,21 +56,21 @@ public class StudyOverallStatusServiceTest {
         assertTrue(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
         assertFalse(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.COMPLETE));
         try {
-            dto.setIi(IiConverter.convertToIi((Long) null)); 
+            dto.setIdentifier(IiConverter.convertToIi((Long) null)); 
             dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
             remoteEjb.create(dto);
             fail("StudyOverallStatus transitions must follow business rules.");
         } catch (PAException e) {
             // expected behavior
         }
-        dto.setIi(IiConverter.convertToIi((Long) null));
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
         remoteEjb.create(dto);
         
         StudyOverallStatusDTO result = 
             remoteEjb.getCurrentByStudyProtocol(pid).get(0);
-        assertNotNull (IiConverter.convertToLong(result.getIi()));
+        assertNotNull (IiConverter.convertToLong(result.getIdentifier()));
         assertEquals (result.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
                     , TsConverter.convertToTimestamp(dto.getStatusDate()));
@@ -87,8 +87,8 @@ public class StudyOverallStatusServiceTest {
         
         StudyOverallStatusDTO dto = 
             remoteEjb.getCurrentByStudyProtocol(pid).get(0);
-        assertEquals(IiConverter.convertToLong(statusList.get(1).getIi())
-                , (IiConverter.convertToLong(dto.getIi())));
+        assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier())
+                , (IiConverter.convertToLong(dto.getIdentifier())));
     }
     
     @Test
@@ -103,10 +103,10 @@ public class StudyOverallStatusServiceTest {
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
         dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
-        dto.setIi(initialIi);
-        assertTrue(PAUtil.isIiNull(dto.getIi()));
+        dto.setIdentifier(initialIi);
+        assertTrue(PAUtil.isIiNull(dto.getIdentifier()));
         StudyOverallStatusDTO resultDto = remoteEjb.create(dto);
-        assertFalse(PAUtil.isIiNull(resultDto.getIi()));
+        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
     }
     
     @Test
@@ -119,7 +119,7 @@ public class StudyOverallStatusServiceTest {
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
         dto.setStatusDate(null);
         dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
-        dto.setIi(null);
+        dto.setIdentifier(null);
         try {
             remoteEjb.create(dto);
             fail("PAException should have been thrown for null in status date.");
@@ -135,7 +135,7 @@ public class StudyOverallStatusServiceTest {
         }
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
         dto = remoteEjb.create(dto);
-        assertFalse(PAUtil.isIiNull(dto.getIi()));
+        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
     }
  
 }

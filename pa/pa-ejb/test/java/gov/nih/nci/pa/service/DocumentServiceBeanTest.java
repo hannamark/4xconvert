@@ -18,24 +18,24 @@ import org.junit.Test;
 public class DocumentServiceBeanTest {
     private DocumentServiceRemote remoteEjb = new DocumentServiceBean();;
     Ii pid;
-    
+
     @Before
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
         pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-    }    
-    
-    @Test 
+    }
+
+    @Test
     public void get() throws Exception {
-        List<DocumentDTO> statusList = 
+        List<DocumentDTO> statusList =
             remoteEjb.getDocumentsByStudyProtocol(pid);
         assertEquals(2, statusList.size());
-        
-        DocumentDTO dto = 
-            remoteEjb.get(statusList.get(1).getIi());
-        assertEquals(IiConverter.convertToLong(statusList.get(1).getIi())
-                , (IiConverter.convertToLong(dto.getIi())));
+
+        DocumentDTO dto =
+            remoteEjb.get(statusList.get(1).getIdentifier());
+        assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier())
+                , (IiConverter.convertToLong(dto.getIdentifier())));
         dto.setText(EdConverter.convertToEd("test".getBytes()));
         DocumentDTO dto2 = null;
         try {
@@ -44,20 +44,20 @@ public class DocumentServiceBeanTest {
         } catch(PAException e) {
             // expected behavior
         }
-        
+
         remoteEjb.delete(dto);
-        DocumentDTO dto3 = 
-            remoteEjb.get(dto.getIi());
-        assertEquals(dto3.getInactiveCommentText(), dto.getInactiveCommentText());        
-        
+        DocumentDTO dto3 =
+            remoteEjb.get(dto.getIdentifier());
+        assertEquals(dto3.getInactiveCommentText(), dto.getInactiveCommentText());
+
     }
-    
+
     @Test
     public void create() throws Exception {
         DocumentDTO docDTO = new DocumentDTO();
         docDTO.setStudyProtocolIi(pid);
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.Other));
-        docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc")); 
+        docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("test".getBytes()));
         DocumentDTO docDTO2 = null;
         try {

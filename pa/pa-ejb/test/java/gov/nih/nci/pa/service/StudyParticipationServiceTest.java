@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -37,7 +37,7 @@ public class StudyParticipationServiceTest {
     Ii participationIi;
     Long facilityId;
     Ii facilityIi;
-    
+
     @Before
     public void setUp() throws Exception {
         TestSchema.reset1();
@@ -62,7 +62,7 @@ public class StudyParticipationServiceTest {
     @Test
     public void create() throws Exception {
         StudyParticipationDTO spDto = new StudyParticipationDTO();
-        spDto.setIi(IiConverter.convertToIi((Long) null)); 
+        spDto.setIdentifier(IiConverter.convertToIi((Long) null));
         spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         spDto.setHealthcareFacilityIi(facilityIi);
         spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP ID 02"));
@@ -70,7 +70,7 @@ public class StudyParticipationServiceTest {
         spDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/15/2008")));
         spDto.setStudyProtocolIi(participationIi);
         StudyParticipationDTO result = remoteEjb.create(spDto);
-        assertFalse(PAUtil.isIiNull(result.getIi()));
+        assertFalse(PAUtil.isIiNull(result.getIdentifier()));
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
                 , CdConverter.convertCdToString(result.getFunctionalCode()));
     }
@@ -87,6 +87,6 @@ public class StudyParticipationServiceTest {
     @Test
     public void getByProtocol() throws Exception {
         List<StudyParticipationDTO> spList = remoteEjb.getByStudyProtocol(studyIi);
-        assertEquals(participationId, IiConverter.convertToLong(spList.get(0).getIi()));
+        assertEquals(participationId, IiConverter.convertToLong(spList.get(0).getIdentifier()));
     }
 }
