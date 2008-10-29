@@ -8,6 +8,7 @@ import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
@@ -88,6 +89,7 @@ public class TestSchema {
             addAnnotatedClass(StudyRecruitmentStatus.class).
             addAnnotatedClass(StratumGroup.class).
             addAnnotatedClass(ResearchOrganization.class).
+            addAnnotatedClass(ObservationalStudyProtocol.class).
                         
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").

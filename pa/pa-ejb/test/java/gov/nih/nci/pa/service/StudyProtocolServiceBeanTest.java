@@ -9,8 +9,11 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -103,7 +106,42 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(saved.getPhaseCode().getCode(),update.getPhaseCode().getCode());
         assertNotNull(update.getIdentifier().getExtension());
     }
+    @Test
+    public void getObservationalStudyProtocol() throws Exception {
+        ObservationalStudyProtocolDTO create = 
+            ObservationalStudyProtocolDTOTest.createObservationalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createObservationalStudyProtocol(create);
+        assertNotNull(ii.getExtension());
+        ObservationalStudyProtocolDTO saved =  remoteEjb.getObservationalStudyProtocol(ii);
+        assertNotNull(saved);
+        assertEquals(create.getStudyModelCode().getCode(),saved.getStudyModelCode().getCode());
+        assertEquals(create.getTimePerspectiveCode().getCode(),saved.getTimePerspectiveCode().getCode());
+        assertEquals(create.getBiospecimenDescription().getValue(),saved.getBiospecimenDescription().getValue());
+        assertEquals(create.getBiospecimenRetentionCode().getCode(),saved.getBiospecimenRetentionCode().getCode());
+        assertEquals(create.getNumberOfGroups().getValue() ,saved.getNumberOfGroups().getValue());
+        assertNotNull(saved.getIdentifier().getExtension());
+    }
+    @Test
+    public void updateObservationalStudyProtocol() throws Exception {
+        ObservationalStudyProtocolDTO create = 
+            ObservationalStudyProtocolDTOTest.createObservationalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createObservationalStudyProtocol(create);
+        assertNotNull(ii.getExtension());
+        ObservationalStudyProtocolDTO saved =  remoteEjb.getObservationalStudyProtocol(ii);
+        
+        saved.setMaximumTargetAccrualNumber(IntConverter.convertToInt(1234));
+        
+        ObservationalStudyProtocolDTO update =  remoteEjb.updateObservationalStudyProtocol(saved);
 
+        assertNotNull(saved);
+        assertEquals(update.getStudyModelCode().getCode(),saved.getStudyModelCode().getCode());
+        assertEquals(update.getTimePerspectiveCode().getCode(),saved.getTimePerspectiveCode().getCode());
+        assertEquals(update.getBiospecimenDescription().getValue(),saved.getBiospecimenDescription().getValue());
+        assertEquals(update.getBiospecimenRetentionCode().getCode(),saved.getBiospecimenRetentionCode().getCode());
+        assertEquals(update.getNumberOfGroups().getValue() ,saved.getNumberOfGroups().getValue());
+        assertEquals(update.getMaximumTargetAccrualNumber().getValue() ,saved.getMaximumTargetAccrualNumber().getValue());
+        assertNotNull(update.getIdentifier().getExtension());
+    }
     @Test
     public void nullInDatesTest() throws Exception {
         StudyProtocol sp = new StudyProtocol();   
