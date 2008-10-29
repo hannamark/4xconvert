@@ -10,6 +10,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -104,7 +105,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
      */
-    public InterventionalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
+    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
         return null;
     }
     /* (non-Javadoc)
@@ -113,6 +114,18 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
     
     public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
     throws PAException {
+        return null;
+    }
+
+    public Ii createObservationalStudyProtocol(
+            ObservationalStudyProtocolDTO ospDTO) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
+            ObservationalStudyProtocolDTO ospDTO) throws PAException {
+        // TODO Auto-generated method stub
         return null;
     }    
 }
