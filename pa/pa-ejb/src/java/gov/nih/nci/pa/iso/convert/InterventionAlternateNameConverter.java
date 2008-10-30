@@ -12,8 +12,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-
-import java.util.Date;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author Hugh Reinhart
@@ -33,10 +32,13 @@ public class InterventionAlternateNameConverter {
             InterventionAlternateName bo) throws PAException {
         InterventionAlternateNameDTO dto = new InterventionAlternateNameDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
+        if (bo.getIntervention() != null) {
+            dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
+        }
         dto.setName(StConverter.convertToSt(bo.getName()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
+        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -48,16 +50,19 @@ public class InterventionAlternateNameConverter {
      */
     public static InterventionAlternateName convertFromDtoToDomain(
             InterventionAlternateNameDTO dto) throws PAException {
-        Intervention iBo = new Intervention();
-        iBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+        Intervention iBo = null;
+        if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
+            iBo = new Intervention();
+            iBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+        }
 
         InterventionAlternateName bo = new InterventionAlternateName();
-        bo.setDateLastUpdated(new Date());
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(iBo);
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
+        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 
