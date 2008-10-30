@@ -13,24 +13,13 @@ import gov.nih.nci.coppa.iso.Ts;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 
-public class InterventionAlternateNameDTO {
-    Ii identifier;
-    Ii interventionIdentifier;
-    St name;
-    Cd statusCode;
-    Ts statusDateRangeLow;
-    /**
-     * @return the identifier
-     */
-    public Ii getIdentifier() {
-        return identifier;
-    }
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
-    }
+public class InterventionAlternateNameDTO extends BaseDTO {
+    private static final long serialVersionUID = 1948667890L;
+    private Ii interventionIdentifier;
+    private St name;
+    private Cd statusCode;
+    private Ts statusDateRangeLow;
+
     /**
      * @return the interventionIdentifier
      */

@@ -12,28 +12,16 @@ import gov.nih.nci.coppa.iso.St;
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class PlannedActivityDTO {
-    Ii identifier;
-    Ii studyProtocolIdentifier;
-    St alternateName;
-    Cd categoryCode;
-    St descriptionText;
-    Ii interventionIdentifier;
-    Bl leadProductIndicator;
-    St name;
-    Cd subcategoryCode;
-    /**
-     * @return the identifier
-     */
-    public Ii getIdentifier() {
-        return identifier;
-    }
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
-    }
+public class PlannedActivityDTO extends BaseDTO {
+    private static final long serialVersionUID = 1238767890L;
+    private Ii studyProtocolIdentifier;
+    private St alternateName;
+    private Cd categoryCode;
+    private St descriptionText;
+    private Ii interventionIdentifier;
+    private Bl leadProductIndicator;
+    private St name;
+    private Cd subcategoryCode;
     /**
      * @return the studyProtocolIdentifier
      */
@@ -130,7 +118,4 @@ public class PlannedActivityDTO {
     public void setSubcategoryCode(Cd subcategoryCode) {
         this.subcategoryCode = subcategoryCode;
     }
-    
-    
-
 }

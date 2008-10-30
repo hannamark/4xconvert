@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -13,25 +12,13 @@ import gov.nih.nci.coppa.iso.Ts;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 
-public class InterventionDTO {
-    Ii identifier;
-    Cd typeCode;
-    St name;
-    St descriptionText;
-    Cd statusCode;
-    Ts statusDateRangeLow;
-    /**
-     * @return the identifier
-     */
-    public Ii getIdentifier() {
-        return identifier;
-    }
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(Ii identifier) {
-        this.identifier = identifier;
-    }
+public class InterventionDTO extends BaseDTO {
+    private static final long serialVersionUID = 1234567567L;
+    private Cd typeCode;
+    private St name;
+    private St descriptionText;
+    private Cd statusCode;
+    private Ts statusDateRangeLow;
     /**
      * @return the typeCode
      */
