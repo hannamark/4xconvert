@@ -352,112 +352,64 @@ insert into healthcare_provider (id, person_id, date_last_updated, user_last_upd
 
 --------------- study contact -----------
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(1, 'true','2432','terra cot','herdon','de','11111',null,1,1,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(1, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,1,1,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
  
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(2, 'true','2432','terra cot','herdon','de','11111',null,2,2,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(2, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,2,2,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(3, 'true','2432','terra cot','herdon','de','11111',null,3,3,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(3, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,3,3,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(4, 'true','2432','terra cot','herdon','de','11111',null,4,4,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(4, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,4,4,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(5, 'true','2432','terra cot','herdon','de','11111',null,5,5,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(5, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,5,5,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(6, 'true','2432','terra cot','herdon','de','11111',null,1,6,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(6, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,1,6,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
  
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(7, 'true','2432','terra cot','herdon','de','11111',null,2,7,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(7, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,2,7,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(8, 'true','2432','terra cot','herdon','de','11111',null,3,8,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(8, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,3,8,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(9, 'true','2432','terra cot','herdon','de','11111',null,4,9,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(9, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,4,9,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(10, 'true','2432','terra cot','herdon','de','11111',null,5,10,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(10, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,5,10,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(11, 'true','2432','terra cot','herdon','de','11111',null,4,11,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
+values(11, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,4,11,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
-insert into study_contact (id,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ) 
-values(12, 'true','2432','terra cot','herdon','de','11111',null,5,12,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
-;
-
------------------- study contact rules
-
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (1, 'STUDY_PRINCIPAL_INVESTIGATOR', 1, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (2, 'STUDY_DIRECTOR', 1, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (3, 'STUDY_PRINCIPAL_INVESTIGATOR', 2, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (4, 'STUDY_PRINCIPAL_INVESTIGATOR', 3, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (5, 'STUDY_PRINCIPAL_INVESTIGATOR', 4, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (6, 'STUDY_PRINCIPAL_INVESTIGATOR', 5, current_timestamp , 'abstractor' ) 
-;
-
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (7, 'STUDY_PRINCIPAL_INVESTIGATOR', 6, current_timestamp , 'abstractor' ) 
-;
---insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
---values (2, 'STUDY_DIRECTOR', 1, current_timestamp , 'abstractor' ) 
---;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (9, 'STUDY_PRINCIPAL_INVESTIGATOR', 7, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (10, 'STUDY_PRINCIPAL_INVESTIGATOR', 8, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (11, 'STUDY_PRINCIPAL_INVESTIGATOR', 9, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (12, 'STUDY_PRINCIPAL_INVESTIGATOR', 10, current_timestamp , 'abstractor' ) 
-;
- 
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (13, 'STUDY_PRINCIPAL_INVESTIGATOR', 11, current_timestamp , 'abstractor' ) 
-;
-insert into study_contact_roles (id, role_code, study_contact_id, date_last_updated, user_last_updated) 
-values (14, 'STUDY_PRINCIPAL_INVESTIGATOR', 12, current_timestamp , 'abstractor' ) 
+values(12, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,5,12,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ) 
 ;
 
 DELETE FROM STUDY_PROTOCOL WHERE ID > 1 ;
-DELETE FROM STUDY_CONTACT_ROLES WHERE ID > 1 ;
