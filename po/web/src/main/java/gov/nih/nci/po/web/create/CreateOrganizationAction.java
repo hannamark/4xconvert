@@ -43,6 +43,7 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization") })
     public String create() throws JMSException {
         String result = super.curate();
+        ActionHelper.getMessages().clear();
         ActionHelper.saveMessage(getText("organization.create.success"));
         return result;
     }

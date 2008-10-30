@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.time.FastDateFormat;
 
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -92,6 +93,7 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
             })
     public String curate() throws JMSException {
         PoRegistry.getOrganizationService().curate(getOrganization());
+        ActionHelper.saveMessage(getText("organization.curate.success"));
         return SUCCESS;
     }
     
