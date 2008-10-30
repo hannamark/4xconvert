@@ -1,13 +1,11 @@
 package gov.nih.nci.pa.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
@@ -35,14 +33,10 @@ public class StudyContact extends PersonFunctionalRole {
     private String state;
     private String postalCode;
     private Country country;
-    
-    
+    private StudyContactRoleCode studyContactRoleCode;    
     private HealthCareProvider healthCareProvider;
-
     private Boolean primaryIndicator;
-    private List<StudyContactRole> studyContactRoles = 
-        new ArrayList<StudyContactRole>();
-    
+   
 
     /**
      * 
@@ -134,7 +128,6 @@ public class StudyContact extends PersonFunctionalRole {
      */
     @ManyToOne
     @JoinColumn(name = "COUNTRY_ID", updatable = false)
-    @NotNull    
     public Country getCountry() {
         return country;
     }
@@ -185,21 +178,17 @@ public class StudyContact extends PersonFunctionalRole {
 
 
     /**
-     * 
-     * @return studyContactRoles studyContactRoles
+     * @return the studyContactRoleCode studyContactRoleCode
      */
-    
-    @OneToMany(mappedBy = "studyContact")
-    public List<StudyContactRole> getStudyContactRoles() {
-        return studyContactRoles;
+    @Column(name = "ROLE_CODE")
+    public StudyContactRoleCode getStudyContactRoleCode() {
+        return studyContactRoleCode;
     }
-    
 
     /**
-     * 
-     * @param studyContactRoles studyContactRoles) {
+     * @param studyContactRoleCode the studyContactRoleCode to set
      */
-    public void setStudyContactRoles(List<StudyContactRole> studyContactRoles) {
-        this.studyContactRoles = studyContactRoles;
+    public void setStudyContactRoleCode(StudyContactRoleCode studyContactRoleCode) {
+        this.studyContactRoleCode = studyContactRoleCode;
     }
 }
