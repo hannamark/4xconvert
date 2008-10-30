@@ -14,7 +14,7 @@ function activate(){
 	
    		if (inputElement.options[inputElement.selectedIndex].value == "Other")
 		{
-   			document.getElementById("primaryPurposeOtherText").style.display = "inline";
+   			document.getElementById("primaryPurposeOtherText").style.display = "";
    		}else
    		{
    			document.getElementById("primaryPurposeOtherText").style.display = "none";
@@ -24,7 +24,7 @@ function activate(){
 		if ((inputElement2.options[inputElement2.selectedIndex].value == "Single Blind")
 			|| (inputElement2.options[inputElement2.selectedIndex].value == "Double Blind"))
 		{
-   			document.getElementById("blindingRoleCode").style.display = "inline";
+   			document.getElementById("blindingRoleCode").style.display = "";
    		}else
    		{
    			document.getElementById("blindingRoleCode").style.display = "none";
@@ -39,6 +39,42 @@ function showAlert() {
 			alert("Please select a different Trial Phase");
 		}
 }
+
+function ChecksCount(name) {
+
+var input2="webDTO.blindingSchemaCode";
+var inputElement2 = document.forms[0].elements[input2];
+
+		if (inputElement2.options[inputElement2.selectedIndex].value == "Single Blind") 
+		{
+			var maxchecked = 1;
+			var count = 0;
+			if(document.forms[0].patient.checked == true) { count++; }
+			if(document.forms[0].investigator.checked == true) { count++; }
+			if(document.forms[0].caregiver.checked == true) { count++; }
+			if(document.forms[0].outcomesassessor.checked == true) { count++; }
+			if(count > maxchecked) {
+				eval('document.forms[0].' + name + '.checked = false');
+				alert('Only ' + maxchecked + ' needs to be checked for Single Blind.');
+			}
+		}else
+		{
+			var maxchecked = 2;
+			var count = 0;
+			if(document.forms[0].patient.checked == true) { count++; }
+			if(document.forms[0].investigator.checked == true) { count++; }
+			if(document.forms[0].caregiver.checked == true) { count++; }
+			if(document.forms[0].outcomesassessor.checked == true) { count++; }
+			if(count > maxchecked) {
+				eval('document.forms[0].' + name + '.checked = false');
+				alert('Only ' + maxchecked + ' needs to be checked for Double Blind.');
+			}
+		}
+
+}
+
+
+
 function handleAction(){
  document.forms[0].action="interventionalStudyDesignupdate.action";
  document.forms[0].submit(); 
@@ -63,8 +99,8 @@ function tooltip() {
 	 		<fmt:message key="isdesign.details.primary.purpose"/></dfn><span class="required">*</span></label></td>
      	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
-          <s:select headerKey="" headerValue="All" name="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                   value="webDTO.primaryPurposeCode" cssStyle="width:206px" onchange="activate()"/>
+          <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeCode</s:param>
@@ -76,7 +112,7 @@ function tooltip() {
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.primary.purpose.other"/></dfn></label></td>
 		<td>
-			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:206px" rows="2"/>
+			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:150px" rows="2"/>
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeOtherText</s:param>
@@ -89,8 +125,8 @@ function tooltip() {
         	 <fmt:message key="studyProtocol.studyPhase"/></dfn><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
-        	<s:select headerKey="" headerValue="All" name="webDTO.phaseCode" list="#phaseCodeValues" 
-				value="webDTO.phaseCode" cssStyle="width:206px" onchange="showAlert()" />
+        	<s:select headerKey="" headerValue="" name="webDTO.phaseCode" list="#phaseCodeValues" 
+				value="webDTO.phaseCode" cssStyle="width:60px" onchange="showAlert()" />
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.phaseCode</s:param>
@@ -102,7 +138,7 @@ function tooltip() {
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.phase.comment"/></dfn></label></td>
 		<td>
-			<s:textfield name="webDTO.phaseOtherText" maxlength="200" cssStyle="width:206px" readonly="true"/>
+			<s:textarea name="webDTO.phaseOtherText" rows="2" cssStyle="width:150px" readonly="true"/>
 		</td>
 	</tr>	 
     <tr>
@@ -110,7 +146,7 @@ function tooltip() {
 	 		<fmt:message key="isdesign.details.intervention.model"/></dfn><span class="required">*</span></label></td>
 		<s:set name="designConfigurationCodeValues" value="@gov.nih.nci.pa.enums.DesignConfigurationCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="All" name="webDTO.designConfigurationCode" list="#designConfigurationCodeValues"  value="webDTO.designConfigurationCode" cssStyle="width:206px" />
+           <s:select headerKey="" headerValue="" name="webDTO.designConfigurationCode" list="#designConfigurationCodeValues"  value="webDTO.designConfigurationCode" cssStyle="width:150px" />
            <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.designConfigurationCode</s:param>
@@ -122,7 +158,7 @@ function tooltip() {
 		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.no.arms"/></dfn><span class="required">*</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.numberOfInterventionGroups" maxlength="200" cssStyle="width:206px"/>
+         	<s:textfield name="webDTO.numberOfInterventionGroups" maxlength="3" cssStyle="width:25px"/>
          	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.numberOfInterventionGroups</s:param>
@@ -135,8 +171,8 @@ function tooltip() {
 	 		<fmt:message key="isdesign.details.masking"/></dfn><span class="required">*</span></label></td>
 		<s:set name="blindingSchemaCodeValues" value="@gov.nih.nci.pa.enums.BlindingSchemaCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="All" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
-	           value="webDTO.blindingSchemaCode" cssStyle="width:206px" onchange="activate()" />
+           <s:select headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
+	           value="webDTO.blindingSchemaCode" cssStyle="width:100px" onchange="activate()" />
 	       <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.blindingSchemaCode</s:param>
@@ -147,9 +183,11 @@ function tooltip() {
 	<tr id="blindingRoleCode">
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.masking.role"/></dfn><span class="required">*</span></label></td>
-		<s:set name="blindingRoleCodeValues" value="@gov.nih.nci.pa.enums.BlindingRoleCode@getDisplayNames()" />
-        <td>
-           <s:select headerKey="" headerValue="All" name="webDTO.blindingRoleCode" list="#blindingRoleCodeValues"  value="webDTO.blindingRoleCode" cssStyle="width:206px" />           
+		<td>
+           <input type="checkbox" name="patient" value="patient" onClick="ChecksCount('patient')">patient
+		   <input type="checkbox" name="investigator" value="investigator" onClick="ChecksCount('investigator')">investigator
+		   <input type="checkbox" name="caregiver" value="caregiver" onClick="ChecksCount('caregiver')">caregiver
+		   <input type="checkbox" name="outcomesassessor" value="outcomesassessor" onClick="ChecksCount('outcomesassessor')">outcomesassessor          
          </td>
 	</tr>
 	<tr> 
@@ -157,7 +195,7 @@ function tooltip() {
 	 		<fmt:message key="isdesign.details.allocation"/></dfn><span class="required">*</span></label> </td>
         <s:set name="allocationCodeValues" value="@gov.nih.nci.pa.enums.AllocationCode@getDisplayNames()" />
         <td>
-        	<s:select headerKey="" headerValue="All" name="webDTO.allocationCode" list="#allocationCodeValues"  value="webDTO.allocationCode" cssStyle="width:206px" />
+        	<s:select headerKey="" headerValue="" name="webDTO.allocationCode" list="#allocationCodeValues"  value="webDTO.allocationCode" cssStyle="width:206px" />
         	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.allocationCode</s:param>
@@ -170,7 +208,7 @@ function tooltip() {
 	 		<fmt:message key="isdesign.details.trial.classification"/></dfn><span class="required">*</span></label></td>
 		<s:set name="studyClassificationCodeValues" value="@gov.nih.nci.pa.enums.StudyClassificationCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="All" name="webDTO.studyClassificationCode" list="#studyClassificationCodeValues"  value="webDTO.studyClassificationCode" cssStyle="width:206px" />
+           <s:select headerKey="" headerValue="" name="webDTO.studyClassificationCode" list="#studyClassificationCodeValues"  value="webDTO.studyClassificationCode" cssStyle="width:206px" />
            <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyClassificationCode</s:param>
@@ -182,7 +220,7 @@ function tooltip() {
 		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.target.enrollment"/></dfn><span class="required">*</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.maximumTargetAccrualNumber" maxlength="200" cssStyle="width:206px"/>
+         	<s:textfield name="webDTO.maximumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
          	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.maximumTargetAccrualNumber</s:param>
