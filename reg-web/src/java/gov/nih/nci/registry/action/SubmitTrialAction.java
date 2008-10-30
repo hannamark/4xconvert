@@ -275,6 +275,9 @@ public class SubmitTrialAction extends ActionSupport implements
         }
     }
     
+    //TODO this method needs to be modified and appropriate
+    // StudyContacts (Submitter or PI) have to be created
+    // for each trial submitted
     /**
      * @param studyProtocolIi
      */
