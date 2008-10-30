@@ -22,6 +22,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 /**
  * An action plan and execution of a pre-clinical or clinical study including
  * all activities to test a particular hypothesis that is the basis of the study
@@ -60,6 +63,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyParticipation> studyParticipations = new ArrayList<StudyParticipation>();
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
+    private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
     private String primaryPurposeOtherText;
     private String phaseOtherText;
     private Integer maximumTargetAccrualNumber;
@@ -389,6 +393,21 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setIndIdeIndicator(Boolean indIdeIndicator) {
         this.indIdeIndicator = indIdeIndicator;
+    }
+    /**
+     * @return the plannedActivities
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<PlannedActivity> getPlannedActivities() {
+        return plannedActivities;
+    }
+
+    /**
+     * @param plannedActivities the plannedActivities to set
+     */
+    public void setPlannedActivities(List<PlannedActivity> plannedActivities) {
+        this.plannedActivities = plannedActivities;
     }
     /**
      * 
