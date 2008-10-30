@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/struts-tags" prefix="s" %>
 <li class="stdnav"><div>Protocol Abstraction</div> 
 	<ul>
 		<li><a href="#">Home</a></li>			
@@ -8,6 +9,8 @@
 		</c:if>	
 	</ul>
 </li>
+
+
 <c:if test="${sessionScope.trialSummary  != null}">
 	<li class="sub"><div><c:out value="${sessionScope.trialSummary.nciIdentifier }"/></div>
 		<ul>
@@ -34,6 +37,7 @@
 			<li><div>Scientific Data</div>
 				<ul>
 					<li><a href="subGroupsquery.action" >SubGroups</a></li>
+                    <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
 					<li class="sub"><a href="interventionalStudyDesigndetailsQuery.action" style="color: black;">Interventional Trial Design </a>
                         <ul>
                             <li><a href="interventionalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
@@ -41,6 +45,8 @@
                             <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
                         </ul>
 					</li>
+                    </s:if>
+                    <s:else>
 					<li class="sub"><a href="observationalStudyDesigndetailsQuery.action" style="color: black;">Observational Trial Design </a>
                         <ul>
                             <li><a href="observationalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
@@ -48,6 +54,7 @@
                             <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
                         </ul>
 					</li>
+                    </s:else>
 				</ul>
 			</li>
 		</ul>
