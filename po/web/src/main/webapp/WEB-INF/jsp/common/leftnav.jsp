@@ -11,7 +11,7 @@
             <li class="lisubheader">Organization</li>
 	            <li><a id="EntityInboxOrganization" href="<c:url value="/protected/curate/search/listOrgs.action"/>">Inbox</a></li>
 	            <li><a id="SearchOrganization" href="<c:url value="/protected/search/organization/start.action"/>">Search</a></li>
-	            <li><a id="CreateOrganization" href="<c:url value="/notYetImplemented.jsp"/>">Create</a></li>
+	            <li><a id="CreateOrganization" href="<c:url value="/protected/create/organization/start.action"/>">Create</a></li>
             <li class="lisubheader">Person</li>
 	            <li><a id="EntityInboxPerson" href="<c:url value="/protected/curate/search/listPersons.action"/>">Inbox</a></li>
                 <li><a id="SearchPerson" href="<c:url value="/notYetImplemented.jsp"/>">Search</a></li>

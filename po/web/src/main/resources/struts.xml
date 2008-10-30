@@ -207,5 +207,14 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/organization/results.jsp</result>
         </action>            
+        
+        <action name="create/organization/*" class="gov.nih.nci.po.web.create.CreateOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/curate/organization/curate.jsp</result>
+            <result name="success" type="redirect-action">
+	            <param name="namespace">/protected</param>
+	            <param name="actionName">create/organization/start</param>
+            </result>
+        </action>      
     </package>
 </struts>

@@ -464,4 +464,43 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
     }
 
+    
+    @Test
+    public void curatorCreatesOrgAsPENDING() throws JMSException {
+        Organization o = curatorCreatesOrg(EntityStatus.PENDING);
+        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
+    }
+
+    @Test
+    public void curatorCreatesOrgAsACTIVE() throws JMSException {
+        Organization o = curatorCreatesOrg(EntityStatus.ACTIVE);
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+    }
+
+    @Test
+    public void curatorCreatesOrgAsNULLIFIED() throws JMSException {
+        Organization o = curatorCreatesOrg(EntityStatus.NULLIFIED);
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+    }
+
+    @Test
+    public void curatorCreatesOrgAsINACTIVE() throws JMSException {
+        Organization o = curatorCreatesOrg(EntityStatus.INACTIVE);
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
+    }
+
+    private Organization curatorCreatesOrg(EntityStatus status) throws JMSException {
+        Organization o = getBasicOrganization();
+       
+        o.setStatusCode(status);
+        o.setDuplicateOf(null);
+        getOrgServiceBean().curate(o);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        Organization result = getOrgServiceBean().getById(o.getId());
+        assertEquals(status, result.getStatusCode());
+        assertEquals(status, result.getPriorEntityStatus());
+        return result;
+    }
 }

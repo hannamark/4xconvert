@@ -103,7 +103,8 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationServiceBean extends AbstractBaseServiceBean<Organization> implements OrganizationServiceLocal {
+public class OrganizationServiceBean extends AbstractBaseServiceBean<Organization> implements
+        OrganizationServiceLocal {
 
     /**
      * {@inheritDoc}
@@ -117,18 +118,24 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
 
     /**
      * {@inheritDoc}
-     * @throws EntityValidationException 
+     * 
+     * @throws EntityValidationException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(Organization org) throws JMSException {
         final Session s = PoHibernateUtil.getCurrentSession();
-        Organization o = loadAndMerge(org, s);
-        EntityUpdateCallback<Organization> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<Organization>() {
-            public void entityUpdate(Organization target) {
-                s.update(target);
-            }
-        };
-        CRProcessor.processCRs(new ArrayList<OrganizationCR>(o.getChangeRequests()), entityUpdateCallback);
+        if (org.getId() != null) {
+            Organization o = loadAndMerge(org, s);
+            EntityUpdateCallback<Organization> entityUpdateCallback 
+                = new CRProcessor.EntityUpdateCallback<Organization>() {
+                public void entityUpdate(Organization target) {
+                    s.update(target);
+                }
+            };
+            CRProcessor.processCRs(new ArrayList<OrganizationCR>(o.getChangeRequests()), entityUpdateCallback);
+        } else {
+            s.save(org);
+        }
         getPublisher().sendUpdate(org);
     }
 

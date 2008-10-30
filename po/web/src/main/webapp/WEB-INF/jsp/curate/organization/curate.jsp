@@ -1,12 +1,18 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-    <c:if test="${fn:length(organization.changeRequests) > 0}">
-    <title>Organization Details - Comparison</title>
-    </c:if>
-    <c:if test="${fn:length(organization.changeRequests) == 0}">
-    <title>Organization Details</title>
-    </c:if>
+    <s:set name="isCreate" value="organization.id == null"/>
+    <s:if test="%{isCreate}">
+        <title>Create Organization</title>
+    </s:if>
+    <s:else>
+	    <c:if test="${fn:length(organization.changeRequests) > 0}">
+	       <title>Organization Details - Comparison</title>
+	    </c:if>
+	    <c:if test="${fn:length(organization.changeRequests) == 0}">
+	       <title>Organization Details</title>
+	    </c:if>
+    </s:else>
     <script type="text/javascript">
     function handleDuplicateOf() {
     	$('duplicateOfDiv')[$('curateOrgForm_organization_statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
@@ -24,24 +30,33 @@
 <%-- page conditional variable --%>
 <c:url value="/notYetImplemented.jsp" var="urlNotYetImplemented"/>
 
-<c:if test="${fn:length(organization.changeRequests) > 0}">
-<s:form action="ajax/organization/curate/changeCurrentChangeRequest.action" id="changeCrForm">
-    <s:hidden key="rootKey"/>
-    <s:select
-       label="Current Change Request"
-       name="cr"
-       list="selectChangeRequests"
-       value="cr.id"
-       onchange="document.getElementById('curateOrgForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
-       />
-</s:form>
-</c:if> 
+<s:if test="%{!isCreate}">
+	<c:if test="${fn:length(organization.changeRequests) > 0}">
+	<s:form action="ajax/organization/curate/changeCurrentChangeRequest.action" id="changeCrForm">
+	    <s:hidden key="rootKey"/>
+	    <s:select
+	       label="Current Change Request"
+	       name="cr"
+	       list="selectChangeRequests"
+	       value="cr.id"
+	       onchange="document.getElementById('curateOrgForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
+	       />
+	</s:form>
+	</c:if> 
+</s:if> 
 
+<po:successMessages/>
 
 <div id="page" style="margin-top:10px;">
 	<div class="boxouter_nobottom">
 	<h2>Organization Information</h2>
-	<s:form action="organization/curate/curate.action" id="curateOrgForm">
+	<s:if test="%{isCreate}">
+	   <s:set name="formAction" value="'create/organization/create.action'"/>
+	</s:if>
+	<s:else>
+	   <s:set name="formAction" value="'organization/curate/curate.action'"/>
+	</s:else>
+	<s:form action="%{formAction}" id="curateOrgForm">
 		<s:hidden key="rootKey"/>
 	    <s:hidden key="cr.id"/>
 	    <s:hidden key="organization.id"/>
@@ -49,6 +64,18 @@
 		<h2>Basic Identifying Information</h2>
 		    <div class="box_white">
 		        <s:actionerror/>
+	        <s:if test="isCreate">
+	            <s:select
+	               label="%{getText('organization.statusCode')}"
+	               name="organization.statusCode"
+	               list="availableStatus"
+	               listKey="name()"
+	               listValue="name()"
+	               value="organization.statusCode" 
+	               headerKey="" headerValue="--Select a Status--" 
+	               />		        
+	        </s:if>
+	        <s:else>
                 <div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
 		            <div class="wwlbl" id="wwlbl_curateOrgForm_organization_statusCode">
 		            <label class="label" for="curateOrgForm_organization_statusCode">        
@@ -98,6 +125,7 @@
 				    <s:hidden key="organization.duplicateOf" id="curateOrgForm.organization.duplicateOf.id"/>
 	
 			    </div>
+	        </s:else>
 				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
 				<s:textfield key="organization.abbreviatedName" required="false" cssClass="required" size="70"/>
 				<s:textfield key="organization.description" required="false" cssClass="required" size="70"/>

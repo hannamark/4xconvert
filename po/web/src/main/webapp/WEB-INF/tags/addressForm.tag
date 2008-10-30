@@ -33,9 +33,9 @@
                      label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
     </po:inputRowElement>
     <po:inputRowElement>
-        <s:set name="configService" value="@gov.nih.nci.po.util.PoRegistry@getCountryService()" />
+        <s:set name="countryService" value="@gov.nih.nci.po.util.PoRegistry@getCountryService()" />
         <s:select name="%{#attr.addressKeyBase + '.country'}" label="%{getText(#attr.addressKeyBase + '.country')}"
-            list="#configService.countries" listKey="id" listValue="name" cssClass="%{cssClass}" required="%{#attr.required}"
+            list="#countryService.countries" listKey="id" listValue="name" cssClass="%{cssClass}" required="%{#attr.required}"
             headerKey="" headerValue="--Select a Country--"
             value="#attr.address.country.id">
         </s:select>
