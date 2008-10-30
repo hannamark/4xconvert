@@ -19,6 +19,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -39,6 +40,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -132,6 +134,9 @@ public class SubmitTrialAction extends ActionSupport implements
             
             //upload IRB Approval document
             uploadIrbApproval(studyProtocolIi);
+            
+            // createStudyContact
+            createStudyContact(studyProtocolIi);
             
             // after creating the study protocol, query the protocol for viewing
             query();
@@ -271,7 +276,31 @@ public class SubmitTrialAction extends ActionSupport implements
     }
     
     /**
-     * query the created protocol and all related associations.
+     * @param studyProtocolIi
+     */
+    private void createStudyContact(Ii studyProtocolIi) {
+        try {
+        LOG.info(" creating study contact ");
+        // create Study Contact record        
+        StudyContactDTO studyContactDTO = new StudyContactDTO();
+        studyContactDTO.setStudyProtocolIi(studyProtocolIi);
+        studyContactDTO.setHealthCareProvider(IiConverter.convertToIi("1"));
+        studyContactDTO.setRoleCode(CdConverter.convertStringToCd(
+                            StudyContactRoleCode.SUBMITTER.getCode()));
+        studyContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
+        
+        RegistryServiceLocator.getStudyContactService().create(studyContactDTO);
+        } catch (PAException pae) {
+            pae.printStackTrace();
+            LOG.error("Exception occured while creating study contact: " + pae);
+        } catch (Exception ex) {
+        ex.printStackTrace();
+        LOG.error("Exception occured while creating study contact: " + ex);
+    }
+    }
+    
+    /**
+     * query the created protocol and all associated data.
      * @return String
      */
     public String query() {
@@ -285,7 +314,7 @@ public class SubmitTrialAction extends ActionSupport implements
             InterventionalStudyProtocolWebDTO trialWebDTO =
                                                           new InterventionalStudyProtocolWebDTO(protocolDTO);
             // put an entry in the session and store InterventionalStudyProtocolDTO 
-            ServletActionContext.getRequest().getSession().setAttribute(
+            ServletActionContext.getRequest().setAttribute(
                                     Constants.TRIAL_SUMMARY, trialWebDTO);
             
             // query the study grants 
@@ -298,7 +327,7 @@ public class SubmitTrialAction extends ActionSupport implements
                     trialFundingList.add(new TrialFundingWebDTO(dto));
                 }
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.TRIAL_FUNDING_LIST, trialFundingList.get(0));
             }
             
@@ -312,7 +341,7 @@ public class SubmitTrialAction extends ActionSupport implements
                     overallStatusList.add(new StudyOverallStatusWebDTO(dto));
                 }
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.TRIAL_OVERALL_STATUS, overallStatusList.get(0));
             }
             
@@ -328,7 +357,7 @@ public class SubmitTrialAction extends ActionSupport implements
                     studyParticipationList.add(new StudyParticipationWebDTO(dto));
                 }
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.STUDY_PARTICIPATION, studyParticipationList.get(0));
                 
             }
@@ -348,14 +377,14 @@ public class SubmitTrialAction extends ActionSupport implements
                     if (webdto.getTypeCode().equalsIgnoreCase(
                             DocumentTypeCode.Protocol_Document.getCode())) {
                         // put an entry in the session and store Protocol Document
-                        ServletActionContext.getRequest().getSession().setAttribute(
+                        ServletActionContext.getRequest().setAttribute(
                                                 Constants.PROTOCOL_DOCUMENT, webdto);
                         
                     }
                     if (webdto.getTypeCode().equalsIgnoreCase(
                             DocumentTypeCode.IRB_Approval_Document.getCode())) {
                         // put an entry in the session and store IRB Approval Document
-                        ServletActionContext.getRequest().getSession().setAttribute(
+                        ServletActionContext.getRequest().setAttribute(
                                                 Constants.IRB_APPROVAL, webdto);                        
                     }                    
                 }
@@ -385,7 +414,7 @@ public class SubmitTrialAction extends ActionSupport implements
             
             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
             sb.append(File.separator).append(spDTO.getNciAccessionNumber()).append(File.separator).
-                append(docDTO.getIi().getExtension()).append('-').append(docDTO.getFileName().getValue());
+                append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
 
             File downloadFile = new File(sb.toString());
             servletResponse = ServletActionContext.getResponse();
