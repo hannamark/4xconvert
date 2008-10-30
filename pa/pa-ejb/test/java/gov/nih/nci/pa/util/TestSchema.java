@@ -16,7 +16,6 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyContactRole;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -75,7 +74,6 @@ public class TestSchema {
             addAnnotatedClass(HealthCareProvider.class).
             addAnnotatedClass(StudyContact.class).
             addAnnotatedClass(StudyParticipation.class).
-            addAnnotatedClass(StudyContactRole.class).
             addAnnotatedClass(Country.class).
             addAnnotatedClass(RegulatoryAuthority.class).
             addAnnotatedClass(StudyRegulatoryAuthority.class).
