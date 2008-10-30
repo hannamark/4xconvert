@@ -68,8 +68,8 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
      * @param code code
      * @return StatusCode 
      */
-    public static StatusCode getByCode(String code) {
-        return getByClassAndCode(StatusCode.class, code);
+    public static ActiveInactivePendingCode getByCode(String code) {
+        return getByClassAndCode(ActiveInactivePendingCode.class, code);
     }
     
     /**

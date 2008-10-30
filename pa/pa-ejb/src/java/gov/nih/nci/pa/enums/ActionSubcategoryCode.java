@@ -70,8 +70,8 @@ public enum ActionSubcategoryCode implements CodedEnum<String> {
      * @param code code
      * @return TrialPhaseType 
      */
-    public static YesNoCode getByCode(String code) {
-        return getByClassAndCode(YesNoCode.class, code);
+    public static ActionSubcategoryCode getByCode(String code) {
+        return getByClassAndCode(ActionSubcategoryCode.class, code);
     }
     
     /**
