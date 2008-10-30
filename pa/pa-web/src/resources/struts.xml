@@ -120,5 +120,10 @@
 			<interceptor-ref name="nci-commonsParams" />
 			<result name="details">/WEB-INF/jsp/osdesignDetails.jsp</result>
 		</action>
+        <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
+            <interceptor-ref name="nci-commonsParams" />
+            <result name="edit">/WEB-INF/jsp/generalTrialDesignEdit.jsp</result>
+        </action>
+
 	</package>
 </struts>

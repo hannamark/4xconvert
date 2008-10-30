@@ -1,10 +1,12 @@
 package gov.nih.nci.pa.decorator;
 
-import java.util.Date;
-import org.displaytag.decorator.TableDecorator;
-import org.apache.commons.lang.time.FastDateFormat;
-
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+
+import java.util.Date;
+
+import org.apache.commons.lang.time.FastDateFormat;
+import org.displaytag.decorator.TableDecorator;
 
 /**
  * tag decorator class for pa.
@@ -41,4 +43,19 @@ public class PADisplayTagDecorator extends TableDecorator {
             
     }
 
+    /**
+     * 
+     * @return formated date
+     */
+    public String getAction() {
+        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
+                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        if (dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)) {
+            return "Abstract";
+        } else {
+            return "";
+        }
+            
+    }
+    
 }

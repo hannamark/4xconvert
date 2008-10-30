@@ -10,5 +10,11 @@
     <display:column titleKey="studyProtocol.studyStatusDate" property="studyStatusDate"    sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code"   sortable="true" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate"    sortable="true" headerClass="sortable"/>
-
+    <display:column class="title" 
+        titleKey="studyProtocol.action"  
+        href="generalTrialDesignquery.action"
+        property="action"
+        paramId="studyProtocolId"  paramProperty="studyProtocolId"
+        sortable="true" headerClass="sortable"/>
+    
 </display:table>

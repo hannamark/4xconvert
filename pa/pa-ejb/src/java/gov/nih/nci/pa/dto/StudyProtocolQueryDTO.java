@@ -18,7 +18,7 @@ import java.util.Date;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 
-
+@SuppressWarnings({ "PMD.TooManyFields" })
 public class StudyProtocolQueryDTO implements Serializable {
     static final long serialVersionUID = 283476876L;
     
@@ -37,6 +37,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private StudyTypeCode studyTypeCode;
     private PhaseCode phaseCode; 
     private String studyProtocolType;
+    private String action;
     
     /**
      * 
@@ -248,6 +249,22 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setStudyProtocolType(String studyProtocolType) {
         this.studyProtocolType = studyProtocolType;
     }
+    /**
+     * 
+     * @return action
+     */
+    public String getAction() {
+        return action;
+    }
+    /**
+     * 
+     * @param action action
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
+    
+    
     
     
     

@@ -19,44 +19,48 @@
 					<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Identification</a></li>
 				</ul>
 			</li>
-			<li><div>Administrative Data</div>
-				<ul>
-					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
-					<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
-					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
-					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                    <li class="sub"><a href="participatingOrganizations.action" style="color: black;">Participating Sites</a>
-                        <ul>
-                            <li><a href="participatingOrganizations.action" style="text-indent: .5cm">Treating Sites</a></li>
-                            <li><a href="collaborators.action" style="text-indent: .5cm">Collaborators</a></li>
-                        </ul>
-                    </li>    
-					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
-				</ul>
-			</li>
-			<li><div>Scientific Data</div>
-				<ul>
-					<li><a href="subGroupsquery.action" >SubGroups</a></li>
-                    <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-					<li class="sub"><a href="interventionalStudyDesigndetailsQuery.action" style="color: black;">Interventional Trial Design </a>
-                        <ul>
-                            <li><a href="interventionalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
-                            <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
-                            <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
-                        </ul>
-					</li>
-                    </s:if>
-                    <s:else>
-					<li class="sub"><a href="observationalStudyDesigndetailsQuery.action" style="color: black;">Observational Trial Design </a>
-                        <ul>
-                            <li><a href="observationalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
-                            <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
-                            <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
-                        </ul>
-					</li>
-                    </s:else>
-				</ul>
-			</li>
+			
+			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
+    			<li><div>Administrative Data</div>
+    				<ul>
+    					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
+    					<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
+    					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
+    					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
+                        <li class="sub"><a href="participatingOrganizations.action" style="color: black;">Participating Sites</a>
+                            <ul>
+                                <li><a href="participatingOrganizations.action" style="text-indent: .5cm">Treating Sites</a></li>
+                                <li><a href="collaborators.action" style="text-indent: .5cm">Collaborators</a></li>
+                            </ul>
+                        </li>    
+    					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
+    				</ul>
+    			</li>
+    			<li><div>Scientific Data</div>
+    				<ul>
+    					<li><a href="subGroupsquery.action" >SubGroups</a></li>
+                        <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+    					<li class="sub"><a href="interventionalStudyDesigndetailsQuery.action" style="color: black;">Interventional Trial Design </a>
+                            <ul>
+                                <li><a href="interventionalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
+                                <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
+                                <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
+                            </ul>
+    					</li>
+                        </s:if>
+                        <s:else>
+    					<li class="sub"><a href="observationalStudyDesigndetailsQuery.action" style="color: black;">Observational Trial Design </a>
+                            <ul>
+                                <li><a href="observationalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
+                                <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
+                                <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
+                            </ul>
+    					</li>
+                        </s:else>
+    				</ul>
+    			</li>
+            </s:if>
+
 		</ul>
 	</li>
 </c:if>
