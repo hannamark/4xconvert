@@ -23,7 +23,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.DocumentWorkflowStatus" />
         <mapping class="gov.nih.nci.pa.domain.Country" />
         <mapping class="gov.nih.nci.pa.domain.StudyContact" />
-        <mapping class="gov.nih.nci.pa.domain.StudyContactRole" />
         <mapping class="gov.nih.nci.pa.domain.StudyParticipation" />
         <mapping class="gov.nih.nci.pa.domain.Organization" />
         <mapping class="gov.nih.nci.pa.domain.StudyCoordinatingCenter" />
