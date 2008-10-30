@@ -135,6 +135,26 @@ LEGEND
 { text-decoration:none; font-weight:normal; background:#fff; padding:1px 8px 1px 16px; display:block; border:1px solid #fff; border-bottom:1px solid #eee; height:1% }
 #leftnav UL.menu LI.sub UL UL A:hover
 { background:#ffef90; color:#333; border:1px solid #d49722; border-top:1px solid #fff6cd; border-left:1px solid #fff6cd }
+#leftnav UL.menu LI.sub UL UL UL
+{ background:#eee  }
+#leftnav UL.menu LI.sub UL UL A.hassubmenu, #leftnav UL.menu LI.sub UL UL A.hassubmenu:hover, #leftnav UL.menu LI.sub UL UL LI.hassubmenu
+{ text-decoration:none; font-weight:normal; background:#eee url("../images/arrow_down.gif") no-repeat right; padding:1px 8px 1px 16px; display:block; border:1px solid #fff; border-bottom:1px solid #eee; height:1%; color:#333 }
+#leftnav UL.menu LI.sub UL UL LI.hassubmenu
+{ background-image:none; padding-right:0 }
+#leftnav UL.menu LI.sub UL UL LI.hassubmenu A
+{ line-height:1em }
+#leftnav UL.menu LI.sub UL UL UL LI
+{ padding-left:5px; background:#eee url("../images/bg_ico_submenu.gif") no-repeat left; border:1px solid #eee  }
+#leftnav UL.menu LI.sub UL UL UL LI:hover
+{ background:#ffef90 url("../images/bg_ico_submenu.gif") no-repeat left; color:#333; border:1px solid #d49722; border-top:1px solid #fff6cd; border-left:1px solid #fff6cd }
+#leftnav UL.menu LI.sub UL UL UL A, #leftnav UL.menu LI.sub UL UL UL A:hover
+{ padding-left:5px; background-color:transparent; border:1px solid #eee; height:1% }
+#leftnav UL.menu LI.sub UL UL UL LI A:hover
+{ border:1px solid #eee; }
+#leftnav UL.menu LI.sub UL UL UL LI>A:hover
+{ border:1px solid #ffef90; }
+#leftnav UL.menu LI.sub UL UL UL LI A.selected, #leftnav UL.menu LI.sub UL UL UL LI A.selected:hover
+{ background:#eecf41 url("../images/arrow_right.gif") no-repeat right; }
 
 
 /* Quicklinks */
