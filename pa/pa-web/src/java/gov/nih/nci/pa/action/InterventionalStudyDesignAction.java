@@ -31,6 +31,11 @@ import com.opensymphony.xwork2.ActionSupport;
 public class InterventionalStudyDesignAction extends ActionSupport {
     
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
+    private String patient;
+    private String investigator;
+    private String caregiver;
+    private String outcomesassessor;
+    
     
     /**  
      * @return res
@@ -210,6 +215,62 @@ public class InterventionalStudyDesignAction extends ActionSupport {
      */
     public void setWebDTO(ISDesignDetailsWebDTO webDTO) {
         this.webDTO = webDTO;
+    }
+
+    /**
+     * @return patient
+     */
+    public String getPatient() {
+        return patient;
+    }
+
+    /**
+     * @param patient patient
+     */
+    public void setPatient(String patient) {
+        this.patient = patient;
+    }
+
+    /**
+     * @return investigator
+     */
+    public String getInvestigator() {
+        return investigator;
+    }
+
+    /**
+     * @param investigator investigator
+     */
+    public void setInvestigator(String investigator) {
+        this.investigator = investigator;
+    }
+
+    /**
+     * @return caregiver
+     */
+    public String getCaregiver() {
+        return caregiver;
+    }
+
+    /**
+     * @param caregiver caregiver
+     */
+    public void setCaregiver(String caregiver) {
+        this.caregiver = caregiver;
+    }
+
+    /**
+     * @return outcomesassessor
+     */
+    public String getOutcomesassessor() {
+        return outcomesassessor;
+    }
+
+    /**
+     * @param outcomesassessor outcomesassessor
+     */
+    public void setOutcomesassessor(String outcomesassessor) {
+        this.outcomesassessor = outcomesassessor;
     }
     
 }
