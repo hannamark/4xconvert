@@ -2,6 +2,7 @@ package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -126,14 +127,21 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
         return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup("pa/StudySiteAccrualStatusServiceBean/remote");
     }
-    
+
     /**
-     * 
+     *
      * @return DocumentService
      */
     public DocumentServiceRemote getDocumentService() {
         return (DocumentServiceRemote) JNDIUtil.lookup("pa/DocumentServiceBean/remote");
     }
 
+    /**
+     *
+     * @return StudyContactService
+     */
+    public StudyContactServiceRemote getStudyContactService() {
+        return (StudyContactServiceRemote) JNDIUtil.lookup("pa/StudyContactServiceBean/remote");
+    }
 
 }
