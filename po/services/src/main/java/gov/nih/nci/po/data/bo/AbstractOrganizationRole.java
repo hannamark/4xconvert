@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.EnumType;
@@ -91,6 +92,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -137,6 +139,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
     @NotNull
     @ForeignKey(name = "organizationrole_player_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Organization getPlayer() {
         return player;
     }
@@ -157,6 +160,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
     @ManyToOne
     @ForeignKey(name = "organizationrole_scoper_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return scoper;
     }
@@ -177,6 +181,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
     @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public RoleStatus getStatus() {
         return this.status;
     }

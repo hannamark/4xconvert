@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -93,6 +94,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -164,6 +166,7 @@ public class Address implements Auditable, PersistentObject {
      */
     @NotEmpty
     @Length(max = LINE_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "street1")
     public String getStreetAddressLine() {
         return streetAddressLine;
     }
@@ -179,6 +182,7 @@ public class Address implements Auditable, PersistentObject {
      * @return line 2
      */
     @Length(max = LINE_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "street2")
     public String getDeliveryAddressLine() {
         return deliveryAddressLine;
     }
@@ -195,6 +199,7 @@ public class Address implements Auditable, PersistentObject {
      */
     @NotEmpty
     @Length(max = CITY_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "city")
     public String getCityOrMunicipality() {
         return cityOrMunicipality;
     }
@@ -211,6 +216,7 @@ public class Address implements Auditable, PersistentObject {
      */
     @NotEmpty
     @Length(max = POSTAL_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "postalCode")
     public String getPostalCode() {
         return postalCode;
     }
@@ -226,6 +232,7 @@ public class Address implements Auditable, PersistentObject {
      * @return stateOrProvince
      */
     @Length(max = STATE_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "state")
     public String getStateOrProvince() {
         return stateOrProvince;
     }
@@ -243,6 +250,7 @@ public class Address implements Auditable, PersistentObject {
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     @ForeignKey(name = "ADDRESS_COUNTRY_FK")
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "country")
     public Country getCountry() {
         return country;
     }

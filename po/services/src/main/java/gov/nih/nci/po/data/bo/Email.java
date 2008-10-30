@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 
 import java.io.Serializable;
 
@@ -92,6 +93,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 
 /**
@@ -142,6 +144,7 @@ public class Email implements Auditable, Contact, Serializable {
     @NotEmpty
     @org.hibernate.validator.Email
     @Length(max = MAX_NAME_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
     public String getValue() {
         return value;
     }

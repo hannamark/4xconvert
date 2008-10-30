@@ -84,12 +84,14 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.Pattern;
 
@@ -145,6 +147,7 @@ public class URL implements Auditable, Contact {
     @Pattern(regex = URL_REGEX,
              message = "URL is not well formed")
     @Length(max = MAX_VALUE_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
     public String getValue() {
         return value;
     }

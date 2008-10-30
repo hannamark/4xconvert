@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.EnumType;
@@ -93,6 +94,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 
@@ -142,6 +144,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
     @ManyToOne
     @ForeignKey(name = "orgrpnrole_scoper_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return scoper;
     }
@@ -163,6 +166,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
     @NotNull
     @ForeignKey(name = "orgrprole_player_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Organization getPlayer() {
         return player;
     }
@@ -183,6 +187,7 @@ public abstract class AbstractOrganizationResourceProvider implements Correlatio
     @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public RoleStatus getStatus() {
         return this.status;
     }

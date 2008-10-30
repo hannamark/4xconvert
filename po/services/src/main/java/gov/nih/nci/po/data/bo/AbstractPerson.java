@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -171,6 +173,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @Length(max = LONG_COL_LENGTH)
     @NotEmpty
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fname")
     public String getFirstName() {
         return firstName;
     }
@@ -187,6 +190,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = LONG_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "mname")
     public String getMiddleName() {
         return this.middleName;
     }
@@ -204,6 +208,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @Length(max = LONG_COL_LENGTH)
     @NotEmpty
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "lname")
     public String getLastName() {
         return lastName;
     }
@@ -220,6 +225,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = SHORT_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "prefix")
     public String getPrefix() {
         return prefix;
     }
@@ -236,6 +242,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Length(max = SHORT_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "suffix")
     public String getSuffix() {
         return suffix;
     }
@@ -260,6 +267,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @Valid
     @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
             "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "address")
     public Address getPostalAddress() {
         return postalAddress;
     }
@@ -367,6 +375,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @NotNull
     @Column(name = "STATUS")
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public EntityStatus getStatusCode() {
         return this.statusCode;
     }

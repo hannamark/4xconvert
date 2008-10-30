@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.EnumType;
@@ -94,6 +95,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -185,6 +187,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     @ForeignKey(name = "qualifiedentity_type_fkey")
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public QualifiedEntityType getTypeCode() {
         return typeCode;
     }
@@ -205,6 +208,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public RoleStatus getStatus() {
         return this.status;
     }

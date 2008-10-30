@@ -95,6 +95,11 @@ import gov.nih.nci.po.service.PersonServiceLocal;
 public final class PoRegistry {
 
     /**
+     * Constant to tell the plugin to generate a unique key.
+     */
+    public static final String GENERATE_INDEX_NAME_PREFIX = "~generate-an-index~";
+
+    /**
      * Number of records to display by default in displaytag controlled tables.
      */
     public static final int DEFAULT_RECORDS_PER_PAGE = 20;

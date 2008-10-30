@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.GeneratedValue;
@@ -91,6 +92,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -132,6 +134,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @Override
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Organization getPlayer() {
         return super.getPlayer();
     }
@@ -156,6 +159,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @ForeignKey(name = "identifiedorg_type_fkey")
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "type")
     public IdentifiedOrganizationType getTypeCode() {
         return typeCode;
     }

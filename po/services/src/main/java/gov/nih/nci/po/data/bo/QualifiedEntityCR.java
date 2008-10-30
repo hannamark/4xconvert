@@ -1,5 +1,7 @@
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -61,6 +63,7 @@ public class QualifiedEntityCR extends AbstractQualifiedEntity
     @ForeignKey(name = "qecr_per_fkey")
     @Override
     @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return super.getPlayer();
     }
@@ -74,6 +77,7 @@ public class QualifiedEntityCR extends AbstractQualifiedEntity
     @ForeignKey(name = "qecr_org_fkey")
     @Override
     @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return super.getScoper();
     }

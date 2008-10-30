@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
 
@@ -95,6 +96,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
 
@@ -155,6 +157,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     @ManyToOne
     @ForeignKey(name = "identifiedentity_scoper_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return this.scoper;
     }
@@ -175,6 +178,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public RoleStatus getStatus() {
         return this.status;
     }

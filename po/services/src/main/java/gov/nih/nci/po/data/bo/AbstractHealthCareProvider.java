@@ -83,10 +83,12 @@
 package gov.nih.nci.po.data.bo;
 
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 
 
@@ -113,6 +115,7 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
      */
     @Length(max = CERTIFICATE_LICENSE_TEXT_LENGHT)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "cert")
     public String getCertificateLicenseText() {
         return this.certificateLicenseText;
     }

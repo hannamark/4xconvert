@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -167,6 +169,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @NotEmpty
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
     public String getName() {
         return name;
     }
@@ -186,6 +189,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      */
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "abbreviation")
     public String getAbbreviatedName() {
         return abbreviatedName;
     }
@@ -205,6 +209,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      */
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "desc")
     public String getDescription() {
         return this.description;
     }
@@ -229,6 +234,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @Valid
     @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
             "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_START)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "address")
     public Address getPostalAddress() {
         return postalAddress;
     }
@@ -331,6 +337,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @NotNull
     @Column(name = "STATUS")
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public EntityStatus getStatusCode() {
         return this.statusCode;
     }

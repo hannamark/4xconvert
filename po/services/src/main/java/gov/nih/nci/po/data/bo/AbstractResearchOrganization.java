@@ -84,12 +84,14 @@
 
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -116,6 +118,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
      */
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
     @NotNull
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fundingMech")
     public String getFundingMechanism() {
         return fundingMechanism;
     }
@@ -137,6 +140,7 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     @ForeignKey(name = "research_org_type_fkey")
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public ResearchOrganizationType getTypeCode() {
         return typeCode;
     }
@@ -148,7 +152,4 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
     public void setTypeCode(ResearchOrganizationType type) {
         this.typeCode = type;
     }
-
-
-
 }

@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -91,6 +92,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -152,6 +154,7 @@ public class AbstractCodeValue implements PersistentObject, Auditable, CodeValue
     @Column(updatable = false, unique = true)
     @Length(max = CODE_LENGTH)
     @NotEmpty
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public String getCode() {
         return code;
     }

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
@@ -153,7 +154,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
     @Searchable(fields = {"id" })
-    @Index(name = "")
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return this.player;
     }
@@ -176,6 +177,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
     @Searchable(fields = {"id" })
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return this.scoper;
     }
@@ -291,6 +293,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "status")
     public RoleStatus getStatus() {
         return this.status;
     }

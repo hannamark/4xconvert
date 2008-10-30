@@ -82,12 +82,14 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 /**
  * Oversight committee role class.
@@ -122,6 +124,7 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
     @ManyToOne
     @ForeignKey(name = "oversight_comm_type_fkey")
     @Searchable
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public OversightCommitteeType getTypeCode() {
         return typeCode;
     }

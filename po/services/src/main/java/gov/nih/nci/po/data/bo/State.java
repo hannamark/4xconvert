@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -98,6 +99,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -147,6 +149,7 @@ public class State implements Auditable, PersistentObject {
     @JoinColumn(name = "country_id")
     @NotNull
     @ForeignKey(name = "STATE_COUNTRY_FK")
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "country")
     public Country getCountry() {
         return country;
     }
@@ -163,6 +166,7 @@ public class State implements Auditable, PersistentObject {
      */
     @NotEmpty
     @Length(max = CODE_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public String getCode() {
         return code;
     }
@@ -179,6 +183,7 @@ public class State implements Auditable, PersistentObject {
      */
     @NotEmpty
     @Length(max = STATE_COL_LENGTH)
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
     public String getName() {
         return name;
     }

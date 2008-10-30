@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -97,10 +98,10 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import org.hibernate.annotations.Index;
 
 
 /**
@@ -171,6 +172,7 @@ public class Country implements PersistentObject, Auditable {
     @Column(updatable = false, unique = true)
     @Length(max = NAME_LENGTH)
     @NotEmpty
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
     public String getName() {
         return name;
     }
@@ -186,6 +188,7 @@ public class Country implements PersistentObject, Auditable {
     @Column(updatable = false, unique = true)
     @Length(min = NUMERIC_LENGTH, max = NUMERIC_LENGTH)
     @NotEmpty
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "numeric")
     public String getNumeric() {
         return numeric;
     }
@@ -201,6 +204,7 @@ public class Country implements PersistentObject, Auditable {
     @Column(updatable = false, unique = true)
     @Length(min = ALPHA2_LENGTH, max = ALPHA2_LENGTH)
     @NotEmpty
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "alpha2")
     public String getAlpha2() {
         return alpha2;
     }
