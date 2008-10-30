@@ -19,7 +19,7 @@ INSERT INTO study_protocol
         start_date, start_date_type_code, ind_ide_indicator ,fda_regulated_indicator,section801_indicator,delayed_posting_indicator, study_protocol_type, date_last_updated, user_last_updated
     )  values ( 2, 'Acronym 2', 'RANDOMIZED_CONTROLLED_TRIAL', 'COMPLETE','false','true', 'NCI-2008-00002','CTEP','A Phase I study of Taxol in refractory leukemia in children
 ','II', 'TREATMENT','2008-07-13', 'ACTUAL', 
-    '2008-08-13', 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'InterventionalStudyProtocol' , current_timestamp, 'abstractor' )
+    '2008-08-13', 'ANTICIPATED', 'true' , 'false', 'true' , 'false' , 'ObservationalStudyProtocol' , current_timestamp, 'abstractor' )
 ;
 
 INSERT INTO study_protocol 
