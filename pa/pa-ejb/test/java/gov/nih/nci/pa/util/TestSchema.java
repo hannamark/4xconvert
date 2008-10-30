@@ -7,10 +7,13 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.Intervention;
+import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -27,8 +30,13 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.enums.ActionCategoryCode;
+import gov.nih.nci.pa.enums.ActionSubcategoryCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -39,6 +47,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -57,6 +66,8 @@ public class TestSchema {
         public static ArrayList<Long> studyParticipationContactIds;
         public static ArrayList<Long> healthCareFacilityIds;
         public static ArrayList<Long> healthCareProviderIds;
+        public static ArrayList<Long> plannedActivityIds;
+        public static ArrayList<Long> interventionIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -87,6 +98,9 @@ public class TestSchema {
             addAnnotatedClass(StudyRecruitmentStatus.class).
             addAnnotatedClass(StratumGroup.class).
             addAnnotatedClass(ResearchOrganization.class).
+            addAnnotatedClass(PlannedActivity.class).
+            addAnnotatedClass(Intervention.class).
+            addAnnotatedClass(InterventionAlternateName.class).
             addAnnotatedClass(ObservationalStudyProtocol.class).
                         
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
@@ -128,6 +142,7 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
+                        statement.executeUpdate("delete from INTERVENTION");
                         statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                         statement.executeUpdate("delete from STUDY_CONDITIONS");
@@ -196,6 +211,8 @@ public class TestSchema {
             studyParticipationContactIds = new ArrayList<Long>();
             healthCareFacilityIds = new ArrayList<Long>();
             healthCareProviderIds = new ArrayList<Long>();
+            plannedActivityIds = new ArrayList<Long>();
+            interventionIds = new ArrayList<Long>();
 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -323,6 +340,48 @@ public class TestSchema {
             sg.setGroupNumberText("Code2");
             addUpdObject(sg);
             
+            Intervention inv = new Intervention();
+            inv.setName("Chocolate Bar");
+            inv.setDescriptionText("Oral intervention to improve morale");
+            inv.setDateLastUpdated(new Date());
+            inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+            inv.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+            inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
+            inv.setUserLastUpdated("Joe");
+            addUpdObject(inv);
+            interventionIds.add(inv.getId());
+            
+            InterventionAlternateName invo = new InterventionAlternateName();
+            invo.setDateLastUpdated(new Date());
+            invo.setIntervention(inv);
+            invo.setName("Hershey");
+            invo.setStatusCode(ActiveInactiveCode.ACTIVE);
+            invo.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+            invo.setUserLastUpdated("Joe");
+            addUpdObject(invo);
+            invo = new InterventionAlternateName();
+            invo.setDateLastUpdated(new Date());
+            invo.setIntervention(inv);
+            invo.setName("Nestle");
+            invo.setStatusCode(ActiveInactiveCode.ACTIVE);
+            invo.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+            invo.setUserLastUpdated("Joe");            
+            addUpdObject(invo);
+            
+            PlannedActivity pa = new PlannedActivity();
+            pa.setAlternateName("alternateName");
+            pa.setCategoryCode(ActionCategoryCode.INTERVENTION);
+            pa.setDateLastUpdated(new Date());
+            pa.setDescriptionText("descriptionText");
+            pa.setIntervention(inv);
+            pa.setLeadProductIndicator(true);
+            pa.setName("name");
+            pa.setStudyProtocol(sp);
+            pa.setSubcategoryCode(ActionSubcategoryCode.DIETARY_SUPPLEMENT);
+            pa.setUserLastUpdated("Joe");
+            addUpdObject(pa);
+            plannedActivityIds.add(pa.getId());
+             
             HibernateUtil.getCurrentSession().clear();
             
         }
