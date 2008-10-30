@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -49,7 +50,6 @@ public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
     private static final String ACTION_HISTORY = "history";
-    private static final int MAX_REASON_LENGTH = 200;
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
 
@@ -379,8 +379,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (statusReason == null) {
             this.statusReason = null;
         } else {
-            this.statusReason = (statusReason.length() > MAX_REASON_LENGTH)
-                    ? statusReason.substring(0, MAX_REASON_LENGTH) : statusReason;
+            this.statusReason = (statusReason.length() > AbstractEntity.LONG_TEXT_LENGTH) 
+                    ? statusReason.substring(0, AbstractEntity.LONG_TEXT_LENGTH) : statusReason;
         }
     }
 
