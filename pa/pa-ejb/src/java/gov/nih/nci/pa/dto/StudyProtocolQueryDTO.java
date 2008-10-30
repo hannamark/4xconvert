@@ -36,6 +36,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String localStudyProtocolIdentifier;
     private StudyTypeCode studyTypeCode;
     private PhaseCode phaseCode; 
+    private String studyProtocolType;
     
     /**
      * 
@@ -233,5 +234,21 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setPhaseCode(PhaseCode phaseCode) {
         this.phaseCode = phaseCode;
     }
+    /**
+     * 
+     * @return studyProtocolType
+     */
+    public String getStudyProtocolType() {
+        return studyProtocolType;
+    }
+    /**
+     * 
+     * @param studyProtocolType studyProtocolType
+     */
+    public void setStudyProtocolType(String studyProtocolType) {
+        this.studyProtocolType = studyProtocolType;
+    }
+    
+    
     
 }

@@ -178,7 +178,7 @@ public class StudyContactTest  {
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sc.setDateLastUpdated(now);
         sc.setStudyProtocol(sp);
-        sc.setStudyContactRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+        sc.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         sc.setHealthCareProvider(hc);
         return sc;
     }

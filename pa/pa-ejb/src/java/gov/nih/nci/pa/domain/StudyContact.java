@@ -33,7 +33,7 @@ public class StudyContact extends PersonFunctionalRole {
     private String state;
     private String postalCode;
     private Country country;
-    private StudyContactRoleCode studyContactRoleCode;    
+    private StudyContactRoleCode roleCode;    
     private HealthCareProvider healthCareProvider;
     private Boolean primaryIndicator;
    
@@ -181,14 +181,14 @@ public class StudyContact extends PersonFunctionalRole {
      * @return the studyContactRoleCode studyContactRoleCode
      */
     @Column(name = "ROLE_CODE")
-    public StudyContactRoleCode getStudyContactRoleCode() {
-        return studyContactRoleCode;
+    public StudyContactRoleCode getRoleCode() {
+        return roleCode;
     }
 
     /**
      * @param studyContactRoleCode the studyContactRoleCode to set
      */
-    public void setStudyContactRoleCode(StudyContactRoleCode studyContactRoleCode) {
-        this.studyContactRoleCode = studyContactRoleCode;
+    public void setRoleCode(StudyContactRoleCode studyContactRoleCode) {
+        this.roleCode = studyContactRoleCode;
     }
 }

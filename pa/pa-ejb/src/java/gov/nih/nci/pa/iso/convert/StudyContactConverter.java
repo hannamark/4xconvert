@@ -43,7 +43,7 @@ public class StudyContactConverter {
         if (bo.getHealthCareProvider() != null) {
             dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
         }
-        dto.setRoleCode(CdConverter.convertToCd(bo.getStudyContactRoleCode()));
+        dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
@@ -69,7 +69,7 @@ public class StudyContactConverter {
             hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProvider()));
             bo.setHealthCareProvider(hfBo);
         }
-        bo.setStudyContactRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
+        bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setStudyProtocol(spBo);
         return bo;
     }

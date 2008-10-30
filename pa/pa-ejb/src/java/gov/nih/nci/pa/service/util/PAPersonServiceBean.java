@@ -56,8 +56,7 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
             + " join p.healthCareProviders as hc "
             + " join hc.studyContacts as sc" 
             + " join sc.studyProtocol as sp" 
-            + " join sc.studyContactRoles as scr" 
-            + " where scr.studyContactRoleCode = '" 
+            + " where sc.roleCode = '" 
             + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
             session = HibernateUtil.getCurrentSession();
             persons = session.createQuery(hql.toString()).list();

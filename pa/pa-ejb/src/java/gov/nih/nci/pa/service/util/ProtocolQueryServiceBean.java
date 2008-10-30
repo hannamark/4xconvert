@@ -1,6 +1,8 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -10,7 +12,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode; //import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode; 
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -164,6 +166,15 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                     .getStatusDateRangeLow());
                 }
                 if (studyProtocol != null) {
+                    if (studyProtocol instanceof ObservationalStudyProtocol) {
+                        studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
+                    } else if (studyProtocol instanceof InterventionalStudyProtocol) {
+                        studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
+                    } else {
+                        throw new PAException(" Unknown StudyProtocol type found for protocol id = " 
+                                + studyProtocol.getIdentifier() + " title " + studyProtocol.getOfficialTitle());
+                    }
+
                     studyProtocolDto.setOfficialTitle(studyProtocol
                             .getOfficialTitle());
                     studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
@@ -266,7 +277,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.documentWorkflowStatuses as dws  "
                             + "left outer join sp.studyOverallStatuses as sos  "
                             + "left outer join sp.studyContacts as sc "
-                            + "left outer join sc.studyContactRoles as scr "
                             + "left outer join sc.healthCareProvider as hcp "
                             + "left outer join hcp.person as per "
                             + "left outer join sp.studyParticipations as sps  "
