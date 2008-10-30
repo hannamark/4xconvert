@@ -1,8 +1,11 @@
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
@@ -12,10 +15,16 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class CurateOrganizationTest extends AbstractPoWebTest {
+    private static final String DEFAULT_URL = "http://default.example.com";
+
+    private static final String DEFAULT_EMAIL = "default@example.com";
+
     private static final int DEFAULT_TEXT_COL_LENGTH = 100;
 
     private final Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
@@ -35,7 +44,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     public void testCurateNewOrg() throws Exception {
-        /* create a new org via remote API.*/
+        /* create a new org via remote API. */
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
         String desc = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'W', 10);
@@ -44,10 +53,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         loginAsCurator();
 
         openEntityInboxOrganization();
-        
+
         // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWaitButton("org_id_" + id.getExtension());
         assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
         assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
         assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
@@ -91,10 +99,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         loginAsCurator();
 
         openEntityInboxOrganization();
-        
+
         // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWaitButton("org_id_" + id.getExtension());
         assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
         assertEquals(abbrv, selenium.getValue("curateOrgForm_organization_abbreviatedName"));
         assertEquals(desc, selenium.getValue("curateOrgForm_organization_description"));
@@ -109,7 +116,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         saveAsActive(id);
     }
-    
+
     public void testCurateNewOrgThenCurateAfterRemoteUpdateToActive() throws Exception {
         Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
 
@@ -141,17 +148,17 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         /* wait for in-browser js to execute via select's onchange event */
         Thread.sleep(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
-        clickAndWait("//a[@id='select_duplicate']/span/span");
+        clickAndWaitButton("select_duplicate");
         selenium.selectFrame("popupFrame");
         selenium.type("duplicateOrganizationForm_criteria_organization_id", dupId.getExtension());
-        
-        /*search for dups*/
+
+        /* search for dups */
         selenium.click("//a[@id='submitDuplicateOrganizationForm']/span/span");
-        /*wait for results to load*/
+        /* wait for results to load */
         waitForElementById("mark_as_dup_" + dupId.getExtension(), 30);
-        /*select record to use at duplicate*/
-        clickAndWait("//a[@id='mark_as_dup_" + dupId.getExtension() + "']/span/span");
-        
+        /* select record to use at duplicate */
+        clickAndWaitButton("mark_as_dup_" + dupId.getExtension());
+
         selenium.selectFrame("relative=parent");
 
         saveAsNullified(id);
@@ -173,7 +180,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         saveAsInactive(id);
     }
 
-    private Ii createNewOrgThenCurateAsActive() throws EntityValidationException {
+    private Ii createNewOrgThenCurateAsActive() throws EntityValidationException, URISyntaxException {
         // create a new org via remote API.
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         String abbrv = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'X', 10);
@@ -185,7 +192,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         }
 
         openEntityInboxOrganization();
-        
+
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
@@ -205,7 +212,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         return id;
     }
 
-    private Ii curateNewOrgThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException {
+    private Ii curateNewOrgThenCurateAfterRemoteUpdate() throws EntityValidationException, NullifiedEntityException,
+            URISyntaxException {
         Ii id = createNewOrgThenCurateAsActive();
 
         OrganizationDTO proposedState = remoteGetOrganization(id);
@@ -237,14 +245,14 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
     private void saveAsActive(Ii id) {
         selenium.select("curateOrgForm_organization_statusCode", "label=ACTIVE");
-        clickAndWait("//a[@id='save_button']/span/span");
+        clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void saveAsInactive(Ii id) {
         selenium.select("curateOrgForm_organization_statusCode", "label=INACTIVE");
-        clickAndWait("//a[@id='save_button']/span/span");
+        clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
@@ -252,7 +260,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     private void saveAsNullified(Ii id) {
         selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
         selenium.chooseOkOnNextConfirmation();
-        clickAndWait("//a[@id='save_button']/span/span");
+        clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
@@ -266,6 +274,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private void verifyEmail() {
+        waitForElementById("email-remove-0", 5);
+        assertEquals(DEFAULT_EMAIL + " | Remove", selenium.getText("email-entry-0"));
+
         waitForElementById("emailEntry_value", 5);
         selenium.type("emailEntry_value", "");
         selenium.click("email-add");
@@ -275,8 +286,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         waitForElementById("emailEntry_value", 5);
         selenium.type("emailEntry_value", "abc@example.com");
         selenium.click("email-add");
-        waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("email-entry-0"));
+        waitForElementById("email-remove-1", 5);
+        assertEquals("abc@example.com | Remove", selenium.getText("email-entry-1"));
 
         waitForElementById("emailEntry_value", 5);
         selenium.type("emailEntry_value", "abc.com");
@@ -346,6 +357,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private void verifyUrl() {
+        waitForElementById("url-remove-0", 5);
+        assertEquals(DEFAULT_URL + " | Remove | Visit...", selenium.getText("url-entry-0"));
+
         waitForElementById("urlEntry_value", 5);
         selenium.type("urlEntry_value", "");
         selenium.click("url-add");
@@ -355,8 +369,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         waitForElementById("urlEntry_value", 5);
         selenium.type("urlEntry_value", "http://www.example.com");
         selenium.click("url-add");
-        waitForElementById("url-remove-0", 5);
-        assertEquals("http://www.example.com | Remove | Visit...", selenium.getText("url-entry-0"));
+        waitForElementById("url-remove-1", 5);
+        assertEquals("http://www.example.com | Remove | Visit...", selenium.getText("url-entry-1"));
 
         waitForElementById("urlEntry_value", 5);
         selenium.type("urlEntry_value", "abc.com");
@@ -372,12 +386,23 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         return id;
     }
 
-    private OrganizationDTO create(String name, String abbrv, String desc) {
+    private OrganizationDTO create(String name, String abbrv, String desc) throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
         org.setName(RemoteApiUtils.convertToEnOn(name));
         org.setAbbreviatedName(RemoteApiUtils.convertToEnOn(abbrv));
         org.setDescription(RemoteApiUtils.convertToSt(desc));
         org.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        org.setTelecomAddress(telco);
+
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
+        org.getTelecomAddress().getItem().add(email);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI(DEFAULT_URL));
+        org.getTelecomAddress().getItem().add(url);
         return org;
     }
 

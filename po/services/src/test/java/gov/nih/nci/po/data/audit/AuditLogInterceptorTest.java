@@ -13,6 +13,7 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -50,7 +51,8 @@ public class AuditLogInterceptorTest extends AbstractHibernateTestCase {
         org.setStatusCode(EntityStatus.PENDING);
         org.setPostalAddress(address1);
         org.setName("tstName");
-        org.getEmail().add(new Email("foo@zombo.com"));
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
         PoHibernateUtil.getCurrentSession().save(org);
         PoHibernateUtil.getCurrentSession().flush();
 

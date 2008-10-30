@@ -88,8 +88,11 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -97,6 +100,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.HashSet;
 
 import javax.ejb.EJBException;
 
@@ -107,7 +111,8 @@ import org.junit.Test;
  *
  */
 public class OrganizationEntityServiceTest extends BaseOrganizationEntityServiceTest {
-
+    private static final String DEFAULT_URL = "http://default.example.com";
+    private static final String DEFAULT_EMAIL = "default@example.com";
     private Ii orgId = null;
 
     public Ii getOrgId() {
@@ -142,7 +147,17 @@ public class OrganizationEntityServiceTest extends BaseOrganizationEntityService
             dto.setName(RemoteApiUtils.convertToEnOn("_"));
             dto.setAbbreviatedName(RemoteApiUtils.convertToEnOn("_"));
             dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
-
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            dto.setTelecomAddress(telco);
+            
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
+            dto.getTelecomAddress().getItem().add(email);
+            
+            TelUrl url = new TelUrl();
+            url.setValue(new URI(DEFAULT_URL));
+            dto.getTelecomAddress().getItem().add(url);
             orgId = getOrgService().createOrganization(dto);
             assertNotNull(orgId);
             assertNotNull(orgId.getExtension());

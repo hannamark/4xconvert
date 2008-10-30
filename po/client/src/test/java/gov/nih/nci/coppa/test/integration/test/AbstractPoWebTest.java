@@ -27,5 +27,24 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected boolean isLoggedIn() {
         return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
     }
+
+    protected void clickAndWaitSaveButton() {
+        clickAndWaitButton("save_button");
+    }
+
+    protected void clickAndWaitButton(String buttonId) {
+        clickAndWait("//a[@id='" + buttonId + "']/span/span");
+    }
+
+    protected void openCreateOrganization() {
+        goHome();
+        selenium.click("CreateOrganization");
+        waitForPageToLoad();
+    }
+
+    private void goHome() {
+        selenium.open("/po-web/protected/home.action");
+        waitForPageToLoad();
+    }
     
 }

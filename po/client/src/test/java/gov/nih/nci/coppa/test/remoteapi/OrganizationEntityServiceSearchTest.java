@@ -6,11 +6,16 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -27,17 +32,29 @@ public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityS
         return id;
     }
 
-    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress) {
+    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress) throws URISyntaxException {
         return create(name, abbrv, desc, postalAddress, null);
     }
 
-    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress, DSet<Tel> telecomAddress) {
+    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress, DSet<Tel> telecomAddress) throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
         org.setName(RemoteApiUtils.convertToEnOn(name));
         org.setAbbreviatedName(RemoteApiUtils.convertToEnOn(abbrv));
         org.setDescription(RemoteApiUtils.convertToSt(desc));
         org.setPostalAddress(postalAddress);
         org.setTelecomAddress(telecomAddress);
+        
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        org.setTelecomAddress(telco);
+        
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:default@example.com"));
+        org.getTelecomAddress().getItem().add(email);
+        
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://default.example.com"));
+        org.getTelecomAddress().getItem().add(url);
         return org;
     }
 

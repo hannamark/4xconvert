@@ -146,7 +146,7 @@
 		<h2>Contact Information</h2>
 		    <div class="box_white">
 		        <div class="clear"></div>
-                <%@ include file="../../contactable/contacts.jsp" %>    		
+		        <po:contacts contactableKeyBase="organization"/>
 		    </div>
 		</div>
     </div>

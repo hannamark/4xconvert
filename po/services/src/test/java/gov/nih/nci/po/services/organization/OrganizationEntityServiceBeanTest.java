@@ -92,6 +92,15 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         t.setValue(new URI("tel", phone, null));
         telco.getItem().add(t);
         dto.setTelecomAddress(telco);
+        
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
+        
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://example.com"));
+        dto.getTelecomAddress().getItem().add(url);
+        
         Ii id = remote.createOrganization(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -100,6 +109,8 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
         assertEquals(1, o.getPhone().size());
         assertEquals(phone, o.getPhone().get(0).getValue());
+        assertEquals("another.email@example.com", o.getEmail().get(0).getValue());
+        assertEquals("http://example.com", o.getUrl().get(0).getValue());
     }
 
     @Test
@@ -109,12 +120,26 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
             dto.setName(StringConverter.convertToEnOn("some name"));
             dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
             dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            dto.setTelecomAddress(telco);
+            
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:another.email@example.com"));
+            dto.getTelecomAddress().getItem().add(email);
+            
+            TelUrl url = new TelUrl();
+            url.setValue(new URI("http://example.com"));
+            dto.getTelecomAddress().getItem().add(url);
+            
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, IiConverter.convertToLong(id));
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
             assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
+            assertEquals("another.email@example.com", o.getEmail().get(0).getValue());
+            assertEquals("http://example.com", o.getUrl().get(0).getValue());
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
@@ -125,9 +150,11 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationDTO dto = new OrganizationDTO();
         dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         Map<String, String[]> errors = remote.validate(dto);
-        assertEquals(2, errors.size()) ;
+        assertEquals(4, errors.size()) ;
         assertTrue(errors.containsKey("name"));
         assertTrue(errors.containsKey("postalAddress"));
+        assertTrue(errors.containsKey("email"));
+        assertTrue(errors.containsKey("url"));
     }
 
     private Organization createOrg(String name, String abbreviatedName, String desc, String addr1, String addr2,
@@ -387,7 +414,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationCR cr = l.get(0);
         assertEquals("newName", cr.getName());
         assertEquals("additional ADL", cr.getPostalAddress().getDeliveryAddressLine());
-        assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
+        assertEquals("another.email@example.com", cr.getEmail().get(1).getValue());
         assertEquals(EntityStatus.PENDING, cr.getStatusCode());
     }
 

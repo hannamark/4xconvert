@@ -89,11 +89,13 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -167,6 +169,8 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         org2.setName("org2 name");
         org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         org2.setStatusCode(EntityStatus.ACTIVE);
+        org2.getEmail().add(new Email("foo@example.com"));
+        org2.getUrl().add(new URL("http://example.com"));
         PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
 
         OversightCommitteeType other = new OversightCommitteeType("Foo");

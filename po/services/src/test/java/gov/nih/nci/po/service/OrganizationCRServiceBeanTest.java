@@ -10,6 +10,7 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country);
         o.setPostalAddress(a);
         o.getEmail().add(new Email("foo@example.com"));
+        o.getUrl().add(new URL("http://example.com"));
     }
 
     private void fill(AbstractOrganization o) {

@@ -211,6 +211,8 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         org.setAbbreviatedName(abbrvName);
         org.setDescription(desc);
         org.setStatusCode(EntityStatus.PENDING);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
         long orgId = orgServiceBean.create(org);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -236,6 +238,8 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
         org.setStatusCode(EntityStatus.NULLIFIED);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
 
         long orgId = orgServiceBean.create(org);
 

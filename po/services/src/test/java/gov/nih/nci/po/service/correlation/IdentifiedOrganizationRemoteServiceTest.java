@@ -89,11 +89,13 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
@@ -224,6 +226,8 @@ public class IdentifiedOrganizationRemoteServiceTest
         org2.setName("org2 name");
         org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         org2.setStatusCode(EntityStatus.ACTIVE);
+        org2.getEmail().add(new Email("foo@example.com"));
+        org2.getUrl().add(new URL("http://example.com"));
         PoHibernateUtil.getCurrentSession().saveOrUpdate(org2);
 
         IdentifiedOrganizationDTO correlation1 = getSampleDto();
