@@ -251,6 +251,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
     private void saveAsNullified(Ii id) {
         selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
+        selenium.chooseOkOnNextConfirmation();
         clickAndWait("//a[@id='save_button']/span/span");
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));

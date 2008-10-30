@@ -170,9 +170,25 @@
 			$('wwctrl_curateOrgForm_organization_duplicateOf_id').innerHTML = $('curateOrgForm.organization.duplicateOf.id').value;
 		}
 	</script>
-    <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="document.forms.curateOrgForm.submit();" style="save" text="Save"/>
-    </po:buttonRow>
+	<script type="text/javascript">
+	   function confirmThenSubmit(formId) {
+		   if ($('curateOrgForm_organization_statusCode').value == 'NULLIFIED') {
+			   var r = confirm('<s:text name="curation.nullified.confirmation"/>');
+			   if (r == true) {
+				   $(formId).submit();
+				   return true;
+			   } else {
+				   return false;
+			   }
+		   } else {
+			   $(formId).submit();
+			   return true;
+		   }
+	   } 
+	</script>
+	    <po:buttonRow>
+	        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit(document.forms.curateOrgForm);" style="save" text="Save"/>
+	    </po:buttonRow>
 </div>
 
 </body>
