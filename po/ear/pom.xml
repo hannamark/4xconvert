@@ -13,6 +13,7 @@
     <url>../../ear/target/site</url>
     
     <properties>
+        <log.level.default>WARN</log.level.default>
         <jboss.home>target/jbossDeploy</jboss.home>
         <jboss.mq:service.POInvocationLayer.type.UIL2.ServerBindPort>8094</jboss.mq:service.POInvocationLayer.type.UIL2.ServerBindPort>
     </properties>

@@ -61,9 +61,13 @@
    <!-- ======================= -->
    <!-- Setup the Root category -->
    <!-- ======================= -->
-
-   <root>
-      <appender-ref ref="POFILE"/>
-   </root>
+	<root>
+		<!--
+			The default logging level, for any logger not configured above. Warning:
+			setting this too fine-grained can have major performance consequences
+		-->
+		<priority value="${log.level.default}" />
+		<appender-ref ref="POFILE" />
+	</root>
 
 </log4j:configuration>
