@@ -17,7 +17,7 @@ public class StudyParticipationWebDTO {
     public StudyParticipationWebDTO(StudyParticipationDTO iso) {
         super();
         this.localProtocolIdentifier = iso.getLocalStudyProtocolIdentifier().getValue().toString();
-        this.id = iso.getIi().getExtension();
+        this.id = iso.getIdentifier().getExtension();
     }
 
     /** .

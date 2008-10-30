@@ -31,7 +31,7 @@ public class InterventionalStudyProtocolWebDTO {
         super();
         this.trialPhase = iso.getPhaseCode().getCode();
         this.trialTitle = iso.getOfficialTitle().getValue();
-        this.nciAccessionNumber =  IiConverter.convertToString(iso.getIdentifier());
+        this.nciAccessionNumber =  IiConverter.convertToString(iso.getAssignedIdentifier());
         if (iso.getStartDate() != null) {
             this.startDate = PAUtil.normalizeDateString(
                            TsConverter.convertToTimestamp(iso.getStartDate()).toString());

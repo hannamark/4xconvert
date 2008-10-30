@@ -23,7 +23,7 @@ public class TrialFundingWebDTO {
         this.nihInstitutionCode = iso.getNihInstitutionCode().getCode();
         this.nciDivisionProgramCode = iso.getNciDivisionProgramCode().getCode();
         this.serialNumber = iso.getSerialNumber().getValue().toString();
-        this.id = iso.getIi().getExtension();
+        this.id = iso.getIdentifier().getExtension();
     }
 
     /** .
