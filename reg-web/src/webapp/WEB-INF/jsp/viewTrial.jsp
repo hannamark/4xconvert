@@ -36,7 +36,7 @@
 	                </label>
 	            </td>
                 <td class="value">
-                    <c:out value="${sessionScope.trialSummary.nciAccessionNumber}"/> 
+                    <c:out value="${requestScope.trialSummary.nciAccessionNumber}"/> 
                 </td>
             </tr>
             <tr>
@@ -47,7 +47,7 @@
                     </label>
                 </td>
                 <td class="value">
-                    <c:out value="${sessionScope.studyParticipation.localProtocolIdentifier }"/> 
+                    <c:out value="${requestScope.studyParticipation.localProtocolIdentifier }"/> 
                 </td>
             </tr>
             <tr>     
@@ -57,7 +57,7 @@
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.trialTitle }"/> 
+                 <c:out value="${requestScope.trialSummary.trialTitle }"/> 
             </td>
             </tr>       
             <tr>            
@@ -67,7 +67,7 @@
                 </label>
             </td>
             <td class="value">
-                <c:out value="${sessionScope.trialSummary.trialPhase }"/> 
+                <c:out value="${requestScope.trialSummary.trialPhase }"/> 
             </td>
             </tr>
             <tr>
@@ -80,7 +80,7 @@
                 Organization A
             </td>
             </tr> 
-            <c:if test="${sessionScope.trialFundingList != null}">  
+            <c:if test="${requestScope.trialFundingList != null}">  
 		        <tr>
 	                <td colspan="2" class="space">&nbsp;</td>
 		        </tr>	        
@@ -115,23 +115,23 @@
 	                        </tr>
 	                        <tr>
 	                          <td class="value">
-	                            <c:out value="${sessionScope.trialFundingList.fundingMechanismCode }"/> 
+	                            <c:out value="${requestScope.trialFundingList.fundingMechanismCode }"/> 
 	                          </td>
 	                          <td class="value">
-	                            <c:out value="${sessionScope.trialFundingList.nihInstitutionCode }"/> 
+	                            <c:out value="${requestScope.trialFundingList.nihInstitutionCode }"/> 
 	                          </td>
 	                          <td class="value">
-	                            <c:out value="${sessionScope.trialFundingList.serialNumber }"/> 
+	                            <c:out value="${requestScope.trialFundingList.serialNumber }"/> 
 	                          </td>
 	                          <td class="value">
-	                            <c:out value="${sessionScope.trialFundingList.nciDivisionProgramCode }"/> 
+	                            <c:out value="${requestScope.trialFundingList.nciDivisionProgramCode }"/> 
 	                          </td>
 	                        </tr>
 	                    </table>
 	                </td>
 	            </tr>
             </c:if>
-            <c:if test="${sessionScope.trialOverallStatus != null}">  
+            <c:if test="${requestScope.trialOverallStatus != null}">  
                 <tr>
                     <td colspan="2" class="space">&nbsp;</td>
                 </tr>           
@@ -145,7 +145,7 @@
 		                </label>
 		            </td>
 		            <td class="value">
-		                <c:out value="${sessionScope.trialOverallStatus.statusCode }"/> 
+		                <c:out value="${requestScope.trialOverallStatus.statusCode }"/> 
 		            </td>
 	            </tr>
 	            <tr>            
@@ -155,10 +155,10 @@
 	                    </label>
 	                </td>
 	                <td class="value">
-	                    <c:out value="${sessionScope.trialOverallStatus.statusDate }"/> 
+	                    <c:out value="${requestScope.trialOverallStatus.statusDate }"/> 
 	                </td>
                 </tr>
-                <c:if test="${sessionScope.trialSummary.startDate != null}">
+                <c:if test="${requestScope.trialSummary.startDate != null}">
 	                <tr>            
 		                <td scope="row" class="label">
 		                    <label for="studyStartDate">
@@ -166,12 +166,12 @@
 		                    </label>
 		                </td>
 		                <td class="value">
-		                    <c:out value="${sessionScope.trialSummary.startDate }"/>
-		                    <c:out value="${sessionScope.trialSummary.startDateType }"/>  
+		                    <c:out value="${requestScope.trialSummary.startDate }"/>
+		                    <c:out value="${requestScope.trialSummary.startDateType }"/>  
 		                </td>
 	                </tr>
                 </c:if>
-                <c:if test="${sessionScope.trialSummary.completionDate != null}">
+                <c:if test="${requestScope.trialSummary.completionDate != null}">
 	                <tr>       
 	                    <td scope="row" class="label">
 	                        <label for="primaryCompletionDate">
@@ -179,8 +179,8 @@
 	                        </label>
 	                    </td>
 	                    <td class="value">
-	                        <c:out value="${sessionScope.trialSummary.completionDate }"/>
-	                        <c:out value="${sessionScope.trialSummary.completionDateType }"/>  
+	                        <c:out value="${requestScope.trialSummary.completionDate }"/>
+	                        <c:out value="${requestScope.trialSummary.completionDateType }"/>  
 	                    </td>
 	                </tr>
                 </c:if>
@@ -199,9 +199,9 @@
                     </td>
                     <td class="value">
                         <c:url var="url" value="submitTrialviewDoc.action" >
-						  <c:param name="id " value="${sessionScope.protocolDocument.id}" />
+						  <c:param name="id " value="${requestScope.protocolDocument.id}" />
 						</c:url>
-                        <a href="<c:out value="${url}"/>"><c:out value="${sessionScope.protocolDocument.fileName }"/></a>
+                        <a href="<c:out value="${url}"/>"><c:out value="${requestScope.protocolDocument.fileName }"/></a>
                     </td>
                 </tr>
                 <tr>            
@@ -212,9 +212,9 @@
                     </td>
                     <td class="value">
                         <c:url var="url" value="submitTrialviewDoc.action" >
-                          <c:param name="id " value="${sessionScope.irbApproval.id}" />
+                          <c:param name="id " value="${requestScope.irbApproval.id}" />
                         </c:url>
-                        <a href="<c:out value="${url}"/>"><c:out value="${sessionScope.irbApproval.fileName }"/></a>
+                        <a href="<c:out value="${url}"/>"><c:out value="${requestScope.irbApproval.fileName }"/></a>
                     </td>
                 </tr>
         </table>  
