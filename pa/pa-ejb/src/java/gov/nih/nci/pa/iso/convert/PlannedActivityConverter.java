@@ -14,8 +14,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-
-import java.util.Date;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author Hugh Reinhart
@@ -38,11 +37,16 @@ public class PlannedActivityConverter {
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
         dto.setDescriptionText(StConverter.convertToSt(bo.getDescriptionText()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
+        if (bo.getIntervention() != null) {
+            dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
+        }
         dto.setLeadProductIndicator(BlConverter.convertToBl(bo.getLeadProductIndicator()));
         dto.setName(StConverter.convertToSt(bo.getName()));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        if (bo.getStudyProtocol() != null) {
+            dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        }
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -54,16 +58,21 @@ public class PlannedActivityConverter {
      */
     public static PlannedActivity convertFromDtoToDomain(
             PlannedActivityDTO dto) throws PAException {
-        StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        StudyProtocol spBo = null;
+        if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            spBo = new StudyProtocol();
+            spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        }
 
-        Intervention invBo = new Intervention();
-        invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+        Intervention invBo = null;
+        if (!PAUtil.isIiNull(dto.getInterventionIdentifier())) {
+            invBo = new Intervention();
+            invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+        }
         
         PlannedActivity bo = new PlannedActivity();
         bo.setAlternateName(StConverter.convertToString(dto.getAlternateName()));
         bo.setCategoryCode(ActionCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
-        bo.setDateLastUpdated(new Date());
         bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(invBo);
@@ -71,6 +80,7 @@ public class PlannedActivityConverter {
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(ActionSubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
+        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 
