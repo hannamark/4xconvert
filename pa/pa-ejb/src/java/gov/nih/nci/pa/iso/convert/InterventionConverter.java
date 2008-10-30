@@ -13,8 +13,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
-import java.util.Date;
-
 /**
  * @author Hugh Reinhart
  * @since 10/29/2008
@@ -38,6 +36,7 @@ public class InterventionConverter {
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
+        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -50,13 +49,13 @@ public class InterventionConverter {
     public static Intervention convertFromDtoToDomain(
             InterventionDTO dto) throws PAException {
         Intervention bo = new Intervention();
-        bo.setDateLastUpdated(new Date());
         bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setTypeCode(InterventionTypeCode.getByCode(CdConverter.convertCdToString(dto.getTypeCode())));
+        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 }
