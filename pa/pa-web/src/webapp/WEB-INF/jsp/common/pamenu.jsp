@@ -27,10 +27,10 @@
     					<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
     					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                        <li class="sub"><a href="participatingOrganizations.action" style="color: black;">Participating Sites</a>
-                            <ul>
-                                <li><a href="participatingOrganizations.action" style="text-indent: .5cm">Treating Sites</a></li>
-                                <li><a href="collaborators.action" style="text-indent: .5cm">Collaborators</a></li>
+                        <li class="hassubmenu">Participating Sites
+                           <ul id="part_sites">
+                                <li><a href="participatingOrganizations.action">Treating Sites</a></li>
+                                <li><a href="collaborators.action">Collaborators</a></li>
                             </ul>
                         </li>    
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
@@ -40,20 +40,20 @@
     				<ul>
     					<li><a href="subGroupsquery.action" >SubGroups</a></li>
                         <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-    					<li class="sub"><a href="interventionalStudyDesigndetailsQuery.action" style="color: black;">Interventional Trial Design </a>
-                            <ul>
-                                <li><a href="interventionalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
-                                <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
-                                <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
+    					<li class="hassubmenu">Interventional Trial Design
+                            <ul id="part_sites">
+                                <li><a href="interventionalStudyDesigndetailsQuery.action" >Design Details</a></li>
+                                <li><a href="#" >Outcome Measures</a></li>
+                                <li><a href="#" >Eligibility Criteria</a></li>
                             </ul>
     					</li>
                         </s:if>
                         <s:else>
-    					<li class="sub"><a href="observationalStudyDesigndetailsQuery.action" style="color: black;">Observational Trial Design </a>
-                            <ul>
-                                <li><a href="observationalStudyDesigndetailsQuery.action" style="text-indent: .5cm">Design Details</a></li>
-                                <li><a href="#" style="text-indent: .5cm">Outcome Measures</a></li>
-                                <li><a href="#" style="text-indent: .5cm">Eligibility Criteria</a></li>
+    					<li class="hassubmenu">Observational Trial Design
+                            <ul id="part_sites">
+                                <li><a href="observationalStudyDesigndetailsQuery.action" >Design Details</a></li>
+                                <li><a href="#" >Outcome Measures</a></li>
+                                <li><a href="#" >Eligibility Criteria</a></li>
                             </ul>
     					</li>
                         </s:else>
