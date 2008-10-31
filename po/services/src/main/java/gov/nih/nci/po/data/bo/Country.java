@@ -86,8 +86,8 @@ import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -99,6 +99,8 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.validator.Length;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -125,7 +127,7 @@ public class Country implements PersistentObject, Auditable {
     private String numeric;
     private String alpha2;
     private String alpha3;
-    private Set<State> states = new HashSet<State>();
+    private SortedSet<State> states = new TreeSet<State>();
 
     /**
      * For unit tests only.
@@ -235,12 +237,13 @@ public class Country implements PersistentObject, Auditable {
      */
     @OneToMany(mappedBy = "country")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)  // Unit tests write, so cannot use read-only
-    public Set<State> getStates() {
+    @Sort(type = SortType.NATURAL)
+    public SortedSet<State> getStates() {
         return states;
     }
 
     @SuppressWarnings("unused")
-    private void setStates(Set<State> states) {
+    private void setStates(SortedSet<State> states) {
         this.states = states;
     }
 

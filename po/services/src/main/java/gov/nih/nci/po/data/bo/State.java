@@ -116,7 +116,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
             @UniqueConstraint(columnNames = { "code", "country_id" }),
             @UniqueConstraint(columnNames = { "name", "country_id" })
        })
-public class State implements Auditable, PersistentObject {
+public class State implements Auditable, PersistentObject, Comparable<State> {
     private static final long serialVersionUID = 1L;
     private static final int CODE_LENGTH = 3;
     private static final int STATE_COL_LENGTH = 50;
@@ -193,5 +193,12 @@ public class State implements Auditable, PersistentObject {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(State o) {
+        return this.getCode().compareTo(o.getCode());
     }
 }
