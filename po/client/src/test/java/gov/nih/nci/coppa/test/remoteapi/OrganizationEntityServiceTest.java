@@ -110,7 +110,7 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public class OrganizationEntityServiceTest extends BaseOrganizationEntityServiceTest {
+public class OrganizationEntityServiceTest extends AbstractOrganizationEntityService {
     private static final String DEFAULT_URL = "http://default.example.com";
     private static final String DEFAULT_EMAIL = "default@example.com";
     private Ii orgId = null;

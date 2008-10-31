@@ -54,6 +54,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- JTC -->
+        <dependency>
+            <groupId>org.openqa.jtc.junit</groupId>
+            <artifactId>jtc</artifactId>
+            <version>0.2</version>
+            <scope>test</scope>
+        </dependency>
     
         <!-- Selenium -->
         <dependency>
@@ -340,6 +347,9 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <includes>
+                                        <include>**/AllTests.java</include>
+                                    </includes>
                                     <skip>false</skip>
                                 </configuration>
                             </execution>
@@ -504,6 +514,9 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <includes>
+                                        <include>**/AllTests.java</include>
+                                    </includes>
                                     <skip>false</skip>
                                 </configuration>
                             </execution>
@@ -611,6 +624,9 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <includes>
+                                        <include>**/AllTests.java</include>
+                                    </includes>
                                     <skip>false</skip>
                                 </configuration>
                             </execution>

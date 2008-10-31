@@ -22,7 +22,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OrganizationEntityServiceSearchTest extends BaseOrganizationEntityServiceTest {
+public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEntityService {
     private final Map<Ii, OrganizationDTO> catalogOrgs = new HashMap<Ii, OrganizationDTO>();
 
     private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException {

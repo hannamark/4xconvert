@@ -109,7 +109,7 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public class PersonEntityServiceTest extends BasePersonEntityServiceTest {
+public class PersonEntityServiceTest extends AbstractPersonEntityService {
 
     private Ii personId;
 

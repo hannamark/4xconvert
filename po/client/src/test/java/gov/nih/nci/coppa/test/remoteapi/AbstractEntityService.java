@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 import org.junit.After;
 import org.junit.Before;
 
-public abstract class BaseEntityServiceTest {
+public abstract class AbstractEntityService {
     private OrganizationEntityServiceRemote orgService;
     private PersonEntityServiceRemote personService;
 

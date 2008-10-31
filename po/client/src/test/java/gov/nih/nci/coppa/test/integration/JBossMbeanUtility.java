@@ -26,6 +26,8 @@ import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
+import org.apache.log4j.Logger;
+
 /**
  * A utility class from JBM v1.40.SP3 that was adapted to meet our needs
  * 
@@ -38,7 +40,7 @@ public class JBossMbeanUtility {
     // Constants -----------------------------------------------------
 
     // Static --------------------------------------------------------
-
+    private static final Logger LOG = Logger.getLogger(JBossMbeanUtility.class);
     private static String DEFALUT_SERVER_PEER_NAME = "PODestinationManager";
 
     public static void setDefaultServerPeerName(String name) {
@@ -60,7 +62,7 @@ public class JBossMbeanUtility {
         mBeanServer.invoke(serverObjectName, "deployTopic", new Object[] { queueName, jndiName }, new String[] {
                 "java.lang.String", "java.lang.String" });
 
-        System.out.println("Queue " + jndiName + " deployed");
+        LOG.debug("Queue " + jndiName + " deployed");
     }
 
     public static void destroyTopic(String jndiName) throws Exception {
@@ -75,7 +77,7 @@ public class JBossMbeanUtility {
         mBeanServer.invoke(serverObjectName, "destroyTopic", new Object[] { queueName },
                 new String[] { "java.lang.String" });
 
-        System.out.println("Queue " + jndiName + " undeployed");
+        LOG.debug("Queue " + jndiName + " undeployed");
     }
 
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {
@@ -87,7 +89,7 @@ public class JBossMbeanUtility {
         ObjectName serverObjectName = new ObjectName("jboss.mq.destination:service=Topic,name=" + topicName);
         mBeanServer.invoke(serverObjectName, "removeAllMessages", new Object[] {}, new String[] {});
 
-        System.out.println("Removed all messages for " + jndiName + " topic/queue");
+        LOG.debug("Removed all messages for " + jndiName + " topic/queue");
     }
 
     public static Object listAllSubscriptionsOnTopic(String jndiName, String topicName)
@@ -97,7 +99,7 @@ public class JBossMbeanUtility {
         Object invokeResult = mBeanServer.invoke(serverObjectName, "listAllSubscriptions", new Object[] {},
                 new String[] {});
 
-        System.out.println("Removed all messages for " + jndiName + " topic/queue");
+        LOG.debug("Removed all messages for " + jndiName + " topic/queue");
         return invokeResult;
     }
 

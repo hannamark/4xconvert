@@ -17,7 +17,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PersonEntityServiceSearchTest extends BasePersonEntityServiceTest {
+public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     private final Map<Ii, PersonDTO> catalog = new HashMap<Ii, PersonDTO>();
 
     private Ii remoteCreateAndCatalog(PersonDTO person) throws EntityValidationException {

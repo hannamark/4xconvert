@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.test.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.coppa.test.integration.test.AbstractSeleneseTestCase;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -18,6 +19,7 @@ import javax.jms.TopicSubscriber;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +29,8 @@ import org.junit.Test;
  */
 public class TopicIntegrationTest {
 
-
+    private static final Logger LOG = Logger.getLogger(TopicIntegrationTest.class);
+    
     private static final String SUBSCRIBER_ROLE_USER = "subscriber";
     private static final String SUBSCRIBER_ROLE_USER_PASS = "pass";
     private static final String CONNECTION_FACTORY_JNDI_BINDING_NAME = "/POConnectionFactory";
@@ -243,7 +246,7 @@ public class TopicIntegrationTest {
     }
 
     protected void log(String s) {
-        System.out.println(s);
+        LOG.debug(s);
     }
 
     protected void displayProviderInfo(ConnectionMetaData metaData)
@@ -254,7 +257,7 @@ public class TopicIntegrationTest {
                 + metaData.getProviderMajorVersion() + "."
                 + metaData.getProviderMinorVersion() + ")";
 
-        System.out.println(info);
+        log(info);
     }
 
     private void close(InitialContext ic, Connection connection)
