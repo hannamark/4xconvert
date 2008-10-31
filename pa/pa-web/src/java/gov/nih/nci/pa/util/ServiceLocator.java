@@ -2,6 +2,9 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -158,4 +161,19 @@ public interface ServiceLocator {
      * @return HealthCareProviderCorrelationServiceRemote
      */ 
     HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService();
+    
+    /**
+     * @return PlannedActivityServiceRemote
+     */
+    PlannedActivityServiceRemote getPlannedActivityService();
+    
+    /**
+     * @return InterventionServiceRemote
+     */
+    InterventionServiceRemote getInterventionService();
+    
+    /**
+     * @return InterventionAlternateNameServiceRemote
+     */
+    InterventionAlternateNameServiceRemote getInterventionAlternateNameService();
 }

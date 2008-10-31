@@ -2,6 +2,9 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -245,5 +248,26 @@ public final class PaRegistry {
      */
     public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
         return getInstance().getServiceLocator().getPoPersonCorrelationService();
+    }
+    
+    /**
+     * @return PlannedActivityServiceRemote
+     */
+    public static PlannedActivityServiceRemote getPlannedActivityService() {
+        return getInstance().getServiceLocator().getPlannedActivityService();
+    }
+    
+    /**
+     * @return InterventionServiceRemote
+     */
+    public static InterventionServiceRemote getInterventionService() {
+        return getInstance().getServiceLocator().getInterventionService();
+    }
+    
+    /**
+     * @return InterventionAlternateNameServiceRemote
+     */
+    public static InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        return getInstance().getServiceLocator().getInterventionAlternateNameService();
     }
 }

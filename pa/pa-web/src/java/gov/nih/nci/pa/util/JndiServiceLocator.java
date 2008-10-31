@@ -2,6 +2,9 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -189,5 +192,27 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudyParticipationContactServiceRemote getStudyParticipationContactService() {
         return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(
                                             "pa/StudyParticipationContactServiceBean/remote");
+    }
+
+    /**
+     * @return InterventionAlternateNameServiceRemote
+     */
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        return (InterventionAlternateNameServiceRemote) JNDIUtil.lookup(
+                    "pa/InterventionAlternateNameServiceBean/remote");
+    }
+
+    /**
+     * @return InterventionServiceRemote
+     */
+    public InterventionServiceRemote getInterventionService() {
+        return (InterventionServiceRemote) JNDIUtil.lookup("pa/InterventionServiceBean/remote");
+    }
+
+    /**
+     * @return PlannedActivityServiceRemote
+     */
+    public PlannedActivityServiceRemote getPlannedActivityService() {
+        return (PlannedActivityServiceRemote) JNDIUtil.lookup("pa/PlannedActivityServiceBean/remote");
     }
 }

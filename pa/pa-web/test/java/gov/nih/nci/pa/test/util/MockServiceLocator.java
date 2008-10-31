@@ -2,6 +2,9 @@ package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -191,6 +194,30 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getPAResearchOrganizationService()
      */
     public PAResearchOrganizationServiceRemote getPAResearchOrganizationService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getInterventionAlternateNameService()
+     */
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getInterventionService()
+     */
+    public InterventionServiceRemote getInterventionService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getPlannedActivityService()
+     */
+    public PlannedActivityServiceRemote getPlannedActivityService() {
         // TODO Auto-generated method stub
         return null;
     }
