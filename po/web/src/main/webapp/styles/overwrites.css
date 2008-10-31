@@ -75,7 +75,7 @@ table.inputRow  DIV.wwgrp {
 }
 
 table.inputRow td {
-    vertical-align: top;
+    vertical-align: bottom;
 }
 
 a.formElementButton {

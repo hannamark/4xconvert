@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
@@ -269,7 +270,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertEquals("123 abc ave.", selenium.getValue("curateOrgForm_organization_postalAddress_streetAddressLine"));
         assertEquals("", selenium.getValue("curateOrgForm_organization_postalAddress_deliveryAddressLine"));
         assertEquals("mycity", selenium.getValue("curateOrgForm_organization_postalAddress_cityOrMunicipality"));
-        assertEquals("", selenium.getValue("curateOrgForm_organization_postalAddress_stateOrProvince"));
+        assertEquals("", selenium.getValue("curateOrgForm.organization.postalAddress.stateOrProvince"));
         assertEquals("12345", selenium.getValue("curateOrgForm_organization_postalAddress_postalCode"));
     }
 
@@ -387,11 +388,15 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private OrganizationDTO create(String name, String abbrv, String desc) throws URISyntaxException {
+        return create(name, abbrv, desc, RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
+    }
+
+    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress) throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
         org.setName(RemoteApiUtils.convertToEnOn(name));
         org.setAbbreviatedName(RemoteApiUtils.convertToEnOn(abbrv));
         org.setDescription(RemoteApiUtils.convertToSt(desc));
-        org.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
+        org.setPostalAddress(postalAddress);
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         org.setTelecomAddress(telco);

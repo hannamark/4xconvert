@@ -15,7 +15,7 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
         assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curateOrgForm_organization_postalAddress_cityOrMunicipality']/div"));
         assertEquals("Organization Name must be set", selenium.getText("//div[@id='wwerr_curateOrgForm_organization_name']/div"));
         assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curateOrgForm_organization_postalAddress_postalCode']/div"));
-        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateOrgForm_organization_postalAddress_country']/div"));
+        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateOrgForm.organization.postalAddress.country']/div"));
         assertTrue(selenium.isTextPresent("At least one Email Address must be set"));
         assertTrue(selenium.isTextPresent("At least one URL must be set"));
     }

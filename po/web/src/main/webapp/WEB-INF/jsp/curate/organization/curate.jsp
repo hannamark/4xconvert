@@ -73,7 +73,7 @@
 	               listValue="name()"
 	               value="organization.statusCode" 
 	               headerKey="" headerValue="--Select a Status--" 
-	               />		        
+	               required="true" cssClass="required" />		        
 	        </s:if>
 	        <s:else>
                 <div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
@@ -99,7 +99,7 @@
 			       value="organization.statusCode" 
 			       headerKey="" headerValue="--Select a Status--" 
 			       onchange="handleDuplicateOf();"
-			       />         
+			       required="true" cssClass="required" />         
         	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
 	                    <div style="float:right;">
@@ -136,7 +136,7 @@
 		<div class="boxouter">
 		<h2>Address Information</h2>
 		    <div class="box_white">
-		        <po:addressForm addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
+		        <po:addressForm formNameBase="curateOrgForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
 		        <div class="clear"></div>
 		    </div>
 		</div>

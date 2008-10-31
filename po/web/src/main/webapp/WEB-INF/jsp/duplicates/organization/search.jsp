@@ -45,7 +45,7 @@
 				        <div class="boxouter">
 				        <h2>Address Information</h2>
 				            <div class="box_white">
-				                <po:addressForm addressKeyBase="criteria.organization.postalAddress" address="${criteria.organization.postalAddress}" required="false"/>
+				                <po:addressForm formNameBase="duplicateOrganizationForm" addressKeyBase="criteria.organization.postalAddress" address="${criteria.organization.postalAddress}" required="false"/>
 				                <div class="clear"></div>
 				            </div>
 				        </div>

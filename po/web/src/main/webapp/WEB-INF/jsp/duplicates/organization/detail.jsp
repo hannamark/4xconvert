@@ -14,7 +14,7 @@
 <div class="boxouter">
 <h2>Address Information</h2>
     <div class="box_white">
-        <po:addressForm addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="false"/>
+        <po:addressForm formNameBase="orgReadOnlyDetailForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="false"/>
         <div class="clear"></div>
     </div>
 </div>
