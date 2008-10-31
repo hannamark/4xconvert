@@ -18,6 +18,22 @@ public class PersonResourceProviderCR extends AbstractPersonResourceProvider
     private static final long serialVersionUID = -4866225509121969001L;
 
     private PersonResourceProvider target;
+    
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
 
     /**
      * default ctor.

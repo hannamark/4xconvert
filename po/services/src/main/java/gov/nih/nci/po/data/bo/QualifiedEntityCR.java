@@ -22,6 +22,22 @@ public class QualifiedEntityCR extends AbstractQualifiedEntity
 
     private QualifiedEntity target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
     /**
      * default ctor.
      */

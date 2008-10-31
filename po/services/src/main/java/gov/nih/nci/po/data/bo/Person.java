@@ -101,6 +101,7 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
 /**
@@ -113,7 +114,7 @@ import org.hibernate.validator.Valid;
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson implements Auditable, Curatable<Person> {
+public class Person extends AbstractPerson implements Auditable, CuratableEntity<Person, PersonCR> {
     private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Person duplicateOf;
@@ -267,6 +268,7 @@ public class Person extends AbstractPerson implements Auditable, Curatable<Perso
      * @return associated CRs
      */
     @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
     public Set<PersonCR> getChangeRequests() {
         return changeRequests;
     }

@@ -84,8 +84,8 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
-import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.Curatable;
+import gov.nih.nci.po.data.bo.CuratableEntity;
+import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AbstractHQLSearchCriteria;
@@ -175,11 +175,11 @@ public final class SearchableUtils {
     private static void handleNullifiedStatus(final Object obj, boolean disallowNullified,
             final StringBuffer whereClause, final Map<String, Object> params) {
         String operator = determineOperator(whereClause);
-        if (disallowNullified && obj instanceof Curatable) {
+        if (disallowNullified && obj instanceof CuratableEntity) {
             whereClause.append(String.format("%s %s.statusCode != :%s", operator, ROOT_OBJ_ALIAS,
                     NULLIFIED_STATUS_PARAM));
             params.put(NULLIFIED_STATUS_PARAM, EntityStatus.NULLIFIED);
-        } else if (disallowNullified && obj instanceof Correlation) {
+        } else if (disallowNullified && obj instanceof CuratableRole) {
             whereClause.append(String.format("%s %s.status != :%s", operator, ROOT_OBJ_ALIAS, NULLIFIED_STATUS_PARAM));
             params.put(NULLIFIED_STATUS_PARAM, RoleStatus.NULLIFIED);
         }

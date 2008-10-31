@@ -85,6 +85,7 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
 
+import gov.nih.nci.po.data.bo.RoleStatus;
 import java.io.Serializable;
 
 import org.hibernate.CallbackException;
@@ -106,11 +107,22 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
             String[] propertyNames, Type[] types) {
-        if (entity instanceof Curatable<?> && previousState != null) {
+        if (entity instanceof Curatable && previousState != null) {
             for (int i = 0; i < currentState.length; ++i) {
                 if (currentState[i] instanceof EntityStatus) {
                     EntityStatus newStatus = (EntityStatus) currentState[i];
                     EntityStatus oldStatus = (EntityStatus) previousState[i];
+                    if (oldStatus == null) {
+                        return false;
+                    }
+                    if (!oldStatus.canTransitionTo(newStatus)) {
+                        throw new CallbackException(String.format("Illegal curation transition from %s to %s",
+                                                                  oldStatus.name(), newStatus.name()));
+                    }
+
+                } else if (currentState[i] instanceof RoleStatus) {
+                    RoleStatus newStatus = (RoleStatus) currentState[i];
+                    RoleStatus oldStatus = (RoleStatus) previousState[i];
                     if (oldStatus == null) {
                         return false;
                     }

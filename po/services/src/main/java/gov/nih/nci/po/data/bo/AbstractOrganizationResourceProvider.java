@@ -105,7 +105,7 @@ import org.hibernate.validator.NotNull;
  *      class="gov.nih.nci.services.correlation.AbstractOrganizationResourceProviderDTO"
  */
 @MappedSuperclass
-public abstract class AbstractOrganizationResourceProvider implements Correlation {
+public abstract class AbstractOrganizationResourceProvider {
 
     private static final long serialVersionUID = 1L;
 

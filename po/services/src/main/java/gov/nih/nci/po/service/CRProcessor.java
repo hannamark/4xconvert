@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
+import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
@@ -25,11 +26,11 @@ final class CRProcessor {
     /**
      * update the target ENTITY, and delete processed CRs (whether applied or rejected).
      * 
-     * @param <CR> the PersistentObject type.
+     * @param <CR> the change request type.
      * @param <ENTITY> the PersistentObject type.
      * @param crs the hibernate IDs of the CRs to delete. All crs must have the same target Org,
      */
-    static <CR extends ChangeRequest<ENTITY>, ENTITY> void processCRs(List<CR> crs,
+    static <CR extends ChangeRequest<ENTITY>, ENTITY extends Curatable> void processCRs(List<CR> crs,
             EntityUpdateCallback<ENTITY> callback) {
         ENTITY target = null;
         for (CR ocr : crs) {
@@ -42,12 +43,13 @@ final class CRProcessor {
             } else if (!target.equals(crTarget)) {
                 throw new IllegalArgumentException("all crs must have the same target");
             }
-            // TODO delete or mark as processed
-            // see https://jira.5amsolutions.com/browse/PO-492
-            PoHibernateUtil.getCurrentSession().delete(ocr);
+
+            ocr.setProcessed(true);
+            PoHibernateUtil.getCurrentSession().update(ocr);
         }
 
         if (target != null) {
+            target.getChangeRequests().removeAll(crs);
             callback.entityUpdate(target);
         }
     }

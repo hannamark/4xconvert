@@ -30,6 +30,22 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     private static final long serialVersionUID = 1L;
     private HealthCareProvider target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
     /**
      * default ctor.
      */

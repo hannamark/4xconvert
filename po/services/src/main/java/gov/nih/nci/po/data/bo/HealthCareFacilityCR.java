@@ -22,6 +22,21 @@ public class HealthCareFacilityCR extends AbstractOrganizationRole
 
     private HealthCareFacility target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
     /**
      * useful ctor.
      * @param target the affected Correlation.
@@ -56,4 +71,5 @@ public class HealthCareFacilityCR extends AbstractOrganizationRole
     public Long getId() {
         return super.getId();
     }
+
 }

@@ -84,10 +84,18 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.Searchable;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
 /**
  * Class that stores health care facility information.
@@ -116,5 +124,39 @@ public class HealthCareFacility extends AbstractOrganizationRole implements Corr
     @Searchable
     public Long getId() {
         return super.getId();
+    }
+
+    private Set<HealthCareFacilityCR> changeRequests = new HashSet<HealthCareFacilityCR>();
+    
+    private HealthCareFacility duplicateOf;
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
+    public Set<HealthCareFacilityCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<HealthCareFacilityCR> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "duplicate_of", nullable = true)
+    @Index(name = "hcf_duplicateof_idx")
+    @ForeignKey(name = "HCF_DUPLICATE_HCF_FK")
+    public HealthCareFacility getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(HealthCareFacility duplicateOf) {
+        this.duplicateOf = duplicateOf;
     }
 }

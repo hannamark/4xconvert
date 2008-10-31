@@ -31,6 +31,22 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
 
     private ClinicalResearchStaff target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
     /**
      * default ctor.
      */
@@ -194,4 +210,5 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     public List<URL> getUrl() {
         return super.getUrl();
     }
+
 }

@@ -84,10 +84,18 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.Searchable;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
 /**
  * @author Scott Miller
@@ -99,6 +107,40 @@ import javax.persistence.Id;
 @Entity
 public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correlation {
     private static final long serialVersionUID = 1L;
+
+    private Set<IdentifiedPersonCR> changeRequests = new HashSet<IdentifiedPersonCR>();
+
+    private IdentifiedPerson duplicateOf;
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
+    public Set<IdentifiedPersonCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<IdentifiedPersonCR> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "duplicate_of", nullable = true)
+    @Index(name = "ip_duplicateof_idx")
+    @ForeignKey(name = "IP_DUPLICATE_IP_FK")
+    public IdentifiedPerson getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(IdentifiedPerson duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
 
     /**
      * {@inheritDoc}

@@ -83,26 +83,36 @@
 package gov.nih.nci.po.data.bo;
 
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Primary curation interface.  Curatable objects have a curation lifecycle, typically
  * starting as NEW and transitioning to either ACCEPTED or REJECTED.
  *
- * @param <T> type curatable against
+ * @param <BO> type curatable against
+ * @param <CR> BO's change request type.
  * @author Todd Parnell
  */
 @gov.nih.nci.po.util.DuplicateStatusCheck
-public interface Curatable<T extends Serializable> extends Serializable {
-    /**
-     * @return the curration status
-     */
-    EntityStatus getStatusCode();
+public interface Curatable<BO extends PersistentObject, CR extends ChangeRequest<BO>> extends Serializable {
 
     /**
      * @return the object this was curated to be a duplicate of, if curationStatus
      * is EntityStatus.REJECTED, otherwise null
      */
-    T getDuplicateOf();
+    BO getDuplicateOf();
+
+    /**
+     * Get unprocessed changed requests.
+     * In general, the hibernate mapping should be like the following:
+     * <code>
+     *  &amp;#064;OneToMany(mappedBy = "target")
+     *  &amp;#064;Where(clause = "processed = 'false'")
+     * </code>
+     * @return associated CRs
+     */
+    Set<CR> getChangeRequests();
 
 }

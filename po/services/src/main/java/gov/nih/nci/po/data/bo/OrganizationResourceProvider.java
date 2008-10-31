@@ -83,7 +83,15 @@
 package gov.nih.nci.po.data.bo;
 
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
 /**
  * ResourceProvider that has an Organization player and Organization scoper.
@@ -98,4 +106,38 @@ public class OrganizationResourceProvider extends AbstractOrganizationResourcePr
         implements Correlation {
 
     private static final long serialVersionUID = -4866225509121969001L;
+
+    private Set<OrganizationResourceProviderCR> changeRequests = new HashSet<OrganizationResourceProviderCR>();
+
+    private OrganizationResourceProvider duplicateOf;
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
+    public Set<OrganizationResourceProviderCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<OrganizationResourceProviderCR> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "duplicate_of", nullable = true)
+    @Index(name = "orp_duplicateof_idx")
+    @ForeignKey(name = "ORP_DUPLICATE_ORP_FK")
+    public OrganizationResourceProvider getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(OrganizationResourceProvider duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
 }

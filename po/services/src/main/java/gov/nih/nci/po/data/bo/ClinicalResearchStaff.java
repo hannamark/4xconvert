@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.Searchable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -93,11 +94,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
 /**
@@ -112,6 +116,40 @@ import org.hibernate.validator.Valid;
 public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation {
     private static final long serialVersionUID = 1L;
 
+    private Set<ClinicalResearchStaffCR> changeRequests = new HashSet<ClinicalResearchStaffCR>();
+
+    private ClinicalResearchStaff duplicateOf;
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
+    public Set<ClinicalResearchStaffCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<ClinicalResearchStaffCR> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "duplicate_of", nullable = true)
+    @Index(name = "crs_duplicateof_idx")
+    @ForeignKey(name = "CRS_DUPLICATE_CRS_FK")
+    public ClinicalResearchStaff getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(ClinicalResearchStaff duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
+    
     /**
      * {@inheritDoc}
      *
@@ -254,4 +292,5 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     public List<URL> getUrl() {
         return super.getUrl();
     }
+
 }

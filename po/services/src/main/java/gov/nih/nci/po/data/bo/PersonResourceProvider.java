@@ -83,7 +83,15 @@
 package gov.nih.nci.po.data.bo;
 
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
 
 /**
@@ -98,4 +106,38 @@ import javax.persistence.Entity;
 public class PersonResourceProvider extends AbstractPersonResourceProvider implements Correlation {
 
     private static final long serialVersionUID = 1;
+
+    private Set<PersonResourceProviderCR> changeRequests = new HashSet<PersonResourceProviderCR>();
+
+    private PersonResourceProvider duplicateOf;
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
+    public Set<PersonResourceProviderCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<PersonResourceProviderCR> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "duplicate_of", nullable = true)
+    @Index(name = "prp_duplicateof_idx")
+    @ForeignKey(name = "PRP_DUPLICATE_PRP_FK")
+    public PersonResourceProvider getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(PersonResourceProvider duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
 }

@@ -7,12 +7,7 @@ import gov.nih.nci.po.audit.Auditable;
  *
  * @author gax
  */
-public interface Correlation extends PersistentObject, Auditable {
-    /**
-     * @return the Correlation's status code.
-     */
-    RoleStatus getStatus();
-    
+public interface Correlation extends PersistentObject, Auditable, CuratableRole {
     /**
      * @param status the Correlation's status code.
      */

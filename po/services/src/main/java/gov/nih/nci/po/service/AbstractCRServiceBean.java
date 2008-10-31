@@ -84,6 +84,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
+import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
 
 import java.util.List;
@@ -97,7 +98,7 @@ import javax.ejb.TransactionAttributeType;
  * @param <ENTITY> the PersistentObject type.
  * @author gax
  */
-public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY>
+public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Curatable>
         extends AbstractBaseServiceBean<CR> {
 
     /**

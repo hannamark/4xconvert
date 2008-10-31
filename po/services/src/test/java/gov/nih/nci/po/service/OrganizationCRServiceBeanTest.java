@@ -2,6 +2,8 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
@@ -123,10 +125,13 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(o.getId(), o2.getId());
         assertNotSame(o, o2);
         assertEquals("new abbreviatedName", o2.getAbbreviatedName());
-        // check if CRs are no longer available.
-        // see https://jira.5amsolutions.com/browse/PO-492
+        assertEquals(0, o2.getChangeRequests().size());
         list = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
-        assertEquals(0, list.size());
+        assertEquals(2, list.size());
+        for (OrganizationCR ocr : list) {
+            assertTrue(ocr.isProcessed());
+            assertFalse(o2.getChangeRequests().contains(ocr));
+        }
     }
 
 }

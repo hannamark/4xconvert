@@ -85,13 +85,15 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
-
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
+import javax.persistence.OneToMany;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.NotNull;
 
 
@@ -109,6 +111,40 @@ public class QualifiedEntity extends AbstractQualifiedEntity implements Correlat
 
     private static final long serialVersionUID = 1;
 
+    private Set<QualifiedEntityCR> changeRequests = new HashSet<QualifiedEntityCR>();
+
+    private QualifiedEntity duplicateOf;
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(mappedBy = "target")
+    @Where(clause = "processed = 'false'")
+    public Set<QualifiedEntityCR> getChangeRequests() {
+        return changeRequests;
+    }
+
+    @SuppressWarnings("unused")
+    private void setChangeRequests(Set<QualifiedEntityCR> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "duplicate_of", nullable = true)
+    @Index(name = "rpp_duplicateof_idx")
+    @ForeignKey(name = "PRP_DUPLICATE_PRP_FK")
+    public QualifiedEntity getDuplicateOf() {
+        return duplicateOf;
+    }
+
+    @SuppressWarnings("unused")
+    private void setDuplicateOf(QualifiedEntity duplicateOf) {
+        this.duplicateOf = duplicateOf;
+    }
+    
     /**
      * {@inheritDoc}
      */

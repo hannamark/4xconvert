@@ -99,6 +99,21 @@ public class IdentifiedPersonCR extends AbstractIdentifiedPerson implements Corr
 
     private IdentifiedPerson target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
     /**
      * default constructor.
      */

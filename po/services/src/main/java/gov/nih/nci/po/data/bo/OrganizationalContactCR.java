@@ -111,6 +111,22 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     private static final long serialVersionUID = 1L;
     private OrganizationalContact target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
     /**
      * default ctor.
      */

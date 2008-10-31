@@ -99,6 +99,22 @@ public class IdentifiedOrganizationCR extends AbstractIdentifiedOrganization
 
     private IdentifiedOrganization target;
 
+    private boolean processed;
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isProcessed() {
+        return this.processed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+    
     /**
      * default constructor.
      */
