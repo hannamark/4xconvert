@@ -365,7 +365,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 } else if (studyProtocolQueryCriteria.getIdentifierType()
                         .equalsIgnoreCase("NCI")) {
                     where.append(" and upper(sp.nci_identifier) like '%"
-                            + studyProtocolQueryCriteria.getIdentifierType()
+                            + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
                                     .toUpperCase().trim().replaceAll("'", "''")
                             + "%'");
                 } else {
