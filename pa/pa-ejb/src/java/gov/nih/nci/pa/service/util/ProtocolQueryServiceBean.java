@@ -442,7 +442,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + studyProtocolQueryCriteria
                                 .getPrincipalInvestigatorId());
             }
-
+                where.append(" and dws.statusCode  <>  '"
+                    + DocumentWorkflowStatusCode.REJECTED + "'");
             // where.append(" and scr.studyContactRoleCode ='"
             // + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
         } catch (Exception e) {
