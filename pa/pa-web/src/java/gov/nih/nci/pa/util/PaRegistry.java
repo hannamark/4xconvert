@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -269,5 +270,11 @@ public final class PaRegistry {
      */
     public static InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
         return getInstance().getServiceLocator().getInterventionAlternateNameService();
+    }
+    /**
+     * @return OutcomeMeasureServiceRemote
+     */
+    public static StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
+        return getInstance().getServiceLocator().getOutcomeMeasurService();
     }
 }

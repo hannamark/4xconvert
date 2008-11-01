@@ -6,6 +6,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({ "PMD.TooManyFields" })
 public class ISDesignDetailsWebDTO {
     
     private String primaryPurposeCode;
@@ -19,6 +20,12 @@ public class ISDesignDetailsWebDTO {
     private String blindingRoleCode;
     private String maximumTargetAccrualNumber;
     private String studyClassificationCode;
+    
+    private String name;
+    private String timeFrame;
+    private String primaryIndicator;
+    private String safetyIndicator;
+    private String id;
        
     /**
      * @return primaryPurposeCode
@@ -152,6 +159,66 @@ public class ISDesignDetailsWebDTO {
      */
     public void setStudyClassificationCode(String studyClassificationCode) {
         this.studyClassificationCode = studyClassificationCode;
+    }
+    /**
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+    /**
+     * @param name name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    /**
+     * @return timeFrame
+     */
+    public String getTimeFrame() {
+        return timeFrame;
+    }
+    /**
+     * @param timeFrame timeFrame
+     */
+    public void setTimeFrame(String timeFrame) {
+        this.timeFrame = timeFrame;
+    }
+    /**
+     * @return primaryIndicator
+     */
+    public String getPrimaryIndicator() {
+        return primaryIndicator;
+    }
+    /**
+     * @param primaryIndicator primaryIndicator
+     */
+    public void setPrimaryIndicator(String primaryIndicator) {
+        this.primaryIndicator = primaryIndicator;
+    }
+    /**
+     * @return safetyIndicator
+     */
+    public String getSafetyIndicator() {
+        return safetyIndicator;
+    }
+    /**
+     * @param safetyIndicator safetyIndicator
+     */
+    public void setSafetyIndicator(String safetyIndicator) {
+        this.safetyIndicator = safetyIndicator;
+    }
+    /**
+     * @return id
+     */
+    public String getId() {
+        return id;
+    }
+    /**
+     * @param id id
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

@@ -9,13 +9,19 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -30,12 +36,16 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 public class InterventionalStudyDesignAction extends ActionSupport {
     
+    private static final String OUTCOME = "outcome";
+    private static final String OUTCOMEADD = "outcomeAdd";
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private String patient;
     private String investigator;
     private String caregiver;
     private String outcomesassessor;
-    
+    private List<ISDesignDetailsWebDTO> outcomeList;
+    private Long id = null;
+    private String page;
     
     /**  
      * @return res
@@ -200,7 +210,168 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         }
         return dto;
     }
+    /**
+     * @return result
+     */
+    public String outcomeQuery()  {
+        try {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+            getAttribute(Constants.STUDY_PROTOCOL_II);
+            List<StudyOutcomeMeasureDTO> isoList = PaRegistry.getOutcomeMeasurService().
+            getByStudyProtocol(studyProtocolIi);
+            if (!(isoList.isEmpty())) {
+                outcomeList = new ArrayList<ISDesignDetailsWebDTO>();
+                for (StudyOutcomeMeasureDTO dto : isoList) {
+                    outcomeList.add(setOutcomeMeasureDTO(dto));
+                }
+            } else {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                        getText("No OutcomeMeasures exists for the trial."));
+            }            
 
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        return OUTCOME;
+    }
+    
+    /**
+     * @return result
+     */
+     public String outcomeinput() {
+         return OUTCOMEADD;
+     }
+     
+     /**
+      * @return result
+      */
+     public String outcomecreate() {
+         enforceOutcomeBusinessRules();
+         if (hasFieldErrors()) {
+             return OUTCOMEADD;
+         }
+         try {
+             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+             getAttribute(Constants.STUDY_PROTOCOL_II);
+             StudyOutcomeMeasureDTO sgDTO = new StudyOutcomeMeasureDTO();
+             sgDTO.setStudyProtocolIi(studyProtocolIi);
+             sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
+             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
+             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
+             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
+             sgDTO.setUserLastUpdated((StConverter.convertToSt(
+                     ServletActionContext.getRequest().getRemoteUser())));
+             PaRegistry.getOutcomeMeasurService().create(sgDTO);
+             outcomeQuery();
+             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+             return OUTCOME;
+         } catch (Exception e) {
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+             return OUTCOMEADD;
+         }         
+     }
+     /**
+      * @return result
+      */
+     public String outcomeedit() {
+         try {
+             StudyOutcomeMeasureDTO  sgDTO =
+                 PaRegistry.getOutcomeMeasurService().get(IiConverter.convertToIi(id));
+             webDTO = setOutcomeMeasureDTO(sgDTO);
+         } catch (Exception e) {
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+         }
+         return OUTCOMEADD;
+     }
+
+     /**
+      * @return result
+      */
+     public String outcomeupdate() {
+         enforceOutcomeBusinessRules();
+         if (hasFieldErrors()) {
+             return OUTCOMEADD;
+         }
+         try {
+
+             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+             getAttribute(Constants.STUDY_PROTOCOL_II);
+             StudyOutcomeMeasureDTO  sgDTO = new StudyOutcomeMeasureDTO();
+             sgDTO.setIdentifier(IiConverter.convertToIi(id));
+             sgDTO.setStudyProtocolIi(studyProtocolIi);
+             sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
+             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
+             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
+             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
+             sgDTO.setUserLastUpdated((StConverter.convertToSt(
+                     ServletActionContext.getRequest().getRemoteUser())));
+             PaRegistry.getOutcomeMeasurService().update(sgDTO);
+             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+             outcomeQuery();
+         } catch (Exception e) {
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+             return OUTCOMEADD;
+         }
+         return OUTCOME;
+     }
+
+     private void enforceOutcomeBusinessRules() {
+         if (PAUtil.isEmpty(webDTO.getPrimaryIndicator())) {
+             addFieldError("webDTO.primaryIndicator",
+                     getText("error.outcome.primary"));
+         }
+         if (PAUtil.isEmpty(webDTO.getName())) {
+             addFieldError("webDTO.name",
+                     getText("error.outcome.description"));
+         }
+         if (PAUtil.isEmpty(webDTO.getTimeFrame())) {
+             addFieldError("webDTO.timeFrame",
+                     getText("error.outcome.timeFrame"));
+         } 
+         if (PAUtil.isEmpty(webDTO.getSafetyIndicator())) {
+             addFieldError("webDTO.safetyIndicator",
+                     getText("error.outcome.safety"));
+         } 
+    }
+
+    /**
+      * @return result
+      */
+     public String outcomedelete()  {
+
+         try {
+             PaRegistry.getOutcomeMeasurService().delete(IiConverter.convertToIi(id));
+             outcomeQuery();
+             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+         } catch (Exception e) {
+             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+         }
+         return OUTCOME;
+     }
+
+    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(
+            StudyOutcomeMeasureDTO dto) {
+        ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
+        if (dto != null) {
+            if (dto.getPrimaryIndicator().getValue() != null) {
+            webdto.setPrimaryIndicator(dto.getPrimaryIndicator().getValue().toString());
+            }
+            if (dto.getName() != null) {
+                webdto.setName(dto.getName().getValue());
+            }
+            if (dto.getTimeFrame() != null) {
+                webdto.setTimeFrame(dto.getTimeFrame().getValue());
+            }
+            if (dto.getSafetyIndicator().getValue() != null) {
+                webdto.setSafetyIndicator(dto.getSafetyIndicator().getValue().toString());
+            }
+            if (dto.getIdentifier() != null) {
+                webdto.setId(dto.getIdentifier().getExtension());
+            }
+            
+        }
+        return webdto;
+    }
 
     /**
      * @return webDTO
@@ -271,6 +442,48 @@ public class InterventionalStudyDesignAction extends ActionSupport {
      */
     public void setOutcomesassessor(String outcomesassessor) {
         this.outcomesassessor = outcomesassessor;
+    }
+
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return page
+     */
+    public String getPage() {
+        return page;
+    }
+
+    /**
+     * @param page page
+     */
+    public void setPage(String page) {
+        this.page = page;
+    }
+
+    /**
+     * @return outcomeList
+     */
+    public List<ISDesignDetailsWebDTO> getOutcomeList() {
+        return outcomeList;
+    }
+
+    /**
+     * @param outcomeList outcomeList
+     */
+    public void setOutcomeList(List<ISDesignDetailsWebDTO> outcomeList) {
+        this.outcomeList = outcomeList;
     }
     
 }

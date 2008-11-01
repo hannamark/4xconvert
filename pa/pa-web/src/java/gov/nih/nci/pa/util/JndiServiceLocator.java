@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -214,5 +215,11 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
         return (PlannedActivityServiceRemote) JNDIUtil.lookup("pa/PlannedActivityServiceBean/remote");
+    }
+    /**
+     * @return OutcomeMeasureServiceRemote
+     */
+    public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
+        return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup("pa/StudyOutcomeMeasureServiceBean/remote");
     }
 }

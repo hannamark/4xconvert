@@ -26,7 +26,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class SubGroupsAction extends ActionSupport {
 
-    private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
+    private static final Logger LOG  = Logger.getLogger(SubGroupsAction.class);
     private List<SubGroupsWebDTO> subGroupsList;
     private SubGroupsWebDTO subGroupsWebDTO = new SubGroupsWebDTO();
     private Long id = null;
