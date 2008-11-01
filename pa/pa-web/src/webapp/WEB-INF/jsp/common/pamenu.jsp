@@ -43,7 +43,7 @@
     					<li class="hassubmenu">Interventional Trial Design
                             <ul id="part_sites">
                                 <li><a href="interventionalStudyDesigndetailsQuery.action" >Design Details</a></li>
-                                <li><a href="#" >Outcome Measures</a></li>
+                                <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
                                 <li><a href="#" >Eligibility Criteria</a></li>
                             </ul>
     					</li>
@@ -52,7 +52,7 @@
     					<li class="hassubmenu">Observational Trial Design
                             <ul id="part_sites">
                                 <li><a href="observationalStudyDesigndetailsQuery.action" >Design Details</a></li>
-                                <li><a href="#" >Outcome Measures</a></li>
+                                <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
                                 <li><a href="#" >Eligibility Criteria</a></li>
                             </ul>
     					</li>
