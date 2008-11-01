@@ -21,6 +21,8 @@ import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
+import gov.nih.nci.pa.domain.StudyIndlde;
+import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
@@ -35,6 +37,9 @@ import gov.nih.nci.pa.enums.ActionSubcategoryCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
+import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.NihInstHolderCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.StatusCode;
@@ -102,6 +107,8 @@ public class TestSchema {
             addAnnotatedClass(Intervention.class).
             addAnnotatedClass(InterventionAlternateName.class).
             addAnnotatedClass(ObservationalStudyProtocol.class).
+            addAnnotatedClass(StudyOutcomeMeasure.class).
+            addAnnotatedClass(StudyIndlde.class).
                         
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
@@ -381,7 +388,19 @@ public class TestSchema {
             pa.setUserLastUpdated("Joe");
             addUpdObject(pa);
             plannedActivityIds.add(pa.getId());
-             
+            
+            StudyOutcomeMeasure som = new StudyOutcomeMeasure();
+            som.setName("StudyOutcomeMeasure");
+            som.setStudyProtocol(sp);
+            som.setPrimaryIndicator(Boolean.TRUE);
+            
+            StudyIndlde si = new StudyIndlde();
+            si.setExpandedAccessStatusCode(ExpandedAccessStatusCode.AVAILABLE);
+            si.setStudyProtocol(sp);
+            si.setExpandedAccessIndicator(Boolean.TRUE);
+            si.setHolderTypeCode(HolderTypeCode.NIH);
+            si.setNihInstHolderCode(NihInstHolderCode.NCRR);
+            
             HibernateUtil.getCurrentSession().clear();
             
         }
