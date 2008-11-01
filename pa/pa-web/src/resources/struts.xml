@@ -115,6 +115,8 @@
 		<action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />
 			<result name="details">/WEB-INF/jsp/isdesignDetails.jsp</result>
+			<result name="outcome">/WEB-INF/jsp/outcomeMeasure.jsp</result>
+			<result name="outcomeAdd">/WEB-INF/jsp/outcomeMeasureAdd.jsp</result>
 		</action>
 		<action name="observationalStudyDesign*" class="gov.nih.nci.pa.action.ObservationalStudyDesignAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />
