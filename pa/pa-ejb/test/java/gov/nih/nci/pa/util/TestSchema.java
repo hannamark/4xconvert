@@ -119,7 +119,7 @@ public class TestSchema {
             setProperty("hibernate.connection.autocommit", "true").
             setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
             setProperty("hibernate.hbm2ddl.auto", "create-drop").
-            setProperty("hibernate.show_sql", "True");
+            setProperty("hibernate.show_sql", TestProperties.getShowSQL());
             HibernateUtil.getHibernateHelper().setConfiguration(config);
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
@@ -149,35 +149,35 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
-                        statement.executeUpdate("delete from INTERVENTION");
-                        statement.executeUpdate("delete from ORGANIZATION");
+                        statement.executeUpdate("delete from STUDY_RECRUITMENT_STATUS");
                         statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                         statement.executeUpdate("delete from STUDY_CONDITIONS");
                         statement.executeUpdate("delete from CONDITIONS");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT_TELECOM_ADDRESS");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION");
+                        statement.executeUpdate("delete from DOCUMENT");
+                        statement.executeUpdate("delete from STRATUM_GROUP");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
+                        statement.executeUpdate("delete from COUNTRY");
+                        statement.executeUpdate("delete from INTERVENTION");
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
                         statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from HEALTHCARE_PROVIDER");
                         statement.executeUpdate("delete from PERSON");
-                        statement.executeUpdate("delete from COUNTRY");
-                        statement.executeUpdate("delete from DOCUMENT");
-                        statement.executeUpdate("delete from STRATUM_GROUP");
                         connection.commit();
                     } finally {
                         statement.close();
                     }
                 } catch (HibernateException e) {
                     connection.rollback();
-                    //throw new RuntimeException(e);
+                    throw new RuntimeException(e);
                 } catch (SQLException e) {
                     connection.rollback();
-                    //throw new RuntimeException(e);
+                    throw new RuntimeException(e);
                 }
             } catch (SQLException e) {
-                //throw new RuntimeException(e);
+                throw new RuntimeException(e);
             } finally {
                 session.close();
             }
