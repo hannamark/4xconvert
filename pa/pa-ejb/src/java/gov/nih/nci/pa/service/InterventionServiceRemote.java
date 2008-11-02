@@ -5,6 +5,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 
+import java.util.List;
+
 import javax.ejb.Remote;
 
 /**
@@ -18,5 +20,12 @@ import javax.ejb.Remote;
 @Remote
 public interface InterventionServiceRemote 
         extends BasePaService<InterventionDTO> {
+    
+    /**
+     * @param searchCriteria search string
+     * @return all interventions of given type with names or alternate names matching search string
+     * @throws PAException exception
+     */
+    List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException;
 
 }
