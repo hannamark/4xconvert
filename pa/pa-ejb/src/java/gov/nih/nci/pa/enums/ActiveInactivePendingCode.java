@@ -77,7 +77,7 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
      * @return String[] display names for Abstracted Status Code
      */
     public static String[]  getDisplayNames() {
-        StatusCode[] absStatusCodes = StatusCode.values();
+        ActiveInactivePendingCode[] absStatusCodes = ActiveInactivePendingCode.values();
         String[] codedNames = new String[absStatusCodes.length];
         for (int i = 0; i < absStatusCodes.length; i++) {
             codedNames[i] = absStatusCodes[i].getCode();

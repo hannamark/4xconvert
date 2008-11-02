@@ -78,7 +78,7 @@ public enum ActionSubcategoryCode implements CodedEnum<String> {
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        YesNoCode[] l = YesNoCode.values();
+        ActionSubcategoryCode[] l = ActionSubcategoryCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();

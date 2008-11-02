@@ -65,7 +65,7 @@ public enum ActionCategoryCode implements CodedEnum<String> {
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        YesNoCode[] l = YesNoCode.values();
+        ActionCategoryCode[] l = ActionCategoryCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();
