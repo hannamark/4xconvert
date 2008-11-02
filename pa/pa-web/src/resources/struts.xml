@@ -45,6 +45,10 @@
             <result>/WEB-INF/jsp/collaborators.jsp</result>
          </action> 
 
+        <action name="ajaxptpIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>  
+        </action>
+         
         <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">        	
         	<result name="edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
         	<result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
@@ -98,12 +102,16 @@
  			<result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
  		</action>		
 
-		<action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
-			<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
-			<result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
-			<result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
-			<result name="contactpersons">/WEB-INF/jsp/nodecorate/lookupcontactpersons.jsp</result>
-		</action>		
+        <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>
+        </action>       
+
+        <action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+            <result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
+            <result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+            <result name="contactpersons">/WEB-INF/jsp/nodecorate/lookupcontactpersons.jsp</result>
+        </action>       
 
 		<action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
  			<result>/WEB-INF/jsp/subGroups.jsp</result>
@@ -125,6 +133,11 @@
         <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
             <interceptor-ref name="nci-commonsParams" />
             <result name="edit">/WEB-INF/jsp/generalTrialDesignEdit.jsp</result>
+        </action>
+        <action name="trialInterventions*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
+            <result name="displayDetails">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>              
+            <result name="edit">/WEB-INF/jsp/trialInterventionsedit.jsp</result>  
+            <result>/WEB-INF/jsp/trialInterventions.jsp</result>
         </action>
 
 	</package>
