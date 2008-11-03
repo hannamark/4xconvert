@@ -41,7 +41,7 @@
     <property name="ivy.def.file" location="ivy-reg-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
-    
+	<property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
@@ -115,7 +115,12 @@
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/reg-web"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-
+    <path id="macrodef">
+        <fileset dir="${bda-utils}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+	<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
     
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -464,5 +469,26 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/reg-web"/>
     </target>
-    
+    <!-- ====================================================================== -->
+    <!-- Copies JSP to the tmp folder                                           -->
+    <!-- ====================================================================== -->
+        
+    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
+            <for param="toDir">
+              <path>
+                <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/reg-web-exp.war"/>
+              </path>
+              <sequential>
+                  <copy todir="@{toDir}">
+                      <fileset dir="${basedir}/src/webapp">                         
+                          <include name="WEB-INF/jsp/*.jsp"/>
+                          <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                      	  <include name="styles/*.css"/>
+                      	  <include name="scripts/js/*.js"/>     
+                      	  <include name="scripts/ajax/*.js"/>   
+                      </fileset>
+                  </copy>
+              </sequential>
+            </for>
+      </target> 
 </project>
