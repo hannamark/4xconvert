@@ -149,6 +149,8 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
+                        statement.executeUpdate("delete from STUDY_OUTCOME_MEASURE");
+                        statement.executeUpdate("delete from STUDY_INDLDE");
                         statement.executeUpdate("delete from STUDY_RECRUITMENT_STATUS");
                         statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                         statement.executeUpdate("delete from STUDY_CONDITIONS");
@@ -393,6 +395,7 @@ public class TestSchema {
             som.setName("StudyOutcomeMeasure");
             som.setStudyProtocol(sp);
             som.setPrimaryIndicator(Boolean.TRUE);
+            addUpdObject(som); 
             
             StudyIndlde si = new StudyIndlde();
             si.setExpandedAccessStatusCode(ExpandedAccessStatusCode.AVAILABLE);
@@ -400,6 +403,7 @@ public class TestSchema {
             si.setExpandedAccessIndicator(Boolean.TRUE);
             si.setHolderTypeCode(HolderTypeCode.NIH);
             si.setNihInstHolderCode(NihInstHolderCode.NCRR);
+            addUpdObject(si); 
             
             HibernateUtil.getCurrentSession().clear();
             
