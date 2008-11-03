@@ -46,7 +46,6 @@ public class InterventionalStudyProtocolTest {
         assertEquals("Expanded Access Indicator does not  match " , 
                 create.getExpandedAccessIndicator(), saved.getExpandedAccessIndicator());
         assertEquals("Identifer does not match " , create.getIdentifier() , saved.getIdentifier());
-        assertEquals("Monitor code does not match " , create.getMonitorCode(), saved.getMonitorCode());
         assertEquals("Official Title does not match " , create.getOfficialTitle() , saved.getOfficialTitle());
         assertEquals("Phase code does not match " , create.getPhaseCode(), saved.getPhaseCode());
         assertEquals("PrimaryCompletionDate  does not match " , 
@@ -84,7 +83,6 @@ public class InterventionalStudyProtocolTest {
         isp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         isp.setExpandedAccessIndicator(Boolean.TRUE);
         isp.setIdentifier("NCI-2008-0001");
-        isp.setMonitorCode(MonitorCode.CCR);
         isp.setOfficialTitle("Cancer for kids");
         isp.setPhaseCode(PhaseCode.I);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());

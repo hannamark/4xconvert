@@ -25,6 +25,8 @@ public  class AbstractEntity implements Serializable, Auditable {
     private static final long serialVersionUID = 1234567890L;
     
     private Long id;
+    private Date dateLastCreated;
+    private String userLastCreated;
     private Date dateLastUpdated;
     private String userLastUpdated;
     
@@ -84,6 +86,43 @@ public  class AbstractEntity implements Serializable, Auditable {
     public void setUserLastUpdated(String userLastUpdated) {
         this.userLastUpdated = userLastUpdated;
     }
+
+    /**
+     * 
+     * @return dateLastCreated
+     */
+    @Column(name = "DATE_LAST_CREATED")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getDateLastCreated() {
+        return dateLastCreated;
+    }
+
+    /**
+     * 
+     * @param dateLastCreated dateLastCreated
+     */
+    public void setDateLastCreated(Date dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
+    }
+
+    /**
+     * 
+     * @return userLastCreated
+     */
+    @Column(name = "USER_LAST_CREATED")
+    public String getUserLastCreated() {
+        return userLastCreated;
+    }
+
+    /**
+     * 
+     * @param userLastCreated userLastCreated
+     */
+    public void setUserLastCreated(String userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+    
+    
     
     
 }

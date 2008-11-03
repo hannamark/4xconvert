@@ -4,10 +4,8 @@ package gov.nih.nci.pa.iso.convert;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -35,101 +33,135 @@ public class StudyProtocolConverter {
      * @return studyProtocolDTO
      */
     public static StudyProtocolDTO convertFromDomainToDTO(StudyProtocol studyProtocol) {
-        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        return convertFromDomainToDTO(studyProtocol, new StudyProtocolDTO());
+    }
+    
+    /**
+    *
+    * @param studyProtocolDTO studyProtocolDTO
+    * @return StudyProtocol StudyProtocol
+    */
+   public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO) {
+       return convertFromDTOToDomain(studyProtocolDTO , new StudyProtocol());
+   }
+    
 
-        studyProtocolDTO.setAssignedIdentifier(IiConverter.convertToIi(studyProtocol.getIdentifier()));
-        studyProtocolDTO.setIdentifier(IiConverter.convertToIi(studyProtocol.getId()));
+    /**
+     * 
+     * @param studyProtocol sp 
+     * @param studyProtocolDTO spDTO
+     * @return StudyProtocolDTO sp
+     */
+    public static StudyProtocolDTO convertFromDomainToDTO(
+            StudyProtocol studyProtocol , StudyProtocolDTO studyProtocolDTO) {
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
+        studyProtocolDTO.setAssignedIdentifier(IiConverter.convertToIi(studyProtocol.getIdentifier()));
+        studyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
+                BlConverter.convertToBl(studyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
+        studyProtocolDTO.setDelayedpostingIndicator(
+                BlConverter.convertToBl(studyProtocol.getDelayedpostingIndicator()));
+
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
-        studyProtocolDTO.setMonitorCode(
-                CdConverter.convertToCd(studyProtocol.getMonitorCode()));
+        studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(studyProtocol.getFdaRegulatedIndicator()));
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(studyProtocol.getOfficialTitle()));
+        studyProtocolDTO.setMaximumTargetAccrualNumber(
+                IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));
+        studyProtocolDTO.setIdentifier(IiConverter.convertToIi(studyProtocol.getId()));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
-
+        studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
+        studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(
                 CdConverter.convertToCd(studyProtocol.getPrimaryCompletionDateTypeCode()));
-        studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(studyProtocol.getStartDateTypeCode()));
-        studyProtocolDTO.setStartDate(TsConverter.convertToTs(studyProtocol.getStartDate()));
-        studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));
         studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(studyProtocol.getPrimaryPurposeCode()));
         studyProtocolDTO.setPrimaryPurposeOtherText(
                 StConverter.convertToSt(studyProtocol.getPrimaryPurposeOtherText()));
-        studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
-        studyProtocolDTO.setStudyClassificationCode(
-                CdConverter.convertToCd(studyProtocol.getStudyClassificationCode()));
-        studyProtocolDTO.setMaximumTargetAccrualNumber(
-                IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));
+        studyProtocolDTO.setPublicDescription(
+                StConverter.convertToSt(studyProtocol.getPublicDescription()));
+        studyProtocolDTO.setPublicTitle(
+                StConverter.convertToSt(studyProtocol.getPublicTitle()));
+        studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(studyProtocol.getRecordVerificationDate()));
+        studyProtocolDTO.setScientificDescription(StConverter.convertToSt(studyProtocol.getScientificDescription()));
+        studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(studyProtocol.getSection801Indicator()));
+        studyProtocolDTO.setStartDate(TsConverter.convertToTs(studyProtocol.getStartDate()));
+        studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(studyProtocol.getStartDateTypeCode()));
         return studyProtocolDTO;
     }
 
     /**
-     *
-     * @param studyProtocolDTO studyProtocolDTO
-     * @return StudyProtocol StudyProtocol
-     */
-    public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO) {
-        StudyProtocol studyProtocol = new StudyProtocol();
-        if (studyProtocolDTO.getIdentifier() != null) {
-            studyProtocol.setId(Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
-        }
-        if (studyProtocolDTO.getAssignedIdentifier() != null) {
-            studyProtocol.setIdentifier(studyProtocolDTO.getAssignedIdentifier().getExtension());
-        }
+    *
+    * @param studyProtocolDTO studyProtocolDTO
+    * @param studyProtocol studyProtocol
+    * @return StudyProtocol StudyProtocol
+    */
+   public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO , 
+           StudyProtocol studyProtocol) {
 
-        if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
-            studyProtocol.setAccrualReportingMethodCode(
-                    AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
-        }
-        studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
-        studyProtocol.setExpandedAccessIndicator(
-                BlConverter.covertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
-        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
-        if (studyProtocolDTO.getMonitorCode() != null) {
-            studyProtocol.setMonitorCode(MonitorCode.getByCode(studyProtocolDTO.getMonitorCode().getCode()));
-        }
+       studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
+       studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
+       if (studyProtocolDTO.getAssignedIdentifier() != null) {
+           studyProtocol.setIdentifier(studyProtocolDTO.getAssignedIdentifier().getExtension());
+       }
+       if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
+           studyProtocol.setAccrualReportingMethodCode(
+                   AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
+       }
+       if (studyProtocolDTO.getAssignedIdentifier() != null) {
+           studyProtocol.setIdentifier(IiConverter.convertToString(studyProtocolDTO.getAssignedIdentifier()));
+       }
+       studyProtocol.setDataMonitoringCommitteeAppointedIndicator(
+               BlConverter.covertToBoolean(studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator()));
+       studyProtocol.setDelayedpostingIndicator(
+               BlConverter.covertToBoolean(studyProtocolDTO.getDelayedpostingIndicator()));
+       studyProtocol.setExpandedAccessIndicator(
+               BlConverter.covertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
+       studyProtocol.setFdaRegulatedIndicator(
+               BlConverter.covertToBoolean(studyProtocolDTO.getFdaRegulatedIndicator()));
+       studyProtocol.setMaximumTargetAccrualNumber(
+               IntConverter.convertToInteger(studyProtocolDTO.getMaximumTargetAccrualNumber()));
+       studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
+       if (studyProtocolDTO.getPhaseCode() != null) {
+           studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));
+       }
+       studyProtocol.setPhaseOtherText(StConverter.convertToString(studyProtocolDTO.getPhaseOtherText()));
+       if (studyProtocolDTO.getPrimaryCompletionDate() != null) {
+           studyProtocol.setPrimaryCompletionDate(
+                   TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate()));
+       }
+       if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() != null) {
+           studyProtocol.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(
+                   studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode()));
+       }
+       if (studyProtocolDTO.getPrimaryPurposeCode() != null) {
+           studyProtocol.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
+                   studyProtocolDTO.getPrimaryPurposeCode().getCode()));
+       }
+       studyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(
+               studyProtocolDTO.getPrimaryPurposeOtherText()));
+       studyProtocol.setPublicDescription(StConverter.convertToString(
+               studyProtocolDTO.getPublicDescription()));
+       studyProtocol.setPublicTitle(StConverter.convertToString(studyProtocolDTO.getPublicTitle()));
+       if (studyProtocolDTO.getRecordVerificationDate() != null) {
+           studyProtocol.setRecordVerificationDate(
+                   TsConverter.convertToTimestamp(studyProtocolDTO.getRecordVerificationDate()));
+       }
+       
+       studyProtocol.setSection801Indicator(BlConverter.covertToBoolean(studyProtocolDTO.getSection801Indicator()));
+       
+       studyProtocol.setScientificDescription(StConverter.convertToString(
+               studyProtocolDTO.getScientificDescription()));
+       if (studyProtocolDTO.getStartDate() != null) {
+           studyProtocol.setStartDate(
+                   TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate()));
+       }
+       if (studyProtocolDTO.getStartDateTypeCode() != null) {
+           studyProtocol.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
+                   studyProtocolDTO.getStartDateTypeCode().getCode()));
 
-        studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
-        if (studyProtocolDTO.getPhaseCode() != null) {
-            studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));
-        }
-        if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() != null) {
-            studyProtocol.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(
-                    studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode()));
-        }
-        if (studyProtocolDTO.getStartDateTypeCode() != null) {
-            studyProtocol.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
-                    studyProtocolDTO.getStartDateTypeCode().getCode()));
-
-        }
-        if (studyProtocolDTO.getStartDate() != null) {
-            studyProtocol.setStartDate(
-                    TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate()));
-        }
-        if (studyProtocolDTO.getPrimaryCompletionDate() != null) {
-            studyProtocol.setPrimaryCompletionDate(
-                    TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate()));
-        }
-        if (studyProtocolDTO.getPrimaryPurposeCode() != null) {
-            studyProtocol.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
-                    studyProtocolDTO.getPrimaryPurposeCode().getCode()));
-        }
-        if (studyProtocolDTO.getPrimaryPurposeOtherText() != null) {
-            studyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(
-                    studyProtocolDTO.getPrimaryPurposeOtherText()));
-        }
-        if (studyProtocolDTO.getPhaseOtherText() != null) {
-            studyProtocol.setPhaseOtherText(StConverter.convertToString(studyProtocolDTO.getPhaseOtherText()));
-        }
-        if (studyProtocolDTO.getMaximumTargetAccrualNumber() != null) {
-            studyProtocol.setMaximumTargetAccrualNumber(studyProtocolDTO.getMaximumTargetAccrualNumber().getValue());
-        } 
-        if (studyProtocolDTO.getStudyClassificationCode() != null) {
-            studyProtocol.setStudyClassificationCode(
-                    StudyClassificationCode.getByCode(studyProtocolDTO.getStudyClassificationCode().getCode()));
-        }
-        return studyProtocol;
-    }
+       }
+       return studyProtocol;
+   }
+    
 }

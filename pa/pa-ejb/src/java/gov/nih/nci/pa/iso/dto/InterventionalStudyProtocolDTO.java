@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Int;
 
 
@@ -16,14 +16,11 @@ import gov.nih.nci.coppa.iso.Int;
 public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
 
     Cd allocationCode;
-    Bl delayedpostingIndicator;
-    Bl fdaRegulatedIndicator;
-    Bl section801Indicator;
-    Int numberOfInterventionGroups;
-    Cd designConfigurationCode;
+    DSet blindedRoleCode;
     Cd blindingSchemaCode;
-    Cd blindingRoleCode;
-        
+    Cd designConfigurationCode;
+    Int numberOfInterventionGroups;    
+    Cd studyClassificationCode;
     
     /**
      * @return allocationCode
@@ -37,71 +34,20 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
     public void setAllocationCode(Cd allocationCode) {
         this.allocationCode = allocationCode;
     }
+
     /**
      * 
-     * @return delayedpostingIndicator
+     * @return blindedRoleCode
      */
-    public Bl getDelayedpostingIndicator() {
-        return delayedpostingIndicator;
-    }
-    /**
-     * 
-     * @param delayedpostingIndicator delayedpostingIndicator
-     */
-    public void setDelayedpostingIndicator(Bl delayedpostingIndicator) {
-        this.delayedpostingIndicator = delayedpostingIndicator;
+    public DSet getBlindedRoleCode() {
+        return blindedRoleCode;
     }
     /**
      * 
-     * @return fdaRegulatedIndicator
+     * @param blindedRoleCode blindedRoleCode
      */
-    public Bl getFdaRegulatedIndicator() {
-        return fdaRegulatedIndicator;
-    }
-    /**
-     * 
-     * @param fdaRegulatedIndicator fdaRegulatedIndicator
-     */
-    public void setFdaRegulatedIndicator(Bl fdaRegulatedIndicator) {
-        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
-    }
-    /**
-     * 
-     * @return section801Indicator
-     */
-    public Bl getSection801Indicator() {
-        return section801Indicator;
-    }
-    /**
-     * 
-     * @param section801Indicator section801Indicator
-     */
-    public void setSection801Indicator(Bl section801Indicator) {
-        this.section801Indicator = section801Indicator;
-    }
-    /**
-     * @return numberOfInterventionGroups
-     */
-    public Int getNumberOfInterventionGroups() {
-        return numberOfInterventionGroups;
-    }
-    /**
-     * @param numberOfInterventionGroups numberOfInterventionGroups
-     */
-    public void setNumberOfInterventionGroups(Int numberOfInterventionGroups) {
-        this.numberOfInterventionGroups = numberOfInterventionGroups;
-    }
-    /**
-     * @return designConfigurationCode
-     */
-    public Cd getDesignConfigurationCode() {
-        return designConfigurationCode;
-    }
-    /** 
-     * @param designConfigurationCode designConfigurationCode
-     */
-    public void setDesignConfigurationCode(Cd designConfigurationCode) {
-        this.designConfigurationCode = designConfigurationCode;
+    public void setBlindedRoleCode(DSet blindedRoleCode) {
+        this.blindedRoleCode = blindedRoleCode;
     }
     /**
      * @return blindingSchemaCode
@@ -116,16 +62,44 @@ public class InterventionalStudyProtocolDTO extends StudyProtocolDTO {
         this.blindingSchemaCode = blindingSchemaCode;
     }
     /**
-     * @return blindingRoleCode
+     * @return designConfigurationCode
      */
-    public Cd getBlindingRoleCode() {
-        return blindingRoleCode;
+    public Cd getDesignConfigurationCode() {
+        return designConfigurationCode;
     }
-    /**
-     * @param blindingRoleCode blindingRoleCode
+    /** 
+     * @param designConfigurationCode designConfigurationCode
      */
-    public void setBlindingRoleCode(Cd blindingRoleCode) {
-        this.blindingRoleCode = blindingRoleCode;
+    public void setDesignConfigurationCode(Cd designConfigurationCode) {
+        this.designConfigurationCode = designConfigurationCode;
     }
         
+    /**
+     * @return numberOfInterventionGroups
+     */
+    public Int getNumberOfInterventionGroups() {
+        return numberOfInterventionGroups;
+    }
+    /**
+     * @param numberOfInterventionGroups numberOfInterventionGroups
+     */
+    public void setNumberOfInterventionGroups(Int numberOfInterventionGroups) {
+        this.numberOfInterventionGroups = numberOfInterventionGroups;
+    }
+    /**
+     * 
+     * @return studyClassificationCode
+     */
+    public Cd getStudyClassificationCode() {
+        return studyClassificationCode;
+    }
+    /**
+     * 
+     * @param studyClassificationCode studyClassificationCodeR
+     */
+    public void setStudyClassificationCode(Cd studyClassificationCode) {
+        this.studyClassificationCode = studyClassificationCode;
+    }
+    
+    
 }

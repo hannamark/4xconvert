@@ -61,9 +61,8 @@ public class RegulatoryInformationAction extends ActionSupport {
                 .getFdaRegulatedInterventionIndicator())));
         ispFromDatabaseDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getDelayedPostingIndicator())));
-        ispFromDatabaseDTO.setDataMonitoringCommitteInd(BlConverter.convertToBl(Boolean.valueOf(webDTO
+        ispFromDatabaseDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getDataMonitoringIndicator())));
-        ispFromDatabaseDTO.setIndIdeIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getIdeTrialIndicator())));
         ispFromDatabaseDTO.setUserLastUpdated(StConverter.convertToSt(user));
         PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispFromDatabaseDTO);
         
@@ -117,13 +116,13 @@ public class RegulatoryInformationAction extends ActionSupport {
                     webDTO.setDelayedPostingIndicator(BlConverter.convertToString(ispFromDatabaseDTO
                             .getDelayedpostingIndicator()));
                 }
-                if (ispFromDatabaseDTO.getIndIdeIndicator().getValue() != null) {
-                    webDTO.setIdeTrialIndicator((BlConverter.convertToString(ispFromDatabaseDTO
-                            .getIndIdeIndicator())));
-                }        
-                if (ispFromDatabaseDTO.getDataMonitoringCommitteInd().getValue() != null) {
+//                if (ispFromDatabaseDTO.getIndIdeIndicator().getValue() != null) {
+//                    webDTO.setIdeTrialIndicator((BlConverter.convertToString(ispFromDatabaseDTO
+//                            .getIndIdeIndicator())));
+//                }        
+                if (ispFromDatabaseDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
                     webDTO.setDataMonitoringIndicator((BlConverter.convertToString(ispFromDatabaseDTO
-                            .getDataMonitoringCommitteInd())));
+                            .getDataMonitoringCommitteeAppointedIndicator())));
                 }                 
                 Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityId().getExtension());
                 List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);

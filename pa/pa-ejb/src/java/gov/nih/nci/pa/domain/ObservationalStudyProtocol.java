@@ -13,7 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 /**
- * An action plan for InterventionalStudyProtocol.
+ * domain class for ObservationalStudyProtocol.
  *
  * @author Naveen Amiruddin
  * @since 09/07/2008

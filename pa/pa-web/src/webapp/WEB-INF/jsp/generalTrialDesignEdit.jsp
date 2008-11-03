@@ -32,52 +32,6 @@
          
             <tr>
             <td scope="row" class="label">
-                <label for="nciAccessionNumber">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="studyProtocol.nciIdentifier"/>
-                 </dfn>
-                </label>
-            </td>
-            <td class="value">
-                <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
-            </td>
-            </tr>
-            <tr>
-            <td scope="row" class="label">
-                <label for="nct">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">NCT Number:
-                </dfn></label>
-            </td>
-            <td class="value"></td>
-            </tr>
-            <tr>
-            <td scope="row" class="label">
-                <label for="localProtocolIdentifer"> 
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                    <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
-                </dfn>
-                </label>
-            </td>
-            <td class="value"></td>
-            </tr>  
-            <tr>
-                <td scope="row" class="label"><label for="sectrialid"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Secondary Trial Identifier:</dfn></label></td>
-                <td class="value"></td>
-            </tr>
-            <tr>
-            <td scope="row" class="label">
-                <label for="leadOrg"> 
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                    <fmt:message key="studyProtocol.leadOrganization"/>
-                </dfn>
-                </label>
-            </td>
-            <td class="value">
-                <c:out value="${sessionScope.trialSummary.leadOrganizationName }"/> 
-            </td>
-            </tr> 
-            <tr>     
-            <td scope="row" class="label">
                 <label for="officialTitle">
                 <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.officialTitle"/>
@@ -85,25 +39,12 @@
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.officialTitle }"/> 
+                <s:textarea name="gtdDTO.officialTitle" cssStyle="width:206px" rows="2"/> 
             </td>
-            </tr>       
-             <tr>
-                <td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Acronym:</dfn></label></td>
-                <td class="value"></td>
             </tr>
 
 
         </table>  
-<!--        
- <div class="actionsrow">
-	<del class="btnwrapper">
-		<ul class="btnrow">
-			<li><a href="studyProtocolEdit.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="edit">Edit</span></span></a></li>
-		</ul>	
-	</del>
-</div>
--->
                   
     </s:form>
    </div>

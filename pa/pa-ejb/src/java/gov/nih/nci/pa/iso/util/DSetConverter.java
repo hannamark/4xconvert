@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.iso.util;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
@@ -9,9 +10,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -95,4 +95,39 @@ public class DSetConverter {
         }        
         return retList;
     }
+    
+    /**
+     * 
+     * @param cds cds
+     * @return dSet
+     */
+    public static DSet<Cd> convertCdListToDSet(List<Cd> cds) {
+        DSet<Cd> dSet = null;
+        if (cds == null || cds.isEmpty()) {
+            return dSet;
+        }
+        dSet = new DSet();
+        Set<Cd> cdSet = new HashSet<Cd>();
+        cdSet.addAll(cds);
+        dSet.setItem(cdSet);
+        return dSet;
+    }
+    
+    /**
+     * 
+     * @param dset dset
+     * @return cds
+     */
+    public static List<Cd> convertDsetToCdList(DSet<Cd> dset) {
+        List<Cd> cds = null;
+        if (dset == null || dset.getItem() == null || dset.getItem().isEmpty()) {
+            return cds;
+        }
+        cds = new ArrayList<Cd>();
+        Set<Cd> set = dset.getItem();
+        cds.addAll(set);
+        return cds;
+    }
+
+
 }

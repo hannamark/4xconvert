@@ -20,104 +20,28 @@ import gov.nih.nci.coppa.iso.Ts;
 public class StudyProtocolDTO extends BaseDTO {
     
     private St acronym;
-    private Cd allocationCode;
     private Cd accrualReportingMethodCode;
+    private Ii assignedIdentifier; 
+    private Bl dataMonitoringCommitteeAppointedIndicator;
+    private Bl delayedpostingIndicator;
     private Bl expandedAccessIndicator;
-    private Ii assignedIdentifier; // used to store nci-accession number
-    private Cd monitorCode;
+    private Bl fdaRegulatedIndicator;
     private St officialTitle;
+    private Int maximumTargetAccrualNumber;
     private Cd phaseCode;
-    private Cd primaryPurposeCode;
+    private St phaseOtherText;
     private Ts primaryCompletionDate;
     private Cd primaryCompletionDateTypeCode;
+    private Cd primaryPurposeCode;
+    private St primaryPurposeOtherText;
+    private St publicDescription;
+    private St publicTitle;
+    private Ts recordVerificationDate;
+    private St scientificDescription;
+    private Bl section801Indicator;
     private Ts startDate;
     private Cd startDateTypeCode;
-    private Bl dataMonitoringCommitteInd;
-    private Bl indIdeIndicator;
-    private St primaryPurposeOtherText;
-    private St phaseOtherText;
-    private Cd studyClassificationCode;
-    private Int maximumTargetAccrualNumber;
     
-    /**
-     * @return the indIdeIndicator
-     */
-    public Bl getIndIdeIndicator() {
-        return indIdeIndicator;
-    }
-
-    /**
-     * @param indIdeIndicator the indIdeIndicator to set
-     */
-    public void setIndIdeIndicator(Bl indIdeIndicator) {
-        this.indIdeIndicator = indIdeIndicator;
-    }
-
-    /**
-     * 
-     * @return monitorCode
-     */
-    public Cd getMonitorCode() {
-        return monitorCode;
-    }
-
-    /**
-     * 
-     * @param monitorCode monitorCode
-     */
-    public void setMonitorCode(Cd monitorCode) {
-        this.monitorCode = monitorCode;
-    }
-
-    /**
-     * 
-     * @return accrualReportingMethodCode
-     */
-    public Cd getAccrualReportingMethodCode() {
-        return accrualReportingMethodCode;
-    }
-
-    /**
-     * 
-     * @param accrualReportingMethodCode accrualReportingMethodCode
-     */
-    public void setAccrualReportingMethodCode(Cd accrualReportingMethodCode) {
-        this.accrualReportingMethodCode = accrualReportingMethodCode;
-    }
-
-
-    /**
-     * 
-     * @return phaseCode
-     */
-    public Cd getPhaseCode() {
-        return phaseCode;
-    }
-
-    /**
-     * 
-     * @param phaseCode phaseCode
-     */
-    public void setPhaseCode(Cd phaseCode) {
-        this.phaseCode = phaseCode;
-    }
-
-    /**
-     * 
-     * @return allocationCode
-     */
-    public Cd getAllocationCode() {
-        return allocationCode;
-    }
-
-    /**
-     * 
-     * @param allocationCode allocationCode
-     */
-    public void setAllocationCode(Cd allocationCode) {
-        this.allocationCode = allocationCode;
-    }
-
     /**
      * 
      * @return acronym
@@ -134,20 +58,21 @@ public class StudyProtocolDTO extends BaseDTO {
         this.acronym = acronym;
     }
 
+
     /**
      * 
-     * @return expandedAccessIndicator
+     * @return accrualReportingMethodCode
      */
-    public Bl getExpandedAccessIndicator() {
-        return expandedAccessIndicator;
+    public Cd getAccrualReportingMethodCode() {
+        return accrualReportingMethodCode;
     }
 
     /**
      * 
-     * @param expandedAccessIndicator expandedAccessIndicator
+     * @param accrualReportingMethodCode accrualReportingMethodCode
      */
-    public void setExpandedAccessIndicator(Bl expandedAccessIndicator) {
-        this.expandedAccessIndicator = expandedAccessIndicator;
+    public void setAccrualReportingMethodCode(Cd accrualReportingMethodCode) {
+        this.accrualReportingMethodCode = accrualReportingMethodCode;
     }
 
     /**
@@ -168,6 +93,89 @@ public class StudyProtocolDTO extends BaseDTO {
 
     /**
      * 
+     * @return dataMonitoringCommitteeAppointedIndicator dataMonitoringCommitteeAppointedIndicator
+     */
+    public Bl getDataMonitoringCommitteeAppointedIndicator() {
+        return dataMonitoringCommitteeAppointedIndicator;
+    }
+
+    /**
+     * 
+     * @param dataMonitoringCommitteeAppointedIndicator dataMonitoringCommitteeAppointedIndicator;
+     */
+    public void setDataMonitoringCommitteeAppointedIndicator(
+            Bl dataMonitoringCommitteeAppointedIndicator) {
+        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
+    }
+
+    /**
+     * 
+     * @return delayedpostingIndicator
+     */
+    public Bl getDelayedpostingIndicator() {
+        return delayedpostingIndicator;
+    }
+
+    /**
+     * 
+     * @param delayedpostingIndicator delayedpostingIndicator
+     */
+    public void setDelayedpostingIndicator(Bl delayedpostingIndicator) {
+        this.delayedpostingIndicator = delayedpostingIndicator;
+    }
+
+    /**
+     * 
+     * @return expandedAccessIndicator
+     */
+    public Bl getExpandedAccessIndicator() {
+        return expandedAccessIndicator;
+    }
+
+    /**
+     * 
+     * @param expandedAccessIndicator expandedAccessIndicator
+     */
+    public void setExpandedAccessIndicator(Bl expandedAccessIndicator) {
+        this.expandedAccessIndicator = expandedAccessIndicator;
+    }
+
+
+    /**
+     * 
+     * @return fdaRegulatedIndicator
+     */
+    public Bl getFdaRegulatedIndicator() {
+        return fdaRegulatedIndicator;
+    }
+
+    /**
+     * 
+     * @param fdaRegulatedIndicator fdaRegulatedIndicator
+     */
+    public void setFdaRegulatedIndicator(Bl fdaRegulatedIndicator) {
+        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
+    }
+
+    
+    /**
+     * 
+     * @return maximumTargetAccrualNumber
+     */
+    public Int getMaximumTargetAccrualNumber() {
+        return maximumTargetAccrualNumber;
+    }
+
+    /**
+     * 
+     * @param maximumTargetAccrualNumber maximumTargetAccrualNumber
+     */
+    public void setMaximumTargetAccrualNumber(Int maximumTargetAccrualNumber) {
+        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
+    }
+
+    /**
+     * 
      * @return officialTitle
      */
     public St getOfficialTitle() {
@@ -182,6 +190,36 @@ public class StudyProtocolDTO extends BaseDTO {
         this.officialTitle = officialTitle;
     }
 
+    /**
+     * 
+     * @return phaseCode
+     */
+    public Cd getPhaseCode() {
+        return phaseCode;
+    }
+
+    /**
+     * 
+     * @param phaseCode phaseCode
+     */
+    public void setPhaseCode(Cd phaseCode) {
+        this.phaseCode = phaseCode;
+    }
+
+    /**
+     * @return phaseOtherText
+     */
+    public St getPhaseOtherText() {
+        return phaseOtherText;
+    }
+
+    /**
+     * @param phaseOtherText phaseOtherText
+     */
+    public void setPhaseOtherText(St phaseOtherText) {
+        this.phaseOtherText = phaseOtherText;
+    }
+    
     /**
      * 
      * @return primaryCompletionDate
@@ -212,6 +250,114 @@ public class StudyProtocolDTO extends BaseDTO {
      */
     public void setPrimaryCompletionDateTypeCode(Cd primaryCompletionDateTypeCode) {
         this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
+    }
+
+    /**
+     * @return primaryPurposeCode
+     */
+    public Cd getPrimaryPurposeCode() {
+        return primaryPurposeCode;
+    }
+
+    /**
+     * @param primaryPurposeCode primaryPurposeCode
+     */
+    public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
+        this.primaryPurposeCode = primaryPurposeCode;
+    }
+    
+    /**
+     * @return primaryPurposeOtherText
+     */
+    public St getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
+
+    /**
+     * @param primaryPurposeOtherText primaryPurposeOtherText
+     */
+    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+
+    /**
+     * 
+     * @return publicDescription
+     */
+    public St getPublicDescription() {
+        return publicDescription;
+    }
+
+    /**
+     * 
+     * @param publicDescription publicDescription
+     */
+    public void setPublicDescription(St publicDescription) {
+        this.publicDescription = publicDescription;
+    }
+
+    /**
+     * 
+     * @return publicTitle
+     */
+    public St getPublicTitle() {
+        return publicTitle;
+    }
+
+    /**
+     * 
+     * @param publicTitle publicTitle
+     */
+    public void setPublicTitle(St publicTitle) {
+        this.publicTitle = publicTitle;
+    }
+
+    /**
+     * 
+     * @return recordVerificationDate
+     */
+    public Ts getRecordVerificationDate() {
+        return recordVerificationDate;
+    }
+
+    /**
+     * 
+     * @param recordVerificationDate recordVerificationDate
+     */
+    public void setRecordVerificationDate(Ts recordVerificationDate) {
+        this.recordVerificationDate = recordVerificationDate;
+    }
+
+    /**
+     * 
+     * @return scientificDescription
+     */
+    public St getScientificDescription() {
+        return scientificDescription;
+    }
+
+    /**
+     * 
+     * @param scientificDescription scientificDescription
+     */
+    public void setScientificDescription(St scientificDescription) {
+        this.scientificDescription = scientificDescription;
+    }
+
+    /**
+     * 
+     * @return section801Indicator
+     */
+    public Bl getSection801Indicator() {
+        return section801Indicator;
+    }
+
+    /**
+     * 
+     * @param section801Indicator section801Indicator
+     */
+    public void setSection801Indicator(Bl section801Indicator) {
+        this.section801Indicator = section801Indicator;
     }
 
     /**
@@ -246,88 +392,5 @@ public class StudyProtocolDTO extends BaseDTO {
         this.startDateTypeCode = startDateTypeCode;
     }
 
-    /**
-     * @return the dataMonitoringCommitteInd
-     */
-    public Bl getDataMonitoringCommitteInd() {
-        return dataMonitoringCommitteInd;
-    }
-
-    /**
-     * @param dataMonitoringCommitteInd the dataMonitoringCommitteInd to set
-     */
-    public void setDataMonitoringCommitteInd(Bl dataMonitoringCommitteInd) {
-        this.dataMonitoringCommitteInd = dataMonitoringCommitteInd;
-    }
-
-    /**
-     * @return primaryPurposeCode
-     */
-    public Cd getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-
-    /**
-     * @param primaryPurposeCode primaryPurposeCode
-     */
-    public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-
-    /**
-     * @return primaryPurposeOtherText
-     */
-    public St getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-
-    /**
-     * @param primaryPurposeOtherText primaryPurposeOtherText
-     */
-    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
-    }
-
-    /**
-     * @return phaseOtherText
-     */
-    public St getPhaseOtherText() {
-        return phaseOtherText;
-    }
-
-    /**
-     * @param phaseOtherText phaseOtherText
-     */
-    public void setPhaseOtherText(St phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
-    }
-
-    /**
-     * @return studyClassificationCode
-     */
-    public Cd getStudyClassificationCode() {
-        return studyClassificationCode;
-    }
-
-    /** 
-     * @param studyClassificationCode studyClassificationCode
-     */
-    public void setStudyClassificationCode(Cd studyClassificationCode) {
-        this.studyClassificationCode = studyClassificationCode;
-    }
-
-    /**
-     * @return maximumTargetAccrualNumber
-     */
-    public Int getMaximumTargetAccrualNumber() {
-        return maximumTargetAccrualNumber;
-    }
-
-    /**
-     * @param maximumTargetAccrualNumber maximumTargetAccrualNumber
-     */
-    public void setMaximumTargetAccrualNumber(Int maximumTargetAccrualNumber) {
-        this.maximumTargetAccrualNumber = maximumTargetAccrualNumber;
-    }
 }
 

@@ -43,7 +43,6 @@
     					<li class="hassubmenu">Interventional Trial Design
                             <ul id="part_sites">
                                 <li><a href="interventionalStudyDesigndetailsQuery.action" >Design Details</a></li>
-                                <li><a href="trialInterventions.action" >Interventions</a></li>
                                 <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
                                 <li><a href="#" >Eligibility Criteria</a></li>
                             </ul>
@@ -58,6 +57,8 @@
                             </ul>
     					</li>
                         </s:else>
+                        <li><a href="trialInterventions.action" >Interventions</a></li>
+
     				</ul>
     			</li>
             </s:if>

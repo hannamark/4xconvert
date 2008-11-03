@@ -278,48 +278,64 @@ public class StudyProtocolServiceBean  implements StudyProtocolServiceRemote {
         Timestamp now = new Timestamp((new Date()).getTime());
         InterventionalStudyProtocolDTO  ispRetDTO = null;
         Session session = null;
-        List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
+//        List<InterventionalStudyProtocol> queryList = new ArrayList<InterventionalStudyProtocol>();
 
         try {
             session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select isp "
-                       + "from InterventionalStudyProtocol isp "
-                       + "where isp.id =  " + Long.valueOf(ispDTO.getIdentifier().getExtension());
-            LOG.info(" query InterventionalStudyProtocol = " + hql);
-            query = session.createQuery(hql);
-            queryList = query.list();
-            InterventionalStudyProtocol isp = queryList.get(0);
+//            Query query = null;
+//            String hql = "select isp "
+//                       + "from InterventionalStudyProtocol isp "
+//                       + "where isp.id =  " + Long.valueOf(ispDTO.getIdentifier().getExtension());
+//            LOG.info(" query InterventionalStudyProtocol = " + hql);
+//            query = session.createQuery(hql);
+//            queryList = query.list();
+//            InterventionalStudyProtocol isp = queryList.get(0);
+
+            InterventionalStudyProtocol isp = (InterventionalStudyProtocol) 
+                session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
 
             InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.
                                 convertFromDTOToDomain(ispDTO);
+          upd.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
+          upd.setDateLastUpdated(now);
+
+          if (!upd.equals(isp)) {
+              isp = (InterventionalStudyProtocol) session.merge(upd);
+          } else {
+              isp = upd;
+          }
+
+            
             // overwrite the values
-            isp.setAccrualReportingMethodCode(upd.getAccrualReportingMethodCode());
-            isp.setAcronym(upd.getAcronym());
-            isp.setDataMonitoringCommitteeAppointedIndicator(upd.getDataMonitoringCommitteeAppointedIndicator());
-            isp.setDelayedpostingIndicator(upd.getDelayedpostingIndicator());
-            isp.setExpandedAccessIndicator(upd.getExpandedAccessIndicator());
-            isp.setFdaRegulatedIndicator(upd.getFdaRegulatedIndicator());
-            isp.setIndIdeIndicator(upd.getIndIdeIndicator());
-            isp.setOfficialTitle(upd.getOfficialTitle());
-            isp.setPhaseCode(upd.getPhaseCode());
-            isp.setPrimaryCompletionDate(upd.getPrimaryCompletionDate());
-            isp.setPrimaryCompletionDateTypeCode(upd.getPrimaryCompletionDateTypeCode());
-            isp.setPrimaryPurposeCode(upd.getPrimaryPurposeCode());
-            isp.setSection801Indicator(upd.getSection801Indicator());
-            isp.setStartDate(upd.getStartDate());
-            isp.setStartDateTypeCode(upd.getStartDateTypeCode());
-            isp.setDesignConfigurationCode(upd.getDesignConfigurationCode());
-            isp.setNumberOfInterventionGroups(upd.getNumberOfInterventionGroups());
-            isp.setBlindingSchemaCode(upd.getBlindingSchemaCode());
-            isp.setAllocationCode(upd.getAllocationCode());
-            isp.setPhaseOtherText(upd.getPhaseOtherText());
-            isp.setPrimaryPurposeOtherText(upd.getPrimaryPurposeOtherText());
-            //isp.setBlindingRoleCode(upd.getBlindingRoleCode());
-            isp.setStudyClassificationCode(upd.getStudyClassificationCode());
-            isp.setMaximumTargetAccrualNumber(upd.getMaximumTargetAccrualNumber());
-            isp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
-            isp.setDateLastUpdated(now);
+//            isp.setAccrualReportingMethodCode(upd.getAccrualReportingMethodCode());
+//            isp.setAcronym(upd.getAcronym());
+//            isp.setDataMonitoringCommitteeAppointedIndicator(upd.getDataMonitoringCommitteeAppointedIndicator());
+//            isp.setDelayedpostingIndicator(upd.getDelayedpostingIndicator());
+//            isp.setExpandedAccessIndicator(upd.getExpandedAccessIndicator());
+//            isp.setFdaRegulatedIndicator(upd.getFdaRegulatedIndicator());
+//            isp.setIndIdeIndicator(upd.getIndIdeIndicator());
+//            isp.setOfficialTitle(upd.getOfficialTitle());
+//            isp.setPhaseCode(upd.getPhaseCode());
+//            isp.setPrimaryCompletionDate(upd.getPrimaryCompletionDate());
+//            isp.setPrimaryCompletionDateTypeCode(upd.getPrimaryCompletionDateTypeCode());
+//            isp.setPrimaryPurposeCode(upd.getPrimaryPurposeCode());
+//            isp.setSection801Indicator(upd.getSection801Indicator());
+//            isp.setStartDate(upd.getStartDate());
+//            isp.setStartDateTypeCode(upd.getStartDateTypeCode());
+//            isp.setDesignConfigurationCode(upd.getDesignConfigurationCode());
+//            isp.setNumberOfInterventionGroups(upd.getNumberOfInterventionGroups());
+//            isp.setBlindingSchemaCode(upd.getBlindingSchemaCode());
+//            isp.setAllocationCode(upd.getAllocationCode());
+//            isp.setPhaseOtherText(upd.getPhaseOtherText());
+//            isp.setPrimaryPurposeOtherText(upd.getPrimaryPurposeOtherText());
+//            //isp.setBlindingRoleCode(upd.getBlindingRoleCode());
+//            isp.setStudyClassificationCode(upd.getStudyClassificationCode());
+//            isp.setMaximumTargetAccrualNumber(upd.getMaximumTargetAccrualNumber());
+
+//            isp.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
+//            isp.setDateLastUpdated(now);
+
+
 
             session.update(isp);
             session.flush();

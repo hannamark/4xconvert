@@ -8,6 +8,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class StudyProtocolConverterTest  {
      */
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
+        //TestSchema.reset();
                
     }    
 
@@ -33,10 +34,27 @@ public class StudyProtocolConverterTest  {
      */
     @Test
     public void convertFromDomainToDTOTest() {
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-        TestSchema.addUpdObject(sp);
+        Session session  = TestSchema.getSession();
+
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        session.save(sp);
+        //TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
+        assertStudyProtocol(sp , spDTO);
+ 
+        
+    }
+
+    @Test
+    public void convertFromDomainToDTOTest1() {
+        Session session  = TestSchema.getSession();
+
+        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        session.save(sp);
+        //TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+        StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp , new StudyProtocolDTO());
         assertStudyProtocol(sp , spDTO);
  
         
@@ -47,8 +65,10 @@ public class StudyProtocolConverterTest  {
      */
     @Test    
     public void convertFromDtoToDomainTest() {
-        StudyProtocol create = StudyProtocolTest.createStudyProtocolObj();
-        TestSchema.addUpdObject(create);
+        Session session  = TestSchema.getSession();
+        StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        //TestSchema.addUpdObject(create);
+        session.save(create);
         assertNotNull(create.getId());
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
@@ -57,29 +77,51 @@ public class StudyProtocolConverterTest  {
         
     }
 
-    private void assertStudyProtocol(StudyProtocol sp , StudyProtocolDTO spDTO) {
-        assertEquals("Acronym does not match " , sp.getAcronym(), spDTO.getAcronym().getValue());
-/*        assertEquals("Allocation code does not match " , 
-                sp.getAllocationCode().getCode(), 
-                spDTO.getAllocationCode().getCode()); */
-        assertEquals("Accrual Reporting Method code does not match " , 
-                sp.getAccrualReportingMethodCode().getCode(), 
-                spDTO.getAccrualReportingMethodCode().getCode());
-        assertEquals("Expanded Access Indicator does not  match " , 
-                sp.getExpandedAccessIndicator(), spDTO.getExpandedAccessIndicator().getValue());
-        assertEquals("Identifer does not match " , sp.getIdentifier() , spDTO.getAssignedIdentifier().getExtension());
-        assertEquals("Monitor code does not match " , sp.getMonitorCode().getCode(), spDTO.getMonitorCode().getCode());
-        assertEquals("Official Title does not match " , sp.getOfficialTitle() , spDTO.getOfficialTitle().getValue());
-        assertEquals("Phase code does not match " , sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
-        assertEquals("PrimaryCompletionDate  does not match " , 
-                sp.getPrimaryCompletionDate(), TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()));
-        assertEquals("PrimaryCompletionDateTypeCode  does not match " , 
-                sp.getPrimaryCompletionDateTypeCode().getCode(), 
+    @Test    
+    public void convertFromDtoToDomainTest1() {
+        Session session  = TestSchema.getSession();
+        StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        //TestSchema.addUpdObject(create);
+        session.save(create);
+        assertNotNull(create.getId());
+        //convert to DTO
+        StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
+        StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO , new StudyProtocol());
+        assertStudyProtocol(sp , spDTO);
+        
+    }
+    
+    /**
+     * 
+     * @param sp sp
+     * @param spDTO spDTO
+     */
+    public void assertStudyProtocol(StudyProtocol sp , StudyProtocolDTO spDTO) {
+        assertEquals(sp.getAcronym(), spDTO.getAcronym().getValue());
+        assertEquals(sp.getAccrualReportingMethodCode().getCode(), spDTO.getAccrualReportingMethodCode().getCode());
+        assertEquals(sp.getIdentifier() , spDTO.getAssignedIdentifier().getExtension());
+        assertEquals(sp.getDataMonitoringCommitteeAppointedIndicator(),
+                spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue());
+        assertEquals(sp.getDelayedpostingIndicator(), spDTO.getDelayedpostingIndicator().getValue());
+        assertEquals(sp.getExpandedAccessIndicator(), spDTO.getExpandedAccessIndicator().getValue());
+        assertEquals(sp.getFdaRegulatedIndicator(), spDTO.getFdaRegulatedIndicator().getValue());
+        assertEquals(sp.getId().toString() , spDTO.getIdentifier().getExtension());
+        assertEquals(sp.getOfficialTitle() , spDTO.getOfficialTitle().getValue());
+        assertEquals(sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
+        assertEquals(sp.getPhaseOtherText(), spDTO.getPhaseOtherText().getValue());
+        assertEquals(sp.getPrimaryCompletionDate(), TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()));
+        assertEquals(sp.getPrimaryCompletionDateTypeCode().getCode(), 
                 spDTO.getPrimaryCompletionDateTypeCode().getCode());
-        assertEquals("StartDate Does not match ", sp.getStartDate() , TsConverter.convertToTimestamp(spDTO.getStartDate()));  
-        assertEquals("StartDate Type code Does not match ", sp.getStartDateTypeCode().getCode() , 
-                spDTO.getStartDateTypeCode().getCode());  
-//        assertEquals("Status Date Does not match ", sp.getStatusDate() , spDTO.getStatusDate());  
+        assertEquals(sp.getPrimaryPurposeCode().getCode(), spDTO.getPrimaryPurposeCode().getCode());
+        assertEquals(sp.getPrimaryPurposeOtherText(), spDTO.getPrimaryPurposeOtherText().getValue());
+        assertEquals(sp.getPublicDescription(), spDTO.getPublicDescription().getValue());
+        assertEquals(sp.getPublicTitle(), spDTO.getPublicTitle().getValue());
+        assertEquals(sp.getRecordVerificationDate() , 
+                TsConverter.convertToTimestamp(spDTO.getRecordVerificationDate()));
+        assertEquals(sp.getScientificDescription(), spDTO.getScientificDescription().getValue());
+        assertEquals(sp.getSection801Indicator(), spDTO.getSection801Indicator().getValue());
+        assertEquals(sp.getStartDate() , TsConverter.convertToTimestamp(spDTO.getStartDate()));  
+        assertEquals(sp.getStartDateTypeCode().getCode() , spDTO.getStartDateTypeCode().getCode());  
         
     }
 }

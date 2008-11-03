@@ -3,14 +3,19 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocolTest;
+import gov.nih.nci.pa.domain.StudyProtocolTest;
+import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.util.TestSchema;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InterventionalStudyProtocolConverterTest {
+public class InterventionalStudyProtocolConverterTest   {
 
     /**
      * 
@@ -27,62 +32,63 @@ public class InterventionalStudyProtocolConverterTest {
      */
     @Test
     public void convertFromDomainToDTOTest() {
-        InterventionalStudyProtocol isp = InterventionalStudyProtocolTest.createInterventionalStudyProtocolObj();
-        TestSchema.addUpdObject(isp);
+        Session session  = TestSchema.getSession();
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol) 
+            StudyProtocolTest.createStudyProtocolObj(new InterventionalStudyProtocol());
+        isp.setAllocationCode(AllocationCode.NON_RANDOMIZED_TRIAL);
+        isp.setBlindingSchemaCode(BlindingSchemaCode.DOUBLE_BLIND);
+        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER_DESIGN);
+        isp.setNumberOfInterventionGroups(Integer.valueOf(1));
+        isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
+        isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
+        session.save(isp);
+        //TestSchema.addUpdObject(sp);
         assertNotNull(isp.getId());
-        InterventionalStudyProtocolDTO ispDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) 
+            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        
         assertInterventionalStudyProtocol(isp , ispDTO);
+ 
+        
     }
 
     /**
      * 
      */
-    @Test    
-    public void convertFromDtoToDomainTest() {
-        InterventionalStudyProtocol create = InterventionalStudyProtocolTest.createInterventionalStudyProtocolObj();
-        TestSchema.addUpdObject(create);
-        assertNotNull(create.getId());
-        //convert to DTO
-        InterventionalStudyProtocolDTO ispDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(create);
-        InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
+    @Test
+    public void convertFromDTOToDomainTest() {
+        Session session  = TestSchema.getSession();
+
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol) 
+            StudyProtocolTest.createStudyProtocolObj(new InterventionalStudyProtocol());
+        isp.setAllocationCode(AllocationCode.NON_RANDOMIZED_TRIAL);
+        isp.setBlindingSchemaCode(BlindingSchemaCode.DOUBLE_BLIND);
+        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER_DESIGN);
+        isp.setNumberOfInterventionGroups(Integer.valueOf(1));
+        isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
+        isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
+        session.save(isp);
+        //TestSchema.addUpdObject(sp);
+        assertNotNull(isp.getId());
+        InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) 
+            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         assertInterventionalStudyProtocol(isp , ispDTO);
-        
     }
     
-
-    private void assertInterventionalStudyProtocol(InterventionalStudyProtocol sp , InterventionalStudyProtocolDTO spDTO) {
-        assertEquals("Acronym does not match " , sp.getAcronym(), spDTO.getAcronym().getValue());
-        assertEquals("Allocation code does not match " , 
-                sp.getAllocationCode().getCode(), 
-                spDTO.getAllocationCode().getCode()); 
-        assertEquals("Accrual Reporting Method code does not match " , 
-                sp.getAccrualReportingMethodCode().getCode(), 
-                spDTO.getAccrualReportingMethodCode().getCode());
-        assertEquals("Expanded Access Indicator does not  match " , 
-                sp.getExpandedAccessIndicator(), spDTO.getExpandedAccessIndicator().getValue());
-        assertEquals("Identifer does not match " , sp.getIdentifier() , spDTO.getAssignedIdentifier().getExtension());
-        assertEquals("Monitor code does not match " , sp.getMonitorCode().getCode(), spDTO.getMonitorCode().getCode());
-        assertEquals("Official Title does not match " , sp.getOfficialTitle() , spDTO.getOfficialTitle().getValue());
-        assertEquals("Phase code does not match " , sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
-//        assertEquals("PrimaryCompletionDate  does not match " , 
-//                sp.getPrimaryCompletionDate(), spDTO.getPrimaryCompletionDate());
-        assertEquals("PrimaryCompletionDateTypeCode  does not match " , 
-                sp.getPrimaryCompletionDateTypeCode().getCode(), 
-                spDTO.getPrimaryCompletionDateTypeCode().getCode());
-//        assertEquals("StartDate Does not match ", sp.getStartDate() , spDTO.getStartDate());  
-        assertEquals("StartDate Type code Does not match ", sp.getStartDateTypeCode().getCode() , 
-                spDTO.getStartDateTypeCode().getCode());  
-//        assertEquals("Status Date Does not match ", sp.getStatusDate() , spDTO.getStatusDate());
-        assertEquals("StartDate Type code Does not match ", sp.getStartDateTypeCode().getCode() , 
-                spDTO.getStartDateTypeCode().getCode());  
-        assertEquals("delayedpostingIndicator  Does not match ", sp.getDelayedpostingIndicator() , 
-                spDTO.getDelayedpostingIndicator().getValue());  
-        assertEquals("fdaRegulatedIndicator  Does not match ", sp.getFdaRegulatedIndicator() , 
-                spDTO.getFdaRegulatedIndicator().getValue());  
-        assertEquals("section801Indicator  Does not match ", sp.getSection801Indicator() , 
-                spDTO.getSection801Indicator().getValue());  
-        
-        
+    /**
+     * 
+     * @param isp isp
+     * @param ispDTO ispDTO
+     */
+    public void assertInterventionalStudyProtocol(
+                InterventionalStudyProtocol isp , InterventionalStudyProtocolDTO ispDTO) {
+        new StudyProtocolConverterTest().assertStudyProtocol(isp , ispDTO);
+        assertEquals(isp.getAllocationCode().getCode(), ispDTO.getAllocationCode().getCode());
+        assertEquals(isp.getBlindingSchemaCode().getCode(), ispDTO.getBlindingSchemaCode().getCode());
+        assertEquals(isp.getDesignConfigurationCode().getCode(), ispDTO.getDesignConfigurationCode().getCode());
+        assertEquals(isp.getNumberOfInterventionGroups(), ispDTO.getNumberOfInterventionGroups().getValue());
+        assertEquals(2,ispDTO.getBlindedRoleCode().getItem().size());
     }
 
 }
