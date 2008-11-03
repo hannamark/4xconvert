@@ -127,7 +127,6 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         dto.setPlayerIdentifier(ii);
-        dto.setScoperIdentifier(ii);
 
         Cd type = new Cd();
         type.setCode("Ethics Committee");
@@ -139,7 +138,6 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
     @Override
     void verifyDto(OversightCommitteeDTO expected, OversightCommitteeDTO actual) {
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
-        assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
         assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
     }
@@ -189,7 +187,6 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         org2Ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         org2Ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setPlayerIdentifier(org2Ii);
-        correlation2.setScoperIdentifier(org2Ii);
         Cd type = new Cd();
         type.setCode("Foo");
         correlation2.setTypeCode(type);
@@ -250,23 +247,6 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
 
-        // search by scoper
-        searchCriteria.setPlayerIdentifier(null);
-        searchCriteria.setScoperIdentifier(correlation1.getScoperIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
-
-        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        // search by scoper and player
-        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
-
         searchCriteria.setPlayerIdentifier(correlation2.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
@@ -274,7 +254,6 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
 
         // search by type code
         searchCriteria.setPlayerIdentifier(null);
-        searchCriteria.setScoperIdentifier(null);
         searchCriteria.setTypeCode(correlation1.getTypeCode());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());

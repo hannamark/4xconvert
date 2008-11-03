@@ -111,8 +111,6 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         or.setStatus(RoleStatus.ACTIVE);
         or.setPlayer(new Organization());
         or.getPlayer().setId(2L);
-        or.setScoper(new Organization());
-        or.getScoper().setId(3L);
 
         return or;
     }
@@ -135,16 +133,12 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         expectedIi.setRoot(IdConverter.ORG_ROOT);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getPlayerIdentifier()));
 
-        expectedIi.setExtension("" + 3);
-        assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
-
         assertEquals("active", dto.getStatus().getCode());
 
         verifyTestClassFields(dto);
     }
 
-    protected AbstractOrganizationRoleDTO fillInOrgRoleDTOFields(AbstractOrganizationRoleDTO or, Long scoperId, Long playerId) {
-        or.setScoperIdentifier(getPlayerScoperIi(scoperId));
+    protected AbstractOrganizationRoleDTO fillInOrgRoleDTOFields(AbstractOrganizationRoleDTO or, Long playerId) {
         or.setPlayerIdentifier(getPlayerScoperIi(playerId));
 
         Cd status = new Cd();
@@ -165,7 +159,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         return ii;
     }
 
-    abstract protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId);
+    abstract protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId);
 
     abstract protected void verifyTestClassDTOFields(AbstractOrganizationRole or);
 
@@ -175,13 +169,11 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         orgTest.loadData();
         orgTest.setUpData();
 
-        long scoperId = orgTest.createOrganization();
         long playerId = orgTest.createOrganization();
-        PoDto dto = (PoDto) getExampleTestClassDTO(scoperId, playerId);
+        PoDto dto = (PoDto) getExampleTestClassDTO(playerId);
         AbstractOrganizationRole bo = (AbstractOrganizationRole) PoXsnapshotHelper.createModel(dto);
 
         assertEquals(1L, bo.getId().longValue());
-        assertEquals(scoperId, bo.getScoper().getId().longValue());
         assertEquals(playerId, bo.getPlayer().getId().longValue());
         assertEquals(RoleStatus.ACTIVE, bo.getStatus());
 

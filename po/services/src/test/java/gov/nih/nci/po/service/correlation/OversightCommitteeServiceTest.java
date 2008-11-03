@@ -107,7 +107,6 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
     OversightCommittee getSampleStructuralRole() {
         OversightCommittee oc = new OversightCommittee();
         oc.setPlayer(basicOrganization);
-        oc.setScoper(basicOrganization);
         oc.setTypeCode(sampleType);
 
         return oc;

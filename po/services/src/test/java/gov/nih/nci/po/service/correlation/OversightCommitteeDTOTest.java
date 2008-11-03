@@ -119,9 +119,9 @@ public class OversightCommitteeDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
+    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) {
         OversightCommitteeDTO dto = new OversightCommitteeDTO();
-        fillInOrgRoleDTOFields(dto, scoperId, playerId);
+        fillInOrgRoleDTOFields(dto, playerId);
         Ii ii = new Ii();
         ii.setExtension("" + 1L);
         ii.setDisplayable(true);

@@ -98,7 +98,6 @@ public class HealthCareFacilityCorrelationServiceTest
     protected HealthCareFacilityDTO makeCorrelation() throws Exception {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         dto.setPlayerIdentifier(getOrgId());
-        dto.setScoperIdentifier(getOrgId());
         return dto;
     }
 
@@ -110,7 +109,6 @@ public class HealthCareFacilityCorrelationServiceTest
     @Override
     protected void verifyCreated(HealthCareFacilityDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
 
     }
 }

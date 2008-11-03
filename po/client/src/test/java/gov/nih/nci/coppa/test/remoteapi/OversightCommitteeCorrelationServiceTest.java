@@ -96,7 +96,6 @@ public class OversightCommitteeCorrelationServiceTest
     @Override
     protected OversightCommitteeDTO makeCorrelation() throws Exception {
         OversightCommitteeDTO dto = new OversightCommitteeDTO();
-        dto.setScoperIdentifier(getOrgId());
         dto.setPlayerIdentifier(getOrgId());
         return dto;
     }
@@ -109,7 +108,6 @@ public class OversightCommitteeCorrelationServiceTest
     @Override
     protected void verifyCreated(OversightCommitteeDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
 
     }
 }

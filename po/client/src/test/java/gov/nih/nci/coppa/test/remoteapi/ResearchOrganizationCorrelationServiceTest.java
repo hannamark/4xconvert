@@ -98,7 +98,6 @@ public class ResearchOrganizationCorrelationServiceTest
     @Override
     protected ResearchOrganizationDTO makeCorrelation() throws Exception {
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
-        dto.setScoperIdentifier(getOrgId());
         dto.setPlayerIdentifier(getOrgId());
         dto.setFundingMechanism(RemoteApiUtils.convertToSt("Magical"));
         Cd type = new Cd();
@@ -115,7 +114,6 @@ public class ResearchOrganizationCorrelationServiceTest
     @Override
     protected void verifyCreated(ResearchOrganizationDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-        Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals("Magical", dto.getFundingMechanism().getValue());
         Assert.assertEquals("Cancer Center", dto.getTypeCode().getCode());
     }

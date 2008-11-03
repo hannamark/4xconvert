@@ -131,7 +131,6 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         dto.setPlayerIdentifier(ii);
-        dto.setScoperIdentifier(ii);
 
         return dto;
     }
@@ -139,7 +138,6 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
     @Override
     void verifyDto(HealthCareFacilityDTO expected, HealthCareFacilityDTO actual) {
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
-        assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
     }
 
@@ -158,21 +156,11 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
     private long newOrgId;
     @Override
     protected void alter(HealthCareFacilityDTO dto) throws Exception {
-        assertEquals(dto.getPlayerIdentifier().getExtension(), dto.getScoperIdentifier().getExtension());
         OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
         orgTest.setDefaultCountry(getDefaultCountry());
         orgTest.setUser(getUser());
         orgTest.setUpData();
         newOrgId = orgTest.createOrganization();
-        dto.setScoperIdentifier(ISOUtils.ID_ORG.convertToIi(newOrgId));
-    }
-
-    @Override
-    protected void verifyAlterations(HealthCareFacilityCR cr) {
-        super.verifyAlterations(cr);
-
-        assertNotSame(cr.getPlayer(), cr.getScoper());
-        assertEquals(newOrgId, cr.getScoper().getId().longValue());
     }
 
     /**
@@ -201,7 +189,6 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
         org2Ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         org2Ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setPlayerIdentifier(org2Ii);
-        correlation2.setScoperIdentifier(org2Ii);
         Ii id2 = getCorrelationService().createCorrelation(correlation2);
 
         // test search by null / empty criteria
@@ -258,23 +245,6 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        // search by scoper
-        searchCriteria.setPlayerIdentifier(null);
-        searchCriteria.setScoperIdentifier(correlation1.getScoperIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id1.getExtension());
-
-        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), id2.getExtension());
-
-        // search by scoper and player
-        searchCriteria.setPlayerIdentifier(correlation1.getPlayerIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
 
         searchCriteria.setPlayerIdentifier(correlation2.getPlayerIdentifier());
         results = getCorrelationService().search(searchCriteria);

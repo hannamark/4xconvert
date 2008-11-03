@@ -127,7 +127,6 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         dto.setPlayerIdentifier(ii);
-        dto.setScoperIdentifier(ii);
 
         Cd type = new Cd();
         type.setCode("Cancer Center");
@@ -141,7 +140,6 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
     @Override
     void verifyDto(ResearchOrganizationDTO expected, ResearchOrganizationDTO actual) {
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
-        assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
         assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
         assertEquals(expected.getFundingMechanism().getValue(), actual.getFundingMechanism().getValue());
@@ -189,15 +187,6 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setPlayerIdentifier(ii);
-
-        ii = new Ii();
-        ii.setExtension("" + org2.getId());
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.ORG_ROOT);
-        correlation2.setScoperIdentifier(ii);
 
         ResearchOrganizationType other = new ResearchOrganizationType("Another Type");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
@@ -257,21 +246,8 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
 
-        // test search by scoper id
-        searchCriteria.setPlayerIdentifier(null);
-        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
-
-        // test by assigned id and scoper id
-        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
-
         // test by fundintMethod
-        searchCriteria.setScoperIdentifier(null);
+        searchCriteria.setPlayerIdentifier(null);
         searchCriteria.setFundingMechanism(correlation1.getFundingMechanism());
         searchCriteria.getFundingMechanism().setValue(searchCriteria.getFundingMechanism().getValue().toUpperCase());
         results = getCorrelationService().search(searchCriteria);

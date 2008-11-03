@@ -113,9 +113,9 @@ public class HealthCareFacilityDTOTest extends AbstractOrganizationRoleDTOTest {
      * {@inheritDoc}
      */
     @Override
-    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long scoperId, Long playerId) {
+    protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
-        fillInOrgRoleDTOFields(dto, scoperId, playerId);
+        fillInOrgRoleDTOFields(dto, playerId);
 
         Ii ii = new Ii();
         ii.setExtension("" + 1L);

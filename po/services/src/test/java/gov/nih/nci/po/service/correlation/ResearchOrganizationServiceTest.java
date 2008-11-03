@@ -107,7 +107,6 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
     ResearchOrganization getSampleStructuralRole() {
         ResearchOrganization oc = new ResearchOrganization();
         oc.setPlayer(basicOrganization);
-        oc.setScoper(basicOrganization);
         oc.setTypeCode(sampleType);
         oc.setFundingMechanism("foo");
 

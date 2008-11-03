@@ -110,7 +110,6 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
 
     private Long id;
     private Organization player;
-    private Organization scoper;
     private RoleStatus status;
 
     /**
@@ -149,27 +148,6 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
      */
     public void setPlayer(Organization player) {
         this.player = player;
-    }
-
-    /**
-     * @return the scoper. may be null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
-     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
-     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "organizationrole_scoper_fkey")
-    @Searchable(fields = {"id" })
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
-    public Organization getScoper() {
-        return scoper;
-    }
-
-    /**
-     * @param scoper the scoper to set
-     */
-    public void setScoper(Organization scoper) {
-        this.scoper = scoper;
     }
 
     /**

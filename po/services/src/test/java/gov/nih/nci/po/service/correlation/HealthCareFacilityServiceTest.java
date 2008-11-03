@@ -107,7 +107,6 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
     HealthCareFacility getSampleStructuralRole() {
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(basicOrganization);
-        hcf.setScoper(basicOrganization);
 
         return hcf;
     }
@@ -140,32 +139,29 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
             // expected
         }
 
-        testSearchParams(hcf, hcf.getId(), null, null, null, 1);
-        testSearchParams(hcf, null, hcf.getPlayer().getId(), null, null, 1);
-        testSearchParams(hcf, null, null, hcf.getScoper().getId(), null, 1);
-        testSearchParams(hcf, null, null, null, hcf.getStatus(), 1);
-        testSearchParams(hcf, hcf.getId(), hcf.getPlayer().getId(), hcf.getScoper().getId(), hcf.getStatus(), 1);
+        testSearchParams(hcf, hcf.getId(), null, null, 1);
+        testSearchParams(hcf, null, hcf.getPlayer().getId(), null, 1);
+        testSearchParams(hcf, null, null, hcf.getStatus(), 1);
+        testSearchParams(hcf, hcf.getId(), hcf.getPlayer().getId(), hcf.getStatus(), 1);
 
-        testSearchParams(hcf, -1L, null, null, null, 0);
-        testSearchParams(hcf, -1L, null, null, hcf.getStatus(), 0); // verifies that we're doing ANDs (not ORs)
+        testSearchParams(hcf, -1L, null, null, 0);
+        testSearchParams(hcf, -1L, null, hcf.getStatus(), 0); // verifies that we're doing ANDs (not ORs)
 
         HealthCareFacility hcf2 = getSampleStructuralRole();
         svc.create(hcf2);
-        testSearchParams(hcf2, hcf2.getId(), null, null, null, 1);
-        testSearchParams(hcf, null, null, null, hcf.getStatus(), 2);
-        testSearchParams(hcf2, null, null, null, hcf.getStatus(), 2);
+        testSearchParams(hcf2, hcf2.getId(), null, null, 1);
+        testSearchParams(hcf, null, null, hcf.getStatus(), 2);
+        testSearchParams(hcf2, null, null, hcf.getStatus(), 2);
 
     }
 
-    private void testSearchParams(HealthCareFacility hcf, Long id, Long playerId, Long scoperId, RoleStatus rs,
+    private void testSearchParams(HealthCareFacility hcf, Long id, Long playerId, RoleStatus rs,
             int numExpected) {
         HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
         HealthCareFacility example = new HealthCareFacility();
         example.setId(id);
         example.setPlayer(new Organization());
         example.getPlayer().setId(playerId);
-        example.setScoper(new Organization());
-        example.getScoper().setId(scoperId);
         example.setStatus(rs);
 
         SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
