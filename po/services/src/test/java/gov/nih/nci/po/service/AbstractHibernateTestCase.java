@@ -89,11 +89,17 @@ import gov.nih.nci.po.util.TestServiceLocator;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.mapping.Column;
+import org.hibernate.mapping.Index;
+import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.junit.After;
 import org.junit.Before;
@@ -105,6 +111,7 @@ import org.junit.Before;
 public abstract class AbstractHibernateTestCase {
 
     private static final Logger LOG = Logger.getLogger(AbstractHibernateTestCase.class);
+    private static Configuration CFG;
 
     protected Transaction transaction;
 
@@ -148,8 +155,17 @@ public abstract class AbstractHibernateTestCase {
         tx.commit();
 
         tx = PoHibernateUtil.getHibernateHelper().beginTransaction();
-        List<Long> counts = PoHibernateUtil.getCurrentSession().createQuery(
+        List<Long> counts = null;
+        try {
+            counts = PoHibernateUtil.getCurrentSession().createQuery(
                 "select count(*) from " + Object.class.getName()).list();
+        } catch (Exception e) {
+            // counts unable to get, assume that this was because the schema has never been created before
+            SchemaExport se = new SchemaExport(getConfigurationForSchemaExport());
+            se.create(false, true);
+            counts = new ArrayList<Long>();
+        }
+
         // create sequence and fake table for selecting from
         s = PoHibernateUtil.getCurrentSession().connection().createStatement();
         s.execute("create sequence AUDIT_ID_SEQ");
@@ -158,13 +174,54 @@ public abstract class AbstractHibernateTestCase {
         for (Long count : counts) {
             if (count > 0) {
                 LOG.debug("DB contains data, dropping and readding.");
-                SchemaExport se = new SchemaExport(PoHibernateUtil.getHibernateHelper().getConfiguration());
+                SchemaExport se = new SchemaExport(getConfigurationForSchemaExport());
                 se.drop(false, true);
                 se.create(false, true);
                 //new ConfigurationBeanLocal().reloadCountries();
                 break;
             }
         }
+    }
+
+    private Configuration getConfigurationForSchemaExport() {
+        if (CFG == null) {
+            CFG = PoHibernateUtil.getHibernateHelper().getConfiguration();
+            handleAutoNamingIndexes(CFG);
+        }
+        return CFG;
+    }
+
+    private void handleAutoNamingIndexes(Configuration configuration) {
+        @SuppressWarnings("unchecked")
+        Iterator<Table> iter = configuration.getTableMappings();
+        while (iter.hasNext()) {
+            Table table = iter.next();
+            processTableIndexNames(table);
+        }
+    }
+
+    private void processTableIndexNames(Table table) {
+        if (table.isPhysicalTable()) {
+            @SuppressWarnings("unchecked")
+            Iterator<Index> subIter = table.getIndexIterator();
+            while (subIter.hasNext()) {
+                // for each index that has no name, generate a unique name
+                Index index = subIter.next();
+                if (index.getName().startsWith(PoRegistry.GENERATE_INDEX_NAME_PREFIX)) {
+                    index.setName(gegenerateIndexName(table, index));
+                }
+            }
+        }
+    }
+
+    private String gegenerateIndexName(Table table, Index index) {
+        List<String> columnNames = new ArrayList<String>();
+        @SuppressWarnings("unchecked")
+        Iterator<Column> columns = index.getColumnIterator();
+        while (columns.hasNext()) {
+            columnNames.add(columns.next().getName());
+        }
+        return "IX" + table.uniqueColumnString(columnNames.iterator());
     }
 
     ServiceLocator oldLocator = null;
