@@ -131,8 +131,8 @@
               overwrite="true">
             <filterset>
                 <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            	<filter token="po.username" value="${po.username}" />
-            	<filter token="po.pass" value="${po.pass}" />
+                <filter token="po.username" value="${po.username}" />
+                <filter token="po.pass" value="${po.pass}" />
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/paear.properties" 
@@ -140,6 +140,18 @@
               overwrite="true">
             <filterset>
                 <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}" />
+                <filter token="mail.smtp.host" value="${mail.smtp.host}"/>
+                <filter token="mail.from.address" value="${mail.from.address}"/>
+                <filter token="register.mail.subject" value="${register.mail.subject}"/>
+                <filter token="register.mail.body" value="${register.mail.body}"/>
+                <filter token="register.mail.body.url" value="${register.mail.body.url}"/>
+                <filter token="submission.mail.subject" value="${submission.mail.subject}"/>
+                <filter token="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
+                <filter token="submission.notify.body.para2" value="${submission.notify.body.para2}"/>
+                <filter token="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
+                <filter token="rejection.mail.subject" value="${rejection.mail.subject}"/>
+                <filter token="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
+                <filter token="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
             </filterset>
         </copy>
     </target>
