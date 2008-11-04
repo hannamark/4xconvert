@@ -2,7 +2,7 @@
 <pa:failureMessage/>
 <c:if test="${interWebList != null}">
 
-<display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row" 
+<display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row" 
     name="interWebList" export="false" requestURI="popupIntdisplayList.action">
     <display:column title="Preferred Name" property="name"  headerClass="sortable"/>
     <display:column title="Other Names" property="otherNames"  headerClass="sortable"/> 

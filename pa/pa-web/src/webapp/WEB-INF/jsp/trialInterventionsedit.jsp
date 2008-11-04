@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message
-    key="participatingOrganizations.collaborators.title" /></title>
+    key="interventions.main.title" /></title>
 <s:head />
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet"
     type="text/css" media="all" />
@@ -24,29 +24,53 @@
 
 
 <script type="text/javascript">
-function interventionAdd(){
-     document.intervention.action="trialInterventionsadd.action";
-     document.intervention.submit();     
-}
-function interventionUpdate(){
-     document.intervention.action="trialInterventionsupdate.action";
-     document.intervention.submit();     
-}
-</script>
-
-</head>
-<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-    function lookup(){
-        if(document.intervention.interventionType.value.length < 1){
-           alert("Please select an intervention type before doing look up.");
-        } else {
-           var intType = document.intervention.interventionType.value;
-           showPopWin('${lookupUrl}?interventionType='+intType, 1050, 400, '', intType+' Intervention');
+    function interventionAdd(){
+        document.intervention.action="trialInterventionsadd.action";
+        document.intervention.submit();     
+    }
+    function interventionUpdate(){
+        input_box=confirm("Click OK to save changes.  Cancel to Abort.");
+        if (input_box==true){
+            document.intervention.action="trialInterventionsupdate.action";
+            document.intervention.submit();
         }
+    }
+    function interventionCancel(){
+        document.intervention.action="trialInterventions.action";
+        document.intervention.submit();     
+    }
+    function statusChange() {
+        newType=document.intervention.interventionType.value;
+        if((newType=="Other")||(newType=="Cosmetic")){
+          document.intervention.interventionName.disabled=false;
+          document.intervention.interventionDescription.disabled=false;
+          document.intervention.otherName.disabled=false;
+        } else {
+          document.intervention.interventionName.disabled=true;
+          document.intervention.interventionDescription.disabled=true;
+          document.intervention.otherName.disabled=true;
+        }
+        if(newType=="Drug"){
+          document.intervention.leadIndicator.disabled=false;
+        } else {
+          document.intervention.leadIndicator.disabled=true;
+        }
+    }
+    function lookup(){
+        var intType = document.intervention.interventionType.value;
+        if(intType.length < 1){
+           alert("Please select an intervention type before doing look up.");
+           return;
+        }
+        if((intType=="Other") || (intType=="Cosmetic")){
+           alert("Use form to key in details for non-standard types (Cosmetic and Other) of intervention.");
+           return;
+        }
+        showPopWin('${lookupUrl}?interventionType='+intType, 1050, 400, '', intType+' Intervention');
     }   
     function loadDiv(intid){
          var url = '/pa/protected/ajaxptpInterventiondisplay.action?interventionId='+intid;
-         var div = document.getElementById('loadOrgDetails');   
+         var div = document.getElementById('loadDetails');   
          div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
          var aj = new Ajax.Updater(div, url, {
             asynchronous: true,
@@ -55,7 +79,9 @@ function interventionUpdate(){
          });
          return false;
     }   
-</SCRIPT>
+</script>
+
+</head>
 <body>
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="interventions.main.title" /></h1>
@@ -78,10 +104,8 @@ function interventionUpdate(){
         <td colspan="2"><!--Facility-->
         <h3>Intervention</h3>
         <s:form name="intervention">
-            <div id="loadOrgDetails">
-            <div id="orgDetailsDiv">
+            <div id="loadDetails">
                 <%@ include file="/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp"%>
-            </div>
             </div>
         </s:form>
         <div class="actionsrow"><del class="btnwrapper">

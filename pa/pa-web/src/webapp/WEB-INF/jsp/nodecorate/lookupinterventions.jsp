@@ -23,7 +23,7 @@
         var jsName = document.getElementById("searchName").value;
         var jsType = document.getElementById("interventionType").value;
         var url = '/pa/protected/popupIntdisplayList.action?searchName='+jsName+'&searchType='+jsType;
-        var div = document.getElementById('getOrgs');
+        var div = document.getElementById('getInterventions');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
             asynchronous: true,
@@ -37,12 +37,18 @@
 </head> 
 <body>
 <div class="box">
-<s:form id="poOrganizations" name="poOrganizations" >
+<s:form id="interventions" name="interventions" >
 <h2>Search Interventions</h2>
 <s:label name="interventionErrorMessage"/>
 <table  class="form">  
     <s:hidden id="interventionType" name="interventionType"/>
     <tr>    
+        <td scope="row" class="label">
+            <label for="searchName">Intervention Type: </label>
+        </td>
+        <td>
+            <s:textfield id="interventionType" name="interventionType"  maxlength="60" size="60"  cssStyle="width:200px" readonly="true"/>
+        </td>
         <td scope="row" class="label">
             <label for="searchName">Intervention Name: </label>
         </td>
@@ -60,8 +66,8 @@
                </ul>
           </del>
     </div>
-    <div id="getOrgs" align="center">   
-        <jsp:include page="/WEB-INF/jsp/nodecorate/displayInterventionList.jsp"/>
+    <div id="getInterventions" align="center">   
+        <jsp:include page="/WEB-INF/jsp/nodecorate/lookupInterventionsdisplayList.jsp"/>
     </div>
 </s:form>
 </div>

@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="participatingOrganizations.title" /></title>
+<title><fmt:message key="interventions.main.title" /></title>
 <s:head />
 <script type="text/javascript"
     src='<c:url value="/scripts/js/coppa.js"/>'></script>
@@ -14,22 +14,22 @@
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-function handleEdit(studyResourcingId){
-    document.studyOverallStatus.cbValue.value = studyResourcingId;
-    document.studyOverallStatus.action="trialInterventionsedit.action";
-    document.studyOverallStatus.submit(); 
+function handleEdit(rowId){
+    document.interventionForm.selectedRowIdentifier.value = rowId;
+    document.interventionForm.action="trialInterventionsedit.action";
+    document.interventionForm.submit(); 
 }
-function handleDelete(studyResourcingId){
+function handleDelete(rowId){
     input_box=confirm("Click OK to remove the intervention from the Study.  Cancel to Abort.");
     if (input_box==true){
-        document.studyOverallStatus.cbValue.value = studyResourcingId;
-        document.studyOverallStatus.action="trialInterventionsdelete.action";
-        document.studyOverallStatus.submit();
+        document.interventionForm.selectedRowIdentifier.value = rowId;
+        document.interventionForm.action="trialInterventionsdelete.action";
+        document.interventionForm.submit();
     }
 }
 function handleCreate(){
-    document.studyOverallStatus.action="trialInterventionscreate.action";
-    document.studyOverallStatus.submit(); 
+    document.interventionForm.action="trialInterventionscreate.action";
+    document.interventionForm.submit(); 
 }
 </SCRIPT>
 
@@ -40,34 +40,36 @@ function handleCreate(){
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="studyOverallStatus">
+</s:if> <s:form name="interventionForm"><s:hidden name="selectedRowIdentifier"/> 
     <h2><fmt:message
         key="interventions.details.title" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td colspan="2"><input type="hidden" name="cbValue" /> <display:table
-                name="interventionsList" id="row" class="data">
-                <display:column property="name"
-                    titleKey="interventions.name" class="sortable" />
-                <display:column property="otherNames"
-                    titleKey="interventions.otherNames" class="sortable" />
-                <display:column property="description"
+            <td colspan="2"><input type="hidden" name="cbValue" /> 
+            <display:table name="interventionsList" id="row" class="data" sort="list" pagesize="10" 
+                    requestURI="trialInterventions.action" export="false">
+                <display:column property="name" sortable="true"
+                    titleKey="interventions.name" headerClass="sortable"  />
+                <display:column property="otherNames" sortable="true"
+                    titleKey="interventions.otherNames" headerClass="sortable" />
+                <display:column property="description" sortable="true"
                     titleKey="interventions.description"
-                    class="sortable" />
-                <display:column property="leadIndicator"
+                    headerClass="sortable" />
+                <display:column property="type" sortable="true"
+                    titleKey="interventions.type"
+                    headerClass="sortable"  />
+                <display:column property="leadIndicator" sortable="true"
                     titleKey="interventions.leadIndicator"
-                    class="sortable" />
-                <display:column titleKey="interventions.edit"
-                    class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.id})">
+                    headerClass="sortable"  />
+                <display:column titleKey="interventions.edit" class="action">
+                    <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
                 </display:column>
-                <display:column titleKey="interventions.delete"
-                    class="action">
-                    <s:a href="#" onclick="handleDelete(%{#attr.row.id})">
+                <display:column titleKey="interventions.delete" class="action">
+                    <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
                             alt="Delete" width="16" height="16" />
                     </s:a>
