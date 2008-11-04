@@ -31,6 +31,8 @@ public enum ActionSubcategoryCode implements CodedEnum<String> {
     GENETIC("Genetic"),
     /** Dietary Supplement. */
     DIETARY_SUPPLEMENT("Dietary Supplement"),
+    /** Cosmetic. */
+    COSMETIC("Cosmetic"),
     /** Other. */
     OTHER("Other");
     
