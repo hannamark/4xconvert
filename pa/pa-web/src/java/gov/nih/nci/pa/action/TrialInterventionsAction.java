@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
@@ -16,6 +18,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -40,6 +43,8 @@ public class TrialInterventionsAction extends ActionSupport implements
 
     private static final String ACT_CREATE = "create";
     private static final String ACT_EDIT = "edit";
+    private static final int MAX_DESCRIPTION_LENGTH = 1000;
+    private static final int MAX_OTHER_NAME_LENGTH = 160;
         
     private PlannedActivityServiceRemote paService;
     private InterventionServiceRemote iService;
@@ -55,7 +60,9 @@ public class TrialInterventionsAction extends ActionSupport implements
     private String interventionName;
     private String interventionDescription;
     private String otherName;
-    private Boolean leadIndicator;
+    private Boolean leadIndicator;    
+    private String selectedRowIdentifier;
+
 
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
@@ -98,6 +105,36 @@ public class TrialInterventionsAction extends ActionSupport implements
      * @throws Exception exception
      */
     public String edit() throws Exception {
+        PlannedActivityDTO paDto = paService.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        if (PAUtil.isIiNull(paDto.getInterventionIdentifier())) {
+            setInterventionDescription(StConverter.convertToString(paDto.getDescriptionText()));
+            setInterventionIdentifier(null);
+            setInterventionName(StConverter.convertToString(paDto.getName()));
+            setInterventionType(CdConverter.convertCdToString(paDto.getSubcategoryCode()));
+            setLeadIndicator(BlConverter.covertToBoolean(paDto.getLeadProductIndicator()));
+            setOtherName(StConverter.convertToString(paDto.getAlternateName()));
+        } else {
+            InterventionDTO i = iService.get(paDto.getInterventionIdentifier());
+            if (!"Drug".equals(CdConverter.convertCdToString(i.getTypeCode()))) {
+                addActionError("For standard interventions which are not drugs there are no editable fields.");
+                loadForm();
+                return SUCCESS;
+            }
+            List<InterventionAlternateNameDTO> ianList = ianService.getByIntervention(i.getIdentifier());
+            StringBuffer onBuff = new StringBuffer("");
+            for (InterventionAlternateNameDTO ian : ianList) {
+                if (ianList.get(0) !=  ian) {
+                    onBuff.append(", ");
+                }
+                onBuff.append(StConverter.convertToString(ian.getName()));
+            }
+            setInterventionDescription(StConverter.convertToString(i.getDescriptionText()));
+            setInterventionIdentifier(IiConverter.convertToString(paDto.getInterventionIdentifier()));
+            setInterventionName(StConverter.convertToString(i.getName()));
+            setInterventionType(CdConverter.convertCdToString(i.getTypeCode()));
+            setLeadIndicator(BlConverter.covertToBoolean(paDto.getLeadProductIndicator()));
+            setOtherName(onBuff.toString());
+        }
         setCurrentAction(ACT_EDIT);
         return ACT_EDIT;
     }
@@ -106,22 +143,43 @@ public class TrialInterventionsAction extends ActionSupport implements
      * @return result
      * @throws Exception exception
      */
-    public String add() throws Exception {
+    public String delete() throws Exception {
+        paService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+        loadForm();
+        return SUCCESS;
+    }
+
+    private PlannedActivityDTO generateDto() {
         PlannedActivityDTO paDto = new PlannedActivityDTO();
         paDto.setIdentifier(null);
         paDto.setStudyProtocolIdentifier(spIdIi);
         paDto.setCategoryCode(CdConverter.convertToCd(ActionCategoryCode.INTERVENTION));
         paDto.setUserLastUpdated(user);
-        paDto.setLeadProductIndicator(BlConverter.convertToBl(getLeadIndicator()));
-        
-        // only use existing interventions for now
-        paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
-        paDto.setAlternateName(null);
-        paDto.setDescriptionText(null);
-        paDto.setName(null);
-        paDto.setSubcategoryCode(null);
-        
-        paService.create(paDto);
+        if (PAUtil.isIiNull(IiConverter.convertToIi(getInterventionIdentifier()))) {
+            paDto.setInterventionIdentifier(new Ii());
+            paDto.setAlternateName(StConverter.convertToSt(getOtherName()));
+            paDto.setDescriptionText(StConverter.convertToSt(getInterventionDescription()));
+            paDto.setName(StConverter.convertToSt(getInterventionName()));
+            paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
+            paDto.setLeadProductIndicator(new Bl());
+        } else {
+            paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
+            paDto.setAlternateName(new St());
+            paDto.setDescriptionText(new St());
+            paDto.setName(new St());
+            paDto.setSubcategoryCode(new Cd());
+            paDto.setLeadProductIndicator(BlConverter.convertToBl(getLeadIndicator()));
+        }
+        return paDto;
+    }
+    /**
+     * @return result
+     * @throws Exception exception
+     */
+    public String add() throws Exception {
+        paService.create(generateDto());
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
         return SUCCESS;
     }
@@ -131,12 +189,16 @@ public class TrialInterventionsAction extends ActionSupport implements
      * @throws Exception exception
      */
     public String update() throws Exception {
+        PlannedActivityDTO pa = generateDto();
+        pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        paService.update(pa);
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
         return SUCCESS;
     }
 
     /**
-     * @return the organizationList
+     * @return result
      * @throws Exception on error.
      */
     public String display() throws Exception {
@@ -148,28 +210,46 @@ public class TrialInterventionsAction extends ActionSupport implements
         getInterventionsList().clear();
         List<PlannedActivityDTO> paList = paService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pa : paList) {
-            InterventionDTO i = iService.get(pa.getInterventionIdentifier());
-            List<InterventionAlternateNameDTO> ianList = ianService.getByIntervention(i.getIdentifier());
-            StringBuffer onBuff = new StringBuffer("");
-            for (InterventionAlternateNameDTO ian : ianList) {
-                if (ianList.get(0) !=  ian) {
-                    onBuff.append("\n");
-                }
-                onBuff.append(StConverter.convertToString(ian.getName()));
-            }
-            InterventionWebDTO webDto = new InterventionWebDTO();
-            webDto.setOtherNames(onBuff.toString());
-            webDto.setDescription(StConverter.convertToString(i.getDescriptionText()));
-            webDto.setIdentifier(IiConverter.convertToString(i.getIdentifier()));
-            if ((pa.getLeadProductIndicator() == null) 
-                    || (BlConverter.covertToBoolean(pa.getLeadProductIndicator()) == null)
-                    || (!BlConverter.covertToBoolean(pa.getLeadProductIndicator()))) {
-                webDto.setLeadIndicator(null);
+            if (PAUtil.isIiNull(pa.getInterventionIdentifier())) {
+                InterventionWebDTO webDto = new InterventionWebDTO();
+                webDto.setOtherNames(StConverter.convertToString(pa.getAlternateName()));
+                webDto.setDescription(StConverter.convertToString(pa.getDescriptionText()));
+                webDto.setIdentifier(IiConverter.convertToString(pa.getIdentifier()));
+                if ((pa.getLeadProductIndicator() == null) 
+                        || (BlConverter.covertToBoolean(pa.getLeadProductIndicator()) == null)
+                        || (!BlConverter.covertToBoolean(pa.getLeadProductIndicator()))) {
+                    webDto.setLeadIndicator(null);
+                } else {
+                    webDto.setLeadIndicator("Yes");
+                }            
+                webDto.setName(StConverter.convertToString(pa.getName()));
+                webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
+                getInterventionsList().add(webDto);
             } else {
-                webDto.setLeadIndicator("Yes");
-            }            
-            webDto.setName(StConverter.convertToString(i.getName()));
-            getInterventionsList().add(webDto);
+                InterventionDTO i = iService.get(pa.getInterventionIdentifier());
+                List<InterventionAlternateNameDTO> ianList = ianService.getByIntervention(i.getIdentifier());
+                StringBuffer onBuff = new StringBuffer("");
+                for (InterventionAlternateNameDTO ian : ianList) {
+                    if (ianList.get(0) !=  ian) {
+                        onBuff.append(", ");
+                    }
+                    onBuff.append(StConverter.convertToString(ian.getName()));
+                }
+                InterventionWebDTO webDto = new InterventionWebDTO();
+                webDto.setOtherNames(onBuff.toString());
+                webDto.setDescription(StConverter.convertToString(i.getDescriptionText()));
+                webDto.setIdentifier(IiConverter.convertToString(pa.getIdentifier()));
+                if ((pa.getLeadProductIndicator() == null) 
+                        || (BlConverter.covertToBoolean(pa.getLeadProductIndicator()) == null)
+                        || (!BlConverter.covertToBoolean(pa.getLeadProductIndicator()))) {
+                    webDto.setLeadIndicator(null);
+                } else {
+                    webDto.setLeadIndicator("Yes");
+                }            
+                webDto.setName(StConverter.convertToString(i.getName()));
+                webDto.setType(CdConverter.convertCdToString(i.getTypeCode()));
+                getInterventionsList().add(webDto);
+            }
         }
     }
 
@@ -275,7 +355,12 @@ public class TrialInterventionsAction extends ActionSupport implements
      * @param interventionDescription the intervetnionDescription to set
      */
     public void setInterventionDescription(String interventionDescription) {
-        this.interventionDescription = interventionDescription;
+        if (interventionDescription == null) {
+            this.interventionDescription = null;
+        } else {
+            this.interventionDescription = (interventionDescription.length() > MAX_DESCRIPTION_LENGTH) 
+                    ? interventionDescription.substring(0, MAX_DESCRIPTION_LENGTH) : interventionDescription;
+        }
     }
 
     /**
@@ -289,7 +374,12 @@ public class TrialInterventionsAction extends ActionSupport implements
      * @param otherName the otherName to set
      */
     public void setOtherName(String otherName) {
-        this.otherName = otherName;
+        if (otherName == null) {
+            this.otherName = null;
+        } else {
+            this.otherName = (otherName.length() > MAX_OTHER_NAME_LENGTH) 
+                    ? otherName.substring(0, MAX_OTHER_NAME_LENGTH) : otherName;
+        }
     }
 
     /**
@@ -306,4 +396,17 @@ public class TrialInterventionsAction extends ActionSupport implements
         this.leadIndicator = leadIndicator;
     }
 
+    /**
+     * @return the selectedRowIdentifier
+     */
+    public String getSelectedRowIdentifier() {
+        return selectedRowIdentifier;
+    }
+
+    /**
+     * @param selectedRowIdentifier the selectedRowIdentifier to set
+     */
+    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
+        this.selectedRowIdentifier = selectedRowIdentifier;
+    }
 }
