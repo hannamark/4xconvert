@@ -64,6 +64,7 @@ import org.hibernate.cfg.Configuration;
  * @author Hugh
  *
  */
+@SuppressWarnings("PMD")
 public class TestSchema {
         /** . **/
         public static ArrayList<Long> studyProtocolIds;

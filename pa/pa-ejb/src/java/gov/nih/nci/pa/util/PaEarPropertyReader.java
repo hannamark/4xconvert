@@ -1,5 +1,8 @@
 package gov.nih.nci.pa.util;
 
+
+
+
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
@@ -23,6 +26,10 @@ public class PaEarPropertyReader {
     private static final String RESOURCE_NAME = "paear.properties";
     private static Properties props = null;
     private static String docUploadPath = "doc.upload.path";
+    private static String lookUpServer = "po.server.name";
+    private static String lookUpPort = "po.port.number";
+ 
+    
     static {
         try {
             props = new Properties();
@@ -35,10 +42,10 @@ public class PaEarPropertyReader {
 
 
     /**
-     * 
-     * @return folder path
-     * @throws PAException e
-     */
+      * 
+      * @return folder path
+      * @throws PAException e
+      */
     public static String getDocUploadPath() throws PAException {
         String folderPath = props.getProperty(docUploadPath);
         if (folderPath == null) {
@@ -52,4 +59,23 @@ public class PaEarPropertyReader {
         }    
         return folderPath;
     }
+    
+    /**
+      *
+      * @return String for the server name
+      * @throws PAException on error
+      */
+   public static String getLookUpServerInfo() throws PAException {
+       String server = props.getProperty(lookUpServer);
+       if (server == null) {
+           LOG.error("'server' does not have value in paear.properties ");
+           throw new PAException("'server' does not have value in paear.properties");
+       }
+       String port = props.getProperty(lookUpPort);
+       if (port == null) {
+           LOG.error("'port' does not have value in paear.properties ");
+           throw new PAException("'port' does not have value in paear.properties");
+       }
+       return server + ":" + port;
+   }
 }

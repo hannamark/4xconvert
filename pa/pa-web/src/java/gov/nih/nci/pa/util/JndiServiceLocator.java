@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -90,11 +91,12 @@ public class JndiServiceLocator implements ServiceLocator {
         return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
     }
 
-    /**
+    /** 
      * @return OrganizationEntityServiceRemote
+     * @throws PAException on error
      */
-    public OrganizationEntityServiceRemote getPoOrganizationEntityService() {
-        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+    public OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                 + "/po/OrganizationEntityServiceBean/remote";
         return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
@@ -147,9 +149,10 @@ public class JndiServiceLocator implements ServiceLocator {
 
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
+     * @throws PAException on error
      */
-    public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() {
-        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+    public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
             + "/po/HealthCareFacilityCorrelationServiceBean/remote";
         return (HealthCareFacilityCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
@@ -163,18 +166,19 @@ public class JndiServiceLocator implements ServiceLocator {
     
     /**
      * @return PersonEntityServiceRemote
+     * @throws PAException on error
      */
-    public PersonEntityServiceRemote getPoPersonEntityService() {
-        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
-                                + "/po/PersonEntityServiceBean/remote";
+    public PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
         return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }    
     
     /**
      * @return HealthCareProviderCorrelationServiceRemote
+     * @throws PAException on error
      */
-    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() {
-        String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                                 + "/po/HealthCareProviderCorrelationServiceBean/remote";
         return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     } 

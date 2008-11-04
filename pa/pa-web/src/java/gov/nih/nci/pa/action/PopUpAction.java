@@ -2,6 +2,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.RemoteApiUtil;
@@ -136,7 +137,13 @@ public class PopUpAction extends ActionSupport {
         PersonDTO p = new PersonDTO();
         // (RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
-        persons = PaRegistry.getPoPersonEntityService().search(p);
+        try {
+            persons = PaRegistry.getPoPersonEntityService().search(p);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return SUCCESS;
+        }
         return SUCCESS;
     }
 
@@ -156,7 +163,13 @@ public class PopUpAction extends ActionSupport {
         }         
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
-        persons = PaRegistry.getPoPersonEntityService().search(p);
+        try {
+            persons = PaRegistry.getPoPersonEntityService().search(p);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return SUCCESS;
+        }
         return SUCCESS;
     }
 
@@ -176,7 +189,13 @@ public class PopUpAction extends ActionSupport {
         }         
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
-        persons = PaRegistry.getPoPersonEntityService().search(p);
+        try {
+            persons = PaRegistry.getPoPersonEntityService().search(p);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return SUCCESS;
+        }
         return "persons";
     }
 

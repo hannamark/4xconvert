@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -85,11 +86,11 @@ public interface ServiceLocator {
      */
     StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService();    
 
-    /**
-    *
-    * @return StudyOverallStatusServiceRemote
-    */
-    OrganizationEntityServiceRemote getPoOrganizationEntityService();
+    /** 
+     * @return OrganizationEntityServiceRemote
+     * @throws PAException on error
+     */
+    OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException;
     
     /**
     *
@@ -129,8 +130,9 @@ public interface ServiceLocator {
     /**
     *
     * @return HealthCareFacilityCorrelationServiceRemote
+    * @throws PAException on error  
     */
-    HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService();
+    HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException;
 //    /**
 //    *
 //    * @return HealthCareFacilityCorrelationServiceRemote
@@ -150,8 +152,9 @@ public interface ServiceLocator {
     
     /**
      * @return PersonEntityServiceRemote
+     * @throws PAException on error
      */
-    PersonEntityServiceRemote getPoPersonEntityService();
+    PersonEntityServiceRemote getPoPersonEntityService() throws PAException;
 
     /**
      * @return PAHealthCareProviderRemote
@@ -160,8 +163,9 @@ public interface ServiceLocator {
 
     /**
      * @return HealthCareProviderCorrelationServiceRemote
+     * @throws PAException on error 
      */ 
-    HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService();
+    HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() throws PAException;
     
     /**
      * @return PlannedActivityServiceRemote

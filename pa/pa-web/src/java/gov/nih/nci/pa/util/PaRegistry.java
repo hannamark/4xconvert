@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -138,8 +139,9 @@ public final class PaRegistry {
     /**
      * 
      * @return OrganizationEntityServiceRemote
+     * @throws PAException on error
      */
-    public static OrganizationEntityServiceRemote getPoOrganizationEntityService() {
+    public static OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
         return getInstance().getServiceLocator().getPoOrganizationEntityService();
     }
 
@@ -200,8 +202,10 @@ public final class PaRegistry {
 
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
+     * @throws PAException on error 
      */
-    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() 
+        throws PAException {
         return getInstance().getServiceLocator().getPoHealthCareProverService();
     }
 
@@ -231,8 +235,9 @@ public final class PaRegistry {
     /**
      * 
      * @return PersonEntityServiceRemote
+     * @throws PAException on error 
      */
-    public static PersonEntityServiceRemote getPoPersonEntityService() {
+    public static PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
         return getInstance().getServiceLocator().getPoPersonEntityService();
     }
 
@@ -246,8 +251,10 @@ public final class PaRegistry {
     
     /**
      * @return HealthCareProviderCorrelationServiceRemote
+     * @throws PAException on error 
      */
-    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
+    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() 
+        throws PAException {
         return getInstance().getServiceLocator().getPoPersonCorrelationService();
     }
     

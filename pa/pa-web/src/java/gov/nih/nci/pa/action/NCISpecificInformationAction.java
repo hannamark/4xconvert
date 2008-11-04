@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -214,7 +215,14 @@ public class NCISpecificInformationAction extends ActionSupport {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        OrganizationDTO selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        OrganizationDTO selectedOrgDTO;
+        try {
+            selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ERROR;
+        }
         nciSpecificInformationWebDTO.setOrganizationName(selectedOrgDTO.getName().getPart().get(0).getValue());
         nciSpecificInformationWebDTO.setOrganizationIi(orgId);
         return DISPLAY_ORG_FLD;
