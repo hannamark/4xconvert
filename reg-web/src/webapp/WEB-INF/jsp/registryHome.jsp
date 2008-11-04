@@ -18,11 +18,13 @@
     <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
                 <!--Content-->
 
-		<div id="content" class="homepage">
+
+
+		<div class="homepage" style="width:600px">
 
                     <!--Home Banner-->
 
-                    <div class="homebanner"><img src="images/banner_cactus.jpg" width="700" height="200" alt="" /></div>
+                    <div class="homebanner"><img src="<%=request.getContextPath()%>/images/banner_ctrp.jpg" width="599" height="140" alt="" /></div>
 
                     <!--/Home Banner-->
 

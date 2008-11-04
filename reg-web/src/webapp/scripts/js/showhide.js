@@ -7,3 +7,10 @@ function toggledisplay2 (it) {
   if (vis == "block") { document.getElementById(it).style.display = "none"; }
                  else { document.getElementById(it).style.display = "block"; }
 } 
+
+function ToggleNav(theitem) {
+	if (document.getElementById(theitem).style.display == "none")
+	document.getElementById(theitem).style.display = "block"
+	else
+	document.getElementById(theitem).style.display = "none"
+}

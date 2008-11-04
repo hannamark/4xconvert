@@ -128,7 +128,7 @@ var BubbleTips = {
 
 		
 
-//window.onload=function(){
-//BubbleTips.activateTipOn("acronym");
-//BubbleTips.activateTipOn("dfn");
-//};
+window.onload=function(){
+BubbleTips.activateTipOn("acronym");
+BubbleTips.activateTipOn("dfn");
+};

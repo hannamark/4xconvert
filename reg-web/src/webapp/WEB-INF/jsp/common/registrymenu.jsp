@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-		<li class="stdnav"><div>NCI Registry</div>
+		<li class="stdnav"><div>NCI CTRP</div>
 			<ul>
 				<li><a href="home.action">Home</a></li>			
 				<li><a href="/registry/protected/searchTrial.action" >Search Trials</a></li>
