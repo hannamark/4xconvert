@@ -71,14 +71,14 @@ public class StudyParticipationContactConverter {
 
         Set<St> telSet = new HashSet<St>();
         List<StudyParticipationContactTelecomAddress> tas = bo.getTelecomAddresses();
-        if (tas != null) {
-            for (StudyParticipationContactTelecomAddress ta : tas) {
-                telSet.add(StConverter.convertToSt(ta.getTelecomAddress()));
-            }
-            DSet<St> telDSet = new DSet<St>();
-            telDSet.setItem(telSet);
-            //dto.setTelecomAddresses(telDSet);
-        }
+//        if (tas != null) {
+//            for (StudyParticipationContactTelecomAddress ta : tas) {
+//                telSet.add(StConverter.convertToSt(ta.getTelecomAddress()));
+//            }
+//            DSet<St> telDSet = new DSet<St>();
+//            telDSet.setItem(telSet);
+//            //dto.setTelecomAddresses(telDSet);
+//        }
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();
         emailList.add(bo.getEmail());
