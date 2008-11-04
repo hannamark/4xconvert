@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.InterventionWebDTO;
@@ -55,6 +52,7 @@ public class PopUpIntAction extends ActionSupport {
             List<InterventionDTO> interList = PaRegistry.getInterventionService().search(criteria);
             for (InterventionDTO inter : interList) {
                 InterventionWebDTO newRec = new InterventionWebDTO();
+                newRec.setType(CdConverter.convertCdToString(inter.getTypeCode()));
                 newRec.setIdentifier(IiConverter.convertToString(inter.getIdentifier()));
                 newRec.setDescription(StConverter.convertToString(inter.getDescriptionText()));
                 newRec.setName(StConverter.convertToString(inter.getName()));
@@ -75,14 +73,12 @@ public class PopUpIntAction extends ActionSupport {
         }
     }
     /**
-     * 
      * @return result
      */
     public String displayList() {
         loadResultList();
         return SUCCESS;
     }
-
     /**
      * @return the searchName
      */
