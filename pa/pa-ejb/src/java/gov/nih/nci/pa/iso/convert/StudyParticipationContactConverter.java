@@ -69,8 +69,8 @@ public class StudyParticipationContactConverter {
             dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
         }
 
-        Set<St> telSet = new HashSet<St>();
-        List<StudyParticipationContactTelecomAddress> tas = bo.getTelecomAddresses();
+        //Set<St> telSet = new HashSet<St>();
+        //List<StudyParticipationContactTelecomAddress> tas = bo.getTelecomAddresses();
 //        if (tas != null) {
 //            for (StudyParticipationContactTelecomAddress ta : tas) {
 //                telSet.add(StConverter.convertToSt(ta.getTelecomAddress()));
