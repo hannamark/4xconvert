@@ -73,6 +73,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
+    private List<Arm> arms = new ArrayList<Arm>();
 
     /** 
      * @return accrualReportingMethodCode
@@ -548,5 +549,19 @@ public class StudyProtocol extends AbstractEntity {
         this.plannedActivities = plannedActivities;
     }
 
-     
+    /**
+     * @return the arms
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<Arm> getArms() {
+        return arms;
+    }
+
+    /**
+     * @param arms the arms to set
+     */
+    public void setArms(List<Arm> arms) {
+        this.arms = arms;
+    }
 }

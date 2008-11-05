@@ -6,11 +6,16 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.ActionCategoryCode;
 import gov.nih.nci.pa.enums.ActionSubcategoryCode;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -35,6 +40,8 @@ public class PlannedActivity extends Activity {
     private Boolean leadProductIndicator;
     private String descriptionText;
     private Intervention intervention;
+ 
+    private Collection<Arm> arms = new ArrayList<Arm>();
     
     /**
      * @return the categoryCode
@@ -133,4 +140,21 @@ public class PlannedActivity extends Activity {
     public void setIntervention(Intervention intervention) {
         this.intervention = intervention;
     }
+    /**
+     * @return the arms
+     */
+    @ManyToMany(
+            cascade = {CascadeType.ALL },
+            mappedBy = "interventions",
+            targetEntity = Arm.class)
+    public Collection<Arm> getArms() {
+        return arms;
+    }
+    /**
+     * @param arms the arms to set
+     */
+    public void setArms(Collection<Arm> arms) {
+        this.arms = arms;
+    }
+
 }
