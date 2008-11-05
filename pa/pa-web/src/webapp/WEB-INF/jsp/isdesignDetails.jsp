@@ -49,7 +49,7 @@ var inputElement2 = document.forms[0].elements[input2];
 		{
 			var maxchecked = 1;
 			var count = 0;
-			if(document.forms[0].patient.checked == true) { count++; }
+			if(document.forms[0].subject.checked == true) { count++; }
 			if(document.forms[0].investigator.checked == true) { count++; }
 			if(document.forms[0].caregiver.checked == true) { count++; }
 			if(document.forms[0].outcomesassessor.checked == true) { count++; }
@@ -61,7 +61,7 @@ var inputElement2 = document.forms[0].elements[input2];
 		{
 			var maxchecked = 2;
 			var count = 0;
-			if(document.forms[0].patient.checked == true) { count++; }
+			if(document.forms[0].subject.checked == true) { count++; }
 			if(document.forms[0].investigator.checked == true) { count++; }
 			if(document.forms[0].caregiver.checked == true) { count++; }
 			if(document.forms[0].outcomesassessor.checked == true) { count++; }
@@ -184,10 +184,14 @@ function tooltip() {
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.masking.role"/></dfn><span class="required">*</span></label></td>
 		<td>
-           <input type="checkbox" name="patient" value="patient" onClick="ChecksCount('patient')">patient
-		   <input type="checkbox" name="investigator" value="investigator" onClick="ChecksCount('investigator')">investigator
-		   <input type="checkbox" name="caregiver" value="caregiver" onClick="ChecksCount('caregiver')">caregiver
-		   <input type="checkbox" name="outcomesassessor" value="outcomesassessor" onClick="ChecksCount('outcomesassessor')">outcomesassessor          
+           <s:checkbox name="subject" fieldValue="Subject" onclick="ChecksCount('subject')" value="%{subjectChecked}" />
+           <label>Subject</label>
+		   <s:checkbox name="investigator" fieldValue="Investigator" onclick="ChecksCount('investigator')" value="%{investigatorChecked}" />
+		   <label>Investigator</label>
+		   <s:checkbox name="caregiver" fieldValue="Caregiver" onclick="ChecksCount('caregiver')" value="%{caregiverChecked}" />
+		   <label>Caregiver</label>
+		   <s:checkbox name="outcomesassessor" fieldValue="Outcomes Assessor" onclick="ChecksCount('outcomesassessor')" value="%{outcomesAssessorChecked}" />
+		   <label>Outcomes Assessor</label>          
          </td>
 	</tr>
 	<tr> 
