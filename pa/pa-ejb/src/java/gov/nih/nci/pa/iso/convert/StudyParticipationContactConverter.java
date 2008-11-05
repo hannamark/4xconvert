@@ -4,12 +4,10 @@
 package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
-import gov.nih.nci.pa.domain.StudyParticipationContactTelecomAddress;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -23,9 +21,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Convert StudyParticipationContact domain to DTO.
