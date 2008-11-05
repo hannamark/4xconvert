@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Document;
@@ -37,11 +38,11 @@ import gov.nih.nci.pa.enums.ActionSubcategoryCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
-import gov.nih.nci.pa.enums.NihInstHolderCode;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.NihInstHolderCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -74,6 +75,7 @@ public class TestSchema {
         public static ArrayList<Long> healthCareProviderIds;
         public static ArrayList<Long> plannedActivityIds;
         public static ArrayList<Long> interventionIds;
+        public static ArrayList<Long> armIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -110,6 +112,7 @@ public class TestSchema {
             addAnnotatedClass(ObservationalStudyProtocol.class).
             addAnnotatedClass(StudyOutcomeMeasure.class).
             addAnnotatedClass(StudyIndlde.class).
+            addAnnotatedClass(Arm.class).
                         
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
@@ -150,6 +153,8 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
+                        statement.executeUpdate("delete from ARM_INTERVENTION");
+                        statement.executeUpdate("delete from ARM");
                         statement.executeUpdate("delete from STUDY_OUTCOME_MEASURE");
                         statement.executeUpdate("delete from STUDY_INDLDE");
                         statement.executeUpdate("delete from STUDY_RECRUITMENT_STATUS");
@@ -223,6 +228,7 @@ public class TestSchema {
             healthCareProviderIds = new ArrayList<Long>();
             plannedActivityIds = new ArrayList<Long>();
             interventionIds = new ArrayList<Long>();
+            armIds = new ArrayList<Long>();
 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -405,6 +411,15 @@ public class TestSchema {
             si.setHolderTypeCode(HolderTypeCode.NIH);
             si.setNihInstHolderCode(NihInstHolderCode.NCRR);
             addUpdObject(si); 
+            
+            Arm arm = new Arm();
+            arm.setStudyProtocol(sp);
+            arm.setName("ARM 01");
+            arm.setUserLastCreated("old user");
+            arm.setUserLastUpdated("old user");
+            arm.getInterventions().add(pa);
+            addUpdObject(arm);
+            armIds.add(arm.getId());
             
             HibernateUtil.getCurrentSession().clear();
             

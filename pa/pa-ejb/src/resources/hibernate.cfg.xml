@@ -51,5 +51,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.ObservationalStudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.StudyOutcomeMeasure" />
         <mapping class="gov.nih.nci.pa.domain.StudyIndlde" />
+        <mapping class="gov.nih.nci.pa.domain.Arm" />
     </session-factory>
 </hibernate-configuration>
