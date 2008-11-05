@@ -82,10 +82,12 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -93,8 +95,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Table;
 import org.hibernate.annotations.Where;
 
 /**
@@ -105,6 +109,9 @@ import org.hibernate.annotations.Where;
  *      implements="gov.nih.nci.services.CorrelationDto"
  */
 @Entity
+@Table(appliesTo = "IdentifiedPerson", indexes = {
+        @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
+                columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
 public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correlation {
     private static final long serialVersionUID = 1L;
 
