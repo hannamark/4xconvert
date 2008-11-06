@@ -47,4 +47,9 @@ public class Constants {
     
     /** IRB Approval Document. */
     public static final String IRB_APPROVAL = "irbApproval";
+    
+    /** IRB Approval Document. */
+    public static final String STUDY_INDIDE = "studyIndIde";
+    
+    
 }
