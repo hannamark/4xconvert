@@ -41,8 +41,8 @@ public enum NciDivProgHolderCode implements CodedEnum<String> {
     TRP("TRP-Translational Research Program"),
     /** RRP-Radiation Research Program. */
     RRP("RRP-Radiation Research Program"),
-    /** N/A-Not applicable. */
-    NA("N/A-Not applicable");    
+    /** Not applicable. */
+    NA("Not applicable");    
 
     private String code;
     /**
