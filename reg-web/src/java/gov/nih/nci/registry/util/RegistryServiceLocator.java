@@ -4,6 +4,7 @@ package gov.nih.nci.registry.util;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -186,5 +187,12 @@ public final class RegistryServiceLocator {
      */
     public static StudyContactServiceRemote getStudyContactService() {
         return getInstance().getServiceLocator().getStudyContactService();
+    }
+    /**
+     * @return StudyIndldeServiceRemote
+     * 
+     */
+    public static StudyIndldeServiceRemote getStudyIndldeService() {
+        return getInstance().getServiceLocator().getStudyIndldeService();
     }
 }
