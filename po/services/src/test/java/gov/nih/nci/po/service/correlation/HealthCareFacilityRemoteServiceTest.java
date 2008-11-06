@@ -132,6 +132,7 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
         ii.setRoot(IdConverter.ORG_ROOT);
         dto.setPlayerIdentifier(ii);
 
+        super.setUpData();
         return dto;
     }
 

@@ -101,7 +101,7 @@ import org.junit.Test;
 public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE extends CorrelationService<DTO>> {
 
     private Ii correlationId;
-    private Ii orgId;
+    protected Ii orgId;
     private Ii personId;
     private String tableNameCR;
     private Connection c;

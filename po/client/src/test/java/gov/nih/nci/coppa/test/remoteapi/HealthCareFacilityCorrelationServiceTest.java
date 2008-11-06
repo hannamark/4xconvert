@@ -97,6 +97,7 @@ public class HealthCareFacilityCorrelationServiceTest
     @Override
     protected HealthCareFacilityDTO makeCorrelation() throws Exception {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
+        super.orgId = null;
         dto.setPlayerIdentifier(getOrgId());
         return dto;
     }

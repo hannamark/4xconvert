@@ -80,117 +80,26 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.util.PoHibernateUtil;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
-import gov.nih.nci.po.service.SearchCriteria;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.List;
-
-import org.junit.Test;
+import org.hibernate.validator.ValidatorClass;
 
 /**
- * Service tests.
+ * only one role can exist with a status of anything other than nullified, for a given player org.
  */
-public class HealthCareFacilityServiceTest extends AbstractStructrualRoleServiceTest<HealthCareFacility> {
-
-    @Override
-    HealthCareFacility getSampleStructuralRole() {
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setPlayer(basicOrganization);
-        try {
-            // re-gen new Player Org
-            setUpData();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-        return hcf;
-    }
-
-    @Override
-    void verifyStructuralRole(HealthCareFacility expected, HealthCareFacility actual) {
-        assertEquals(expected.getId(), actual.getId());
-    }
-
-    @Test
-    public void testSearch() throws Exception {
-        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
-
-        HealthCareFacility hcf = getSampleStructuralRole();
-        svc.create(hcf);
-        
-
-        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(null);
-
-        try {
-            svc.search(null);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        try {
-            svc.search(sc);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        testSearchParams(hcf, hcf.getId(), null, null, 1);
-        testSearchParams(hcf, null, hcf.getPlayer().getId(), null, 1);
-        testSearchParams(hcf, null, null, hcf.getStatus(), 1);
-        testSearchParams(hcf, hcf.getId(), hcf.getPlayer().getId(), hcf.getStatus(), 1);
-
-        testSearchParams(hcf, -1L, null, null, 0);
-        testSearchParams(hcf, -1L, null, hcf.getStatus(), 0); // verifies that we're doing ANDs (not ORs)
-
-        HealthCareFacility hcf2 = getSampleStructuralRole();
-        svc.create(hcf2);
-        
-        // WTF? looks like hcf is getting evicted when hcf2 is created (since the fix for PO-628)
-        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, hcf.getId());
-
-        testSearchParams(hcf2, hcf2.getId(), null, null, 1);
-        testSearchParams(hcf, null, null, hcf.getStatus(), 2);
-        testSearchParams(hcf2, null, null, hcf.getStatus(), 2);
-        
-    }
-
-    private void testSearchParams(HealthCareFacility hcf, Long id, Long playerId, RoleStatus rs,
-            int numExpected) {
-        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
-        HealthCareFacility example = new HealthCareFacility();
-        example.setId(id);
-        example.setPlayer(new Organization());
-        example.getPlayer().setId(playerId);
-        example.setStatus(rs);
-
-        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
-        List<HealthCareFacility> l = svc.search(sc);
-        assertNotNull(l);
-        assertEquals(numExpected, l.size());
-        if (numExpected > 0) {
-            assertTrue(l.contains(hcf));
-        }
-    }
-
-    @Test(expected = EntityValidationException.class)
-    public void testUniqueConstraint() throws Exception {
-        HealthCareFacility hcf = getSampleStructuralRole();
-        HealthCareFacility hcf2 = getSampleStructuralRole();
-        hcf.setPlayer(hcf2.getPlayer());
-        getService().create(hcf);        
-        getService().create(hcf2);
-    }
+@Documented
+@ValidatorClass(UniqueHealthCareFacilityValidator.class)
+@Target({ ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UniqueHealthCareFacility {
+    /**
+     * get the massage.
+     */
+    String message() default "Player Organization already has a Health Care Facility";
 }

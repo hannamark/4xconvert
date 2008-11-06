@@ -80,117 +80,66 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.util.PoHibernateUtil;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
 import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.OneCriterionRequiredException;
-import gov.nih.nci.po.service.SearchCriteria;
+import java.io.Serializable;
 
-import java.util.List;
+import java.sql.Connection;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.mapping.Property;
+import org.hibernate.validator.PropertyConstraint;
+import org.hibernate.validator.Validator;
 
-import org.junit.Test;
 
 /**
- * Service tests.
+ * only one role can exist with a status of anything other than nullified, for a given player org.
  */
-public class HealthCareFacilityServiceTest extends AbstractStructrualRoleServiceTest<HealthCareFacility> {
+public class UniqueHealthCareFacilityValidator
+        implements Validator<UniqueHealthCareFacility>, PropertyConstraint, Serializable {
 
-    @Override
-    HealthCareFacility getSampleStructuralRole() {
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setPlayer(basicOrganization);
-        try {
-            // re-gen new Player Org
-            setUpData();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+    private static final long serialVersionUID = -7752244855993073221L;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void initialize(UniqueHealthCareFacility params) {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isValid(Object value) {
+        if (!(value instanceof HealthCareFacility)) {
+            return false;
         }
-        return hcf;
-    }
-
-    @Override
-    void verifyStructuralRole(HealthCareFacility expected, HealthCareFacility actual) {
-        assertEquals(expected.getId(), actual.getId());
-    }
-
-    @Test
-    public void testSearch() throws Exception {
-        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
-
-        HealthCareFacility hcf = getSampleStructuralRole();
-        svc.create(hcf);
         
-
-        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(null);
-
-        try {
-            svc.search(null);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        try {
-            svc.search(sc);
-            fail();
-        } catch (OneCriterionRequiredException e) {
-            // expected
-        }
-
-        testSearchParams(hcf, hcf.getId(), null, null, 1);
-        testSearchParams(hcf, null, hcf.getPlayer().getId(), null, 1);
-        testSearchParams(hcf, null, null, hcf.getStatus(), 1);
-        testSearchParams(hcf, hcf.getId(), hcf.getPlayer().getId(), hcf.getStatus(), 1);
-
-        testSearchParams(hcf, -1L, null, null, 0);
-        testSearchParams(hcf, -1L, null, hcf.getStatus(), 0); // verifies that we're doing ANDs (not ORs)
-
-        HealthCareFacility hcf2 = getSampleStructuralRole();
-        svc.create(hcf2);
+        HealthCareFacility hcf = (HealthCareFacility) value;
+        Connection conn = PoHibernateUtil.getCurrentSession().connection();
+        Session s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+        Criteria c = s.createCriteria(HealthCareFacility.class);
+        LogicalExpression and = Restrictions.and(
+                Restrictions.eq("player", hcf.getPlayer()),
+                Restrictions.ne("status", RoleStatus.NULLIFIED));
+        c.add(and);
+        HealthCareFacility other = (HealthCareFacility) c.uniqueResult();
+        boolean valid = other == null || other.getId().equals(hcf.getId());
+        s.close();
         
-        // WTF? looks like hcf is getting evicted when hcf2 is created (since the fix for PO-628)
-        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, hcf.getId());
-
-        testSearchParams(hcf2, hcf2.getId(), null, null, 1);
-        testSearchParams(hcf, null, null, hcf.getStatus(), 2);
-        testSearchParams(hcf2, null, null, hcf.getStatus(), 2);
-        
+        return valid;
     }
 
-    private void testSearchParams(HealthCareFacility hcf, Long id, Long playerId, RoleStatus rs,
-            int numExpected) {
-        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
-        HealthCareFacility example = new HealthCareFacility();
-        example.setId(id);
-        example.setPlayer(new Organization());
-        example.getPlayer().setId(playerId);
-        example.setStatus(rs);
-
-        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
-        List<HealthCareFacility> l = svc.search(sc);
-        assertNotNull(l);
-        assertEquals(numExpected, l.size());
-        if (numExpected > 0) {
-            assertTrue(l.contains(hcf));
-        }
+    /**
+     * {@inheritDoc}
+     */
+    public void apply(Property property) {
+        // No db constraints are implied by this validator
     }
 
-    @Test(expected = EntityValidationException.class)
-    public void testUniqueConstraint() throws Exception {
-        HealthCareFacility hcf = getSampleStructuralRole();
-        HealthCareFacility hcf2 = getSampleStructuralRole();
-        hcf.setPlayer(hcf2.getPlayer());
-        getService().create(hcf);        
-        getService().create(hcf2);
-    }
 }
