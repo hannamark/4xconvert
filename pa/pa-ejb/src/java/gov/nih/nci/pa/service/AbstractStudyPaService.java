@@ -15,6 +15,7 @@ import java.util.List;
  * copyright holder, NCI.
  * @param <DTO> data transfer object
  */
+@Deprecated
 public abstract class AbstractStudyPaService<DTO> 
         extends AbstractBasePaService<DTO> 
         implements StudyPaService<DTO> {

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
  * copyright holder, NCI.
  * @param <DTO> data transfer object
  */
+@Deprecated
 public abstract class AbstractBasePaService<DTO> 
         implements BasePaService<DTO> {
     
