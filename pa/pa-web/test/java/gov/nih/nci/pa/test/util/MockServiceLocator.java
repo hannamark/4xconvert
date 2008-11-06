@@ -26,6 +26,7 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyProtocolService;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -224,6 +225,9 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
+        return null;
+    }
+    public ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() {
         return null;
     }
 

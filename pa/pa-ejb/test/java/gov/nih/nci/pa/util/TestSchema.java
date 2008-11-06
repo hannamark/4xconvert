@@ -1,19 +1,25 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.Arm;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
+import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.HealthCareProviderTest;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -27,7 +33,6 @@ import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
-import gov.nih.nci.pa.domain.StudyParticipationContactTelecomAddress;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
@@ -73,6 +78,7 @@ public class TestSchema {
         public static ArrayList<Long> studyParticipationContactIds;
         public static ArrayList<Long> healthCareFacilityIds;
         public static ArrayList<Long> healthCareProviderIds;
+        public static ArrayList<Long> clinicalResearchStaffIds;
         public static ArrayList<Long> plannedActivityIds;
         public static ArrayList<Long> interventionIds;
         public static ArrayList<Long> armIds;
@@ -101,7 +107,7 @@ public class TestSchema {
             addAnnotatedClass(FundingMechanism.class).
             addAnnotatedClass(StudySiteAccrualStatus.class).
             addAnnotatedClass(StudyParticipationContact.class).
-            addAnnotatedClass(StudyParticipationContactTelecomAddress.class).
+
             addAnnotatedClass(Document.class).
             addAnnotatedClass(StudyRecruitmentStatus.class).
             addAnnotatedClass(StratumGroup.class).
@@ -113,7 +119,7 @@ public class TestSchema {
             addAnnotatedClass(StudyOutcomeMeasure.class).
             addAnnotatedClass(StudyIndlde.class).
             addAnnotatedClass(Arm.class).
-                        
+            addAnnotatedClass(ClinicalResearchStaff.class).
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
@@ -161,7 +167,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
                         statement.executeUpdate("delete from STUDY_CONDITIONS");
                         statement.executeUpdate("delete from CONDITIONS");
-                        statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT_TELECOM_ADDRESS");
+                        statement.executeUpdate("delete from STUDY_SITE_ACCRUAL_STATUS");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION");
                         statement.executeUpdate("delete from DOCUMENT");
@@ -170,8 +176,8 @@ public class TestSchema {
                         statement.executeUpdate("delete from COUNTRY");
                         statement.executeUpdate("delete from INTERVENTION");
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
-                        statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from HEALTHCARE_PROVIDER");
+                        statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from PERSON");
                         connection.commit();
                     } finally {
@@ -226,10 +232,11 @@ public class TestSchema {
             studyParticipationContactIds = new ArrayList<Long>();
             healthCareFacilityIds = new ArrayList<Long>();
             healthCareProviderIds = new ArrayList<Long>();
+            clinicalResearchStaffIds = new ArrayList<Long>();
             plannedActivityIds = new ArrayList<Long>();
             interventionIds = new ArrayList<Long>();
             armIds = new ArrayList<Long>();
-
+                
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
             sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
@@ -268,28 +275,27 @@ public class TestSchema {
             addUpdObject(con);
             con.setId(con.getId());
             
-            Organization org = new Organization();
-            org.setIdentifier("ORG ID 01");
-            org.setName("Org Name 01");
+            Organization org = OrganizationTest.createOrganizationObj();
             addUpdObject(org);
             
-            HealthCareFacility hfc = new HealthCareFacility();
-            hfc.setIdentifier("HCF ID 01");
-            hfc.setOrganization(org);
+            HealthCareFacility hfc = HealthCareFacilityTest.createHealthCareFacilityObj(org); 
             addUpdObject(hfc);
             healthCareFacilityIds.add(hfc.getId());
             
-            Person per = new Person();
+
+            
+            Person per = PersonTest.createPersonObj();
             per.setFirstName("Joe");
             per.setLastName("the Clinician");
             addUpdObject(per);
             
-            HealthCareProvider hcp = new HealthCareProvider();
-            hcp.setPerson(per);
-            hcp.setIdentifier(66L);
+            HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(per, org);
             addUpdObject(hcp);
             healthCareProviderIds.add(hcp.getId());
-            
+
+            ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(org, per);
+            addUpdObject(crs);
+            clinicalResearchStaffIds.add(crs.getId());            
             
             StudyParticipation sPart = new StudyParticipation();
             sPart.setFunctionalCode(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION);
@@ -322,14 +328,11 @@ public class TestSchema {
             spc.setStudyParticipation(sPart);
             spc.setStudyProtocol(sp);
             spc.setHealthCareProvider(hcp);
+            spc.setClinicalResearchStaff(crs);
+            
             addUpdObject(spc);
             studyParticipationContactIds.add(spc.getId());
             
-            StudyParticipationContactTelecomAddress spcta 
-                    = new StudyParticipationContactTelecomAddress();
-            spcta.setStudyParticipationContact(spc);
-            spcta.setTelecomAddress("java@nci.nih.gov");
-            addUpdObject(spcta);
             
             Document doc = new Document();
             doc.setStudyProtocol(sp);

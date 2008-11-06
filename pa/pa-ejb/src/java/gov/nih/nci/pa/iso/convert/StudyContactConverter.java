@@ -3,9 +3,10 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -43,6 +44,9 @@ public class StudyContactConverter {
         if (bo.getHealthCareProvider() != null) {
             dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
         }
+        if (bo.getClinicalResearchStaff() != null) {
+            dto.setClinicalResearchStaff(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
+        }
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
@@ -64,11 +68,18 @@ public class StudyContactConverter {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
         HealthCareProvider hfBo = null;
+        ClinicalResearchStaff crs = null;
         if (!PAUtil.isIiNull(dto.getHealthCareProvider())) {
             hfBo = new HealthCareProvider();
             hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProvider()));
             bo.setHealthCareProvider(hfBo);
         }
+        if (!PAUtil.isIiNull(dto.getClinicalResearchStaff())) {
+            crs = new ClinicalResearchStaff();
+            crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaff()));
+            bo.setClinicalResearchStaff(crs);
+        }
+
         bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setStudyProtocol(spBo);
         return bo;

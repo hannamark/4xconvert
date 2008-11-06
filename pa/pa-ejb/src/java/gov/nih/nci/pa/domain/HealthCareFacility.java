@@ -28,7 +28,7 @@ import org.hibernate.validator.NotNull;
 
 @Entity
 @Table(name = "HEALTHCARE_FACILITY")
-public class HealthCareFacility  extends AbstractEntity {
+public class HealthCareFacility  extends StructuralRole {
     
     private Organization organization;
     private String identifier;  
@@ -55,6 +55,7 @@ public class HealthCareFacility  extends AbstractEntity {
      * @return the identifier
      */
     @Column(name = "IDENTIFIER")
+    @NotNull
     public String getIdentifier() {
         return identifier;
     }

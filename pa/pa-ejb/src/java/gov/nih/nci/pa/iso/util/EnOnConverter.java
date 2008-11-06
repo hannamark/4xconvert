@@ -51,6 +51,19 @@ public class EnOnConverter {
     }
     return iso;
     }
+    
+    /**
+     * returns the name of the organization.
+     * @param enOn enOn
+     * @return name org name
+     */
+    public static String convertEnOnToString(EnOn enOn) {
+        
+        if (enOn.getPart() != null && enOn.getPart().get(0) != null) {
+            return enOn.getPart().get(0).getValue();
+        }
+        return null;
+    }
 
     
 

@@ -2,10 +2,12 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,17 +33,24 @@ public class OrganizationTest   {
      */
     @Test
     public void createOrganization() {
-        Organization create = createOrganizationObj();
-        TestSchema.addUpdObject(create);
-        Session session  = TestSchema.getSession();
-        
-        Serializable id = create.getId();
-        assertNotNull(id);
-        Organization saved = (Organization) session.load(Organization.class, id);
-        assertEquals("Name does not match " , create.getName(), saved.getName());
-        assertEquals("Identifer does not match " , create.getIdentifier(), saved.getIdentifier());
-        assertEquals("User Id  does not match " , create.getUserLastUpdated(), saved.getUserLastUpdated());
-        assertEquals("Date updated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
+        try {
+            Session session  = TestSchema.getSession();
+            Transaction t = session.beginTransaction();
+            Organization create = createOrganizationObj();
+            TestSchema.addUpdObject(create);
+            
+            
+            Serializable id = create.getId();
+            assertNotNull(id);
+            Organization saved = (Organization) session.load(Organization.class, id);
+            assertEquals("Name does not match " , create.getName(), saved.getName());
+            assertEquals("Identifer does not match " , create.getIdentifier(), saved.getIdentifier());
+            assertEquals("User Id  does not match " , create.getUserLastUpdated(), saved.getUserLastUpdated());
+            assertEquals("Date updated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
+            t.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -55,7 +64,8 @@ public class OrganizationTest   {
         create.setUserLastUpdated("abstractor");
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
-        
+        create.setIdentifier("abc");
+        create.setStatusCode(StatusCode.PENDING);
         return create;
         
     }

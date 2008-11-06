@@ -5,19 +5,14 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -40,9 +35,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
         
     private Boolean primaryIndicator;
     private StudyContactRoleCode roleCode;
-    private List<StudyParticipationContactTelecomAddress> telecomAddresses;
     private StudyParticipation studyParticipation;
-    private HealthCareProvider healthCareProvider;
     private String phone;
     private String email;
     /**
@@ -178,21 +171,6 @@ public class StudyParticipationContact extends PersonFunctionalRole {
         this.roleCode = roleCode;
     }
     /**
-     * @return the telecomAddresses
-     */
-    @OneToMany(mappedBy = "studyParticipationContact")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<StudyParticipationContactTelecomAddress> getTelecomAddresses() {
-        return telecomAddresses;
-    }
-    /**
-     * @param telecomAddresses the telecomAddresses to set
-     */
-    public void setTelecomAddresses(
-            List<StudyParticipationContactTelecomAddress> telecomAddresses) {
-        this.telecomAddresses = telecomAddresses;
-    }
-    /**
      * @return the studyParticipation
      */
     @ManyToOne
@@ -206,19 +184,5 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      */
     public void setStudyParticipation(StudyParticipation studyParticipation) {
         this.studyParticipation = studyParticipation;
-    }
-    /**
-     * @return the healthCareProvider
-     */
-    @JoinColumn(name = "health_care_provider_id")
-    @ManyToOne
-    public HealthCareProvider getHealthCareProvider() {
-        return healthCareProvider;
-    }
-    /**
-     * @param healthCareProvider the healthCareProvider to set
-     */
-    public void setHealthCareProvider(HealthCareProvider healthCareProvider) {
-        this.healthCareProvider = healthCareProvider;
     }
 }

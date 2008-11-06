@@ -23,6 +23,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -257,7 +258,7 @@ public final class PaRegistry {
         throws PAException {
         return getInstance().getServiceLocator().getPoPersonCorrelationService();
     }
-    
+
     /**
      * @return PlannedActivityServiceRemote
      */
@@ -283,5 +284,15 @@ public final class PaRegistry {
      */
     public static StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
         return getInstance().getServiceLocator().getOutcomeMeasurService();
+    }
+    
+    /**
+     * 
+     * @return ClinicalResearchStaffCorrelationServiceRemote
+     * @throws PAException on error 
+     */
+    public static ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() 
+        throws PAException {
+        return getInstance().getServiceLocator().getPoClinicalResearchStaffCorrelationService();
     }
 }

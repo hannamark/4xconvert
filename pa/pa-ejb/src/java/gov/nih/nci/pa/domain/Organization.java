@@ -4,11 +4,15 @@
 package gov.nih.nci.pa.domain;
 
 
+import gov.nih.nci.pa.enums.StatusCode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -31,6 +35,7 @@ public class Organization extends AbstractEntity {
     private String city;
     private String countryName;
     private String postalCode;
+    private StatusCode statusCode;
     private List<HealthCareFacility> healthCareFacilities = new ArrayList<HealthCareFacility>();
     
     /**
@@ -111,6 +116,24 @@ public class Organization extends AbstractEntity {
         this.postalCode = postalCode;
     }
 
+    /**
+     * 
+     * @return statusCode
+     */
+    @Column(name = "STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public StatusCode getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * 
+     * @param statusCode statusCode
+     */
+    public void setStatusCode(StatusCode statusCode) {
+        this.statusCode = statusCode;
+    }
+    
     /**
      * 
      * @return healthCareFacilities

@@ -13,7 +13,6 @@ import gov.nih.nci.po.data.convert.IdConverter;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings("PMD")
 public class IiConverter {
 
     /**

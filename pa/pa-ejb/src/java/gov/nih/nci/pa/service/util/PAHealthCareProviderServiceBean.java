@@ -133,7 +133,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             session.saveOrUpdate(person);
             HealthCareProvider careProvider = new HealthCareProvider();
             Long temp = dto.getAssignedIdentifier();
-            careProvider.setIdentifier(temp);
+            careProvider.setIdentifier(temp.toString());
             careProvider.setPerson(person);
             session.saveOrUpdate(careProvider);
             session.flush();
@@ -190,7 +190,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO.setRoleName((((StudyParticipationContact) searchResult[1]).getRoleCode()));
             personWebDTO.setTelephone((((StudyParticipationContact) searchResult[1]).getPhone()));
             personWebDTO.setEmail((((StudyParticipationContact) searchResult[1]).getEmail()));
-            personWebDTO.setSelectedPersId(((HealthCareProvider) searchResult[TWO]).getIdentifier());
+            personWebDTO.setSelectedPersId(Long.valueOf(((HealthCareProvider) searchResult[TWO]).getIdentifier()));
             retList.add(personWebDTO);
         }
         return retList;
@@ -223,7 +223,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
                     return null;
                 }
                 careProvider = ((HealthCareProvider) searchResult[1]);
-                return careProvider.getIdentifier();
+                return Long.valueOf(careProvider.getIdentifier());
             }
             LOG.debug("Leaving  getIdentifierBySPCId");
         } catch (HibernateException hbe) {

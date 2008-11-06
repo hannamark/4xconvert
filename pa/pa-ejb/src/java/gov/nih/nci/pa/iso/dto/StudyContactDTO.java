@@ -4,9 +4,9 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Bl;
 
 
 /**
@@ -21,7 +21,6 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
 
     private Ii studyProtocolIi;
     private Bl primaryIndicator;
-    private Ii healthCareProvider;
     private Cd roleCode;
     private Ad postalAddress;
     
@@ -74,19 +73,6 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     public void setPrimaryIndicator(Bl primaryIndicator) {
         this.primaryIndicator = primaryIndicator;
     }
-    /**
-     * @return the healthCareProvider
-     */
-    public Ii getHealthCareProvider() {
-        return healthCareProvider;
-    }
-    /**
-     * @param healthCareProvider the healthCareProvider to set
-     */
-    public void setHealthCareProvider(Ii healthCareProvider) {
-        this.healthCareProvider = healthCareProvider;
-    }
-
 
 
 }

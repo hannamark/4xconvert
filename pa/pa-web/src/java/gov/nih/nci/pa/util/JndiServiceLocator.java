@@ -5,8 +5,8 @@ import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -23,6 +23,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -226,4 +227,16 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
         return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup("pa/StudyOutcomeMeasureServiceBean/remote");
     }
+
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     * @throws PAException e
+     */
+    public ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService()  
+    throws PAException { 
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+            + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
+        return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
 }

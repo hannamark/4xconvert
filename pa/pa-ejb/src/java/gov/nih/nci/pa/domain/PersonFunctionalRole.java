@@ -1,6 +1,10 @@
 package gov.nih.nci.pa.domain;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * Abstract class for managing Person Functional Role .
@@ -13,5 +17,44 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 @SuppressWarnings("PMD")
 public abstract class PersonFunctionalRole extends FunctionalRole {
+    
+    private HealthCareProvider healthCareProvider;
+    private ClinicalResearchStaff clinicalResearchStaff;
+
+    /**
+     * 
+     * @return crs ClinicalResearchStaff
+     */
+    @ManyToOne 
+    @JoinColumn(name = "CLINICAL_RESEARCH_STAFF_ID", updatable = false)
+    @NotNull
+    public ClinicalResearchStaff getClinicalResearchStaff() {
+        return clinicalResearchStaff;
+    }
+    /**
+     * 
+     * @param clinicalResearchStaff ClinicalResearchStaff
+     */
+    public void setClinicalResearchStaff(ClinicalResearchStaff clinicalResearchStaff) {
+        this.clinicalResearchStaff = clinicalResearchStaff;
+    }
+
+    /**
+     * 
+     * @return healthCareProvider healthCareProvider
+     */
+    @ManyToOne
+    @JoinColumn(name = "HEALTHCARE_PROVIDER_ID", updatable = false)
+    public HealthCareProvider getHealthCareProvider() {
+        return healthCareProvider;
+    }
+
+    /**
+     * 
+     * @param healthCareProvider healthCareProvider
+     */
+    public void setHealthCareProvider(HealthCareProvider healthCareProvider) {
+        this.healthCareProvider = healthCareProvider;
+    }
 
 }

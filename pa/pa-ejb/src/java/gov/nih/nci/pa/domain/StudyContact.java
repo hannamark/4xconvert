@@ -2,13 +2,12 @@ package gov.nih.nci.pa.domain;
 
 
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
 
 
 
@@ -34,7 +33,6 @@ public class StudyContact extends PersonFunctionalRole {
     private String postalCode;
     private Country country;
     private StudyContactRoleCode roleCode;    
-    private HealthCareProvider healthCareProvider;
     private Boolean primaryIndicator;
    
 
@@ -142,25 +140,6 @@ public class StudyContact extends PersonFunctionalRole {
 
     /**
      * 
-     * @return healthCareProvider healthCareProvider
-     */
-    @ManyToOne
-    @JoinColumn(name = "HEALTHCARE_PROVIDER_ID", updatable = false)
-    @NotNull
-    public HealthCareProvider getHealthCareProvider() {
-        return healthCareProvider;
-    }
-
-    /**
-     * 
-     * @param healthCareProvider healthCareProvider
-     */
-    public void setHealthCareProvider(HealthCareProvider healthCareProvider) {
-        this.healthCareProvider = healthCareProvider;
-    }
-    
-    /**
-     * 
      * @return primaryIndicator primaryIndicator
      */
     @Column(name = "PRIMARY_INDICATOR")
@@ -191,4 +170,5 @@ public class StudyContact extends PersonFunctionalRole {
     public void setRoleCode(StudyContactRoleCode studyContactRoleCode) {
         this.roleCode = studyContactRoleCode;
     }
+
 }

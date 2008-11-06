@@ -23,6 +23,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -186,4 +187,10 @@ public interface ServiceLocator {
      * @return OutcomeMeasureServiceRemote
      */
     StudyOutcomeMeasureServiceRemote getOutcomeMeasurService();
+    
+    /**
+     * @return getPoClinicalResearchStaffCorrelationService
+     * @throws PAException on error 
+     */
+    ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() throws PAException;
 }

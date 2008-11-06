@@ -2,11 +2,11 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import java.util.List;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.pa.util.HibernateUtil;
+
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class StudyContactTest  {
+public class StudyContactTest   {
     
     /**
      * 
@@ -33,12 +33,21 @@ public class StudyContactTest  {
     @Test
     public void createStudyContactTest() {
         Session session = TestSchema.getSession();
+        Transaction t = session.beginTransaction();
         Person p = PersonTest.createPersonObj();
         TestSchema.addUpdObject(p);
         Person savedP = (Person) session.load(Person.class, p.getId());
         assertEquals("Person  id does not match " , p.getId(), savedP.getId());
+
+        Organization o = OrganizationTest.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        assertNotNull(o.getId());
         
-        HealthCareProvider hc = HealthCareProviderTest.createHealthCareProviderObj(p);
+        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o,p);
+        TestSchema.addUpdObject(crs);
+        assertNotNull(crs.getId());
+        
+        HealthCareProvider hc = HealthCareProviderTest.createHealthCareProviderObj(p,o);
         TestSchema.addUpdObject(hc);
         HealthCareProvider savedhc = (HealthCareProvider) session.load(HealthCareProvider.class, hc.getId());
         assertEquals("Healtcare Provider does not match " , hc.getId(), savedhc.getId());
@@ -54,7 +63,7 @@ public class StudyContactTest  {
         TestSchema.addUpdObject(c);
         assertNotNull(c.getId());
         
-        StudyContact create = createStudyContactObj(sp , c , hc);
+        StudyContact create = createStudyContactObj(sp , c , hc , crs);
         TestSchema.addUpdObject(create);
         StudyContact saved = (StudyContact) session.load(StudyContact.class, create.getId());
 
@@ -74,24 +83,32 @@ public class StudyContactTest  {
         assertEquals("Study contact / Healthcare /Person not match " , 
                 create.getHealthCareProvider().getPerson().getId(), saved.getHealthCareProvider().getPerson().getId());
         
-   
+        //t.commit();
 
     }
     
     @Test
     public void getPersonsAssociatedWithProtcol() {
         Session session = TestSchema.getSession();
+        
         Person p = PersonTest.createPersonObj();
         TestSchema.addUpdObject(p);
         Person savedP = (Person) session.load(Person.class, p.getId());
         assertEquals("Person  id does not match " , p.getId(), savedP.getId());
         
-        HealthCareProvider hc = HealthCareProviderTest.createHealthCareProviderObj(p);
+        Organization o = OrganizationTest.createOrganizationObj();
+        TestSchema.addUpdObject(o);
+        assertNotNull(o.getId());
+
+        HealthCareProvider hc = HealthCareProviderTest.createHealthCareProviderObj(p , o);
         TestSchema.addUpdObject(hc);
         HealthCareProvider savedhc = (HealthCareProvider) session.load(HealthCareProvider.class, hc.getId());
         assertEquals("Healtcare Provider does not match " , hc.getId(), savedhc.getId());
 
-
+        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+        TestSchema.addUpdObject(crs);
+        assertNotNull(crs.getId());
+        
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
@@ -102,12 +119,10 @@ public class StudyContactTest  {
         TestSchema.addUpdObject(c);
         assertNotNull(c.getId());
         
-        StudyContact create = createStudyContactObj(sp , c , hc);
+        StudyContact create = createStudyContactObj(sp , c , hc , crs);
         TestSchema.addUpdObject(create);
         StudyContact saved = (StudyContact) session.load(StudyContact.class, create.getId());
         
-        //StudyContactRole scr = StudyContactRolesTest.createStudyContactRoleObj(create, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
-        //TestSchema.addUpdObject(scr);
         
         assertNotNull(saved.getId());
         assertEquals("Study contact does not match " , create.getId(), saved.getId());
@@ -130,7 +145,7 @@ public class StudyContactTest  {
         Person savedP2 = (Person) session.load(Person.class, p2.getId());
         assertEquals("Person  id does not match " , p2.getId(), savedP2.getId());
 
-        HealthCareProvider hc2 = HealthCareProviderTest.createHealthCareProviderObj(p2);
+        HealthCareProvider hc2 = HealthCareProviderTest.createHealthCareProviderObj(p2, o);
         TestSchema.addUpdObject(hc2);
         HealthCareProvider savedhc2 = (HealthCareProvider) session.load(HealthCareProvider.class, hc2.getId());
         assertEquals("Healtcare Provider does not match " , hc2.getId(), savedhc2.getId());
@@ -141,12 +156,10 @@ public class StudyContactTest  {
         StudyProtocol savedsp2 = (StudyProtocol) session.load(StudyProtocol.class, sp2.getId());
         assertEquals("Study Protocol does not match " , sp2.getId(), savedsp2.getId());
 
-        StudyContact create2 = createStudyContactObj(sp2 , c , hc2);
-        TestSchema.addUpdObject(create2);
-        StudyContact saved2 = (StudyContact) session.load(StudyContact.class, create2.getId());
+//        StudyContact create2 = createStudyContactObj(sp2 , c , hc2 , crs);
+//        TestSchema.addUpdObject(create2);
+//        StudyContact saved2 = (StudyContact) session.load(StudyContact.class, create2.getId());
 
-        //StudyContactRole scr2 = StudyContactRolesTest.createStudyContactRoleObj(create2, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
-        //TestSchema.addUpdObject(scr2);
         
 //        List<Person> persons = null;
 //        StringBuffer hql = new StringBuffer();
@@ -166,7 +179,7 @@ public class StudyContactTest  {
      * @param sp StudyProtocol
      * @return StudyContact
      */
-    public static  StudyContact createStudyContactObj(StudyProtocol sp , Country c , HealthCareProvider hc) {
+    public static  StudyContact createStudyContactObj(StudyProtocol sp , Country c , HealthCareProvider hc , ClinicalResearchStaff crs) {
         StudyContact sc = new StudyContact();
         sc.setPrimaryIndicator(Boolean.TRUE);
         sc.setAddressLine("1111, terra cotta cirle");
@@ -180,6 +193,7 @@ public class StudyContactTest  {
         sc.setStudyProtocol(sp);
         sc.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         sc.setHealthCareProvider(hc);
+        sc.setClinicalResearchStaff(crs);
         return sc;
     }
 

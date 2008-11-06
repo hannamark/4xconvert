@@ -14,10 +14,11 @@ import org.hibernate.validator.NotNull;
 
 
 /**
- * A person who directly or indirectly administers interventions that are designed to 
- * improve the physical or emotional status of another person. A person licensed, certified or 
- * otherwise authorized or permitted by law to administer health care in the ordinary course of 
- * business or practice of a profession, including a health care facility. 
+ * Individuals who are employed and/or involved in any aspect of clinical research.
+ * For example, administrators, clinical and data managers, clinical research 
+ * pharmacists, clinical research associates, clinical trials compliance coordinators, 
+ * clinical trials specialists, laboratory technologists, nurses, research services 
+ * consultants, study coordinators and others.
  * 
  * @author Naveen Amiruddin
  * @since 07/24/2007
@@ -26,18 +27,16 @@ import org.hibernate.validator.NotNull;
  * copyright holder, NCI.
  */
 @Entity
-@Table(name = "HEALTHCARE_PROVIDER")
-public class HealthCareProvider extends StructuralRole {
-    
+@Table(name = "CLINICAL_RESEARCH_STAFF")
+public class ClinicalResearchStaff  extends StructuralRole {
     private static final long serialVersionUID = 1234567890L;
+    
     private String identifier;
-
     private Person person;
     private Organization organization;
     private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
     private List<StudyParticipationContact> studyPartContacts = new ArrayList<StudyParticipationContact>();
 
-    
     /**
      * @return the identifier
      */
@@ -53,11 +52,11 @@ public class HealthCareProvider extends StructuralRole {
         this.identifier = identifier;
     }
 
+    
     /**
      * 
      * @return person person
      */
-
     @ManyToOne
     @JoinColumn(name = "PERSON_ID", updatable = false)
     @NotNull
@@ -71,7 +70,7 @@ public class HealthCareProvider extends StructuralRole {
     public void setPerson(Person person) {
         this.person = person;
     }    
-    
+
     /**
      * 
      * @return person person
@@ -91,7 +90,6 @@ public class HealthCareProvider extends StructuralRole {
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }
-    
     /**
      * 
      * @return studyContacts studyContacts

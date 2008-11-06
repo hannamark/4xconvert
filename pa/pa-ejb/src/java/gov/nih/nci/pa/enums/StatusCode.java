@@ -15,14 +15,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum StatusCode implements CodedEnum<String> {
 
-     /**
-     * Active.
-     */
+     /*** Active.*/
      ACTIVE("Active"), 
-     /**
-      * Pending.
-      */
-     PENDING("Pending");
+     /*** Pending.*/
+     PENDING("Pending"),
+     /*** In Active. **/
+     INACTIVE("InActive"),
+     /*** Nullified. */
+     NULLIFIED("Nullified");
      
           
      private String code;

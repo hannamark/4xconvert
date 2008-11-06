@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.Serializable;
 
+import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,16 +36,23 @@ public class PersonTest {
      */
     @Test
     public void createPesrsonTest() {
-        Person create = createPersonObj();
-        Session session  = TestSchema.getSession();
-        TestSchema.addUpdObject(create);
-        Serializable cid = create.getId();
-        assertNotNull(cid);
-        Person saved = (Person) session.load(Person.class, cid);
-        assertEquals("First Name does not match " , create.getFirstName() , saved.getFirstName());
-        assertEquals("Last Name does not match " , create.getLastName() , saved.getLastName());
-        assertEquals("Middle Name does not match " , create.getMiddleName() , saved.getMiddleName());
-        assertEquals("Id does not match " , create.getId() , saved.getId());
+        try {
+            Person create = createPersonObj();
+            
+            Session session  = TestSchema.getSession();
+            Transaction t = session.beginTransaction();
+            TestSchema.addUpdObject(create);
+            Serializable cid = create.getId();
+            assertNotNull(cid);
+            Person saved = (Person) session.load(Person.class, cid);
+            assertEquals("First Name does not match " , create.getFirstName() , saved.getFirstName());
+            assertEquals("Last Name does not match " , create.getLastName() , saved.getLastName());
+            assertEquals("Middle Name does not match " , create.getMiddleName() , saved.getMiddleName());
+            assertEquals("Id does not match " , create.getId() , saved.getId());
+            t.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -55,6 +64,8 @@ public class PersonTest {
         p.setFirstName("Naveen");
         p.setLastName("Amiruddin");
         p.setMiddleName("S");
+        p.setIdentifier("abc");
+        p.setStatusCode(StatusCode.PENDING);
         return p;
     }
 

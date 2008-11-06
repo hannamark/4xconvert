@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.Serializable;
 
+import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,17 +35,32 @@ public class HealthCareProviderTest {
      */
     @Test
     public void createHealthCareProviderTest() {
-        Person p = PersonTest.createPersonObj();
-        TestSchema.addUpdObject(p);
-        Session session  = TestSchema.getSession();
-        HealthCareProvider hc = createHealthCareProviderObj(p);
-        TestSchema.addUpdObject(hc);
-        Serializable id = hc.getId();
-        assertNotNull(id);
-        HealthCareProvider saved = (HealthCareProvider) session.load(HealthCareProvider.class, id);
-        assertEquals("Healcare Provider does not match " , hc.getId(), saved.getId());
-        assertEquals("Person  does not match " , hc.getPerson().getId(), saved.getPerson().getId());
         
+        try {
+            Session session = TestSchema.getSession();
+
+            Transaction t = session.beginTransaction();    
+
+            Person p = PersonTest.createPersonObj();
+            TestSchema.addUpdObject(p);
+            //session.save(p);
+            Organization o = OrganizationTest.createOrganizationObj();
+            TestSchema.addUpdObject(o);
+            //session.save(o);
+            
+            HealthCareProvider hc = createHealthCareProviderObj(p , o);
+            TestSchema.addUpdObject(hc);
+            //session.save(hc);
+            Serializable id = hc.getId();
+            assertNotNull(id);
+            HealthCareProvider saved = (HealthCareProvider) session.load(HealthCareProvider.class, id);
+            assertEquals("Healcare Provider does not match " , hc.getId(), saved.getId());
+            assertEquals("Person  does not match " , hc.getPerson().getId(), saved.getPerson().getId());
+            t.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+   
 
     }
     
@@ -52,9 +69,12 @@ public class HealthCareProviderTest {
      * @param p Person
      * @return HealthCareProvider
      */
-    public static  HealthCareProvider createHealthCareProviderObj(Person p) {
+    public static  HealthCareProvider createHealthCareProviderObj(Person p , Organization o ) {
         HealthCareProvider hc = new HealthCareProvider();
+        hc.setOrganization(o);
         hc.setPerson(p);
+        hc.setIdentifier("abc");
+        hc.setStatusCode(StatusCode.PENDING);
         return hc;
     }
 

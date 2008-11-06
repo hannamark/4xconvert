@@ -23,6 +23,7 @@ public class PAUtil {
     /**
      * utility method to determine if the object is not null. 
      * it returns true, if the object is not null , and does not contain any white space
+     * @deprecated
      * @param obj obj1
      * @return boolean 
      */

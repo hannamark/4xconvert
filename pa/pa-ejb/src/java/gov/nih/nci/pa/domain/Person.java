@@ -1,12 +1,18 @@
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.StatusCode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+
+import org.hibernate.validator.NotNull;
 
 
 /**
@@ -28,7 +34,11 @@ public class Person extends AbstractEntity {
     private String lastName;
     private String middleName;
     private String fullName;
+    private String identifier;
+    private StatusCode statusCode;
+    
     private List<HealthCareProvider> healthCareProviders = new ArrayList<HealthCareProvider>();
+    private List<ClinicalResearchStaff> clinicalResearchStaffs = new ArrayList<ClinicalResearchStaff>();
     
     
     /**
@@ -78,6 +88,39 @@ public class Person extends AbstractEntity {
     }
     
     /**
+     * @return the identifier
+     */
+    @Column(name = "identifier")
+    @NotNull
+    public String getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * 
+     * @return statusCode
+     */
+    @Column(name = "STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public StatusCode getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * 
+     * @param statusCode statusCode
+     */
+    public void setStatusCode(StatusCode statusCode) {
+        this.statusCode = statusCode;
+    }
+    
+    /**
      * 
      * @return healthCareProviders healthCareProviders
      */
@@ -92,6 +135,23 @@ public class Person extends AbstractEntity {
     public void setHealthCareProviders(List<HealthCareProvider> healthCareProviders) {
         this.healthCareProviders = healthCareProviders;
     }
+    
+    /**
+     * 
+     * @return clinicalResearchStaffs clinicalResearchStaffs
+     */
+    @OneToMany(mappedBy = "person")
+    public List<ClinicalResearchStaff> getClinicalResearchStaffs() {
+        return clinicalResearchStaffs;
+    }
+    /**
+     * 
+     * @param clinicalResearchStaffs clinicalResearchStaffs
+     */
+    public void setClinicalResearchStaffs(List<ClinicalResearchStaff> clinicalResearchStaffs) {
+        this.clinicalResearchStaffs = clinicalResearchStaffs;
+    }
+
     /**
      * 
      * @return fullName
