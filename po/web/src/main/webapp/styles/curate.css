@@ -82,6 +82,9 @@ LEGEND
 { background:#475b82 url("../images/bg_curateheader.gif") repeat-x bottom; border-bottom:1px solid #fff; height:57px; min-width:770px  }
 #curatelogo
 { padding:3px 0 0 5px ; float:left; width:384px; }
+#curatelogo td  { vertical-align: middle;}
+#curatelogo td a
+{ font:  900 25px arial,sans-serif; color: #fff; white-space: nowrap; }
 #userarea
 { background:url("../images/bg_user.jpg") no-repeat left 0; height:30px; width:27.5em; margin-top:14px; padding:8px 0 0 12px; float:right; color:#bfd5d5; font-size:92%; font-weight:bold; }
 #userarea A
