@@ -37,7 +37,7 @@
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.officialTitle.value }"/> 
+                 <c:out value="${requestScope.trialSummary.officialTitle.value }"/> 
             </td>
           </tr>
           <tr>     
@@ -47,7 +47,7 @@
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.identifier.extension }"/> 
+                 <c:out value="${requestScope.trialSummary.identifier.extension }"/> 
             </td>
           </tr>
           <tr>     
@@ -57,7 +57,7 @@
                   </label>
               </td>
               <td class="value">
-              	<c:out value="${sessionScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
+              	<c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
               </td>
           </tr>
          <tr>     
@@ -67,7 +67,7 @@
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.phaseCode.code }"/> 
+                 <c:out value="${requestScope.trialSummary.phaseCode.code }"/> 
             </td>
           </tr> 
           <tr>     
@@ -77,8 +77,8 @@
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.primaryPurposeCode.code }"/>
-                 <c:out value="${sessionScope.trialSummary.primaryPurposeOtherText.value }"/>
+                 <c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
+                 <c:out value="${requestScope.trialSummary.primaryPurposeOtherText.value }"/>
             </td>
           </tr>
           <tr>
@@ -94,7 +94,7 @@
             </label>
             </td>
            	 <td class="value">
-           		<c:out value="${sessionScope.studyProtocolIi.leadOrganizationName }"/>
+           		<c:out value="${requestScope.studyProtocolIi.leadOrganizationName }"/>
              </td>
        </tr> 
        <tr>     
@@ -104,7 +104,7 @@
               	</label>
               </td>
          	 <td class="value">
-         		<c:out value="${sessionScope.studyProtocolIi.piFullName }"/>
+         		<c:out value="${requestScope.studyProtocolIi.piFullName }"/>
          		</td>
        </tr> 
        <tr>
@@ -120,7 +120,7 @@
 				</label>
 			</td>
 			<td class="value">
-				<c:out value="${sessionScope.nihInstitute.typeCode.code }"/>
+				<c:out value="${requestScope.nihInstitute.typeCode.code }"/>
 			</td>
 	   </tr>
   	   <tr>     
@@ -130,7 +130,7 @@
 				</label>
 			</td>
 			<td class="value">
-				<c:out value="${sessionScope.nihInstitute.organizationIdentifier.extension }"/>
+				<c:out value="${requestScope.nihInstitute.organizationIdentifier.extension }"/>
 			</td>
 	   </tr> 
       <tr>
@@ -146,7 +146,7 @@
         </label>
        </td>
        	 <td class="value">
-       		<c:out value="${sessionScope.trialOverallStatus.statusCode.code }"/>
+       		<c:out value="${requestScope.trialOverallStatus.statusCode.code }"/>
          </td>
       </tr> 
       <tr>     
@@ -156,7 +156,7 @@
           </label>
          </td>
          <td class="value">
-      	   <fmt:formatDate value="${sessionScope.trialOverallStatus.statusDate.value }"/>
+      	   <fmt:formatDate value="${requestScope.trialOverallStatus.statusDate.value }"/>
            </td>
       </tr> 
       <tr>     
@@ -166,8 +166,8 @@
               </label>
           </td>
           <td class="value">
-          	   <fmt:formatDate value="${sessionScope.trialSummary.startDate.value }"/>
-               <c:out value="${sessionScope.trialSummary.startDateTypeCode.code }"/> 
+          	   <fmt:formatDate value="${requestScope.trialSummary.startDate.value }"/>
+               <c:out value="${requestScope.trialSummary.startDateTypeCode.code }"/> 
           </td>
        </tr> 
        <tr>     
@@ -177,8 +177,8 @@
             </label>
         </td>
         <td class="value">
-        	 <fmt:formatDate value="${sessionScope.trialSummary.primaryCompletionDate.value }"/> 
-             <c:out value="${sessionScope.trialSummary.primaryCompletionDateTypeCode.code }"/>
+        	 <fmt:formatDate value="${requestScope.trialSummary.primaryCompletionDate.value }"/> 
+             <c:out value="${requestScope.trialSummary.primaryCompletionDateTypeCode.code }"/>
         </td>
       </tr> 
      </table>
