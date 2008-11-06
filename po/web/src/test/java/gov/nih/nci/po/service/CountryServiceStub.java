@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.State;
 
 import java.util.List;
 
@@ -121,6 +122,11 @@ public class CountryServiceStub implements CountryServiceLocal {
     }
 
     public Country getCountryByAlpha3(String code) {
+        return null;
+    }
+
+    public State getStateByCode(Country country, String code) {
+        // TODO Auto-generated method stub
         return null;
     }
 

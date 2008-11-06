@@ -81,20 +81,21 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.State;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-
 
 /**
  * Converts for Ad (both simple and set based).
@@ -144,15 +145,20 @@ public class AdConverter {
             return a;
         }
 
-        @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity" })
+        @SuppressWarnings({ "PMD.UseStringBufferForStringAppends", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
         private static void processParts(Ad iso, Address a, StringBuffer street, StringBuffer delivery) {
             String sdelimitor = "";
             String ddelimitor = "";
+            Adxp stateProvince = null;
 
             for (Adxp part : iso.getPart()) {
                 if (part.getType() == null) {
+                    verify(part);
                     street.append(sdelimitor).append(part.getValue());
                 } else {
+                    if (!AddressPartType.DEL.equals(part.getType())) {
+                        verify(part);
+                    }
                     switch (part.getType()) {
                         case CAR:
                             ddelimitor += "c/o ";
@@ -170,7 +176,8 @@ public class AdConverter {
                             sdelimitor = "";
                             continue;
                         case STA:
-                            a.setStateOrProvince(part.getValue());
+                            stateProvince = part;
+                            a.setStateOrProvince(stateProvince.getValue());
                             sdelimitor = "";
                             continue;
                         case CTY:
@@ -188,6 +195,29 @@ public class AdConverter {
                     }
                     sdelimitor = street.length() == 0 ? "" : " ";
                     ddelimitor = delivery.length() == 0 ? "" : " ";
+                }
+            }
+            validate(a, stateProvince);
+        }
+
+        private static void verify(Adxp part) {
+            if (StringUtils.isBlank(part.getValue())) {
+                throw new PoIsoConstraintException("Adxp.value is required");
+            }
+        }
+
+        private static void validate(Address a, Adxp stateProvince) {
+            if (stateProvince == null) {
+                return;
+            }
+            if (StringUtils.isNotBlank(stateProvince.getCode()) && a.getCountry() != null
+                    && a.getCountry().getId() != null && !a.getCountry().getStates().isEmpty()) {
+                a.setStateOrProvince(stateProvince.getCode());
+                State stateByCode = PoRegistry.getCountryService().getStateByCode(a.getCountry(),
+                        a.getStateOrProvince());
+                if (stateByCode == null) {
+                    throw new PoIsoConstraintException("unsupported ISO 3166 state or province code '"
+                            + a.getStateOrProvince() + "' for Country code '" + a.getCountry().getAlpha3() + "'");
                 }
             }
         }

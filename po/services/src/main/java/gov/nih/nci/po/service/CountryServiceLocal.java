@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.State;
 
 import java.util.List;
 
@@ -125,4 +126,12 @@ public interface CountryServiceLocal {
      * @return a county
      */
     Country getCountryByAlpha3(String code);
+    
+    /**
+     * Get a state by ISO 3166 code value.
+     * @param country the country containing the state or province 
+     * @param code the state or province ISO code
+     * @return the state 
+     */
+    State getStateByCode(Country country, String code);
 }

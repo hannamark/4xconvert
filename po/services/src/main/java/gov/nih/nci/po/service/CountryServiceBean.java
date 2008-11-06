@@ -173,4 +173,16 @@ public class CountryServiceBean implements CountryServiceLocal {
         }
         return cnt;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public State getStateByCode(Country country, String code) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Query q = s.createQuery(FROM + State.class.getName() + " s where s.code = :code and s.country = :country");
+        q.setParameter("code", code);
+        q.setParameter("country", country);
+        return (State) q.uniqueResult();
+    }
 }

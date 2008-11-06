@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.PoIsoConstraintException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Arrays;
@@ -59,50 +60,51 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
 
             DSet<Tel> telecomAddress = createDSetTel(email, tels, tels, urls, tels);
 
+            String state = "WY";
             remoteCreateAndCatalog(create("Abc", "Mid1", "Klm", "Mr.", "Suf1", createPostalAddress("street",
-                    "delivery", "city", "state", "zip", "USA"), telecomAddress));
+                    "delivery", "city", state, "zip", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("Def", "Mid2", "Nop", "Ms.", "Suf2", createPostalAddress("street",
-                    "delivery", "city", "state", "zip", "USA"), telecomAddress));
+                    "delivery", "city", state, "zip", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("Ghi", "Mid3", "Qrs", "Mrs.", "Suf3", createPostalAddress("street",
-                    "delivery", "city", "state", "zip", "USA"), telecomAddress));
+                    "delivery", "city", state, "zip", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("ADG", "Mid4", "KNQ", "Dr.", "Suf4", createPostalAddress("street",
-                    "delivery", "city", "state", "zip", "USA"), telecomAddress));
+                    "delivery", "city", state, "zip", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("beh", "Mid5", "lor", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "zip", "USA"), telecomAddress));
+                    "city", state, "zip", "USA"), telecomAddress));
 
             // for street searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("Rst", "delivery",
-                    "city", "state", "zip", "USA")));
+                    "city", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("Uvw", "delivery",
-                    "city", "state", "zip", "USA")));
+                    "city", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("Xyz", "delivery",
-                    "city", "state", "zip", "USA")));
+                    "city", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("Rsu", "delivery",
-                    "city", "state", "zip", "USA")));
+                    "city", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("stu", "delivery",
-                    "city", "state", "zip", "USA")));
+                    "city", state, "zip", "USA")));
 
             // for delivery searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "Abc", "city",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "Dfg", "city",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "Ghi", "city",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "jkl", "city",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "Abe", "city",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
 
             // for city searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "Reston", "state", "zip", "USA")));
+                    "Reston", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "reston", "state", "zip", "USA")));
+                    "reston", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "New Falls", "state", "zip", "USA")));
+                    "New Falls", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "Old Falls", "state", "zip", "USA")));
+                    "Old Falls", state, "zip", "USA")));
 
             // for state searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
@@ -110,41 +112,37 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
                     "city", "MD", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "md", "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
                     "city", "VT", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "vt", "zip", "USA")));
+                    "city", "AL", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "ALABAMA", "zip", "USA")));
+                    "city", "AK", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "ALASKA", "zip", "USA")));
+                    "city", "LA", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "LOUISIANA", "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "INDIANA", "zip", "USA")));
+                    "city", "IN", "zip", "USA")));
 
             // for zip searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "Abc", "USA")));
+                    "city", state, "Abc", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "Def", "USA")));
+                    "city", state, "Def", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "Ghi", "USA")));
+                    "city", state, "Ghi", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "Abe", "USA")));
+                    "city", state, "Abe", "USA")));
 
             // for country searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "zip", "USA")));
+                    "city", state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "zip", "UGA")));
+                    "city", state, "zip", "UGA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "zip", "UKR")));
+                    "city", state, "zip", "UKR")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "zip", "UMI")));
+                    "city", state, "zip", "UMI")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", null, null, createPostalAddress("street", "delivery",
-                    "city", "state", "zip", "URY")));
+                    "city", state, "zip", "URY")));
             testDataLoaded = true;
         }
     }
@@ -557,7 +555,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByStateSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "IAN", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "Y", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -565,7 +563,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByStateInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "ian", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "y", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -573,7 +571,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByStateStartsWith() {
         PersonDTO p = new PersonDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "LOU", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "LA", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -581,7 +579,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByStateInsensitiveStartsWith() {
         PersonDTO p = new PersonDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "lou", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "la", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }

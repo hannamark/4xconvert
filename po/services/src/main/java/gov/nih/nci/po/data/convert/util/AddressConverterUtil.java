@@ -48,6 +48,7 @@ public class AddressConverterUtil {
 
         Adxp x;
         x = Adxp.createAddressPart(AddressPartType.CNT);
+        x.setValue("adxp.value is required");
         x.setCode(countryAlpha3);
         l.add(x);
         return iso;

@@ -406,6 +406,7 @@ public class PersonDTOTest {
         part.add(zip);
 
         AdxpCnt cnt = new AdxpCnt();
+        cnt.setValue("United States");
         cnt.setCode("USA");
         part.add(cnt);
 

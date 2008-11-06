@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.PoIsoConstraintException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -89,80 +90,77 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
                     "mycity", null, "12345", "USA")));
 
             // for street searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Rst", "delivery", "city", "state",
+            String state = "WY";
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Rst", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Uvw", "delivery", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Uvw", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Xyz", "delivery", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Xyz", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Rsu", "delivery", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Rsu", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("stu", "delivery", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("stu", "delivery", "city", state,
                     "zip", "USA")));
 
             // for delivery searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Abc", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Abc", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Dfg", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Dfg", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Ghi", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Ghi", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "jkl", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "jkl", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Abe", "city", "state",
+            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Abe", "city", state,
                     "zip", "USA")));
 
             // for city searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "Reston",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "reston",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "New Falls",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "Old Falls",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
 
             // for state searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "VA",
                     "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "MD",
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "md",
-                    "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "VT",
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "vt",
-                    "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "ALABAMA", "zip", "USA")));
+                    "AL", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "ALASKA", "zip", "USA")));
+                    "AK", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "LOUISIANA", "zip", "USA")));
+                    "LA", "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "INDIANA", "zip", "USA")));
+                    "IN", "zip", "USA")));
 
             // for zip searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "Abc", "USA")));
+                    state, "Abc", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "Def", "USA")));
+                    state, "Def", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "Ghi", "USA")));
+                    state, "Ghi", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "Abe", "USA")));
+                    state, "Abe", "USA")));
 
             // for country searches
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "zip", "USA")));
+                    state, "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "zip", "UGA")));
+                    state, "zip", "UGA")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "zip", "UKR")));
+                    state, "zip", "UKR")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "zip", "UMI")));
+                    state, "zip", "UMI")));
             remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
-                    "state", "zip", "URY")));
+                    state, "zip", "URY")));
             testDataLoaded = true;
         }
     }
@@ -404,7 +402,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStateStartsWith() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "LOU", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "LA", null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(1, results.size());
     }
@@ -412,7 +410,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStateInsensitiveStartsWith() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "lou", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "la", null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(1, results.size());
     }

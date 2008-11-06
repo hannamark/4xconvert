@@ -3,19 +3,22 @@ package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.util.MockCountryServiceLocator;
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.State;
+import gov.nih.nci.po.service.AbstractHibernateTestCase;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,25 +26,64 @@ import org.junit.Test;
  *
  * @author gax
  */
-public class AdConverterTest {
-
-    ServiceLocator oldLocator = null;
-
+public class AdConverterTest extends AbstractHibernateTestCase {
+    private Country c;
+    private State state;
+    
     @Before
-    public void setUpTest() {
-        oldLocator = PoRegistry.getInstance().getServiceLocator();
-        PoRegistry.getInstance().setServiceLocator(new MockCountryServiceLocator());
-    }
+    public void init() {
+        Session s = PoHibernateUtil.getCurrentSession();
+        c = new Country("Super Country", "999", "ZZ", "USA");
+        s.save(c);
+        
+        state = new State();
+        state.setCode("IN");
+        state.setName("INDIANA");
+        state.setCountry(c);
+        s.save(state);
 
-    @After
-    public void tearDownTest() {
-        PoRegistry.getInstance().setServiceLocator(oldLocator);
-    }
+        Country c2 = new Country("Super Country2", "888", "AA", "AAA");
+        s.save(c2);
 
+        s.flush();
+        s.clear();
+    }
     @Test(expected = UnsupportedOperationException.class)
     public void testConvert() {
         AdConverter.SimpleConverter instance = new AdConverter.SimpleConverter();
         instance.convert(Integer.class, null);
+    }
+    
+    /**
+     * 7.7.1.6 - The value cannot be empty
+     */
+    @Test
+    public void testAdxpValueIsRequired() {
+        for (AddressPartType type : AddressPartType.values()) {
+            if (type.equals(AddressPartType.DEL)) {
+                continue;
+            }
+            Ad iso = new Ad();
+            List<Adxp> part = new ArrayList<Adxp>();
+            iso.setPart(part);
+            Adxp adxp = Adxp.createAddressPart(type);
+            adxp.setValue(null);
+            part.add(adxp);
+            try {
+                AdConverter.SimpleConverter.convertToAddress(iso);
+                fail();
+            } catch (PoIsoConstraintException e) {
+                assertEquals("Adxp.value is required", e.getMessage());
+            }
+            
+            adxp.setValue("");
+            try {
+                AdConverter.SimpleConverter.convertToAddress(iso);
+                fail();
+            } catch (PoIsoConstraintException e) {
+                assertEquals("Adxp.value is required", e.getMessage());
+            }
+        }
     }
 
 
@@ -142,6 +184,7 @@ address lines, this is not implied by this example. See Section 7.7.3.6.
         part.add(a);
 
         a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
 
@@ -189,6 +232,7 @@ This is the same address from a system that differentiates between different lin
         part.add(a);
 
         a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
 
@@ -251,6 +295,7 @@ useful in Germany, where many systems keep house number as a distinct field
         part.add(a);
 
         a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
 
@@ -286,6 +331,7 @@ useful in Germany, where many systems keep house number as a distinct field
         part.add(a);
 
         a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
         a.setCode("USA");
         part.add(a);
 
@@ -295,5 +341,103 @@ useful in Germany, where many systems keep house number as a distinct field
         assertEquals("USA", result.getCountry().getAlpha3());
 
         assertEquals("P.O.Box 909", result.getStreetAddressLine());
+    }
+    
+    @Test 
+    public void testConvertToAddressWithStateValueButNoCountry() {
+        Ad iso = new Ad();
+        List<Adxp> part = new ArrayList<Adxp>();
+        iso.setPart(part);
+        Adxp a = null;
+        
+        a = Adxp.createAddressPart(AddressPartType.STA);
+        a.setValue("INDIANA");
+        part.add(a);
+        
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso);
+        assertEquals("INDIANA", result.getStateOrProvince());
+        assertNull(result.getCountry());
+    }
+    
+    @Test 
+    public void testConvertToAddressWithStateCodeButNoCountry() {
+        Ad iso = new Ad();
+        List<Adxp> part = new ArrayList<Adxp>();
+        iso.setPart(part);
+        Adxp a = null;
+        
+        a = Adxp.createAddressPart(AddressPartType.STA);
+        a.setValue("INDIANA");
+        a.setCode("IN");
+        part.add(a);
+        
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso);
+        assertEquals("INDIANA", result.getStateOrProvince());
+        assertNull(result.getCountry());
+    }
+    
+    @Test 
+    public void testConvertToAddressWithStateValueSpecifiedButNoSuchStateForGivenCountry() {
+        Ad iso = new Ad();
+        List<Adxp> part = new ArrayList<Adxp>();
+        iso.setPart(part);
+        Adxp a = null;
+        
+        a = Adxp.createAddressPart(AddressPartType.STA);
+        a.setValue("ZZZZZ");
+        part.add(a);
+        
+        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
+        a.setCode("USA");
+        part.add(a);
+        
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso);
+        assertEquals("ZZZZZ", result.getStateOrProvince());
+        assertEquals("USA",  result.getCountry().getAlpha3());
+    }
+    @Test 
+    public void testConvertToAddressWithStateCodeSpecifiedButNoSuchStateForGivenCountry() {
+        Ad iso = new Ad();
+        List<Adxp> part = new ArrayList<Adxp>();
+        iso.setPart(part);
+        Adxp a = null;
+        
+        a = Adxp.createAddressPart(AddressPartType.STA);
+        a.setValue("ZZZZZ");
+        a.setCode("ZZ");
+        part.add(a);
+        
+        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
+        a.setCode("USA");
+        part.add(a);
+        
+        try {
+            AdConverter.SimpleConverter.convertToAddress(iso);
+        } catch (PoIsoConstraintException e) {
+            assertEquals("unsupported ISO 3166 state or province code 'ZZ' for Country code 'USA'", e.getMessage());
+        }
+    }
+    
+    @Test 
+    public void testConvertToAddressWithStateSpecifiedButNoSuchStateForGivenCountry2() {
+        Ad iso = new Ad();
+        List<Adxp> part = new ArrayList<Adxp>();
+        iso.setPart(part);
+        Adxp a = null;
+        
+        a = Adxp.createAddressPart(AddressPartType.STA);
+        a.setValue("ZZZZZ");
+        part.add(a);
+        
+        a = Adxp.createAddressPart(AddressPartType.CNT);
+        a.setValue("adxp.value required");
+        a.setCode("AAA");
+        part.add(a);
+        
+        Address result = AdConverter.SimpleConverter.convertToAddress(iso);
+        assertEquals("ZZZZZ", result.getStateOrProvince());
+        assertEquals("AAA",  result.getCountry().getAlpha3());
     }
 }

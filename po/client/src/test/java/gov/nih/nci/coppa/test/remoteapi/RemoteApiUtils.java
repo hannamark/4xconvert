@@ -198,6 +198,7 @@ public class RemoteApiUtils {
         if (StringUtils.isNotBlank(countryAlpha3)) {
             Adxp x;
             x = Adxp.createAddressPart(AddressPartType.CNT);
+            x.setValue("adxp.value is required");
             x.setCode(countryAlpha3);
             l.add(x);
         }
