@@ -38,6 +38,10 @@ public class StudyProtocolQueryDTO implements Serializable {
     private PhaseCode phaseCode; 
     private String studyProtocolType;
     private String action;
+    private String primaryPurpose;
+    private String primaryPurposeOtherText;
+    
+    
     
     /**
      * 
@@ -262,6 +266,30 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setAction(String action) {
         this.action = action;
+    }
+    /**
+     * @return the primaryPurpose
+     */
+    public String getPrimaryPurpose() {
+        return primaryPurpose;
+    }
+    /**
+     * @param primaryPurpose the primaryPurpose to set
+     */
+    public void setPrimaryPurpose(String primaryPurpose) {
+        this.primaryPurpose = primaryPurpose;
+    }
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
     }
     
     
