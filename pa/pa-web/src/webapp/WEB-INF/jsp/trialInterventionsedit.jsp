@@ -35,10 +35,6 @@
             document.intervention.submit();
         }
     }
-    function interventionCancel(){
-        document.intervention.action="trialInterventions.action";
-        document.intervention.submit();     
-    }
     function statusChange() {
         newType=document.intervention.interventionType.value;
         if((newType=="Other")||(newType=="Cosmetic")){
@@ -93,10 +89,10 @@
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if>
-<h2><fmt:message
-    key="interventions.add.title" /></h2>
-
-
+<h2>
+    <s:if test="%{currentAction == 'edit'}"><fmt:message key="interventions.edit.title" /></s:if>
+    <s:else><fmt:message key="interventions.add.title" /></s:else>
+</h2>
 
 <table class="form">
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
