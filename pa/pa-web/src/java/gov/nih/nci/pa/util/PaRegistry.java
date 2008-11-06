@@ -1,12 +1,13 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -285,7 +286,12 @@ public final class PaRegistry {
     public static StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
         return getInstance().getServiceLocator().getOutcomeMeasurService();
     }
-    
+    /**
+     * @return OutcomeMeasureServiceRemote
+     */
+    public static ArmServiceRemote getArmService() {
+        return getInstance().getServiceLocator().getArmService();
+    }
     /**
      * 
      * @return ClinicalResearchStaffCorrelationServiceRemote

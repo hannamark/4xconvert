@@ -1,11 +1,12 @@
 package gov.nih.nci.pa.test.util;
 
+import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -228,6 +229,14 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
     public ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getArmService()
+     */
+    public ArmServiceRemote getArmService() {
+        // TODO Auto-generated method stub
         return null;
     }
 

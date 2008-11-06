@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -227,7 +228,12 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
         return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup("pa/StudyOutcomeMeasureServiceBean/remote");
     }
-
+    /**
+     * @return ArmServcieRemote
+     */
+    public ArmServiceRemote getArmService() {
+        return (ArmServiceRemote) JNDIUtil.lookup("pa/ArmServiceBean/remote");
+    }
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
      * @throws PAException e
@@ -238,5 +244,4 @@ public class JndiServiceLocator implements ServiceLocator {
             + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
         return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
-
 }

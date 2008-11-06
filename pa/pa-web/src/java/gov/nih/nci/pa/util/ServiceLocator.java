@@ -1,12 +1,13 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -187,7 +188,12 @@ public interface ServiceLocator {
      * @return OutcomeMeasureServiceRemote
      */
     StudyOutcomeMeasureServiceRemote getOutcomeMeasurService();
-    
+
+    /**
+     * @return ArmServiceRemote
+     */
+    ArmServiceRemote getArmService();
+
     /**
      * @return getPoClinicalResearchStaffCorrelationService
      * @throws PAException on error 
