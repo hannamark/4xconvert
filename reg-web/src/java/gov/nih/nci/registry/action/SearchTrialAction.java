@@ -130,7 +130,7 @@ public class SearchTrialAction extends ActionSupport {
                                                             getStudyProtocol(studyProtocolIi);
             //TrialWebDTO trialWebDTO = new TrialWebDTO(protocolDTO);
             // put an entry in the session and store InterventionalStudyProtocolDTO 
-            ServletActionContext.getRequest().getSession().setAttribute(
+            ServletActionContext.getRequest().setAttribute(
                                     Constants.TRIAL_SUMMARY, protocolDTO);            
             
             // query the study grants
@@ -152,7 +152,7 @@ public class SearchTrialAction extends ActionSupport {
             //List <StudyOverallStatusWebDTO> overallStatusList;
             if (!(overallStatusISOList.isEmpty())) {
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.TRIAL_OVERALL_STATUS, overallStatusISOList.get(0));
             }
             
@@ -168,7 +168,7 @@ public class SearchTrialAction extends ActionSupport {
             //List <StudyParticipationWebDTO> studyParticipationList;
             if (!(studyParticipationISOList.isEmpty())) { 
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.STUDY_PARTICIPATION, studyParticipationISOList.get(0));
                 
             }
@@ -176,7 +176,7 @@ public class SearchTrialAction extends ActionSupport {
                 getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
             
                 // put an entry in the session and avoid conflict using STUDY_PROTOCOL_II for now
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.STUDY_PROTOCOL_II, queryDTO);
                 
              // put an entry in the session and getsummary4ReportedResource
@@ -184,7 +184,7 @@ public class SearchTrialAction extends ActionSupport {
                 getsummary4ReportedResource(studyProtocolIi);
             
                 // put an entry in the session and avoid conflict using NIH_INSTITUTE for now
-                ServletActionContext.getRequest().getSession().setAttribute(
+                ServletActionContext.getRequest().setAttribute(
                                         Constants.NIH_INSTITUTE, resourcingDTO);    
                 
                 List<StudyIndldeDTO>   studyIndldeDTOList  = RegistryServiceLocator.getStudyIndldeService().
