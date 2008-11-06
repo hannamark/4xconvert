@@ -19,7 +19,6 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -40,7 +39,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+//import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -136,7 +135,7 @@ public class SubmitTrialAction extends ActionSupport implements
             uploadIrbApproval(studyProtocolIi);
             
             // createStudyContact
-            createStudyContact(studyProtocolIi);
+            //createStudyContact(studyProtocolIi);
             
             // after creating the study protocol, query the protocol for viewing
             query();
@@ -281,26 +280,26 @@ public class SubmitTrialAction extends ActionSupport implements
     /**
      * @param studyProtocolIi
      */
-    private void createStudyContact(Ii studyProtocolIi) {
-        try {
-        LOG.info(" creating study contact ");
-        // create Study Contact record        
-        StudyContactDTO studyContactDTO = new StudyContactDTO();
-        studyContactDTO.setStudyProtocolIi(studyProtocolIi);
-        studyContactDTO.setHealthCareProvider(IiConverter.convertToIi("1"));
-        studyContactDTO.setRoleCode(CdConverter.convertStringToCd(
-                            StudyContactRoleCode.SUBMITTER.getCode()));
-        studyContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
-        
-        RegistryServiceLocator.getStudyContactService().create(studyContactDTO);
-        } catch (PAException pae) {
-            pae.printStackTrace();
-            LOG.error("Exception occured while creating study contact: " + pae);
-        } catch (Exception ex) {
-        ex.printStackTrace();
-        LOG.error("Exception occured while creating study contact: " + ex);
-    }
-    }
+//    private void createStudyContact(Ii studyProtocolIi) {
+//        try {
+//        LOG.info(" creating study contact ");
+//        // create Study Contact record        
+//        StudyContactDTO studyContactDTO = new StudyContactDTO();
+//        studyContactDTO.setStudyProtocolIi(studyProtocolIi);
+//        studyContactDTO.setHealthCareProvider(IiConverter.convertToIi("1"));
+//        studyContactDTO.setRoleCode(CdConverter.convertStringToCd(
+//                            StudyContactRoleCode.SUBMITTER.getCode()));
+//        studyContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
+//        
+//        RegistryServiceLocator.getStudyContactService().create(studyContactDTO);
+//        } catch (PAException pae) {
+//            pae.printStackTrace();
+//            LOG.error("Exception occured while creating study contact: " + pae);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            LOG.error("Exception occured while creating study contact: " + ex);
+//        }
+//    }
     
     /**
      * query the created protocol and all associated data.
@@ -551,7 +550,7 @@ public class SubmitTrialAction extends ActionSupport implements
         while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) { 
             part = new byte[bytesRead]; 
             System.arraycopy(readBuffer, 0, part, 0, bytesRead); 
-            parts.add(part); 
+//            parts.add(part); 
         } 
 
         // calculate the total size 
