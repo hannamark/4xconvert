@@ -129,7 +129,7 @@ public class TestSchema {
             setProperty("hibernate.connection.autocommit", "true").
             setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
             setProperty("hibernate.hbm2ddl.auto", "create-drop").
-            setProperty("hibernate.show_sql", TestProperties.getShowSQL());
+            setProperty("hibernate.show_sql", TestProperties.getShowSQL()); // set using test.schema.showsql in build.properties
             HibernateUtil.getHibernateHelper().setConfiguration(config);
             HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
         }
@@ -173,6 +173,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from DOCUMENT");
                         statement.executeUpdate("delete from STRATUM_GROUP");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
+                        statement.executeUpdate("delete from CLINICAL_RESEARCH_STAFF");
                         statement.executeUpdate("delete from COUNTRY");
                         statement.executeUpdate("delete from INTERVENTION");
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
