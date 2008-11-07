@@ -274,7 +274,22 @@ LEGEND
 
 /* Filters */
 
-
+.filter_checkbox
+{ font-size:92%; width:15em; float:left; margin-left:17em; margin-top:-2.0em; }
+.filter_checkbox LABEL
+{ color:#fff; float:left; margin:-19px 0 0 20px; cursor:pointer; }
+.filter_checkbox LABEL:hover
+{ text-decoration:underline }
+.filter_wrapper
+{ background:#d9e3ec; }
+.filter
+{ width:99%; margin:auto; }
+.filterrow
+{ padding:5px; float:left; width:30%; }
+.filter LABEL
+{ display:block; }
+.filterbtn
+{ margin:auto; width:7em; display:block }
 #filters
 { padding:5px 15px 0 15px }
 
