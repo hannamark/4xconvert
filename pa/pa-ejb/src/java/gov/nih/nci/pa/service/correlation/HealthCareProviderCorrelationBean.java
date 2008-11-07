@@ -98,7 +98,7 @@ public class HealthCareProviderCorrelationBean {
             throw new PAException(
                     "PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
         }
-        if (hcpDTOs == null) {
+        if (hcpDTOs == null || hcpDTOs.isEmpty()) {
             try {
                 Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
                 hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
@@ -133,6 +133,7 @@ public class HealthCareProviderCorrelationBean {
             hcp = new HealthCareProvider();
             hcp.setPerson(paPer);
             hcp.setOrganization(paOrg);
+            hcp.setIdentifier(hcpDTO.getIdentifier().getExtension());
             hcp.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcpDTO.getStatus()));
             createPAHealthCareProvider(hcp);
         }
@@ -167,7 +168,8 @@ public class HealthCareProviderCorrelationBean {
         if (hcp.getId() != null) {
             hql.append(" and hcp.id = ").append(hcp.getId());
         }
-        if (hcp.getPerson().getId() != null && hcp.getOrganization().getId() != null) {
+        if (hcp.getPerson() != null && hcp.getPerson().getId() != null 
+                && hcp.getOrganization() != null && hcp.getOrganization().getId() != null) {
             hql.append(" and per.id = ").append(hcp.getPerson().getId());
             hql.append(" and org.id = ").append(hcp.getOrganization().getId());
         }

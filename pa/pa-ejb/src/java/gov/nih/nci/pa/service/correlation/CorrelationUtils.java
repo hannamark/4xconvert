@@ -250,13 +250,13 @@ public class CorrelationUtils {
         if (cd == null) {
             throw new PAException(" Cd cannot be null");
         }
-        if ("ACTIVE".equals(cd.getCode())) {
+        if ("ACTIVE".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.ACTIVE; 
-        } else if ("INACTIVE".equals(cd.getCode())) {
+        } else if ("INACTIVE".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.INACTIVE;
-        } else if ("NULLIFIED".equals(cd.getCode())) {
+        } else if ("NULLIFIED".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.NULLIFIED; 
-        } else if ("PENDING".equals(cd.getCode())) {
+        } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.PENDING;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());
@@ -273,13 +273,13 @@ public class CorrelationUtils {
         if (cd == null) {
             throw new PAException(" Cd cannot be null");
         }
-        if ("ACTIVE".equals(cd.getCode())) {
+        if ("ACTIVE".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.ACTIVE; 
-        } else if ("INACTIVE".equals(cd.getCode())) {
+        } else if ("INACTIVE".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.INACTIVE;
-        } else if ("NULLIFIED".equals(cd.getCode())) {
+        } else if ("NULLIFIED".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.NULLIFIED; 
-        } else if ("PENDING".equals(cd.getCode())) {
+        } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.PENDING;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());

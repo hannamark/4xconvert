@@ -1,15 +1,15 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -33,9 +33,10 @@ import org.hibernate.Session;
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 
-public class ClinicalResearchStaffCorrelationServiceBean {
-    
-    private static final Logger LOG  = Logger.getLogger(ClinicalResearchStaffCorrelationServiceBean.class);
+
+public class OrganizationalContactCorrelationServiceBean {
+
+    private static final Logger LOG  = Logger.getLogger(OrganizationalContactCorrelationServiceBean.class);
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
@@ -43,9 +44,9 @@ public class ClinicalResearchStaffCorrelationServiceBean {
      * @return long id 
      * @throws PAException pe 
      */
-    public Long createClinicalResearchStaffCorrelations(String orgPoIdentifier, 
-                                           String personPoIdentifer) 
-    throws PAException {
+    public void createOrganizationalContactCorrelations(String orgPoIdentifier, 
+                                           String personPoIdentifer) throws PAException { {
+        
         LOG.debug("Entering createClinicalResearchStaffCorrelation");
         
         CorrelationUtils corrUtils = new CorrelationUtils();
@@ -78,33 +79,33 @@ public class ClinicalResearchStaffCorrelationServiceBean {
          }
         
         
-        // Step 2 : check if PO has crs correlation if not create one 
-        ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
-        List<ClinicalResearchStaffDTO> crsDTOs = null;
-        crsDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        crsDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        // Step 2 : check if PO has oc correlation if not create one 
+        OrganizationalContactDTO ocDTO = new OrganizationalContactDTO();
+        List<OrganizationalContactDTO> ocDTOs = null;
+        ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         try {
-            crsDTOs = PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
+            ocDTOs = PoServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
         } catch (NullifiedRoleException e) {
             LOG.error("check with scoot", e);
             // @todo: this should not happen, check with 
         }
-        if (crsDTOs != null && crsDTOs.size() > 1) {
-            throw new PAException("PO CRS Correlation should not have more than 1  ");
+        if (ocDTOs != null && ocDTOs.size() > 1) {
+            throw new PAException("PO oc Correlation should not have more than 1  ");
         }
-        if (crsDTOs == null || crsDTOs.isEmpty()) {
+        if (ocDTOs == null) {
             try {
-                Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+                Ii ii = PoServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
+                ocDTO = PoServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                LOG.error("Validation exception during get ClinicalResearchStaff " , e);
-                throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
+                LOG.error("Validation exception during get OrganizationalContact " , e);
+                throw new PAException("Validation exception during get OrganizationalContact " , e);
             } catch (EntityValidationException e) {
-                LOG.error("Validation exception during create ClinicalResearchStaff " , e);
-                throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+                LOG.error("Validation exception during create OrganizationalContact " , e);
+                throw new PAException("Validation exception during create OrganizationalContact " , e);
             } 
         } else {
-            crsDTO = crsDTOs.get(0);
+            ocDTO = ocDTOs.get(0);
         }
 
         // Step 3 : check for pa org, if not create one
@@ -118,58 +119,60 @@ public class ClinicalResearchStaffCorrelationServiceBean {
             corrUtils.createPAPerson(poPer);
         }
         
-        // Step 6 : Check of PA has crs , if not create one
-        ClinicalResearchStaff crs = new ClinicalResearchStaff();
-        crs.setIdentifier(crsDTO.getIdentifier().getExtension());
-        crs = getPAClinicalResearchStaff(crs);
-        if (crs == null) {
-            // create a new crs
-            crs = new ClinicalResearchStaff();
-            crs.setPerson(paPer);
-            crs.setOrganization(paOrg);
-            crs.setIdentifier(crsDTO.getIdentifier().getExtension());
-            crs.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(crsDTO.getStatus()));
-            createPAClinicalResearchStaff(crs);
+        // Step 6 : Check of PA has oc , if not create one
+        OrganizationalContact oc = new OrganizationalContact();
+        oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+        oc = getPAOrganizationalContact(oc);
+        if (oc == null) {
+            // create a new oc
+            oc = new OrganizationalContact();
+            oc.setPerson(paPer);
+            oc.setOrganization(paOrg);
+            oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+            oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
+            createPAOrganizationalContact(oc);
         }
-        LOG.debug("Leaving createClinicalResearchStaffCorrelation");
-        return crs.getId();
+                                           }
+       // LOG.debug("Leaving createOrganizationalContactCorrelation");
+        //return oc.getId();
+        //return null;
     }
 
     /**
      * 
-     * @param crs crs
-     * @return crs
+     * @param oc oc
+     * @return oc
      * @throws PAException
      */
-    private ClinicalResearchStaff getPAClinicalResearchStaff(ClinicalResearchStaff crs) 
+    private OrganizationalContact getPAOrganizationalContact(OrganizationalContact oc) 
     throws PAException {
-        if (crs == null) {
+        if (oc == null) {
             LOG.error("Clinicial Research Staff cannot be null");
             throw new PAException("Clinicial Research Staff cannot be null");
         }
-        if (crs.getPerson() != null && crs.getOrganization() == null  
-            || crs.getPerson() == null && crs.getOrganization() != null) {
+        if (oc.getPerson() != null && oc.getOrganization() == null  
+            || oc.getPerson() == null && oc.getOrganization() != null) {
             LOG.error("Both person and organization should be specified and it cannot be either");
             throw new PAException("Both person and organization should be specified and it cannot be either");
             
         }
-        ClinicalResearchStaff crsOut = null;
+        OrganizationalContact ocOut = null;
         Session session = null;
-        List<ClinicalResearchStaff> queryList = new ArrayList<ClinicalResearchStaff>();
+        List<OrganizationalContact> queryList = new ArrayList<OrganizationalContact>();
         StringBuffer hql = new StringBuffer();
-        hql.append(" select crs from ClinicalResearchStaff crs  " 
-                + "join crs.person as per "
-                + "join crs.organization as org where 1 = 1 ");
-        if (crs.getId() != null) {
-            hql.append(" and crs.id = ").append(crs.getId());
+        hql.append(" select oc from OrganizationalContact oc  " 
+                + "join oc.person as per "
+                + "join oc.organization as org where 1 = 1 ");
+        if (oc.getId() != null) {
+            hql.append(" and oc.id = ").append(oc.getId());
         }
-        if (crs.getPerson() != null && crs.getOrganization()  != null 
-                && crs.getPerson().getId() != null && crs.getOrganization().getId() != null) {
-            hql.append(" and per.id = ").append(crs.getPerson().getId());
-            hql.append(" and org.id = ").append(crs.getOrganization().getId());
+        if (oc.getPerson() != null && oc.getOrganization()  != null 
+                && oc.getPerson().getId() != null && oc.getOrganization().getId() != null) {
+            hql.append(" and per.id = ").append(oc.getPerson().getId());
+            hql.append(" and org.id = ").append(oc.getOrganization().getId());
         }
-        if (crs.getIdentifier() != null) {
-            hql.append(" and crs.identifier = '").append(crs.getIdentifier()).append('\'');
+        if (oc.getIdentifier() != null) {
+            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
         }
         try {
             session = HibernateUtil.getCurrentSession();
@@ -191,38 +194,38 @@ public class ClinicalResearchStaffCorrelationServiceBean {
     }
     
     if (!queryList.isEmpty()) {
-        crsOut = queryList.get(0);
+        ocOut = queryList.get(0);
     }
-    return crsOut;
+    return ocOut;
     }
     
     /**
      * 
-     * @param crs ClinicalResearchStaff 
-     * @return ClinicalResearchStaff
+     * @param oc OrganizationalContact 
+     * @return OrganizationalContact
      * @throws PAException PAException
      */
-    private ClinicalResearchStaff createPAClinicalResearchStaff(ClinicalResearchStaff crs) throws PAException {
-        if (crs == null) {
-            LOG.error(" ClinicalResearchStaff should not be null ");
-            throw new PAException(" ClinicalResearchStaff should not be null ");
+    private OrganizationalContact createPAOrganizationalContact(OrganizationalContact oc) throws PAException {
+        if (oc == null) {
+            LOG.error(" OrganizationalContact should not be null ");
+            throw new PAException(" OrganizationalContact should not be null ");
         }     
-        LOG.debug("Entering createClinicalResearchStaff ");
+        LOG.debug("Entering createOrganizationalContact ");
         Session session = null;
         
         try {
             session = HibernateUtil.getCurrentSession();
-            session.save(crs);
+            session.save(oc);
         } catch (HibernateException hbe) {
             
-            LOG.error(" Hibernate exception while createClinicalResearchStaff " , hbe);
-            throw new PAException(" Hibernate exception while create ClinicalResearchStaff" , hbe);
+            LOG.error(" Hibernate exception while createOrganizationalContact " , hbe);
+            throw new PAException(" Hibernate exception while create OrganizationalContact" , hbe);
         } finally {
             session.flush();
         }
         
-        LOG.debug("Leaving create ClinicalResearchStaff ");
-        return crs;
+        LOG.debug("Leaving create OrganizationalContact ");
+        return oc;
     }
     
 }
