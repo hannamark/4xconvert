@@ -15,7 +15,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
  * @author NAmiruddin
  *
  */
-
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals" })
 public class PoServiceBeanLookup  {
 
     /**

@@ -4,9 +4,9 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -41,101 +41,100 @@ public class OrganizationalContactCorrelationServiceBean {
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
      * @param personPoIdentifer po primary person id
-     * @return long id 
+     * @return id id
      * @throws PAException pe 
      */
-    public void createOrganizationalContactCorrelations(String orgPoIdentifier, 
+    public Long createOrganizationalContactCorrelations(String orgPoIdentifier, 
                                            String personPoIdentifer) throws PAException { 
         
-//        LOG.debug("Entering createClinicalResearchStaffCorrelation");
-//        
-//        CorrelationUtils corrUtils = new CorrelationUtils();
-//        if (orgPoIdentifier == null) {
-//            throw new PAException(" Organization PO Identifier is null");
-//        }
-//        if (personPoIdentifer == null) {
-//            throw new PAException(" Person PO Identifier is null");
-//        }
-//
-//        // Step 1 : get the PO Organization
-//        OrganizationDTO poOrg = null;
-//        try {
-//            poOrg = PoRegistry.getOrganizationEntityService().
-//                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-//        } catch (NullifiedEntityException e) {
-////            Map m = e.getNullifiedEntities();
-//           LOG.error("This Organization is no longer available instead use ");
-//           throw new PAException("This Organization is no longer available instead use ", e);
-//        }
-//        
-//        // Step 2 : get the PO Person
-//        PersonDTO poPer = null;
-//        try {
-//            poPer = PoRegistry.getPersonEntityService().getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
-//        } catch (NullifiedEntityException e) {
-//  //          Map m = e.getNullifiedEntities();
-//            LOG.error("This Person is no longer available instead use ");
-//            throw new PAException("This Person is no longer available instead use ", e);
-//         }
-//        
-//        
-//        // Step 2 : check if PO has oc correlation if not create one 
-//        OrganizationalContactDTO ocDTO = new OrganizationalContactDTO();
-//        List<OrganizationalContactDTO> ocDTOs = null;
-//        ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-//        ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-//        try {
-//            ocDTOs = PoServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
-//        } catch (NullifiedRoleException e) {
-//            LOG.error("check with scoot", e);
-//            // @todo: this should not happen, check with 
-//        }
-//        if (ocDTOs != null && ocDTOs.size() > 1) {
-//            throw new PAException("PO oc Correlation should not have more than 1  ");
-//        }
-//        if (ocDTOs == null) {
-//            try {
-//                Ii ii = PoServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
-//                ocDTO = PoServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
-//            } catch (NullifiedRoleException e) {
-//                LOG.error("Validation exception during get OrganizationalContact " , e);
-//                throw new PAException("Validation exception during get OrganizationalContact " , e);
-//            } catch (EntityValidationException e) {
-//                LOG.error("Validation exception during create OrganizationalContact " , e);
-//                throw new PAException("Validation exception during create OrganizationalContact " , e);
-//            } 
-//        } else {
-//            ocDTO = ocDTOs.get(0);
-//        }
-//
-//        // Step 3 : check for pa org, if not create one
-//        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
-//        if (paOrg == null) {
-//            corrUtils.createPAOrganization(poOrg);
-//        }
-//        // Step 4 : check for pa person, if not create one
-//        Person paPer = corrUtils.getPAPersonByIndetifers(null , personPoIdentifer);
-//        if (paPer == null) {
-//            corrUtils.createPAPerson(poPer);
-//        }
-//        
-//        // Step 6 : Check of PA has oc , if not create one
-//        OrganizationalContact oc = new OrganizationalContact();
-//        oc.setIdentifier(ocDTO.getIdentifier().getExtension());
-//        oc = getPAOrganizationalContact(oc);
-//        if (oc == null) {
-//            // create a new oc
-//            oc = new OrganizationalContact();
-//            oc.setPerson(paPer);
-//            oc.setOrganization(paOrg);
-//            oc.setIdentifier(ocDTO.getIdentifier().getExtension());
-//            oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
-//            createPAOrganizationalContact(oc);
-//        }
-//                                           }
-//       // LOG.debug("Leaving createOrganizationalContactCorrelation");
-//        //return oc.getId();
-//        //return null;
+        LOG.debug("Entering createClinicalResearchStaffCorrelation");
+        
+        CorrelationUtils corrUtils = new CorrelationUtils();
+        if (orgPoIdentifier == null) {
+            throw new PAException(" Organization PO Identifier is null");
+        }
+        if (personPoIdentifer == null) {
+            throw new PAException(" Person PO Identifier is null");
+        }
+
+        // Step 1 : get the PO Organization
+        // Step 1 : get the PO Organization
+        OrganizationDTO poOrg = null;
+        try {
+            poOrg = PoRegistry.getOrganizationEntityService().
+                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        } catch (NullifiedEntityException e) {
+//            Map m = e.getNullifiedEntities();
+           LOG.error("This Organization is no longer available instead use ");
+           throw new PAException("This Organization is no longer available instead use ", e);
+        }
+        
+        // Step 2 : get the PO Person
+        PersonDTO poPer = null;
+        try {
+            poPer = PoRegistry.getPersonEntityService().getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
+        } catch (NullifiedEntityException e) {
+  //          Map m = e.getNullifiedEntities();
+            LOG.error("This Person is no longer available instead use ");
+            throw new PAException("This Person is no longer available instead use ", e);
+         }
+        
+        
+        // Step 2 : check if PO has oc correlation if not create one 
+        OrganizationalContactDTO ocDTO = new OrganizationalContactDTO();
+        List<OrganizationalContactDTO> ocDTOs = null;
+        ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        try {
+            ocDTOs = PoServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
+        } catch (NullifiedRoleException e) {
+            LOG.error("check with scoot", e);
+            // @todo: this should not happen, check with 
+        }
+        if (ocDTOs != null && ocDTOs.size() > 1) {
+            throw new PAException("PO oc Correlation should not have more than 1  ");
+        }
+        if (ocDTOs == null) {
+            try {
+                Ii ii = PoServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
+                ocDTO = PoServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
+            } catch (NullifiedRoleException e) {
+                LOG.error("Validation exception during get OrganizationalContact " , e);
+                throw new PAException("Validation exception during get OrganizationalContact " , e);
+            } catch (EntityValidationException e) {
+                LOG.error("Validation exception during create OrganizationalContact " , e);
+                throw new PAException("Validation exception during create OrganizationalContact " , e);
+            } 
+        } else {
+            ocDTO = ocDTOs.get(0);
+        }
+
+        // Step 3 : check for pa org, if not create one
+        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        if (paOrg == null) {
+            corrUtils.createPAOrganization(poOrg);
+        }
+        // Step 4 : check for pa person, if not create one
+        Person paPer = corrUtils.getPAPersonByIndetifers(null , personPoIdentifer);
+        if (paPer == null) {
+            corrUtils.createPAPerson(poPer);
+        }
+        
+        // Step 6 : Check of PA has oc , if not create one
+        OrganizationalContact oc = new OrganizationalContact();
+        oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+        oc = getPAOrganizationalContact(oc);
+        if (oc == null) {
+            // create a new oc
+            oc = new OrganizationalContact();
+            oc.setPerson(paPer);
+            oc.setOrganization(paOrg);
+            oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+            oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
+            createPAOrganizationalContact(oc);
+        }
+        LOG.debug("Leaving createOrganizationalContactCorrelation");
+        return oc.getId();
     }
 
     /**
