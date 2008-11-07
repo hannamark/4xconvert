@@ -28,64 +28,65 @@
     	
     <table class="form">
     	  <tr>
-    	  	<th colspan="2"><h2><fmt:message key="view.trial.trialDetails"/></h2></th>
+    	  	<th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
     	  </tr>
-          <tr>     
-            <td scope="row" class="label">
-                <label for="officialTitle">
-                    <fmt:message key="view.trial.title"/>                
-                </label>
-            </td>
-            <td class="value">
-                 <c:out value="${requestScope.trialSummary.officialTitle.value }"/> 
-            </td>
+    	  <tr>     
+          		<td scope="row" class="label">
+          			<label for="Identifier">
+          				<fmt:message key="view.trial.identifier"/>                
+                  	</label>
+                </td>
+                <td class="value">
+                	<c:out value="${requestScope.trialSummary.identifier.extension }"/> 
+                </td>
           </tr>
           <tr>     
-            <td scope="row" class="label">
-                <label for="Identifier">
-                    <fmt:message key="view.trial.identifier"/>                
-                </label>
-            </td>
-            <td class="value">
-                 <c:out value="${requestScope.trialSummary.identifier.extension }"/> 
-            </td>
+        		<td scope="row" class="label">
+            		<label for="Lead Organization Trial Identifier">
+            			<fmt:message key="view.trial.leadOrgTrialIdentifier"/>                
+            			</label>
+            	</td>
+            	<td class="value">
+            		<c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
+            	</td>
           </tr>
           <tr>     
-          	<td scope="row" class="label">
-              		<label for="Lead Organization Trial Identifier">
-                  <fmt:message key="view.trial.leadOrgTrialIdentifier"/>                
-                  </label>
-              </td>
-              <td class="value">
-              	<c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
-              </td>
+            	<td scope="row" class="label">
+                	<label for="officialTitle">
+                    	<fmt:message key="search.trial.view.officialTitle"/>                
+                    </label>
+                </td>
+                <td class="value">
+                 	<c:out value="${requestScope.trialSummary.officialTitle.value }"/> 
+                </td>
           </tr>
-         <tr>     
-            <td scope="row" class="label">
-                <label for="Trial Phase">
-                    <fmt:message key="view.trial.phase"/>                
-                </label>
-            </td>
-            <td class="value">
-                 <c:out value="${requestScope.trialSummary.phaseCode.code }"/> 
-            </td>
+          <tr>     
+          		<td scope="row" class="label">
+          			<label for="Primary Purpose">
+          				<fmt:message key="view.trial.primaryPurpose"/>                
+          			</label>
+          		</td>
+          		<td class="value">
+          			<c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
+          			<c:out value="${requestScope.trialSummary.primaryPurposeOtherText.value }"/>
+          		</td>
+          </tr>
+          <tr>     
+            	<td scope="row" class="label">
+                	<label for="Trial Phase">
+                    	<fmt:message key="view.trial.phase"/>                
+                    	</label>
+                </td>
+                <td class="value">
+                 	<c:out value="${requestScope.trialSummary.phaseCode.code }"/> 
+                </td>
           </tr> 
-          <tr>     
-            <td scope="row" class="label">
-                <label for="Primary Purpose">
-                    <fmt:message key="view.trial.primaryPurpose"/>                
-                </label>
-            </td>
-            <td class="value">
-                 <c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
-                 <c:out value="${requestScope.trialSummary.primaryPurposeOtherText.value }"/>
-            </td>
-          </tr>
+         
           <tr>
           	<td colspan="2" class="space">&nbsp;</td>
           </tr>           
           <tr>
-          	<th colspan="2"><h2><fmt:message key="view.trial.leadOrgInvestigator"/></h2></th>
+          	<th colspan="2"><fmt:message key="view.trial.leadOrgInvestigator"/></th>
           </tr>
           <tr>     
         	<td scope="row" class="label">
@@ -111,7 +112,7 @@
      		<td colspan="2" class="space">&nbsp;</td>
        </tr>           
        <tr>
-     		<th colspan="2"><h2><fmt:message key="view.trial.Summary4Information"/></h2></th>
+     		<th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
        </tr>
        <tr>     
 			<td scope="row" class="label">
@@ -137,7 +138,7 @@
           <td colspan="2" class="space">&nbsp;</td>
       </tr>           
       <tr>
-          <th colspan="2"><h2><fmt:message key="view.trial.statusDates"/></h2></th>
+          <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
       </tr>
       <tr>     
     	<td scope="row" class="label">
@@ -161,8 +162,8 @@
       </tr> 
       <tr>     
           <td scope="row" class="label">
-              <label for="Study Start Date">
-                  <fmt:message key="view.trial.studyStartDate"/>                
+              <label for="Trial Start Date">
+                  <fmt:message key="search.trial.view.trialStartDate"/>                
               </label>
           </td>
           <td class="value">
@@ -184,25 +185,24 @@
      </table>
      	<div class="box">
      		<c:if test="${requestScope.studyIndIde != null}">						
-     		<h2>IND/IDE Information</h2>  
+     		IND/IDE Information  
      		<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>	
      		</c:if>
 		</div>
         <div class="box">
     		<c:if test="${requestScope.trialFundingList != null}">						
-    		<h2>NIH Grant Information</h2>  
+    		NIH Grant Information  
     		<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>	
     		</c:if>
 		</div>
 		
 		<div class="box">
 			<c:if test="${requestScope.protocolDocument != null}">						
-			<h2>Trial Related Documents</h2>  
+			Trial Related Documents  
 			<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>	
 			</c:if>
 		</div>
 
-	
 		<div class="actionsrow">
 		<del class="btnwrapper">
         	<ul class="btnrow">
