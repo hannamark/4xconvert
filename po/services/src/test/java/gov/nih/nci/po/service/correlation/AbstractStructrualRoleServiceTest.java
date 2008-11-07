@@ -83,12 +83,15 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
@@ -217,6 +220,11 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     public void testSimpleCreateAndGet() throws Exception {
         T structuralRole = getSampleStructuralRole();
 
+        if (structuralRole instanceof CuratableRole) {
+            CuratableRole c = (CuratableRole) structuralRole;
+            assertNull(c.getStatusDate());
+        }
+
         AbstractBaseServiceBean<T> service = getService();
 
         service.create(structuralRole);
@@ -226,6 +234,11 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
 
         T retrievedRole = service.getById(structuralRole.getId());
         verifyStructuralRole(structuralRole, retrievedRole);
+
+        if (retrievedRole instanceof CuratableRole) {
+            CuratableRole c = (CuratableRole) retrievedRole;
+            assertNotNull(c.getStatusDate());
+        }
     }
 
     @Test

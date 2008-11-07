@@ -84,10 +84,12 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
-
 import gov.nih.nci.po.data.bo.RoleStatus;
-import java.io.Serializable;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -100,6 +102,30 @@ import org.hibernate.type.Type;
 public class CurationStatusInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+        if (entity instanceof Curatable) {
+            Curatable c = (Curatable) entity;
+            if (c.getStatusDate() == null) {
+                setStatusDate(propertyNames, state);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void setStatusDate(String[] propNames, Object[] state) {
+        setProperty(propNames, state, "statusDate", new Date());
+    }
+
+    private void setProperty(String[] propNames, Object[] state, String prop, Object val) {
+        int index = ArrayUtils.indexOf(propNames, prop);
+        state[index] = val;
+    }
 
     /**
      * {@inheritDoc}
@@ -118,6 +144,9 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
                     if (!oldStatus.canTransitionTo(newStatus)) {
                         throw new CallbackException(String.format("Illegal curation transition from %s to %s",
                                                                   oldStatus.name(), newStatus.name()));
+                    } else {
+                        setStatusDate(propertyNames, currentState);
+                        return true;
                     }
 
                 } else if (currentState[i] instanceof RoleStatus) {
@@ -129,8 +158,10 @@ public class CurationStatusInterceptor extends EmptyInterceptor {
                     if (!oldStatus.canTransitionTo(newStatus)) {
                         throw new CallbackException(String.format("Illegal curation transition from %s to %s",
                                                                   oldStatus.name(), newStatus.name()));
+                    } else {
+                        setStatusDate(propertyNames, currentState);
+                        return true;
                     }
-
                 }
             }
         }

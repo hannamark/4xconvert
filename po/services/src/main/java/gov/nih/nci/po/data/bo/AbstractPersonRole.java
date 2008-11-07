@@ -86,6 +86,7 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -94,6 +95,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
@@ -127,6 +130,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private RoleStatus status;
+    private Date statusDate;
 
     /**
      * @return the id
@@ -303,5 +307,20 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
      */
     public void setStatus(RoleStatus status) {
         this.status = status;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 }

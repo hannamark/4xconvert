@@ -83,9 +83,11 @@
 package gov.nih.nci.po.data.bo;
 
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Primary curation interface.  Curatable objects have a curation lifecycle, typically
@@ -115,4 +117,15 @@ public interface Curatable<BO extends PersistentObject, CR extends ChangeRequest
      */
     Set<CR> getChangeRequests();
 
+    /**
+     * Get the status date.
+     * @return the status date.
+     */
+    Date getStatusDate();
+
+    /**
+     * Set the status date.
+     * @param statusDate the status date.
+     */
+    void setStatusDate(Date statusDate);
 }

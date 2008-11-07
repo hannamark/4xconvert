@@ -83,7 +83,6 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
@@ -95,7 +94,6 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.URL;
-import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -154,14 +152,13 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
         assertEquals(2, getCorrelationService().validate(dto).keySet().size());
     }
 
-    private long newOrgId;
     @Override
     protected void alter(HealthCareFacilityDTO dto) throws Exception {
         OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
         orgTest.setDefaultCountry(getDefaultCountry());
         orgTest.setUser(getUser());
         orgTest.setUpData();
-        newOrgId = orgTest.createOrganization();
+        orgTest.createOrganization();
     }
 
     /**

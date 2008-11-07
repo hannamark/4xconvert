@@ -85,6 +85,8 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
+import java.util.Date;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -92,6 +94,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -112,6 +116,7 @@ public abstract class AbstractPersonResourceProvider {
     private Person player;
     private Organization scoper;
     private RoleStatus status;
+    private Date statusDate;
 
     /**
      * @return the id
@@ -196,5 +201,20 @@ public abstract class AbstractPersonResourceProvider {
      */
     public void setStatus(RoleStatus status) {
         this.status = status;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 }

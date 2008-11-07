@@ -87,11 +87,15 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Columns;
@@ -117,6 +121,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     private Organization scoper;
     private RoleStatus status;
     private Ii assignedIdentifier;
+    private Date statusDate;
 
     /**
      * @return the id
@@ -216,5 +221,20 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
      */
     public void setAssignedIdentifier(Ii assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 }

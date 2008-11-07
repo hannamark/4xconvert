@@ -86,6 +86,7 @@ import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.Searchable;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -96,6 +97,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
@@ -120,6 +123,7 @@ public class Organization extends AbstractOrganization
     private static final long serialVersionUID = 1L;
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
+    private Date statusDate;
 
     /**
      * Create a new, empty org.
@@ -209,7 +213,6 @@ public class Organization extends AbstractOrganization
     @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
-    @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -265,5 +268,20 @@ public class Organization extends AbstractOrganization
     @SuppressWarnings("unused")
     private void setChangeRequests(Set<OrganizationCR> changeRequests) {
         this.changeRequests = changeRequests;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 }

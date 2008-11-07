@@ -2,7 +2,6 @@ package gov.nih.nci.coppa.test.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.test.integration.test.AbstractSeleneseTestCase;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -30,7 +29,7 @@ import org.junit.Test;
 public class TopicIntegrationTest {
 
     private static final Logger LOG = Logger.getLogger(TopicIntegrationTest.class);
-    
+
     private static final String SUBSCRIBER_ROLE_USER = "subscriber";
     private static final String SUBSCRIBER_ROLE_USER_PASS = "pass";
     private static final String CONNECTION_FACTORY_JNDI_BINDING_NAME = "/POConnectionFactory";

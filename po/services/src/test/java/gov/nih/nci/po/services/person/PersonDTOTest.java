@@ -374,6 +374,7 @@ public class PersonDTOTest {
      * @throws Exception on error
      */
     @Test
+    @SuppressWarnings("deprecation")
     public void testCTEPDataset() throws Exception {
         dto.setIdentifier(new Ii());
         dto.getIdentifier().setDisplayable(Boolean.TRUE);

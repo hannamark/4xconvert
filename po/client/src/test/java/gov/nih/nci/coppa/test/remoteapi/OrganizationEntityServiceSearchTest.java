@@ -9,7 +9,6 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.PoIsoConstraintException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -44,15 +43,15 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
         org.setDescription(RemoteApiUtils.convertToSt(desc));
         org.setPostalAddress(postalAddress);
         org.setTelecomAddress(telecomAddress);
-        
+
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         org.setTelecomAddress(telco);
-        
+
         TelEmail email = new TelEmail();
         email.setValue(new URI("mailto:default@example.com"));
         org.getTelecomAddress().getItem().add(email);
-        
+
         TelUrl url = new TelUrl();
         url.setValue(new URI("http://default.example.com"));
         org.getTelecomAddress().getItem().add(url);
@@ -72,7 +71,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
                     "john.doe@example.com", "jdoe@example.net", "jdoe@example.org" });
 
             DSet<Tel> telecomAddress = createDSetTel(email, tels, tels, urls, tels);
-            
+
             remoteCreateAndCatalog(create("Z Inc.", "Z", "Z org", createPostalAddress("123 abc ave.", null, "mycity",
                     null, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("A Inc.", "A", "A org", createPostalAddress("123 abc ave.", null, "mycity",
@@ -83,7 +82,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
                     null, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("AB Inc.", "AB", "AB org", createPostalAddress("123 abc ave.", null,
                     "mycity", null, "12345", "USA"), telecomAddress));
-            
+
             remoteCreateAndCatalog(create("BC Inc.", "BC", "BC org", createPostalAddress("123 abc ave.", null,
                     "mycity", null, "12345", "USA")));
             remoteCreateAndCatalog(create("CA Inc.", "CA", "CA org", createPostalAddress("123 abc ave.", null,

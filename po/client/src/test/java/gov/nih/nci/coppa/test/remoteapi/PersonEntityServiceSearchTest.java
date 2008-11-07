@@ -7,7 +7,6 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.PoIsoConstraintException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Arrays;

@@ -10,13 +10,13 @@ import java.util.List;
  * A static utility class to handle the processing of Change Requests.
  */
 final class CRProcessor {
-    
+
     private CRProcessor() {
         //noop
     }
     /**
      * A callback to update the target entity after processing.
-     * 
+     *
      * @param <ENTITY>
      */
     interface EntityUpdateCallback<ENTITY> {
@@ -25,11 +25,12 @@ final class CRProcessor {
 
     /**
      * update the target ENTITY, and delete processed CRs (whether applied or rejected).
-     * 
+     *
      * @param <CR> the change request type.
      * @param <ENTITY> the PersistentObject type.
      * @param crs the hibernate IDs of the CRs to delete. All crs must have the same target Org,
      */
+    @SuppressWarnings("unchecked")
     static <CR extends ChangeRequest<ENTITY>, ENTITY extends Curatable> void processCRs(List<CR> crs,
             EntityUpdateCallback<ENTITY> callback) {
         ENTITY target = null;

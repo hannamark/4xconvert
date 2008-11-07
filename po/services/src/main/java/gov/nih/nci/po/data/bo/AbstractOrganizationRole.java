@@ -85,10 +85,14 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 
+import java.util.Date;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
@@ -111,6 +115,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
     private Long id;
     private Organization player;
     private RoleStatus status;
+    private Date statusDate;
 
     /**
      * @return the id
@@ -148,6 +153,21 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
      */
     public void setPlayer(Organization player) {
         this.player = player;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getStatusDate() {
+        return this.statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 
     /**

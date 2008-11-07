@@ -84,6 +84,8 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.audit.AuditLogRecord;
@@ -101,6 +103,7 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -114,7 +117,7 @@ import org.junit.Test;
 
 /**
  * Tests the organization service.
- * 
+ *
  * @author Scott Miller
  */
 public class OrganizationServiceBeanTest extends AbstractBeanTest {
@@ -168,10 +171,12 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     }
 
     protected long createOrganization(Organization org) throws EntityValidationException {
+        assertNull(org.getStatusDate());
         long id = getOrgServiceBean().create(org);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         Organization saved = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
+        assertNotNull(saved.getStatusDate());
 
         // adjust the expected value to NEW
         org.setStatusCode(EntityStatus.PENDING);
@@ -286,9 +291,10 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
     }
 
     @Test
-    public void curateWithChanges() throws EntityValidationException, JMSException {
+    public void curateWithChanges() throws Exception {
         Organization o = getBasicOrganization();
         long id = createOrganization(o);
+        Thread.sleep(10);
         o = getOrgServiceBean().getById(id);
         // remove elements from the different CollectionType properties to ensure proper persistence
         o.getEmail().remove(0);
@@ -298,9 +304,14 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         o.getUrl().remove(0);
 
         o.setStatusCode(EntityStatus.ACTIVE);
+        Date oldDate = o.getStatusDate();
         getOrgServiceBean().curate(o);
 
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
         Organization result = getOrgServiceBean().getById(id);
+        assertTrue(result.getStatusDate().getTime() >  oldDate.getTime());
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
         assertEquals(1, result.getEmail().size());
         assertEquals(1, result.getFax().size());
@@ -370,7 +381,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         o.getPhone().remove(0);
         o.getTty().remove(0);
         o.getUrl().remove(0);
-        
+
         verifyCurateThrowsInvalidStateException(o, id2, EntityStatus.ACTIVE);
     }
     @Test
@@ -386,7 +397,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         o.getPhone().remove(0);
         o.getTty().remove(0);
         o.getUrl().remove(0);
-        
+
         // to avoid "Illegal curation transition from PENDING to INACTIVE" set org's status to ACTIVE to test INACTIVE
         // transition
         o.setStatusCode(EntityStatus.ACTIVE);
@@ -468,7 +479,7 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean());
     }
 
-    
+
     @Test
     public void curatorCreatesOrgAsPENDING() throws JMSException {
         Organization o = curatorCreatesOrg(EntityStatus.PENDING);
@@ -495,13 +506,13 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
     private Organization curatorCreatesOrg(EntityStatus status) throws JMSException {
         Organization o = getBasicOrganization();
-       
+
         o.setStatusCode(status);
         o.setDuplicateOf(null);
         getOrgServiceBean().curate(o);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         Organization result = getOrgServiceBean().getById(o.getId());
         assertEquals(status, result.getStatusCode());
         assertEquals(status, result.getPriorEntityStatus());

@@ -92,15 +92,15 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         t.setValue(new URI("tel", phone, null));
         telco.getItem().add(t);
         dto.setTelecomAddress(telco);
-        
+
         TelEmail email = new TelEmail();
         email.setValue(new URI("mailto:another.email@example.com"));
         dto.getTelecomAddress().getItem().add(email);
-        
+
         TelUrl url = new TelUrl();
         url.setValue(new URI("http://example.com"));
         dto.getTelecomAddress().getItem().add(url);
-        
+
         Ii id = remote.createOrganization(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -123,15 +123,15 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);
-            
+
             TelEmail email = new TelEmail();
             email.setValue(new URI("mailto:another.email@example.com"));
             dto.getTelecomAddress().getItem().add(email);
-            
+
             TelUrl url = new TelUrl();
             url.setValue(new URI("http://example.com"));
             dto.getTelecomAddress().getItem().add(url);
-            
+
             Ii id = remote.createOrganization(dto);
             assertNotNull(id);
             assertNotNull(id.getExtension());
@@ -150,11 +150,10 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         OrganizationDTO dto = new OrganizationDTO();
         dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         Map<String, String[]> errors = remote.validate(dto);
-        assertEquals(4, errors.size()) ;
+        assertEquals(3, errors.size()) ;
         assertTrue(errors.containsKey("name"));
         assertTrue(errors.containsKey("postalAddress"));
         assertTrue(errors.containsKey("email"));
-        assertTrue(errors.containsKey("url"));
     }
 
     private Organization createOrg(String name, String abbreviatedName, String desc, String addr1, String addr2,

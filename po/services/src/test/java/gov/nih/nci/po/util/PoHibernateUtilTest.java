@@ -21,11 +21,10 @@ public class PoHibernateUtilTest {
         a.setStreetAddressLine("dummy street");
         Organization org = new Organization();
         Map<String, String[]> result = PoHibernateUtil.validate(org);
-        assertEquals(5, result.size());
+        assertEquals(4, result.size());
         assertEquals("must be set", result.get("postalAddress")[0]);
         assertEquals("must be set", result.get("name")[0]);
         assertEquals("must be set", result.get("statusCode")[0]);
         assertEquals("At least one  must be set", result.get("email")[0]);
-        assertEquals("At least one  must be set", result.get("url")[0]);
     }
 }
