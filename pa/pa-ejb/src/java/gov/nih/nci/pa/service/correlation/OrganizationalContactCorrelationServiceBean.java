@@ -94,7 +94,7 @@ public class OrganizationalContactCorrelationServiceBean {
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO oc Correlation should not have more than 1  ");
         }
-        if (ocDTOs == null) {
+        if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
                 Ii ii = PoServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
                 ocDTO = PoServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
