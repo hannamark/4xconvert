@@ -48,7 +48,7 @@ public class OrganizationCorrelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoRegistry.getOrganizationEntityService().
+            poOrg = PoServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();

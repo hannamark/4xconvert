@@ -61,7 +61,7 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoRegistry.getOrganizationEntityService().
+            poOrg = PoServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -72,7 +72,8 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoRegistry.getPersonEntityService().getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
+            poPer = PoServiceBeanLookup.getPersonEntityService().
+            getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
   //          Map m = e.getNullifiedEntities();
             LOG.error("This Person is no longer available instead use ");
