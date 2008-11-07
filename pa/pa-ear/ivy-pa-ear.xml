@@ -68,7 +68,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="container->master"/>
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="container->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="container->master"/>
-    <dependency org="ncicb"                  name="clm"                     rev="3.2"             conf="container->master"/>
+    <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="container->master"/>
     
     <!-- test -->
     <dependency org="apache"                 name="struts2-core"            rev="2.0.5"           conf="test->master"/>
