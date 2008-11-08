@@ -14,7 +14,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum ActionCategoryCode implements CodedEnum<String> {
+public enum ActivityCategoryCode implements CodedEnum<String> {
     
     /** Intervention. */
     INTERVENTION("Intervention"), 
@@ -26,7 +26,7 @@ public enum ActionCategoryCode implements CodedEnum<String> {
      * 
      * @param code
      */
-    private ActionCategoryCode(String code) {
+    private ActivityCategoryCode(String code) {
         this.code = code;
         register(this);
     }
@@ -57,15 +57,15 @@ public enum ActionCategoryCode implements CodedEnum<String> {
      * @param code code
      * @return TrialPhaseType 
      */
-    public static ActionCategoryCode getByCode(String code) {
-        return getByClassAndCode(ActionCategoryCode.class, code);
+    public static ActivityCategoryCode getByCode(String code) {
+        return getByClassAndCode(ActivityCategoryCode.class, code);
     }
     
     /**
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        ActionCategoryCode[] l = ActionCategoryCode.values();
+        ActivityCategoryCode[] l = ActivityCategoryCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();
