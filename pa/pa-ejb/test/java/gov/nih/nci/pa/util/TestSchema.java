@@ -39,8 +39,8 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
-import gov.nih.nci.pa.enums.ActionCategoryCode;
-import gov.nih.nci.pa.enums.ActionSubcategoryCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -392,14 +392,14 @@ public class TestSchema {
             
             PlannedActivity pa = new PlannedActivity();
             pa.setAlternateName("alternateName");
-            pa.setCategoryCode(ActionCategoryCode.INTERVENTION);
+            pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
             pa.setDateLastUpdated(new Date());
             pa.setDescriptionText("descriptionText");
             pa.setIntervention(inv);
             pa.setLeadProductIndicator(true);
             pa.setName("name");
             pa.setStudyProtocol(sp);
-            pa.setSubcategoryCode(ActionSubcategoryCode.DIETARY_SUPPLEMENT);
+            pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
             pa.setUserLastUpdated("Joe");
             addUpdObject(pa);
             plannedActivityIds.add(pa.getId());
