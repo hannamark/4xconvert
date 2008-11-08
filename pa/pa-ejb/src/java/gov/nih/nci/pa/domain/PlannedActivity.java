@@ -3,8 +3,8 @@
  */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActionCategoryCode;
-import gov.nih.nci.pa.enums.ActionSubcategoryCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +33,8 @@ import org.hibernate.validator.Length;
 public class PlannedActivity extends Activity {
     private static final long serialVersionUID = 1239781890L;
 
-    private ActionCategoryCode categoryCode;
-    private ActionSubcategoryCode subcategoryCode; 
+    private ActivityCategoryCode categoryCode;
+    private ActivitySubcategoryCode subcategoryCode; 
     private String name;
     private String alternateName;
     private Boolean leadProductIndicator;
@@ -48,13 +48,13 @@ public class PlannedActivity extends Activity {
      */
     @Column(name = "CATEGORY_CODE")
     @Enumerated(EnumType.STRING)
-    public ActionCategoryCode getCategoryCode() {
+    public ActivityCategoryCode getCategoryCode() {
         return categoryCode;
     }
     /**
      * @param categoryCode the categoryCode to set
      */
-    public void setCategoryCode(ActionCategoryCode categoryCode) {
+    public void setCategoryCode(ActivityCategoryCode categoryCode) {
         this.categoryCode = categoryCode;
     }
     /**
@@ -62,13 +62,13 @@ public class PlannedActivity extends Activity {
      */
     @Column(name = "SUBCATEGORY_CODE")
     @Enumerated(EnumType.STRING)
-    public ActionSubcategoryCode getSubcategoryCode() {
+    public ActivitySubcategoryCode getSubcategoryCode() {
         return subcategoryCode;
     }
     /**
      * @param subcategoryCode the subcategoryCode to set
      */
-    public void setSubcategoryCode(ActionSubcategoryCode subcategoryCode) {
+    public void setSubcategoryCode(ActivitySubcategoryCode subcategoryCode) {
         this.subcategoryCode = subcategoryCode;
     }
     /**
