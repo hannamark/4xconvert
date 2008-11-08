@@ -187,8 +187,7 @@ public class IiConverter {
             return null;
         }
         if (ii.getExtension() == null) {
-            // @todo : throw exception
-            ii.setNullFlavor(NullFlavor.NI);
+            return null;
         }
         return Long.valueOf(ii.getExtension());
     }
