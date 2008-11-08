@@ -145,7 +145,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
                 bo.setUserLastCreated(oldBo.getUserLastCreated());
                 bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
             }
-            session.merge(bo);
+            bo = (BO) session.merge(bo);
             session.flush();
             resultDto = (DTO) Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
@@ -173,7 +173,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     public DTO update(DTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            serviceError("Create method should be used to modify existing.  ");
+            serviceError("Create method should be used to create new.  ");
         }
         return createOrUpdate(dto);
     }

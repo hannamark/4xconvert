@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -74,7 +75,7 @@ public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         Collection<PlannedActivity> interventions = new ArrayList<PlannedActivity>();
         Collection<Ii> paIiSet = new ArrayList<Ii>();
-        if (dto.getInterventions() != null) {
+        if ((dto.getInterventions() != null) && (dto.getInterventions().getItem() != null)) {
             paIiSet = dto.getInterventions().getItem();
         }
         for (Ii paIi : paIiSet) {
@@ -85,6 +86,7 @@ public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
         bo.setInterventions(interventions);
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStudyProtocol(spBo);
+        bo.setTypeCode(ArmTypeCode.getByCode(CdConverter.convertCdToString(dto.getTypeCode())));
         return bo;
     }
 }
