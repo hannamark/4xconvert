@@ -59,7 +59,7 @@ public class OrganizationCorrelationServiceBean {
         // Step 2 : check if PO has hcf correlation if not create one 
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
         List<HealthCareFacilityDTO> hcfDTOs = null;
-        hcfDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         try {
             hcfDTOs = PoServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
         } catch (NullifiedRoleException e) {
@@ -88,7 +88,7 @@ public class OrganizationCorrelationServiceBean {
         // Step 3 : check for pa org, if not create one
         Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
         if (paOrg == null) {
-            corrUtils.createPAOrganization(poOrg);
+            paOrg = corrUtils.createPAOrganization(poOrg);
         }
 
         // Step 4 : Check of PA has hcf , if not create one

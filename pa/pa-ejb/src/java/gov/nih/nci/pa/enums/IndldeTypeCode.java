@@ -16,7 +16,7 @@ public enum IndldeTypeCode implements CodedEnum<String> {
     /** IND. */
     IND("IND"),
     /**  IDE. */
-    IDE(" IDE");    
+    IDE("IDE");    
 
     private String code;
     /**

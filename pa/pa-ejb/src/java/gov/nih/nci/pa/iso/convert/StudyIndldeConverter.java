@@ -6,8 +6,8 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.NciDivProgHolderCode;
-import gov.nih.nci.pa.enums.NihInstHolderCode;
+import gov.nih.nci.pa.enums.ProgramCodesForNCI;
+import gov.nih.nci.pa.enums.ProgramCodesForNIH;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -73,11 +73,11 @@ public class StudyIndldeConverter {
         if (siDTO.getGrantorCode() != null) {
             si.setGrantorCode(GrantorCode.getByCode(siDTO.getGrantorCode().getCode()));
         }
-        if (siDTO.getNihInstHolderCode() != null) {
-            si.setNihInstHolderCode(NihInstHolderCode.getByCode(siDTO.getNihInstHolderCode().getCode()));
+        if (siDTO.getHolderTypeCode() != null && siDTO.getHolderTypeCode().getCode().equals("NIH")) {
+            si.setNihInstHolderCode(ProgramCodesForNIH.getByCode(siDTO.getNihInstHolderCode().getCode()));
         }
-        if (siDTO.getNciDivProgHolderCode() != null) {
-            si.setNciDivProgHolderCode(NciDivProgHolderCode.getByCode(siDTO.getNciDivProgHolderCode().getCode()));
+        if (siDTO.getHolderTypeCode() != null && siDTO.getHolderTypeCode().getCode().equals("NCI")) {
+            si.setNciDivProgHolderCode(ProgramCodesForNCI.getByCode(siDTO.getNciDivProgHolderCode().getCode()));
         }
         if (siDTO.getHolderTypeCode() != null) {
             si.setHolderTypeCode(HolderTypeCode.getByCode(siDTO.getHolderTypeCode().getCode()));

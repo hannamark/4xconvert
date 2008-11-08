@@ -11,17 +11,61 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum ProgramCodesForNCI implements CodedEnum<String> {
     /**
-     * Abbreviated.
+     * CCR-Center for Cancer Research.
      */
-    NCIValue01("ncivalue1"), 
-     /**
-      * Complete.
-      */
-    NCIValue02("ncivalue2"),
-     /**
-      * AE.
-      */
-    NCIValue03("ncivalue3");
+    CCR("CCR-Center for Cancer Research"),
+    /**
+     * CTEP-Cancer Therapy Evaluation Program.
+     */
+    CTEP("CTEP-Cancer Therapy Evaluation Program"),
+    /**
+     * DCB-Division of Cancer Biology.
+     */
+    DCB("DCB-Division of Cancer Biology"),
+    /**
+     * DCCPS-Division of Cancer Control and Population Sciences.
+     */
+    DCCPS("DCCPS-Division of Cancer Control and Population Sciences"),
+    /**
+     * DCEG-Division of Cancer Epidemiology and Genetics.
+     */
+    DCEG("DCEG-Division of Cancer Epidemiology and Genetics"),
+    /**
+     * DTP-Developmental Therapeutics Program.
+     *
+    DTP("DTP-Developmental Therapeutics Program"),
+    /**
+     * DCP-Division of Cancer Prevention.
+     */
+    DCP("DCP-Division of Cancer Prevention"),
+    /**
+     * DEA-Division of Extramural Activities.
+     */
+    DEA("DEA-Division of Extramural Activities"),
+    /**
+     * OD-Office of the Director, NCI, NIH.
+     */
+    OD("OD-Office of the Director, NCI, NIH"),
+    /**
+     * OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs).
+     */
+    OSB_SPOREs("OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs)"),
+    /**
+     * CIP-Cencer Imaging Program.
+     */
+    CIP("CIP-Cencer Imaging Program"),
+    /**
+     * CDP-Cancer Diagnosis Program.
+     */
+    CDP("CDP-Cancer Diagnosis Program"),
+    /**
+     * TRP-Translational Research Program.
+     */
+    TRP("TRP-Translational Research Program"),
+    /**
+     * RRP-Radiation Research Program.
+     */
+    RRP("RRP-Radiation Research Program");
     
     private String code;
     

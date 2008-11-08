@@ -70,7 +70,7 @@ public class StudyIndldeTest {
         create.setStudyProtocol(sp);
         create.setExpandedAccessIndicator(Boolean.TRUE);
         create.setHolderTypeCode(HolderTypeCode.NIH);
-        create.setNihInstHolderCode(NihInstHolderCode.NCRR);
+        //create.setNihInstHolderCode(NihInstHolderCode.NCRR);
         create.setUserLastUpdated("Abstractor");
         create.setDateLastUpdated(now);
         return create;

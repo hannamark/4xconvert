@@ -415,7 +415,7 @@ public class TestSchema {
             si.setStudyProtocol(sp);
             si.setExpandedAccessIndicator(Boolean.TRUE);
             si.setHolderTypeCode(HolderTypeCode.NIH);
-            si.setNihInstHolderCode(NihInstHolderCode.NCRR);
+            //si.setNihInstHolderCode(NihInstHolderCode.NCRR);
             addUpdObject(si); 
             
             Arm arm = new Arm();

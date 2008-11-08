@@ -4,8 +4,8 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.NciDivProgHolderCode;
-import gov.nih.nci.pa.enums.NihInstHolderCode;
+import gov.nih.nci.pa.enums.ProgramCodesForNCI;
+import gov.nih.nci.pa.enums.ProgramCodesForNIH;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,8 +33,8 @@ public class StudyIndlde extends AbstractEntity {
     private ExpandedAccessStatusCode expandedAccessStatusCode;
     private Boolean expandedAccessIndicator;
     private GrantorCode grantorCode;
-    private NihInstHolderCode nihInstHolderCode;
-    private NciDivProgHolderCode nciDivProgHolderCode;
+    private ProgramCodesForNIH nihInstHolderCode;
+    private ProgramCodesForNCI nciDivProgHolderCode;
     private HolderTypeCode holderTypeCode;
     private String indldeNumber;
     private IndldeTypeCode indldeTypeCode;
@@ -103,13 +103,13 @@ public class StudyIndlde extends AbstractEntity {
      */
     @Column(name = "NIH_INST_HOLDER_CODE")
     @Enumerated(EnumType.STRING)
-    public NihInstHolderCode getNihInstHolderCode() {
+    public ProgramCodesForNIH getNihInstHolderCode() {
         return nihInstHolderCode;
     }
     /**
      * @param nihInstHolderCode nihInstHolderCode
      */
-    public void setNihInstHolderCode(NihInstHolderCode nihInstHolderCode) {
+    public void setNihInstHolderCode(ProgramCodesForNIH nihInstHolderCode) {
         this.nihInstHolderCode = nihInstHolderCode;
     }
     /**
@@ -117,13 +117,13 @@ public class StudyIndlde extends AbstractEntity {
      */
     @Column(name = "NCI_DIV_PROG_HOLDER_CODE")
     @Enumerated(EnumType.STRING)
-    public NciDivProgHolderCode getNciDivProgHolderCode() {
+    public ProgramCodesForNCI getNciDivProgHolderCode() {
         return nciDivProgHolderCode;
     }
     /**
      * @param nciDivProgHolderCode nciDivProgHolderCode
      */
-    public void setNciDivProgHolderCode(NciDivProgHolderCode nciDivProgHolderCode) {
+    public void setNciDivProgHolderCode(ProgramCodesForNCI nciDivProgHolderCode) {
         this.nciDivProgHolderCode = nciDivProgHolderCode;
     }
     /**
