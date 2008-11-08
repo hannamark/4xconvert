@@ -42,10 +42,10 @@ public class StudyContactConverter {
                     bo.getPrimaryIndicator()));
         
         if (bo.getHealthCareProvider() != null) {
-            dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+            dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
         }
         if (bo.getClinicalResearchStaff() != null) {
-            dto.setClinicalResearchStaff(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
+            dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
         }
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
@@ -69,14 +69,14 @@ public class StudyContactConverter {
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
         HealthCareProvider hfBo = null;
         ClinicalResearchStaff crs = null;
-        if (!PAUtil.isIiNull(dto.getHealthCareProvider())) {
+        if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
             hfBo = new HealthCareProvider();
-            hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProvider()));
+            hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
             bo.setHealthCareProvider(hfBo);
         }
-        if (!PAUtil.isIiNull(dto.getClinicalResearchStaff())) {
+        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
             crs = new ClinicalResearchStaff();
-            crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaff()));
+            crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
             bo.setClinicalResearchStaff(crs);
         }
 

@@ -25,7 +25,7 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     private Cd roleCode;
     private DSet<Tel> telecomAddresses;
     private Ii studyParticipationIi;
-    private Ii healthCareProvider;
+    private Ii organizationalContactIi;
     /**
      * @return the postalAddress
      */
@@ -75,11 +75,20 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
     public void setTelecomAddresses(DSet<Tel> telecomAddresses) {
         this.telecomAddresses = telecomAddresses;
     }
+    
     /**
-     * @return the serialVersionUID
+     * 
+     * @return Ii ii
      */
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public Ii getOrganizationalContactIi() {
+        return organizationalContactIi;
+    }
+    /**
+     * 
+     * @param organizationalContactIi ii
+     */
+    public void setOrganizationalContactIi(Ii organizationalContactIi) {
+        this.organizationalContactIi = organizationalContactIi;
     }
     /**
      * @return the studyParticipationIi
@@ -92,17 +101,5 @@ public class StudyParticipationContactDTO extends PersonFunctionalRoleDTO {
      */
     public void setStudyParticipationIi(Ii studyParticipationIi) {
         this.studyParticipationIi = studyParticipationIi;
-    }
-    /**
-     * @return the healthCareProvider
-     */
-    public Ii getHealthCareProvider() {
-        return healthCareProvider;
-    }
-    /**
-     * @param healthCareProvider the healthCareProvider to set
-     */
-    public void setHealthCareProvider(Ii healthCareProvider) {
-        this.healthCareProvider = healthCareProvider;
     }
 }

@@ -59,7 +59,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -70,7 +70,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoServiceBeanLookup.getPersonEntityService().
+            poPer = PoPaServiceBeanLookup.getPersonEntityService().
                 getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
   //          Map m = e.getNullifiedEntities();
@@ -85,7 +85,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         crsDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         crsDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         try {
-            crsDTOs = PoServiceBeanLookup.getClinicalResearchStaffCorrelationService().search(crsDTO);
+            crsDTOs = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().search(crsDTO);
         } catch (NullifiedRoleException e) {
             LOG.error("check with scoot", e);
             // @todo: this should not happen, check with 
@@ -95,8 +95,8 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
         if (crsDTOs == null || crsDTOs.isEmpty()) {
             try {
-                Ii ii = PoServiceBeanLookup.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                crsDTO = PoServiceBeanLookup.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+                Ii ii = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
+                crsDTO = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
@@ -111,12 +111,12 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 3 : check for pa org, if not create one
         Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
         if (paOrg == null) {
-            paOrg = corrUtils.createPAOrganization(poOrg);
+            corrUtils.createPAOrganization(poOrg);
         }
         // Step 4 : check for pa person, if not create one
         Person paPer = corrUtils.getPAPersonByIndetifers(null , personPoIdentifer);
         if (paPer == null) {
-            paPer = corrUtils.createPAPerson(poPer);
+            corrUtils.createPAPerson(poPer);
         }
         
         // Step 6 : Check of PA has crs , if not create one

@@ -25,7 +25,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "RESEARCH_ORGANIZATION")
-public class ResearchOrganization extends AbstractEntity {
+public class ResearchOrganization extends StructuralRole {
     private static final long serialVersionUID = 1736507890L;
     
     private Organization organization;

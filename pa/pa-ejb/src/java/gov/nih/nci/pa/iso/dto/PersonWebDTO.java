@@ -1,6 +1,6 @@
 package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 
 /**
  * This class is used to display results to the browser.
@@ -10,7 +10,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
  */
 public class PersonWebDTO {
     private Long id;
-    private StudyContactRoleCode roleName;
+    private StudyParticipationContactRoleCode roleName;
     private String firstName;
     private String lastName;    
     private String middleName;
@@ -35,14 +35,14 @@ public class PersonWebDTO {
     /**
      * @return the roleName
      */
-    public StudyContactRoleCode getRoleName() {
+    public StudyParticipationContactRoleCode getRoleName() {
         return roleName;
     }
 
     /**
      * @param roleName the roleName to set
      */
-    public void setRoleName(StudyContactRoleCode roleName) {
+    public void setRoleName(StudyParticipationContactRoleCode roleName) {
         this.roleName = roleName;
     }
 

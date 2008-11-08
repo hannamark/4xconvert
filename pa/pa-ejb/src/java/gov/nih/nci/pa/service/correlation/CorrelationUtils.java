@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.enums.StatusCode;
@@ -236,6 +237,35 @@ public class CorrelationUtils {
     
         }
         return per;
+    }
+    
+    /**
+     * 
+     * @param crs ClinicalResearchStaff 
+     * @return ClinicalResearchStaff
+     * @throws PAException PAException
+     */
+    AbstractEntity createPADomain(AbstractEntity ae) throws PAException {
+        if (ae == null) {
+            LOG.error(" domain should not be null ");
+            throw new PAException(" domaon should not be null ");
+        }     
+        LOG.debug("Entering createPA Domain ");
+        Session session = null;
+        
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.save(ae);
+        } catch (HibernateException hbe) {
+            
+            LOG.error(" Hibernate exception while creating domain " , hbe);
+            throw new PAException(" Hibernate exception while creating domain" , hbe);
+        } finally {
+            session.flush();
+        }
+        
+        LOG.debug("Leaving create PA Domain ");
+        return ae;
     }
     
 

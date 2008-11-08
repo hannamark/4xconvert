@@ -4,8 +4,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import org.hibernate.validator.NotNull;
-
 /**
  * Abstract class for managing Person Functional Role .
  * @author Naveen Amiruddin
@@ -27,7 +25,6 @@ public abstract class PersonFunctionalRole extends FunctionalRole {
      */
     @ManyToOne 
     @JoinColumn(name = "CLINICAL_RESEARCH_STAFF_ID", updatable = false)
-    @NotNull
     public ClinicalResearchStaff getClinicalResearchStaff() {
         return clinicalResearchStaff;
     }

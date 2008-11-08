@@ -61,7 +61,7 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -72,7 +72,7 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoServiceBeanLookup.getPersonEntityService().
+            poPer = PoPaServiceBeanLookup.getPersonEntityService().
             getPerson(IiConverter.converToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
   //          Map m = e.getNullifiedEntities();
@@ -87,7 +87,7 @@ public class OrganizationalContactCorrelationServiceBean {
         ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         try {
-            ocDTOs = PoServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
+            ocDTOs = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
         } catch (NullifiedRoleException e) {
             LOG.error("check with scoot", e);
             // @todo: this should not happen, check with 
@@ -97,8 +97,8 @@ public class OrganizationalContactCorrelationServiceBean {
         }
         if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
-                Ii ii = PoServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
-                ocDTO = PoServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
+                Ii ii = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().createCorrelation(ocDTO);
+                ocDTO = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get OrganizationalContact " , e);
                 throw new PAException("Validation exception during get OrganizationalContact " , e);

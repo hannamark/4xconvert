@@ -3,12 +3,14 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -48,7 +50,7 @@ public class OrganizationCorrelationServiceBean {
         // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
-            poOrg = PoServiceBeanLookup.getOrganizationEntityService().
+            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
@@ -61,7 +63,7 @@ public class OrganizationCorrelationServiceBean {
         List<HealthCareFacilityDTO> hcfDTOs = null;
         hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         try {
-            hcfDTOs = PoServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
+            hcfDTOs = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
         } catch (NullifiedRoleException e) {
             LOG.error("check with scoot", e);
             // @todo: this should not happen, check with 
@@ -71,8 +73,8 @@ public class OrganizationCorrelationServiceBean {
         }
         if (hcfDTOs == null || hcfDTOs.isEmpty()) {
             try {
-                Ii ii = PoServiceBeanLookup.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
-                hcfDTO = PoServiceBeanLookup.getHealthCareFacilityCorrelationService().getCorrelation(ii);
+                Ii ii = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
+                hcfDTO = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 LOG.error("Validation exception during get ClinicalResearchStaff " , e);
                 throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
@@ -109,6 +111,82 @@ public class OrganizationCorrelationServiceBean {
     }
     
 
+    /**
+     * 
+     * @param orgPoIdentifier org id
+     * @return Long
+     * @throws PAException pe
+     */
+    public Long createResearchOrganizationCorrelations(String orgPoIdentifier) throws PAException { 
+        LOG.debug("Entering createResearchOrganizationCorrelations");
+
+        CorrelationUtils corrUtils = new CorrelationUtils();
+        if (orgPoIdentifier == null) {
+            throw new PAException(" Organization PO Identifier is null");
+        }
+        // Step 1 : get the PO Organization
+        OrganizationDTO poOrg = null;
+        try {
+            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        } catch (NullifiedEntityException e) {
+//            Map m = e.getNullifiedEntities();
+           LOG.error("This Organization is no longer available instead use ");
+           throw new PAException("This Organization is no longer available instead use ", e);
+        }
+
+        // Step 2 : check if PO has hcf correlation if not create one 
+        ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
+        List<ResearchOrganizationDTO> roDTOs = null;
+        roDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        try {
+            roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
+        } catch (NullifiedRoleException e) {
+            LOG.error("check with scoot", e);
+            // @todo: this should not happen, check with 
+        }
+        if (roDTOs != null && roDTOs.size() > 1) {
+            throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
+        }
+        if (roDTOs == null || roDTOs.isEmpty()) {
+            try {
+                Ii ii = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
+                roDTO = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().getCorrelation(ii);
+            } catch (NullifiedRoleException e) {
+                LOG.error("Validation exception during get ClinicalResearchStaff " , e);
+                throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
+            } catch (EntityValidationException e) {
+                LOG.error("Validation exception during create ClinicalResearchStaff " , e);
+                throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+            } 
+        } else {
+            roDTO = roDTOs.get(0);
+        }
+
+        
+        // Step 3 : check for pa org, if not create one
+        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        if (paOrg == null) {
+            paOrg = corrUtils.createPAOrganization(poOrg);
+        }
+
+        // Step 4 : Check of PA has hcf , if not create one
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier(roDTO.getIdentifier().getExtension());
+        ro = getPAResearchOrganization(ro);
+        if (ro == null) {
+            // create a new crs
+            ro = new ResearchOrganization();
+            ro.setOrganization(paOrg);
+            ro.setIdentifier(roDTO.getIdentifier().getExtension());
+            ro.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
+            corrUtils.createPADomain(ro);
+        }
+        LOG.debug("Leaving createResearchOrganizationCorrelation");
+        return ro.getId();
+        
+    }
+    
     /**
      * 
      * @param crs crs
@@ -161,6 +239,58 @@ public class OrganizationCorrelationServiceBean {
     return hcfOut;
     }
     
+
+    /**
+     * 
+     * @param crs crs
+     * @return crs
+     * @throws PAException
+     */
+    private ResearchOrganization getPAResearchOrganization(ResearchOrganization ro) 
+    throws PAException {
+        if (ro == null) {
+            LOG.error("ResearchOrganization Staff cannot be null");
+            throw new PAException("ResearchOrganization Staff cannot be null");
+        }
+        ResearchOrganization roOut = null;
+        Session session = null;
+        List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select ro from ResearchOrganization ro  " 
+                + "join ro.organization as org where 1 = 1 ");
+        if (ro.getId() != null) {
+            hql.append(" and ro.id = ").append(ro.getId());
+        }
+        if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
+            hql.append(" and ro.id = ").append(ro.getOrganization().getId());
+        }
+        if (ro.getIdentifier() != null) {
+            hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
+            throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving ResearchOrganization" , hbe);
+        throw new PAException(" Error while retrieving ResearchOrganization" , hbe);
+    } finally {
+        session.flush();
+    }
+    
+    if (!queryList.isEmpty()) {
+        roOut = queryList.get(0);
+    }
+    return roOut;
+    }
     
     /**
      * 

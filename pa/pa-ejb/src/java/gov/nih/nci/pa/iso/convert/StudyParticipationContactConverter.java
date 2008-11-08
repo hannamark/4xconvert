@@ -5,12 +5,14 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -62,19 +64,15 @@ public class StudyParticipationContactConverter {
             dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         }
         if (bo.getHealthCareProvider() != null) {
-            dto.setHealthCareProvider(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+            dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
+        }
+        if (bo.getClinicalResearchStaff() != null) {
+            dto.setClinicalResearchStaffIi(IiConverter.convertToIi(bo.getClinicalResearchStaff().getId()));
+        }
+        if (bo.getOrganizationalContact() != null) {
+            dto.setOrganizationalContactIi(IiConverter.convertToIi(bo.getOrganizationalContact().getId()));
         }
 
-        //Set<St> telSet = new HashSet<St>();
-        //List<StudyParticipationContactTelecomAddress> tas = bo.getTelecomAddresses();
-//        if (tas != null) {
-//            for (StudyParticipationContactTelecomAddress ta : tas) {
-//                telSet.add(StConverter.convertToSt(ta.getTelecomAddress()));
-//            }
-//            DSet<St> telDSet = new DSet<St>();
-//            telDSet.setItem(telSet);
-//            //dto.setTelecomAddresses(telDSet);
-//        }
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();
         emailList.add(bo.getEmail());
@@ -95,28 +93,15 @@ public class StudyParticipationContactConverter {
      */
     public static StudyParticipationContact convertFromDtoToDomain(
             StudyParticipationContactDTO dto) throws PAException {
-        StudyProtocol protocolBo = new StudyProtocol();
-        protocolBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
-        StudyParticipation participationBo = new StudyParticipation();
-        participationBo.setId(IiConverter.convertToLong(dto.getStudyParticipationIi()));
-        HealthCareProvider healthCareProvider = new HealthCareProvider();
-        healthCareProvider.setId(IiConverter.convertToLong(dto.getHealthCareProvider()));
+        
         StudyParticipationContact bo = new StudyParticipationContact();
-//        bo.setAddressLine(addressLine)
-//        bo.setCity(city)
-//        bo.setCountry(country)
-//        bo.setDeliveryAddressLine(deliveryAddressLine)
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-//        bo.setPostalCode(postalCode)
         bo.setPrimaryIndicator(BlConverter.covertToBoolean(dto.getPrimaryIndicator()));
-        bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
-//        bo.setState(state)
+        bo.setRoleCode(StudyParticipationContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
-        bo.setStudyParticipation(participationBo);
-        bo.setStudyProtocol(protocolBo);
-        bo.setHealthCareProvider(healthCareProvider);
-//        bo.setTelecomAddresses(telecomAddresses)
+        
+        
         bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         List retList = null;
         if (dto.getTelecomAddresses() != null) {
@@ -125,6 +110,26 @@ public class StudyParticipationContactConverter {
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
             bo.setPhone(retList.get(0).toString());
         }
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
+        bo.setClinicalResearchStaff(crs);
+
+        HealthCareProvider healthCareProvider = new HealthCareProvider();
+        healthCareProvider.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
+        bo.setHealthCareProvider(healthCareProvider);
+        
+        OrganizationalContact oc = new OrganizationalContact();
+        oc.setId(IiConverter.convertToLong(dto.getOrganizationalContactIi()));
+        bo.setOrganizationalContact(oc);
+        
+        StudyProtocol protocolBo = new StudyProtocol();
+        protocolBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        bo.setStudyProtocol(protocolBo);
+        
+        StudyParticipation participationBo = new StudyParticipation();
+        participationBo.setId(IiConverter.convertToLong(dto.getStudyParticipationIi()));
+        bo.setStudyParticipation(participationBo);
+        
         return bo;
     }
 

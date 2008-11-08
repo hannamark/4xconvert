@@ -16,35 +16,35 @@ import gov.nih.nci.coppa.iso.Ii;
 public class PersonFunctionalRoleDTO extends FunctionalRoleDTO {
     private static final long serialVersionUID = 198569324790L;
     
-    private Ii healthCareProvider;
-    private Ii clinicalResearchStaff;
+    private Ii healthCareProviderIi;
+    private Ii clinicalResearchStaffIi;
     /**
      * 
      * @return healthCareProvider
      */
-    public Ii getHealthCareProvider() {
-        return healthCareProvider;
+    public Ii getHealthCareProviderIi() {
+        return healthCareProviderIi;
     }
     /**
      * 
-     * @param healthCareProvider healthCareProvider
+     * @param healthCareProviderIi healthCareProviderIi
      */
-    public void setHealthCareProvider(Ii healthCareProvider) {
-        this.healthCareProvider = healthCareProvider;
+    public void setHealthCareProviderIi(Ii healthCareProviderIi) {
+        this.healthCareProviderIi = healthCareProviderIi;
     }
     /**
      * 
-     * @return healthCareProvider
+     * @return healthCareProviderIi
      */
-    public Ii getClinicalResearchStaff() {
-        return clinicalResearchStaff;
+    public Ii getClinicalResearchStaffIi() {
+        return clinicalResearchStaffIi;
     }
     /**
      * 
-     * @param clinicalResearchStaff healthCareProvider
+     * @param clinicalResearchStaffIi healthCareProviderIi
      */
-    public void setClinicalResearchStaff(Ii clinicalResearchStaff) {
-        this.clinicalResearchStaff = clinicalResearchStaff;
+    public void setClinicalResearchStaffIi(Ii clinicalResearchStaffIi) {
+        this.clinicalResearchStaffIi = clinicalResearchStaffIi;
     }
     
     

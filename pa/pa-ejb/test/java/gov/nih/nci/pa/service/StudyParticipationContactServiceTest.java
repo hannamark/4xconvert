@@ -80,7 +80,7 @@ public class StudyParticipationContactServiceTest {
         spc.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2005")));
         spc.setStudyParticipationIi(participationIi);
         spc.setStudyProtocolIi(protocolIi);
-        spc.setHealthCareProvider(healthCareProviderIi);
+        spc.setHealthCareProviderIi(healthCareProviderIi);
         StudyParticipationContactDTO result = remoteEjb.create(spc);
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));
     }

@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +34,8 @@ public class StudyParticipationContact extends PersonFunctionalRole {
     private Country country;
         
     private Boolean primaryIndicator;
-    private StudyContactRoleCode roleCode;
+    private StudyParticipationContactRoleCode roleCode;
+    private OrganizationalContact organizationalContact; 
     private StudyParticipation studyParticipation;
     private String phone;
     private String email;
@@ -161,14 +162,32 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      */
     @Column(name = "ROLE_CODE")
     @Enumerated(EnumType.STRING)
-    public StudyContactRoleCode getRoleCode() {
+    public StudyParticipationContactRoleCode getRoleCode() {
         return roleCode;
     }
     /**
      * @param roleCode the roleCode to set
      */
-    public void setRoleCode(StudyContactRoleCode roleCode) {
+    public void setRoleCode(StudyParticipationContactRoleCode roleCode) {
         this.roleCode = roleCode;
+    }
+
+    
+    /**
+     * 
+     * @return organizationalContact OrganizationalContact
+     */
+    @ManyToOne
+    @JoinColumn(name = "ORGANIZATIONAL_CONTACT_ID")
+    public OrganizationalContact getOrganizationalContact() {
+        return organizationalContact;
+    }
+    /**
+     * 
+     * @param organizationalContact OrganizationalContact
+     */
+    public void setOrganizationalContact(OrganizationalContact organizationalContact) {
+        this.organizationalContact = organizationalContact;
     }
     /**
      * @return the studyParticipation

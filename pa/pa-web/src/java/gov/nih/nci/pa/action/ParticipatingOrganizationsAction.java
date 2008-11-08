@@ -580,7 +580,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         clearErrorsAndMessages();
         String invId = ServletActionContext.getRequest().getParameter("persid");
         StudyParticipationContactDTO contactDTO = sPartContactService.get(IiConverter.convertToIi(invId));
-        Long identifier = IiConverter.convertToLong(contactDTO.getHealthCareProvider());
+        Long identifier = IiConverter.convertToLong(contactDTO.getHealthCareProviderIi());
         ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
         ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
@@ -591,7 +591,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (returnlist.size() > 0) {
             StudyParticipationContactDTO contactDTODB = sPartContactService.get(IiConverter
                     .convertToIi(((PersonWebDTO) returnlist.get(0)).getId()));
-            Long identifierDB = IiConverter.convertToLong(contactDTODB.getHealthCareProvider());
+            Long identifierDB = IiConverter.convertToLong(contactDTODB.getHealthCareProviderIi());
             if (identifier.equals(identifierDB)) {
                 sPartContactService.delete(IiConverter.convertToIi(((PersonWebDTO) returnlist.get(0)).getId()));
             }
@@ -716,7 +716,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         spContactDTOSave.setStatusCode(CdConverter.convertStringToCd("Active"));
         spContactDTOSave.setStudyProtocolIi(spIi);
-        spContactDTOSave.setHealthCareProvider(IiConverter.convertToIi(healthCareProvider));
+        spContactDTOSave.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProvider));
         sPartContactService.create(spContactDTOSave);
         ServletActionContext.getRequest().getSession().removeAttribute("emailEntered");
         ServletActionContext.getRequest().getSession().removeAttribute("telephoneEntered");
