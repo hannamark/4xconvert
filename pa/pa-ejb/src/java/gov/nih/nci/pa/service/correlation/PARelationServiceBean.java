@@ -31,7 +31,7 @@ public class PARelationServiceBean {
      * @param localSpIdentifier local protocol id 
      * @throws PAException e
      */
-    public void createLeadOrganizationRelation(
+    public void createLeadOrganizationRelations(
                 String orgPoIdentifier,  
                 Long studyProtocolId ,
                 String localSpIdentifier) throws PAException {
@@ -75,7 +75,7 @@ public class PARelationServiceBean {
      * @throws PAException e
      */
 
-    public void createPrincipalInvestigator(String orgPoIdentifier ,
+    public void createPrincipalInvestigatorRelations(String orgPoIdentifier ,
                                       String personPoIdentifer ,
                                       Long studyProtocolId ,
                                       StudyTypeCode studyTypeCode) throws PAException {
@@ -124,7 +124,7 @@ public class PARelationServiceBean {
      * @param studyProtocolId studyProtocolId
      * @throws PAException pe
      */
-    public void createPIAsResponsibleParty(String orgPoIdentifier ,
+    public void createPIAsResponsiblePartyRelations(String orgPoIdentifier ,
             String personPoIdentifer ,
             Long studyProtocolId) throws PAException {
 
@@ -162,7 +162,7 @@ public class PARelationServiceBean {
      * @param studyProtocolId studyProtocolId
      * @throws PAException pe
      */
-    public void createSponsorAsPrimaryContact(String orgPoIdentifier ,
+    public void createSponsorAsPrimaryContactRelations(String orgPoIdentifier ,
             String personPoIdentifer ,
             Long studyProtocolId) throws PAException {
 
