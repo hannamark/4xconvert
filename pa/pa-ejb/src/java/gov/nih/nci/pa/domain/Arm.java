@@ -11,6 +11,8 @@ import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -77,6 +79,8 @@ public class Arm extends AbstractEntity {
     /**
      * @return the typeCode
      */
+    @Column(name = "TYPE_CODE")
+    @Enumerated(EnumType.STRING)
     public ArmTypeCode getTypeCode() {
         return typeCode;
     }
