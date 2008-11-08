@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC
+    "-//W3C//DTD XHTML 1.1 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><fmt:message
+    key="interventions.main.title" /></title>
+<s:head />
+<script type="text/javascript"
+    src='<c:url value="/scripts/js/coppa.js"/>'></script>
+<script type="text/javascript"
+    src='<c:url value="/scripts/js/scriptaculous.js"/>'></script>
+
+
+<script type="text/javascript">
+    function armAdd(){
+        document.armForm.action="trialArmsadd.action";
+        document.armForm.submit();     
+    }
+    function armUpdate(){
+        input_box=confirm("Click OK to save changes.  Cancel to Abort.");
+        if (input_box==true){
+            document.armForm.action="trialArmsupdate.action";
+            document.armForm.submit();
+        }
+    }
+</script>
+
+</head>
+<body>
+<!-- <div id="contentwide"> -->
+<h1><fmt:message key="interventions.main.title" /></h1>
+
+<!--Help Content-->
+<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
+<jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+<div class="box"><pa:sucessMessage /> <s:if
+    test="hasActionErrors()">
+    <div class="error_msg"><s:actionerror /></div>
+</s:if>
+<h2>
+    <s:if test="%{currentAction == 'edit'}"><fmt:message key="arms.edit.title" /></s:if>
+    <s:else><fmt:message key="arms.add.title" /></s:else>
+</h2>
+
+<table class="form">
+    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
+    <tr>
+        <td colspan="2">
+        <h3>Arm</h3>
+        </td>
+    </tr>
+    <tr>
+        <s:form name="armForm">
+        <s:hidden name="checkBoxEntry"/>
+        <s:hidden name="currentAction"/>
+        <s:hidden name="selectedRowIdentifier"/>
+        <td>
+            <table>
+                <tr>
+                    <td class="label"><s:label for="armName">Label:</s:label><span class="required">*</span></td>
+                    <td class="value">
+                        <s:textfield name="armName"maxlength="62" size="62" cssStyle="width:280px;float:left"/> 
+                    </td>
+                </tr>
+                <s:set name="armTypeValues" value="@gov.nih.nci.pa.enums.ArmTypeCode@getDisplayNames()" />
+                <tr>
+                    <td class="label"><s:label for="armType">Type:</s:label><span class="required">*</span></td>
+                    <td class="value">
+                    <s:select onchange="statusChange()" headerKey=""
+                            headerValue="--Select--" name="armType" list="#armTypeValues" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
+                    <td class="value">
+                        <s:textarea name="armDescription" rows="3" cssStyle="width:280px;float:left"/>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <display:table name="intList" id="row" class="data">
+                <display:column titleKey="arms.intervention.assignment" style="text-align: center">
+                    <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" value="%{#attr.row.armAssignment}"/>
+                </display:column>
+                <display:column property="name" titleKey="interventions.name"/>
+                <display:column property="description" titleKey="interventions.description"/>
+            </display:table>
+        </td>
+        </s:form>
+    </tr>
+    <tr>
+        <td colspan="2">
+        <div class="actionsrow"><del class="btnwrapper">
+        <ul class="btnrow">
+            <li><s:if test="%{currentAction == 'edit'}">
+                <s:a href="#" cssClass="btn" onclick="armUpdate();">
+                    <span class="btn_img"> <span class="save">Save</span></span>
+                </s:a>
+            </s:if> <s:else>
+                <s:a href="#" cssClass="btn" onclick="armAdd();">
+                    <span class="btn_img"> <span class="save">Save</span></span>
+                </s:a>
+            </s:else></li>
+        </ul>
+        </del></div>
+        </td>
+    </tr>
+</table>
+
+<div class="actionsrow"><del class="btnwrapper">
+<ul class="btnrow">
+    <li><a href="interventionalStudyDesigndetailsQuery.action" class="btn"
+        onclick="this.blur();"><span class="btn_img"><span
+        class="back">Back</span></span></a></li>
+    <li><a href="#" class="btn"
+        onclick="this.blur();"><span class="btn_img"><span
+        class="next">Next</span></span></a></li>
+</ul>
+</del></div>
+</div>
+</body>
+</html>

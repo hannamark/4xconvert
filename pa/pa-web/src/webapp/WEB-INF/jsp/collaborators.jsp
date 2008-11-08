@@ -15,21 +15,21 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 function handleEdit(studyResourcingId){
-    document.studyOverallStatus.cbValue.value = studyResourcingId;
-    document.studyOverallStatus.action="collaboratorsedit.action";
-    document.studyOverallStatus.submit(); 
+    document.collaboratorsForm.cbValue.value = studyResourcingId;
+    document.collaboratorsForm.action="collaboratorsedit.action";
+    document.collaboratorsForm.submit(); 
 }
 function handleDelete(studyResourcingId){
     input_box=confirm("Click OK to un-link the collaborator from the Study.  Cancel to Abort.");
     if (input_box==true){
-	    document.studyOverallStatus.cbValue.value = studyResourcingId;
-	    document.studyOverallStatus.action="collaboratorsdelete.action";
-	    document.studyOverallStatus.submit();
+	    document.collaboratorsForm.cbValue.value = studyResourcingId;
+	    document.collaboratorsForm.action="collaboratorsdelete.action";
+	    document.collaboratorsForm.submit();
 	}
 }
 function handleCreate(){
-    document.studyOverallStatus.action="collaboratorscreate.action";
-    document.studyOverallStatus.submit(); 
+    document.collaboratorsForm.action="collaboratorscreate.action";
+    document.collaboratorsForm.submit(); 
 }
 </SCRIPT>
 
@@ -40,7 +40,7 @@ function handleCreate(){
 <div class="box"><pa:sucessMessage /> <s:if
 	test="hasActionErrors()">
 	<div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="studyOverallStatus">
+</s:if> <s:form name="collaboratorsForm">
 	<h2><fmt:message
 		key="participatingOrganizations.collaborators.title" /></h2>
 	<table class="form">

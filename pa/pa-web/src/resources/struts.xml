@@ -139,6 +139,10 @@
             <result name="edit">/WEB-INF/jsp/trialInterventionsedit.jsp</result>  
             <result>/WEB-INF/jsp/trialInterventions.jsp</result>
         </action>
+        <action name="trialArms*" class="gov.nih.nci.pa.action.TrialArmsAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/trialArmsedit.jsp</result>  
+            <result>/WEB-INF/jsp/trialArms.jsp</result>
+        </action>
 
 	</package>
 </struts>

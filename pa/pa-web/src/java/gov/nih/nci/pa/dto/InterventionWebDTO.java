@@ -19,6 +19,7 @@ public class InterventionWebDTO {
     private String otherNames;
     private String leadIndicator;
     private String type;
+    private Boolean armAssignment;
     /**
      * @return the identifier
      */
@@ -90,5 +91,17 @@ public class InterventionWebDTO {
      */
     public void setType(String type) {
         this.type = type;
+    }
+    /**
+     * @return the armAssignment
+     */
+    public Boolean getArmAssignment() {
+        return armAssignment;
+    }
+    /**
+     * @param armAssignment the armAssignment to set
+     */
+    public void setArmAssignment(Boolean armAssignment) {
+        this.armAssignment = armAssignment;
     }
 }

@@ -58,7 +58,7 @@
     					</li>
                         </s:else>
                         <li><a href="trialInterventions.action" >Interventions</a></li>
-
+                        <li><a href="trialArms.action" >Arms</a></li>
     				</ul>
     			</li>
             </s:if>

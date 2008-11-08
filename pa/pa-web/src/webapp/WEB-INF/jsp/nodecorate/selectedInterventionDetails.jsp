@@ -8,7 +8,7 @@
         <td class="label"><s:label for="interventionType">Intervention Type:
             </s:label><span class="required">*</span></td>
         <s:set name="interventionTypeValues"
-            value="@gov.nih.nci.pa.enums.ActionSubcategoryCode@getDisplayNames()" />
+            value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
         <td class="value" colspan="2">
             <s:if test="%{(interventionIdentifier == null) && (currentAction == 'create')}">
                 <s:select onchange="statusChange()" headerKey=""

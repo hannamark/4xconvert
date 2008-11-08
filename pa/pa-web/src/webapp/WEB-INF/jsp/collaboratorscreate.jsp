@@ -81,11 +81,11 @@ function facilityUpdate(){
             </div>
             <table class="form">
                 <tr>
-                    <td scope="row" class="label"><s:label for="srs">Functional Role:</s:label></td>
+                    <td class="label"><s:label for="functionalCode">Functional Role:</s:label></td>
                     <s:set name="functionalCodeValues"
                         value="@gov.nih.nci.pa.enums.StudyParticipationFunctionalCode@getCollaboratorDisplayNames()" />
                     <td class="value" colspan="2"><s:select headerKey=""
-                        headerValue="" name="functionalCode" list="#functionalCodeValues" /></td>
+                        headerValue="--Select--" name="functionalCode" list="#functionalCodeValues" /></td>
                 </tr>
 
             </table>

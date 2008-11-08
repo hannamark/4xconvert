@@ -6,7 +6,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.ActionCategoryCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -154,7 +154,7 @@ public class TrialInterventionsAction extends ActionSupport implements
         PlannedActivityDTO paDto = new PlannedActivityDTO();
         paDto.setIdentifier(null);
         paDto.setStudyProtocolIdentifier(spIdIi);
-        paDto.setCategoryCode(CdConverter.convertToCd(ActionCategoryCode.INTERVENTION));
+        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
         paDto.setUserLastUpdated(user);
         if (PAUtil.isIiNull(IiConverter.convertToIi(getInterventionIdentifier()))) {
             paDto.setInterventionIdentifier(new Ii());
