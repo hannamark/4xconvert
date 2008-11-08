@@ -6,8 +6,8 @@ package gov.nih.nci.pa.iso.convert;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.ActionCategoryCode;
-import gov.nih.nci.pa.enums.ActionSubcategoryCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -72,34 +72,17 @@ public class PlannedActivityConverter {
         
         PlannedActivity bo = new PlannedActivity();
         bo.setAlternateName(StConverter.convertToString(dto.getAlternateName()));
-        bo.setCategoryCode(ActionCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
+        bo.setCategoryCode(ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
         bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(invBo);
         bo.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStudyProtocol(spBo);
-        bo.setSubcategoryCode(ActionSubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
+        bo.setSubcategoryCode(ActivitySubcategoryCode.
+                getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
         bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

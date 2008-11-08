@@ -8,8 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.enums.ActionCategoryCode;
-import gov.nih.nci.pa.enums.ActionSubcategoryCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Date;
@@ -52,14 +52,14 @@ public class PlannedActivityTest {
         inv.setId(TestSchema.interventionIds.get(0));
         PlannedActivity pa = new PlannedActivity();
         pa.setAlternateName("alternateName");
-        pa.setCategoryCode(ActionCategoryCode.INTERVENTION);
+        pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
         pa.setDateLastUpdated(new Date());
         pa.setDescriptionText("descriptionText");
         pa.setIntervention(inv);
         pa.setLeadProductIndicator(true);
         pa.setName("name");
         pa.setStudyProtocol(sp);
-        pa.setSubcategoryCode(ActionSubcategoryCode.DIETARY_SUPPLEMENT);
+        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
         pa.setUserLastUpdated("Joe");
         sess.saveOrUpdate(pa);
         sess.flush();
