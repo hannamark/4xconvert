@@ -27,7 +27,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.AvoidDuplicateLiterals" })
 public class PlannedActivityServiceBean
         extends AbstractStudyPaService<PlannedActivityDTO>
         implements PlannedActivityServiceRemote {
@@ -208,13 +208,55 @@ public class PlannedActivityServiceBean
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getStudyProtocolByCriteria.  ", hbe);
+            serviceError("Hibernate exception in getByStudyProtocol.  ", hbe);
         }
         ArrayList<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
         for (PlannedActivity bo : queryList) {
             resultList.add(PlannedActivityConverter.convertFromDomainToDTO(bo));
         }
         LOG.info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
+        return resultList;
+    }
+
+    /**
+     * @param ii index of arm
+     * @return list of planned activities associated w/arm
+     * @throws PAException exception
+     */
+    public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            serviceError("Check the Ii value; null found.  ");
+        }
+        LOG.info("Entering getByArm.  ");
+
+        Session session = null;
+        List<PlannedActivity> queryList = new ArrayList<PlannedActivity>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+
+            // step 1: form the hql
+            String hql = "select pa "
+                       + "from PlannedActivity pa "
+                       + "join pa.arms a "
+                       + "where a.id = :armId "
+                       + "order by pa.id ";
+            LOG.info("query PlannedActivity = " + hql + ".  ");
+
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            query.setParameter("armId", IiConverter.convertToLong(ii));
+
+            // step 3: query the result
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            serviceError("Hibernate exception in getByArm.  ", hbe);
+        }
+        ArrayList<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
+        for (PlannedActivity bo : queryList) {
+            resultList.add(PlannedActivityConverter.convertFromDomainToDTO(bo));
+        }
+        LOG.info("Leaving getByArm, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 

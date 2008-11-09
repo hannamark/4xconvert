@@ -3,7 +3,10 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+
+import java.util.List;
 
 import javax.ejb.Remote;
 
@@ -18,5 +21,10 @@ import javax.ejb.Remote;
 @Remote
 public interface PlannedActivityServiceRemote 
         extends StudyPaService<PlannedActivityDTO> {
-
+    /**
+     * @param ii index of arm
+     * @return list of planned activities associated w/arm
+     * @throws PAException exception
+     */
+    List<PlannedActivityDTO> getByArm(Ii ii) throws PAException;
 }

@@ -25,6 +25,7 @@ public class PlannedActivityServiceTest {
     private PlannedActivityServiceRemote remoteEjb = new PlannedActivityServiceBean();
     private Ii ii;
     private Ii spIi;
+    private Ii armIi;
     
     @Before
     public void setUp() throws Exception {
@@ -32,6 +33,7 @@ public class PlannedActivityServiceTest {
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        armIi = IiConverter.convertToIi(TestSchema.armIds.get(0));
      }    
     @Test 
     public void getTest() throws Exception {
@@ -42,6 +44,11 @@ public class PlannedActivityServiceTest {
     @Test
     public void getByStudyProtocolTest() throws Exception {
         List<PlannedActivityDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);
+        assertEquals(1, dtoList.size());
+    }
+    @Test
+    public void getByArmTest() throws Exception {
+        List<PlannedActivityDTO> dtoList = remoteEjb.getByArm(armIi);
         assertEquals(1, dtoList.size());
     }
     @Test
