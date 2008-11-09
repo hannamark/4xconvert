@@ -15,6 +15,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -55,7 +56,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private List<TrialArmsWebDTO> armList = new ArrayList<TrialArmsWebDTO>();
     private List<InterventionWebDTO> intList = new ArrayList<InterventionWebDTO>();
     private String currentAction;
-    private String selectedRowIdentifier;
+    private String selectedArmIdentifier;
     private String armName;
     private String armType;
     private String armDescription;
@@ -104,7 +105,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @throws Exception exception
      */
     public String edit() throws Exception {
-        loadEditForm(getSelectedRowIdentifier());
+        loadEditForm(getSelectedArmIdentifier());
         setCurrentAction(ACT_EDIT);
         return ACT_EDIT;
     }
@@ -114,7 +115,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @throws Exception exception
      */
     public String delete() throws Exception {
-        armService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        armService.delete(IiConverter.convertToIi(getSelectedArmIdentifier()));
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
         return SUCCESS;
@@ -125,14 +126,19 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      */
     public String add() throws Exception {
         ArmDTO newArm = new ArmDTO();
+        newArm.setIdentifier(null);
         newArm.setDescriptionText(StConverter.convertToSt(getArmDescription()));
         newArm.setName(StConverter.convertToSt(getArmName()));
         newArm.setStudyProtocolIdentifier(spIdIi);
         newArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
         newArm.setUserLastUpdated(user);
-//        newArm.setInterventions(getAssociatedInterventions());
         newArm.setInterventions(getAssociatedInterventions());
-        armService.create(newArm);
+        try {
+            armService.create(newArm);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return ACT_EDIT;
+        }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
         return SUCCESS;
@@ -142,7 +148,20 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @throws Exception exception
      */
     public String update() throws Exception {
-//        armService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        ArmDTO updatedArm = new ArmDTO();
+        updatedArm.setIdentifier(IiConverter.convertToIi(getSelectedArmIdentifier()));
+        updatedArm.setDescriptionText(StConverter.convertToSt(getArmDescription()));
+        updatedArm.setName(StConverter.convertToSt(getArmName()));
+        updatedArm.setStudyProtocolIdentifier(spIdIi);
+        updatedArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
+        updatedArm.setUserLastUpdated(user);
+        updatedArm.setInterventions(getAssociatedInterventions());
+        try {
+            armService.update(updatedArm);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return ACT_EDIT;
+        }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
         return SUCCESS;
@@ -156,7 +175,14 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
             webDto.setDescription(StConverter.convertToString(arm.getDescriptionText()));
             webDto.setIdentifier(IiConverter.convertToString(arm.getIdentifier()));
             StringBuffer intBuff = new StringBuffer();
-            intBuff.append("TODO loop through to get all associated interventions");
+            List<PlannedActivityDTO> paList = plaService.getByArm(arm.getIdentifier());
+            for (PlannedActivityDTO pa : paList) {
+                InterventionDTO inter = intService.get(pa.getInterventionIdentifier());
+                if (intBuff.length() > 0) {
+                    intBuff.append(", ");
+                }
+                intBuff.append(StConverter.convertToString(inter.getName()));
+            }
             webDto.setInterventions(intBuff.toString());
             webDto.setName(StConverter.convertToString(arm.getName()));
             webDto.setType(CdConverter.convertCdToString(arm.getTypeCode()));
@@ -164,7 +190,21 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         }
     }
 
-    private void loadEditForm(String interventionId) throws Exception {
+    private void loadEditForm(String armId) throws Exception {
+        Set<Long> cInterventions = new HashSet<Long>();
+        if (armId != null) {
+            ArmDTO cArm = armService.get(IiConverter.convertToIi(armId));
+            setArmDescription(StConverter.convertToString(cArm.getDescriptionText()));
+            setArmName(StConverter.convertToString(cArm.getName()));
+            setArmType(CdConverter.convertCdToString(cArm.getTypeCode()));
+            setSelectedArmIdentifier(armId);
+            List<PlannedActivityDTO> paList = plaService.getByArm(IiConverter.convertToIi(armId));
+            for (PlannedActivityDTO pa : paList) {
+                cInterventions.add(IiConverter.convertToLong(pa.getIdentifier()));
+            }
+        } else {
+            setSelectedArmIdentifier(null);
+        }
         getIntList().clear();
         setCheckBoxEntry("");
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
@@ -177,7 +217,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
                     intWebDto.setDescription(StConverter.convertToString(intDto.getDescriptionText()));
                     intWebDto.setIdentifier(IiConverter.convertToString(pla.getIdentifier()));
                     intWebDto.setName(StConverter.convertToString(intDto.getName()));
-                    intWebDto.setArmAssignment(true);
+                    intWebDto.setArmAssignment(cInterventions.contains(IiConverter.convertToLong(pla.getIdentifier())));
                     getIntList().add(intWebDto);
                     if (intWebDto.getArmAssignment()) {
                         setCheckBoxEntry(getCheckBoxEntry() + intWebDto.getIdentifier() + ",");
@@ -250,20 +290,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @return the selectedRowIdentifier
-     */
-    public String getSelectedRowIdentifier() {
-        return selectedRowIdentifier;
-    }
-
-    /**
-     * @param selectedRowIdentifier the selectedRowIdentifier to set
-     */
-    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
-        this.selectedRowIdentifier = selectedRowIdentifier;
-    }
-
-    /**
      * @return the armName
      */
     public String getArmName() {
@@ -322,5 +348,19 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      */
     public void setCheckBoxEntry(String checkBoxEntry) {
         this.checkBoxEntry = checkBoxEntry;
+    }
+
+    /**
+     * @return the selectedArmIdentifier
+     */
+    public String getSelectedArmIdentifier() {
+        return selectedArmIdentifier;
+    }
+
+    /**
+     * @param selectedArmIdentifier the selectedArmIdentifier to set
+     */
+    public void setSelectedArmIdentifier(String selectedArmIdentifier) {
+        this.selectedArmIdentifier = selectedArmIdentifier;
     }
 }
