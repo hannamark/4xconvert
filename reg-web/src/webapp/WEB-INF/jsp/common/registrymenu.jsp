@@ -7,11 +7,11 @@
 				<c:choose>
 				    <c:when test="${pageContext.request.remoteUser != null}">
                         <li><a href="/registry/logout.action" >Logout</a></li>
-                        <li><a href="registry/protected/searchTrial.action" >My Account</a></li>
+                        <li><a href="registerUsershowMyAccount.action" >My Account</a></li>
 				    </c:when>
 			        <c:otherwise>
                         <li><a href="/registry/protected/searchTrial.action" >Login</a></li>
-                        <li><a href="registry/protected/searchTrial.action" >Register</a></li>
+                        <li><a href="registerUser.action" >Register</a></li>
 				    </c:otherwise>
 				</c:choose>
 				<li><a href="#">Help</a></li>
