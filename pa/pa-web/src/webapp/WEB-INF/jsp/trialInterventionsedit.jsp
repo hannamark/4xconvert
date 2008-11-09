@@ -125,12 +125,20 @@
 
 <div class="actionsrow"><del class="btnwrapper">
 <ul class="btnrow">
-    <li><a href="interventionalStudyDesigndetailsQuery.action" class="btn"
-        onclick="this.blur();"><span class="btn_img"><span
-        class="back">Back</span></span></a></li>
-    <li><a href="#" class="btn"
-        onclick="this.blur();"><span class="btn_img"><span
-        class="next">Next</span></span></a></li>
+        <li>
+            <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+                <a href="#" class="btn"
+                  onclick="this.blur();"><span class="btn_img"><span
+                  class="back">Back</span></span></a>
+            </s:if><s:else>
+                <a href="#" class="btn"
+                  onclick="this.blur();"><span class="btn_img"><span
+                  class="back">Back</span></span></a>
+            </s:else>
+        </li>
+        <li><a href="#" class="btn"
+            onclick="this.blur();"><span class="btn_img"><span
+            class="next">Next</span></span></a></li>
 </ul>
 </del></div>
 </div>
