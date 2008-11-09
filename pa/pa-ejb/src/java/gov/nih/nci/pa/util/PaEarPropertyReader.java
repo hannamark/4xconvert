@@ -78,4 +78,12 @@ public class PaEarPropertyReader {
        }
        return server + ":" + port;
    }
+   
+   /**
+    * @return the properties
+    */
+   public static Properties getProperties() {
+       return props;
+   }
+   
 }
