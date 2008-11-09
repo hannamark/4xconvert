@@ -37,7 +37,7 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<span class="small"><a title="To Create an Account Or Reset Password." href="#">(Forgot Your Password?)</a></span> 
+					<span class="small"><a title="To Create an Account Or Reset Password." href="registerUser.action?resetPassword=true">(Forgot Your Password?)</a></span> 
 				</td>
 			</tr>   
 </table>
