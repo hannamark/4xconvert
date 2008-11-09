@@ -1,9 +1,22 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -38,5 +51,70 @@ public class RemoteApiUtil {
             enpn.getPart().add(part);
         }
     }
+    
+    /**
+     * 
+     * @param value a boolean to parse.
+     * @return an iso BL
+     */
+    public static Bl convertToBl(Boolean value) {
+        Bl iso = new Bl();
+        if (value == null) {
+            iso.setNullFlavor(NullFlavor.NI);
+        } else {
+            iso.setValue(value);
+        }
+        return iso;
+    }
+    
+    /**
+     * @param email email
+     * @param fax fax
+     * @param phone phone
+     * @param url url
+     * @param text tty
+     * @return a list containg all the params' content converted to a Tel type.
+     */
+    public static DSet<Tel> convertToDSetTel(List<String> email, List<String> fax,
+            List<String> phone, List<String> url, List<String> text) {
+        DSet<Tel> dset = new DSet<Tel>();
+        @SuppressWarnings("unchecked")
+        Set<Tel> set = new ListOrderedSet();
+        dset.setItem(set);
+        for (String c : email) {
+            TelEmail t = new TelEmail();
+            t.setValue(createURI(TelEmail.SCHEME_MAILTO, c));
+            set.add(t);
+        }
+        for (String c : fax) {
+            TelPhone t = new TelPhone();
+            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c));
+            set.add(t);
+        }
+        for (String c : phone) {
+            TelPhone t = new TelPhone();
+            t.setValue(createURI(TelPhone.SCHEME_TEL, c));
+            set.add(t);
+        }
+        for (String c : url) {
+            TelUrl t = new TelUrl();
+            t.setValue(URI.create(c));
+            set.add(t);
+        }
+        for (String c : text) {
+            TelPhone t = new TelPhone();
+            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c));
+            set.add(t);
+        }
+        return dset;
+    }    
+
+    private static URI createURI(String scheme, String schemeSpecificPart) {
+        try {
+            return new URI(scheme, schemeSpecificPart, null);
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }    
 
 }
