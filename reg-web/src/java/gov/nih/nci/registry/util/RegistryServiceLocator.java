@@ -1,6 +1,5 @@
 package gov.nih.nci.registry.util;
 
-
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -16,14 +15,14 @@ import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
-
 /**
- *
+ * 
  * @author Bala Nair
- *
+ * 
  */
 @SuppressWarnings("PMD.UnusedPrivateField")
 public final class RegistryServiceLocator {
@@ -50,16 +49,16 @@ public final class RegistryServiceLocator {
     }
 
     /**
-     *
+     * 
      * @return diseaseCondServiceRemote DiseaseCondServiceRemote
      */
     public static DiseaseCondServiceRemote getDiseaseService() {
         return getInstance().getServiceLocator().getDiseaseConditionService();
     }
 
-
     /**
      * Gets the org service from the service locator.
+     * 
      * @return the service.
      */
     public static StudyProtocolServiceRemote getStudyProtocolService() {
@@ -68,6 +67,7 @@ public final class RegistryServiceLocator {
 
     /**
      * Gets the org service from the service locator.
+     * 
      * @return PAOrganizationServiceRemote
      */
     public static PAOrganizationServiceRemote getPAOrganizationService() {
@@ -82,7 +82,8 @@ public final class RegistryServiceLocator {
     }
 
     /**
-     * @param serviceLocator the serviceLocator to set
+     * @param serviceLocator
+     *            the serviceLocator to set
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
@@ -96,15 +97,16 @@ public final class RegistryServiceLocator {
     }
 
     /**
-     *
+     * 
      * @return RegulatoryInformationServiceRemote
      */
     public static RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        return getInstance().getServiceLocator().getRegulatoryInformationService();
+        return getInstance().getServiceLocator()
+                .getRegulatoryInformationService();
     }
 
     /**
-     *
+     * 
      * @return StudyOverallStatusServiceRemote
      */
     public static StudyOverallStatusServiceRemote getStudyOverallStatusService() {
@@ -112,7 +114,7 @@ public final class RegistryServiceLocator {
     }
 
     /**
-     *
+     * 
      * @return StudyResourcingServiceRemote
      */
     public static StudyResourcingServiceRemote getStudyResourcingService() {
@@ -120,59 +122,65 @@ public final class RegistryServiceLocator {
     }
 
     /**
-     *
+     * 
      * @return StudyRegulatoryAuthorityServiceRemote
      */
     public static StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
-        return getInstance().getServiceLocator().getStudyRegulatoryAuthorityService();
+        return getInstance().getServiceLocator()
+                .getStudyRegulatoryAuthorityService();
     }
 
     /**
-    *
-    * @return OrganizationEntityServiceRemote
-    */
+     * 
+     * @return OrganizationEntityServiceRemote
+     */
     public static OrganizationEntityServiceRemote getPoOrganizationEntityService() {
-    return getInstance().getServiceLocator().getPoOrganizationEntityService();
+        return getInstance().getServiceLocator()
+                .getPoOrganizationEntityService();
     }
 
     /**
-    *
-    * @return LookUpTableServiceRemote
-    */
+     * 
+     * @return LookUpTableServiceRemote
+     */
     public static LookUpTableServiceRemote getLookUpTableService() {
-    return getInstance().getServiceLocator().getLookUpTableService();
+        return getInstance().getServiceLocator().getLookUpTableService();
     }
 
     /**
-    *
-    * @return ProtocolQueryServiceRemote
-    */
+     * 
+     * @return ProtocolQueryServiceRemote
+     */
     public static ProtocolQueryServiceLocal getProtocolQueryService() {
-    return getInstance().getServiceLocator().getProtocolQueryService();
+        return getInstance().getServiceLocator().getProtocolQueryService();
     }
 
     /**
-    *
-    * @return HealthCareFacilityServiceRemote
-    */
+     * 
+     * @return HealthCareFacilityServiceRemote
+     */
     public static PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
-    return getInstance().getServiceLocator().getPAHealthCareFacilityService();
+        return getInstance().getServiceLocator()
+                .getPAHealthCareFacilityService();
     }
+
     /**
-    *
-    * @return StudyParticipationService
-    */
+     * 
+     * @return StudyParticipationService
+     */
     public static StudyParticipationServiceRemote getStudyParticipationService() {
-    return getInstance().getServiceLocator().getStudyParticipationService();
+        return getInstance().getServiceLocator().getStudyParticipationService();
     }
+
     /**
-    *
-    * @return StudySiteAccrualStatusService
-    */
+     * 
+     * @return StudySiteAccrualStatusService
+     */
     public static StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-    return getInstance().getServiceLocator().getStudySiteAccrualStatusService();
+        return getInstance().getServiceLocator()
+                .getStudySiteAccrualStatusService();
     }
-    
+
     /**
      * 
      * @return DocumentServiceRemote
@@ -180,7 +188,7 @@ public final class RegistryServiceLocator {
     public static DocumentServiceRemote getDocumentService() {
         return getInstance().getServiceLocator().getDocumentService();
     }
-    
+
     /**
      * 
      * @return DocumentServiceRemote
@@ -188,11 +196,20 @@ public final class RegistryServiceLocator {
     public static StudyContactServiceRemote getStudyContactService() {
         return getInstance().getServiceLocator().getStudyContactService();
     }
+
     /**
      * @return StudyIndldeServiceRemote
      * 
      */
     public static StudyIndldeServiceRemote getStudyIndldeService() {
         return getInstance().getServiceLocator().getStudyIndldeService();
+    }
+
+    /**
+     * 
+     * @return RegistryUserServiceRemote
+     */
+    public static RegistryUserServiceRemote getRegistryUserService() {
+        return getInstance().getServiceLocator().getRegistryUserService();
     }
 }
