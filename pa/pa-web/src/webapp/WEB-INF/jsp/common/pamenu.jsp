@@ -45,6 +45,7 @@
                                 <li><a href="interventionalStudyDesigndetailsQuery.action" >Design Details</a></li>
                                 <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
                                 <li><a href="#" >Eligibility Criteria</a></li>
+                                <li><a href="trialArms.action" >Arms</a></li>
                             </ul>
     					</li>
                         </s:if>
@@ -58,7 +59,6 @@
     					</li>
                         </s:else>
                         <li><a href="trialInterventions.action" >Interventions</a></li>
-                        <li><a href="trialArms.action" >Arms</a></li>
     				</ul>
     			</li>
             </s:if>
