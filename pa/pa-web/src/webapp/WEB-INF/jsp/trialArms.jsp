@@ -15,14 +15,14 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 function handleEdit(rowId){
-    document.armForm.selectedRowIdentifier.value = rowId;
+    document.armForm.selectedArmIdentifier.value = rowId;
     document.armForm.action="trialArmsedit.action";
     document.armForm.submit(); 
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the arm from the Study.  Cancel to Abort.");
     if (input_box==true){
-        document.armForm.selectedRowIdentifier.value = rowId;
+        document.armForm.selectedArmIdentifier.value = rowId;
         document.armForm.action="trialArmsdelete.action";
         document.armForm.submit();
     }
@@ -40,7 +40,7 @@ function handleCreate(){
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="armForm"><s:hidden name="selectedRowIdentifier"/> 
+</s:if> <s:form name="armForm"><s:hidden name="selectedArmIdentifier"/> 
     <h2><fmt:message
         key="arms.details.title" /></h2>
     <table class="form">
@@ -57,7 +57,7 @@ function handleCreate(){
                 <display:column property="description" sortable="true"
                     titleKey="arms.description"
                     headerClass="sortable" />
-                <display:column property="interventions"/>
+                <display:column property="interventions" titleKey="arms.interventions"/>
                 <display:column titleKey="arms.edit" class="action">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
@@ -80,7 +80,7 @@ function handleCreate(){
         <li><a href="#" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>
-        <li><a href="#" class="btn"
+        <li><a href="trialInterventions.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="next">Next</span></span></a></li>
     </ul>

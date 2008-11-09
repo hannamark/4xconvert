@@ -26,6 +26,10 @@
             document.armForm.submit();
         }
     }
+    function interventionCheckboxClick(rowId){
+        document.armForm.checkBoxEntry.value += rowId;
+        document.armForm.checkBoxEntry.value += ",";
+    }
 </script>
 
 </head>
@@ -56,7 +60,7 @@
         <s:form name="armForm">
         <s:hidden name="checkBoxEntry"/>
         <s:hidden name="currentAction"/>
-        <s:hidden name="selectedRowIdentifier"/>
+        <s:hidden name="selectedArmIdentifier"/>
         <td>
             <table>
                 <tr>
@@ -84,7 +88,10 @@
         <td>
             <display:table name="intList" id="row" class="data">
                 <display:column titleKey="arms.intervention.assignment" style="text-align: center">
-                    <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" value="%{#attr.row.armAssignment}"/>
+                    <s:a href="#" onclick="interventionCheckboxClick(%{#attr.row.identifier})">
+                        <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" 
+                                value="%{#attr.row.armAssignment}"/>
+                    </s:a>
                 </display:column>
                 <display:column property="name" titleKey="interventions.name"/>
                 <display:column property="description" titleKey="interventions.description"/>
@@ -113,12 +120,12 @@
 
 <div class="actionsrow"><del class="btnwrapper">
 <ul class="btnrow">
-    <li><a href="interventionalStudyDesigndetailsQuery.action" class="btn"
-        onclick="this.blur();"><span class="btn_img"><span
-        class="back">Back</span></span></a></li>
-    <li><a href="#" class="btn"
-        onclick="this.blur();"><span class="btn_img"><span
-        class="next">Next</span></span></a></li>
+        <li><a href="#" class="btn"
+            onclick="this.blur();"><span class="btn_img"><span
+            class="back">Back</span></span></a></li>
+        <li><a href="trialInterventions.action" class="btn"
+            onclick="this.blur();"><span class="btn_img"><span
+            class="next">Next</span></span></a></li>
 </ul>
 </del></div>
 </div>
