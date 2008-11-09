@@ -119,6 +119,7 @@ public class ArmServiceTest {
         String newName = "new name";
         assertFalse(newName.equals(oldName));
         dto.setName(StConverter.convertToSt(newName));
+        dto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.EXPERIMENTAL));
         dto.setUserLastUpdated(null);
         try {
             remoteEjb.update(dto);

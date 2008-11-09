@@ -8,7 +8,6 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -94,8 +93,7 @@ public class Arm extends AbstractEntity {
      * @return the interventions
      */
     @ManyToMany(
-            targetEntity = PlannedActivity.class,
-            cascade = {CascadeType.ALL })
+            targetEntity = PlannedActivity.class)
     @JoinTable(
         name = "ARM_INTERVENTION",
         joinColumns = @JoinColumn(name = "ARM_ID"),
