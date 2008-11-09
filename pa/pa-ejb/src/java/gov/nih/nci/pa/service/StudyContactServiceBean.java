@@ -47,8 +47,8 @@ public class StudyContactServiceBean
         if ((dto.getIdentifier() != null) && !PAUtil.isIiNull(dto.getIdentifier())) {
             serviceError(" Update method should be used to modify existing. ");
         }
-        if (PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
-            serviceError("Healthcare Provider  must be set.  ");
+        if (PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
+            serviceError("Clinical Reseasrh Staff  must be set.  ");
         }
 
         StudyContactDTO resultDto = null;
