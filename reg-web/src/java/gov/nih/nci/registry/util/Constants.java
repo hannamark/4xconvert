@@ -51,5 +51,23 @@ public class Constants {
     /** IRB Approval Document. */
     public static final String STUDY_INDIDE = "studyIndIde";
     
+    /** My Account Page. */
+    public static final String MY_ACCOUNT = "myAccount";
+    
+    /** Register User Email Confirmation. */
+    public static final String CONFIRMATION = "confirmation";
+    
+    /** Register User Validation Error. */
+    public static final String REGISTER_USER_ERROR = "registerUserError";
+    
+    /** My Account Validation Error. */
+    public static final String MY_ACCOUNT_ERROR = "myAccountError";
+    
+    /** Application Error. */
+    public static final String APPLICATION_ERROR = "applicationError";
+    
+    /** minimum password length. */
+    public static final int MIN_PASSWORD_LENGTH = 6;
+    
     
 }
