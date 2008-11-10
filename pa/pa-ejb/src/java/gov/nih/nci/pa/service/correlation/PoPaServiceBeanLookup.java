@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -144,5 +145,15 @@ public class PoPaServiceBeanLookup  {
         return (StudyContactServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
 
+    /**
+     * @return StudyResourcingServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyResourcingServiceRemote
+        getStudyResourcingService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/StudyResourcingServiceBean/remote";
+        return (StudyResourcingServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
     
 }

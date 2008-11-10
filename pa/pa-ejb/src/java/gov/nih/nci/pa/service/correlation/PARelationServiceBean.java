@@ -1,17 +1,23 @@
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 /**
  * 
@@ -208,6 +214,59 @@ public class PARelationServiceBean {
         spcDTO.setStudyProtocolIi(spDTO.getIdentifier());
         PoPaServiceBeanLookup.getStudyParticipationContactService().create(spcDTO);
         
+    }
+    /**
+     * 
+     * @param orgPoIdentifier poIdentifer
+     * @param summartFourSorceCode summary4source
+     * @param studyProtocolId studyProtocolId
+     * @throws PAException pa
+     */
+    public void createSummary4ReportedSource(String orgPoIdentifier ,
+                SummaryFourFundingCategoryCode summartFourSorceCode , 
+                Long studyProtocolId) throws PAException {
+
+        CorrelationUtils corrUtils = new CorrelationUtils();
+        if (orgPoIdentifier == null) {
+            throw new PAException(" Organization PO Identifier is null");
+        }
+        if (summartFourSorceCode == null) {
+            throw new PAException(" Person PO Identifier is null");
+        }
+        if (studyProtocolId == null) {
+            throw new PAException("Study Protocol Identifer is null");
+        }
+
+        StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().
+        getStudyProtocol(IiConverter.convertToIi(studyProtocolId));
+        
+        if (spDTO == null) {
+            throw new PAException("No Study Protocol found for = " + studyProtocolId);
+        }
+        
+        // Step 1 : get the PO Organization
+        OrganizationDTO poOrg = null;
+        try {
+            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        } catch (NullifiedEntityException e) {
+//            Map m = e.getNullifiedEntities();
+//           LOG.error("This Organization is no longer available instead use ");
+           throw new PAException("This Organization is no longer available instead use ", e);
+        }
+
+        // Step 3 : check for pa org, if not create one
+        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        if (paOrg == null) {
+            paOrg = corrUtils.createPAOrganization(poOrg);
+        }
+        
+        StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
+        summary4ResoureDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summartFourSorceCode));
+        summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
+        PoPaServiceBeanLookup.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
     }
 
 
