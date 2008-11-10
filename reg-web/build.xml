@@ -228,10 +228,13 @@
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" 
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
+    		 
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
                 <path refid="jboss.classpath"/>  
-                <path refid="jboss.client.classpath"/>
+                <path refid="jboss.client.classpath"/>  
+            	<path refid="ejb.package.classpath"/> 
+
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -483,6 +486,7 @@
                       <fileset dir="${basedir}/src/webapp">                         
                           <include name="WEB-INF/jsp/*.jsp"/>
                           <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                      		<include name="WEB-INF/tags/*.tag"/>	
                       	  <include name="styles/*.css"/>
                       	  <include name="scripts/js/*.js"/>     
                       	  <include name="scripts/ajax/*.js"/>   
