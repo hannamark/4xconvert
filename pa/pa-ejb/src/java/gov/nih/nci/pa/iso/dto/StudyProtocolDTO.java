@@ -41,6 +41,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Bl section801Indicator;
     private Ts startDate;
     private Cd startDateTypeCode;
+    private St keywordText;
     
     /**
      * 
@@ -390,6 +391,20 @@ public class StudyProtocolDTO extends BaseDTO {
      */
     public void setStartDateTypeCode(Cd startDateTypeCode) {
         this.startDateTypeCode = startDateTypeCode;
+    }
+
+    /**
+     * @return keywordText
+     */
+    public St getKeywordText() {
+        return keywordText;
+    }
+
+    /**
+     * @param keywordText keywordText
+     */
+    public void setKeywordText(St keywordText) {
+        this.keywordText = keywordText;
     }
 
 }
