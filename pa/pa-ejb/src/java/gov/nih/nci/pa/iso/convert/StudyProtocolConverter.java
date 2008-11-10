@@ -87,6 +87,7 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(studyProtocol.getSection801Indicator()));
         studyProtocolDTO.setStartDate(TsConverter.convertToTs(studyProtocol.getStartDate()));
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(studyProtocol.getStartDateTypeCode()));
+        studyProtocolDTO.setKeywordText(StConverter.convertToSt(studyProtocol.getKeywordText()));
         return studyProtocolDTO;
     }
 
@@ -160,6 +161,9 @@ public class StudyProtocolConverter {
            studyProtocol.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
                    studyProtocolDTO.getStartDateTypeCode().getCode()));
 
+       }
+       if (studyProtocolDTO.getKeywordText() != null) {
+       studyProtocol.setKeywordText(studyProtocolDTO.getKeywordText().getValue());
        }
        return studyProtocol;
    }
