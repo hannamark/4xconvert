@@ -211,13 +211,22 @@ public class RegisterUserAction extends ActionSupport {
                                         createUser(registryUser);           
     
             }
+            // set the login name and password in the session
+            ServletActionContext.getRequest().
+                        getSession().setAttribute("j_username" , registryUserWebDTO.getLoginName());
+            ServletActionContext.getRequest().
+                        getSession().setAttribute("j_password" , registryUserWebDTO.getPassword());
+            
         } catch (Exception ex) {
             LOG.error("error while updating user info");
             return Constants.APPLICATION_ERROR;
             
         }        
         // show the My Account page
-        return Constants.MY_ACCOUNT;
+        //return Constants.MY_ACCOUNT;
+        
+        //forward to the registry home page
+        return "registryHome";
 
     }
     
