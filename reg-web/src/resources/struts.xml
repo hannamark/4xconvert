@@ -23,6 +23,7 @@
             <result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
             <result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
             <result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
+            <result name="registryHome">/WEB-INF/jsp/registryHome.jsp</result>
         </action> 
         <action name="login">
 	       <result>/WEB-INF/jsp/login.jsp</result>
