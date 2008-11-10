@@ -40,7 +40,7 @@ public class SubGroupsAction extends ActionSupport {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             List<StratumGroupDTO> isoList = PaRegistry.getSubGroupsService().
-            getDocumentsByStudyProtocol(studyProtocolIi);
+            getByStudyProtocol(studyProtocolIi);
             if (!(isoList.isEmpty())) {
                 subGroupsList = new ArrayList<SubGroupsWebDTO>();
                 for (StratumGroupDTO dto : isoList) {
