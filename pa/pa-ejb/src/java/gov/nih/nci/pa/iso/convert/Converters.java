@@ -15,6 +15,8 @@ import gov.nih.nci.pa.service.PAException;
  */
 public class Converters {
     private static ArmConverter arm = new ArmConverter();
+    private static StratumGroupConverter sg = new StratumGroupConverter();
+    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
     /**
      * @param clazz class
      * @return converter
@@ -24,6 +26,12 @@ public class Converters {
     public static AbstractConverter get(Class clazz)  throws PAException {
         if (clazz.equals(ArmConverter.class)) {
             return arm;
+        }
+        if (clazz.equals(StratumGroupConverter.class)) {
+            return sg;
+        }
+        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
+            return dws;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }
