@@ -11,7 +11,7 @@ import gov.nih.nci.coppa.iso.St;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-public class StratumGroupDTO extends BaseDTO {
+public class StratumGroupDTO extends StudyDTO {
 
     private St description;
     private St groupNumberText;
