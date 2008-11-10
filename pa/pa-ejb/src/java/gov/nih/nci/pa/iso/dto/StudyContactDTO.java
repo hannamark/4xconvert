@@ -6,7 +6,9 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
 
 
 /**
@@ -23,6 +25,7 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     private Bl primaryIndicator;
     private Cd roleCode;
     private Ad postalAddress;
+    private DSet<Tel> telecomAddresses;
     
     /**
      * @return the postalAddress
@@ -72,6 +75,18 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
      */
     public void setPrimaryIndicator(Bl primaryIndicator) {
         this.primaryIndicator = primaryIndicator;
+    }
+    /**
+     * @return the telecomAddresses
+     */
+    public DSet<Tel> getTelecomAddresses() {
+        return telecomAddresses;
+    }
+    /**
+     * @param telecomAddresses the telecomAddresses to set
+     */
+    public void setTelecomAddresses(DSet<Tel> telecomAddresses) {
+        this.telecomAddresses = telecomAddresses;
     }
 
 

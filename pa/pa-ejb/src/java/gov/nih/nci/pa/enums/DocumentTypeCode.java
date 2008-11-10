@@ -17,6 +17,8 @@ public enum DocumentTypeCode implements CodedEnum<String> {
     Protocol_Document("PROTOCOL DOCUMENT"), 
     /**IRB_Approval_Document.*/
     IRB_Approval_Document("IRB APPROVAL DOCUMENT"), 
+    /**Participating_sites.*/
+    Participating_sites("PARTICIPATING_SITES"),    
     /**Informed_Consent_Document.*/
     Informed_Consent_Document("INFORMED CONSENT DOCUMENT"),
     /**Other.*/

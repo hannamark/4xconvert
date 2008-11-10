@@ -1,10 +1,12 @@
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -62,6 +64,7 @@ public class OrganizationCorrelationServiceBean {
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
         List<HealthCareFacilityDTO> hcfDTOs = null;
         hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+     
         try {
             hcfDTOs = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
         } catch (NullifiedRoleException e) {
@@ -138,7 +141,11 @@ public class OrganizationCorrelationServiceBean {
         // Step 2 : check if PO has hcf correlation if not create one 
         ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
         List<ResearchOrganizationDTO> roDTOs = null;
-        roDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        roDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        Cd cd = new Cd();
+        cd.setCode("Cancer Center");
+        roDTO.setType(cd);
+        roDTO.setFundingMechanism(StConverter.convertToSt("foo"));
         try {
             roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
         } catch (NullifiedRoleException e) {
@@ -262,7 +269,7 @@ public class OrganizationCorrelationServiceBean {
             hql.append(" and ro.id = ").append(ro.getId());
         }
         if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
-            hql.append(" and ro.id = ").append(ro.getOrganization().getId());
+            hql.append(" and org.id = ").append(ro.getOrganization().getId());
         }
         if (ro.getIdentifier() != null) {
             hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');

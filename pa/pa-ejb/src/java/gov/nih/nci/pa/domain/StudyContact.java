@@ -5,6 +5,8 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -34,8 +36,35 @@ public class StudyContact extends PersonFunctionalRole {
     private Country country;
     private StudyContactRoleCode roleCode;    
     private Boolean primaryIndicator;
+    private String phone;
+    private String email;
    
-
+    /**
+     * @return the phone
+     */
+    @Column(name = "telephone")
+    public String getPhone() {
+        return phone;
+    }
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    /**
+     * @return the email
+     */
+    @Column(name = "email")
+    public String getEmail() {
+        return email;
+    }
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
     /**
      * 
      * @return addressLine
@@ -160,6 +189,7 @@ public class StudyContact extends PersonFunctionalRole {
      * @return the studyContactRoleCode studyContactRoleCode
      */
     @Column(name = "ROLE_CODE")
+    @Enumerated(EnumType.STRING)
     public StudyContactRoleCode getRoleCode() {
         return roleCode;
     }

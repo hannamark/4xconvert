@@ -35,7 +35,8 @@ public class FunctionalRole extends AbstractEntity {
      * @return statusCode
      */
     @Column(name = "STATUS_CODE")
-    @Enumerated(EnumType.STRING)    
+    @Enumerated(EnumType.STRING)  
+    @NotNull  
     public StatusCode getStatusCode() {
         return statusCode;
     }

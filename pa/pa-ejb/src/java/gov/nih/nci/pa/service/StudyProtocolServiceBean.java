@@ -434,6 +434,9 @@ import org.hibernate.Session;
         } finally {
             session.flush();
         }
+        
+        createDocumentWorkFlowStatus(osp);
+        
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.convertToIi(osp.getId());
 
