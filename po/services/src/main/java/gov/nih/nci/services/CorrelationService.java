@@ -125,7 +125,7 @@ public interface CorrelationService<T extends PoDto> {
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(T dto);
-    
+
     /**
      * Provides the ability to find correlations using conjunctional insensitive substring matching.
      *
@@ -133,17 +133,16 @@ public interface CorrelationService<T extends PoDto> {
      *
      * @param dto criteria used to find matching dtos
      * @return list of matching dto
-     * @throws NullifiedRoleException if the results contain any NULLIFIED role status
      */
-    List<T> search(T dto) throws NullifiedRoleException;
-    
+    List<T> search(T dto);
+
     /**
      * Propose a new entity value to the curator.
      * @param proposedState the CR containg the proposed stated.
      * @throws EntityValidationException if the CR proposes an invalid state for the target.
      */
     void updateCorrelation(T proposedState) throws EntityValidationException;
-    
+
     /**
      * Propose a new status code to the curator.
      * @param target the ID of the Correlation to update.
