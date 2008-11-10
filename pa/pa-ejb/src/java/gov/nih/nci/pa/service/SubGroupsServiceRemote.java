@@ -1,9 +1,6 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
-
-import java.util.List;
 
 import javax.ejb.Remote;
 
@@ -15,41 +12,6 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface SubGroupsServiceRemote {
-    /**
-     * @param studyProtocolIi Ii 
-     * @return SubGroupsDTO
-     * @throws PAException PAException
-     */
-    List<StratumGroupDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException;
+public interface SubGroupsServiceRemote extends StudyPaService<StratumGroupDTO> {
     
-    /**
-     * @param sgDTO SubGroupsDTO 
-     * @return DocumentDTO
-     * @throws PAException PAException
-     */
-    StratumGroupDTO create(StratumGroupDTO sgDTO) throws PAException;
-    
-    /**
-     * @param id Ii 
-     * @return SubGroupsDTO
-     * @throws PAException PAException
-     */
-    StratumGroupDTO get(Ii id) throws PAException;
-
-    /**
-     * @param sgDTO SubGroupsDTO 
-     * @return SubGroupsDTO
-     * @throws PAException PAException
-     */
-    StratumGroupDTO update(StratumGroupDTO sgDTO) throws PAException;
-
-    /**
-     * @param id Ii  
-     * @return Boolean
-     * @throws PAException PAException
-     */
-    Boolean delete(Ii id) throws PAException;    
-
-
 }
