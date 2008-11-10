@@ -8,6 +8,13 @@
     <title><fmt:message key="submit.trial.page.title"/></title>   
     <s:head/>
 </head>
+<!-- po integration -->
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<!-- /po integration -->
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
@@ -17,22 +24,167 @@
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
-
+<c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+<!-- c:url value="/protected/ajaxorganizationContactsavePI.action" var="lookupOrgUrl"/-->
+<c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
+<c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
-
-
+var orgid;
+var persid;
+function setorgid(orgIdentifier){
+	orgid = orgIdentifier;
+}
+function setpersid(persIdentifier){
+	persid = persIdentifier;
+}
+//
+function lookup4loadleadorg(){
+    showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
+}
+function lookup4loadleadpers(){
+    showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
+}
+function lookup4sponsor(){
+    showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
+} 
+function lookup4loadresponsibleparty(){	
+	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+}
+function lookup4loadSummary4Sponsor(){
+    showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+}
+//
+function loadLeadOrgDiv() {	
+	var url = '/registry/protected/ajaxSubmitTrialActiondisplayLeadOrganization.action?orgId='+orgid;
+    var div = document.getElementById('loadOrgField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    callAjax(url, div);    
+}
+function loadLeadPersDiv() {
+	var url = '/registry/protected/ajaxSubmitTrialActiondisplayLeadPrincipalInvestigator.action?persId='+persid;
+    var div = document.getElementById('loadPersField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    callAjax(url, div);    
+}
+function loadSponsorDiv() {
+	
+	var url = '/registry/protected/ajaxSubmitTrialActiondisplaySelectedSponsor.action?orgId='+orgid;
+    var div = document.getElementById('loadSponsorField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
+    callAjax(url, div);
+}
+function createOrgContactDiv() {	
+	var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
+    var div = document.getElementById('loadResponsibleContactField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Creating primary contact...</div>';
+    callAjax(url, div);
+}
+function loadSummary4SponsorDiv() {
+	var url = '/registry/protected/ajaxSubmitTrialActiondisplaySummary4FundingSponsor.action?orgId='+orgid;
+    var div = document.getElementById('loadSummary4FundingSponsorField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
+    callAjax(url, div);
+}
+//
 function handleAction(){   
     document.forms[0].page.value = "Submit";
     document.forms[0].action="submitTrialcreate.action";
     document.forms[0].submit();  
 }
+function callAjax(url, div){
 
+    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
+    return false;
+}
+function manageRespPartyLookUp(){		
+		for(var i=0; i<2; i++) {			
+			if(document.forms[0].respparty[i].checked==true) {
+				if(document.forms[0].respparty[i].value == 'sponsor') {					
+						document.getElementById('rpcid').style.display='';
+				}
+				if(document.forms[0].respparty[i].value == 'pi') {					
+						document.getElementById('rpcid').style.display='none';
+				}
+			}
+			
+		}
+}
+function setRequiredFieldIndicators() {
+	var size = document.forms[0].trialType.length;	
+	for(var i=0; i < size; i++) {		
+		if(document.forms[0].trialType[i].checked == true)			 
+			if(document.forms[0].trialType[i].value == 'Observational') {				
+				document.getElementById('summary4fundingcatid').style.display='none';
+				return;
+			}
+			if(document.forms[0].trialType[i].value == 'Interventional') {				
+				document.getElementById('summary4fundingcatid').style.display = '';				
+			}
+	}
+}
+function addGrant(){
+	var fundingMechanismCode = document.getElementById('submitTrial_trialFundingWebDTO_fundingMechanismCode').value;
+	var nihInstitutionCode = document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value;
+	var serialNumber = document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value;
+	var nciDivisionProgramCode = document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value;
+	var  url = '/registry/protected/ajaxSubmitTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;
+	
+   	var div = document.getElementById('grantdiv');
+   
+   	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+   	callAjax(url, div);
+	resetGrantRow();
+}
+
+function deleteGrantRow(rowid){
+	
+		var  url = '/registry/protected/ajaxSubmitTrialActiondeleteGrant.action?uuid='+rowid;
+    	var div = document.getElementById('grantdiv');
+    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+    	callAjax(url, div);				
+}
+
+function enableGrantAddButton(){
+	var fundingMechanismCode = document.getElementById('submitTrial_trialFundingWebDTO_fundingMechanismCode').value;
+	var nihInstitutionCode = document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value;
+	var serialNumber = document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value;
+	var nciDivisionProgramCode = document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value;
+	if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber != '' && nciDivisionProgramCode != '') {
+		
+		document.getElementById('grantbtnid').disabled = false;
+	}
+}
+function resetGrantRow(){
+	document.getElementById('submitTrial_trialFundingWebDTO_fundingMechanismCode').value = '';
+	document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value = '';
+	document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value = '';
+	document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value = '';
+	document.getElementById('grantbtnid').disabled = true;
+}
 </SCRIPT>
+
+<script language="javascript">
+
+function toggledisplay (it, box) {
+  var vis = (box.checked) ? "block" : "none";
+  document.getElementById(it).style.display = vis;
+}
+function toggledisplay2 (it) {
+  var vis = document.getElementById(it).style.display
+  if (vis == "block") { document.getElementById(it).style.display = "none"; }
+                 else { document.getElementById(it).style.display = "block"; }
+} 
+
+
+
+
+</script>	
 
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="submit.trial.page.header"/></h1>
     <div class="box" id="filters">
+    <reg-web:failureMessage/>
     <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <input type="hidden" name="page" />
         <p>Add Trial into NCI Clinical Trials Portal - Powered by (caCTUS) by submitting this form. Please note: asterisks (<span class="required">*</span>) indicate required fields. </p>
@@ -40,10 +192,7 @@ function handleAction(){
           <tr>
                 <th colspan="2"><h2><fmt:message key="submit.trial.trialDetails"/></h2></th>
           </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-  
+          <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
                 <td scope="row" class="label">
                     <label for="leadOrgIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
@@ -74,6 +223,7 @@ function handleAction(){
                 <td  scope="row" class="label">
                     <label for="trialPhase"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label> 
                 </td>
+              
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
                     <s:select headerKey="" headerValue="All" name="protocolWebDTO.trialPhase" list="#phaseCodeValues"  value="protocolWebDTO.trialPhase" cssStyle="width:206px" />
@@ -88,41 +238,182 @@ function handleAction(){
                 <td  scope="row" class="label">
                     <label for="trialType"> <fmt:message key="submit.trial.type"/></label> 
                 </td>
+                <td>
+				<input type="radio" name="trialType" value="Observational" checked="checked" onclick="setRequiredFieldIndicators();"> Observational 
+				<input type="radio" name="trialType" value="Interventional" onclick="setRequiredFieldIndicators();"> Interventional
+				</td>
+          </tr>
+          <tr>
+                <td  scope="row" class="label">
+                    <label for="trialPurpose">Purpose :</label> 
+                </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="trialType" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="trialPurpose" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
                 </td>
           </tr>          
-
+                    <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr> 
           
+        <tr>
+              <th colspan="2"><h2>Lead Organization/Principal Investigator</h2></th>
+        </tr>
+                    <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          <tr>
+					<td scope="row" class="label">
+						<label for="org"> Organization :</label> 
+					</td>
+					<td class="value">
+						<div id="loadOrgField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp" %>
+						</div>		
+					</td>
+		  </tr>
+          <!-- include po person jsp -->
+          <tr>
+					<td scope="row" class="label">
+						<label for="org"> Person :</label> 
+					</td>
+					<td class="value">
+						<div id="loadPersField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp" %>
+						</div>		
+					</td>
+					
+				</tr>
+          <tr>          
+          <tr><td colspan="2" class="space">&nbsp;</td></tr>
+        <tr>
+             <th colspan="2"><h2>Sponsor</h2></th>
+        </tr>          
+        <tr><td colspan="2" class="space">&nbsp;</td></tr>
+        <tr>
+					<td scope="row" class="label">
+						<label for="sponsor"> Sponsor :</label> 
+					</td>
+					<td class="value">
+						<div id="loadSponsorField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/displaySponsor.jsp" %>
+						</div>		
+					</td>
+		</tr>    
+				
+				<tr>
+				<td scope="row" class="label">Responsible Party: </td>
+				<td>
+				<input type="radio" name="respparty" value="pi" checked="checked" onclick="manageRespPartyLookUp();"> PI 
+				<input type="radio" name="respparty" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
+				</td>
+				</tr>				
+				<tr id="rpcid" style="display:none">
+				<td scope="row" class="label">
+					<label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+				</td>				
+				<td class="value">
+					<div id="loadResponsibleContactField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
+					</div>								      
+				</td>
+				</tr>
+          <tr>
+                <td scope="row" class="label">
+                   Email Address:<span class="required">*</span>
+                </td>
+                <td class="value">
+                    <s:textfield name="contactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>contactEmail</s:param>
+                       </s:fielderror>                            
+                     </span>
+                </td>
+                </tr>
+                <tr>
+                <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
+                <td class="value">
+                    <s:textfield name="contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>contactPhone</s:param>
+                       </s:fielderror>                            
+                     </span>
+                </td>           
+          </tr>				
+          <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+		  <!--  summary4 information -->
+          <tr>
+                <th colspan="2"><h2>Summary 4 Information</h2></th>
+          </tr>
+          <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>          
+          <tr>
+					<td scope="row" class="label">
+						<label for="org">Summary 4 Funding Category<span id="summary4fundingcatid" style="display:none" class="required">*</span></label> 
+					</td>
+			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
+                      <td class="value">
+                        <s:select headerKey="" headerValue="" 
+                            name="summary4FundingCategory" 
+                            list="#summaryFourFundingCategoryCodeValues"
+                            cssStyle="width:206px" />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>summary4FundingCategory</s:param>
+                               </s:fielderror>                            
+                             </span>
+                      </td>
+          </tr>          
+          <tr>
+               
+					<td scope="row" class="label">
+						<label for="sponsor"> Summary 4 Funding Sponsor :  <span class="required">*</span></label> 
+					</td>
+					<td class="value">
+						<div id="loadSummary4FundingSponsorField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
+						</div>		
+					</td>
+		</tr>  
+                         			                    
+          
+          <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
+          <tr>
+                <th colspan="2"><h2><fmt:message key="submit.trial.grantInfo"/></h2></th> 
+          </tr>
+          
+         
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
           
           <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.grantInfo"/></h2></th>
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          
-          <tr>
-                <td colspan="2">
-					<table>
+                <td colspan="3">
+					<table class="data2">	
 					   <tr>
-							<td scope="row" class="label">
-							    <label for="fundingMechanism"> <fmt:message key="submit.trial.fundingMechanism"/></label>
-							</td>
-							<td scope="row" class="label">
+							<th scope="row" class="label">
+							    <label for="fundingMechanism">&nbsp;&nbsp;<fmt:message key="submit.trial.fundingMechanism"/></label>
+							</th>
+							<th scope="row" class="label">
 							    <label for="instituteCode"> <fmt:message key="submit.trial.instituteCode"/></label>
-							</td>
-							<td scope="row" class="label">
+							</th>
+							<th scope="row" class="label">
                                 <label for="serialNumber"> <fmt:message key="submit.trial.serialNumber"/></label>
-                            </td>
-							<td scope="row" class="label">
+                            </th>
+							<th scope="row" class="label">
 							    <label for="divProgram"> <fmt:message key="submit.trial.divProgram"/></label>
-							</td>
-					   </tr>
+							</th>
+							<th scope="row" class="label">
+							    <label for="divProgram">&nbsp;&nbsp;&nbsp;&nbsp; </label>
+							</th>
+						
+					</tr>
+					   
 					   <tr>
 							<s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
 							<td>                                             
@@ -132,7 +423,7 @@ function handleAction(){
                                      listKey="fundingMechanismCode"  
                                      listValue="fundingMechanismCode" 
                                      value="trialFundingWebDTO.fundingMechanismCode" 
-                                     cssStyle="width:106px" />
+                                     cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 							</td>
 							<s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
 							<td>                                             
@@ -142,15 +433,15 @@ function handleAction(){
                                      listKey="nihInstituteCode" 
                                      listValue="nihInstituteCode"   
 							         value="trialFundingWebDTO.nihInstitutionCode" 
-							         cssStyle="width:106px" />
-						             <span class="formErrorMsg"> 
+							         cssStyle="width:150px" onblur="enableGrantAddButton();" />
+						             <span class="formErrorMsg" >
 				                        <s:fielderror>
 				                        <s:param>trialFundingWebDTO.nihInstitutionCode</s:param>
 				                       </s:fielderror>                            
 				                     </span>
 							</td>
 							<td>
-                                <s:textfield name="trialFundingWebDTO.serialNumber"  maxlength="200" size="100"  cssStyle="width:100px" />
+                                <s:textfield name="trialFundingWebDTO.serialNumber"  maxlength="200" size="100"  cssStyle="width:150px" onblur="enableGrantAddButton();" />
 	                            <span class="formErrorMsg"> 
 	                                <s:fielderror>
 	                                <s:param>trialFundingWebDTO.serialNumber</s:param>
@@ -159,17 +450,31 @@ function handleAction(){
                             </td>
 							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:106px" />
+							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 		                        <span class="formErrorMsg"> 
                                    <s:fielderror>
                                    <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
                                   </s:fielderror>                            
                                 </span>
 							</td>
+							<td> <input type="button" id="grantbtnid" value="Add Grant.." onclick="addGrant();" disabled="disabled"/></td>
+							<td> &nbsp;</td><td> &nbsp;</td><td> &nbsp;</td>
 					  </tr>
 					</table>
                 </td>
           </tr>
+         
+          <tr>
+                <td colspan="2" class="space">       <div id="grantdiv">   
+                <%@ include file="/WEB-INF/jsp/nodecorate/addGrant.jsp" %>
+                </div>
+                </td>
+                
+          </tr>
+          
+
+	
+       
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
@@ -256,6 +561,31 @@ function handleAction(){
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
           
+          
+ 
+        <tr>
+              <th colspan="2"><h2>IND/IDE Information</h2></th>
+        </tr>     
+         <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+			
+				<tr><td colspan="2" class="space">
+						<%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
+						</td>
+		  		</tr>
+		<tr>	
+			<td colspan="2" class="space">
+		   	<div id="indidediv">	     
+		  							
+						<%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
+		  		
+		    </div>
+		    </td>
+        </tr>
+        <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
         <tr>
               <th colspan="2"><h2><fmt:message key="submit.trial.documents"/></h2></th>
         </tr>
@@ -304,7 +634,50 @@ function handleAction(){
                  </span>
                </td>         
          </tr>
-
+         
+         <tr>
+              <td scope="row" class="label">
+              <label for="particpating sites">
+                     Participating Sites Document
+                     
+              </label>
+             </td>
+             <td class="value">
+                 <s:file name="participatingSites" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.participatingSites</s:param>
+                   </s:fielderror>                            
+                 </span>
+               </td>         
+         </tr>         
+         
+         <tr>
+              <td scope="row" class="label">
+              <label for="informedConsent">Informed Consent Document</label>
+             </td>
+             <td class="value">
+                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.informedConsentFileName</s:param>
+                   </s:fielderror>                            
+                 </span>
+               </td>         
+         </tr>         
+         <tr>
+              <td scope="row" class="label">
+              <label for="otherDocument">Other</label>
+             </td>
+             <td class="value">
+                 <s:file name="otherDocument" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.otherDocument</s:param>
+                   </s:fielderror>                            
+                 </span>
+               </td>         
+         </tr> 
 
         </table>
         <div class="actionsrow">
@@ -319,7 +692,6 @@ function handleAction(){
         
    </s:form>
 
- </div>
-   
+ </div> 
 </body>
 </html>

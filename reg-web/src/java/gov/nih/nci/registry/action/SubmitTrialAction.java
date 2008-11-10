@@ -1,5 +1,47 @@
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
+import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
+import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
+import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
+import gov.nih.nci.registry.dto.TrialFundingWebDTO;
+import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,50 +51,17 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.StatusCode;
-import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.EdConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-
-
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
-import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-//import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
-import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
-import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
-import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
-import gov.nih.nci.registry.dto.TrialFundingWebDTO;
-import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
-import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
-import gov.nih.nci.registry.util.Constants;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * 
@@ -60,11 +69,10 @@ import gov.nih.nci.registry.util.Constants;
  * 
  */
 @Validation
-@SuppressWarnings({ "PMD" })
-public class SubmitTrialAction extends ActionSupport implements
-                                                    ServletResponseAware {
+@SuppressWarnings("PMD")
+public class SubmitTrialAction extends ActionSupport implements ServletResponseAware {
     private static final String VIEW_TRIAL = "view";
-    private static final Logger LOG  = Logger.getLogger(SubmitTrialAction.class);
+    private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private InterventionalStudyProtocolWebDTO protocolWebDTO = new InterventionalStudyProtocolWebDTO();
     private StudyParticipationWebDTO participationWebDTO = new StudyParticipationWebDTO();
     private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
@@ -78,352 +86,418 @@ public class SubmitTrialAction extends ActionSupport implements
     private String irbApprovalFileName;
     private Long id = null;
     private HttpServletResponse servletResponse;
+    private static final int MAXF = 1024;
+    /**
+     * Adding new members for PO integration and additional Use cases.
+     */
+    // Collection for holding the ideInd information
+    private ArrayList<IndIdeHolder> ideInd = new ArrayList<IndIdeHolder>();
+    // Lead Org/Pers
+    private OrganizationDTO selectedLeadOrg = null;
+    private PersonDTO selectedLeadPrincipalInvestigator = null;
+    // Sponsor / Resp Party
+    private OrganizationDTO selectedSponsor = null;
+    private PersonDTO responsiblePartyContact = null;
+    // Summary 4 Sponsor
+    private OrganizationDTO selectedSummary4Sponsor = null;
+    // Collection for holding the grant information
+    private ArrayList<GrantHolder> grants = new ArrayList<GrantHolder>();
+    private String trialType = null;
+    private File participatingSites = null;
+    private String participatingSitesFileName = null;
+    private File informedConsentDocument = null;
+    private String informedConsentDocumentFileName = null;
+    private File otherDocument = null;
+    private String otherDocumentFileName = null;
+    private String respparty = null;
+    private String contactEmail = null;
+    private String contactPhone = null;
+    private String trialPurpose = null;
+    private String summary4FundingCategory = null;
 
-    private static final int MAXF = 1024; 
- 
     /**
      * create protocol.
+     * 
      * @return String
      */
     public String create() {
-        try {        
-            
+        try {
             clearErrorsAndMessages();
-            
             // validate the form elements
             validateForm();
-
             if (hasFieldErrors()) {
                 return ERROR;
             }
-            
-            //create Study Protocol
-            InterventionalStudyProtocolDTO protocolDTO = new InterventionalStudyProtocolDTO();
-            protocolDTO.setPhaseCode(CdConverter.convertToCd(
-                                    PhaseCode.getByCode(protocolWebDTO.getTrialPhase())));
-            protocolDTO.setOfficialTitle(StConverter.convertToSt(
-                                    protocolWebDTO.getTrialTitle()));
-            protocolDTO.setStartDate(TsConverter.convertToTs(
-                                    PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
-            protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(
-                                    PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
-            protocolDTO.setStartDateTypeCode(CdConverter.convertToCd(
-                                    ActualAnticipatedTypeCode.getByCode(protocolWebDTO.getStartDateType())));
-            protocolDTO.setPrimaryCompletionDateTypeCode(CdConverter
-                    .convertToCd(ActualAnticipatedTypeCode.getByCode(protocolWebDTO.getCompletionDateType())));
-            Ii studyProtocolIi = RegistryServiceLocator.getStudyProtocolService()
-                                    .createInterventionalStudyProtocol(protocolDTO);
-            LOG.info("Trial is registered with ID: " + IiConverter.convertToString(studyProtocolIi));
-            
-            ServletActionContext.getRequest().getSession().setAttribute(
-                                        Constants.STUDY_PROTOCOL_II, IiConverter.convertToString(studyProtocolIi));
-            
-            //create study participation
-            createStudyParticipation(studyProtocolIi);
-            
-            //create study overall status
-            createStudyStatus(studyProtocolIi);
-            
-            if (!PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-                // create the Study Grants
-                createStudyResource(studyProtocolIi);
+            Ii studyProtocolIi = null;
+            if (trialType.equals("Observational")) {
+                studyProtocolIi = RegistryServiceLocator.getStudyProtocolService().createObservationalStudyProtocol(
+                        (ObservationalStudyProtocolDTO) createProtocolDTO(trialType));
+            } else {
+                studyProtocolIi = RegistryServiceLocator.getStudyProtocolService().createInterventionalStudyProtocol(
+                        (InterventionalStudyProtocolDTO) createProtocolDTO(trialType));
             }
-            //upload protocol document
-            uploadProtocolDocument(studyProtocolIi);
-            
-            //upload IRB Approval document
-            uploadIrbApproval(studyProtocolIi);
-            
-            // createStudyContact
-            //createStudyContact(studyProtocolIi);
-            
+            LOG.info("Trial is registered with ID: " + IiConverter.convertToString(studyProtocolIi));
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
+                    IiConverter.convertToString(studyProtocolIi));
+            // create study overall status
+            createStudyStatus(studyProtocolIi);
+            // create IND/IDE information *Multiple - times*
+            createIndIdeIndicators(studyProtocolIi);
+            // create the Study Grants *Multiple - times*
+            createStudyResources(studyProtocolIi);
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), protocolDocFileName,
+                    protocolDoc.getAbsolutePath());
+            uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(), irbApprovalFileName,
+                    irbApproval.getAbsolutePath());
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
+                    informedConsentDocumentFileName, informedConsentDocument.getAbsolutePath());
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), otherDocumentFileName,
+                    informedConsentDocument.getAbsolutePath());
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Participating_sites.getCode(), participatingSitesFileName,
+                    participatingSites.getAbsolutePath());
+            // ----------- Begin calling the PO related
+            selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
+                    "PoSummary4Sponsor");
+            if (selectedSummary4Sponsor != null) {
+                new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getIdentifier()
+                        .getExtension(), SummaryFourFundingCategoryCode.getByCode(summary4FundingCategory), IiConverter
+                        .convertToLong(studyProtocolIi));
+            }
+            selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute("PoLeadOrg");
+            if (selectedLeadOrg != null) {
+                new PARelationServiceBean().createLeadOrganizationRelations(selectedLeadOrg.getIdentifier()
+                        .getExtension(), IiConverter.convertToLong(studyProtocolIi), participationWebDTO
+                        .getLocalProtocolIdentifier());
+            }
+            selectedLeadPrincipalInvestigator = (PersonDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute("PoLeadPI");
+            if (selectedLeadPrincipalInvestigator != null) {
+                new PARelationServiceBean().createPrincipalInvestigatorRelations(selectedLeadOrg.getIdentifier()
+                        .getExtension(), selectedLeadPrincipalInvestigator.getIdentifier().getExtension(), IiConverter
+                        .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(trialType));
+            }
+            selectedSponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute("PoSponsor");
+            if (selectedSponsor != null) {
+                if (respparty.equals("pi")) {
+                    new PARelationServiceBean().createPIAsResponsiblePartyRelations(selectedSponsor.getIdentifier()
+                            .getExtension(), selectedLeadPrincipalInvestigator.getIdentifier().getExtension(),
+                            IiConverter.convertToLong(studyProtocolIi), contactEmail, contactPhone);
+                } else {
+                    responsiblePartyContact = (PersonDTO) ServletActionContext.getRequest().getSession().getAttribute(
+                            "PoResponsibleContact");
+                    new PARelationServiceBean().createSponsorAsPrimaryContactRelations(selectedSponsor.getIdentifier()
+                            .getExtension(), responsiblePartyContact.getIdentifier().getExtension(), IiConverter
+                            .convertToLong(studyProtocolIi), contactEmail, contactPhone);
+                }
+            }
             // after creating the study protocol, query the protocol for viewing
             query();
         } catch (Exception e) {
-            //e.printStackTrace();
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while submitting trial: " + e);
+            return VIEW_TRIAL;
+        } finally {
+            ServletActionContext.getRequest().getSession().removeAttribute("INDIDE_LIST");
+            ServletActionContext.getRequest().getSession().removeAttribute("GRANT_LIST");
+            ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
+            ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
+            ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
+            ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
         }
         return VIEW_TRIAL;
     }
 
-    /**
-     * @param studyProtocolIi
-     */
-    private void createStudyResource(Ii studyProtocolIi) {
-        // create the Study Grants
-        try {
-            
-            StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();            
-    
-            studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
-            studyResoureDTO.setSummary4ReportedResourceIndicator(
-                            BlConverter.convertToBl(Boolean.FALSE));
-            studyResoureDTO.setFundingMechanismCode(
-                            CdConverter.convertStringToCd(trialFundingWebDTO.getFundingMechanismCode()));
-            studyResoureDTO.setNciDivisionProgramCode(
-                            CdConverter.convertToCd(MonitorCode.getByCode(
-                               trialFundingWebDTO.getNciDivisionProgramCode())));
-            studyResoureDTO.setNihInstitutionCode(
-                            CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
-            studyResoureDTO.setSerialNumber(
-                            IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
-            studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
-            RegistryServiceLocator.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
-        } catch (PAException pae) {
-            //pae.printStackTrace();
-            LOG.error("Exception occured while creating study resource: " + pae);
+    private StudyProtocolDTO createProtocolDTO(String type) {
+        StudyProtocolDTO protocolDTO = null;
+        if (type.equals("Observational")) {
+            protocolDTO = new ObservationalStudyProtocolDTO();
+        } else {
+            protocolDTO = new InterventionalStudyProtocolDTO();
         }
+        protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(protocolWebDTO.getTrialPhase())));
+        protocolDTO.setOfficialTitle(StConverter.convertToSt(protocolWebDTO.getTrialTitle()));
+        protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
+        protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(protocolWebDTO
+                .getStartDate())));
+        protocolDTO.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(protocolWebDTO
+                .getStartDateType())));
+        protocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
+                .getByCode(protocolWebDTO.getCompletionDateType())));
+        protocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(trialPurpose)));
+        return protocolDTO;
     }
 
-    /**
-     * @param studyProtocolIi
-     */
-    private void createStudyStatus(Ii studyProtocolIi)  {
-        //create study overall status
+    private void createStudyStatus(Ii studyProtocolIi) {
+        // create study overall status
         try {
-
             StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
-            //overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
+            // overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
             overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
-            overallStatusDTO.setStatusCode(CdConverter.convertToCd(
-                        StudyStatusCode.getByCode(overallStatusWebDTO.getStatusCode())));
-            overallStatusDTO.setStatusDate(TsConverter.convertToTs(
-                        PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate())));
+            overallStatusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(overallStatusWebDTO
+                    .getStatusCode())));
+            overallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(overallStatusWebDTO
+                    .getStatusDate())));
             RegistryServiceLocator.getStudyOverallStatusService().create(overallStatusDTO);
         } catch (PAException pae) {
-            //pae.printStackTrace();
+            // pae.printStackTrace();
             LOG.error("Exception occured while creating study overall status: " + pae);
         }
     }
-    
-    /**
-     * Uploads Protocol Document.
-     * @param studyProtocolIi
-     */
-    private void uploadProtocolDocument(Ii studyProtocolIi) {
-        try {
 
+    private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, String file) {
+        try {
             DocumentDTO docDTO = new DocumentDTO();
             docDTO.setStudyProtocolIi(studyProtocolIi);
-            docDTO.setTypeCode(
-                    CdConverter.convertStringToCd(DocumentTypeCode.Protocol_Document.getCode()));
-            docDTO.setFileName(StConverter.convertToSt(protocolDocFileName));
-            docDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
-            docDTO.setText(EdConverter.convertToEd(
-                        readInputStream(new FileInputStream(protocolDoc))));
+            docDTO.setTypeCode(CdConverter.convertStringToCd(docTypeCode));
+            docDTO.setFileName(StConverter.convertToSt(fileName));
+            docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+            docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(file))));
             RegistryServiceLocator.getDocumentService().create(docDTO);
         } catch (PAException pae) {
-            //pae.printStackTrace();
-            LOG.error("Exception occured while uploading Protocol Document: " + pae);
+            // pae.printStackTrace();
+            LOG.error("Exception occured while uploading a '" + fileName + "' Exception is" + pae);
         } catch (IOException ioe) {
-            //ioe.printStackTrace();
-            LOG.error("Exception occured reading  Protocol Document " + ioe);
-            
+            // ioe.printStackTrace();
+            LOG.error("Exception occured reading '" + fileName + "' Exception is" + ioe);
         }
     }
-    
-    /**
-     * Uploads IRB Approval Document.
-     * @param studyProtocolIi
-     */
-    private void uploadIrbApproval(Ii studyProtocolIi) {
-        try {
 
-            DocumentDTO docDTO = new DocumentDTO();
-            docDTO.setStudyProtocolIi(studyProtocolIi);
-            docDTO.setTypeCode(
-                    CdConverter.convertStringToCd(DocumentTypeCode.IRB_Approval_Document.getCode()));
-            docDTO.setFileName(StConverter.convertToSt(irbApprovalFileName));
-            docDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
-            docDTO.setText(EdConverter.convertToEd(
-                        readInputStream(new FileInputStream(irbApproval))));
-            RegistryServiceLocator.getDocumentService().create(docDTO);
-        } catch (PAException pae) {
-            //pae.printStackTrace();
-            LOG.error("Exception occured while uploading IRB Approval Document: " + pae);
-        } catch (IOException ioe) {
-            //ioe.printStackTrace();
-            LOG.error("Exception occured reading  IRB Approval Document " + ioe);
-            
+    private void createIndIdeIndicators(Ii studyProtocolIi) throws PAException {
+        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "INDIDE_LIST");
+        if (!(sessionList.size() > 0)) {
+            return;
+        }
+        StudyIndldeDTO indldeDTO = null;
+        for (IndIdeHolder holder : sessionList) {
+            indldeDTO = new StudyIndldeDTO();
+            indldeDTO.setStudyProtocolIi(studyProtocolIi);
+            // indldeDTO.setStatusDateRange(statusDateRange)sDateRange(statusDateRange)
+            indldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(holder.getIndIde()));
+            indldeDTO.setIndldeNumber(StConverter.convertToSt(holder.getNumber()));
+            indldeDTO.setGrantorCode(CdConverter.convertStringToCd(holder.getGrantor()));
+            indldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(holder.getHolderType()));
+            if (holder.getHolderType().equalsIgnoreCase("NIH")) {
+                indldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(holder.getProgramCode()));
+            }
+            if (holder.getHolderType().equalsIgnoreCase("NCI")) {
+                indldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(holder.getProgramCode()));
+            }
+            indldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(holder.getExpandedAccess())));
+            indldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(holder.getExpandedAccessType()));
+            RegistryServiceLocator.getStudyIndldeService().create(indldeDTO);
         }
     }
-    
-    /**
-     * @param studyProtocolIi
-     */
-    private void createStudyParticipation(Ii studyProtocolIi) {
+
+    private void createStudyResources(Ii studyProtocolIi) {
         try {
-        // create Study Participation record
-        StudyParticipationDTO studyPartcipationDTO = new StudyParticipationDTO();
-        studyPartcipationDTO.setStudyProtocolIi(studyProtocolIi);
-        studyPartcipationDTO.setLocalStudyProtocolIdentifier(
-                      StConverter.convertToSt(participationWebDTO.getLocalProtocolIdentifier()));
-        studyPartcipationDTO.setHealthcareFacilityIi(IiConverter.convertToIi("1"));
-        studyPartcipationDTO.setFunctionalCode(
-                    CdConverter.convertStringToCd(
-                              StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode()));
-        studyPartcipationDTO.setStatusCode(
-                    CdConverter.convertStringToCd(StatusCode.ACTIVE.getCode()));
-        RegistryServiceLocator.getStudyParticipationService().create(studyPartcipationDTO);
+            ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+                    .getAttribute("GRANT_LIST");
+            if (!(sessionList.size() > 0)) {
+                return;
+            }
+            StudyResourcingDTO studyResoureDTO = null;
+            for (GrantHolder holder : sessionList) {
+                studyResoureDTO = new StudyResourcingDTO();
+                studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
+                studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
+                studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(holder.getFundingMechanism()));
+                studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(MonitorCode.getByCode(holder
+                        .getNciDivisionProgramCode())));
+                studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(holder.getInstituteCode()));
+                studyResoureDTO.setSerialNumber(IntConverter.convertToInt(holder.getSerialNumber()));
+                studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
+                        .getRemoteUser())));
+                RegistryServiceLocator.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
+            }
         } catch (PAException pae) {
-            //pae.printStackTrace();
+            // pae.printStackTrace();
             LOG.error("Exception occured while creating study participation: " + pae);
         }
     }
-    
-    //TODO this method needs to be modified and appropriate
-    // StudyContacts (Submitter or PI) have to be created
-    // for each trial submitted
+
     /**
-     * @param studyProtocolIi
-     */
-//    private void createStudyContact(Ii studyProtocolIi) {
-//        try {
-//        LOG.info(" creating study contact ");
-//        // create Study Contact record        
-//        StudyContactDTO studyContactDTO = new StudyContactDTO();
-//        studyContactDTO.setStudyProtocolIi(studyProtocolIi);
-//        studyContactDTO.setHealthCareProvider(IiConverter.convertToIi("1"));
-//        studyContactDTO.setRoleCode(CdConverter.convertStringToCd(
-//                            StudyContactRoleCode.SUBMITTER.getCode()));
-//        studyContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
-//        
-//        RegistryServiceLocator.getStudyContactService().create(studyContactDTO);
-//        } catch (PAException pae) {
-//            pae.printStackTrace();
-//            LOG.error("Exception occured while creating study contact: " + pae);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            LOG.error("Exception occured while creating study contact: " + ex);
-//        }
-//    }
-    
-    /**
-     * query the created protocol and all associated data.
-     * @return String
+     * query the created protocol and all related associations.
+     * 
+     * @return res
      */
     public String query() {
         try {
-            
-            Ii studyProtocolIi = IiConverter.convertToIi((String) ServletActionContext.
-                                    getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II)); 
-                        
-            InterventionalStudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().
-                                                             getInterventionalStudyProtocol(studyProtocolIi);
-            InterventionalStudyProtocolWebDTO trialWebDTO =
-                                                          new InterventionalStudyProtocolWebDTO(protocolDTO);
-            // put an entry in the session and store InterventionalStudyProtocolDTO 
-            ServletActionContext.getRequest().setAttribute(
-                                    Constants.TRIAL_SUMMARY, trialWebDTO);
-            
-            // query the study grants 
-            List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService().
-                                                 getstudyResourceByStudyProtocol(studyProtocolIi);
-            List <TrialFundingWebDTO> trialFundingList;
-            if (!(isoList.isEmpty())) { 
-                trialFundingList = new ArrayList<TrialFundingWebDTO>();                
+            Ii studyProtocolIi = IiConverter.convertToIi((String) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.STUDY_PROTOCOL_II));
+            StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService()
+                    .getInterventionalStudyProtocol(studyProtocolIi);
+            InterventionalStudyProtocolWebDTO trialWebDTO = new InterventionalStudyProtocolWebDTO(protocolDTO);
+            // put an entry in the session and store
+            // InterventionalStudyProtocolDTO
+            ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, trialWebDTO);
+            // query the study grants
+            List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService()
+                    .getstudyResourceByStudyProtocol(studyProtocolIi);
+            List<TrialFundingWebDTO> trialFundingList;
+            if (!(isoList.isEmpty())) {
+                trialFundingList = new ArrayList<TrialFundingWebDTO>();
                 for (StudyResourcingDTO dto : isoList) {
                     trialFundingList.add(new TrialFundingWebDTO(dto));
                 }
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(
-                                        Constants.TRIAL_FUNDING_LIST, trialFundingList.get(0));
+                ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST, trialFundingList.get(0));
             }
-            
-            List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.
-                                                        getStudyOverallStatusService().
-                                                            getByStudyProtocol(studyProtocolIi);
-            List <StudyOverallStatusWebDTO> overallStatusList;
-            if (!(overallStatusISOList.isEmpty())) { 
-                overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();                
+            List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
+                    .getByStudyProtocol(studyProtocolIi);
+            List<StudyOverallStatusWebDTO> overallStatusList;
+            if (!(overallStatusISOList.isEmpty())) {
+                overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
                 for (StudyOverallStatusDTO dto : overallStatusISOList) {
                     overallStatusList.add(new StudyOverallStatusWebDTO(dto));
                 }
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(
-                                        Constants.TRIAL_OVERALL_STATUS, overallStatusList.get(0));
+                ServletActionContext.getRequest()
+                        .setAttribute(Constants.TRIAL_OVERALL_STATUS, overallStatusList.get(0));
             }
-            
             // query the study participation sites
-            List<StudyParticipationDTO> studyParticipationISOList = 
-                                       RegistryServiceLocator.getStudyParticipationService().
-                                               getByStudyProtocol(studyProtocolIi);
-            
-            List <StudyParticipationWebDTO> studyParticipationList;
-            if (!(studyParticipationISOList.isEmpty())) { 
-                studyParticipationList = new ArrayList<StudyParticipationWebDTO>();                
+            List<StudyParticipationDTO> studyParticipationISOList = RegistryServiceLocator
+                    .getStudyParticipationService().getByStudyProtocol(studyProtocolIi);
+            List<StudyParticipationWebDTO> studyParticipationList;
+            if (!(studyParticipationISOList.isEmpty())) {
+                studyParticipationList = new ArrayList<StudyParticipationWebDTO>();
                 for (StudyParticipationDTO dto : studyParticipationISOList) {
                     studyParticipationList.add(new StudyParticipationWebDTO(dto));
                 }
                 // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(
-                                        Constants.STUDY_PARTICIPATION, studyParticipationList.get(0));
-                
+                ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
+                        studyParticipationList.get(0));
             }
-            
             // query the trial documents
-            List<DocumentDTO> documentISOList = 
-                                       RegistryServiceLocator.getDocumentService().
-                                               getDocumentsByStudyProtocol(studyProtocolIi);
-            List <TrialDocumentWebDTO> documentList;
-            if (!(documentISOList.isEmpty())) { 
-                documentList = new ArrayList<TrialDocumentWebDTO>();                
+            List<DocumentDTO> documentISOList = RegistryServiceLocator.getDocumentService()
+                    .getDocumentsByStudyProtocol(studyProtocolIi);
+            List<TrialDocumentWebDTO> documentList;
+            if (!(documentISOList.isEmpty())) {
+                documentList = new ArrayList<TrialDocumentWebDTO>();
                 for (DocumentDTO dto : documentISOList) {
                     documentList.add(new TrialDocumentWebDTO(dto));
                 }
-                
                 for (TrialDocumentWebDTO webdto : documentList) {
-                    if (webdto.getTypeCode().equalsIgnoreCase(
-                            DocumentTypeCode.Protocol_Document.getCode())) {
-                        // put an entry in the session and store Protocol Document
-                        ServletActionContext.getRequest().setAttribute(
-                                                Constants.PROTOCOL_DOCUMENT, webdto);
-                        
+                    if (webdto.getTypeCode().equalsIgnoreCase(DocumentTypeCode.Protocol_Document.getCode())) {
+                        // put an entry in the session and store Protocol
+                        // Document
+                        ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, webdto);
                     }
-                    if (webdto.getTypeCode().equalsIgnoreCase(
-                            DocumentTypeCode.IRB_Approval_Document.getCode())) {
-                        // put an entry in the session and store IRB Approval Document
-                        ServletActionContext.getRequest().setAttribute(
-                                                Constants.IRB_APPROVAL, webdto);                        
-                    }                    
+                    if (webdto.getTypeCode().equalsIgnoreCase(DocumentTypeCode.IRB_Approval_Document.getCode())) {
+                        // put an entry in the session and store IRB Approval
+                        // Document
+                        ServletActionContext.getRequest().setAttribute(Constants.IRB_APPROVAL, webdto);
+                    }
                 }
-                
             }
- 
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
         } catch (Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             LOG.error("Exception occured while querying trial " + e);
         }
         return VIEW_TRIAL;
     }
-    
+
+    /**
+     * 
+     * @return result
+     */
+    // public String displayOrg() {
+    public String displayLeadOrganization() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (orgId.equals("undefined")) {
+            return "display_org";
+        }
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        try {
+            selectedLeadOrg = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria).get(0);
+            ServletActionContext.getRequest().getSession().setAttribute("PoLeadOrg", selectedLeadOrg);
+        } catch (Exception e) {
+            return "display_lead_org";
+        }
+        return "display_lead_org";
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    // public String displayPerson() {
+    public String displayLeadPrincipalInvestigator() {
+        String persId = ServletActionContext.getRequest().getParameter("persId");
+        try {
+            selectedLeadPrincipalInvestigator = RegistryServiceLocator.getPoPersonEntityService().getPerson(
+                    EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+            ServletActionContext.getRequest().getSession().setAttribute("PoLeadPI", selectedLeadPrincipalInvestigator);
+        } catch (Exception e) {
+            return "display_lead_prinicipal_inv";
+        }
+        return "display_lead_prinicipal_inv";
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    // public String displayOrg() {
+    public String displaySelectedSponsor() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (orgId.equals("undefined")) {
+            return "display_selected_sponsor";
+        }
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        try {
+            selectedSponsor = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria).get(0);
+            ServletActionContext.getRequest().getSession().setAttribute("PoSponsor", selectedSponsor);
+        } catch (Exception e) {
+            return "display_selected_sponsor";
+        }
+        return "display_selected_sponsor";
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    // public String displayOrg() {
+    public String displaySummary4FundingSponsor() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (orgId.equals("undefined")) {
+            return "display_summary4funding_sponsor";
+        }
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        try {
+            selectedSummary4Sponsor = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria).get(0);
+            ServletActionContext.getRequest().getSession().setAttribute("PoSummary4Sponsor", selectedSummary4Sponsor);
+        } catch (Exception e) {
+            return "display_summary4funding_sponsor";
+        }
+        return "display_summary4funding_sponsor";
+    }
+
     /**
      * @return result
      */
     public String viewDoc() {
         LOG.info("Entering viewProtocolDoc");
-        try {  
-            DocumentDTO  docDTO = 
-                RegistryServiceLocator.getDocumentService().get(IiConverter.convertToIi(id));
-
+        try {
+            DocumentDTO docDTO = RegistryServiceLocator.getDocumentService().get(IiConverter.convertToIi(id));
             InterventionalStudyProtocolWebDTO spDTO = (InterventionalStudyProtocolWebDTO) ServletActionContext
-                                .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-
-            
+                    .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
-            sb.append(File.separator).append(spDTO.getNciAccessionNumber()).append(File.separator).
-                append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
-
+            sb.append(File.separator).append(spDTO.getNciAccessionNumber()).append(File.separator).append(
+                    docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
             File downloadFile = new File(sb.toString());
             servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/x-unknown");
             FileInputStream fileToDownload = new FileInputStream(downloadFile);
-            servletResponse.setHeader("Content-Disposition", "attachment; filename="
-                    + downloadFile.getName());
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + downloadFile.getName());
             servletResponse.setContentLength(fileToDownload.available());
             int data;
             ServletOutputStream out = servletResponse.getOutputStream();
@@ -431,188 +505,365 @@ public class SubmitTrialAction extends ActionSupport implements
                 out.write(data);
             }
             out.flush();
-            out.close();             
+            out.close();
         } catch (FileNotFoundException err) {
-            LOG.error("TrialDocumentAction failed with FileNotFoundException: "
-                    + err);
+            LOG.error("TrialDocumentAction failed with FileNotFoundException: " + err);
             this.addActionError("File not found: " + err.getLocalizedMessage());
             query();
             return ERROR;
         } catch (Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             LOG.error("Exception occured while retrieving document " + e);
         }
         return NONE;
     }
 
-    
     /**
      * validate the submit trial form elements.
      */
-    private void validateForm()  {
+    private void validateForm() {
         if (PAUtil.isEmpty(participationWebDTO.getLocalProtocolIdentifier())) {
             addFieldError("participationWebDTO.localProtocolIdentifier",
                     getText("error.submit.localProtocolIdentifier"));
         }
         if (PAUtil.isEmpty(protocolWebDTO.getTrialTitle())) {
-            addFieldError("protocolWebDTO.trialTitle",
-                    getText("error.submit.trialTitle"));
+            addFieldError("protocolWebDTO.trialTitle", getText("error.submit.trialTitle"));
         }
         if (PAUtil.isEmpty(protocolWebDTO.getTrialPhase())) {
-            addFieldError("protocolWebDTO.trialPhase",
-                    getText("error.submit.trialPhase"));
+            addFieldError("protocolWebDTO.trialPhase", getText("error.submit.trialPhase"));
         }
-        
-        // if funding mechanism is selected, make all other 
+        // if funding mechanism is selected, make all other
         // funding fields required
-        if (!PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {            
-            if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {                
-                addFieldError("trialFundingWebDTO.nihInstitutionCode",
-                        getText("error.submit.nihInstitutionCode"));
+        if (!PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+            if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
+                addFieldError("trialFundingWebDTO.nihInstitutionCode", getText("error.submit.nihInstitutionCode"));
             }
-            if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {                
-                addFieldError("trialFundingWebDTO.serialNumber",
-                        getText("error.submit.serialNumber"));
+            if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+                addFieldError("trialFundingWebDTO.serialNumber", getText("error.submit.serialNumber"));
             } else if (!PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
-                
                 try {
                     Long.valueOf(trialFundingWebDTO.getSerialNumber());
                 } catch (NumberFormatException nfe) {
                     // if cannot be converted to long then it's not a number
-                    addFieldError("trialFundingWebDTO.serialNumber",
-                            getText("error.submit.serialNumberType"));
+                    addFieldError("trialFundingWebDTO.serialNumber", getText("error.submit.serialNumberType"));
                 }
-                
             }
-            if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {                
+            if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
                 addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
                         getText("error.submit.nciDivisionProgramCode"));
             }
         }
-        
         if (PAUtil.isEmpty(overallStatusWebDTO.getStatusCode())) {
-            addFieldError("overallStatusWebDTO.statusCode",
-                    getText("error.submit.statusCode"));
+            addFieldError("overallStatusWebDTO.statusCode", getText("error.submit.statusCode"));
         }
         if (PAUtil.isEmpty(overallStatusWebDTO.getStatusDate())) {
-            addFieldError("overallStatusWebDTO.statusDate",
-                    getText("error.submit.statusDate"));
+            addFieldError("overallStatusWebDTO.statusDate", getText("error.submit.statusDate"));
         }
         if (PAUtil.isEmpty(protocolWebDTO.getStartDate())) {
-            addFieldError("protocolWebDTO.startDate",
-                    getText("error.submit.startDate"));
+            addFieldError("protocolWebDTO.startDate", getText("error.submit.startDate"));
         }
         if (PAUtil.isEmpty(protocolWebDTO.getStartDateType())) {
-            addFieldError("protocolWebDTO.startDateType",
-                    getText("error.submit.dateType"));
+            addFieldError("protocolWebDTO.startDateType", getText("error.submit.dateType"));
         }
         if (PAUtil.isEmpty(protocolWebDTO.getCompletionDate())) {
-            addFieldError("protocolWebDTO.completionDate",
-                    getText("error.submit.completionDate"));
-        }        
+            addFieldError("protocolWebDTO.completionDate", getText("error.submit.completionDate"));
+        }
         if (PAUtil.isEmpty(protocolWebDTO.getCompletionDateType())) {
-            addFieldError("protocolWebDTO.completionDateType",
-                    getText("error.submit.dateType"));
-        }        
+            addFieldError("protocolWebDTO.completionDateType", getText("error.submit.dateType"));
+        }
         if (PAUtil.isEmpty(protocolDocFileName)) {
-            addFieldError("trialDocumentWebDTO.protocolDocFileName",
-                    getText("error.submit.protocolDocument"));           
+            addFieldError("trialDocumentWebDTO.protocolDocFileName", getText("error.submit.protocolDocument"));
         }
         if (PAUtil.isEmpty(irbApprovalFileName)) {
-            addFieldError("trialDocumentWebDTO.irbApprovalFileName",
-                    getText("error.submit.irbApproval"));           
+            addFieldError("trialDocumentWebDTO.irbApprovalFileName", getText("error.submit.irbApproval"));
         }
-        
-        
+        if (PAUtil.isEmpty(contactEmail)) {
+            addFieldError("contactEmail", getText("error.submit.contactEmail"));
+        }
+        if (PAUtil.isEmpty(contactPhone)) {
+            addFieldError("contactPhone", getText("error.submit.contactPhone"));
+        }
+        // LeadOrgNotSelected;check the session;
+        selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoLeadOrg");
+        if (selectedLeadOrg == null) {
+            addFieldError("LeadOrgNotSelected", getText("error.submit.leadOrganization"));
+        }
+        selectedLeadPrincipalInvestigator = (PersonDTO) ServletActionContext.getRequest().getSession().getAttribute(
+                "PoLeadPI");
+        if (selectedLeadPrincipalInvestigator == null) {
+            addFieldError("LeadPINotSelected", getText("error.submit.leadPrincipalInvestigator"));
+        }
+        selectedSponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoSponsor");
+        if (selectedSponsor == null) {
+            addFieldError("SponsorNotSelected", getText("error.submit.sponsor"));
+        }
+        if (!(respparty.equals("pi"))) {
+            responsiblePartyContact = (PersonDTO) ServletActionContext.getRequest().getSession().getAttribute(
+                    "PoResponsibleContact");
+            addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
+        }
+        if (trialType.equals("Interventional")) {
+            if (PAUtil.isEmpty(contactPhone)) {
+                addFieldError("summary4FundingCategory", getText("error.submit.summary4FundingCategory"));
+            }
+        }
+        selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
+                "PoSummary4Sponsor");
+        if (selectedSummary4Sponsor == null) {
+            addFieldError("summary4FundingSponsor", getText("error.submit.summary4FundingSponsor"));
+        }
     }
-    
+
     /**
      * @return result
      */
-     public String input() {
-         return INPUT;
-     }
-    
-     // Read an input stream in its entirety into a byte array.
-     private static byte[] readInputStream(InputStream inputStream) throws IOException {
-        
-        int bufSize = MAXF * MAXF; 
-        byte[] content; 
-
-        List<byte[]> parts = new LinkedList(); 
-        InputStream in = new BufferedInputStream(inputStream); 
-
-        byte[] readBuffer = new byte[bufSize]; 
-        byte[] part = null; 
-        int bytesRead = 0; 
-
-        // read everything into a list of byte arrays 
-        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) { 
-            part = new byte[bytesRead]; 
-            System.arraycopy(readBuffer, 0, part, 0, bytesRead); 
-//            parts.add(part); 
-        } 
-
-        // calculate the total size 
-        int totalSize = 0; 
-        for (byte[] partBuffer : parts) { 
-            totalSize += partBuffer.length; 
-        } 
-
-        // allocate the array 
-        content = new byte[totalSize]; 
-        int offset = 0; 
-        for (byte[] partBuffer : parts) { 
-            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length); 
-            offset += partBuffer.length; 
-        } 
-
-        return content; 
+    public String input() {
+        return INPUT;
     }
-     
-     /**
-      * @return protocolWebDTO
-      */
-     public InterventionalStudyProtocolWebDTO getProtocolWebDTO() {
-         return protocolWebDTO;
-     }
-     
-     /**
-      * @param protocolWebDTO protocolWebDTO
-      */
-     public void setProtocolWebDTO(InterventionalStudyProtocolWebDTO protocolWebDTO) {
-         this.protocolWebDTO = protocolWebDTO;
-     }
-     
-     /**
-      * @return the overallStatusWebDTO
-      */
-     public StudyOverallStatusWebDTO getOverallStatusWebDTO() {
-         return overallStatusWebDTO;
-     }
 
-     /**
-      * @param overallStatusWebDTO the overallStatusWebDTO to set
-      */
-     public void setOverallStatusWebDTO(StudyOverallStatusWebDTO overallStatusWebDTO) {
-         this.overallStatusWebDTO = overallStatusWebDTO;
-     }
+    // Read an input stream in its entirety into a byte array.
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+        int bufSize = MAXF * MAXF;
+        byte[] content;
+        List<byte[]> parts = new LinkedList();
+        InputStream in = new BufferedInputStream(inputStream);
+        byte[] readBuffer = new byte[bufSize];
+        byte[] part = null;
+        int bytesRead = 0;
+        // read everything into a list of byte arrays
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
+            part = new byte[bytesRead];
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
+            // parts.add(part);
+        }
+        // calculate the total size
+        int totalSize = 0;
+        for (byte[] partBuffer : parts) {
+            totalSize += partBuffer.length;
+        }
+        // allocate the array
+        content = new byte[totalSize];
+        int offset = 0;
+        for (byte[] partBuffer : parts) {
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
+            offset += partBuffer.length;
+        }
+        return content;
+    }
 
-     
-     /**
-      * @return the participationWebDTO
-      */
-     public StudyParticipationWebDTO getParticipationWebDTO() {
-         return participationWebDTO;
-     }
+    /**
+     * Sets the ind ide information in the collection.
+     * 
+     * @return result
+     */
+    public String addIdeIndIndicator() {
+        String number = ServletActionContext.getRequest().getParameter("number");
+        String grantor = ServletActionContext.getRequest().getParameter("grantor");
+        String programCode = ServletActionContext.getRequest().getParameter("programcode");
+        String expandedAccess = ServletActionContext.getRequest().getParameter("expandedaccess");
+        String expandedAccessType = ServletActionContext.getRequest().getParameter("expandedaccesstype");
+        String holderType = ServletActionContext.getRequest().getParameter("holdertype");
+        String indIde = ServletActionContext.getRequest().getParameter("indIde");
+        if (number.equals("") && grantor.equals("") && programCode.equals("") && expandedAccess.equals("No")
+                && expandedAccessType.equals("") && holderType.equals("") && indIde.equals("undefined")) {
+            return SUCCESS;
+        }
+        IndIdeHolder indIdeHolder = new IndIdeHolder();
+        indIdeHolder.setExpandedAccess(expandedAccess.equals("") ? "-" : expandedAccess);
+        indIdeHolder.setExpandedAccessType(expandedAccessType.equals("") ? "-" : expandedAccessType);
+        indIdeHolder.setGrantor(grantor.equals("") ? "-" : grantor);
+        indIdeHolder.setHolderType(holderType.equals("") ? "-" : holderType);
+        indIdeHolder.setNumber(number.equals("") ? "-" : number);
+        indIdeHolder.setProgramCode(programCode.equals("") ? "-" : programCode);
+        indIdeHolder.setIndIde(indIde.equals("") ? "-" : indIde);
+        indIdeHolder.setRowId(UUID.randomUUID().toString());
+        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "INDIDE_LIST");
+        if (sessionList != null) {
+            for (int i = 0; i < sessionList.size(); i++) {
+                ideInd.add(sessionList.get(i));
+            }
+            ideInd.add(indIdeHolder);
+            sessionList.add(indIdeHolder);
+            ServletActionContext.getRequest().getSession().setAttribute("INDIDE_LIST", sessionList);
+        } else {
+            ideInd.add(indIdeHolder);
+            ServletActionContext.getRequest().getSession().setAttribute("INDIDE_LIST", ideInd);
+        }
+        // ideIndList.setList(ideInd);
+        return SUCCESS;
+    }
 
-     /**
-      * @param participationWebDTO the participationWebDTO to set
-      */
-     public void setParticipationWebDTO(StudyParticipationWebDTO participationWebDTO) {
-         this.participationWebDTO = participationWebDTO;
-     }
-    
+    /**
+     * 
+     * @return result
+     */
+    public String deleteIndIde() {
+        String rowid = ServletActionContext.getRequest().getParameter("uuid");
+        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "INDIDE_LIST");
+        IndIdeHolder holder;
+        for (int i = 0; i < sessionList.size(); i++) {
+            holder = (IndIdeHolder) sessionList.get(i);
+            if (holder.getRowId().equals(rowid)) {
+                sessionList.remove(i);
+            }
+        }
+        ideInd.clear();
+        for (int i = 0; i < sessionList.size(); i++) {
+            ideInd.add(sessionList.get(i));
+        }
+        // ideIndList.setList(ideInd);
+        return "display_ideind";
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    public String addGrant() {
+        String fundingMechanismCode = ServletActionContext.getRequest().getParameter("fundingMechanismCode");
+        String nihInstitutionCode = ServletActionContext.getRequest().getParameter("nihInstitutionCode");
+        String serialNumber = ServletActionContext.getRequest().getParameter("serialNumber");
+        String nciDivisionProgramCode = ServletActionContext.getRequest().getParameter("nciDivisionProgramCode");
+        GrantHolder grantHolder = new GrantHolder();
+        grantHolder.setFundingMechanism(fundingMechanismCode);
+        grantHolder.setInstituteCode(nihInstitutionCode);
+        grantHolder.setSerialNumber(serialNumber);
+        grantHolder.setNciDivisionProgramCode(nciDivisionProgramCode);
+        grantHolder.setRowId(UUID.randomUUID().toString());
+        ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "GRANT_LIST");
+        if (sessionList != null) {
+            for (int i = 0; i < sessionList.size(); i++) {
+                grants.add(sessionList.get(i));
+            }
+            grants.add(grantHolder);
+            sessionList.add(grantHolder);
+            ServletActionContext.getRequest().getSession().setAttribute("GRANT_LIST", sessionList);
+        } else {
+            grants.add(grantHolder);
+            ServletActionContext.getRequest().getSession().setAttribute("GRANT_LIST", grants);
+        }
+        // ideIndList.setList(ideInd);
+        return SUCCESS;
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    public String deleteGrant() {
+        String rowid = ServletActionContext.getRequest().getParameter("uuid");
+        ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "GRANT_LIST");
+        GrantHolder holder;
+        for (int i = 0; i < sessionList.size(); i++) {
+            holder = (GrantHolder) sessionList.get(i);
+            if (holder.getRowId().equals(rowid)) {
+                sessionList.remove(i);
+            }
+        }
+        grants.clear();
+        for (int i = 0; i < sessionList.size(); i++) {
+            grants.add(sessionList.get(i));
+        }
+        // ideIndList.setList(ideInd);
+        return "display_grants";
+    }
+
+    /**
+     * 
+     * @return res
+     */
+    public String createOrganizationContacts() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        String persId = ServletActionContext.getRequest().getParameter("persId");
+        OrganizationalContactDTO dto = new OrganizationalContactDTO();
+        dto.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
+        dto.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
+        dto.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
+        //        
+        dto.setPersonIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
+        dto.getPersonIdentifier().setRoot("UID.for.nci.entity.person");
+        dto.getPersonIdentifier().setIdentifierName("NCI person entity identifier");
+        dto.setPrimaryIndicator(RemoteApiUtil.convertToBl(Boolean.TRUE));
+        try {
+            RegistryServiceLocator.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
+            Ii personIi = gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId);
+            personIi.setRoot("UID.for.nci.entity.organization");
+            responsiblePartyContact = RegistryServiceLocator.getPoPersonEntityService().getPerson(personIi);
+            ServletActionContext.getRequest().getSession()
+                    .setAttribute("PoResponsibleContact", responsiblePartyContact);
+            // personName = personDTO.getName().toString();
+            // String lastName = null, firstName = null;
+            // if
+            // (personDTO.getName().getPart().get(0).getType().toString().equals("FAM"))
+            // {
+            // lastName = personDTO.getName().getPart().get(0).getValue();
+            // }
+            // personName = lastName;
+        } catch (NullifiedEntityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (EntityValidationException e) {
+            // TODO Auto-generated catch block
+        } catch (PAException e) {
+            // TODO Auto-generated catch block
+        }
+        return "display_responsible_contact";
+    }
+
+    /**
+     * 
+     * @return res
+     */
+    public String addGrants() {
+        return null;
+    }
+
+    /**
+     * @return protocolWebDTO
+     */
+    public InterventionalStudyProtocolWebDTO getProtocolWebDTO() {
+        return protocolWebDTO;
+    }
+
+    /**
+     * @param protocolWebDTO protocolWebDTO
+     */
+    public void setProtocolWebDTO(InterventionalStudyProtocolWebDTO protocolWebDTO) {
+        this.protocolWebDTO = protocolWebDTO;
+    }
+
+    /**
+     * @return the overallStatusWebDTO
+     */
+    public StudyOverallStatusWebDTO getOverallStatusWebDTO() {
+        return overallStatusWebDTO;
+    }
+
+    /**
+     * @param overallStatusWebDTO the overallStatusWebDTO to set
+     */
+    public void setOverallStatusWebDTO(StudyOverallStatusWebDTO overallStatusWebDTO) {
+        this.overallStatusWebDTO = overallStatusWebDTO;
+    }
+
+    /**
+     * @return the participationWebDTO
+     */
+    public StudyParticipationWebDTO getParticipationWebDTO() {
+        return participationWebDTO;
+    }
+
+    /**
+     * @param participationWebDTO the participationWebDTO to set
+     */
+    public void setParticipationWebDTO(StudyParticipationWebDTO participationWebDTO) {
+        this.participationWebDTO = participationWebDTO;
+    }
+
     /**
      * @return trialFundingWebDTO
      */
@@ -626,7 +877,7 @@ public class SubmitTrialAction extends ActionSupport implements
     public void setTrialFundingWebDTO(TrialFundingWebDTO trialFundingWebDTO) {
         this.trialFundingWebDTO = trialFundingWebDTO;
     }
-    
+
     /**
      * @return the trialDocumentWebDTO
      */
@@ -640,20 +891,21 @@ public class SubmitTrialAction extends ActionSupport implements
     public void setTrialDocumentWebDTO(TrialDocumentWebDTO trialDocumentWebDTO) {
         this.trialDocumentWebDTO = trialDocumentWebDTO;
     }
-    
+
     /**
      * @param response servletResponse
      */
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
     }
+
     /**
      * @return servletResponse
      */
     public HttpServletResponse getServletResponse() {
         return servletResponse;
     }
-    
+
     /**
      * @return id
      */
@@ -667,7 +919,7 @@ public class SubmitTrialAction extends ActionSupport implements
     public void setId(Long id) {
         this.id = id;
     }
-   
+
     /**
      * @return cbValue
      */
@@ -695,61 +947,328 @@ public class SubmitTrialAction extends ActionSupport implements
     public void setPage(String page) {
         this.page = page;
     }
-    
+
     /**
      * @return protocolDoc
      */
     public File getProtocolDoc() {
         return protocolDoc;
-     }
-    
-     /**
+    }
+
+    /**
      * @param protocolDoc protocolDoc
      */
     public void setProtocolDoc(File protocolDoc) {
-         this.protocolDoc = protocolDoc;
-     }
-    
+        this.protocolDoc = protocolDoc;
+    }
+
     /**
      * @return protocolDocFileName
      */
     public String getProtocolDocFileName() {
-         return protocolDocFileName;
-     }
-    
-     /**
+        return protocolDocFileName;
+    }
+
+    /**
      * @param protocolDocFileName protocolDocFileName
      */
     public void setProtocolDocFileName(String protocolDocFileName) {
         this.protocolDocFileName = protocolDocFileName;
-     } 
-    
+    }
+
     /**
      * @return irbApproval
      */
     public File getIrbApproval() {
         return irbApproval;
-     }
-    
-     /**
+    }
+
+    /**
      * @param irbApproval irbApproval
      */
     public void setIrbApproval(File irbApproval) {
-         this.irbApproval = irbApproval;
-     }
-    
+        this.irbApproval = irbApproval;
+    }
+
     /**
      * @return irbApprovalFileName
      */
     public String getIrbApprovalFileName() {
-         return irbApprovalFileName;
-     }
-    
-     /**
+        return irbApprovalFileName;
+    }
+
+    /**
      * @param irbApprovalFileName irbApprovalFileName
      */
     public void setIrbApprovalFileName(String irbApprovalFileName) {
         this.irbApprovalFileName = irbApprovalFileName;
-     } 
+    }
 
+    /**
+     * @return the ideInd
+     */
+    public ArrayList<IndIdeHolder> getIdeInd() {
+        return ideInd;
+    }
+
+    /**
+     * @param ideInd the ideInd to set
+     */
+    public void setIdeInd(ArrayList<IndIdeHolder> ideInd) {
+        this.ideInd = ideInd;
+    }
+
+    /**
+     * @return the selectedLeadOrg
+     */
+    public OrganizationDTO getSelectedLeadOrg() {
+        return selectedLeadOrg;
+    }
+
+    /**
+     * @param selectedLeadOrg the selectedLeadOrg to set
+     */
+    public void setSelectedLeadOrg(OrganizationDTO selectedLeadOrg) {
+        this.selectedLeadOrg = selectedLeadOrg;
+    }
+
+    /**
+     * @return the selectedLeadPrincipalInvestigator
+     */
+    public PersonDTO getSelectedLeadPrincipalInvestigator() {
+        return selectedLeadPrincipalInvestigator;
+    }
+
+    /**
+     * @param selectedLeadPrincipalInvestigator the
+     *            selectedLeadPrincipalInvestigator to set
+     */
+    public void setSelectedLeadPrincipalInvestigator(PersonDTO selectedLeadPrincipalInvestigator) {
+        this.selectedLeadPrincipalInvestigator = selectedLeadPrincipalInvestigator;
+    }
+
+    /**
+     * @return the selectedSponsor
+     */
+    public OrganizationDTO getSelectedSponsor() {
+        return selectedSponsor;
+    }
+
+    /**
+     * @param selectedSponsor the selectedSponsor to set
+     */
+    public void setSelectedSponsor(OrganizationDTO selectedSponsor) {
+        this.selectedSponsor = selectedSponsor;
+    }
+
+    /**
+     * @return the responsiblePartyContact
+     */
+    public PersonDTO getResponsiblePartyContact() {
+        return responsiblePartyContact;
+    }
+
+    /**
+     * @param responsiblePartyContact the responsiblePartyContact to set
+     */
+    public void setResponsiblePartyContact(PersonDTO responsiblePartyContact) {
+        this.responsiblePartyContact = responsiblePartyContact;
+    }
+
+    /**
+     * @return the selectedSummary4Sponsor
+     */
+    public OrganizationDTO getSelectedSummary4Sponsor() {
+        return selectedSummary4Sponsor;
+    }
+
+    /**
+     * @param selectedSummary4Sponsor the selectedSummary4Sponsor to set
+     */
+    public void setSelectedSummary4Sponsor(OrganizationDTO selectedSummary4Sponsor) {
+        this.selectedSummary4Sponsor = selectedSummary4Sponsor;
+    }
+
+    /**
+     * @return the grants
+     */
+    public ArrayList<GrantHolder> getGrants() {
+        return grants;
+    }
+
+    /**
+     * @param grants the grants to set
+     */
+    public void setGrants(ArrayList<GrantHolder> grants) {
+        this.grants = grants;
+    }
+
+    /**
+     * @return the trialType
+     */
+    public String getTrialType() {
+        return trialType;
+    }
+
+    /**
+     * @param trialType the trialType to set
+     */
+    public void setTrialType(String trialType) {
+        this.trialType = trialType;
+    }
+
+    /**
+     * @return the informedConsentDocument
+     */
+    public File getInformedConsentDocument() {
+        return informedConsentDocument;
+    }
+
+    /**
+     * @param informedConsentDocument the informedConsentDocument to set
+     */
+    public void setInformedConsentDocument(File informedConsentDocument) {
+        this.informedConsentDocument = informedConsentDocument;
+    }
+
+    /**
+     * @return the otherDocument
+     */
+    public File getOtherDocument() {
+        return otherDocument;
+    }
+
+    /**
+     * @param otherDocument the otherDocument to set
+     */
+    public void setOtherDocument(File otherDocument) {
+        this.otherDocument = otherDocument;
+    }
+
+    /**
+     * @return the informedConsentDocumentFileName
+     */
+    public String getInformedConsentDocumentFileName() {
+        return informedConsentDocumentFileName;
+    }
+
+    /**
+     * @param informedConsentDocumentFileName the
+     *            informedConsentDocumentFileName to set
+     */
+    public void setInformedConsentDocumentFileName(String informedConsentDocumentFileName) {
+        this.informedConsentDocumentFileName = informedConsentDocumentFileName;
+    }
+
+    /**
+     * @return the otherDocumentFileName
+     */
+    public String getOtherDocumentFileName() {
+        return otherDocumentFileName;
+    }
+
+    /**
+     * @param otherDocumentFileName the otherDocumentFileName to set
+     */
+    public void setOtherDocumentFileName(String otherDocumentFileName) {
+        this.otherDocumentFileName = otherDocumentFileName;
+    }
+
+    /**
+     * @return the respparty
+     */
+    public String getRespparty() {
+        return respparty;
+    }
+
+    /**
+     * @param respparty the respparty to set
+     */
+    public void setRespparty(String respparty) {
+        this.respparty = respparty;
+    }
+
+    /**
+     * @return the contactEmail
+     */
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    /**
+     * @param contactEmail the contactEmail to set
+     */
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    /**
+     * @return the contactPhone
+     */
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    /**
+     * @param contactPhone the contactPhone to set
+     */
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    /**
+     * @return the trialPurpose
+     */
+    public String getTrialPurpose() {
+        return trialPurpose;
+    }
+
+    /**
+     * @param trialPurpose the trialPurpose to set
+     */
+    public void setTrialPurpose(String trialPurpose) {
+        this.trialPurpose = trialPurpose;
+    }
+
+    /**
+     * @return the participatingSites
+     */
+    public File getParticipatingSites() {
+        return participatingSites;
+    }
+
+    /**
+     * @param participatingSites the participatingSites to set
+     */
+    public void setParticipatingSites(File participatingSites) {
+        this.participatingSites = participatingSites;
+    }
+
+    /**
+     * @return the participatingSitesFileName
+     */
+    public String getParticipatingSitesFileName() {
+        return participatingSitesFileName;
+    }
+
+    /**
+     * @param participatingSitesFileName the participatingSitesFileName to set
+     */
+    public void setParticipatingSitesFileName(String participatingSitesFileName) {
+        this.participatingSitesFileName = participatingSitesFileName;
+    }
+
+    /**
+     * @return the summary4FundingCategory
+     */
+    public String getSummary4FundingCategory() {
+        return summary4FundingCategory;
+    }
+
+    /**
+     * @param summary4FundingCategory the summary4FundingCategory to set
+     */
+    public void setSummary4FundingCategory(String summary4FundingCategory) {
+        this.summary4FundingCategory = summary4FundingCategory;
+    }
 }

@@ -2,6 +2,7 @@ package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -17,8 +18,12 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  *
@@ -29,119 +34,97 @@ import gov.nih.nci.pa.util.JNDIUtil;
  * @author hreinhart
  * 
  */
+@SuppressWarnings("PMD")
 public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return protocol service
      */
     public StudyProtocolServiceRemote getStudyProtocolService() {
-        return (StudyProtocolServiceRemote) JNDIUtil
-                .lookup("pa/StudyProtocolServiceBean/remote");
+        return (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
     }
 
     /**
      * @return PAOrganizationServiceRemote remote interface
      */
     public PAOrganizationServiceRemote getPAOrganizationService() {
-        return (PAOrganizationServiceRemote) JNDIUtil
-                .lookup("pa/PAOrganizationServiceBean/remote");
+        return (PAOrganizationServiceRemote) JNDIUtil.lookup("pa/PAOrganizationServiceBean/remote");
     }
 
     /**
      * @return DiseaseConditionService
      */
     public DiseaseCondServiceRemote getDiseaseConditionService() {
-        return (DiseaseCondServiceRemote) JNDIUtil
-                .lookup("pa/DiseaseCondServiceBean/remote");
+        return (DiseaseCondServiceRemote) JNDIUtil.lookup("pa/DiseaseCondServiceBean/remote");
     }
 
     /**
      * @return PAPersonService
      */
     public PAPersonServiceRemote getPAPersonService() {
-        return (PAPersonServiceRemote) JNDIUtil
-                .lookup("pa/PAPersonServiceBean/remote");
+        return (PAPersonServiceRemote) JNDIUtil.lookup("pa/PAPersonServiceBean/remote");
     }
 
     /**
      * @return RegulatoryInformationServiceRemote
      */
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        return (RegulatoryInformationServiceRemote) JNDIUtil
-                .lookup("pa/RegulatoryInformationBean/remote");
+        return (RegulatoryInformationServiceRemote) JNDIUtil.lookup("pa/RegulatoryInformationBean/remote");
     }
 
     /**
      * @return StudyOverallStatusServiceRemote
      */
     public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
-        return (StudyOverallStatusServiceRemote) JNDIUtil
-                .lookup("pa/StudyOverallStatusServiceBean/remote");
+        return (StudyOverallStatusServiceRemote) JNDIUtil.lookup("pa/StudyOverallStatusServiceBean/remote");
     }
 
     /**
      * @return StudyResourcingServiceRemote
      */
     public StudyResourcingServiceRemote getStudyResoucringService() {
-        return (StudyResourcingServiceRemote) JNDIUtil
-                .lookup("pa/StudyResourcingServiceBean/remote");
+        return (StudyResourcingServiceRemote) JNDIUtil.lookup("pa/StudyResourcingServiceBean/remote");
     }
 
     /**
      * @return StudyResourcingServiceRemote
      */
     public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
-        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil
-                .lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
-    }
-
-    /**
-     * @return OrganizationEntityServiceRemote
-     */
-    public OrganizationEntityServiceRemote getPoOrganizationEntityService() {
-        String serverInfo = "jnp://"
-                + RegistryPropertyReader.getLookUpServerInfo()
-                + "/po/OrganizationEntityServiceBean/remote";
-        return (OrganizationEntityServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
     }
 
     /**
      * @return LookUpTableServiceRemote
      */
     public LookUpTableServiceRemote getLookUpTableService() {
-        return (LookUpTableServiceRemote) JNDIUtil
-                .lookup("pa/LookUpTableServiceBean/remote");
+        return (LookUpTableServiceRemote) JNDIUtil.lookup("pa/LookUpTableServiceBean/remote");
     }
 
     /**
      * @return ProtocolQueryServiceRemote
      */
     public ProtocolQueryServiceLocal getProtocolQueryService() {
-        return (ProtocolQueryServiceLocal) JNDIUtil
-                .lookup("pa/ProtocolQueryServiceBean/local");
+        return (ProtocolQueryServiceLocal) JNDIUtil.lookup("pa/ProtocolQueryServiceBean/local");
     }
 
     /**
      * @return HealthCareFacilityService
      */
     public PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
-        return (PAHealthCareFacilityServiceRemote) JNDIUtil
-                .lookup("pa/PAHealthCareFacilityServiceBean/remote");
+        return (PAHealthCareFacilityServiceRemote) JNDIUtil.lookup("pa/PAHealthCareFacilityServiceBean/remote");
     }
 
     /**
      * @return StudyParticipationService
      */
     public StudyParticipationServiceRemote getStudyParticipationService() {
-        return (StudyParticipationServiceRemote) JNDIUtil
-                .lookup("pa/StudyParticipationServiceBean/remote");
+        return (StudyParticipationServiceRemote) JNDIUtil.lookup("pa/StudyParticipationServiceBean/remote");
     }
 
     /**
      * @return StudySiteAccrualStatusService
      */
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-        return (StudySiteAccrualStatusServiceRemote) JNDIUtil
-                .lookup("pa/StudySiteAccrualStatusServiceBean/remote");
+        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup("pa/StudySiteAccrualStatusServiceBean/remote");
     }
 
     /**
@@ -149,8 +132,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return DocumentService
      */
     public DocumentServiceRemote getDocumentService() {
-        return (DocumentServiceRemote) JNDIUtil
-                .lookup("pa/DocumentServiceBean/remote");
+        return (DocumentServiceRemote) JNDIUtil.lookup("pa/DocumentServiceBean/remote");
     }
 
     /**
@@ -158,8 +140,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return StudyContactService
      */
     public StudyIndldeServiceRemote getStudyIndldeService() {
-        return (StudyIndldeServiceRemote) JNDIUtil
-                .lookup("pa/StudyIndldeServiceBean/remote");
+        return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
     }
 
     /**
@@ -167,8 +148,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return StudyContactService
      */
     public StudyContactServiceRemote getStudyContactService() {
-        return (StudyContactServiceRemote) JNDIUtil
-                .lookup("pa/StudyContactServiceBean/remote");
+        return (StudyContactServiceRemote) JNDIUtil.lookup("pa/StudyContactServiceBean/remote");
     }
 
     /**
@@ -176,8 +156,48 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return RegistryUserService
      */
     public RegistryUserServiceRemote getRegistryUserService() {
-        return (RegistryUserServiceRemote) JNDIUtil
-                .lookup("pa/RegistryUserServiceBean/remote");
+        return (RegistryUserServiceRemote) JNDIUtil.lookup("pa/RegistryUserServiceBean/remote");
     }
 
+    /**
+     * @throws PAException on e
+     * @return PersonEntityServiceRemote
+     */
+    public PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
+        return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * @return HealthCareProviderCorrelationServiceRemote
+     */
+    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() {
+        // String serverInfo = "jnp://" + PaPropertyReader.getLookUpServerInfo()
+        // + "/po/HealthCareProviderCorrelationServiceBean/remote";
+        // return (HealthCareProviderCorrelationServiceRemote)
+        // JNDIUtil.lookupPo(serverInfo);
+        return null;
+    }
+
+    /**
+     * 
+     * @return OrganizationalContactCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
+            throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                + "/po/OrganizationalContactCorrelationServiceBean/remote";
+        return (OrganizationalContactCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * @throws PAException e
+     * @return OrganizationEntityServiceRemote
+     */
+    public OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                + "/po/OrganizationEntityServiceBean/remote";
+        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
 }

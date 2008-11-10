@@ -8,43 +8,65 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-            <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-            <interceptor name="fileUpload" class="org.apache.struts2.interceptor.FileUploadInterceptor"/>            
+		<interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
+		<interceptor name="fileUpload" class="org.apache.struts2.interceptor.FileUploadInterceptor"/>            
         </interceptors>
         <global-results>
-             <result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
+		<result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
         </global-results>     
         <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
-            <result>/index.jsp</result>
+		<result>/index.jsp</result>
         </action>
         <action name="registerUser*" class="gov.nih.nci.registry.action.RegisterUserAction" method="{1}">
-            <result>/WEB-INF/jsp/registerUser.jsp</result>
-            <result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
-            <result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
-            <result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
-            <result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
-            <result name="registryHome">/WEB-INF/jsp/registryHome.jsp</result>
+		<result>/WEB-INF/jsp/registerUser.jsp</result>
+		<result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
+		<result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
+		<result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
+		<result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
+		<result name="registryHome">/WEB-INF/jsp/registryHome.jsp</result>
         </action> 
         <action name="login">
 	       <result>/WEB-INF/jsp/login.jsp</result>
         </action>
-	   <action name="home">
-	       <result>/WEB-INF/jsp/registryHome.jsp</result>
+	<action name="home">
+		<result>/WEB-INF/jsp/registryHome.jsp</result>
         </action> 
     </package>
     <package name="protected" namespace="/protected" extends="default">
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
-            <interceptor-ref name="nci-commonsParams" />
-            <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
-            <result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
-            <result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
+		<interceptor-ref name="nci-commonsParams" />
+		<result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
+		<result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
+		<result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
         </action>
         <action name="submitTrial*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
-            <interceptor-ref name="fileUpload"/>
-            <interceptor-ref name="nci-commonsParams" />
-            <result>/WEB-INF/jsp/submitTrial.jsp</result>
-            <result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
-            <result name="view">/WEB-INF/jsp/viewTrial.jsp</result>
+		<interceptor-ref name="fileUpload"/>
+		<interceptor-ref name="nci-commonsParams" />
+		<result>/WEB-INF/jsp/submitTrial.jsp</result>
+		<result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
+		<result name="view">/WEB-INF/jsp/viewTrial.jsp</result>
         </action> 
+	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
+		<result name="display_lead_org">/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp</result> 
+		<result name="display_lead_prinicipal_inv">/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp</result>
+		<result name="display_selected_sponsor">/WEB-INF/jsp/nodecorate/displaySelectedSponsor.jsp</result>
+		<result name="display_responsible_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
+		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
+		<result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
+		<result name="display_grants">/WEB-INF/jsp/nodecorate/addGrant.jsp</result>
+		<result name="display_summary4funding_sponsor">/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp</result>
+	</action>        
+        <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
+		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+		<result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
+		<result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+		<result name="create_org_response">/WEB-INF/jsp/nodecorate/displayOrgList.jsp</result>
+		<result name="create_pers_response">/WEB-INF/jsp/nodecorate/displayPersonsList.jsp</result>
+	</action>
+	<action name="ajaxorganizationContact*" class="gov.nih.nci.registry.action.OrganizationContactAction" method="{1}">
+		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+		<result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+		<result name="display_org_created_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
+	</action>        
     </package>
 </struts>

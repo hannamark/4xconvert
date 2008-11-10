@@ -2,6 +2,7 @@ package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -17,7 +18,9 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  * Interface used to locate the services used by pa-web.
@@ -26,7 +29,6 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
  * 
  */
 public interface ServiceLocator {
-
     /**
      * 
      * @return StudyProtocolServiceRemote studyProtocolServiceRemote
@@ -73,12 +75,6 @@ public interface ServiceLocator {
      * @return StudyRegulatoryAuthorityServiceRemote
      */
     StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService();
-
-    /**
-     * 
-     * @return StudyOverallStatusServiceRemote
-     */
-    OrganizationEntityServiceRemote getPoOrganizationEntityService();
 
     /**
      * 
@@ -130,4 +126,23 @@ public interface ServiceLocator {
      * @return RegistryUserServiceRemote
      */
     RegistryUserServiceRemote getRegistryUserService();
+
+    /**
+     * @throws PAException on e
+     * @return StudyOverallStatusServiceRemote
+     */
+    OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException;
+
+    /**
+     * @throws PAException on e
+     * @return PersonEntityServiceRemote
+     */
+    PersonEntityServiceRemote getPoPersonEntityService() throws PAException;
+
+    /**
+     * 
+     * @return OrganizationalContactCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService() throws PAException;
 }

@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.dto;
 
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -27,7 +27,7 @@ public class InterventionalStudyProtocolWebDTO {
      * @param iso
      * InterventionalStudyProtocolWebDTO object
      */
-    public InterventionalStudyProtocolWebDTO(InterventionalStudyProtocolDTO iso) {
+    public InterventionalStudyProtocolWebDTO(StudyProtocolDTO iso) {
         super();
         this.trialPhase = iso.getPhaseCode().getCode();
         this.trialTitle = iso.getOfficialTitle().getValue();

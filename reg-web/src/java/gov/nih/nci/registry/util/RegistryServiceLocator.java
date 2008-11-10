@@ -2,6 +2,7 @@ package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -17,16 +18,17 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 /**
  * 
  * @author Bala Nair
  * 
  */
-@SuppressWarnings("PMD.UnusedPrivateField")
+@SuppressWarnings("PMD")
 public final class RegistryServiceLocator {
-
     /**
      * Number of records to display by default in display tag controlled tables.
      */
@@ -82,8 +84,7 @@ public final class RegistryServiceLocator {
     }
 
     /**
-     * @param serviceLocator
-     *            the serviceLocator to set
+     * @param serviceLocator the serviceLocator to set
      */
     public void setServiceLocator(ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
@@ -101,8 +102,7 @@ public final class RegistryServiceLocator {
      * @return RegulatoryInformationServiceRemote
      */
     public static RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        return getInstance().getServiceLocator()
-                .getRegulatoryInformationService();
+        return getInstance().getServiceLocator().getRegulatoryInformationService();
     }
 
     /**
@@ -126,17 +126,7 @@ public final class RegistryServiceLocator {
      * @return StudyRegulatoryAuthorityServiceRemote
      */
     public static StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
-        return getInstance().getServiceLocator()
-                .getStudyRegulatoryAuthorityService();
-    }
-
-    /**
-     * 
-     * @return OrganizationEntityServiceRemote
-     */
-    public static OrganizationEntityServiceRemote getPoOrganizationEntityService() {
-        return getInstance().getServiceLocator()
-                .getPoOrganizationEntityService();
+        return getInstance().getServiceLocator().getStudyRegulatoryAuthorityService();
     }
 
     /**
@@ -160,8 +150,7 @@ public final class RegistryServiceLocator {
      * @return HealthCareFacilityServiceRemote
      */
     public static PAHealthCareFacilityServiceRemote getPAHealthCareFacilityService() {
-        return getInstance().getServiceLocator()
-                .getPAHealthCareFacilityService();
+        return getInstance().getServiceLocator().getPAHealthCareFacilityService();
     }
 
     /**
@@ -177,8 +166,7 @@ public final class RegistryServiceLocator {
      * @return StudySiteAccrualStatusService
      */
     public static StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-        return getInstance().getServiceLocator()
-                .getStudySiteAccrualStatusService();
+        return getInstance().getServiceLocator().getStudySiteAccrualStatusService();
     }
 
     /**
@@ -212,4 +200,30 @@ public final class RegistryServiceLocator {
     public static RegistryUserServiceRemote getRegistryUserService() {
         return getInstance().getServiceLocator().getRegistryUserService();
     }
+
+    /**
+     * 
+     * @return OrganizationalContactCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public static OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
+            throws PAException {
+        return getInstance().getServiceLocator().getPoOrganizationalContactCorrelationService();
+    }
+
+    /**
+     * @throws PAException on error
+     * @return OrganizationEntityServiceRemote
+     */
+    public static OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
+        return getInstance().getServiceLocator().getPoOrganizationEntityService();
+    }
+    
+    /**
+     * @throws PAException on e
+     * @return PersonEntityServiceRemote
+     */
+    public static PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
+        return getInstance().getServiceLocator().getPoPersonEntityService();
+    }    
 }

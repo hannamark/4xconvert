@@ -217,6 +217,33 @@
                         <a href="<c:out value="${url}"/>"><c:out value="${requestScope.irbApproval.fileName }"/></a>
                     </td>
                 </tr>
+                
+                <tr>            
+                    <td scope="row" class="label">
+                        <label for="informedConsent">
+                            Informed Consent Document
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:url var="url" value="submitTrialviewDoc.action" >
+                          <c:param name="id " value="${requestScope.informedConsent.id}" />
+                        </c:url>
+                        <a href="<c:out value="${url}"/>"><c:out value="${requestScope.informedConsent.fileName }"/></a>
+                    </td>
+                </tr>      
+                <tr>            
+                    <td scope="row" class="label">
+                        <label for="other">
+                            Other
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:url var="url" value="submitTrialviewDoc.action" >
+                          <c:param name="id " value="${requestScope.other.id}" />
+                        </c:url>
+                        <a href="<c:out value="${url}"/>"><c:out value="${requestScope.other.fileName }"/></a>
+                    </td>
+                </tr>                 
         </table>  
                   
     </s:form>

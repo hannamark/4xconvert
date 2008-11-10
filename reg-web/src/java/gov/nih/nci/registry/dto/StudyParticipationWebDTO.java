@@ -10,6 +10,8 @@ public class StudyParticipationWebDTO {
 
     private String id;
     private String localProtocolIdentifier;
+    private String summary4FundingSponsor;
+   // private String studyType;
 
     /**
      * @param iso StudyResourcingDTO object
@@ -53,6 +55,20 @@ public class StudyParticipationWebDTO {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * @return the summary4FundingSponsor
+     */
+    public String getSummary4FundingSponsor() {
+        return summary4FundingSponsor;
+    }
+
+    /**
+     * @param summary4FundingSponsor the summary4FundingSponsor to set
+     */
+    public void setSummary4FundingSponsor(String summary4FundingSponsor) {
+        this.summary4FundingSponsor = summary4FundingSponsor;
     }
 
 }

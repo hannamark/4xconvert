@@ -7,4 +7,4 @@
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page" %>
 <%@ taglib uri="http://ajaxtags.org/tags/ajax" prefix="ajax" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="pa" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="reg-web" %>
