@@ -3,6 +3,9 @@
  */
 package gov.nih.nci.registry.action;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -122,8 +125,6 @@ public class RegisterUserAction extends ActionSupport {
     public String showMyAccount() {
         String loginName = null;
         try {
-            //String loginName = (String) ServletActionContext.getRequest().
-            //                                getSession().getAttribute("j_username");
             loginName =  ServletActionContext.
                                         getRequest().getRemoteUser();
             String password = (String) ServletActionContext.getRequest().
@@ -214,7 +215,7 @@ public class RegisterUserAction extends ActionSupport {
             LOG.error("error while updating user info");
             return Constants.APPLICATION_ERROR;
             
-        }
+        }        
         // show the My Account page
         return Constants.MY_ACCOUNT;
 
@@ -239,6 +240,14 @@ public class RegisterUserAction extends ActionSupport {
      * validate the  form elements.
      */
     private void validateForm(boolean isMyAccountPage)  {
+        // TODO password fields are empty after validation
+        // setting in the request is only a workaround.
+        // have to find a better solution
+//        ServletActionContext.getRequest().getSession().
+//                        setAttribute("password" , registryUserWebDTO.getPassword());
+//        ServletActionContext.getRequest().getSession().
+//                        setAttribute("retypePassword" , registryUserWebDTO.getRetypePassword());
+        
         if (PAUtil.isEmpty(registryUserWebDTO.getLoginName())) {
             addFieldError("registryUserWebDTO.loginName",
                     getText("error.register.emailAddress"));
@@ -266,6 +275,15 @@ public class RegisterUserAction extends ActionSupport {
                     getText("error.register.passwordLength"));
             }
         }
+        // check if the login name is a valid e-mail address
+        if (!PAUtil.isEmpty(registryUserWebDTO.getLoginName())) {
+            if (!isValidEmailID(registryUserWebDTO.getLoginName())) {
+                addFieldError("registryUserWebDTO.loginName",
+                        getText("error.register.invalidEmailAddress"));                
+            }
+            
+        }
+        
         // if it's My Account page validate required fields
         if (isMyAccountPage) {
             if (PAUtil.isEmpty(registryUserWebDTO.getFirstName())) {
@@ -289,6 +307,27 @@ public class RegisterUserAction extends ActionSupport {
                         getText("error.register.affiliateOrg"));
             }
         }
+    }
+    
+    private  boolean isValidEmailID(String userName)  {
+        boolean flag = false;
+        Pattern email = Pattern.compile("^[a-zA-Z]+([\\.-_]?[a-zA-Z0-9]+)*@[a-zA-Z]+([\\.-]?\\w+)*(\\.\\w{2,5})+$");
+
+        Matcher fit = email.matcher(userName);
+        if (fit.matches()) {
+             flag = true;
+        } else if (containsAlphaNumeric(userName)) {
+              flag = true;
+        } else {
+              flag = false;
+        }
+        return flag;
+    }
+
+    private  boolean containsAlphaNumeric(String userName)   {
+        Pattern email = Pattern.compile("^[A-Za-z]\\w[A-Za-z0-9]+$");
+        Matcher fit = email.matcher(userName);
+        return fit.matches();
     }
 
 }
