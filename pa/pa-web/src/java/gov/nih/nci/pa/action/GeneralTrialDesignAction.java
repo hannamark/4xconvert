@@ -4,7 +4,6 @@ import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -61,9 +60,14 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
 
     
-    private void copy(StudyProtocolDTO spDTO) {
-        
-        gtdDTO.setOfficialTitle(StConverter.convertToString(spDTO.getOfficialTitle()));
+    private void copy(StudyProtocolDTO spDTO) {        
+        gtdDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
+        gtdDTO.setPublicTitle(spDTO.getPublicTitle().getValue());
+        gtdDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
+        gtdDTO.setAcronym(spDTO.getAcronym().getValue());
+        gtdDTO.setPublicDescription(spDTO.getPublicDescription().getValue());
+        gtdDTO.setScientificDescription(spDTO.getScientificDescription().getValue());
+        gtdDTO.setKeywordText(spDTO.getKeywordText().getValue());
     }
 
     /**
