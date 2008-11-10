@@ -18,6 +18,10 @@ public class GeneralTrialDesignWebDTO {
     private String officialTitle;
     private String phaseCode;
     private String primaryPurposeCode;
+    private String publicTitle;
+    private String publicDescription;
+    private String scientificDescription;
+    private String keywordText;
     
     /**
      * 
@@ -117,6 +121,54 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setPrimaryPurposeCode(String primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
+    }
+    /**
+     * @return publicTitle
+     */
+    public String getPublicTitle() {
+        return publicTitle;
+    }
+    /**
+     * @param publicTitle publicTitle
+     */
+    public void setPublicTitle(String publicTitle) {
+        this.publicTitle = publicTitle;
+    }
+    /**
+     * @return publicDescription
+     */
+    public String getPublicDescription() {
+        return publicDescription;
+    }
+    /**
+     * @param publicDescription publicDescription
+     */
+    public void setPublicDescription(String publicDescription) {
+        this.publicDescription = publicDescription;
+    }
+    /**
+     * @return scientificDescription
+     */
+    public String getScientificDescription() {
+        return scientificDescription;
+    }
+    /**
+     * @param scientificDescription scientificDescription
+     */
+    public void setScientificDescription(String scientificDescription) {
+        this.scientificDescription = scientificDescription;
+    }
+    /**
+     * @return keywordText
+     */
+    public String getKeywordText() {
+        return keywordText;
+    }
+    /**
+     * @param keywordText keywordText
+     */
+    public void setKeywordText(String keywordText) {
+        this.keywordText = keywordText;
     }
 
 }
