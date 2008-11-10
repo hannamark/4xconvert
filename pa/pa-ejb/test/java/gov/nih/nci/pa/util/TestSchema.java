@@ -54,6 +54,7 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.YesNoCode;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -355,11 +356,13 @@ public class TestSchema {
             sg.setStudyProtocol(sp);
             sg.setDescription("Description1");
             sg.setGroupNumberText("Code1");
+            sg.setUserLastUpdated("curator");
             addUpdObject(sg);
             sg = new StratumGroup();
             sg.setStudyProtocol(sp);
             sg.setDescription("Description2");
             sg.setGroupNumberText("Code2");
+            sg.setUserLastUpdated("curator");
             addUpdObject(sg);
             
             Intervention inv = new Intervention();
@@ -408,6 +411,7 @@ public class TestSchema {
             som.setName("StudyOutcomeMeasure");
             som.setStudyProtocol(sp);
             som.setPrimaryIndicator(Boolean.TRUE);
+            som.setUserLastUpdated("curator");
             addUpdObject(som); 
             
             StudyIndlde si = new StudyIndlde();

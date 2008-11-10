@@ -31,8 +31,9 @@ public class StratumGroupConverterTest {
             bo.setDescription("Description");
             bo.setGroupNumberText("Code");
             bo.setStudyProtocol(sp);
-
-            StratumGroupDTO dto = StratumGroupConverter.convertFromDomainToDTO(bo);
+            
+            StratumGroupConverter sg = new StratumGroupConverter();
+            StratumGroupDTO dto = sg.convertFromDomainToDto(bo);
             assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
             assertEquals(bo.getDescription(), dto.getDescription().getValue());
             assertEquals(bo.getGroupNumberText(), dto.getGroupNumberText().getValue());
@@ -48,7 +49,8 @@ public class StratumGroupConverterTest {
             dto.setGroupNumberText(StConverter.convertToSt("Code"));
             dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
 
-            StratumGroup bo = StratumGroupConverter.convertFromDTOToDomain(dto);
+            StratumGroupConverter sg = new StratumGroupConverter();
+            StratumGroup bo = sg.convertFromDtoToDomain(dto);
             assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
             assertEquals(bo.getDescription(), dto.getDescription().getValue());
             assertEquals(bo.getGroupNumberText(), dto.getGroupNumberText().getValue());
