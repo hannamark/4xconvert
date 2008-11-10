@@ -21,7 +21,7 @@ mail.from.address=do.not.reply@mail.nih.gov
 # User Registration Notification
 register.mail.subject=NCI Clinical Trials Reporting Portal User Activation
 register.mail.body=Thank you for registering with NCI Clinical Trials Reporting Portal. Please click on the link below to activate your account or copy paste the URL in the browser
-register.mail.body.url=http://localhost:8080/registry/registerUserActivation.action
+register.mail.body.url=http://localhost:8080/registry/registerUseractivate.action
 
 # Protocol Submission Notification
 submission.mail.subject=Clinical Trials Reporting Program (CTRP) Protocol Submission Acknowledgement
