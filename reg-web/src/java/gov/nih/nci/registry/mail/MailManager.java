@@ -62,6 +62,40 @@ public class MailManager {
             logger.error("Send confirmation mail error", e);
         }
     }
+    
+    /**
+     * Sends an email notifying the submitter that the protocol is registered in the system.
+     * @param mailTo mailTo
+     * @param nciIdentifier nciIdentifier
+     * @param localProtocolIdentifier localProtocolIdentifier
+     */
+    public void sendNotificationMail(
+            String mailTo, 
+            String nciIdentifier, 
+            String localProtocolIdentifier)  {
+    
+        try {
+            String[] params = {mailTo , };
+            
+            MessageFormat formatterSubject = new MessageFormat(
+                                            regProperties.getProperty("submission.mail.subject"));
+            String emailSubject = formatterSubject.format(params);
+            logger.info("emailSubject is: " + emailSubject);
+
+            MessageFormat formatterBody = new MessageFormat(
+                    regProperties.getProperty("submission.mail.body.para1") 
+                    + " " + localProtocolIdentifier + "\n \n" 
+                    + regProperties.getProperty("submission.mail.body.para2") 
+                    + "  " + nciIdentifier + "\n \n" 
+                    +  regProperties.getProperty("submission.mail.body.para3"));
+            String emailBody =  formatterBody.format(params);
+
+            logger.info("emailBody is: " + emailBody);
+            sendMail(mailTo, null, emailBody, emailSubject);
+        } catch (Exception e) {
+            logger.error("Send submission notification mail error", e);
+        }
+     }
 
 
     /**
