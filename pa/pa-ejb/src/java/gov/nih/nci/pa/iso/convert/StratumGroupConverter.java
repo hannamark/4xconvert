@@ -1,12 +1,12 @@
 package gov.nih.nci.pa.iso.convert;
 
-import java.util.Date;
-
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.Date;
 /**
  * Convert Document from domain to DTO.
  *
@@ -17,13 +17,14 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * copyright holder, NCI.
  */
 @SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
-public class StratumGroupConverter {
+public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, StratumGroup> {
 
     /**
      * @param sg StratumGroup
      * @return SubGroupsDTO
      */
-    public static StratumGroupDTO convertFromDomainToDTO(StratumGroup sg) {
+    @Override
+    public StratumGroupDTO convertFromDomainToDto(StratumGroup sg) {
         StratumGroupDTO sgDTO = new StratumGroupDTO();
         sgDTO.setIdentifier(IiConverter.convertToIi(sg.getId()));
         sgDTO.setUserLastUpdated(StConverter.convertToSt(sg.getUserLastUpdated()));
@@ -38,7 +39,8 @@ public class StratumGroupConverter {
      * @param sgDTO SubGroupsDTO
      * @return StratumGroup
      */
-    public static StratumGroup convertFromDTOToDomain(StratumGroupDTO sgDTO) {
+    @Override
+    public StratumGroup convertFromDtoToDomain(StratumGroupDTO sgDTO) {
         StratumGroup sg = new StratumGroup();
 
         StudyProtocol spBo = new StudyProtocol();
