@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page" %>
 <ul class="menu">
-    <li class="liheader">PO Curating System</li>
+    <li class="liheader">PO Curating Portal</li>
     <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
             <li><a href="<c:url value="/login/logout.action"/>">Logout</a></li>
