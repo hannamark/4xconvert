@@ -192,6 +192,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                             .convertToLong(studyProtocolIi), contactEmail, contactPhone);
                 }
             }
+            ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
             // after creating the study protocol, query the protocol for viewing
             query();
         } catch (Exception e) {
@@ -206,8 +207,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
             ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
             ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
-        }
-        return VIEW_TRIAL;
+        }     
+        return "redirect_to_search";
     }
 
     private StudyProtocolDTO createProtocolDTO(String type) {

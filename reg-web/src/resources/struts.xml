@@ -45,6 +45,7 @@
 		<result>/WEB-INF/jsp/submitTrial.jsp</result>
 		<result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
 		<result name="view">/WEB-INF/jsp/viewTrial.jsp</result>
+		<result name="redirect_to_search"  type="redirect-action">searchTrial.action</result>
         </action> 
 	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
 		<result name="display_lead_org">/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp</result> 
