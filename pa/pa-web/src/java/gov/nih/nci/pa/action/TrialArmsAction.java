@@ -2,7 +2,6 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialArmsWebDTO;
@@ -38,7 +37,7 @@ import com.opensymphony.xwork2.Preparable;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@SuppressWarnings("PMD")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.SignatureDeclareThrowsException" })
 public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1884666890L;
 
@@ -51,10 +50,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private InterventionServiceRemote intService;
 
     private Ii spIdIi;
-    private St user;
     
-    private List<TrialArmsWebDTO> armList = new ArrayList<TrialArmsWebDTO>();
-    private List<InterventionWebDTO> intList = new ArrayList<InterventionWebDTO>();
+    private List<TrialArmsWebDTO> armList;
+    private List<InterventionWebDTO> intList;
     private String currentAction;
     private String selectedArmIdentifier;
     private String armName;
@@ -77,7 +75,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
                 .getAttribute(Constants.TRIAL_SUMMARY);
 
         spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
-        user = StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
     }
 
     /**
@@ -136,6 +133,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
             armService.create(newArm);
         } catch (PAException e) {
             addActionError(e.getMessage());
+            reloadInterventions();
             return ACT_EDIT;
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -158,6 +156,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
             armService.update(updatedArm);
         } catch (PAException e) {
             addActionError(e.getMessage());
+            reloadInterventions();
             return ACT_EDIT;
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -166,7 +165,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
 
     private void loadForm() throws Exception {
-        getArmList().clear();
+        setArmList(new ArrayList<TrialArmsWebDTO>());
         List<ArmDTO> armIsoList = armService.getByStudyProtocol(spIdIi);
         for (ArmDTO arm : armIsoList) {
             TrialArmsWebDTO webDto = new TrialArmsWebDTO();
@@ -203,40 +202,63 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         } else {
             setSelectedArmIdentifier(null);
         }
-        getIntList().clear();
+        setIntList(new ArrayList<InterventionWebDTO>());
         setCheckBoxEntry("");
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pla : plaList) {
-            if (ActivityCategoryCode.INTERVENTION.equals(
-                    ActivityCategoryCode.getByCode(CdConverter.convertCdToString(pla.getCategoryCode())))) {
-                if (!PAUtil.isIiNull(pla.getInterventionIdentifier())) {
-                    InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
-                    InterventionWebDTO intWebDto = new InterventionWebDTO();
-                    intWebDto.setDescription(StConverter.convertToString(intDto.getDescriptionText()));
-                    intWebDto.setIdentifier(IiConverter.convertToString(pla.getIdentifier()));
-                    intWebDto.setName(StConverter.convertToString(intDto.getName()));
-                    intWebDto.setArmAssignment(cInterventions.contains(IiConverter.convertToLong(pla.getIdentifier())));
-                    getIntList().add(intWebDto);
-                    if (intWebDto.getArmAssignment()) {
-                        setCheckBoxEntry(getCheckBoxEntry() + intWebDto.getIdentifier() + ",");
-                    }
+            if ((ActivityCategoryCode.INTERVENTION.equals(
+                    ActivityCategoryCode.getByCode(CdConverter.convertCdToString(pla.getCategoryCode()))))
+                 && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
+                InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
+                InterventionWebDTO intWebDto = new InterventionWebDTO();
+                intWebDto.setDescription(StConverter.convertToString(intDto.getDescriptionText()));
+                intWebDto.setIdentifier(IiConverter.convertToString(pla.getIdentifier()));
+                intWebDto.setName(StConverter.convertToString(intDto.getName()));
+                intWebDto.setArmAssignment(cInterventions.contains(IiConverter.convertToLong(pla.getIdentifier())));
+                getIntList().add(intWebDto);
+                if (intWebDto.getArmAssignment()) {
+                    setCheckBoxEntry(getCheckBoxEntry() + intWebDto.getIdentifier() + ",");
                 }
             }
         }
     }
     
-    private DSet<Ii> getAssociatedInterventions() {
+    private void reloadInterventions() throws Exception {
+        setIntList(new ArrayList<InterventionWebDTO>());
+        List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
+        for (PlannedActivityDTO pla : plaList) {
+            if ((ActivityCategoryCode.INTERVENTION.equals(
+                    ActivityCategoryCode.getByCode(CdConverter.convertCdToString(pla.getCategoryCode()))))
+                 && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
+                InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
+                InterventionWebDTO intWebDto = new InterventionWebDTO();
+                intWebDto.setDescription(StConverter.convertToString(intDto.getDescriptionText()));
+                intWebDto.setIdentifier(IiConverter.convertToString(pla.getIdentifier()));
+                intWebDto.setName(StConverter.convertToString(intDto.getName()));
+                intWebDto.setArmAssignment(getAssociatedIds().contains(
+                        IiConverter.convertToLong(pla.getIdentifier())));
+                getIntList().add(intWebDto);
+            }
+        }
+    }
+    
+    private Set<Long> getAssociatedIds() {
         String clicks = getCheckBoxEntry();
         Set<Long> tSet = new HashSet<Long>();
-        while (clicks.indexOf(",") > 1) {
-            Long lid = new Long(clicks.substring(0, clicks.indexOf(",")));
-            clicks = clicks.substring(clicks.indexOf(",") + 1);
+        while (clicks.indexOf(',') > 1) {
+            Long lid = Long.valueOf(clicks.substring(0, clicks.indexOf(',')));
+            clicks = clicks.substring(clicks.indexOf(',') + 1);
             if (tSet.contains(lid)) {
                 tSet.remove(lid);
             } else {
                 tSet.add(lid);
             }
         }
+        return tSet;
+    }
+    
+    private DSet<Ii> getAssociatedInterventions() {
+        Set<Long> tSet = getAssociatedIds();
         Set<Ii> intSet = new HashSet<Ii>();
         for (Long t : tSet) {
             intSet.add(IiConverter.convertToIi(t));
