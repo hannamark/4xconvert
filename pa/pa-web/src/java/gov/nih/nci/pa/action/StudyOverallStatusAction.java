@@ -115,7 +115,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
            updateStudyProtocol();
         }
         if (!hasActionErrors()) {
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             loadForm();
         }
         return Action.SUCCESS;
