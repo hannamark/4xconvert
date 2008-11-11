@@ -37,15 +37,6 @@
     }
     function statusChange() {
         newType=document.intervention.interventionType.value;
-        if((newType=="Other")||(newType=="Cosmetic")){
-          document.intervention.interventionName.disabled=false;
-          document.intervention.interventionDescription.disabled=false;
-          document.intervention.otherName.disabled=false;
-        } else {
-          document.intervention.interventionName.disabled=true;
-          document.intervention.interventionDescription.disabled=true;
-          document.intervention.otherName.disabled=true;
-        }
         if(newType=="Drug"){
           document.intervention.leadIndicator.disabled=false;
         } else {
@@ -53,16 +44,7 @@
         }
     }
     function lookup(){
-        var intType = document.intervention.interventionType.value;
-        if(intType.length < 1){
-           alert("Please select an intervention type before doing look up.");
-           return;
-        }
-        if((intType=="Other") || (intType=="Cosmetic")){
-           alert("Use form to key in details for non-standard types (Cosmetic and Other) of intervention.");
-           return;
-        }
-        showPopWin('${lookupUrl}?interventionType='+intType, 1050, 400, '', intType+' Intervention');
+        showPopWin('${lookupUrl}', 1050, 400, '', 'Intervention');
     }   
     function loadDiv(intid){
          var url = '/pa/protected/ajaxptpInterventiondisplay.action?interventionId='+intid;
@@ -100,6 +82,33 @@
         <td colspan="2"><!--Facility-->
         <h3>Intervention</h3>
         <s:form name="intervention">
+
+            <table class="form">
+                <tr>
+                <td class="label">
+                    <s:label for="interventionType">Intervention Type:
+                    </s:label><span class="required">*</span>
+                </td>
+                <s:set name="interventionTypeValues"
+                    value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
+                <td class="value" colspan="2">
+                    <s:select onchange="statusChange()" headerKey="" headerValue="--Select--" 
+                    name="interventionType" value="interventionType" list="#interventionTypeValues" />
+                </td>
+                </tr>
+                <tr><td/>
+                    <td class="value">
+                        <s:if test="%{interventionType == 'Drug'}">
+                            <s:checkbox name="leadIndicator"/>
+                            <s:label name="leadIndicatorLabel" for="leadIndicator">Lead Product (Drug interventions only)</s:label>
+                        </s:if><s:else>
+                            <s:checkbox disabled="true" name="leadIndicator"/>
+                            <s:label disabled="true" name="leadIndicatorLabel" for="leadIndicator">Lead Product (Drug interventions only)</s:label>
+                        </s:else>
+                    </td>
+                </tr>
+            </table>
+
             <div id="loadDetails">
                 <%@ include file="/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp"%>
             </div>

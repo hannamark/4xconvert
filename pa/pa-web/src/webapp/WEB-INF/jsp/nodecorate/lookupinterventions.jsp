@@ -7,7 +7,6 @@
 <SCRIPT language="JavaScript">
     function submitform(intid)
     {
-        
         top.window.loadDiv(intid);
         window.top.hidePopWin(true); 
     }
@@ -17,12 +16,9 @@
         top.window.loadDiv(intid);
         window.top.hidePopWin(true); 
     }
-    
-    
     function loadDiv() {        
         var jsName = document.getElementById("searchName").value;
-        var jsType = document.getElementById("interventionType").value;
-        var url = '/pa/protected/popupIntdisplayList.action?searchName='+jsName+'&searchType='+jsType;
+        var url = '/pa/protected/popupIntdisplayList.action?searchName='+jsName;
         var div = document.getElementById('getInterventions');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
@@ -44,12 +40,6 @@
     <s:hidden id="interventionType" name="interventionType"/>
     <tr>    
         <td scope="row" class="label">
-            <label for="searchName">Intervention Type: </label>
-        </td>
-        <td>
-            <s:textfield id="interventionType" name="interventionType"  maxlength="60" size="60"  cssStyle="width:200px" readonly="true"/>
-        </td>
-        <td scope="row" class="label">
             <label for="searchName">Intervention Name: </label>
         </td>
         <td>
@@ -60,12 +50,13 @@
     <div class="actionsrow">
          <del class="btnwrapper">
             <ul class="btnrow">
-               <li><li>
+               <li>
                    <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
-                   </li>
-               </ul>
+               </li>
+            </ul>
           </del>
     </div>
+    <div class="line"></div>
     <div id="getInterventions" align="center">   
         <jsp:include page="/WEB-INF/jsp/nodecorate/lookupInterventionsdisplayList.jsp"/>
     </div>
