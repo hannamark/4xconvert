@@ -25,7 +25,8 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             ResearchOrganizationType.class,
             QualifiedEntityType.class };
 
-    private static final String TESTTYPE = "testtype";
+    private static final String CODE = "TT";
+    private static final String DESC = "Test Type";
     private final GenericCodeValueServiceBean svcBean = new GenericCodeValueServiceBean();
 
     @Before
@@ -39,9 +40,15 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
     private void init(Session s, Class<? extends AbstractCodeValue> clz) throws Exception {
         int n = s.createQuery("FROM " + clz.getName()).list().size();
         assertEquals(0, n);
-
-        Constructor<? extends CodeValue> constructor = clz.getConstructor(String.class);
-        CodeValue newInstance = constructor.newInstance(TESTTYPE);
+        Constructor<? extends CodeValue> constructor = null;
+        CodeValue newInstance = null;
+        if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class)) {
+            constructor = clz.getConstructor(String.class, String.class);
+            newInstance = constructor.newInstance(CODE, DESC);
+        }else {
+            constructor = clz.getConstructor(String.class);
+            newInstance = constructor.newInstance(CODE);
+        }
         s.save(newInstance);
     }
 
@@ -59,8 +66,8 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         }catch(IllegalArgumentException iae) {
             // expected
         }
-        CodeValue oct = svcBean.getByCode(clz, TESTTYPE);
+        CodeValue oct = svcBean.getByCode(clz, CODE);
         assertNotNull(oct);
-        assertEquals(TESTTYPE, oct.getCode());
+        assertEquals(CODE, oct.getCode());
     }
 }

@@ -105,6 +105,7 @@ import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.util.ServiceLocator;
 
 /**
@@ -120,6 +121,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final HealthCareProviderServiceLocal hcpService = new HealthCareProviderServiceStub();
     private final OversightCommitteeServiceLocal ocService = new OversightCommitteeServiceStub();
     private final HealthCareFacilityServiceLocal hcfService = new HealthCareFacilityServiceStub();
+    private final ResearchOrganizationServiceLocal roService = new ResearchOrganizationServiceStub();
 
     /**
      * {@inheritDoc}
@@ -202,7 +204,7 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
+        return roService;
     }
 
     /**

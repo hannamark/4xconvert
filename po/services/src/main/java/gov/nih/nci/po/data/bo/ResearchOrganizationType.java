@@ -82,10 +82,16 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PoRegistry;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
 
 /**
  * Lookup class for types of Research Organization.
@@ -96,14 +102,16 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class ResearchOrganizationType extends AbstractCodeValue {
 
     private static final long serialVersionUID = 1L;
+    private String description;
 
     /**
      * For unit tests only.
-     *
-     * @param code type
+     * @param code TODO
+     * @param description type
      */
-    public ResearchOrganizationType(String code) {
+    public ResearchOrganizationType(String code, String description) {
         super(code);
+        this.description = description;
     }
 
     /**
@@ -114,5 +122,22 @@ public class ResearchOrganizationType extends AbstractCodeValue {
         // for hibernate only - do nothing
         super();
     }
-
+    
+    /**
+     * @return the description
+     */
+    @Column(updatable = false, unique = true)
+    @Length(max = CODE_LENGTH)
+    @NotEmpty
+    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "desc")
+    public String getDescription() {
+        return description;
+    }
+    
+    /**
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

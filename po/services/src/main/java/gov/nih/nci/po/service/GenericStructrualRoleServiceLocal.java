@@ -126,4 +126,5 @@ public interface GenericStructrualRoleServiceLocal<T extends Correlation>
      * @param updated The structural role to update.
      */
     void update(T updated);
+    
 }

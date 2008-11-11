@@ -98,7 +98,7 @@ public class QualifiedEntityServiceTest extends AbstractStructrualRoleServiceTes
 
     @Before
     public void setupType() throws Exception {
-        sampleType = new QualifiedEntityType("sampleType");
+        sampleType = new QualifiedEntityType("ST", "Sample Type");
         PoHibernateUtil.getCurrentSession().save(sampleType);
     }
 

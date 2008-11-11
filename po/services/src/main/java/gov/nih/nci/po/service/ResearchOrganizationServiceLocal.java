@@ -85,12 +85,18 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 /**
  * Service interface for Research Organization structural role.
  */
 @Local
 public interface ResearchOrganizationServiceLocal extends GenericStructrualRoleServiceLocal<ResearchOrganization> {
+    /**
+     * @param org method to curate/accept ResearchOrganization's w/ RoleStatus.NEW and transition to RoleStatus.ACTIVE
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
+     */
+    void curate(ResearchOrganization org) throws JMSException;
 
     // empty interface - all methods are defined by generic interface
 }

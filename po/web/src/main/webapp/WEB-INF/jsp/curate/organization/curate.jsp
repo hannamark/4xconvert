@@ -149,6 +149,18 @@
 		        <po:contacts contactableKeyBase="organization"/>
 		    </div>
 		</div>
+<s:if test="%{!isCreate}">
+        <div class="boxouter">
+        <h2>Assign Organizational Roles</h2>
+            <div class="box_white">
+                <c:url var="manageResearchOrgs" value="/protected/roles/organizational/researchorganization/start.action">
+                    <c:param name="organization.id" value="${organization.id}"/>
+                </c:url>
+                <a href="${manageResearchOrgs}">Manage Research Organizations</a>
+                <div class="clear"></div>
+            </div>
+        </div>
+</s:if>		
     </div>
 </div>
 
@@ -162,6 +174,8 @@
 
 <div style="clear:left;">
 </div>
+
+
 
 <div class="btnwrapper" style="margin-bottom:20px;">
 	<script type="text/javascript">

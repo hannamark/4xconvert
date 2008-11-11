@@ -84,6 +84,8 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
@@ -183,7 +185,18 @@ public class MessageProducerBean implements MessageProducerLocal {
           send(msg);
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void sendUpdate(ResearchOrganization rOrg) throws JMSException {
+        if (!RoleStatus.PENDING.equals(rOrg.getStatus())) {
+            SubscriberUpdateMessage msg
+            = new SubscriberUpdateMessage(IdConverterRegistry.find(rOrg.getClass()).convertToIi(rOrg.getId()));
+            send(msg);
+        }
+    }
+    
     private synchronized void send(Serializable o) throws JMSException {
         ObjectMessage msg = session.createObjectMessage(o);
         messageProducer.send(msg);

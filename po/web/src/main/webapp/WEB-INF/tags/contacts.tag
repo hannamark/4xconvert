@@ -63,7 +63,7 @@
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.url'}"/>
    </s:fielderror>
-    <legend><span class="required">*</span>&nbsp;Web Sites</legend>
+    <legend>Web Sites</legend>
     <c:url value="contactable/url/edit.action" var="viewUrlAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>

@@ -99,7 +99,7 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
 
     @Before
     public void setupType() throws Exception {
-        sampleType = new ResearchOrganizationType("sampleType");
+        sampleType = new ResearchOrganizationType("ST", "sampleType");
         PoHibernateUtil.getCurrentSession().save(sampleType);
     }
 

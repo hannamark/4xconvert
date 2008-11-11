@@ -104,9 +104,13 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 public class AbstractCodeValue implements PersistentObject, Auditable, CodeValue {
 
     private static final long serialVersionUID = -7321430733371701736L;
-    private static final int CODE_LENGTH = 254;
+    /**
+     * Maximum code field length.
+     */
+    protected static final int CODE_LENGTH = 254;
     private Long id;
     private String code;
+
 
     /**
      * For unit tests only.
@@ -158,4 +162,5 @@ public class AbstractCodeValue implements PersistentObject, Auditable, CodeValue
     public String getCode() {
         return code;
     }
+ 
 }

@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 
 import javax.jms.JMSException;
 
@@ -95,5 +96,11 @@ public interface MessageProducerLocal {
      * @throws JMSException on error
      */
     void sendUpdate(Organization e) throws JMSException;
+
+    /**
+     * @param e role to send update announcement for
+     * @throws JMSException on error
+     */
+    void sendUpdate(ResearchOrganization e) throws JMSException;
 
 }

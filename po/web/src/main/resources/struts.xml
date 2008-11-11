@@ -216,5 +216,24 @@
 	            <param name="actionName">create/organization/start</param>
             </result>
         </action>      
+        <action name="roles/organizational/researchorganization/*" class="gov.nih.nci.po.web.roles.ResearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/roles/organizational/researchorganization/manage.jsp</result>
+            <result name="success">/WEB-INF/jsp/roles/organizational/researchorganization/manage.jsp</result>
+        </action>
+        <action name="ajax/roles/organizational/researchorganization/*" class="gov.nih.nci.po.web.roles.ResearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/roles/organizational/researchorganization/rOrgCrInfo.jsp</result>
+        </action>
+        <action name="roles/organizational/researchorganization/addedit/*" class="gov.nih.nci.po.web.roles.ResearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/roles/organizational/researchorganization/form.jsp</result>
+            <result name="success">/WEB-INF/jsp/roles/organizational/researchorganization/manage.jsp</result>
+        </action>
+        <action name="ajax/roles/organizational/researchorganization/results/*" class="gov.nih.nci.po.web.roles.ResearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/roles/organizational/researchorganization/list.jsp</result>
+        </action>
+        
     </package>
 </struts>

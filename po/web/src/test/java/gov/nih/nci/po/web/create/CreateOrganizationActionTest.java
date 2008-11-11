@@ -8,12 +8,16 @@ import static org.junit.Assert.assertSame;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 
 
 public class CreateOrganizationActionTest extends AbstractPoTest {
@@ -66,6 +70,13 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
         Iterator<EntityStatus> iterator = availableStatus.iterator();
         assertEquals(EntityStatus.PENDING, iterator.next());
         assertEquals(EntityStatus.ACTIVE, iterator.next());
+    }
+    
+    @Test
+    public void create() throws JMSException {
+        assertEquals(action.SUCCESS, action.create());
+        assertEquals(1, ActionHelper.getMessages().size());
+        assertEquals("organization.create.success", ActionHelper.getMessages().get(0));
     }
 
 }

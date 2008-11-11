@@ -129,7 +129,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         dto.setPlayerIdentifier(ii);
 
         Cd type = new Cd();
-        type.setCode("Cancer Center");
+        type.setCode("CCR");
         dto.setTypeCode(type);
 
         dto.setFundingMechanism(StringConverter.convertToSt("foo"));
@@ -147,7 +147,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
 
     @Override
     protected void alter(ResearchOrganizationDTO dto) {
-        ResearchOrganizationType other = new ResearchOrganizationType("Foo");
+        ResearchOrganizationType other = new ResearchOrganizationType("Foo", "Foo type");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         PoHibernateUtil.getCurrentSession().flush();
 
@@ -188,7 +188,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setPlayerIdentifier(ii);
 
-        ResearchOrganizationType other = new ResearchOrganizationType("Another Type");
+        ResearchOrganizationType other = new ResearchOrganizationType("AT", "Another Type");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         Cd type = new Cd();
         type.setCode(other.getCode());

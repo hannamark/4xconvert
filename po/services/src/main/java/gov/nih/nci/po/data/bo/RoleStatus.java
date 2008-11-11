@@ -114,14 +114,19 @@ public enum RoleStatus {
     NULLIFIED;
     
     static {
-        PENDING.allowedTransitions.add(ACTIVE);
-        PENDING.allowedTransitions.add(NULLIFIED);
+        PENDING.allowedTransitions.add(RoleStatus.PENDING);
+        PENDING.allowedTransitions.add(RoleStatus.ACTIVE);
+        PENDING.allowedTransitions.add(RoleStatus.NULLIFIED);
         
+        ACTIVE.allowedTransitions.add(RoleStatus.ACTIVE);
         ACTIVE.allowedTransitions.add(RoleStatus.SUSPENDED);
         ACTIVE.allowedTransitions.add(RoleStatus.NULLIFIED);
         
+        SUSPENDED.allowedTransitions.add(RoleStatus.SUSPENDED);
         SUSPENDED.allowedTransitions.add(RoleStatus.ACTIVE);
         SUSPENDED.allowedTransitions.add(RoleStatus.NULLIFIED);
+        
+        NULLIFIED.allowedTransitions.add(RoleStatus.NULLIFIED);
     }
 
     private final Set<RoleStatus> allowedTransitions = new HashSet<RoleStatus>();

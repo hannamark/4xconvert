@@ -111,7 +111,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
     protected AbstractOrganizationRole getExampleTestClass() {
         ResearchOrganization oc = new ResearchOrganization();
         fillInExampleOrgRoleFields(oc);
-        ResearchOrganizationType oct = new ResearchOrganizationType("Cancer Center");
+        ResearchOrganizationType oct = new ResearchOrganizationType("CCR", "Cancer Center");
         oc.setTypeCode(oct);
         oc.setFundingMechanism("foo");
         return oc;
@@ -134,7 +134,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         dto.setIdentifier(ii);
 
         Cd type = new Cd();
-        type.setCode("Cancer Center");
+        type.setCode("CCR");
         dto.setTypeCode(type);
 
         dto.setFundingMechanism(StringConverter.convertToSt("foo"));
@@ -147,7 +147,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
     @Override
     protected void verifyTestClassDTOFields(AbstractOrganizationRole ro) {
         ResearchOrganization bo = (ResearchOrganization) ro;
-        assertEquals("Cancer Center", bo.getTypeCode().getCode());
+        assertEquals("CCR", bo.getTypeCode().getCode());
         assertEquals("foo", bo.getFundingMechanism());
     }
 
@@ -156,7 +156,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
      */
     @Override
     protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
-        assertEquals("Cancer Center", ((ResearchOrganizationDTO) dto).getTypeCode().getCode());
+        assertEquals("CCR", ((ResearchOrganizationDTO) dto).getTypeCode().getCode());
         assertEquals("foo", ((ResearchOrganizationDTO) dto).getFundingMechanism().getValue());
 
         // check id

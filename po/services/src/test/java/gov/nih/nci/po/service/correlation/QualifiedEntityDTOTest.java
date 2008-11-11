@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class QualifiedEntityDTOTest extends AbstractHibernateTestCase {
 
-    private static final QualifiedEntityType TYPE = new QualifiedEntityType("MD");
+    private static final QualifiedEntityType TYPE = new QualifiedEntityType("MD", "Medical Doctor");
     private static final RoleStatus STATUS = RoleStatus.ACTIVE;
 
     @Before

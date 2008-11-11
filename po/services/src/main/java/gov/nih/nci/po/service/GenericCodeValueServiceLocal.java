@@ -3,6 +3,8 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.CodeValue;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 /**
@@ -27,4 +29,11 @@ public interface GenericCodeValueServiceLocal {
      * @return the CodeValue instance found otherwise, null
      */
     <T extends CodeValue> T getByCode(Class<T> clz, String code);
+    
+    /**
+     * @param <T> the type
+     * @param clz the type to lookup
+     * @return the list CodeValue instances found otherwise, null
+     */
+    <T extends CodeValue> List<T> list(Class<T> clz);
 }

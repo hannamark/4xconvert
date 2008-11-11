@@ -45,5 +45,13 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
             return ret;
         }
     }
+    /**
+     * {@inheritDoc}
+     */
+    public <T extends CodeValue> List<T> list(Class<T> clz) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        Query q = s.createQuery("FROM " + clz.getName());
+        return q.list();
+    }
 
 }

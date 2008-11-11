@@ -129,6 +129,8 @@ div#page {
 
 A.btn SPAN.copy
 { background:url("../images/ico_copy.gif") no-repeat; }
+A.btn SPAN.edit
+{ background:url("../images/ico_edit.gif") no-repeat; }
 
 div.message {
     background: #ffffcc;

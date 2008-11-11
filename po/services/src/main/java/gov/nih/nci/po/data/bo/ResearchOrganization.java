@@ -119,7 +119,7 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
      * {@inheritDoc}
      */
     @OneToMany(mappedBy = "target")
-    @Where(clause = "processed = false")
+    @Where(clause = "processed = 'false'")
     public Set<ResearchOrganizationCR> getChangeRequests() {
         return changeRequests;
     }

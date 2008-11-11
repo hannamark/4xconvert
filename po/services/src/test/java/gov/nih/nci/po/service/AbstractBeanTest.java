@@ -66,9 +66,9 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
         oversightCommitee = new OversightCommitteeType("Ethics Committee");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
-        researchOrgType = new ResearchOrganizationType("Cancer Center");
+        researchOrgType = new ResearchOrganizationType("CCR", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
-        qualifiedEntityType = new QualifiedEntityType("MD");
+        qualifiedEntityType = new QualifiedEntityType("MD", "Medical Doctor");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(qualifiedEntityType);
 
         user = new User();

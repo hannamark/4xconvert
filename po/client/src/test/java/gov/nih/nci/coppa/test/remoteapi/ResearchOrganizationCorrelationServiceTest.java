@@ -101,7 +101,7 @@ public class ResearchOrganizationCorrelationServiceTest
         dto.setPlayerIdentifier(getOrgId());
         dto.setFundingMechanism(RemoteApiUtils.convertToSt("Magical"));
         Cd type = new Cd();
-        type.setCode("Cancer Center");
+        type.setCode("CCR");
         dto.setTypeCode(type);
         return dto;
     }
@@ -115,6 +115,6 @@ public class ResearchOrganizationCorrelationServiceTest
     protected void verifyCreated(ResearchOrganizationDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
         Assert.assertEquals("Magical", dto.getFundingMechanism().getValue());
-        Assert.assertEquals("Cancer Center", dto.getTypeCode().getCode());
+        Assert.assertEquals("CCR", dto.getTypeCode().getCode());
     }
 }

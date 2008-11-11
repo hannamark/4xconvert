@@ -15,10 +15,10 @@ public class RoleStatusTest {
      */
     @Test
     public void testGetAllowedTransitions() {
-        check(RoleStatus.ACTIVE, RoleStatus.SUSPENDED, RoleStatus.NULLIFIED);
-        check(RoleStatus.PENDING, RoleStatus.ACTIVE, RoleStatus.NULLIFIED);
-        check(RoleStatus.SUSPENDED, RoleStatus.ACTIVE, RoleStatus.NULLIFIED);
-        check(RoleStatus.NULLIFIED);
+        check(RoleStatus.ACTIVE, RoleStatus.ACTIVE, RoleStatus.SUSPENDED, RoleStatus.NULLIFIED);
+        check(RoleStatus.PENDING, RoleStatus.PENDING, RoleStatus.ACTIVE, RoleStatus.NULLIFIED);
+        check(RoleStatus.SUSPENDED, RoleStatus.SUSPENDED,RoleStatus.ACTIVE, RoleStatus.NULLIFIED);
+        check(RoleStatus.NULLIFIED, RoleStatus.NULLIFIED);
     }
     
     private void check(RoleStatus rs, RoleStatus ... allowed) {
