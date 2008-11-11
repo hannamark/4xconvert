@@ -4,7 +4,6 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
@@ -20,7 +19,6 @@ import org.junit.Test;
 public class StudyRecruitmentStatusTest {
     @Test
     public void createTest() {
-        // return null when study status does not have a corresponding recruitment status
         StudyProtocol sp = new StudyProtocol();
         sp.setId(1L);
         StudyOverallStatus bo = new StudyOverallStatus();

@@ -4,12 +4,15 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -38,8 +41,7 @@ public class PlannedActivityServiceTest {
     @Test 
     public void getTest() throws Exception {
         PlannedActivityDTO dto = remoteEjb.get(ii);
-        assertTrue("name".equals(StConverter.convertToString(dto.getName())));
-        assertTrue("alternateName".equals(StConverter.convertToString(dto.getAlternateName())));
+        assertEquals(TestSchema.interventionIds.get(0), IiConverter.convertToLong(dto.getInterventionIdentifier()));
     }
     @Test
     public void getByStudyProtocolTest() throws Exception {
@@ -57,33 +59,30 @@ public class PlannedActivityServiceTest {
         int originalCount = dtoList.size();
         PlannedActivityDTO dto = new PlannedActivityDTO();
         dto.setStudyProtocolIdentifier(spIi);
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        dto.setInterventionIdentifier(null);
+        dto.setLeadProductIndicator(null);
+        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.BEHAVIORAL));
         try {
             remoteEjb.create(dto);
-//            fail("Test should have failed for null in userLastUpdated.  ");
+            fail("Test should have failed for null in interventionIdentifier.  ");
         } catch (PAException e) {
             // expected behavior, failure for not logging user
         }
+        dto.setInterventionIdentifier(IiConverter.convertToIi(TestSchema.interventionIds.get(0)));
         remoteEjb.create(dto);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
-        assertEquals(originalCount + 2, dtoList.size());
+        assertEquals(originalCount + 1, dtoList.size());
     }
     @Test
     public void updateTest() throws Exception {
         PlannedActivityDTO dto = remoteEjb.get(ii);
-        assertTrue("name".equals(StConverter.convertToString(dto.getName())));
-        assertTrue("alternateName".equals(StConverter.convertToString(dto.getAlternateName())));
-        PlannedActivityDTO updateDto = new PlannedActivityDTO();
-        updateDto.setIdentifier(dto.getIdentifier());
-        updateDto.setName(StConverter.convertToSt("new name"));
-        try {
-            remoteEjb.update(updateDto);
-            //fail("Test should have failed for null in userLastUpdated.  ");
-        } catch (PAException e) {
-            // expected behavior, failure for not logging user
-        }
-        PlannedActivityDTO resultDto = remoteEjb.update(updateDto);
-        assertTrue("new name".equals(StConverter.convertToString(resultDto.getName())));
-        assertTrue("alternateName".equals(StConverter.convertToString(resultDto.getAlternateName())));
+        assertFalse(ActivitySubcategoryCode.DRUG.equals(
+                ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode()))));
+        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DRUG));
+        PlannedActivityDTO resultDto = remoteEjb.update(dto);
+        assertTrue(ActivitySubcategoryCode.DRUG.equals(
+                ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(resultDto.getSubcategoryCode()))));
     }
     @Test
     public void deleteTest() throws Exception {

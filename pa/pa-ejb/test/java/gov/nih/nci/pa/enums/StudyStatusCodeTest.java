@@ -87,8 +87,6 @@ public class StudyStatusCodeTest {
         assertFalse(cs.canTransitionTo(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
         assertFalse(cs.canTransitionTo(StudyStatusCode.WITHDRAWN));
         
-        
-        
         cs = StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL;
         assertTrue(cs.canTransitionTo(StudyStatusCode.ACTIVE));
         assertTrue(cs.canTransitionTo(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));

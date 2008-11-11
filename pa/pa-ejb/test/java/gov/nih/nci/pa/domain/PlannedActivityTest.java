@@ -51,13 +51,10 @@ public class PlannedActivityTest {
         Intervention inv = new Intervention();
         inv.setId(TestSchema.interventionIds.get(0));
         PlannedActivity pa = new PlannedActivity();
-        pa.setAlternateName("alternateName");
         pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
         pa.setDateLastUpdated(new Date());
-        pa.setDescriptionText("descriptionText");
         pa.setIntervention(inv);
         pa.setLeadProductIndicator(true);
-        pa.setName("name");
         pa.setStudyProtocol(sp);
         pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
         pa.setUserLastUpdated("Joe");

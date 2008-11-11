@@ -39,39 +39,22 @@ public class InterventionServiceTest {
     public void searchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();
         searchCriteria.setName(StConverter.convertToSt("CHOCOLATE"));
-        searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.DIETARY_SUPPLEMENT));
         List<InterventionDTO> r = remoteEjb.search(searchCriteria);
         assertEquals(1, r.size());
 
         searchCriteria.setName(StConverter.convertToSt("xCHOCOLATE"));
-        searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.DIETARY_SUPPLEMENT));
         r = remoteEjb.search(searchCriteria);
         assertEquals(0, r.size());
 
         searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
-        searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.DIETARY_SUPPLEMENT));
         r = remoteEjb.search(searchCriteria);
         assertEquals(1, r.size());
-
-        searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
-        searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.GENETIC));
-        r = remoteEjb.search(searchCriteria);
-        assertEquals(0, r.size());
 
         searchCriteria.setName(null);
         searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.GENETIC));
         try {
             r = remoteEjb.search(searchCriteria);
             fail("Service should throw PAException when searching w/o name.  ");
-        } catch(PAException e) {
-            // expected behavior
-        }
-
-        searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
-        searchCriteria.setTypeCode(null);
-        try {
-            r = remoteEjb.search(searchCriteria);
-            fail("Service should throw PAException when searching w/o typeCode.  ");
         } catch(PAException e) {
             // expected behavior
         }
