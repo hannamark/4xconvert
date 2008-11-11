@@ -19,8 +19,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.validator.Length;
-
 /**
  * @author Hugh Reinhart
  * @since 10/28/2008
@@ -35,10 +33,7 @@ public class PlannedActivity extends Activity {
 
     private ActivityCategoryCode categoryCode;
     private ActivitySubcategoryCode subcategoryCode; 
-    private String name;
-    private String alternateName;
     private Boolean leadProductIndicator;
-    private String descriptionText;
     private Intervention intervention;
  
     private Collection<Arm> arms = new ArrayList<Arm>();
@@ -72,34 +67,6 @@ public class PlannedActivity extends Activity {
         this.subcategoryCode = subcategoryCode;
     }
     /**
-     * @return the name
-     */
-    @Column(name = "NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
-    public String getName() {
-        return name;
-    }
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    /**
-     * @return the alternateName
-     */
-    @Column(name = "ALTERNATE_NAME")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
-    public String getAlternateName() {
-        return alternateName;
-    }
-    /**
-     * @param alternateName the alternateName to set
-     */
-    public void setAlternateName(String alternateName) {
-        this.alternateName = alternateName;
-    }
-    /**
      * @return the leadProductIndicator
      */
     @Column(name = "LEAD_PRODUCT_INDICATOR")
@@ -111,20 +78,6 @@ public class PlannedActivity extends Activity {
      */
     public void setLeadProductIndicator(Boolean leadProductIndicator) {
         this.leadProductIndicator = leadProductIndicator;
-    }
-    /**
-     * @return the descriptionText
-     */
-    @Column(name = "DESCRIPTION_TEXT")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
-    public String getDescriptionText() {
-        return descriptionText;
-    }
-    /**
-     * @param descriptionText the descriptionText to set
-     */
-    public void setDescriptionText(String descriptionText) {
-        this.descriptionText = descriptionText;
     }
     /**
      * @return the intervention
