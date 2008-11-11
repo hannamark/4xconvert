@@ -396,22 +396,11 @@ function toggledisplay2 (it) {
                 <td colspan="3">
 					<table class="data2">	
 					   <tr>
-							<th scope="row" class="label">
-							    <label for="fundingMechanism">&nbsp;&nbsp;<fmt:message key="submit.trial.fundingMechanism"/></label>
-							</th>
-							<th scope="row" class="label">
-							    <label for="instituteCode"> <fmt:message key="submit.trial.instituteCode"/></label>
-							</th>
-							<th scope="row" class="label">
-                                <label for="serialNumber"> <fmt:message key="submit.trial.serialNumber"/></label>
-                            </th>
-							<th scope="row" class="label">
-							    <label for="divProgram"> <fmt:message key="submit.trial.divProgram"/></label>
-							</th>
-							<th scope="row" class="label">
-							    <label for="divProgram">&nbsp;&nbsp;&nbsp;&nbsp; </label>
-							</th>
-						
+							<th>Funding Mechanism</th>
+							<th><fmt:message key="submit.trial.instituteCode"/></th>
+							<th><fmt:message key="submit.trial.serialNumber"/></th>
+							<th><fmt:message key="submit.trial.divProgram"/></th>
+							<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
 					</tr>
 					   
 					   <tr>
