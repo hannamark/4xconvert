@@ -40,6 +40,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String action;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
+    private String userLastCreated;    
     
     
     
@@ -290,6 +291,18 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
         this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+    /**
+     * @return the userLastCreated
+     */
+    public String getUserLastCreated() {
+        return userLastCreated;
+    }
+    /**
+     * @param userLastCreated the userLastCreated to set
+     */
+    public void setUserLastCreated(String userLastCreated) {
+        this.userLastCreated = userLastCreated;
     }
     
     
