@@ -55,11 +55,11 @@
     <table class="form">
         
         <tr>
-            <td scope="row" class="label"><s:label for="currentTrialStatus"><fmt:message
+            <td class="label"><s:label for="currentTrialStatus"><fmt:message
                 key="trialStatus.current.trial.status" /></s:label></td>
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-            <td class="value"><s:select headerKey="" headerValue="" onchange="statusChange()"  onfocus="statusChange()"
+            <td class="value"><s:select headerValue="--Select--" onchange="statusChange()"  onfocus="statusChange()"
                 name="currentTrialStatus"
                 list="#currentTrialStatusValues" /></td>
             <td>
@@ -69,7 +69,7 @@
             </td>
         </tr>
         <tr>
-            <td scope="row" class="label"><s:label for="statusDate"><fmt:message
+            <td class="label"><s:label for="statusDate"><fmt:message
                 key="trialStatus.current.trial.status.date" /></s:label></td>
             <td class="value"><s:textfield name="statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -78,19 +78,19 @@
             </td>
         </tr>
         <tr>
-            <td scope="row" class="label"><s:label name="statusReasonLabel" for="statusReason">
+            <td class="label"><s:label name="statusReasonLabel" for="statusReason">
                 <fmt:message key="trialStatus.current.trial.status.reason"/>
             </s:label></td>
-            <td scope="row" class="label"><s:textarea name="statusReason" rows="3"
+            <td class="value"><s:textarea name="statusReason" rows="3"
                     cssStyle="width:280px;float:left" /></td>
         </tr>
         <tr> 
             <td/>
-            <td colspan="2">(Administratively Complete, Withdrawn, and Temporarily Closed statuses only)</td>
+            <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
         </tr>
         <tr><td>&nbsp</td></tr>
         <tr>
-            <td scope="row" class="label"><s:label for="startDate"><fmt:message
+            <td class="label"><s:label for="startDate"><fmt:message
                 key="trialStatus.trial.start.date" /></s:label></td>
             <td class="value"><s:textfield name="startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -99,7 +99,7 @@
                 <s:radio name="startDateType" list="dateTypeList" /></td>
         </tr>
         <tr>
-            <td scope="row" class="label"><s:label for="completionDate">
+            <td class="label"><s:label for="completionDate">
             <fmt:message key="trialStatus.primary.completion.date" /></s:label></td>
             <td class="value"><s:textfield name="completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
