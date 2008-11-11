@@ -24,7 +24,7 @@ values (2,'ACCEPTED', NULL, '2008-02-21', 2, current_timestamp, 'abstractor' )
 -- insert into study_overall_status 
 
 insert into study_overall_status (id, status_code, status_date, study_protocol_id, date_last_updated, user_last_updated) 
-values (1, 'IN_REVIEW', '2008-03-11', 1, current_timestamp, 'abstractor' ) 
+values (1, 'APPROVED', '2008-03-11', 1, current_timestamp, 'abstractor' ) 
 ;
 insert into study_overall_status (id, status_code, status_date, study_protocol_id, date_last_updated, user_last_updated) 
 values (2, 'APPROVED', '2007-07-21', 2, current_timestamp, 'abstractor' ) 
