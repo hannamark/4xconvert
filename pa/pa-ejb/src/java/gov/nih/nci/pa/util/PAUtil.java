@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.sql.Timestamp;
@@ -61,6 +62,23 @@ public class PAUtil {
         } catch (NumberFormatException nfe) {
             // if cannot be converted, consider as null
             isNull = true;
+        }
+        return isNull;
+    }
+    
+    /**
+     * checks if Cd is null.
+     * @param cd cd
+     * @return boolean
+     */
+    public static boolean isCdNull(Cd cd) {
+        boolean isNull = false;
+        if (cd == null || cd.getCode() == null) {
+            return true;
+        } else {
+            if (cd.getCode().trim().length() == 0) {
+                isNull = true;
+            }
         }
         return isNull;
     }
