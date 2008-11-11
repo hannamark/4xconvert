@@ -171,8 +171,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     } else if (studyProtocol instanceof InterventionalStudyProtocol) {
                         studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     } else {
-                        throw new PAException(" Unknown StudyProtocol type found for protocol id = " 
-                                + studyProtocol.getIdentifier() + " title " + studyProtocol.getOfficialTitle());
+//                        throw new PAException(" Unknown StudyProtocol type found for protocol id = " 
+//                                + studyProtocol.getIdentifier() + " title " + studyProtocol.getOfficialTitle());
+                        studyProtocolDto.setStudyProtocolType(studyProtocol.getClass().getName());
                     }
 
                     studyProtocolDto.setOfficialTitle(studyProtocol
@@ -183,6 +184,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     studyProtocolDto
                             .setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
+                    studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated());
                     // @todo : hardcoded for interventional, its has to be
                     // derived
                 }
@@ -444,8 +446,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             }
                 where.append(" and dws.statusCode  <>  '"
                     + DocumentWorkflowStatusCode.REJECTED + "'");
-            // where.append(" and scr.studyContactRoleCode ='"
-            // + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+           if  ((PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getClientName())) 
+                       && (studyProtocolQueryCriteria.getClientName().equalsIgnoreCase("MyTrials"))) {
+               where.append(" and sp.userLastCreated = '").append(
+                       studyProtocolQueryCriteria.getUserLastCreated() + "'");
+           }
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
             throw new PAException("General error in while create where cluase",
