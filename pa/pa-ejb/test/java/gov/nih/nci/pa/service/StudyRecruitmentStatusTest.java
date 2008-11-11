@@ -24,12 +24,12 @@ public class StudyRecruitmentStatusTest {
         StudyProtocol sp = new StudyProtocol();
         sp.setId(1L);
         StudyOverallStatus bo = new StudyOverallStatus();
-        bo.setStatusCode(StudyStatusCode.IN_REVIEW);
+        bo.setStatusCode(StudyStatusCode.ACTIVE);
         bo.setStatusDate(PAUtil.dateStringToTimestamp("1/1/2001"));
         bo.setStudyProtocol(sp);
         bo.setCommentText(null);
         StudyRecruitmentStatus srs = StudyRecruitmentStatusServiceBean.create(bo);
-        assertNull(srs);
+        assertNotNull(srs);
         
         // return domain object when there is corresponding recruitment status
         bo.setStatusCode(StudyStatusCode.ACTIVE);

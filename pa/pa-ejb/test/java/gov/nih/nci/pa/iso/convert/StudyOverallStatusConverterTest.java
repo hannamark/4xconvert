@@ -53,7 +53,7 @@ public class StudyOverallStatusConverterTest {
         StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/11/2002")));
         dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
 

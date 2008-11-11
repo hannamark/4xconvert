@@ -99,7 +99,7 @@ public class StudyOverallStatusServiceTest {
         TestSchema.addUpdObject(spNew);
         
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
         dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
@@ -116,7 +116,7 @@ public class StudyOverallStatusServiceTest {
         TestSchema.addUpdObject(spNew);
         
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(null);
         dto.setStudyProtocolIi(IiConverter.convertToIi(spNew.getId()));
         dto.setIdentifier(null);

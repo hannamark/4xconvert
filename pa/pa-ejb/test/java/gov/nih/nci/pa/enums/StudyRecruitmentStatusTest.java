@@ -33,7 +33,5 @@ public class StudyRecruitmentStatusTest {
                 StudyRecruitmentStatusCode.getByStudyStatusCode(StudyStatusCode.COMPLETE).getCode());
         assertEquals(StudyRecruitmentStatusCode.TERMINATED.getCode(), 
                 StudyRecruitmentStatusCode.getByStudyStatusCode(StudyStatusCode.ADMINISTRATIVELY_COMPLETE).getCode());
-        assertNull(StudyRecruitmentStatusCode.getByStudyStatusCode(StudyStatusCode.IN_REVIEW));
-        assertNull(StudyRecruitmentStatusCode.getByStudyStatusCode(StudyStatusCode.DISAPPROVED));
     }
 }
