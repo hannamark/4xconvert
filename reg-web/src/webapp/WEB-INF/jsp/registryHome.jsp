@@ -30,14 +30,14 @@
 
                     <!--ADD CONTENT HERE-->
 
-                    <h1>Welcome to NCI Clinical Trials Portal - Powered by (caCTUS)</h1>
+                    <h1>Welcome to NCI Clinical Trials Reporting Portal</h1>
 
                     <p class="intro">
-                        <strong>NCI Clinical Trials Portal - Powered by (caCTUS)</strong> is a registry system for cancer clinical trial protocols that gives you the tools to:
+                        <strong>NCI Clinical Trials Reporting Portal </strong> is a registry system for NCI clinical trials that gives you the tools to:
                     </p>
                     <ul>
-                        <li><a href="/registry/protected/searchTrial.action"><strong>Search for NCI clinical trial protocols</strong></a> submitted by members of the <a href="https://cabig.nci.nih.gov" class="external" target="new">caBIG&trade; community.</a> You can view detailed protocol information such as the title, NCI and Lead Organization Protocol Id, phase, status, principal investigators, and more.</li>
-                        <li><a href="/registry/protected/submitTrial.action"><strong>Submit your NCI clinical trial protocols</strong></a> and join our community of contributing scientists.</li>
+                        <li><a href="/registry/protected/searchTrial.action"><strong>Search for NCI clinical trials</strong></a> submitted by members of the <a href="https://cabig.nci.nih.gov" class="external" target="new">caBIG&trade; community.</a> You can view detailed trial information such as the title, NCI and Lead Organization Trial Identifier, phase, status, principal investigators, and more.</li>
+                        <li><a href="/registry/protected/submitTrial.action"><strong>Submit your NCI clinical trials</strong></a> and join our community of contributing scientists.</li>
                         <li><a href="/registry/protected/searchTrial.action" class="selected"><strong>Login</strong></a> to enter protocol details into the system.</li>
                     </ul>
 
