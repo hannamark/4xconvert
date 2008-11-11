@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.InterventionWebDTO;
-import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -25,27 +24,16 @@ import com.opensymphony.xwork2.ActionSupport;
 */
 @SuppressWarnings("PMD")
 public class PopUpIntAction extends ActionSupport {
+    private static final long serialVersionUID = 9987838321L;
+    
     private String searchName;
-    private String interventionType;
     private List<InterventionWebDTO> interWebList = new ArrayList<InterventionWebDTO>();
-
-    /**
-     * @return action result
-     * @throws Exception exception
-     */
-    @Override
-    public String execute() throws Exception {
-        this.setInterventionType(ServletActionContext.getRequest().getParameter("interventionType"));
-        return SUCCESS;
-    }
 
     private void loadResultList() {
         String tName = ServletActionContext.getRequest().getParameter("searchName");
-        String tType = ServletActionContext.getRequest().getParameter("searchType");
         
         InterventionDTO criteria = new InterventionDTO();
         criteria.setName(StConverter.convertToSt(tName));
-        criteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.getByCode(tType)));
         
         interWebList.clear();
         try {
@@ -105,19 +93,5 @@ public class PopUpIntAction extends ActionSupport {
      */
     public void setInterWebList(List<InterventionWebDTO> interWebList) {
         this.interWebList = interWebList;
-    }
-
-    /**
-     * @return the interventionType
-     */
-    public String getInterventionType() {
-        return interventionType;
-    }
-
-    /**
-     * @param interventionType the interventionType to set
-     */
-    public void setInterventionType(String interventionType) {
-        this.interventionType = interventionType;
     }
 }
