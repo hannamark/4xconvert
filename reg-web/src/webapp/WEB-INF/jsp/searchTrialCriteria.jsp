@@ -9,8 +9,9 @@
     <s:head/>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
+
 function resetValues(){
-    document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
+	document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
     document.forms.queryProtocol.queryProtocol_criteria_phaseCode.value="";
     document.forms.queryProtocol.queryProtocol_criteria_primaryPurposeCode.value="";
     document.forms.queryProtocol.queryProtocol_criteria_identifierType.value="NCI";
@@ -112,7 +113,6 @@ function handleMyAction(){
                 <li>           
                 <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="Search">My Trials</span></span></s:a>       
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="Search">Search Trials</span></span></s:a>
-                <s:a href="#" cssClass="btn" onclick="resetValues()"><span class="btn_img"><span class="Reset">Reset</span></span></s:a>  
                 </li>
                </ul>   
             </del>
