@@ -5,10 +5,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Intervention;
-import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionConverter;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -82,9 +80,6 @@ public class InterventionServiceBean
         if (searchCriteria == null) {
             serviceError("Must pass in search criteria when calling search().");
         }
-        if (searchCriteria.getTypeCode() == null) {
-            serviceError("Must pass in an intervention type when calling search().");
-        }
         if (searchCriteria.getName() == null) {
             serviceError("Must pass in a name when calling search().");
         }
@@ -100,14 +95,11 @@ public class InterventionServiceBean
                        + "left join int.interventionAlternateNames ian "
                        + "where (upper(int.name) like upper(:name) "
                        + "     or upper(ian.name) like upper(:name)) " 
-                       + "  and int.typeCode = :type "
                        + "order by int.name ";
             LOG.info("query Intervention = " + hql);
 
             // step 2: construct query object
             query = session.createQuery(hql);
-            query.setParameter("type", InterventionTypeCode.
-                    getByCode(CdConverter.convertCdToString(searchCriteria.getTypeCode())));
             query.setParameter("name", "%" + StConverter.convertToString(searchCriteria.getName()) + "%");
             
             // step 3: query the result
