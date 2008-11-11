@@ -12,7 +12,6 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -23,25 +22,22 @@ import gov.nih.nci.pa.util.PAUtil;
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class PlannedActivityConverter {
+public class PlannedActivityConverter extends AbstractConverter<PlannedActivityDTO, PlannedActivity> {
     /**
      * 
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
      */
-    public static PlannedActivityDTO convertFromDomainToDTO(
-            PlannedActivity bo) throws PAException {
+    @Override
+    public PlannedActivityDTO convertFromDomainToDto(PlannedActivity bo) throws PAException {
         PlannedActivityDTO dto = new PlannedActivityDTO();
-        dto.setAlternateName(StConverter.convertToSt(bo.getAlternateName()));
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
-        dto.setDescriptionText(StConverter.convertToSt(bo.getDescriptionText()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         if (bo.getIntervention() != null) {
             dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
         }
         dto.setLeadProductIndicator(BlConverter.convertToBl(bo.getLeadProductIndicator()));
-        dto.setName(StConverter.convertToSt(bo.getName()));
         if (bo.getStudyProtocol() != null) {
             dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         }
@@ -55,8 +51,8 @@ public class PlannedActivityConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static PlannedActivity convertFromDtoToDomain(
-            PlannedActivityDTO dto) throws PAException {
+    @Override
+    public PlannedActivity convertFromDtoToDomain(PlannedActivityDTO dto) throws PAException {
         StudyProtocol spBo = null;
         if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             spBo = new StudyProtocol();
@@ -70,13 +66,10 @@ public class PlannedActivityConverter {
         }
         
         PlannedActivity bo = new PlannedActivity();
-        bo.setAlternateName(StConverter.convertToString(dto.getAlternateName()));
         bo.setCategoryCode(ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
-        bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(invBo);
         bo.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
-        bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(ActivitySubcategoryCode.
                 getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));

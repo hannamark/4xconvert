@@ -15,8 +15,10 @@ import gov.nih.nci.pa.service.PAException;
  */
 public class Converters {
     private static ArmConverter arm = new ArmConverter();
+    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
     private static StratumGroupConverter sg = new StratumGroupConverter();
     private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
+
     /**
      * @param clazz class
      * @return converter
@@ -26,6 +28,9 @@ public class Converters {
     public static AbstractConverter get(Class clazz)  throws PAException {
         if (clazz.equals(ArmConverter.class)) {
             return arm;
+        }
+        if (clazz.equals(PlannedActivityConverter.class)) {
+            return plannedActivity;
         }
         if (clazz.equals(StratumGroupConverter.class)) {
             return sg;
