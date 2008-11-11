@@ -22,10 +22,6 @@ import java.util.Set;
 public enum StudyStatusCode implements CodedEnum<String> {
 
      /**
-     * In Review.
-     */
-     IN_REVIEW("In Review"), 
-     /**
       * Approved.
       */
      APPROVED("Approved") , 
@@ -49,10 +45,6 @@ public enum StudyStatusCode implements CodedEnum<String> {
       * Temporarily Closed To Accrual and Intervention.
       */
      TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention") ,
-     /**
-      * Disapproved.
-      */
-     DISAPPROVED("Disapproved") ,
      /**
       * Withdrawn.
       */
@@ -169,13 +161,6 @@ public enum StudyStatusCode implements CodedEnum<String> {
          tmpSet = new HashSet<StudyStatusCode>();
          tmp.put(COMPLETE, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmp.put(DISAPPROVED, Collections.unmodifiableSet(tmpSet));
-
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(APPROVED);
-         tmpSet.add(DISAPPROVED);
-         tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
 
          TRANSITIONS = Collections.unmodifiableMap(tmp);
      }
