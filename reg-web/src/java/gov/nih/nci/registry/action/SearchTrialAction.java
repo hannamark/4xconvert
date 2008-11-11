@@ -133,6 +133,7 @@ public class SearchTrialAction extends ActionSupport {
      */
     public String query() {
         try {
+            criteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
             records = new ArrayList<StudyProtocolQueryDTO>();
             records = RegistryServiceLocator.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
             return SUCCESS;
