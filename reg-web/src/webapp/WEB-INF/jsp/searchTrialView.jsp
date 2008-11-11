@@ -2,7 +2,7 @@
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><fmt:message key="view.trial.page.title"/></title>
@@ -185,22 +185,21 @@
      </table>
      	<div class="box">
      		<c:if test="${requestScope.studyIndIde != null}">						
-     		IND/IDE Information  
-     		<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>	
+     			<h3>IND/IDE Information</h3>  
+     			<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>	
      		</c:if>
 		</div>
         <div class="box">
     		<c:if test="${requestScope.trialFundingList != null}">						
-    		NIH Grant Information  
-    		<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>	
+    			<h3>NIH Grant Information</h3>  
+    			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>	
     		</c:if>
 		</div>
-		
 		<div class="box">
-			<c:if test="${requestScope.protocolDocument != null}">						
-			Trial Related Documents  
-			<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>	
-			</c:if>
+				<c:if test="${requestScope.protocolDocument != null}">						
+					<h3>Trial Related Documents</h3>  
+					<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>	
+				</c:if>
 		</div>
 
 		<div class="actionsrow">
