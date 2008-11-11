@@ -193,24 +193,6 @@ public class DocumentServiceBean implements DocumentServiceRemote {
             docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
             delete(docDTO);
             docDTO.setInactiveCommentText(null);
-//            session = HibernateUtil.getCurrentSession();
-//
-//            Query query = null;
-//
-//            // step 1: form the hql
-//            String hql = " select doc "
-//                       + " from Document doc "
-//                       + " where doc.id = " + IiConverter.convertToLong(docDTO.getIdentifier());
-//            // step 2: construct query object
-//            query = session.createQuery(hql);
-//            queryList = query.list();
-//            doc = queryList.get(0);
-//            // set the values from paramter
-//            doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-//            doc.setUserLastUpdated(docDTO.getUserLastUpdated().getValue());
-//            doc.setActiveIndicator(false);
-//            session.update(doc);
-//            session.flush();
             docRetDTO = create(docDTO);
 
         } catch (HibernateException hbe) {
@@ -304,7 +286,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         StudyProtocolServiceBean spBean = new StudyProtocolServiceBean();
         StudyProtocolDTO sp = spBean.getStudyProtocol(docDTO.getStudyProtocolIi());
         StringBuffer sb  = new StringBuffer(folderPath);
-        sb.append(File.separator).append(sp.getIdentifier().getExtension());
+        sb.append(File.separator).append(sp.getAssignedIdentifier().getExtension());
         File f = new File(sb.toString());
         if (!f.exists()) {
             // create a new directory
