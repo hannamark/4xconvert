@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 		<li class="stdnav"><div>NCI CTRP</div>
 			<ul>
-				<li><a href="home.action">Home</a></li>			
+				<li><a href="/registry/home.action">Home</a></li>			
 				<li><a href="/registry/protected/searchTrial.action" >Search Trials</a></li>
 				<li><a href="/registry/protected/submitTrial.action" >Submit Trial</a></li>
 				<c:choose>
@@ -11,7 +11,7 @@
 				    </c:when>
 			        <c:otherwise>
                         <li><a href="/registry/protected/searchTrial.action" >Login</a></li>
-                        <li><a href="registerUser.action" >Register</a></li>
+                        <li><a href="/registry/registerUser.action" >Register</a></li>
 				    </c:otherwise>
 				</c:choose>
 				<li><a href="#">Help</a></li>
