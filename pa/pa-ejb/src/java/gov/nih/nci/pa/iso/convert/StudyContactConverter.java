@@ -3,9 +3,6 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -19,10 +16,12 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Convert StudyParticipation domain to DTO.
@@ -59,7 +58,6 @@ public class StudyContactConverter {
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         // handle phone and email
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();

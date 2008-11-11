@@ -7,7 +7,6 @@ import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.iso.convert.StudyRegulatoryAuthorityConverter;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -105,7 +104,6 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(sraDTO.getProtocolId()));
         sra.setStudyProtocol(studyProtocol);
-        sra.setUserLastUpdated(StConverter.convertToString(sraDTO.getUserLastUpdated()));
         //
         RegulatoryAuthority ra = new RegulatoryAuthority();
         ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityId()));
@@ -166,7 +164,6 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
             createSra.setRegulatoryAuthority(ra);
 
             createSra.setDateLastUpdated(now);
-            createSra.setUserLastUpdated(StConverter.convertToString(sraDTO.getUserLastUpdated()));
             createSra.setRegulatoryAuthority(ra);
             createSra.setStudyProtocol(sp);
             session.save(createSra);

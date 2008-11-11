@@ -155,7 +155,6 @@ public class TrialInterventionsAction extends ActionSupport implements
         paDto.setIdentifier(null);
         paDto.setStudyProtocolIdentifier(spIdIi);
         paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
-        paDto.setUserLastUpdated(user);
         if (PAUtil.isIiNull(IiConverter.convertToIi(getInterventionIdentifier()))) {
             paDto.setInterventionIdentifier(new Ii());
             paDto.setAlternateName(StConverter.convertToSt(getOtherName()));

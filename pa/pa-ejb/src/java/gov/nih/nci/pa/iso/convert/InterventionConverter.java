@@ -36,7 +36,6 @@ public class InterventionConverter {
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -55,7 +54,6 @@ public class InterventionConverter {
         bo.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setTypeCode(InterventionTypeCode.getByCode(CdConverter.convertCdToString(dto.getTypeCode())));
-        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 }

@@ -99,8 +99,6 @@ public class TrialFundingAction extends ActionSupport {
             studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
             studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
             studyResoureDTO.setSerialNumber(IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
-            studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
 
             query();
@@ -141,8 +139,6 @@ public class TrialFundingAction extends ActionSupport {
             studyResoureDTO.setSuffixGrantYear(StConverter.convertToSt(trialFundingWebDTO.getSuffixgrantYear()));
             studyResoureDTO.setSuffixOther(StConverter.convertToSt(trialFundingWebDTO.getSuffixOther()));
             studyResoureDTO.setSerialNumber(IntConverter.convertToInt(trialFundingWebDTO.getSerialNumber()));
-            studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
 
             query();
@@ -174,8 +170,6 @@ public class TrialFundingAction extends ActionSupport {
                     IiConverter.convertToIi(cbValue)); 
             studyResoureDTO.setInactiveCommentText(StConverter.convertToSt(
                     trialFundingWebDTO.getInactiveCommentText()));
-            studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyResourcingService().deleteStudyResourceByID(studyResoureDTO);
 
             query();

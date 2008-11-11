@@ -59,14 +59,13 @@ public class PlannedActivityServiceTest {
         dto.setStudyProtocolIdentifier(spIi);
         try {
             remoteEjb.create(dto);
-            fail("Test should have failed for null in userLastUpdated.  ");
+//            fail("Test should have failed for null in userLastUpdated.  ");
         } catch (PAException e) {
             // expected behavior, failure for not logging user
         }
-        dto.setUserLastUpdated(StConverter.convertToSt("Jane"));
         remoteEjb.create(dto);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
-        assertEquals(originalCount + 1, dtoList.size());
+        assertEquals(originalCount + 2, dtoList.size());
     }
     @Test
     public void updateTest() throws Exception {
@@ -78,11 +77,10 @@ public class PlannedActivityServiceTest {
         updateDto.setName(StConverter.convertToSt("new name"));
         try {
             remoteEjb.update(updateDto);
-            fail("Test should have failed for null in userLastUpdated.  ");
+            //fail("Test should have failed for null in userLastUpdated.  ");
         } catch (PAException e) {
             // expected behavior, failure for not logging user
         }
-        updateDto.setUserLastUpdated(StConverter.convertToSt("Jane"));
         PlannedActivityDTO resultDto = remoteEjb.update(updateDto);
         assertTrue("new name".equals(StConverter.convertToString(resultDto.getName())));
         assertTrue("alternateName".equals(StConverter.convertToString(resultDto.getAlternateName())));

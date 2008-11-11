@@ -51,9 +51,6 @@ public class StudyOutcomeMeasureConverter {
         if (somDTO.getIdentifier() != null) {
             som.setId(IiConverter.convertToLong(somDTO.getIdentifier()));
         }
-        if (somDTO.getUserLastUpdated() != null) {
-            som.setUserLastUpdated(somDTO.getUserLastUpdated().getValue());
-        }
         if (somDTO.getName() != null) {
             som.setName(somDTO.getName().getValue());
         }

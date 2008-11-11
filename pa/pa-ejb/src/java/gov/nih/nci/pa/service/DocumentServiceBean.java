@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -39,6 +41,12 @@ public class DocumentServiceBean implements DocumentServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(DocumentServiceBean.class);
 
+    private SessionContext ejbContext;
+    
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+    this.ejbContext = ctx;
+    }
     /**
      * @param studyProtocolIi Ii
      * @return DocumentDTO
@@ -105,6 +113,9 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         Document doc = DocumentConverter.convertFromDTOToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastUpdated(now);
+        if (ejbContext != null) {
+            doc.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
+        }
         // create Protocol Obj
         /*StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));
@@ -236,7 +247,9 @@ public class DocumentServiceBean implements DocumentServiceRemote {
             doc.setInactiveCommentText(StConverter.convertToString(
                     docDTO.getInactiveCommentText()));
             doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            doc.setUserLastUpdated(docDTO.getUserLastUpdated().getValue());
+            if (ejbContext != null) {
+                doc.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+            }
             session.update(doc);
             session.flush();
             result = true;

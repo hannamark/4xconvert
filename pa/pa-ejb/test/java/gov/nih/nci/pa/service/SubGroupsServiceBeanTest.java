@@ -50,7 +50,6 @@ public class SubGroupsServiceBeanTest {
         dto.setStudyProtocolIi(pid);
         dto.setDescription(StConverter.convertToSt("Description"));
         dto.setGroupNumberText(StConverter.convertToSt("Code"));
-        dto.setUserLastUpdated(StConverter.convertToSt("curator"));
         StratumGroupDTO dto2 = null;
         dto2 = new StratumGroupDTO();
         dto2 = remoteEjb.create(dto);

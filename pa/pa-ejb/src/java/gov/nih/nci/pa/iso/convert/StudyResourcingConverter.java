@@ -35,7 +35,6 @@ public class StudyResourcingConverter {
         srDTO.setSummary4ReportedResourceIndicator(
                 BlConverter.convertToBl(studyResourcing.getSummary4ReportedResourceIndicator()));
         srDTO.setTypeCode(CdConverter.convertToCd(studyResourcing.getTypeCode()));
-        srDTO.setUserLastUpdated(StConverter.convertToSt(studyResourcing.getUserLastUpdated()));
         srDTO.setFundingMechanismCode(CdConverter.convertStringToCd(studyResourcing.getFundingMechanismCode()));
         srDTO.setFundingTypeCode(CdConverter.convertStringToCd(studyResourcing.getFundingTypeCode()));
         srDTO.setNciDivisionProgramCode(CdConverter.convertToCd(studyResourcing.getNciDivisionProgramCode()));
@@ -71,9 +70,6 @@ public class StudyResourcingConverter {
         if (studyResourcingDTO.getTypeCode() != null) {
             studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
                     studyResourcingDTO.getTypeCode().getCode()));
-        }
-        if (studyResourcingDTO.getUserLastUpdated() != null) {
-            studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
         }
         if (studyResourcingDTO.getFundingMechanismCode() != null) {
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(

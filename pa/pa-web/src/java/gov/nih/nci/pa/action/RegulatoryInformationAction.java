@@ -6,7 +6,6 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -63,7 +62,6 @@ public class RegulatoryInformationAction extends ActionSupport {
                 .getDelayedPostingIndicator())));
         ispFromDatabaseDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getDataMonitoringIndicator())));
-        ispFromDatabaseDTO.setUserLastUpdated(StConverter.convertToSt(user));
         PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispFromDatabaseDTO);
         
         
@@ -73,12 +71,10 @@ public class RegulatoryInformationAction extends ActionSupport {
         StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
         sraDTO.setProtocolId(studyProtocolIi);
         sraDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(selectedAuthOrg));
-        sraDTO.setUserLastUpdated(StConverter.convertToSt(user));
         if (sraFromDatabaseDTO == null) {
             PaRegistry.getStudyRegulatoryAuthorityService().createStudyRegulatoryAuthority(sraDTO);
         } else {
             sraFromDatabaseDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(selectedAuthOrg));
-            sraFromDatabaseDTO.setUserLastUpdated(StConverter.convertToSt(user));
             PaRegistry.getStudyRegulatoryAuthorityService().updateStudyRegulatoryAuthority(sraFromDatabaseDTO);
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);

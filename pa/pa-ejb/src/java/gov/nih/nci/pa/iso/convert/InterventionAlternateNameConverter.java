@@ -38,7 +38,6 @@ public class InterventionAlternateNameConverter {
         dto.setName(StConverter.convertToSt(bo.getName()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -62,7 +61,6 @@ public class InterventionAlternateNameConverter {
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
-        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 

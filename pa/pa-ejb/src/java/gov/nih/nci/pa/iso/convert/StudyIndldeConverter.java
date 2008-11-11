@@ -60,9 +60,6 @@ public class StudyIndldeConverter {
         if (siDTO.getIdentifier() != null) {
             si.setId(IiConverter.convertToLong(siDTO.getIdentifier()));
         }
-        if (siDTO.getUserLastUpdated() != null) {
-            si.setUserLastUpdated(siDTO.getUserLastUpdated().getValue());
-        }
         if (siDTO.getExpandedAccessStatusCode() != null) {
             si.setExpandedAccessStatusCode(
                     ExpandedAccessStatusCode.getByCode(siDTO.getExpandedAccessStatusCode().getCode()));

@@ -46,7 +46,6 @@ public class PlannedActivityConverter {
             dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         }
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -81,7 +80,6 @@ public class PlannedActivityConverter {
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(ActivitySubcategoryCode.
                 getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
-        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 

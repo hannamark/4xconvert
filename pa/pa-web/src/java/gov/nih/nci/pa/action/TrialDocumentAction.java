@@ -116,8 +116,6 @@ ServletResponseAware {
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setUserLastUpdated((StConverter.convertToSt(
-                     ServletActionContext.getRequest().getRemoteUser())));
              docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
              PaRegistry.getDocumentService().create(docDTO);
              query();
@@ -217,8 +215,6 @@ ServletResponseAware {
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setUserLastUpdated((StConverter.convertToSt(
-                     ServletActionContext.getRequest().getRemoteUser())));
              docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
              PaRegistry.getDocumentService().update(docDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -250,8 +246,6 @@ ServletResponseAware {
                      IiConverter.convertToIi(id));
              docDTO.setInactiveCommentText(StConverter.convertToSt(
                      trialDocumentWebDTO.getInactiveCommentText()));
-             docDTO.setUserLastUpdated((StConverter.convertToSt(
-                     ServletActionContext.getRequest().getRemoteUser())));
              PaRegistry.getDocumentService().delete(docDTO);
 
              query();

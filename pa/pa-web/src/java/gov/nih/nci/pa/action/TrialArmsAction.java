@@ -131,7 +131,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         newArm.setName(StConverter.convertToSt(getArmName()));
         newArm.setStudyProtocolIdentifier(spIdIi);
         newArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
-        newArm.setUserLastUpdated(user);
         newArm.setInterventions(getAssociatedInterventions());
         try {
             armService.create(newArm);
@@ -154,7 +153,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         updatedArm.setName(StConverter.convertToSt(getArmName()));
         updatedArm.setStudyProtocolIdentifier(spIdIi);
         updatedArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
-        updatedArm.setUserLastUpdated(user);
         updatedArm.setInterventions(getAssociatedInterventions());
         try {
             armService.update(updatedArm);

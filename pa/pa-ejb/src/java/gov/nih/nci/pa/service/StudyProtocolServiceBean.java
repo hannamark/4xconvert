@@ -15,7 +15,6 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -25,6 +24,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -49,6 +50,13 @@ import org.hibernate.Session;
     private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
     private static final int FIVE_5 = 5;
 
+    private SessionContext ejbContext;
+    
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+    this.ejbContext = ctx;
+    }
+    
     /**
      *
      * @param ii primary id of StudyProtocol
@@ -142,7 +150,10 @@ import org.hibernate.Session;
 
             StudyProtocol studyProtocol = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
             sp = studyProtocol;
-
+            if (ejbContext != null) {
+            sp.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+            }
+            sp.setDateLastUpdated(now);
             session.merge(sp);
             session.flush();
 
@@ -245,12 +256,11 @@ import org.hibernate.Session;
 
             InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.
             convertFromDTOToDomain(ispDTO);
-            upd.setUserLastUpdated(StConverter.convertToString(ispDTO.getUserLastUpdated()));
+            if (ejbContext != null) {
+            upd.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+            }
             upd.setDateLastUpdated(now);
-
-
             isp = upd;
-
             session.merge(isp);
             session.flush();
 
@@ -287,8 +297,11 @@ import org.hibernate.Session;
         LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
         convertFromDTOToDomain(ispDTO);
-        isp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
         isp.setIdentifier(generateNciIdentifier());
+        if (ejbContext != null) {
+            isp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
+        }
+        isp.setDateLastCreated(new Timestamp((new Date()).getTime()));
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -329,12 +342,9 @@ import org.hibernate.Session;
         ObservationalStudyProtocol osp = null;
         try {
             session = HibernateUtil.getCurrentSession();                     
-
             osp = (ObservationalStudyProtocol)
             session.load(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
-
             session.flush();
-
 
         }  catch (HibernateException hbe) {
             session.flush();
@@ -372,13 +382,14 @@ import org.hibernate.Session;
 
         try {
             session = HibernateUtil.getCurrentSession();            
-
             ObservationalStudyProtocol osp = (ObservationalStudyProtocol) 
             session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
 
             ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.
             convertFromDTOToDomain(ospDTO);
-            upd.setUserLastUpdated(StConverter.convertToString(ospDTO.getUserLastUpdated()));
+            if (ejbContext != null) {
+                upd.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+            }
             upd.setDateLastUpdated(now);
 
 
@@ -419,7 +430,10 @@ import org.hibernate.Session;
         LOG.debug("Entering createObservationalStudyProtocol");
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
         convertFromDTOToDomain(ispDTO);
-        osp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+        osp.setDateLastCreated(new Timestamp((new Date()).getTime()));
+        if (ejbContext != null) {
+            osp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
+        }
         osp.setIdentifier(generateNciIdentifier());
         Session session = null;
         try {
@@ -451,7 +465,7 @@ import org.hibernate.Session;
             DocumentWorkflowStatus wfs = new DocumentWorkflowStatus();
             wfs.setStudyProtocol(sp);
             wfs.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
-            wfs.setStatusDateRangeLow(new Timestamp(sp.getDateLastUpdated().getTime()));
+            wfs.setStatusDateRangeLow(new Timestamp((new Date()).getTime()));
             wfs.setUserLastUpdated(sp.getUserLastUpdated());
             wfs.setDateLastUpdated(sp.getDateLastUpdated());
             session.save(wfs);

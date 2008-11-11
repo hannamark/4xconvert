@@ -26,7 +26,6 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
     public DocumentWorkflowStatusDTO convertFromDomainToDto(DocumentWorkflowStatus dws) {
         DocumentWorkflowStatusDTO dwsDTO = new DocumentWorkflowStatusDTO();
         dwsDTO.setIdentifier(IiConverter.convertToIi(dws.getId()));
-        dwsDTO.setUserLastUpdated(StConverter.convertToSt(dws.getUserLastUpdated()));
         dwsDTO.setCommonText(StConverter.convertToSt(dws.getCommonText()));
         dwsDTO.setStatusCode(CdConverter.convertToCd(dws.getStatusCode()));
         dwsDTO.setStudyProtocolIi(IiConverter.convertToIi(dws.getStudyProtocol().getId()));
@@ -46,9 +45,6 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         spBo.setId(IiConverter.convertToLong(dwsDTO.getStudyProtocolIi()));
         dws.setDateLastUpdated(new Date());
         dws.setStudyProtocol(spBo);
-        if (dwsDTO.getUserLastUpdated() != null) {
-            dws.setUserLastUpdated(dwsDTO.getUserLastUpdated().getValue());
-        }
         if (dwsDTO.getCommonText() != null) {
             dws.setCommonText(dwsDTO.getCommonText().getValue());
         }

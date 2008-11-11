@@ -18,7 +18,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
@@ -81,7 +80,6 @@ public class StudyParticipationContactConverter {
         telList.add(bo.getPhone());
         DSetConverter.convertListToDSet(telList, "PHONE", telAddresses);
         dto.setTelecomAddresses(telAddresses);
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -102,7 +100,6 @@ public class StudyParticipationContactConverter {
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         
         
-        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         List retList = null;
         if (dto.getTelecomAddresses() != null) {
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");

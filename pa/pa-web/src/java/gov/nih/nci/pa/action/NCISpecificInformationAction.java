@@ -11,7 +11,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -100,13 +99,11 @@ public class NCISpecificInformationAction extends ActionSupport {
                     Constants.STUDY_PROTOCOL_II);
             spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             // Step1 : update values to StudyProtocol
-            spDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-            srDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             srDTO.setStudyProtocolIi(studyProtocolIi);
             // Step3: update studyprotocol
             spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
@@ -139,8 +136,6 @@ public class NCISpecificInformationAction extends ActionSupport {
                 summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
                 summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                         .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-                summary4ResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
-                        .getRemoteUser())));
                 summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
                 PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
             } else {
@@ -148,8 +143,6 @@ public class NCISpecificInformationAction extends ActionSupport {
                 summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
                 summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                         .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-                summary4ResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
-                        .getRemoteUser())));
                 summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
                 PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
             }

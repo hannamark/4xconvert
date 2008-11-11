@@ -6,7 +6,6 @@ import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -122,10 +121,6 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
 
     @SuppressWarnings(UNCHECKED)
     private DTO createOrUpdate(DTO dto) throws PAException {
-        if ((StConverter.convertToString(dto.getUserLastUpdated()) == null)
-               || (StConverter.convertToString(dto.getUserLastUpdated()).trim().length() < 1)) {
-            serviceError("All creates and updates must have a userLastUpdated.  ");
-        }
         BO bo = null;
         DTO resultDto = null;
         Session session = null;
@@ -136,14 +131,12 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setDateLastCreated(new Date());
                 bo.setDateLastUpdated(bo.getDateLastCreated());
-                bo.setUserLastCreated(StConverter.convertToString(dto.getUserLastUpdated()));
                 bo.setUserLastUpdated(bo.getUserLastCreated());
             } else {
                 BO oldBo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
                 bo.setDateLastCreated(oldBo.getDateLastCreated());
                 bo.setDateLastUpdated(new Date());
                 bo.setUserLastCreated(oldBo.getUserLastCreated());
-                bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
             }
             bo = (BO) session.merge(bo);
             session.flush();

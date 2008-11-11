@@ -1,7 +1,5 @@
 package gov.nih.nci.pa.iso.convert;
 
-import java.util.Date;
-
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -9,6 +7,8 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.Date;
 /**
  * Convert Document from domain to DTO.
  *
@@ -29,7 +29,6 @@ public class DocumentConverter {
         DocumentDTO docDTO = new DocumentDTO();
         docDTO.setIdentifier(IiConverter.convertToIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
-        docDTO.setUserLastUpdated(StConverter.convertToSt(doc.getUserLastUpdated()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
         docDTO.setStudyProtocolIi(IiConverter.convertToIi(doc.getStudyProtocol().getId()));
         return docDTO;
@@ -50,9 +49,6 @@ public class DocumentConverter {
         if (docDTO.getTypeCode() != null) {
             doc.setTypeCode(DocumentTypeCode.getByCode(
                     docDTO.getTypeCode().getCode()));
-        }
-        if (docDTO.getUserLastUpdated() != null) {
-            doc.setUserLastUpdated(docDTO.getUserLastUpdated().getValue());
         }
         if (docDTO.getFileName() != null) {
             doc.setFileName(docDTO.getFileName().getValue());

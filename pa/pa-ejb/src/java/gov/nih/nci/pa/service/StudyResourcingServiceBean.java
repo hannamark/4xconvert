@@ -17,6 +17,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -39,6 +41,13 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
 
     private static final Logger LOG  = Logger.getLogger(StudyResourcingServiceBean.class);
 
+    private SessionContext ejbContext;
+    
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+    this.ejbContext = ctx;
+    }
+    
     /**
      * @param studyProtocolIi Ii
      * @return StudyProtocolDTO
@@ -133,7 +142,9 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
                     studyResourcingDTO.getOrganizationIdentifier()));
             studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
+            if (ejbContext != null) {
+                studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+            }
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
             studyResourcing.setFundingTypeCode(studyResourcingDTO.getFundingTypeCode().getCode());
@@ -172,7 +183,10 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         Session session = null;
         StudyResourcing studyResourcing = StudyResourcingConverter.convertFromDTOToDomain(studyResourcingDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        studyResourcing.setDateLastUpdated(now);
+        studyResourcing.setDateLastCreated(now);
+        if (ejbContext != null) {
+            studyResourcing.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
+        }
         // create Protocol Obj
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIi()));
@@ -328,7 +342,9 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
             studyResourcing.setInactiveCommentText(StConverter.convertToString(
                     studyResourcingDTO.getInactiveCommentText()));
             studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            studyResourcing.setUserLastUpdated(studyResourcingDTO.getUserLastUpdated().getValue());
+            if (ejbContext != null) {
+                studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+            }
             session.update(studyResourcing);
             session.flush();
             result = true;

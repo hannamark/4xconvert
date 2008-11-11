@@ -81,8 +81,6 @@ public class SubGroupsAction extends ActionSupport {
              sgDTO.setStudyProtocolIi(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
-             sgDTO.setUserLastUpdated((StConverter.convertToSt(
-                     ServletActionContext.getRequest().getRemoteUser())));
              PaRegistry.getSubGroupsService().create(sgDTO);
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -128,8 +126,6 @@ public class SubGroupsAction extends ActionSupport {
              sgDTO.setStudyProtocolIi(studyProtocolIi);
              sgDTO.setDescription(StConverter.convertToSt(subGroupsWebDTO.getDescription()));
              sgDTO.setGroupNumberText(StConverter.convertToSt(subGroupsWebDTO.getGroupNumberText()));
-             sgDTO.setUserLastUpdated((StConverter.convertToSt(
-                     ServletActionContext.getRequest().getRemoteUser())));
              PaRegistry.getSubGroupsService().update(sgDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
              query();

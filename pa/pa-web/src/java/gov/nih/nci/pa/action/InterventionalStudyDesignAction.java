@@ -115,8 +115,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             }
             ispFromDatabaseDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
 
-            ispFromDatabaseDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispFromDatabaseDTO);
             detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -298,8 +296,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
-            sgDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getOutcomeMeasurService().create(sgDTO);
             outcomeQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -342,8 +338,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
-            sgDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getOutcomeMeasurService().update(sgDTO);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             outcomeQuery();

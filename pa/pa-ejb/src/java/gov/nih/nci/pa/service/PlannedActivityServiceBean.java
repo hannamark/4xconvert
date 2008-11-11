@@ -5,7 +5,6 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -70,10 +69,6 @@ public class PlannedActivityServiceBean
     }
 
     private PlannedActivityDTO createOrUpdate(PlannedActivityDTO dto) throws PAException {
-        if ((StConverter.convertToString(dto.getUserLastUpdated()) == null)
-               || (StConverter.convertToString(dto.getUserLastUpdated()).trim().length() < 1)) {
-            serviceError("All creates and updates must have a userLastUpdated.  ");
-        }
         PlannedActivity bo = null;
         PlannedActivityDTO resultDto = null;
         Session session = null;

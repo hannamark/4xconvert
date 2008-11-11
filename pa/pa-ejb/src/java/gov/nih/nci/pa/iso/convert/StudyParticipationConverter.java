@@ -48,7 +48,6 @@ public class StudyParticipationConverter {
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -86,7 +85,6 @@ public class StudyParticipationConverter {
         bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setStudyProtocol(spBo);
-        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 }

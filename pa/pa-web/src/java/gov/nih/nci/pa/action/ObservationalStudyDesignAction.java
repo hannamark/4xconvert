@@ -74,8 +74,6 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                     StConverter.convertToSt(webDTO.getBiospecimenDescription()));  
             ospFromDatabaseDTO.setMaximumTargetAccrualNumber(
                     IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
-            ospFromDatabaseDTO.setUserLastUpdated((StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser())));
             PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospFromDatabaseDTO);
             detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);

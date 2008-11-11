@@ -1,10 +1,8 @@
 package gov.nih.nci.pa.iso.dto;
 
-import java.io.Serializable;
-
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.St;
+
+import java.io.Serializable;
 
 /**
  * BaseDTO for all common fields .
@@ -18,8 +16,6 @@ public class BaseDTO implements Serializable {
     
     private static final long serialVersionUID = 1234567890L;
     private Ii identifier;
-    private Ivl statusDateRange;
-    private St userLastUpdated;
     
     /**
      * 
@@ -37,38 +33,5 @@ public class BaseDTO implements Serializable {
         this.identifier = ii;
     }
 
-    /**
-     * 
-     * @return statusDateRange
-     */
-    public Ivl getStatusDateRange() {
-        return statusDateRange;
-    }
-
-    /**
-     * 
-     * @param statusDateRange statusDateRange
-     */
-    public void setStatusDateRange(Ivl statusDateRange) {
-        this.statusDateRange = statusDateRange;
-    }
-    
-    /**
-     * 
-     * @return userLastUpdated 
-     */
-    public St getUserLastUpdated() {
-        return userLastUpdated;
-    }
-
-
-    /**
-     * 
-     * @param userLastUpdated userLastUpdated
-     */
-    public void setUserLastUpdated(St userLastUpdated) {
-        this.userLastUpdated = userLastUpdated;
-    }
-    
 
 }

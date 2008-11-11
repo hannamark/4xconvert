@@ -27,7 +27,6 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
     public StratumGroupDTO convertFromDomainToDto(StratumGroup sg) {
         StratumGroupDTO sgDTO = new StratumGroupDTO();
         sgDTO.setIdentifier(IiConverter.convertToIi(sg.getId()));
-        sgDTO.setUserLastUpdated(StConverter.convertToSt(sg.getUserLastUpdated()));
         sgDTO.setDescription(StConverter.convertToSt(sg.getDescription()));
         sgDTO.setGroupNumberText(StConverter.convertToSt(sg.getGroupNumberText()));
         sgDTO.setStudyProtocolIi(IiConverter.convertToIi(sg.getStudyProtocol().getId()));
@@ -47,9 +46,6 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
         spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIi()));
         sg.setDateLastUpdated(new Date());
         sg.setStudyProtocol(spBo);
-        if (sgDTO.getUserLastUpdated() != null) {
-            sg.setUserLastUpdated(sgDTO.getUserLastUpdated().getValue());
-        }
         if (sgDTO.getDescription() != null) {
             sg.setDescription(sgDTO.getDescription().getValue());
         }

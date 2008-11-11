@@ -32,7 +32,6 @@ public class HealthCareFacilityConverter {
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setAssignedIdentifier(StConverter.convertToSt(bo.getIdentifier()));
         dto.setOrganizationIi(IiConverter.convertToIi(bo.getOrganization().getId()));
-        dto.setUserLastUpdated(StConverter.convertToSt(bo.getUserLastUpdated()));
         return dto;
     }
 
@@ -50,7 +49,6 @@ public class HealthCareFacilityConverter {
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIdentifier(StConverter.convertToString(dto.getAssignedIdentifier()));
         bo.setOrganization(oBo);
-        bo.setUserLastUpdated(StConverter.convertToString(dto.getUserLastUpdated()));
         return bo;
     }
 }
