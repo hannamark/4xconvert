@@ -39,6 +39,10 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String primaryPurposeCode;
     private String identifierType;
     private String organizationType;
+    private String userLastCreated;
+    private String clientName;
+    
+    
     
     
     
@@ -209,7 +213,31 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setOrganizationType(String organizationType) {
         this.organizationType = organizationType;
     }
-
+    /**
+     * @return the userLastCreated
+     */
+    public String getUserLastCreated() {
+        return userLastCreated;
+    }
+    /**
+     * @param userLastCreated the userLastCreated to set
+     */
+    public void setUserLastCreated(String userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+    /**
+     * @return the clientName
+     */
+    public String getClientName() {
+        return clientName;
+    }
+    /**
+     * @param clientName the clientName to set
+     */
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+    
     
     
 }
