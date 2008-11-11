@@ -4,26 +4,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.jms.JMSException;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.web.AbstractPoTest;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.Action;
 
 
 public class CreateOrganizationActionTest extends AbstractPoTest {
 
     CreateOrganizationAction action;
-    
+
     @Before
     public void setUp() {
         action = new CreateOrganizationAction();
@@ -62,7 +62,7 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
         assertNotNull(action.getOrganization().getPostalAddress());
         assertNotNull(action.getOrganization().getPostalAddress().getCountry());
     }
-    
+
     @Test
     public void getAvailableStatus() {
         Set<EntityStatus> availableStatus = action.getAvailableStatus();
@@ -71,10 +71,10 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
         assertEquals(EntityStatus.PENDING, iterator.next());
         assertEquals(EntityStatus.ACTIVE, iterator.next());
     }
-    
+
     @Test
     public void create() throws JMSException {
-        assertEquals(action.SUCCESS, action.create());
+        assertEquals(Action.SUCCESS, action.create());
         assertEquals(1, ActionHelper.getMessages().size());
         assertEquals("organization.create.success", ActionHelper.getMessages().get(0));
     }

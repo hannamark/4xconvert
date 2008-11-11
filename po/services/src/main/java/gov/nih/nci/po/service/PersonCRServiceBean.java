@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -98,21 +97,4 @@ import javax.ejb.TransactionAttributeType;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonCRServiceBean extends AbstractCRServiceBean<PersonCR, Person> implements PersonCRServiceLocal {
-
-    private PersonServiceLocal orgService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setPersonServiceBean(PersonServiceLocal svc) {
-        this.orgService = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(Person entity) {
-        orgService.update(entity);
-    }
-
 }

@@ -94,7 +94,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class QualifiedEntityServiceBean extends AbstractBaseServiceBean<QualifiedEntity>
+public class QualifiedEntityServiceBean extends AbstractCuratableServiceBean<QualifiedEntity>
     implements QualifiedEntityServiceLocal {
 
     /**

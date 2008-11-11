@@ -1,13 +1,14 @@
 package gov.nih.nci.po.service;
 
-import java.util.List;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -48,10 +49,10 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public <T extends CodeValue> List<T> list(Class<T> clz) {
         Session s = PoHibernateUtil.getCurrentSession();
         Query q = s.createQuery("FROM " + clz.getName());
         return q.list();
     }
-
 }

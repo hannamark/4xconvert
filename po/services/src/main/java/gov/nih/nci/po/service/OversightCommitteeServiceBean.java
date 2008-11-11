@@ -94,7 +94,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OversightCommitteeServiceBean extends AbstractBaseServiceBean<OversightCommittee>
+public class OversightCommitteeServiceBean extends AbstractCuratableServiceBean<OversightCommittee>
         implements OversightCommitteeServiceLocal {
 
     /**

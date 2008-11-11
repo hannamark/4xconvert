@@ -84,7 +84,6 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,13 +107,6 @@ public interface GenericStructrualRoleCRServiceLocal<CR extends ChangeRequest<?>
      * @throws EntityValidationException if the PersonCR proposes an invalid state for the target.
      */
     long create(CR proposedState) throws EntityValidationException;
-
-    /**
-     * update the target Org, and delete processed CRs (whether applied or rejected).
-     * @param crs the hibernate IDs of the CRs to delete. All crs must hahve the same target Org,
-     */
-    void processCRs(List<CR> crs);
-
 
     /**
      * @param entity the PersonCR to validate

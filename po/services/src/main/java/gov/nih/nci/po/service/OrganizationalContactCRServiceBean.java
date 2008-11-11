@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,24 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationalContactCRServiceBean 
+public class OrganizationalContactCRServiceBean
         extends AbstractCRServiceBean<OrganizationalContactCR, OrganizationalContact>
         implements OrganizationalContactCRServiceLocal {
-
-    private OrganizationalContactServiceLocal localSvc;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setOrganizationalContactServiceBean(OrganizationalContactServiceLocal svc) {
-        this.localSvc = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(OrganizationalContact entity) {
-        localSvc.update(entity);
-    }
-
 }

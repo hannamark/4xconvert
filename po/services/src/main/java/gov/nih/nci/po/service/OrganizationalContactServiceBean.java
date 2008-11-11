@@ -94,7 +94,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationalContactServiceBean extends AbstractBaseServiceBean<OrganizationalContact>
+public class OrganizationalContactServiceBean extends AbstractCuratableServiceBean<OrganizationalContact>
         implements OrganizationalContactServiceLocal {
 
     /**

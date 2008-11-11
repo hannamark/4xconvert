@@ -85,7 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -98,20 +97,4 @@ import javax.ejb.TransactionAttributeType;
 public class IdentifiedOrganizationCrServiceBean
     extends AbstractCRServiceBean<IdentifiedOrganizationCR, IdentifiedOrganization>
     implements IdentifiedOrganizationCrServiceLocal {
-
-    private IdentifiedOrganizationServiceLocal boService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setIdentifiedOrganizationServiceBean(IdentifiedOrganizationServiceLocal svc) {
-        this.boService = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(IdentifiedOrganization entity) {
-        boService.update(entity);
-    }
 }

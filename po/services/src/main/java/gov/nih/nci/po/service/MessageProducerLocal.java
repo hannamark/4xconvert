@@ -82,8 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.Curatable;
 
 import javax.jms.JMSException;
 
@@ -92,15 +91,9 @@ import javax.jms.JMSException;
  */
 public interface MessageProducerLocal {
     /**
+     * @param c the class of the entity being updated.
      * @param e entity to send update announcement for
      * @throws JMSException on error
      */
-    void sendUpdate(Organization e) throws JMSException;
-
-    /**
-     * @param e role to send update announcement for
-     * @throws JMSException on error
-     */
-    void sendUpdate(ResearchOrganization e) throws JMSException;
-
+    void sendUpdate(Class c, Curatable e) throws JMSException;
 }

@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.QualifiedEntityCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,23 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class QualifiedEntityCRServiceBean 
+public class QualifiedEntityCRServiceBean
         extends AbstractCRServiceBean<QualifiedEntityCR, QualifiedEntity>
         implements QualifiedEntityCRServiceLocal {
-
-    private QualifiedEntityServiceLocal prpService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setQualifiedEntityServiceBean(QualifiedEntityServiceLocal svc) {
-        this.prpService = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(QualifiedEntity entity) {
-        prpService.update(entity);
-    }
 }

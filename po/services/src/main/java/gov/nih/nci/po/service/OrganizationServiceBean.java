@@ -84,26 +84,18 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationCR;
-import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
-import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.ArrayList;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.jms.JMSException;
-
-import org.hibernate.Session;
 
 /**
- * 
+ *
  * @author gax
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationServiceBean extends AbstractBaseServiceBean<Organization> implements
+public class OrganizationServiceBean extends AbstractCuratableServiceBean<Organization> implements
         OrganizationServiceLocal {
 
     /**
@@ -115,39 +107,4 @@ public class OrganizationServiceBean extends AbstractBaseServiceBean<Organizatio
         org.setStatusCode(EntityStatus.PENDING);
         return super.create(org);
     }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws EntityValidationException
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void curate(Organization org) throws JMSException {
-        final Session s = PoHibernateUtil.getCurrentSession();
-        if (org.getId() != null) {
-            Organization o = loadAndMerge(org, s);
-            EntityUpdateCallback<Organization> entityUpdateCallback 
-                = new CRProcessor.EntityUpdateCallback<Organization>() {
-                public void entityUpdate(Organization target) {
-                    s.update(target);
-                }
-            };
-            CRProcessor.processCRs(new ArrayList<OrganizationCR>(o.getChangeRequests()), entityUpdateCallback);
-        } else {
-            s.save(org);
-        }
-        getPublisher().sendUpdate(org);
-    }
-
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
-    private Organization loadAndMerge(Organization org, Session s) {
-        Organization o = (Organization) s.load(Organization.class, org.getId());
-        if (org != o) {
-            o = (Organization) s.merge(org);
-        } else {
-            o = org;
-        }
-        return o;
-    }
-
 }

@@ -82,9 +82,11 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Curatable;
+import gov.nih.nci.po.data.bo.CuratableEntity;
+import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.util.JNDIUtil;
@@ -109,6 +111,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * EJB that handles publishing changes to people and organizations to
@@ -178,25 +182,25 @@ public class MessageProducerBean implements MessageProducerLocal {
     /**
      * {@inheritDoc}
      */
-    public void sendUpdate(Organization org) throws JMSException {
-        if (!EntityStatus.PENDING.equals(org.getStatusCode())) {
-          SubscriberUpdateMessage msg
-            = new SubscriberUpdateMessage(IdConverterRegistry.find(org.getClass()).convertToIi(org.getId()));
-          send(msg);
+    @SuppressWarnings("unchecked")
+    public void sendUpdate(Class c, Curatable entity) throws JMSException {
+        if (entity instanceof CuratableEntity) {
+            CuratableEntity castedEntity = (CuratableEntity) entity;
+            if (!EntityStatus.PENDING.equals(castedEntity.getStatusCode())) {
+                Ii ii = IdConverterRegistry.find(c).convertToIi(((PersistentObject) entity).getId());
+                SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);
+                send(msg);
+            }
+        } else if (entity instanceof CuratableRole) {
+            CuratableRole castedEntity = (CuratableRole) entity;
+            if (!RoleStatus.PENDING.equals(castedEntity.getStatus())) {
+                Ii ii = IdConverterRegistry.find(c).convertToIi(((PersistentObject) entity).getId());
+                SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);
+                send(msg);
+            }
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void sendUpdate(ResearchOrganization rOrg) throws JMSException {
-        if (!RoleStatus.PENDING.equals(rOrg.getStatus())) {
-            SubscriberUpdateMessage msg
-            = new SubscriberUpdateMessage(IdConverterRegistry.find(rOrg.getClass()).convertToIi(rOrg.getId()));
-            send(msg);
-        }
-    }
-    
+
     private synchronized void send(Serializable o) throws JMSException {
         ObjectMessage msg = session.createObjectMessage(o);
         messageProducer.send(msg);

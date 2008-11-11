@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,26 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class HealthCareFacilityCRServiceBean 
+public class HealthCareFacilityCRServiceBean
         extends AbstractCRServiceBean<HealthCareFacilityCR, HealthCareFacility>
         implements HealthCareFacilityCRServiceLocal {
-
-    private HealthCareFacilityServiceLocal hcfService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setHealthCareFacilityServiceBean(HealthCareFacilityServiceLocal svc) {
-        this.hcfService = svc;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void entityUpdate(HealthCareFacility entity) {
-        hcfService.update(entity);
-    }
-
 }

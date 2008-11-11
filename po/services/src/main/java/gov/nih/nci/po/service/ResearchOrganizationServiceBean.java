@@ -83,27 +83,18 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
-import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.jms.JMSException;
-
-import org.hibernate.Session;
 
 /**
  * Implementation of interface.
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class ResearchOrganizationServiceBean extends AbstractBaseServiceBean<ResearchOrganization>
+public class ResearchOrganizationServiceBean extends AbstractCuratableServiceBean<ResearchOrganization>
         implements ResearchOrganizationServiceLocal {
 
     /**
@@ -112,43 +103,6 @@ public class ResearchOrganizationServiceBean extends AbstractBaseServiceBean<Res
     @Override
     public long create(ResearchOrganization obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
-        obj.setStatusDate(new Date());
         return super.create(obj);
-    }
-    
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws EntityValidationException
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void curate(ResearchOrganization org) throws JMSException {
-        final Session s = PoHibernateUtil.getCurrentSession();
-        if (org.getId() != null) {
-            ResearchOrganization o = loadAndMerge(org, s);
-            EntityUpdateCallback<ResearchOrganization> entityUpdateCallback 
-                = new CRProcessor.EntityUpdateCallback<ResearchOrganization>() {
-                public void entityUpdate(ResearchOrganization target) {
-                    target.setStatusDate(new Date());
-                    s.update(target);
-                }
-            };
-            CRProcessor.processCRs(new ArrayList<ResearchOrganizationCR>(o.getChangeRequests()), entityUpdateCallback);
-        } else {
-            org.setStatusDate(new Date());
-            s.save(org);
-        }
-        getPublisher().sendUpdate(org);
-    }
-
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
-    private ResearchOrganization loadAndMerge(ResearchOrganization org, Session s) {
-        ResearchOrganization o = (ResearchOrganization) s.load(ResearchOrganization.class, org.getId());
-        if (org != o) {
-            o = (ResearchOrganization) s.merge(org);
-        } else {
-            o = org;
-        }
-        return o;
     }
 }

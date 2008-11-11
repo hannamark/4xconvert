@@ -82,27 +82,76 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.bo.ChangeRequest;
+import gov.nih.nci.po.data.bo.Curatable;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import javax.ejb.Stateless;
+import java.util.ArrayList;
+
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+
+import org.hibernate.Session;
 
 /**
  * @author Scott Miller
+ * @param <T>
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class ClinicalResearchStaffServiceBean extends AbstractCuratableServiceBean<ClinicalResearchStaff>
-    implements ClinicalResearchStaffServiceLocal {
+public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractBaseServiceBean<T> {
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public long create(ClinicalResearchStaff obj) throws EntityValidationException {
-        obj.setStatus(RoleStatus.PENDING);
-        return super.create(obj);
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void curate(T curatable) throws JMSException {
+        final Session s = PoHibernateUtil.getCurrentSession();
+        Curatable object = curatable;
+        if (object.getId() != null) {
+            object = loadAndMerge(object, s);
+            handleExistingObjectCuration(s, object);
+        } else {
+            s.save(object);
+        }
+        getPublisher().sendUpdate(getTypeArgument(), object);
     }
+
+    @SuppressWarnings("unchecked")
+    private void handleExistingObjectCuration(final Session s, Curatable object) {
+        Curatable target = null;
+        ArrayList<ChangeRequest<Curatable>> crs = new ArrayList<ChangeRequest<Curatable>>(
+                object.getChangeRequests());
+        for (ChangeRequest<Curatable> cr : crs) {
+            Curatable currentTarget = cr.getTarget();
+
+            if (currentTarget == null) {
+                throw new IllegalArgumentException("target cannot be null");
+            }
+            if (target == null) {
+                target = currentTarget;
+            } else if (!target.equals(currentTarget)) {
+                throw new IllegalArgumentException("all crs must have the same target");
+            }
+
+            cr.setProcessed(true);
+            s.update(cr);
+        }
+
+        if (target != null) {
+            target.getChangeRequests().removeAll(crs);
+            s.update(target);
+        }
+    }
+
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    private Curatable loadAndMerge(Curatable object, Session s) {
+        Curatable o = (Curatable) s.load(getTypeArgument(), object.getId());
+        if (object != o) {
+            o = (Curatable) s.merge(object);
+        } else {
+            o = object;
+        }
+        return o;
+    }
+
 }

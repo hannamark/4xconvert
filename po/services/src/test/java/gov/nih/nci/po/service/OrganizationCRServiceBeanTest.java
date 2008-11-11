@@ -1,10 +1,6 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -14,9 +10,6 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -68,70 +61,4 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(ocr.getAbbreviatedName(), cr.getAbbreviatedName());
         assertEquals(1, cr.getTarget().getChangeRequests().size());
     }
-
-    @Test
-    public void processCRsBad() {
-        List<OrganizationCR> list = new ArrayList<OrganizationCR>();
-        list.add(new OrganizationCR(null));
-        try{
-            instance.processCRs(list);
-            fail();
-        }catch(IllegalArgumentException nb){
-            // null target.
-        }
-
-        OrganizationCR ocr1 = new OrganizationCR(new Organization());
-        OrganizationCR ocr2 = new OrganizationCR(new Organization());
-        fill(ocr1.getTarget());
-        fill(ocr1);
-        fill(ocr2.getTarget());
-        fill(ocr2);
-        PoHibernateUtil.getCurrentSession().save(ocr1.getTarget());
-        PoHibernateUtil.getCurrentSession().save(ocr2.getTarget());
-        PoHibernateUtil.getCurrentSession().save(ocr1);
-        PoHibernateUtil.getCurrentSession().save(ocr2);
-        list.clear();
-        list.add(ocr1);
-        list.add(ocr2);
-        assertNotSame(ocr1.getTarget(), ocr2.getTarget());
-        try{
-            instance.processCRs(list);
-            fail();
-        }catch(IllegalArgumentException nb){
-            // different target.
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void processCRs() {
-        Organization o = new Organization();
-        fill(o);
-        PoHibernateUtil.getCurrentSession().save(o);
-        OrganizationCR ocr1 = new OrganizationCR(o);
-        OrganizationCR ocr2 = new OrganizationCR(o);
-        fill(ocr1);
-        fill(ocr2);
-        PoHibernateUtil.getCurrentSession().save(ocr1);
-        PoHibernateUtil.getCurrentSession().save(ocr2);
-        List<OrganizationCR> list = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
-        o = list.get(0).getTarget();
-        o.setAbbreviatedName("new abbreviatedName");
-        instance.processCRs(list);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        // check if org was updated.
-        Organization o2 = (Organization) PoHibernateUtil.getCurrentSession().createCriteria(Organization.class).uniqueResult();
-        assertEquals(o.getId(), o2.getId());
-        assertNotSame(o, o2);
-        assertEquals("new abbreviatedName", o2.getAbbreviatedName());
-        assertEquals(0, o2.getChangeRequests().size());
-        list = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationCR.class).list();
-        assertEquals(2, list.size());
-        for (OrganizationCR ocr : list) {
-            assertTrue(ocr.isProcessed());
-            assertFalse(o2.getChangeRequests().contains(ocr));
-        }
-    }
-
 }

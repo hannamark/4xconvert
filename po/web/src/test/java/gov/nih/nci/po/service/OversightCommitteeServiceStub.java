@@ -87,6 +87,8 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 /**
  * @author Todd Parnell
  *
@@ -123,6 +125,9 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
     }
 
     public void update(OversightCommittee updated) {
-        
+
+    }
+
+    public void curate(OversightCommittee correlation) throws JMSException {
     }
 }

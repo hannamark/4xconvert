@@ -87,6 +87,8 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 /**
  * @author Scott Miller
  *
@@ -135,6 +137,9 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
     }
 
     public void update(HealthCareProvider updated) {
-        
+
+    }
+
+    public void curate(HealthCareProvider correlation) throws JMSException {
     }
 }

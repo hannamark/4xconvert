@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.bo;
 
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -98,7 +97,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @author Todd Parnell
  */
 @gov.nih.nci.po.util.DuplicateStatusCheck
-public interface Curatable<BO extends PersistentObject, CR extends ChangeRequest<BO>> extends Serializable {
+public interface Curatable<BO extends PersistentObject, CR extends ChangeRequest<BO>> extends PersistentObject {
 
     /**
      * @return the object this was curated to be a duplicate of, if curationStatus

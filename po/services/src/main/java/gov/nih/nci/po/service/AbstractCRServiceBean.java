@@ -85,12 +85,6 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Curatable;
-import gov.nih.nci.po.service.CRProcessor.EntityUpdateCallback;
-
-import java.util.List;
-
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 /**
  * Base for all entity change request (CR) services.
@@ -98,27 +92,8 @@ import javax.ejb.TransactionAttributeType;
  * @param <ENTITY> the PersistentObject type.
  * @author gax
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")  // note this class was defining methods that CR service beans
+    // needed, there are no more special methods, but the class remains in case some return.
 public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Curatable>
         extends AbstractBaseServiceBean<CR> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void processCRs(List<CR> crs) {
-        EntityUpdateCallback<ENTITY> entityUpdateCallback = new CRProcessor.EntityUpdateCallback<ENTITY>() {
-            public void entityUpdate(ENTITY target) {
-                AbstractCRServiceBean.this.entityUpdate(target);
-            }
-        };
-        CRProcessor.processCRs(crs, entityUpdateCallback);
-    }
-
-
-
-    /**
-     * @param entity the entity to update.
-     */
-    protected abstract void entityUpdate(ENTITY entity);
-
 }

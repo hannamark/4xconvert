@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,24 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class ResearchOrganizationCRServiceBean 
+public class ResearchOrganizationCRServiceBean
         extends AbstractCRServiceBean<ResearchOrganizationCR, ResearchOrganization>
         implements ResearchOrganizationCRServiceLocal {
-
-    private ResearchOrganizationServiceLocal hcpService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setRoBean(ResearchOrganizationServiceLocal svc) {
-        this.hcpService = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(ResearchOrganization entity) {
-        hcpService.update(entity);
-    }
-
 }

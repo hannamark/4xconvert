@@ -82,10 +82,12 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Correlation;
+
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.po.data.bo.Correlation;
+import javax.jms.JMSException;
 
 /**
  * Defines the generic methods we expect to implement for all structural role.
@@ -101,6 +103,7 @@ public interface GenericStructrualRoleServiceLocal<T extends Correlation>
      * @throws EntityValidationException if validation fails
      */
     long create(T structuralRole) throws EntityValidationException;
+
 
     /**
      * @param id db id to get
@@ -120,11 +123,18 @@ public interface GenericStructrualRoleServiceLocal<T extends Correlation>
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(T entity);
-    
+
     /**
-     * 
+     *
      * @param updated The structural role to update.
      */
     void update(T updated);
-    
+
+    /**
+     * Method for the curator to use to curate the correlation.
+     * @param correlation the correlation to curate.
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
+     */
+    void curate(T correlation) throws JMSException;
+
 }

@@ -94,7 +94,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class HealthCareProviderServiceBean extends AbstractBaseServiceBean<HealthCareProvider>
+public class HealthCareProviderServiceBean extends AbstractCuratableServiceBean<HealthCareProvider>
         implements HealthCareProviderServiceLocal {
 
     /**

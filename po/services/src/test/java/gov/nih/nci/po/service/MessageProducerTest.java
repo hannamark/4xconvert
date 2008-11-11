@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.convert.IiConverter;
@@ -105,14 +106,12 @@ import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-
 /**
  *
  */
 public class MessageProducerTest extends AbstractHibernateTestCase {
 
-    public static <T extends PersistentObject> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service)
+    public static <T extends Curatable> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service)
             throws JMSException {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertEquals(1, topic.messages.size());
@@ -123,12 +122,12 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         assertEquals(id.getId(), IiConverter.convertToLong(((SubscriberUpdateMessage) om.getObject()).getId()));
     }
 
-    public static <T extends PersistentObject> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
+    public static <T extends Curatable> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertEquals(0, topic.messages.size());
     }
 
-    public static <T extends PersistentObject> void clearMessages(AbstractBaseServiceBean<T> service) {
+    public static <T extends Curatable> void clearMessages(AbstractBaseServiceBean<T> service) {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         topic.messages.clear();
     }
@@ -194,7 +193,7 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
 
         Organization org = createOrg();
         assertEquals(org.getStatusCode(), EntityStatus.PENDING);
-        mp.sendUpdate(org);
+        mp.sendUpdate(Organization.class, org);
 
         TopicStub topic = (TopicStub) mp.getTopic(null);
         assertEquals(0, topic.messages.size());
@@ -211,17 +210,17 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         // verify ACTIVE
         assertEquals(org.getStatusCode(), EntityStatus.PENDING);
         org.setStatusCode(EntityStatus.ACTIVE);
-        mp.sendUpdate(org);
+        mp.sendUpdate(Organization.class, org);
         assertMessageCreated(org, bean);
 
         clearMessages(bean);
         org.setStatusCode(EntityStatus.INACTIVE);
-        mp.sendUpdate(org);
+        mp.sendUpdate(Organization.class, org);
         assertMessageCreated(org, bean);
 
         clearMessages(bean);
         org.setStatusCode(EntityStatus.NULLIFIED);
-        mp.sendUpdate(org);
+        mp.sendUpdate(Organization.class, org);
         assertMessageCreated(org, bean);
     }
 

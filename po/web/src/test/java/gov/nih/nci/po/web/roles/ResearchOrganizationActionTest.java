@@ -27,7 +27,6 @@ import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Action;
 
 public class ResearchOrganizationActionTest extends AbstractPoTest {
@@ -42,7 +41,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
     public void testPrepareNoOrgId() throws Exception {
         action.prepare();
     }
-    
+
     @Test
     public void testPrepareWithOrgId() throws Exception {
         action.getOrganization().setId(1L);
@@ -63,7 +62,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         action.setOrganization(null);
         assertNull(action.getOrganization());
     }
-    
+
     @Test
     public void testResearchOrganizationProperty() {
         assertNotNull(action.getResearchOrganization());
@@ -82,7 +81,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertEquals(ResearchOrganizationSortCriterion.ID.name(), action.getResults().getSortCriterion());
         assertEquals(SortOrderEnum.ASCENDING, action.getResults().getSortDirection());
     }
-    
+
     @Test
     public void list() {
         assertEquals(Action.SUCCESS, action.list());
@@ -100,17 +99,17 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableStatusForAddForm() {
-        List expected = new ArrayList();
+        List<EntityStatus> expected = new ArrayList<EntityStatus>();
         expected.add(EntityStatus.PENDING);
         expected.add(EntityStatus.ACTIVE);
-        
+
         action.getResearchOrganization().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
-        
+
         assertTrue(availableStatus.containsAll(expected));
         assertTrue(expected.containsAll(availableStatus));
     }
-    
+
     @Test
     public void testGetAvailableStatusForEditForm() {
         verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
@@ -125,20 +124,22 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
     }
-    
+
     @Test
     public void testGetAvailableDuplicateOfs() {
         final Long playerId = 1L;
-        
+
         action.getResearchOrganization().setId(null);
         action.getOrganization().setId(playerId);
         assertNull(action.getAvailableDuplicateOfs());
-        
+
         action.getResearchOrganization().setId(5L);
         action.getOrganization().setId(playerId);
         assertNull(action.getAvailableDuplicateOfs());
-        
+
         action = new ResearchOrganizationAction() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             ResearchOrganizationServiceLocal getResearchOrganizationService() {
                 return new ResearchOrganizationServiceStub() {
@@ -172,5 +173,5 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertEquals(4L, iterator.next().getId().longValue());
         assertFalse(iterator.hasNext());
     }
-    
+
 }

@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,24 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OversightCommitteeCRServiceBean 
+public class OversightCommitteeCRServiceBean
         extends AbstractCRServiceBean<OversightCommitteeCR, OversightCommittee>
         implements OversightCommitteeCRServiceLocal {
-
-    private OversightCommitteeServiceLocal hcpService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setOcBean(OversightCommitteeServiceLocal svc) {
-        this.hcpService = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(OversightCommittee entity) {
-        hcpService.update(entity);
-    }
-
 }

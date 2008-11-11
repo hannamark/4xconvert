@@ -115,6 +115,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
      */
     public static final int MAX_IN_CLAUSE_SIZE = 500;
     private final Class<T> typeArgument;
+
     /**
      * message publisher used on update notification.
      */

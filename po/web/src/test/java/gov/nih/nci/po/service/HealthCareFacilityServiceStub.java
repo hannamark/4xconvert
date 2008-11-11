@@ -87,6 +87,8 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 /**
  * Mock implementation.
  */
@@ -122,7 +124,9 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
     }
 
     public void update(HealthCareFacility updated) {
-        
+
     }
 
+    public void curate(HealthCareFacility correlation) throws JMSException {
+    }
 }

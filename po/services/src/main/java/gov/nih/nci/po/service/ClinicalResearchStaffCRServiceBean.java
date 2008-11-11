@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,26 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class ClinicalResearchStaffCRServiceBean 
+public class ClinicalResearchStaffCRServiceBean
         extends AbstractCRServiceBean<ClinicalResearchStaffCR, ClinicalResearchStaff>
         implements ClinicalResearchStaffCRServiceLocal {
-
-    private ClinicalResearchStaffServiceLocal crsService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setClinicalResearchStaffServiceBean(ClinicalResearchStaffServiceLocal svc) {
-        this.crsService = svc;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void entityUpdate(ClinicalResearchStaff entity) {
-        crsService.update(entity);
-    }
-
 }

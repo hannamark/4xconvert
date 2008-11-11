@@ -130,7 +130,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created org service.
-     * 
+     *
      * @return the service
      */
     public static OrganizationServiceBean getOrganizationServiceBean() {
@@ -141,7 +141,6 @@ public class EjbTestHelper {
 
     public static OrganizationCRServiceBean getOrganizationCRServiceBean() {
         OrganizationCRServiceBean crService = new OrganizationCRServiceBean();
-        crService.setOrganizationServiceBean(getOrganizationServiceBean());
         crService.setPublisher(getMessageProducer());
         return crService;
     }
@@ -159,7 +158,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created person service.
-     * 
+     *
      * @return the service
      */
     public static PersonServiceBean getPersonServiceBean() {
@@ -170,7 +169,6 @@ public class EjbTestHelper {
 
     public static PersonCRServiceBean getPersonCRServiceBean() {
         PersonCRServiceBean personCRServiceBean = new PersonCRServiceBean();
-        personCRServiceBean.setPersonServiceBean(getPersonServiceBean());
         personCRServiceBean.setPublisher(getMessageProducer());
         return personCRServiceBean;
     }
@@ -194,7 +192,6 @@ public class EjbTestHelper {
 
     public static HealthCareProviderCRServiceBean getHealthCareProviderCRServiceBean() {
         HealthCareProviderCRServiceBean s = new HealthCareProviderCRServiceBean();
-        s.setHealthCareProviderServiceBean(getHealthCareProviderServiceBean());
         s.setPublisher(getMessageProducer());
         return s;
     }
@@ -236,7 +233,7 @@ public class EjbTestHelper {
 
     /**
      * Get a newly created and configured generic service.
-     * 
+     *
      * @return the service
      */
     public static GenericServiceBean getGenericServiceBean() {
@@ -258,7 +255,6 @@ public class EjbTestHelper {
 
     public static OversightCommitteeCRServiceBean getOversightCommitteeRCServiceBean() {
         OversightCommitteeCRServiceBean ocService = new OversightCommitteeCRServiceBean();
-        ocService.setOcBean(getOversightCommitteeServiceBean());
         ocService.setPublisher(getMessageProducer());
         return ocService;
     }
@@ -281,7 +277,6 @@ public class EjbTestHelper {
 
     public static ResearchOrganizationCRServiceBean getResearchOrganizationRCServiceBean() {
         ResearchOrganizationCRServiceBean ocService = new ResearchOrganizationCRServiceBean();
-        ocService.setRoBean(getResearchOrganizationServiceBean());
         ocService.setPublisher(getMessageProducer());
         return ocService;
     }
@@ -307,14 +302,13 @@ public class EjbTestHelper {
      */
     public static HealthCareFacilityCRServiceLocal getHealthCareFacilityCRServiceBean() {
         HealthCareFacilityCRServiceBean s = new HealthCareFacilityCRServiceBean();
-        s.setHealthCareFacilityServiceBean(getHealthCareFacilityServiceBean());
         s.setPublisher(getMessageProducer());
         return s;
     }
 
     /**
      * Get the bean.
-     * 
+     *
      * @return Get the bean.
      */
     public static ClinicalResearchStaffServiceLocal getClinicalResearchStaffServiceBean() {
@@ -325,7 +319,6 @@ public class EjbTestHelper {
 
     public static ClinicalResearchStaffCRServiceLocal getClinicalResearchStaffCRServiceBean() {
         ClinicalResearchStaffCRServiceBean s = new ClinicalResearchStaffCRServiceBean();
-        s.setClinicalResearchStaffServiceBean(getClinicalResearchStaffServiceBean());
         s.setPublisher(getMessageProducer());
         return s;
     }
@@ -338,7 +331,6 @@ public class EjbTestHelper {
 
     public static PersonResourceProviderCRServiceLocal getPersonResourceProviderCRServiceBean() {
         PersonResourceProviderCRServiceBean s = new PersonResourceProviderCRServiceBean();
-        s.setPersonResourceProviderServiceBean(getPersonResourceProviderServiceBean());
         s.setPublisher(getMessageProducer());
         return s;
     }
@@ -351,7 +343,6 @@ public class EjbTestHelper {
 
     public static OrganizationResourceProviderCRServiceLocal getOrganizationResourceProviderCRServiceBean() {
         OrganizationResourceProviderCRServiceBean s = new OrganizationResourceProviderCRServiceBean();
-        s.setOrganizationResourceProviderBean(getOrganizationResourceProviderServiceBean());
         s.setPublisher(getMessageProducer());
         return s;
     }
@@ -381,20 +372,19 @@ public class EjbTestHelper {
         svc.setLocalCRService(new IdentifiedPersonCrServiceBean());
         return (IdentifiedPersonCorrelationServiceRemote) wrapWithProxies(svc);
     }
-    
+
     public static QualifiedEntityServiceBean getQualifiedEntityServiceBean() {
         QualifiedEntityServiceBean bean = new QualifiedEntityServiceBean();
         bean.setPublisher(getMessageProducer());
         return bean;
     }
-    
+
     public static QualifiedEntityCRServiceBean getQualifiedEntityCRServiceBean() {
         QualifiedEntityCRServiceBean bean = new QualifiedEntityCRServiceBean();
-        bean.setQualifiedEntityServiceBean(getQualifiedEntityServiceBean());
         bean.setPublisher(getMessageProducer());
         return bean;
     }
-    
+
     public static QualifiedEntityCorrelationServiceRemote getQualifiedEntityCorrelationServiceAsRemote() {
         QualifiedEntityCorrelationServiceBean svc = new QualifiedEntityCorrelationServiceBean();
         svc.setQeService(getQualifiedEntityServiceBean());
@@ -443,13 +433,12 @@ public class EjbTestHelper {
         svc.setOcService(getOrganizationalContactService());
         svc.setOcCRService(getOrganizationalContactCrService());
         return svc;
-        
+
     }
 
     public static OrganizationalContactCRServiceLocal getOrganizationalContactCrService() {
         OrganizationalContactCRServiceBean svc = new OrganizationalContactCRServiceBean();
         OrganizationalContactServiceBean ocs = (OrganizationalContactServiceBean) getOrganizationalContactService();
-        svc.setOrganizationalContactServiceBean(ocs);
         svc.setPublisher(ocs.getPublisher());
         return svc;
     }

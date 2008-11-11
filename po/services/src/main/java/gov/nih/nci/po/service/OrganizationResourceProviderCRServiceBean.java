@@ -86,7 +86,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
 import gov.nih.nci.po.data.bo.OrganizationResourceProviderCR;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,23 +96,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationResourceProviderCRServiceBean 
+public class OrganizationResourceProviderCRServiceBean
         extends AbstractCRServiceBean<OrganizationResourceProviderCR, OrganizationResourceProvider>
         implements OrganizationResourceProviderCRServiceLocal {
-
-    private OrganizationResourceProviderServiceLocal orpService;
-
-    /**
-     * @param svc injected.
-     */
-    @EJB
-    void setOrganizationResourceProviderBean(OrganizationResourceProviderServiceLocal svc) {
-        this.orpService = svc;
-    }
-
-    /**{@inheritDoc}*/
-    @Override
-    protected void entityUpdate(OrganizationResourceProvider entity) {
-        orpService.update(entity);
-    }
 }
