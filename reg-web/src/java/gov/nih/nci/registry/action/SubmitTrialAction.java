@@ -254,7 +254,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             docDTO.setStudyProtocolIi(studyProtocolIi);
             docDTO.setTypeCode(CdConverter.convertStringToCd(docTypeCode));
             docDTO.setFileName(StConverter.convertToSt(fileName));
-            docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+            //docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(file))));
             RegistryServiceLocator.getDocumentService().create(docDTO);
         } catch (PAException pae) {
@@ -310,8 +310,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                         .getNciDivisionProgramCode())));
                 studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(holder.getInstituteCode()));
                 studyResoureDTO.setSerialNumber(IntConverter.convertToInt(holder.getSerialNumber()));
-                studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
-                        .getRemoteUser())));
+               // studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
+               //         .getRemoteUser())));
                 RegistryServiceLocator.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
             }
         } catch (PAException pae) {
