@@ -15,7 +15,6 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
  */
 public class RegistryDisplayTagDecorator extends TableDecorator {
     
-    private DocumentWorkflowStatusCode documentWorkflowStatusCode;
     private String loginUser;
     private String userLastCreated;
 
@@ -52,7 +51,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     * @return masked processing status
     */
    public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
-       documentWorkflowStatusCode = ((StudyProtocolQueryDTO)
+       DocumentWorkflowStatusCode documentWorkflowStatusCode = ((StudyProtocolQueryDTO)
                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
        if (documentWorkflowStatusCode != null) {
            loginUser =  ServletActionContext.getRequest().getRemoteUser();
