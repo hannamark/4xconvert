@@ -25,9 +25,9 @@ register.mail.body.url=http://localhost:8080/registry/registerUseractivate.actio
 
 # Protocol Submission Notification
 submission.mail.subject=Clinical Trials Reporting Program (CTRP) Protocol Submission Acknowledgement
-submission.mail.body.para1=You have successfully submitted the following protocol to the NCI Clinical Trials Reporting Office (CTRO):\nLead Organization Trial Identifier 
+submission.mail.body.para1=You have successfully submitted the following protocol to the NCI Clinical Trials Reporting Office (CTRO):\n Lead Organization Trial Identifier 
 submission.mail.body.para2=This protocol has been assigned a unique NCI number for tracking which you may need to reference in future correspondence with the CTRO:\n NCI Trial Identifier
-submission.mail.body.para3=Shortly we will send you a Trial Summary Report which will contain key elements that we have abstracted from the protocol.\nWe request that you review these elements for accuracy and reply with your assessment.If you have questions, you may call the NCI CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov.\nThank you for your submission.
+submission.mail.body.para3=Shortly we will send you a Trial Summary Report which will contain key elements that we have abstracted from the protocol.\n We request that you review these elements for accuracy and reply with your assessment.If you have questions, you may call the NCI CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov.\n Thank you for your submission.
 
 # Protocol Rejection Notification
 rejection.mail.subject=Clinical Trials Reporting Program (CTRP) Protocol Submission Rejection
