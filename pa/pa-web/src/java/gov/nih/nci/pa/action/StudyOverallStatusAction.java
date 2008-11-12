@@ -37,6 +37,7 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for viewing and editing the protocol status.
+ * Additional comment to trigger update.  TODO remove this line.
  *
  * @author Hugh Reinhart
  * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not
@@ -379,7 +380,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         if (statusReason == null) {
             this.statusReason = null;
         } else {
-            this.statusReason = (statusReason.length() > AbstractEntity.LONG_TEXT_LENGTH) 
+            this.statusReason = (statusReason.length() > AbstractEntity.LONG_TEXT_LENGTH)
                     ? statusReason.substring(0, AbstractEntity.LONG_TEXT_LENGTH) : statusReason;
         }
     }
