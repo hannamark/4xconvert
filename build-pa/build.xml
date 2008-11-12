@@ -325,7 +325,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="register.mail.body.url" value="${register.mail.body.url}"/>
             <property name="submission.mail.subject" value="${submission.mail.subject}"/>
             <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
-            <property name="submission.notify.body.para2" value="${submission.notify.body.para2}"/>
+            <property name="submission.mail.body.para2" value="${submission.notify.body.para2}"/>
             <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
             <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
             <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
