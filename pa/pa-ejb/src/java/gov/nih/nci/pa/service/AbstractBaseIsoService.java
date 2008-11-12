@@ -52,7 +52,24 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     protected  Logger getLogger() {
         return logger;
     }
-    
+    /**
+     * @param bo domain ojbect
+     * @return DTO iso transfer object
+     * @throws PAException exception
+     */
+    @SuppressWarnings(UNCHECKED)
+    protected DTO convertFromDomainToDto(BO bo) throws PAException {
+        return (DTO) Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
+    }
+    /**
+     * @param dto iso transfer object
+     * @return DTO iso transfer object
+     * @throws PAException exception
+     */
+    @SuppressWarnings(UNCHECKED)
+    protected BO convertFromDtoToDomain(DTO dto) throws PAException {
+        return (BO) Converters.get(getConverterArgument()).convertFromDtoToDomain(dto);
+    }
     /**
      * Get class of the implementation.
      *
@@ -88,7 +105,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
                 serviceError("Object not found using get() for id = "
                         + IiConverter.convertToString(ii) + ".  ");
             }
-            resultDto = (DTO) Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
+            resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
             serviceError("Hibernate exception in get().", hbe);
         }
@@ -127,7 +144,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
-            bo = (BO) Converters.get(getConverterArgument()).convertFromDtoToDomain(dto);
+            bo = convertFromDtoToDomain(dto);
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setDateLastCreated(new Date());
                 bo.setDateLastUpdated(bo.getDateLastCreated());
@@ -140,7 +157,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             }
             bo = (BO) session.merge(bo);
             session.flush();
-            resultDto = (DTO) Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
+            resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
             serviceError("Hibernate exception in createOrUpdate().  ", hbe);
         }
