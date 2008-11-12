@@ -148,21 +148,21 @@ import org.hibernate.Session;
             StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
                     Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));         
 
-            StudyProtocol studyProtocol = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
-            sp = studyProtocol;
+            StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
+            
             if (ejbContext != null) {
             sp.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
             }
             sp.setDateLastUpdated(now);
-            session.merge(sp);
-            session.flush();
-
-            spDTO =  StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
+            session.update(sp);
+            spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while updating StudyProtocol for id = "
                     + studyProtocolDTO.getIdentifier().getExtension() , hbe);
             throw new PAException(" Hibernate exception while updating StudyProtocol for id = "
                     + studyProtocolDTO.getIdentifier().getExtension() , hbe);
+        } finally {
+            session.flush();
         }
 
         return spDTO;
@@ -513,5 +513,6 @@ import org.hibernate.Session;
         }
         return nciIdentifier;
     }
+    
 
 }
