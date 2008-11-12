@@ -2,6 +2,7 @@
 <html>
 <head>
     <s:set name="isCreate" value="organization.id == null"/>
+    <s:set name="isNotCreate" value="organization.id != null"/>
     <s:if test="%{isCreate}">
         <title>Create Organization</title>
     </s:if>
@@ -30,7 +31,7 @@
 <%-- page conditional variable --%>
 <c:url value="/notYetImplemented.jsp" var="urlNotYetImplemented"/>
 
-<s:if test="%{!isCreate}">
+<s:if test="%{isNotCreate}">
 	<c:if test="${fn:length(organization.changeRequests) > 0}">
 	<s:form action="ajax/organization/curate/changeCurrentChangeRequest.action" id="changeCrForm">
 	    <s:hidden key="rootKey"/>
@@ -149,7 +150,7 @@
 		        <po:contacts contactableKeyBase="organization"/>
 		    </div>
 		</div>
-<s:if test="%{!isCreate}">
+<s:if test="%{isNotCreate}">
         <div class="boxouter">
         <h2>Assign Organizational Roles</h2>
             <div class="box_white"> 
