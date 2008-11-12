@@ -12,7 +12,8 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode; 
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -279,7 +280,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.documentWorkflowStatuses as dws  "
                             + "left outer join sp.studyOverallStatuses as sos  "
                             + "left outer join sp.studyContacts as sc "
-                            + "left outer join sc.healthCareProvider as hcp "
+                            + "left outer join sc.clinicalResearchStaff as hcp "
                             + "left outer join hcp.person as per "
                             + "left outer join sp.studyParticipations as sps  "
                             + "left outer join sps.healthCareFacility as hcf "
@@ -306,7 +307,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @throws PAException
      *             paException
      */
-    @SuppressWarnings({ "PMD.InefficientStringBuffering",
+    @SuppressWarnings({"PMD.InefficientStringBuffering",
             "PMD.ConsecutiveLiteralAppends", "PMD.ExcessiveMethodLength",
             "NPathComplexity" })
     private String generateWhereClause(
@@ -342,45 +343,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
-                    .getLeadOrganizationTrialIdentifier())) {
-                if (studyProtocolQueryCriteria.getIdentifierType() == null)  {
-                    where
-                            .append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                                    + studyProtocolQueryCriteria
-                                            .getLeadOrganizationTrialIdentifier()
-                                            .toUpperCase().trim().replaceAll(
-                                                    "'", "''") + "%'");
-                    where.append(" and sps.functionalCode = '").append(
-                            StudyParticipationFunctionalCode.LEAD_ORAGANIZATION
-                                    + "'");
-                } else if (studyProtocolQueryCriteria.getIdentifierType()
-                        .equalsIgnoreCase("Lead Organization")) {
-                    where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                                    + studyProtocolQueryCriteria
-                                            .getLeadOrganizationTrialIdentifier()
-                                            .toUpperCase().trim().replaceAll(
-                                                    "'", "''") + "%'");
-                    where.append(" and sps.functionalCode = '").append(
-                            StudyParticipationFunctionalCode.LEAD_ORAGANIZATION
-                                    + "'");
-                } else if (studyProtocolQueryCriteria.getIdentifierType()
-                        .equalsIgnoreCase("NCI")) {
-                    where.append(" and upper(sp.identifier) like '%"
-                            + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
-                                    .toUpperCase().trim().replaceAll("'", "''")
-                            + "%'");
-                } else {
-                    where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                                    + studyProtocolQueryCriteria
-                                            .getLeadOrganizationTrialIdentifier()
-                                            .toUpperCase().trim().replaceAll(
-                                                    "'", "''") + "%'");
-                    where.append(" and sps.functionalCode = '").append(
-                            StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER
-                                    + "'");
-                }
-            }
+            /////// deleted by naveen Nov 11 2008
             if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
                     .getStudyStatusCode())) {
                 where.append(" and sos.statusCode  = '"
@@ -451,6 +414,15 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                where.append(" and sp.userLastCreated = '").append(
                        studyProtocolQueryCriteria.getUserLastCreated() + "'");
            }
+           
+           where
+           .append(" and sps.functionalCode ='"
+                   + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION
+                   + "'");
+
+           where.append(" and sc.roleCode ='"
+                   + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+           
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
             throw new PAException("General error in while create where cluase",

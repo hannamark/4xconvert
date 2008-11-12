@@ -574,7 +574,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     /**
      * @return the result
-     * @throws Exception on error.www.javaranch.com
+     * @throws Exception on error
      */
     public String deleteStudyPartContact() throws Exception {
         clearErrorsAndMessages();

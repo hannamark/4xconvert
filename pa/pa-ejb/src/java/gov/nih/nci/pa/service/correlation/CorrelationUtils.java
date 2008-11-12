@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -21,18 +22,17 @@ import org.hibernate.Session;
 
 /**
  * A Service class for handing common methods for all correlations.
+ * 
  * @author Naveen Amiruddin
- * @since 04/11/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 04/11/2008 copyright NCI 2007. All rights reserved. This code may not
+ *        be used without the express written permission of the copyright
+ *        holder, NCI.
  */
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity",
+        "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 public class CorrelationUtils {
-    private static final Logger LOG  = Logger.getLogger(CorrelationUtils.class);
-    
+    private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
+
     /**
      * 
      * @param organization Organization
@@ -43,29 +43,25 @@ public class CorrelationUtils {
         if (organization == null) {
             LOG.error(" organization should not be null ");
             throw new PAException(" organization should not be null ");
-        }     
+        }
         LOG.debug("Entering createOrganization ");
         Session session = null;
-        
         try {
             session = HibernateUtil.getCurrentSession();
             session.save(organization);
         } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while createOrganization " , hbe);
-            throw new PAException(" Hibernate exception while createOrganization " , hbe);
+            LOG.error(" Hibernate exception while createOrganization ", hbe);
+            throw new PAException(" Hibernate exception while createOrganization ", hbe);
         } finally {
             session.flush();
         }
-        
         LOG.debug("Leaving createStudyResourcing ");
         return organization;
-        
     }
-
 
     /**
      * method to create pa org from po.
+     * 
      * @param poOrg
      * @return
      * @throws PAException
@@ -74,13 +70,13 @@ public class CorrelationUtils {
         if (poOrg == null) {
             throw new PAException(" PO Organization cannot be null");
         }
-        Organization paOrg = new Organization(); 
+        Organization paOrg = new Organization();
         paOrg.setName(EnOnConverter.convertEnOnToString(poOrg.getName()));
         paOrg.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poOrg.getStatusCode()));
         paOrg.setIdentifier(poOrg.getIdentifier().getExtension());
         return createPAOrganization(paOrg);
     }
-    
+
     /**
      * 
      * @param person person
@@ -91,28 +87,26 @@ public class CorrelationUtils {
         if (person == null) {
             LOG.error(" Person should not be null ");
             throw new PAException(" Person should not be null ");
-        }     
+        }
         LOG.debug("Entering createPerson ");
         Session session = null;
-        
         try {
             session = HibernateUtil.getCurrentSession();
             session.save(person);
         } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while createPerson " , hbe);
-            throw new PAException(" Hibernate exception while create Person " , hbe);
+            LOG.error(" Hibernate exception while createPerson ", hbe);
+            throw new PAException(" Hibernate exception while create Person ", hbe);
         } finally {
             session.flush();
         }
-        
         LOG.debug("Leaving create Person ");
         return person;
-        
     }
 
     /**
+     * 
      * method to create pa person from po.
+     * 
      * @param poOrg
      * @return
      * @throws PAException
@@ -121,8 +115,19 @@ public class CorrelationUtils {
         if (poPerson == null) {
             throw new PAException(" PO Person cannot be null");
         }
-        Person per = new Person(); 
-        per.setFirstName(" get convertion from harsha");
+        Person per = new Person();
+        
+        try {
+            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.GIV)) {
+                per.setFirstName(poPerson.getName().getPart().get(0).getValue());
+            }
+            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.FAM)) {
+                per.setLastName(poPerson.getName().getPart().get(0).getValue());
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            LOG.error("Error while converting Person ISO " , e);
+        }
         per.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poPerson.getStatusCode()));
         per.setIdentifier(poPerson.getIdentifier().getExtension());
         return createPAPerson(per);
@@ -135,8 +140,7 @@ public class CorrelationUtils {
      * @return Organization
      * @throws PAException e
      */
-    Organization getPAOrganizationByIndetifers(Long paIdentifer , String poIdentifer) 
-    throws PAException {
+    public Organization getPAOrganizationByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
         Organization org = null;
         if (poIdentifer == null && paIdentifer == null) {
             LOG.error(" Atleast one identifier must be entered");
@@ -159,31 +163,25 @@ public class CorrelationUtils {
         try {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error(" Organization  should not be more than 1 record for a Po Indetifer = "  
-                    + poIdentifer);
-            throw new PAException(" Organization  should not be more than 1 " 
-                    + "record for a Po Indetifer = " + poIdentifer);
-            
+            query = session.createQuery(hql.toString());
+            queryList = query.list();
+            if (queryList.size() > 1) {
+                LOG.error(" Organization  should not be more than 1 record for a Po Indetifer = " + poIdentifer);
+                throw new PAException(" Organization  should not be more than 1 " + "record for a Po Indetifer = "
+                        + poIdentifer);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException(" Error while retrieving Organization for id = " + paIdentifer + " PO Identifier = "
+                    + poIdentifer, hbe);
+        } finally {
+            session.flush();
         }
-    }  catch (HibernateException hbe) {
-        throw new PAException(" Error while retrieving Organization for id = " 
-                + paIdentifer + " PO Identifier = " + poIdentifer , hbe);
-    } finally {
-        session.flush();
+        if (!queryList.isEmpty()) {
+            org = queryList.get(0);
+        }
+        return org;
     }
-    
-    if (!queryList.isEmpty()) {
-        org = queryList.get(0);
 
-    }
-    return org;
-    }
-    
     /**
      * 
      * @param poIdentifer id
@@ -191,8 +189,7 @@ public class CorrelationUtils {
      * @return Person
      * @throws PAException e
      */
-    Person getPAPersonByIndetifers(Long paIdentifer , String poIdentifer) 
-    throws PAException {
+    Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
         Person per = null;
         if (poIdentifer == null && paIdentifer == null) {
             LOG.error(" Atleast one identifier must be entered");
@@ -217,31 +214,26 @@ public class CorrelationUtils {
             Query query = null;
             query = session.createQuery(hql.toString());
             queryList = query.list();
-        
             if (queryList.size() > 1) {
-                LOG.error(" Person  should not be more than 1 record for a Po Indetifer = "  
+                LOG.error(" Person  should not be more than 1 record for a Po Indetifer = " + poIdentifer);
+                throw new PAException(" Person  should not be more than 1 " + "record for a Po Indetifer = "
                         + poIdentifer);
-                throw new PAException(" Person  should not be more than 1 " 
-                        + "record for a Po Indetifer = " + poIdentifer);
-                
             }
-        }  catch (HibernateException hbe) {
-            throw new PAException(" Error while retrieving Organization for id = " 
-                    + paIdentifer + " PO Identifier = " + poIdentifer , hbe);
+        } catch (HibernateException hbe) {
+            throw new PAException(" Error while retrieving Organization for id = " + paIdentifer + " PO Identifier = "
+                    + poIdentifer, hbe);
         } finally {
             session.flush();
         }
-    
         if (!queryList.isEmpty()) {
             per = queryList.get(0);
-    
         }
         return per;
     }
-    
+
     /**
      * 
-     * @param crs ClinicalResearchStaff 
+     * @param crs ClinicalResearchStaff
      * @return ClinicalResearchStaff
      * @throws PAException PAException
      */
@@ -249,27 +241,22 @@ public class CorrelationUtils {
         if (ae == null) {
             LOG.error(" domain should not be null ");
             throw new PAException(" domaon should not be null ");
-        }     
+        }
         LOG.debug("Entering createPA Domain ");
         Session session = null;
-        
         try {
             session = HibernateUtil.getCurrentSession();
             session.save(ae);
         } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while creating domain " , hbe);
-            throw new PAException(" Hibernate exception while creating domain" , hbe);
+            LOG.error(" Hibernate exception while creating domain ", hbe);
+            throw new PAException(" Hibernate exception while creating domain", hbe);
         } finally {
             session.flush();
         }
-        
         LOG.debug("Leaving create PA Domain ");
         return ae;
     }
-    
 
-    
     /**
      * 
      * @param cd
@@ -281,18 +268,18 @@ public class CorrelationUtils {
             throw new PAException(" Cd cannot be null");
         }
         if ("ACTIVE".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.ACTIVE; 
+            return StatusCode.ACTIVE;
         } else if ("INACTIVE".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.INACTIVE;
         } else if ("NULLIFIED".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.NULLIFIED; 
+            return StatusCode.NULLIFIED;
         } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.PENDING;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());
         }
     }
-    
+
     /**
      * 
      * @param cd
@@ -304,18 +291,15 @@ public class CorrelationUtils {
             throw new PAException(" Cd cannot be null");
         }
         if ("ACTIVE".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.ACTIVE; 
+            return StatusCode.ACTIVE;
         } else if ("INACTIVE".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.INACTIVE;
         } else if ("NULLIFIED".equalsIgnoreCase(cd.getCode())) {
-            return StatusCode.NULLIFIED; 
+            return StatusCode.NULLIFIED;
         } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.PENDING;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());
         }
     }
-    
-    
-
 }
