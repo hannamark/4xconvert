@@ -152,11 +152,17 @@
 <s:if test="%{!isCreate}">
         <div class="boxouter">
         <h2>Assign Organizational Roles</h2>
-            <div class="box_white">
+            <div class="box_white"> 
                 <c:url var="manageResearchOrgs" value="/protected/roles/organizational/researchorganization/start.action">
                     <c:param name="organization.id" value="${organization.id}"/>
                 </c:url>
-                <a href="${manageResearchOrgs}">Manage Research Organizations</a>
+                <c:url var="manageIdentifiedOrgs" value="/protected/roles/organizational/identifiedorganization/start.action">
+                    <c:param name="organization.id" value="${organization.id}"/>
+                </c:url>
+	            <ul>
+	                <li><a href="${manageResearchOrgs}">Manage Research Organizations</a>
+	                <li><a href="${manageIdentifiedOrgs}">Manage Identified Organizations</a>
+	            </ul>
                 <div class="clear"></div>
             </div>
         </div>

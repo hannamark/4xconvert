@@ -1,0 +1,124 @@
+package gov.nih.nci.po.web.roles;
+
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.IdentifiedOrganizationSortCriterion;
+import gov.nih.nci.po.service.SearchCriteria;
+import gov.nih.nci.po.util.PoRegistry;
+
+import java.util.ArrayList;
+
+import javax.jms.JMSException;
+
+import org.displaytag.properties.SortOrderEnum;
+
+import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
+import com.opensymphony.xwork2.Preparable;
+
+/**
+ * Action to manage IdentifiedOrganization(s).
+ * 
+ * @author smatyas
+ */
+public class IdentifiedOrganizationAction 
+    extends AbstractRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR, IdentifiedOrganizationServiceLocal> 
+    implements Preparable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    @Override
+    public void prepare() throws Exception {
+        super.prepare();
+        if (getRole().getPlayer() == null) { //if not set, then set to default
+            getRole().setPlayer(getOrganization());
+        }
+        if (getRole().getScoper() == null) { //if not set, then set to default
+            getRole().setScoper(new Organization());
+        }
+        if (getRole().getAssignedIdentifier() == null) { //if not set, then set to default
+            getRole().setAssignedIdentifier(new Ii());
+        }
+        getRole().getAssignedIdentifier().setNullFlavor(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String add() throws JMSException {
+        getRole().setScoper(
+                PoRegistry.getGenericService().getPersistentObject(getRole().getScoper().getClass(),
+                        getRole().getScoper().getId()));
+        return super.add();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    protected SearchCriteria<IdentifiedOrganization> getDuplicateCriteria() {
+        IdentifiedOrganization dupOfBOCrit = new IdentifiedOrganization();
+        AnnotatedBeanSearchCriteria<IdentifiedOrganization> duplicateOfCriteria 
+            = new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(dupOfBOCrit);
+        dupOfBOCrit.setPlayer(getOrganization());
+        return duplicateOfCriteria;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void defaultConstructorInit() {
+        setRole(new IdentifiedOrganization());
+        setCr(new IdentifiedOrganizationCR());
+        setResults(new PaginatedList<IdentifiedOrganization>(0,
+                new ArrayList<IdentifiedOrganization>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
+                IdentifiedOrganizationSortCriterion.ID.name(), SortOrderEnum.ASCENDING));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected IdentifiedOrganizationServiceLocal getRoleService() {
+        return PoRegistry.getInstance().getServiceLocator().getIdentifiedOrganizationService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected SearchCriteria<IdentifiedOrganization> getSearchCriteria() {
+        IdentifiedOrganization boCrit = new IdentifiedOrganization();
+        AnnotatedBeanSearchCriteria<IdentifiedOrganization> criteria 
+            = new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(boCrit);
+        Organization player = new Organization();
+        player.setId(getOrganization().getId());
+        boCrit.setPlayer(player);
+        return criteria;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected Class<IdentifiedOrganizationSortCriterion> getSortCriterion() {
+        return IdentifiedOrganizationSortCriterion.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected String getAddSuccessMessageKey() {
+        return "identifiedorganization.create.success";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected String getEditSuccessMessageKey() {
+        return "identifiedorganization.update.success";
+    }
+}

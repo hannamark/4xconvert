@@ -103,7 +103,7 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
 
     @Before
     public void initData() {
-        type = new IdentifiedOrganizationType("foo");
+        type = new IdentifiedOrganizationType("foo", "foo description");
         PoHibernateUtil.getCurrentSession().save(type);
     }
 

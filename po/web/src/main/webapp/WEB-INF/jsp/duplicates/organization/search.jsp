@@ -14,11 +14,11 @@
 <div id="findDuplicates">
 	<div class="po_wrapper">
 	    <div class="po_inner">
-	        <h1>Find Duplicate Organization(s)</h1>
+	        <h1>Find Organization(s)</h1>
 	        <div class="box_white">
 	            <div class="po_form">
 	                <s:actionerror/>
-	                <s:form action="duplicates/organization/search.action" id="duplicateOrganizationForm">
+	                <s:form action="duplicates/organization/search.action" id="duplicateOrganizationForm" onsubmit="$('duplicateSearchResultDetails').hide();">
 	                    <s:hidden name="rootKey"/>
 	                    <s:hidden name="source.id"/>
 				        <div class="boxouter">
@@ -62,11 +62,12 @@
 				            </div>
 				        </div>
 				        <div class="clearfloat"></div>
+				        <input id="enableEnterSubmit" type="submit"/>
 	                </s:form>
 					<div style="float:right;">
 					    <po:button href="javascript://nop/" 
-					        onclick="$('duplicateSearchResultDetails').hide(); $('duplicateOrganizationForm').submit();" 
-					        style="search" text="Search for Duplicates" 
+					        onclick="$('duplicateOrganizationForm').submit();" 
+					        style="search" text="Search" 
 					        id="submitDuplicateOrganizationForm"/>
 					</div>                
 	            </div>
@@ -82,7 +83,7 @@
 	    <div class="po_inner">
 	        <div class="box_white">
 				<div class="boxouter">
-				<h2>Possible Duplicate Organization(s)</h2>
+				<h2>Organization(s) Found</h2>
 					<div id="duplicateSearchResults">     
 		            <%@ include file="results.jsp" %>
 		            </div>

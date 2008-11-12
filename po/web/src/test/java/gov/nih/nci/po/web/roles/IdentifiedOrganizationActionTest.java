@@ -6,18 +6,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
+import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.IdentifiedOrganizationServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.curation.CurateOrganizationAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,19 +33,19 @@ import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
-public class ResearchOrganizationActionTest extends AbstractPoTest {
-    private ResearchOrganizationAction action;
+public class IdentifiedOrganizationActionTest extends AbstractPoTest {
+    private IdentifiedOrganizationAction action;
 
     @Before
     public void setUp() {
-        action = new ResearchOrganizationAction();
+        action = new IdentifiedOrganizationAction();
     }
 
     @Test
     public void testPrepareNoOrgId() throws Exception {
         action.prepare();
     }
-
+    
     @Test
     public void testPrepareWithOrgId() throws Exception {
         action.getOrganization().setId(1L);
@@ -66,7 +66,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         action.setOrganization(null);
         assertNull(action.getOrganization());
     }
-
+    
     @Test
     public void testRoleProperty() {
         assertNotNull(action.getRole());
@@ -85,7 +85,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertEquals(ResearchOrganizationSortCriterion.ID.name(), action.getResults().getSortCriterion());
         assertEquals(SortOrderEnum.ASCENDING, action.getResults().getSortDirection());
     }
-
+    
     @Test
     public void list() {
         assertEquals(Action.SUCCESS, action.list());
@@ -93,6 +93,9 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testAdd() throws JMSException {
+        action.setRole(new IdentifiedOrganization());
+        action.getRole().setScoper(new Organization());
+        action.getRole().getScoper().setId(5L);
         assertEquals(Action.SUCCESS, action.add());
     }
 
@@ -103,17 +106,17 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableStatusForAddForm() {
-        List<EntityStatus> expected = new ArrayList<EntityStatus>();
+        List expected = new ArrayList();
         expected.add(EntityStatus.PENDING);
         expected.add(EntityStatus.ACTIVE);
-
+        
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
-
+        
         assertTrue(availableStatus.containsAll(expected));
         assertTrue(expected.containsAll(availableStatus));
     }
-
+    
     @Test
     public void testGetAvailableStatusForEditForm() {
         verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
@@ -128,28 +131,28 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
     }
-
+    
     @Test
     public void testGetAvailableDuplicateOfs() {
         final Long playerId = 1L;
-
+        
         action.getRole().setId(null);
         action.getOrganization().setId(playerId);
         assertNull(action.getAvailableDuplicateOfs());
-
+        
         action.getRole().setId(5L);
         action.getOrganization().setId(playerId);
         assertNull(action.getAvailableDuplicateOfs());
-
-        action = new ResearchOrganizationAction() {
+        
+        action = new IdentifiedOrganizationAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected ResearchOrganizationServiceLocal getRoleService() {
-                return new ResearchOrganizationServiceStub() {
+            protected IdentifiedOrganizationServiceLocal getRoleService() {
+                return new IdentifiedOrganizationServiceStub() {
                     @Override
-                    public List<ResearchOrganization> search(SearchCriteria<ResearchOrganization> criteria) {
-                        List<ResearchOrganization> results = new ArrayList<ResearchOrganization>();
+                    public List<IdentifiedOrganization> search(SearchCriteria<IdentifiedOrganization> criteria) {
+                        List<IdentifiedOrganization> results = new ArrayList<IdentifiedOrganization>();
                         results.add(create(playerId, 1L));
                         results.add(create(playerId, 2L));
                         results.add(create(playerId, 3L));
@@ -158,19 +161,19 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
                         return results;
                     }
 
-                    private ResearchOrganization create(Long playerId, Long id) {
-                        ResearchOrganization ro = new ResearchOrganization();
+                    private IdentifiedOrganization create(Long playerId, Long id) {
+                        IdentifiedOrganization ro = new IdentifiedOrganization();
                         ro.setPlayer(new Organization());
                         ro.getPlayer().setId(playerId);
                         ro.setId(id);
                         return ro;
                     }
                 };
-            }
+            };
         };
         action.getRole().setId(5L);
         action.getOrganization().setId(1L);
-        Iterator<ResearchOrganization> iterator = action.getAvailableDuplicateOfs().iterator();
+        Iterator<IdentifiedOrganization> iterator = action.getAvailableDuplicateOfs().iterator();
         assertEquals(1L, iterator.next().getId().longValue());
         assertEquals(2L, iterator.next().getId().longValue());
         assertEquals(3L, iterator.next().getId().longValue());
@@ -196,10 +199,10 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
     @Test
     public void testGetSelectChangeRequests() {
         action.getRole().setId(1L);
-        ResearchOrganizationCR cr1 = new ResearchOrganizationCR();
+        IdentifiedOrganizationCR cr1 = new IdentifiedOrganizationCR();
         cr1.setId(1L);
         action.getRole().getChangeRequests().add(cr1);
-        ResearchOrganizationCR cr2 = new ResearchOrganizationCR();
+        IdentifiedOrganizationCR cr2 = new IdentifiedOrganizationCR();
         cr2.setId(2L);
         action.getRole().getChangeRequests().add(cr2);
         Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
@@ -210,5 +213,5 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
             assertEquals("CR-ID-" + i, value);
             i++;
         }
-    }
+    }    
 }

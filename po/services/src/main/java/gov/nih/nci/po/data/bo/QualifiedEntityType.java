@@ -126,8 +126,8 @@ public class QualifiedEntityType extends AbstractCodeValue {
     /**
      * @return the description
      */
-    @Column(updatable = false, unique = true)
-    @Length(max = CODE_LENGTH)
+    @Column(updatable = false, unique = false)
+    @Length(max = DESC_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "desc")
     public String getDescription() {

@@ -25,7 +25,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
 
 public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
-    private static final IdentifiedOrganizationType TYPE = new IdentifiedOrganizationType("Member");
+    private static final IdentifiedOrganizationType TYPE = new IdentifiedOrganizationType("Member", "Member Descritption");
     private static final RoleStatus STATUS = RoleStatus.ACTIVE;
     private static final long ID = 1L;
 

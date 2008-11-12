@@ -108,6 +108,10 @@ public class AbstractCodeValue implements PersistentObject, Auditable, CodeValue
      * Maximum code field length.
      */
     protected static final int CODE_LENGTH = 254;
+    /**
+     * Maximum description field length.
+     */
+    protected static final int DESC_LENGTH = 254;
     private Long id;
     private String code;
 

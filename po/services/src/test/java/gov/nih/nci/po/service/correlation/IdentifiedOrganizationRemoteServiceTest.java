@@ -118,9 +118,9 @@ public class IdentifiedOrganizationRemoteServiceTest
 
     @Before
     public void initData() {
-        type1 = new IdentifiedOrganizationType("foo");
+        type1 = new IdentifiedOrganizationType("foo", "foo description");
         PoHibernateUtil.getCurrentSession().save(type1);
-        type2 = new IdentifiedOrganizationType("bar");
+        type2 = new IdentifiedOrganizationType("bar", "bar description");
         PoHibernateUtil.getCurrentSession().save(type2);
     }
 

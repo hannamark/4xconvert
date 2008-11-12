@@ -26,7 +26,7 @@
         <display:column titleKey="th.action" class="action">
             <c:url var="editUrl" value="/protected/roles/organizational/researchorganization/addedit/input.action">
                 <c:param name="organization.id" value="${organization.id}"/>
-                <c:param name="researchOrganization.id" value="${row.id}"/>
+                <c:param name="role.id" value="${row.id}"/>
             </c:url>
             <po:buttonRow>
                 <po:button href="${editUrl}" style="edit" text="Edit" id="edit_research_org_id_${row.id}"/>

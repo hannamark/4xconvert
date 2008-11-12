@@ -14,24 +14,18 @@
             </div>
         </div>    
         <div class="boxouter">
-            <h2>Research Organization Role Information</h2>
+            <h2>Identified Organization Role Information</h2>
             <div class="box_white">
             <po:copyButton 
-                id="copy_curateCrForm_researchOrganization_typeCode" 
-                onclick="selectValueInSelectField('${cr.typeCode.id}', 'addEditResearchOrgForm_researchOrganization_typeCode');" 
+                id="copy_curateCrForm_role_typeCode" 
+                onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');" 
                 bodyStyle="float:left;" buttonStyle="float:right;">
                 <s:textfield key="cr.typeCode.description" required="true" cssClass="required" />
             </po:copyButton>
-               
+
             <po:copyButton
-             id="copy_curateCrForm_researchOrganization_fundingMechanism"
-             onclick="selectValueInSelectField('${cr.fundingMechanism}', 'addEditResearchOrgForm_researchOrganization_fundingMechanism');" 
-                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.fundingMechanism" required="true" cssClass="required" />
-            </po:copyButton>
-            <po:copyButton
-             id="copy_curateCrForm_researchOrganization_fundingMechanism"
-             onclick="selectValueInSelectField('${cr.status}', 'addEditResearchOrgForm.researchOrganization.status');" 
+             id="copy_curateCrForm_role_status"
+             onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield key="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
