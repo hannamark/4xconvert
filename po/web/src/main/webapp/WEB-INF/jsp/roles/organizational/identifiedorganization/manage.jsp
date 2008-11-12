@@ -8,7 +8,7 @@
 <po:successMessages/>
 
     <div class="boxouter">
-    <h2>Research Identified Information</h2>
+    <h2>Identified Organization Information</h2>
         <div class="boxouter">
         <h2>Organization Information</h2>
             <div class="box_white">

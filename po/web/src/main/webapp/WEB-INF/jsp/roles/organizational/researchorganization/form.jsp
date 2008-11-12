@@ -2,6 +2,7 @@
 <html>
 <head>
 <s:set name="isCreate" value="role.id == null" /> 
+<s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
 <title>Create Research Organization</title>
 </s:if>
@@ -27,7 +28,7 @@ function handleDuplicateOf() {
 </head> 
 <body>
 
-<s:if test="%{!isCreate}">
+<s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
     <s:form action="ajax/roles/organizational/researchorganization/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization.id"/>
@@ -71,7 +72,7 @@ function handleDuplicateOf() {
 				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
 				<s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
 				<s:select 
-				   label="Research Organization Type"
+				   label="%{getText('researchOrganization.typeCode')}"
 				   name="role.typeCode"
 				   list="#researchOrgTypes"
 				   listKey="id"
@@ -81,7 +82,7 @@ function handleDuplicateOf() {
 				   required="true" cssClass="required" /> 
 				<s:set name="researchOrgFundings" value="#{'U10':'U10', 'U01':'U01', 'P01':'P01', 'N01':'N01', 'P30':'P30'}" />
 				<s:select
-				   label="Funding Mechanism"
+				   label="%{getText('researchOrganization.fundingMechanism')}"
 				   name="role.fundingMechanism"
 				   list="#researchOrgFundings"
 				   value="role.fundingMechanism" 
@@ -107,7 +108,7 @@ function handleDuplicateOf() {
 	                    </div> 
 	                    <br/>
 	                    <div class="wwctrl" id="wwctrl_curateRoleForm.role.duplicateOf">
-							<select id="curateRoleForm.role.duplicateOf" name="role.duplicateOf">
+							<select id="curateRoleForm.role.duplicateOf" name="researchOrganization.duplicateOf">
 							<option value="">--Select a Duplicate Of Entry (ID - TYPE - FUNDING - STATUS - DATE)--</option>
 							<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
 							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.fundingMechanism} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>

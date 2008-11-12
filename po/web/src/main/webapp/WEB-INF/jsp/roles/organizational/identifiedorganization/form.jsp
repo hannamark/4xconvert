@@ -2,6 +2,7 @@
 <html>
 <head>
 <s:set name="isCreate" value="role.id == null" /> 
+<s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
 <title>Create Identified Organization</title>
 </s:if>
@@ -27,7 +28,7 @@ function handleDuplicateOf() {
 </head> 
 <body>
 
-<s:if test="%{!isCreate}">
+<s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
     <s:form action="ajax/roles/organizational/identifiedorganization/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization.id"/>
@@ -71,6 +72,9 @@ function handleDuplicateOf() {
                 <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.IdentifiedOrganizationType@class"/>
                 <s:set name="identifiedOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
                 <div class="wwgrp" id="wwgrp_curateRoleForm_role_scoper_id">
+                    <s:fielderror>
+                        <s:param value="%{'role.scoper'}"/>
+                    </s:fielderror>
                     <div style="float:right;">
                         <c:url value="/protected/duplicates/organization/start.action" var="findScoperUrl">
                             <c:param name="source.id" value="${organization.id}"/>
@@ -93,7 +97,7 @@ function handleDuplicateOf() {
                     
                 </div>
                 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
-                <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" required="true"/>
+                <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
                 <s:select 
                    label="Identified Organization Type"
                    name="role.typeCode"

@@ -14,7 +14,7 @@
             </div>
         </div>    
         <div class="boxouter">
-            <h2>Identified Organization Role Information</h2>
+            <h2>Identified Organization Information</h2>
             <div class="box_white">
             <po:copyButton 
                 id="copy_curateCrForm_role_typeCode" 

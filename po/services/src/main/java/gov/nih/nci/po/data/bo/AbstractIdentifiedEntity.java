@@ -161,6 +161,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
      */
     @ManyToOne
     @ForeignKey(name = "identifiedentity_scoper_fkey")
+    @NotNull
     @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
