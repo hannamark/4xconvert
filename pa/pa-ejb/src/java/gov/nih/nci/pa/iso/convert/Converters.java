@@ -13,11 +13,14 @@ import gov.nih.nci.pa.service.PAException;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class Converters {
     private static ArmConverter arm = new ArmConverter();
     private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
     private static StratumGroupConverter sg = new StratumGroupConverter();
     private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
+    private static InterventionConverter intervention = new InterventionConverter();
+    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
 
     /**
      * @param clazz class
@@ -37,6 +40,12 @@ public class Converters {
         }
         if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
             return dws;
+        }
+        if (clazz.equals(InterventionConverter.class)) {
+            return intervention;
+        }
+        if (clazz.equals(InterventionAlternateNameConverter.class)) {
+            return intervAltName;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

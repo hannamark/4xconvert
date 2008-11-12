@@ -20,15 +20,15 @@ import gov.nih.nci.pa.service.PAException;
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class InterventionConverter {
+public class InterventionConverter extends AbstractConverter<InterventionDTO, Intervention> {
     /**
      * 
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
      */
-    public static InterventionDTO convertFromDomainToDTO(
-            Intervention bo) throws PAException {
+    @Override
+    public InterventionDTO convertFromDomainToDto(Intervention bo) throws PAException {
         InterventionDTO dto = new InterventionDTO();
         dto.setDescriptionText(StConverter.convertToSt(bo.getDescriptionText()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
@@ -45,8 +45,8 @@ public class InterventionConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static Intervention convertFromDtoToDomain(
-            InterventionDTO dto) throws PAException {
+    @Override
+    public Intervention convertFromDtoToDomain(InterventionDTO dto) throws PAException {
         Intervention bo = new Intervention();
         bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));

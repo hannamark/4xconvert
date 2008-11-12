@@ -21,15 +21,16 @@ import gov.nih.nci.pa.util.PAUtil;
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class InterventionAlternateNameConverter {
+public class InterventionAlternateNameConverter 
+        extends AbstractConverter<InterventionAlternateNameDTO, InterventionAlternateName> {
     /**
      * 
      * @param bo StudyProtocol domain object
      * @return dto
      * @throws PAException PAException
      */
-    public static InterventionAlternateNameDTO convertFromDomainToDTO(
-            InterventionAlternateName bo) throws PAException {
+    @Override
+    public InterventionAlternateNameDTO convertFromDomainToDto(InterventionAlternateName bo) throws PAException {
         InterventionAlternateNameDTO dto = new InterventionAlternateNameDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         if (bo.getIntervention() != null) {
@@ -47,14 +48,13 @@ public class InterventionAlternateNameConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static InterventionAlternateName convertFromDtoToDomain(
-            InterventionAlternateNameDTO dto) throws PAException {
+    @Override
+    public InterventionAlternateName convertFromDtoToDomain(InterventionAlternateNameDTO dto) throws PAException {
         Intervention iBo = null;
         if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
             iBo = new Intervention();
             iBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
         }
-
         InterventionAlternateName bo = new InterventionAlternateName();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(iBo);

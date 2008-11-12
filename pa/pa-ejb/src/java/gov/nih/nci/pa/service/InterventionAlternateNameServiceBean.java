@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -29,18 +28,9 @@ import org.hibernate.Session;
  */
 @Stateless
 public class InterventionAlternateNameServiceBean
-        extends AbstractBasePaService<InterventionAlternateNameDTO>
+        extends AbstractBaseIsoService
+                <InterventionAlternateNameDTO, InterventionAlternateName, InterventionAlternateNameConverter>
         implements InterventionAlternateNameServiceRemote {
-
-    private static final Logger LOG  = Logger.getLogger(InterventionAlternateNameServiceBean.class);
-
-    /**
-     * @return log4j Logger
-     */
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
 
     /**
      * @param interventionIi Primary key assigned to an Intervention.
@@ -52,7 +42,7 @@ public class InterventionAlternateNameServiceBean
         if (PAUtil.isIiNull(interventionIi)) {
             serviceError(" Ii should not be null ");
         }
-        LOG.info("Entering getByIntervention.  ");
+        getLogger().info("Entering getByIntervention.  ");
 
         Session session = null;
         List<InterventionAlternateName> queryList = new ArrayList<InterventionAlternateName>();
@@ -66,7 +56,7 @@ public class InterventionAlternateNameServiceBean
                        + "join ian.intervention int "
                        + "where int.id = :interventionId "
                        + "order by ian.id ";
-            LOG.info("query InterventionAlternateName = " + hql + "  ");
+            getLogger().info("query InterventionAlternateName = " + hql + "  ");
 
             // step 2: construct query object
             query = session.createQuery(hql);
@@ -79,9 +69,9 @@ public class InterventionAlternateNameServiceBean
         }
         ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
         for (InterventionAlternateName bo : queryList) {
-            resultList.add(InterventionAlternateNameConverter.convertFromDomainToDTO(bo));
+            resultList.add(convertFromDomainToDto(bo));
         }
-        LOG.info("Leaving getByIntervention, returning " + resultList.size() + " object(s).  ");
+        getLogger().info("Leaving getByIntervention, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 
