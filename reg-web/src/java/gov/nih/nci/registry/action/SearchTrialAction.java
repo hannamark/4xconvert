@@ -1,6 +1,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -12,6 +13,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
@@ -189,8 +191,10 @@ public class SearchTrialAction extends ActionSupport {
     public String view() {
         try {
             // remove the session variables stored during a previous view if any
+            
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
             StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
             // TrialWebDTO trialWebDTO = new TrialWebDTO(protocolDTO);
@@ -230,9 +234,18 @@ public class SearchTrialAction extends ActionSupport {
             // put an entry in the session and avoid conflict using
             // STUDY_PROTOCOL_II for now
             ServletActionContext.getRequest().setAttribute(Constants.STUDY_PROTOCOL_II, queryDTO);
+            
             // put an entry in the session and getsummary4ReportedResource
             StudyResourcingDTO resourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                     .getsummary4ReportedResource(studyProtocolIi);
+            
+            // get the organzation name
+            
+            Organization o = new CorrelationUtils().
+                getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
+                        getOrganizationIdentifier().getExtension()), null);
+
+            ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
             // put an entry in the session and avoid conflict using
             // NIH_INSTITUTE for now
             ServletActionContext.getRequest().setAttribute(Constants.NIH_INSTITUTE, resourcingDTO);
@@ -265,14 +278,18 @@ public class SearchTrialAction extends ActionSupport {
         LOG.info("Entering viewProtocolDoc");
         try {
             String docId = ServletActionContext.getRequest().getParameter("identifier");
-            Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+            //spidfromviewresults
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                    "spidfromviewresults");
+            //Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             DocumentDTO docDTO = RegistryServiceLocator.getDocumentService().get(IiConverter.convertToIi(docId));
             // InterventionalStudyProtocolWebDTO spDTO =
             // (InterventionalStudyProtocolWebDTO) ServletActionContext
             // .getRequest().getSession().getAttribute(Constants.PROTOCOL_DOCUMENT);
             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
-            sb.append(File.separator).append(spDTO.getAssignedIdentifier()).append(File.separator).append(
+            sb.append(File.separator).append(spDTO.getAssignedIdentifier().getExtension()).append(File.separator)
+            .append(
                     docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
             File downloadFile = new File(sb.toString());
             servletResponse = ServletActionContext.getResponse();

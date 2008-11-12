@@ -35,8 +35,10 @@ import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
+import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -121,6 +123,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * @return String
      */
     public String create() {
+        StudyProtocolDTO protocolDTO;
         try {
             clearErrorsAndMessages();
             // validate the form elements
@@ -146,15 +149,15 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             // create the Study Grants *Multiple - times*
             createStudyResources(studyProtocolIi);
             uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), protocolDocFileName,
-                    protocolDoc.getAbsolutePath());
+                    protocolDoc);
             uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(), irbApprovalFileName,
-                    irbApproval.getAbsolutePath());
+                    irbApproval);
             uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
-                    informedConsentDocumentFileName, informedConsentDocument.getAbsolutePath());
+                    informedConsentDocumentFileName, informedConsentDocument);
             uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), otherDocumentFileName,
-                    informedConsentDocument.getAbsolutePath());
+                    informedConsentDocument);
             uploadDocument(studyProtocolIi, DocumentTypeCode.Participating_sites.getCode(), participatingSitesFileName,
-                    participatingSites.getAbsolutePath());
+                    participatingSites);
             // ----------- Begin calling the PO related
             selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
                     "PoSummary4Sponsor");
@@ -194,12 +197,19 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
             // after creating the study protocol, query the protocol for viewing
-            query();
+           protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
+                    studyProtocolIi);
+            final MailManager mailManager = new MailManager();
+            mailManager.sendNotificationMail(
+                    ServletActionContext.getRequest().getRemoteUser(), // remote user
+                    protocolDTO.getAssignedIdentifier().getExtension(), //generated identifier
+                    participationWebDTO.getLocalProtocolIdentifier() // lead org trial identifier
+                    );
         } catch (Exception e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while submitting trial: " + e);
-            return VIEW_TRIAL;
+            return SUCCESS;
         } finally {
             ServletActionContext.getRequest().getSession().removeAttribute("INDIDE_LIST");
             ServletActionContext.getRequest().getSession().removeAttribute("GRANT_LIST");
@@ -207,7 +217,10 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
             ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
             ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
-        }     
+        }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.SUCCESS_MESSAGE, 
+                                                    "Trial has been successfully created and assigned " 
+                                                    + protocolDTO.getAssignedIdentifier().getExtension());
         return "redirect_to_search";
     }
 
@@ -248,14 +261,15 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
     }
 
-    private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, String file) {
+    private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, File file) {
         try {
             DocumentDTO docDTO = new DocumentDTO();
             docDTO.setStudyProtocolIi(studyProtocolIi);
             docDTO.setTypeCode(CdConverter.convertStringToCd(docTypeCode));
             docDTO.setFileName(StConverter.convertToSt(fileName));
-            //docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+            // docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(file))));
+            
             RegistryServiceLocator.getDocumentService().create(docDTO);
         } catch (PAException pae) {
             // pae.printStackTrace();
@@ -310,8 +324,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                         .getNciDivisionProgramCode())));
                 studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(holder.getInstituteCode()));
                 studyResoureDTO.setSerialNumber(IntConverter.convertToInt(holder.getSerialNumber()));
-               // studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
-               //         .getRemoteUser())));
+                // studyResoureDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest()
+                // .getRemoteUser())));
                 RegistryServiceLocator.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
             }
         } catch (PAException pae) {
@@ -622,26 +636,32 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         return INPUT;
     }
 
-    // Read an input stream in its entirety into a byte array.
+    /** Read an input stream in its entirety into a byte array. */
     private static byte[] readInputStream(InputStream inputStream) throws IOException {
+
         int bufSize = MAXF * MAXF;
         byte[] content;
+
         List<byte[]> parts = new LinkedList();
         InputStream in = new BufferedInputStream(inputStream);
+
         byte[] readBuffer = new byte[bufSize];
         byte[] part = null;
         int bytesRead = 0;
-        // read everything into a list of byte arrays
+
+        // read everyting into a list of byte arrays
         while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
             part = new byte[bytesRead];
             System.arraycopy(readBuffer, 0, part, 0, bytesRead);
-            // parts.add(part);
+            parts.add(part);
         }
+
         // calculate the total size
         int totalSize = 0;
         for (byte[] partBuffer : parts) {
             totalSize += partBuffer.length;
         }
+
         // allocate the array
         content = new byte[totalSize];
         int offset = 0;
@@ -649,6 +669,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
             offset += partBuffer.length;
         }
+
         return content;
     }
 
@@ -778,32 +799,38 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * @return res
      */
     public String createOrganizationContacts() {
-        String orgId = ServletActionContext.getRequest().getParameter("orgId");
-        String persId = ServletActionContext.getRequest().getParameter("persId");
-        OrganizationalContactDTO dto = new OrganizationalContactDTO();
-        dto.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
-        dto.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
-        dto.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
-        //        
-        dto.setPersonIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
-        dto.getPersonIdentifier().setRoot("UID.for.nci.entity.person");
-        dto.getPersonIdentifier().setIdentifierName("NCI person entity identifier");
-        dto.setPrimaryIndicator(RemoteApiUtil.convertToBl(Boolean.TRUE));
+        boolean contactExists = false;
         try {
-            RegistryServiceLocator.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
+            String orgId = ServletActionContext.getRequest().getParameter("orgId");
+            String persId = ServletActionContext.getRequest().getParameter("persId");
+            OrganizationalContactDTO dto = new OrganizationalContactDTO();
+            dto.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
+            dto.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
+            dto.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
+            // Use these two values and check if the contact already exists, if
+            // they do then this means that the user selected from the list and
+            // did not create a new user
+            List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
+                    .search(dto);
+            //             
+            for (OrganizationalContactDTO contactDTO : list) {
+                String persIdfromOrgContact = contactDTO.getPersonIdentifier().getExtension();
+                if (persIdfromOrgContact.equals(persId)) {
+                    contactExists = true;
+                }
+            }
+            if (!contactExists) {
+                dto.setPersonIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
+                dto.getPersonIdentifier().setRoot("UID.for.nci.entity.person");
+                dto.getPersonIdentifier().setIdentifierName("NCI person entity identifier");
+                dto.setPrimaryIndicator(RemoteApiUtil.convertToBl(Boolean.TRUE));
+                RegistryServiceLocator.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
+            }
             Ii personIi = gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId);
             personIi.setRoot("UID.for.nci.entity.organization");
             responsiblePartyContact = RegistryServiceLocator.getPoPersonEntityService().getPerson(personIi);
             ServletActionContext.getRequest().getSession()
                     .setAttribute("PoResponsibleContact", responsiblePartyContact);
-            // personName = personDTO.getName().toString();
-            // String lastName = null, firstName = null;
-            // if
-            // (personDTO.getName().getPart().get(0).getType().toString().equals("FAM"))
-            // {
-            // lastName = personDTO.getName().getPart().get(0).getValue();
-            // }
-            // personName = lastName;
         } catch (NullifiedEntityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -811,9 +838,13 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             // TODO Auto-generated catch block
         } catch (PAException e) {
             // TODO Auto-generated catch block
+        } catch (NullifiedRoleException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         return "display_responsible_contact";
     }
+
 
     /**
      * 

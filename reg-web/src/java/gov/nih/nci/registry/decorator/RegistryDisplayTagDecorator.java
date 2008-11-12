@@ -10,16 +10,15 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
 /**
  * tag decorator registry.
+ * 
  * @author Bala Nair
- *
+ * 
  */
 public class RegistryDisplayTagDecorator extends TableDecorator {
-    
-    private String loginUser;
-    private String userLastCreated;
+      
 
     /**
-     *
+     * 
      * @return formated date
      */
     public String getStudyStatusDate() {
@@ -32,42 +31,33 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     }
 
     /**
-     *
+     * 
      * @return formated date
      */
     public String getDocumentWorkflowStatusDate() {
-        Date documentWfStatusDate = ((StudyProtocolQueryDTO)
-                this.getCurrentRowObject()).getDocumentWorkflowStatusDate();
+        Date documentWfStatusDate = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
+                .getDocumentWorkflowStatusDate();
         if (documentWfStatusDate != null) {
             return FastDateFormat.getInstance("MM/dd/yyyy").format(documentWfStatusDate);
         } else {
             return "";
         }
-
     }
-    
-    /**
-    *
-    * @return masked processing status
-    */
-   public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
-       DocumentWorkflowStatusCode documentWorkflowStatusCode = ((StudyProtocolQueryDTO)
-               this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-       if (documentWorkflowStatusCode != null) {
-           loginUser =  ServletActionContext.getRequest().getRemoteUser();
-           if (((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated() == null) {
-               return null;
-           } else {
-           userLastCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
-           }
-       if (loginUser.equalsIgnoreCase(userLastCreated)) {
-               return documentWorkflowStatusCode;
-           } else {
-               return null; 
-           }
-       } else {
-           return null;
-       }
-   }
 
+    /**
+     * 
+     * @return masked processing status
+     */
+    public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
+        String loginUser = null;
+        DocumentWorkflowStatusCode documentWorkflowStatusCode = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
+                .getDocumentWorkflowStatusCode();
+        String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
+        loginUser = ServletActionContext.getRequest().getRemoteUser();
+        if (loginUser != null && loginUser.equalsIgnoreCase(userCreated)) {
+            return documentWorkflowStatusCode;
+        } else {
+            return null;
+        }
+    }
 }

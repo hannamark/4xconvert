@@ -27,11 +27,11 @@
 	}
 	function loadDiv() {
 		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_orgName").value;
-		var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;
+		
 		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
 		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_orgCity").value;
 		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;		
-		var url = '/registry/protected/popupdisplayOrgList.action?orgName='+orgName+'&nciNumber='+orgNumber+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip;
+		var url = '/registry/protected/popupdisplayOrgList.action?orgName='+orgName+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip;
 	    var div = document.getElementById('getOrgs');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
 	    ajaxCall(div, url);    

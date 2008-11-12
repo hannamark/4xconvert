@@ -149,9 +149,10 @@ function enableGrantAddButton(){
 	var nihInstitutionCode = document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value;
 	var serialNumber = document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value;
 	var nciDivisionProgramCode = document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value;
-	if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber != '' && nciDivisionProgramCode != '') {
-		
+	if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber.length > 0 && nciDivisionProgramCode != '') {
 		document.getElementById('grantbtnid').disabled = false;
+	} else {
+		document.getElementById('grantbtnid').disabled = true;
 	}
 }
 function resetGrantRow(){
@@ -187,10 +188,10 @@ function toggledisplay2 (it) {
     <reg-web:failureMessage/>
     <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <input type="hidden" name="page" />
-        <p>Add Trial into NCI Clinical Trials Portal - Powered by (caCTUS) by submitting this form. Please note: asterisks (<span class="required">*</span>) indicate required fields. </p>
+        <p>Add Trial into NCI Clinical Trials Reporting Portal  by submitting this form. Please note: asterisks (<span class="required">*</span>) indicate required fields. </p>
         <table class="form"> 
           <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.trialDetails"/></h2></th>
+                <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
           </tr>
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
@@ -257,7 +258,7 @@ function toggledisplay2 (it) {
           </tr> 
           
         <tr>
-              <th colspan="2"><h2>Lead Organization/Principal Investigator</h2></th>
+              <th colspan="2">Lead Organization/Principal Investigator</th>
         </tr>
                     <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -287,7 +288,7 @@ function toggledisplay2 (it) {
           <tr>          
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
-             <th colspan="2"><h2>Sponsor</h2></th>
+             <th colspan="2">Sponsor</th>
         </tr>          
         <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
@@ -347,7 +348,7 @@ function toggledisplay2 (it) {
           </tr>
 		  <!--  summary4 information -->
           <tr>
-                <th colspan="2"><h2>Summary 4 Information</h2></th>
+                <th colspan="2">Summary 4 Information</th>
           </tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -384,7 +385,7 @@ function toggledisplay2 (it) {
           
           <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.grantInfo"/></h2></th> 
+                <th colspan="2"><fmt:message key="submit.trial.grantInfo"/></th> 
           </tr>
           
          
@@ -469,7 +470,7 @@ function toggledisplay2 (it) {
           </tr>
           
           <tr>
-                <th colspan="2"><h2><fmt:message key="submit.trial.statusDates"/></h2></th>
+                <th colspan="2"><fmt:message key="submit.trial.statusDates"/></th>
           </tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -553,7 +554,7 @@ function toggledisplay2 (it) {
           
  
         <tr>
-              <th colspan="2"><h2>IND/IDE Information</h2></th>
+              <th colspan="2">IND/IDE Information</th>
         </tr>     
          <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -576,7 +577,7 @@ function toggledisplay2 (it) {
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
         <tr>
-              <th colspan="2"><h2><fmt:message key="submit.trial.documents"/></h2></th>
+              <th colspan="2"><fmt:message key="submit.trial.documents"/></th>
         </tr>
         <tr>
               <td colspan="2" class="space">&nbsp;</td>

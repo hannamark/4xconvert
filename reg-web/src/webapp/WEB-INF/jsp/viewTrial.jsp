@@ -19,7 +19,7 @@
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
  <h1><fmt:message key="view.trial.page.title" /></h1>
-
+<reg-web:sucessMessage/>
 <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 

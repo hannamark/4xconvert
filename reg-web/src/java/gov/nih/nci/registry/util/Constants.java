@@ -68,6 +68,8 @@ public class Constants {
     
     /** minimum password length. */
     public static final int MIN_PASSWORD_LENGTH = 6;
+    /** Success Message . */
+    public static final String SUCCESS_MESSAGE = "successMessage";
     
     
 }

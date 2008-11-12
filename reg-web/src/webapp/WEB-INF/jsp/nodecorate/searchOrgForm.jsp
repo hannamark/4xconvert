@@ -8,12 +8,6 @@
  		<td>
  			<s:textfield name="orgSearchCriteria.orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
- 		<td scope="row" class="label">
-            <label for="nciorgname"> <fmt:message key="popUpOrg.nciorgnumber"/></label>
-        </td>
- 		<td> 			
- 			<s:textfield name="orgSearchCriteria.nciOrgNumber"  maxlength="200" size="100"  cssStyle="width:200px" />
- 		</td>
  		
  		<td scope="row" class="label">
             <label for="country"> <fmt:message key="popUpOrg.country"/></label>

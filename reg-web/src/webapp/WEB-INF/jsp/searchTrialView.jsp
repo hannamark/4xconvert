@@ -131,7 +131,7 @@
 				</label>
 			</td>
 			<td class="value">
-				<c:out value="${requestScope.nihInstitute.organizationIdentifier.extension }"/>
+				<c:out value="${requestScope.summaryFourSponsorName }"/>
 			</td>
 	   </tr> 
       <tr>
