@@ -63,13 +63,21 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     protected abstract void defaultConstructorInit();
     
     /**
-     * @return success
+     * {@inheritDoc}
      */
-    @SuppressWarnings(UNCHECKED)
-    public String start() {
+    @Override
+    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", UNCHECKED })
+    public String input() throws Exception {
         if (!getRole().getChangeRequests().isEmpty()) {
             setCr((ROLECR) getRole().getChangeRequests().iterator().next());
         }
+        return INPUT;
+    }
+    
+    /**
+     * @return success
+     */
+    public String start() {
         search();
         return SUCCESS;
     }

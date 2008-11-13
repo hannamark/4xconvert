@@ -21,14 +21,17 @@
     label="%{getText(#attr.iiLabelKeyBase + '.displayable')}"
     list="#displayableValues" 
     headerKey="" headerValue="--Is Displayable?--"
-    value="#attr.ii.displayable" >
+    value="#attr.ii.displayable" 
+    id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.displayable'}">
 </s:select>             
 <s:textfield name="%{#attr.iiKeyBase + '.extension'}" required="%{#attr.required}" cssClass="%{cssClass}" 
     size="70" maxlength="255"
-    label="%{getText(#attr.iiLabelKeyBase + '.extension')}" />
+    label="%{getText(#attr.iiLabelKeyBase + '.extension')}" 
+    id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.extension'}"/>
 <s:textfield name="%{#attr.iiKeyBase + '.identifierName'}" 
 	size="70" maxlength="255"
-	label="%{getText(#attr.iiLabelKeyBase + '.identifierName')}"/>
+	label="%{getText(#attr.iiLabelKeyBase + '.identifierName')}"
+	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.identifierName'}"/>
 <s:set name="reliabilityValues" value="@gov.nih.nci.coppa.iso.IdentifierReliability@values()" />
 <s:select 
     name="%{#attr.iiKeyBase + '.reliability'}" 
@@ -36,11 +39,13 @@
     list="#reliabilityValues" 
     listKey="name()" listValue="name()" 
     headerKey="" headerValue="--Select a Reliability--"
-    value="#attr.ii.reliability">
+    value="#attr.ii.reliability"
+    id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.reliability'}">
 </s:select>             
 <s:textfield name="%{#attr.iiKeyBase + '.root'}" required="%{#attr.required}" cssClass="%{cssClass}"
 	size="70" maxlength="255"
-	label="%{getText(#attr.iiLabelKeyBase + '.root')}" />
+	label="%{getText(#attr.iiLabelKeyBase + '.root')}" 
+	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.root'}"/>
 <s:set name="scopeValues" value="@gov.nih.nci.coppa.iso.IdentifierScope@values()" />
 <s:select 
     name="%{#attr.iiKeyBase + '.scope'}" 
@@ -48,6 +53,7 @@
     list="#scopeValues" 
     listKey="name()" listValue="name()" 
     headerKey="" headerValue="--Select a Scope--"
-    value="#attr.ii.scope">
+    value="#attr.ii.scope"
+    id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.scope'}">
 </s:select>             
        

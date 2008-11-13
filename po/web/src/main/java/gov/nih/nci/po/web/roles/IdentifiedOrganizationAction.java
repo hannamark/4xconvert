@@ -99,10 +99,8 @@ public class IdentifiedOrganizationAction
         }
     )
     @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String add() throws JMSException {
-        getRole().setScoper(
-                PoRegistry.getGenericService().getPersistentObject(getRole().getScoper().getClass(),
-                        getRole().getScoper().getId()));
         return super.add();
     }
     

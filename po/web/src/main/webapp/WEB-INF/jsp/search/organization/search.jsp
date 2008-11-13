@@ -53,6 +53,7 @@
          </div>
          <div class="clearfloat"></div>
         </div>
+        <input id="enableEnterSubmit" type="submit"/>
      </s:form>
      <div style="clear:left;"></div>
 </div>

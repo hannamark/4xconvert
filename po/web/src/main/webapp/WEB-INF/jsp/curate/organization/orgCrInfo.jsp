@@ -7,14 +7,9 @@
         <div class="box_white">
 	        <po:copyButton id="copy_curateOrgForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateOrgForm_organization_statusCode');"
 	            bodyStyle="float:left;" buttonStyle="float:right;">
-		            <div class="wwgrp" id="wwgrp_curateOrgCrForm_cr_statusCode" >
-			            <div class="wwlbl" id="wwlbl_curateOrgCrForm_cr_statusCode">
-			            <label class="label" for="curateOrgCrForm_cr_statusCode">     
-			            <s:text name="cr.statusCode"/>:
-			            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgCrForm_cr_statusCode">
-			            ${cr.statusCode}
-			            </div>
-		            </div>        
+	            <po:field labelKey="organization.statusCode">
+		            ${cr.statusCode}
+	            </po:field>
 	        </po:copyButton>
 	        
 	        <po:field labelKey="cr.id"> 
@@ -23,15 +18,15 @@
             
             <po:copyButton id="copy_curateOrgForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateOrgForm_organization_name');" 
                 bodyStyle="float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.name" required="false" cssClass="required" size="70"/>
+                <s:textfield name="cr.name" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
             </po:copyButton>
             <po:copyButton id="copy_curateOrgForm_organization_abbreviatedName" onclick="copyValueToTextField('${cr.abbreviatedName}', 'curateOrgForm_organization_abbreviatedName');"
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.abbreviatedName" required="false" cssClass="required" size="70"/>
+                <s:textfield name="cr.abbreviatedName" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
             </po:copyButton>            
             <po:copyButton id="copy_curateOrgForm_organization_description" onclick="copyValueToTextField('${cr.description}', 'curateOrgForm_organization_description');"
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.description" required="false" cssClass="required" size="70"/>
+                <s:textfield name="cr.description" label="%{getText('organization.description')}" required="false" cssClass="required" size="70"/>
             </po:copyButton>            
             
             <div class="clear"></div>

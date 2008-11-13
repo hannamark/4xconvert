@@ -95,7 +95,6 @@ function handleDuplicateOf() {
                     </div>
                 </div>
                 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
-                <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
                 <s:select 
                    label="Identified Organization Type"
                    name="role.typeCode"
@@ -126,6 +125,10 @@ function handleDuplicateOf() {
 						</select>
 				   </po:field>
                 </div>	
+				<fieldset>
+				    <legend><s:text name="identifiedOrganization.assignedIdentifier"/></legend>
+				    <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
+				</fieldset>                
                  <input id="enableEnterSubmit" type="submit"/>			    
 			    </s:form>
 		    </div>
