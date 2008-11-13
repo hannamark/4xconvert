@@ -11,9 +11,13 @@ import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -27,6 +31,8 @@ import javax.persistence.Table;
  * copyright holder, NCI.
  */
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "PLANNED_ACTIVITY_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "PLANNED_ACTIVITY")
 public class PlannedActivity extends Activity {
     private static final long serialVersionUID = 1239781890L;
@@ -35,6 +41,7 @@ public class PlannedActivity extends Activity {
     private ActivitySubcategoryCode subcategoryCode; 
     private Boolean leadProductIndicator;
     private Intervention intervention;
+    private String descriptionText;
  
     private Collection<Arm> arms = new ArrayList<Arm>();
     
@@ -109,5 +116,17 @@ public class PlannedActivity extends Activity {
     public void setArms(Collection<Arm> arms) {
         this.arms = arms;
     }
-
+    /**
+     * @return the descriptionText
+     */
+    @Column(name = "DESCRIPTION_TEXT")
+    public String getDescriptionText() {
+        return descriptionText;
+    }
+    /**
+     * @param descriptionText the descriptionText to set
+     */
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
+    }
 }
