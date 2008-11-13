@@ -51,13 +51,15 @@
 <div id="page" style="margin-top:10px;">
 	<div class="boxouter_nobottom">
 	<h2>Organization Information</h2>
+	
 	<s:if test="%{isCreate}">
 	   <s:set name="formAction" value="'create/organization/create.action'"/>
 	</s:if>
 	<s:else>
 	   <s:set name="formAction" value="'organization/curate/curate.action'"/>
 	</s:else>
-	<s:form action="%{formAction}" id="curateOrgForm">
+	<s:form action="%{formAction}" id="curateOrgForm" onsubmit="return confirmThenSubmit(document.forms.curateOrgForm);">
+	    <input id="enableEnterSubmit" type="submit"/>
 		<s:hidden key="rootKey"/>
 	    <s:hidden key="cr.id"/>
 	    <s:hidden key="organization.id"/>
@@ -186,25 +188,25 @@
 			$('wwctrl_curateOrgForm_organization_duplicateOf_id').innerHTML = $('curateOrgForm.organization.duplicateOf.id').value;
 		}
 	</script>
-	<script type="text/javascript">
-	   function confirmThenSubmit(formId) {
-		   if ($('curateOrgForm.organization.statusCode').value == 'NULLIFIED') {
-			   var r = confirm('<s:text name="curation.nullified.confirmation"/>');
-			   if (r == true) {
-				   $(formId).submit();
-				   return true;
-			   } else {
-				   return false;
-			   }
-		   } else {
-			   $(formId).submit();
-			   return true;
-		   }
-	   } 
-	</script>
-	    <po:buttonRow>
-	        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit(document.forms.curateOrgForm);" style="save" text="Save"/>
-	    </po:buttonRow>
+    <script type="text/javascript">
+       function confirmThenSubmit(formId) {
+           if ($('curateOrgForm.organization.statusCode').value == 'NULLIFIED') {
+               var r = confirm('<s:text name="curation.nullified.confirmation"/>');
+               if (r == true) {
+                   $(formId).submit();
+                   return true;
+               } else {
+                   return false;
+               }
+           } else {
+               $(formId).submit();
+               return true;
+           }
+       } 
+    </script>	
+    <po:buttonRow>
+        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit(document.forms.curateOrgForm);" style="save" text="Save"/>
+    </po:buttonRow>
 </div>
 
 </body>
