@@ -26,7 +26,14 @@ public class ISDesignDetailsWebDTO {
     private String primaryIndicator;
     private String safetyIndicator;
     private String id;
-       
+
+    private String criterionName;
+    private String inclusionIndicator;
+    private String operator;
+    private String ageValue;
+    private String unit;
+    private String descriptionText;
+    
     /**
      * @return primaryPurposeCode
      */
@@ -220,5 +227,76 @@ public class ISDesignDetailsWebDTO {
     public void setId(String id) {
         this.id = id;
     }
-
+    /**
+     * @return criterionName
+     */
+    public String getCriterionName() {
+        return criterionName;
+    }
+    /**
+     * @param criterionName criterionName
+     */
+    public void setCriterionName(String criterionName) {
+        this.criterionName = criterionName;
+    }
+    /**
+     * @return inclusionIndicator
+     */
+    public String getInclusionIndicator() {
+        return inclusionIndicator;
+    }
+    /**
+     * @param inclusionIndicator inclusionIndicator
+     */
+    public void setInclusionIndicator(String inclusionIndicator) {
+        this.inclusionIndicator = inclusionIndicator;
+    }
+    /**
+     * @return operator
+     */
+    public String getOperator() {
+        return operator;
+    }
+    /**
+     * @param operator operator
+     */
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+    /**
+     * @return ageValue
+     */
+    public String getAgeValue() {
+        return ageValue;
+    }
+    /**
+     * @param ageValue ageValue
+     */
+    public void setAgeValue(String ageValue) {
+        this.ageValue = ageValue;
+    }
+    /**
+     * @return unit
+     */
+    public String getUnit() {
+        return unit;
+    }
+    /**
+     * @param unit unit
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    /**
+     * @return descriptionText
+     */
+    public String getDescriptionText() {
+        return descriptionText;
+    }
+    /**
+     * @param descriptionText descriptionText
+     */
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
+    }
 }
