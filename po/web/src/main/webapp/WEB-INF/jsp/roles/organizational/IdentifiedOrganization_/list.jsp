@@ -28,8 +28,8 @@
         <display:column titleKey="identifiedOrganization.statusDate" property="statusDate" sortable="true" sortProperty="STATUS_DATE" format="{0,date,yyyy-MM-dd}" />
         <display:column titleKey="th.action" class="action">
             <c:url var="editUrl" value="/protected/roles/organizational/IdentifiedOrganization/input.action">
-                <c:param name="organization.id" value="${organization.id}"/>
-                <c:param name="role.id" value="${row.id}"/>
+                <c:param name="organization" value="${organization.id}"/>
+                <c:param name="role" value="${row.id}"/>
             </c:url>
             <po:buttonRow>
                 <po:button href="${editUrl}" style="edit" text="Edit" id="edit_research_org_id_${row.id}"/>

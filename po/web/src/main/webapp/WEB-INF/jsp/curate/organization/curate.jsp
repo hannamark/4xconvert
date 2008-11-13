@@ -155,10 +155,10 @@
         <h2>Assign Organizational Roles</h2>
             <div class="box_white"> 
                 <c:url var="manageResearchOrgs" value="/protected/roles/organizational/ResearchOrganization/start.action">
-                    <c:param name="organization.id" value="${organization.id}"/>
+                    <c:param name="organization" value="${organization.id}"/>
                 </c:url>
                 <c:url var="manageIdentifiedOrgs" value="/protected/roles/organizational/IdentifiedOrganization/start.action">
-                    <c:param name="organization.id" value="${organization.id}"/>
+                    <c:param name="organization" value="${organization.id}"/>
                 </c:url>
 	            <ul>
 	                <li><a href="${manageResearchOrgs}">Manage Research Organizations</a>

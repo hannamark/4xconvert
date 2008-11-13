@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -39,20 +40,15 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
     @Before
     public void setUp() {
         action = new ResearchOrganizationAction();
+        assertNotNull(action.getRole());
+        assertNotNull(action.getCr());
+        assertNotNull(action.getOrganization());        
     }
 
     @Test
     public void testPrepareNoOrgId() throws Exception {
         action.prepare();
-    }
-
-    @Test
-    public void testPrepareWithOrgId() throws Exception {
-        action.getOrganization().setId(1L);
-        assertNull(action.getOrganization().getName());
-        action.prepare();
-        assertEquals(1l, action.getOrganization().getId().longValue());
-        assertEquals("name", action.getOrganization().getName());
+        assertSame(action.getOrganization(), action.getRole().getPlayer());
     }
 
     @Test

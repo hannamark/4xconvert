@@ -26,14 +26,46 @@ public class ResearchOrganizationAction
     implements Preparable {
 
     private static final long serialVersionUID = 1L;
-
+    private ResearchOrganization role = new ResearchOrganization();
+    private ResearchOrganizationCR cr = new ResearchOrganizationCR();
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public ResearchOrganization getRole() {
+        return role;
+    }
+    
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public void setRole(ResearchOrganization role) {
+        this.role = role;
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public ResearchOrganizationCR getCr() {
+        return cr;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCr(ResearchOrganizationCR cr) {
+        this.cr = cr;
+    }
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    @Override
     public void prepare() throws Exception {
-        super.prepare();
         if (getRole().getPlayer() == null) { //if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
@@ -54,8 +86,6 @@ public class ResearchOrganizationAction
      * {@inheritDoc}
      */
     protected void defaultConstructorInit() {
-        setRole(new ResearchOrganization());
-        setCr(new ResearchOrganizationCR());
         setResults(new PaginatedList<ResearchOrganization>(0,
                 new ArrayList<ResearchOrganization>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
                 ResearchOrganizationSortCriterion.ID.name(), SortOrderEnum.ASCENDING));

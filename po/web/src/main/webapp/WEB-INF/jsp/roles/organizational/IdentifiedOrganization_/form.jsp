@@ -31,9 +31,9 @@ function handleDuplicateOf() {
 <s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
     <s:form action="ajax/roles/organizational/IdentifiedOrganization/changeCurrentChangeRequest.action" id="changeCrForm">
-        <s:hidden key="organization.id"/>
-        <s:hidden key="role.id" />
-        <s:hidden key="role.player.id"/>
+        <s:hidden key="organization"/>
+        <s:hidden key="role" />
+        <s:hidden key="role.player"/>
         <s:select
            label="Current Change Request"
            name="cr"
@@ -64,10 +64,10 @@ function handleDuplicateOf() {
 		    <div class="box_white">
 				<s:actionerror/> 
 				<s:form action="%{formAction}" id="curateRoleForm">
-				<s:hidden key="cr.id"/>
-				<s:hidden key="organization.id"/>
-				<s:hidden key="role.id" />
-				<s:hidden key="role.player.id"/>
+				<s:hidden key="cr"/>
+				<s:hidden key="organization"/>
+				<s:hidden key="role" />
+				<s:hidden key="role.player"/>
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                 <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.IdentifiedOrganizationType@class"/>
                 <s:set name="identifiedOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
@@ -77,7 +77,7 @@ function handleDuplicateOf() {
                     </s:fielderror>
                     <div style="float:right;">
                         <c:url value="/protected/selector/organization/start.action" var="findScoperUrl">
-                            <c:param name="source.id" value="${organization.id}"/>
+                            <c:param name="source" value="${organization.id}"/>
                         </c:url>
                         <po:buttonRow>
                         <po:button id="select_scoper" href="javascript://noop/" onclick="showPopWin('${findScoperUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Scoper"/>
@@ -163,7 +163,7 @@ function handleDuplicateOf() {
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="$('curateRoleForm').submit();" style="save" text="Save"/>
        <c:url var="manageIdentifiedOrgs" value="/protected/roles/organizational/IdentifiedOrganization/start.action">
-           <c:param name="organization.id" value="${organization.id}"/>
+           <c:param name="organization" value="${organization.id}"/>
        </c:url>
        <po:button id="continue_button" href="${manageIdentifiedOrgs}" onclick="" style="continue" text="Close"/>
     </po:buttonRow>

@@ -30,16 +30,16 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 public class IdentifiedOrganizationAction 
     extends AbstractRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR, IdentifiedOrganizationServiceLocal> 
     implements Preparable {
-
+    
     private static final long serialVersionUID = 1L;
+    private IdentifiedOrganization role = new IdentifiedOrganization();
+    private IdentifiedOrganizationCR cr = new IdentifiedOrganizationCR();
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    @Override
     public void prepare() throws Exception {
-        super.prepare();
         if (getRole().getPlayer() == null) { //if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
@@ -51,7 +51,40 @@ public class IdentifiedOrganizationAction
         }
         getRole().getAssignedIdentifier().setNullFlavor(null);
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentifiedOrganization getRole() {
+        return role;
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRole(IdentifiedOrganization role) {
+        this.role = role;
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public IdentifiedOrganizationCR getCr() {
+        return cr;
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public void setCr(IdentifiedOrganizationCR cr) {
+        this.cr = cr;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -107,8 +140,6 @@ public class IdentifiedOrganizationAction
      * {@inheritDoc}
      */
     protected void defaultConstructorInit() {
-        setRole(new IdentifiedOrganization());
-        setCr(new IdentifiedOrganizationCR());
         setResults(new PaginatedList<IdentifiedOrganization>(0,
                 new ArrayList<IdentifiedOrganization>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
                 IdentifiedOrganizationSortCriterion.ID.name(), SortOrderEnum.ASCENDING));

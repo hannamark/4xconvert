@@ -8,7 +8,6 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.service.SortCriterion;
-import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
 
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -40,7 +38,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  */
 public abstract class AbstractRoleAction<ROLE extends Correlation, 
     ROLECR extends CorrelationChangeRequest<ROLE>, ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
-        extends ActionSupport implements Preparable {
+        extends ActionSupport {
 
     private static final String UNCHECKED = "unchecked";
     private static final long serialVersionUID = 1L;
@@ -49,8 +47,6 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      */
     public static final String CHANGE_CURRENT_CHANGE_REQUEST_RESULT = "changeCurrentChangeRequest";
     private Organization organization = new Organization();
-    private ROLE role;
-    private ROLECR cr;
     private PaginatedList<ROLE> results;
 
     /**
@@ -65,20 +61,6 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * Implement to provide default constructor initialization.
      */
     protected abstract void defaultConstructorInit();
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        if (organization.getId() != null) { // if set, load
-            organization = PoRegistry.getOrganizationService().getById(organization.getId());
-        }
-        if (getRole().getId() != null) { // if set, load
-            setRole(getRoleService().getById(getRole().getId()));
-        }
-        findAndSetCr(cr.getId());
-    }
     
     /**
      * @return success
@@ -88,7 +70,6 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
         if (!getRole().getChangeRequests().isEmpty()) {
             setCr((ROLECR) getRole().getChangeRequests().iterator().next());
         }
-        findAndSetCr(getCr().getId());
         search();
         return SUCCESS;
     }
@@ -153,28 +134,17 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     protected abstract String getEditSuccessMessageKey();
 
     /**
-     * @param id changeRequest's id
-     */
-    @SuppressWarnings(UNCHECKED)
-    protected void findAndSetCr(Long id) {
-        if (id != null) {
-            this.cr = (ROLECR) PoRegistry.getGenericService().getPersistentObject(cr.getClass(), id);
-        }
-    }
-
-    /**
+     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @return to add/edit/remove
      */
-    public ROLE getRole() {
-        return role;
-    }
+    public abstract ROLE getRole();
+    
 
     /**
+     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @param role to add/edit/remove
      */
-    public void setRole(ROLE role) {
-        this.role = role;
-    }
+    public abstract void setRole(ROLE role);
 
     /**
      * @return organization player
@@ -191,18 +161,16 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     }
 
     /**
+     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @return active change request
      */
-    public ROLECR getCr() {
-        return cr;
-    }
+    public abstract ROLECR getCr();
 
     /**
+     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @param cr active change request
      */
-    public void setCr(ROLECR cr) {
-        this.cr = cr;
-    }
+    public abstract void setCr(ROLECR cr);
 
     /**
      * @return the service for the ROLE
@@ -213,7 +181,6 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @return success
      */
     public String changeCurrentChangeRequest() {
-        findAndSetCr(getCr().getId());
         return CHANGE_CURRENT_CHANGE_REQUEST_RESULT;
     }
 
@@ -223,7 +190,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     @SuppressWarnings(UNCHECKED)
     public Map<String, String> getSelectChangeRequests() {
         TreeMap<String, String> treeMap = new TreeMap<String, String>();
-        Set<ROLECR> unprocessedChangeRequests = role.getChangeRequests();
+        Set<ROLECR> unprocessedChangeRequests = getRole().getChangeRequests();
         for (ROLECR changeRequest : unprocessedChangeRequests) {
             treeMap.put(changeRequest.getId().toString(), "CR-ID-" + changeRequest.getId().toString());
         }

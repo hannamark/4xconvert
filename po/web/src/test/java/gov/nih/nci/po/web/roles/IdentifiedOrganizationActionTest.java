@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
-import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceStub;
@@ -21,8 +20,6 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.util.PrivateAccessor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,7 +28,6 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,22 +40,24 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
     @Before
     public void setUp() {
         action = new IdentifiedOrganizationAction();
+        assertNotNull(action.getRole());
+        assertNotNull(action.getCr());
+        assertNotNull(action.getOrganization());
     }
 
     @Test
-    public void testPrepareNoOrgId() throws Exception {
+    public void testPrepare() throws Exception {
+        action.setRole(new IdentifiedOrganization());
+        assertNull(action.getRole().getScoper());
+        assertNull(action.getRole().getAssignedIdentifier());
+        action.setOrganization(new Organization());
         action.prepare();
+        assertSame(action.getOrganization(), action.getRole().getPlayer());
+        assertNotNull(action.getRole().getScoper());
+        assertNotNull(action.getRole().getAssignedIdentifier());
+        assertNull(action.getRole().getAssignedIdentifier().getNullFlavor());
     }
     
-    @Test
-    public void testPrepareWithOrgId() throws Exception {
-        action.getOrganization().setId(1L);
-        assertNull(action.getOrganization().getName());
-        action.prepare();
-        assertEquals(1l, action.getOrganization().getId().longValue());
-        assertEquals("name", action.getOrganization().getName());
-    }
-
     @Test
     public void testStart() {
         assertEquals(Action.SUCCESS, action.start());
