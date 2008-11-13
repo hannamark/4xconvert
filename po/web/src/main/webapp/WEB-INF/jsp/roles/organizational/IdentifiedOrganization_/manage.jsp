@@ -9,19 +9,7 @@
 
     <div class="boxouter">
     <h2>Identified Organization Information</h2>
-        <div class="boxouter">
-        <h2>Organization Information</h2>
-            <div class="box_white">
-                <s:form action="roles/organizational/IdentifiedOrganization/start.action" id="basicOrgDetailForm" theme="css_xhtml_readonly">
-	            <po:inputRow>
-	            <po:inputRowElement><s:textfield key="organization.id" /></po:inputRowElement>
-	            <po:inputRowElement><s:textfield key="organization.statusCode" /></po:inputRowElement>
-	            </po:inputRow>
-	            <po:inputRowElement><s:textfield key="organization.name" required="false" cssClass="required" size="70"/></po:inputRowElement>
-                </s:form>
-                <div class="clear"></div>
-            </div>
-        </div>
+        <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
 		<h2>Identified Organizational Roles</h2>
 		    <div id="roles">

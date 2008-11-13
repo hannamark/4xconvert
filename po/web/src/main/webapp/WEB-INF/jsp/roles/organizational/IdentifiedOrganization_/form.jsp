@@ -4,7 +4,7 @@
 <s:set name="isCreate" value="role.id == null" /> 
 <s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
-<title>Create Identified Organization</title>
+    <title>Create Identified Organization</title>
 </s:if>
 <s:else>
    <c:if test="${fn:length(organization.changeRequests) > 0}">

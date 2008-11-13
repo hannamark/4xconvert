@@ -4,7 +4,7 @@
     <h2>Change Request Information</h2>
         <%@ include file="../orgInfo.jsp" %>    
         <div class="boxouter">
-            <h2>Identified Organization Information</h2>
+            <h2>Oversight Committee Information</h2>
             <div class="box_white">
             <po:copyButton 
                 id="copy_curateCrForm_role_typeCode" 
@@ -12,9 +12,8 @@
                 bodyStyle="float:left;" buttonStyle="float:right;">
                 <s:textfield key="cr.typeCode.description" required="true" cssClass="required" />
             </po:copyButton>
-
             <po:copyButton
-             id="copy_curateCrForm_role_status"
+             id="copy_curateCrForm_role_fundingMechanism"
              onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield key="cr.status" required="true" cssClass="required"/>

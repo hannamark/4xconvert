@@ -160,9 +160,13 @@
                 <c:url var="manageIdentifiedOrgs" value="/protected/roles/organizational/IdentifiedOrganization/start.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
+                <c:url var="manageOversightComms" value="/protected/roles/organizational/OversightCommittee/start.action">
+                    <c:param name="organization" value="${organization.id}"/>
+                </c:url>
 	            <ul>
 	                <li><a href="${manageResearchOrgs}">Manage Research Organizations</a>
 	                <li><a href="${manageIdentifiedOrgs}">Manage Identified Organizations</a>
+	                <li><a href="${manageOversightComms}">Manage Oversight Committees</a>
 	            </ul>
                 <div class="clear"></div>
             </div>

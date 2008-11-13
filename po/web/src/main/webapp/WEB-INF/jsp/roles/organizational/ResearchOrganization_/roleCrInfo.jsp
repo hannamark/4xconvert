@@ -2,17 +2,7 @@
 <s:form action="ajax/organization/curate/no.action" id="curateCrForm" theme="css_xhtml_readonly">
     <div class="boxouter_nobottom">
     <h2>Change Request Information</h2>
-        <div class="boxouter">
-        <h2>Organization Information</h2>
-            <div class="box_white">
-                <po:inputRow>
-	                <po:inputRowElement><s:textfield key="organization.id" /></po:inputRowElement>
-	                <po:inputRowElement><s:textfield key="organization.statusCode" /></po:inputRowElement>
-                </po:inputRow>
-                <s:textfield key="organization.name" required="false" cssClass="required" size="70"/>
-                <div class="clear"></div>
-            </div>
-        </div>    
+        <%@ include file="../orgInfo.jsp" %>    
         <div class="boxouter">
             <h2>Research Organization Information</h2>
             <div class="box_white">

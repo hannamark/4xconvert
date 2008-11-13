@@ -4,14 +4,14 @@
 <s:set name="isCreate" value="role.id == null" /> 
 <s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
-    <title>Create Research Organization</title>
+    <title>Create Oversight Committee</title>
 </s:if>
 <s:else>
    <c:if test="${fn:length(organization.changeRequests) > 0}">
-      <title>Research Organization Details - Comparison</title>
+      <title>Oversight Committee Details - Comparison</title>
    </c:if>
    <c:if test="${fn:length(organization.changeRequests) == 0}">
-      <title>Research Organization Details</title>
+      <title>Oversight Committee Details</title>
    </c:if>
 </s:else>
 
@@ -30,7 +30,7 @@ function handleDuplicateOf() {
 
 <s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
-    <s:form action="ajax/roles/organizational/ResearchOrganization/changeCurrentChangeRequest.action" id="changeCrForm">
+    <s:form action="ajax/roles/organizational/OversightCommittee/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization"/>
         <s:hidden key="role" />
         <s:hidden key="role.player"/>
@@ -49,17 +49,17 @@ function handleDuplicateOf() {
 
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
-    <h2>Research Organization Information</h2>
+    <h2>Oversight Committee Information</h2>
         <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
 				<s:set name="formAction"
-					value="'roles/organizational/ResearchOrganization/add.action'" />
+					value="'roles/organizational/OversightCommittee/add.action'" />
 			</s:if> <s:else>
 				<s:set name="formAction"
-					value="'roles/organizational/ResearchOrganization/edit.action'" />
+					value="'roles/organizational/OversightCommittee/edit.action'" />
 			</s:else>
-			<h2>Research Organization Role Information</h2>
+			<h2>Oversight Committee Role Information</h2>
 		    <div class="box_white">
 				<s:actionerror/> 
 				<s:form action="%{formAction}" id="curateRoleForm">
@@ -68,27 +68,19 @@ function handleDuplicateOf() {
 				<s:hidden key="role" />
 				<s:hidden key="role.player"/>
 				<s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
-				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
+				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OversightCommitteeType@class"/>
 				<s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
 				<s:select 
-				   label="%{getText('researchOrganization.typeCode')}"
+				   label="%{getText('oversightCommittee.typeCode')}"
 				   name="role.typeCode"
 				   list="#researchOrgTypes"
 				   listKey="id"
-				   listValue="description"
+				   listValue="code"
 				   value="role.typeCode.id" 
 				   headerKey="" headerValue="--Select a Type--" 
 				   required="true" cssClass="required" /> 
-				<s:set name="researchOrgFundings" value="#{'U10':'U10', 'U01':'U01', 'P01':'P01', 'N01':'N01', 'P30':'P30'}" />
-				<s:select
-				   label="%{getText('researchOrganization.fundingMechanism')}"
-				   name="role.fundingMechanism"
-				   list="#researchOrgFundings"
-				   value="role.fundingMechanism" 
-				   headerKey="" headerValue="--Select a Funding Mechanism--" 
-				   required="true" cssClass="required" /> 
 				<s:select id="curateRoleForm.role.status"
-				   label="%{getText('researchOrganization.status')}"
+				   label="%{getText('oversightCommittee.status')}"
 				   name="role.status"
 				   list="availableStatus"
 				   listKey="name()"
@@ -102,15 +94,15 @@ function handleDuplicateOf() {
                     <div class="wwgrp" id="wwgrp_curateRoleForm_role_duplicateOf">
 	                    <div class="wwlbl" id="wwlbl_curateRoleForm.role.duplicateOf">
 		                    <label class="label" for="curateRoleForm.role.duplicateOf">        
-		                    <s:text name="researchOrganization.duplicateOf"/>:
+		                    <s:text name="oversightCommittee.duplicateOf"/>:
 		                    </label>
 	                    </div> 
 	                    <br/>
 	                    <div class="wwctrl" id="wwctrl_curateRoleForm.role.duplicateOf">
-							<select id="curateRoleForm.role.duplicateOf" name="researchOrganization.duplicateOf">
-							<option value="">--Select a Duplicate Of Entry (ID - TYPE - FUNDING - STATUS - DATE)--</option>
+							<select id="curateRoleForm.role.duplicateOf" name="oversightCommittee.duplicateOf">
+							<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
 							<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
-							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.fundingMechanism} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
+							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
 							</c:forEach>
 							</select>
 	                    </div>
@@ -136,7 +128,7 @@ function handleDuplicateOf() {
     <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="$('curateRoleForm').submit();" style="save" text="Save"/>
-       <c:url var="manageResearchOrgs" value="/protected/roles/organizational/ResearchOrganization/start.action">
+       <c:url var="manageResearchOrgs" value="/protected/roles/organizational/OversightCommittee/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>
        <po:button id="continue_button" href="${manageResearchOrgs}" onclick="" style="continue" text="Close"/>
