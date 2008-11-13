@@ -66,6 +66,7 @@ public class StudyProtocol extends AbstractEntity {
     private Boolean section801Indicator;
     private Timestamp startDate;
     private ActualAnticipatedTypeCode startDateTypeCode;
+    private Boolean acceptHealthyVolunteersIndicator;
     
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
@@ -563,5 +564,19 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setArms(List<Arm> arms) {
         this.arms = arms;
+    }
+    /**
+     * @return acceptHealthyVolunteersIndicator
+     */
+    @Column(name = "ACCEPT_HEALTHY_VOLUNTEERS_INDICATOR")
+    public Boolean getAcceptHealthyVolunteersIndicator() {
+        return acceptHealthyVolunteersIndicator;
+    }
+    /**
+     * @param acceptHealthyVolunteersIndicator acceptHealthyVolunteersIndicator
+     */
+    public void setAcceptHealthyVolunteersIndicator(
+            Boolean acceptHealthyVolunteersIndicator) {
+        this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
     }
 }
