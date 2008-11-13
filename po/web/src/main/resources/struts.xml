@@ -211,7 +211,8 @@
             <result name="input">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="success" type="redirect-action">
 	            <param name="namespace">/protected</param>
-	            <param name="actionName">create/organization/start</param>
+	            <param name="actionName">organization/curate/start</param>
+	            <param name="organization.id">${organization.id}</param>
             </result>
         </action>      
         

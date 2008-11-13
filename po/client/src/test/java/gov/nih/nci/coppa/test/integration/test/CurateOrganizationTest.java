@@ -145,7 +145,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         Ii dupId = createNewOrgThenCurateAsActive();
         Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
 
-        selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
+        selenium.select("curateOrgForm.organization.statusCode", "label=NULLIFIED");
         /* wait for in-browser js to execute via select's onchange event */
         Thread.sleep(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
@@ -245,21 +245,21 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private void saveAsActive(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=ACTIVE");
+        selenium.select("curateOrgForm.organization.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void saveAsInactive(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=INACTIVE");
+        selenium.select("curateOrgForm.organization.statusCode", "label=INACTIVE");
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void saveAsNullified(Ii id) {
-        selenium.select("curateOrgForm_organization_statusCode", "label=NULLIFIED");
+        selenium.select("curateOrgForm.organization.statusCode", "label=NULLIFIED");
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());

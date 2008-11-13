@@ -16,9 +16,9 @@
     </s:else>
     <script type="text/javascript">
     function handleDuplicateOf() {
-    	$('duplicateOfDiv')[$('curateOrgForm_organization_statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
+    	$('duplicateOfDiv')[$('curateOrgForm.organization.statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
             	
-    	if ($('curateOrgForm_organization_statusCode').value != 'NULLIFIED') {
+    	if ($('curateOrgForm.organization.statusCode').value != 'NULLIFIED') {
     		$('curateOrgForm.organization.duplicateOf.id').value = '';
     	}
     	return true;
@@ -74,7 +74,8 @@
 	               listValue="name()"
 	               value="organization.statusCode" 
 	               headerKey="" headerValue="--Select a Status--" 
-	               required="true" cssClass="required" />		        
+	               required="true" cssClass="required" 
+	               id="curateOrgForm.organization.statusCode"/>		        
 	        </s:if>
 	        <s:else>
 	            <po:field labelKey="organization.priorEntityStatus">
@@ -90,7 +91,8 @@
 			       value="organization.statusCode" 
 			       headerKey="" headerValue="--Select a Status--" 
 			       onchange="handleDuplicateOf();"
-			       required="true" cssClass="required" />         
+			       required="true" cssClass="required" 
+			       id="curateOrgForm.organization.statusCode"/>         
         	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
 	                    <div style="float:right;">
@@ -186,7 +188,7 @@
 	</script>
 	<script type="text/javascript">
 	   function confirmThenSubmit(formId) {
-		   if ($('curateOrgForm_organization_statusCode').value == 'NULLIFIED') {
+		   if ($('curateOrgForm.organization.statusCode').value == 'NULLIFIED') {
 			   var r = confirm('<s:text name="curation.nullified.confirmation"/>');
 			   if (r == true) {
 				   $(formId).submit();

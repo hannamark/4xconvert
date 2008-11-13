@@ -5,7 +5,7 @@
     <div class="boxouter">
     <h2>Basic Identifying Information</h2>
         <div class="box_white">
-	        <po:copyButton id="copy_curateOrgForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateOrgForm_organization_statusCode');"
+	        <po:copyButton id="copy_curateOrgForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateOrgForm.organization.statusCode');"
 	            bodyStyle="float:left;" buttonStyle="float:right;">
 	            <po:field labelKey="organization.statusCode">
 		            ${cr.statusCode}
