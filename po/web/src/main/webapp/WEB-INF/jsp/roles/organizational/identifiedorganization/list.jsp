@@ -27,7 +27,7 @@
         </display:column> 
         <display:column titleKey="identifiedOrganization.statusDate" property="statusDate" sortable="true" sortProperty="STATUS_DATE" format="{0,date,yyyy-MM-dd}" />
         <display:column titleKey="th.action" class="action">
-            <c:url var="editUrl" value="/protected/roles/organizational/identifiedorganization/addedit/input.action">
+            <c:url var="editUrl" value="/protected/roles/organizational/identifiedorganization/input.action">
                 <c:param name="organization.id" value="${organization.id}"/>
                 <c:param name="role.id" value="${row.id}"/>
             </c:url>

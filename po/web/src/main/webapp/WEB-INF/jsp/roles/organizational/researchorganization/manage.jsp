@@ -31,7 +31,7 @@
     </div> 
     <div class="btnwrapper" style="margin-bottom:20px;">
         <po:buttonRow>
-            <c:url var="addUrl" value="/protected/roles/organizational/researchorganization/addedit/input.action">
+            <c:url var="addUrl" value="/protected/roles/organizational/researchorganization/input.action">
                 <c:param name="organization.id" value="${organization.id}"/>
             </c:url>
             <po:button id="add_button" href="${addUrl}" style="add" text="Add"/>

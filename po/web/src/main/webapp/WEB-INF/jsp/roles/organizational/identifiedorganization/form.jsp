@@ -54,11 +54,11 @@ function handleDuplicateOf() {
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
 				<s:set name="formAction"
-					value="'roles/organizational/identifiedorganization/addedit/add.action'" />
+					value="'roles/organizational/identifiedorganization/add.action'" />
 				<h2>Identified Organization Role Information</h2>
 			</s:if> <s:else>
 				<s:set name="formAction"
-					value="'roles/organizational/identifiedorganization/addedit/edit.action'" />
+					value="'roles/organizational/identifiedorganization/edit.action'" />
 				<h2>Identified Organization Role Information</h2>
 			</s:else>
 		    <div class="box_white">
