@@ -3,6 +3,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 /**
  * @author Hugh Reinhart
@@ -17,6 +18,7 @@ public class PlannedActivityDTO extends StudyDTO {
     private Ii interventionIdentifier;
     private Bl leadProductIndicator;
     private Cd subcategoryCode;
+    private St descriptionText; 
     /**
      * @return the categoryCode
      */
@@ -64,5 +66,17 @@ public class PlannedActivityDTO extends StudyDTO {
      */
     public void setSubcategoryCode(Cd subcategoryCode) {
         this.subcategoryCode = subcategoryCode;
+    }
+    /**
+     * @return descriptionText
+     */
+    public St getDescriptionText() {
+        return descriptionText;
+    }
+    /**
+     * @param descriptionText descriptionText
+     */
+    public void setDescriptionText(St descriptionText) {
+        this.descriptionText = descriptionText;
     }
 }
