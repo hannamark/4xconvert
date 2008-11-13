@@ -7,10 +7,10 @@
     <title>Create Research Organization</title>
 </s:if>
 <s:else>
-   <c:if test="${fn:length(organization.changeRequests) > 0}">
+   <c:if test="${fn:length(role.changeRequests) > 0}">
       <title>Research Organization Details - Comparison</title>
    </c:if>
-   <c:if test="${fn:length(organization.changeRequests) == 0}">
+   <c:if test="${fn:length(role.changeRequests) == 0}">
       <title>Research Organization Details</title>
    </c:if>
 </s:else>

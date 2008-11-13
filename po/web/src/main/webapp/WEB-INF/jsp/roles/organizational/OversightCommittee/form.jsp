@@ -7,10 +7,10 @@
     <title>Create Oversight Committee</title>
 </s:if>
 <s:else>
-   <c:if test="${fn:length(organization.changeRequests) > 0}">
+   <c:if test="${fn:length(role.changeRequests) > 0}">
       <title>Oversight Committee Details - Comparison</title>
    </c:if>
-   <c:if test="${fn:length(organization.changeRequests) == 0}">
+   <c:if test="${fn:length(role.changeRequests) == 0}">
       <title>Oversight Committee Details</title>
    </c:if>
 </s:else>
