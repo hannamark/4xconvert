@@ -42,6 +42,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Ts startDate;
     private Cd startDateTypeCode;
     private St keywordText;
+    private Bl acceptHealthyVolunteersIndicator;
     
     /**
      * 
@@ -406,6 +407,19 @@ public class StudyProtocolDTO extends BaseDTO {
     public void setKeywordText(St keywordText) {
         this.keywordText = keywordText;
     }
+    /**
+     * @return acceptHealthyVolunteersIndicator
+     */
+    public Bl getAcceptHealthyVolunteersIndicator() {
+        return acceptHealthyVolunteersIndicator;
+    }
 
+    /**
+     * @param acceptHealthyVolunteersIndicator acceptHealthyVolunteersIndicator
+     */
+    public void setAcceptHealthyVolunteersIndicator(
+            Bl acceptHealthyVolunteersIndicator) {
+        this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
+    }
 }
 
