@@ -12,7 +12,7 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 /**
@@ -23,15 +23,32 @@ import gov.nih.nci.pa.util.PAUtil;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class PlannedActivityConverter extends AbstractConverter<PlannedActivityDTO, PlannedActivity> {
+   /**
+ * @param pa PlannedActivity
+ * @return PlannedActivityDTO
+ */
+@Override
+public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
+       return convertFromDomainToDTO(pa, new PlannedActivityDTO());
+   }
+   
+   /**
+   *
+   * @param paDTO PlannedActivityDTO
+   * @return PlannedActivity PlannedActivity
+   */
+@Override
+  public PlannedActivity convertFromDtoToDomain(PlannedActivityDTO paDTO) {
+      return convertFromDTOToDomain(paDTO , new PlannedActivity());
+  }
+  
     /**
      * 
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
+     * @param bo PlannedActivity domain object
+     * @param dto PlannedActivityDTO
+     * @return dto PlannedActivityDTO
      */
-    @Override
-    public PlannedActivityDTO convertFromDomainToDto(PlannedActivity bo) throws PAException {
-        PlannedActivityDTO dto = new PlannedActivityDTO();
+    public static PlannedActivityDTO convertFromDomainToDTO(PlannedActivity bo, PlannedActivityDTO dto) {
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         if (bo.getIntervention() != null) {
@@ -42,17 +59,17 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
             dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         }
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setDescriptionText(StConverter.convertToSt(bo.getDescriptionText()));
         return dto;
     }
 
     /**
      * Create a new domain object from a given dto.
      * @param dto PlannedActivityDTO
-     * @return StudyProtocol StudyProtocol
-     * @throws PAException PAException
+     * @param bo PlannedActivity
+     * @return PlannedActivity
      */
-    @Override
-    public PlannedActivity convertFromDtoToDomain(PlannedActivityDTO dto) throws PAException {
+    public static PlannedActivity convertFromDTOToDomain(PlannedActivityDTO dto , PlannedActivity bo) {
         StudyProtocol spBo = null;
         if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             spBo = new StudyProtocol();
@@ -65,7 +82,6 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
             invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
         }
         
-        PlannedActivity bo = new PlannedActivity();
         bo.setCategoryCode(ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(invBo);
@@ -73,6 +89,7 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(ActivitySubcategoryCode.
                 getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
+        bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         return bo;
     }
 
