@@ -46,6 +46,7 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
         spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIi()));
         sg.setDateLastUpdated(new Date());
         sg.setStudyProtocol(spBo);
+        sg.setId(IiConverter.convertToLong(sgDTO.getIdentifier()));
         if (sgDTO.getDescription() != null) {
             sg.setDescription(sgDTO.getDescription().getValue());
         }
