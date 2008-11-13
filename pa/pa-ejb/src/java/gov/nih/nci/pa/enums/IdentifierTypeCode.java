@@ -16,8 +16,8 @@ public enum IdentifierTypeCode implements CodedEnum<String> {
 
     /** NCI. */
     NCI("NCI"),
-    /** NCT. */
-    NCT("NCT"),
+//    /** NCT. */
+//    NCT("NCT"),
     /** Lead Organization. */
     LEAD_ORGANIZATION("Lead Organization");
 
