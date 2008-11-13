@@ -54,5 +54,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.Arm" />
         <mapping class="gov.nih.nci.pa.domain.OrganizationalContact" />
         <mapping class="gov.nih.nci.pa.domain.RegistryUser" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedEligibilityCriterion" />
     </session-factory>
 </hibernate-configuration>
