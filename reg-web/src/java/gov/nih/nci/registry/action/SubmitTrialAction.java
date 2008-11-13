@@ -68,6 +68,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
  * 
  * @author Bala Nair
+ * @author Harsha
  * 
  */
 @Validation
@@ -139,6 +140,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 studyProtocolIi = RegistryServiceLocator.getStudyProtocolService().createInterventionalStudyProtocol(
                         (InterventionalStudyProtocolDTO) createProtocolDTO(trialType));
             }
+            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
             LOG.info("Trial is registered with ID: " + IiConverter.convertToString(studyProtocolIi));
             ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
                     IiConverter.convertToString(studyProtocolIi));
@@ -615,7 +617,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (!(respparty.equals("pi"))) {
             responsiblePartyContact = (PersonDTO) ServletActionContext.getRequest().getSession().getAttribute(
                     "PoResponsibleContact");
-            addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
+            if (responsiblePartyContact == null) {
+                addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
+            }
         }
         if (trialType.equals("Interventional")) {
             if (PAUtil.isEmpty(contactPhone)) {

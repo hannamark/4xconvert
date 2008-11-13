@@ -484,12 +484,13 @@
               <sequential>
                   <copy todir="@{toDir}">
                       <fileset dir="${basedir}/src/webapp">                         
-                          <include name="WEB-INF/jsp/*.jsp"/>
-                          <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-                      		<include name="WEB-INF/tags/*.tag"/>	
-                      	  <include name="styles/*.css"/>
-                      	  <include name="scripts/js/*.js"/>     
-                      	  <include name="scripts/ajax/*.js"/>   
+							<include name="WEB-INF/jsp/*.jsp"/>
+							<include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+							<include name="WEB-INF/jsp/common/*.jsp"/>
+							<include name="WEB-INF/tags/*.tag"/>	
+							<include name="styles/*.css"/>
+							<include name="scripts/js/*.js"/>     
+							<include name="scripts/ajax/*.js"/>   
                       </fileset>
                   </copy>
               </sequential>

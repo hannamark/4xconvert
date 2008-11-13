@@ -76,7 +76,7 @@ function loadSponsorDiv() {
 function createOrgContactDiv() {	
 	var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
     var div = document.getElementById('loadResponsibleContactField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Creating primary contact...</div>';
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
     callAjax(url, div);
 }
 function loadSummary4SponsorDiv() {
