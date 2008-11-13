@@ -96,8 +96,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
@@ -116,6 +118,7 @@ public abstract class AbstractPersonResourceProvider {
     private Person player;
     private Organization scoper;
     private RoleStatus status;
+    private RoleStatus priorStatus;
     private Date statusDate;
 
     /**
@@ -182,6 +185,35 @@ public abstract class AbstractPersonResourceProvider {
         this.scoper = scoper;
     }
 
+    @SuppressWarnings("unused")
+    private void setPriorAsString(String prior) {
+        if (prior != null) {
+            this.priorStatus = RoleStatus.valueOf(prior);
+        } else {
+            this.priorStatus = null;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Formula("status")
+    @SuppressWarnings("unused")
+    private String getPriorAsString() {
+        if (this.priorStatus != null) {
+            return this.priorStatus.name();
+        }
+        return null;
+    }
+    
+    /**
+     * @return the prior curation status
+     */
+    @Transient
+    public RoleStatus getPriorStatus() {
+        return priorStatus;
+    }    
+    
     /**
      * @return the status
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
@@ -202,7 +234,8 @@ public abstract class AbstractPersonResourceProvider {
     public void setStatus(RoleStatus status) {
         this.status = status;
     }
-
+    
+    
     /**
      * @return the statusDate
      */
@@ -210,11 +243,13 @@ public abstract class AbstractPersonResourceProvider {
     public Date getStatusDate() {
         return this.statusDate;
     }
-
+    
     /**
      * @param statusDate the statusDate to set
      */
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
+    
+
 }

@@ -99,6 +99,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
@@ -123,6 +124,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     private Organization scoper;
 
     private RoleStatus status;
+    private RoleStatus priorStatus;
     private Date statusDate;
 
     /**
@@ -239,4 +241,33 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
+    
+    @SuppressWarnings("unused")
+    private void setPriorAsString(String prior) {
+        if (prior != null) {
+            this.priorStatus = RoleStatus.valueOf(prior);
+        } else {
+            this.priorStatus = null;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Formula("status")
+    @SuppressWarnings("unused")
+    private String getPriorAsString() {
+        if (this.priorStatus != null) {
+            return this.priorStatus.name();
+        }
+        return null;
+    }
+
+    /**
+     * @return the prior curation status
+     */
+    @Transient
+    public RoleStatus getPriorStatus() {
+        return priorStatus;
+    }    
 }

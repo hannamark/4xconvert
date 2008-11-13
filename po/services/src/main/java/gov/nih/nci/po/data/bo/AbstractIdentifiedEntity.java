@@ -100,6 +100,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
@@ -120,6 +121,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     private T player;
     private Organization scoper;
     private RoleStatus status;
+    private RoleStatus priorStatus;
     private Ii assignedIdentifier;
     private Date statusDate;
 
@@ -223,6 +225,35 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     public void setAssignedIdentifier(Ii assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
+    
+    @SuppressWarnings("unused")
+    private void setPriorAsString(String prior) {
+        if (prior != null) {
+            this.priorStatus = RoleStatus.valueOf(prior);
+        } else {
+            this.priorStatus = null;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Formula("status")
+    @SuppressWarnings("unused")
+    private String getPriorAsString() {
+        if (this.priorStatus != null) {
+            return this.priorStatus.name();
+        }
+        return null;
+    }
+    
+    /**
+     * @return the prior curation status
+     */
+    @Transient
+    public RoleStatus getPriorStatus() {
+        return priorStatus;
+    }
 
     /**
      * @return the statusDate
@@ -238,4 +269,5 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
+
 }

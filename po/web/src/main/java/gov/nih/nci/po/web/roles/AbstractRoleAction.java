@@ -236,7 +236,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     @SuppressWarnings(UNCHECKED)
     public Collection<RoleStatus> getAvailableStatus() {
         if (getRole().getId() != null) {
-            return getRole().getStatus().getAllowedTransitions();
+            return getRole().getPriorStatus().getAllowedTransitions();
         } else {
             List set = new ArrayList();
             set.add(EntityStatus.PENDING);

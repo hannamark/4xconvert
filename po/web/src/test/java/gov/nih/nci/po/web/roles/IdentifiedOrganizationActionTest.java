@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
@@ -18,7 +19,10 @@ import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.util.PrivateAccessor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,6 +31,7 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,9 +130,10 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         verifyAvailStatusForEditForm(RoleStatus.SUSPENDED);
     }
 
-    private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
+    private void verifyAvailStatusForEditForm(RoleStatus roleStatus){
         action.getRole().setId(1L);
-        action.getRole().setStatus(roleStatus);
+        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractIdentifiedEntity.class, "setPriorAsString",
+                new Object[] { roleStatus.name() });
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
     }

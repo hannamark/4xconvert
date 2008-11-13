@@ -96,8 +96,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
@@ -117,6 +119,7 @@ public abstract class AbstractOrganizationResourceProvider {
     private Organization player;
     private Organization scoper;
     private RoleStatus status;
+    private RoleStatus priorStatus;
     private Date statusDate;
 
     /**
@@ -217,5 +220,34 @@ public abstract class AbstractOrganizationResourceProvider {
      */
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Formula("status")
+    @SuppressWarnings("unused")
+    private String getPriorAsString() {
+        if (this.priorStatus != null) {
+            return this.priorStatus.name();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unused")
+    private void setPriorAsString(String prior) {
+        if (prior != null) {
+            this.priorStatus = RoleStatus.valueOf(prior);
+        } else {
+            this.priorStatus = null;
+        }
+    }
+
+    /**
+     * @return the prior curation status
+     */
+    @Transient
+    public RoleStatus getPriorStatus() {
+        return priorStatus;
     }
 }

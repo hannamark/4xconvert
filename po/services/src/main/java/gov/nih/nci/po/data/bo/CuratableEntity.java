@@ -95,7 +95,12 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 @gov.nih.nci.po.util.DuplicateStatusCheck
 public interface CuratableEntity<BO extends PersistentObject, CR extends ChangeRequest<BO>> extends Curatable<BO, CR> {
     /**
-     * @return the curration status
+     * @return the status
      */
     EntityStatus getStatusCode();
+    
+    /**
+     * @return the prior status
+     */
+    EntityStatus getPriorEntityStatus();
 }

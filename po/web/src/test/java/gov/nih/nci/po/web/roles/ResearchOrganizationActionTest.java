@@ -5,9 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -17,7 +17,7 @@ import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.curation.CurateOrganizationAction;
+import gov.nih.nci.po.web.util.PrivateAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,7 +124,8 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
         action.getRole().setId(1L);
-        action.getRole().setStatus(roleStatus);
+        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractOrganizationRole.class, "setPriorAsString",
+                new Object[] { roleStatus.name() });
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
     }
@@ -177,13 +178,15 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertEquals(4L, iterator.next().getId().longValue());
         assertFalse(iterator.hasNext());
     }
-    
+
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+                .changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+        assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
+                .changeCurrentChangeRequest());
     }
 
     @Test
@@ -192,7 +195,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         action.setCr(null);
         assertNull(action.getCr());
     }
-    
+
     @Test
     public void testGetSelectChangeRequests() {
         action.getRole().setId(1L);

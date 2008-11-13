@@ -100,6 +100,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
@@ -130,7 +131,9 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private RoleStatus status;
+    private RoleStatus priorStatus;
     private Date statusDate;
+
 
     /**
      * @return the id
@@ -310,6 +313,35 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Formula("status")
+    @SuppressWarnings("unused")
+    private String getPriorAsString() {
+        if (this.priorStatus != null) {
+            return this.priorStatus.name();
+        }
+        return null;
+    }
+    
+    @SuppressWarnings("unused")
+    private void setPriorAsString(String prior) {
+        if (prior != null) {
+            this.priorStatus = RoleStatus.valueOf(prior);
+        } else {
+            this.priorStatus = null;
+        }
+    }
+    
+    /**
+     * @return the prior curation status
+     */
+    @Transient
+    public RoleStatus getPriorStatus() {
+        return priorStatus;
+    }
+
+    /**
      * @return the statusDate
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -323,4 +355,5 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
+    
 }
