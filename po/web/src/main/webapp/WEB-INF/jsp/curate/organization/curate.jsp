@@ -77,22 +77,12 @@
 	               required="true" cssClass="required" />		        
 	        </s:if>
 	        <s:else>
-                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_statusCode">
-		            <div class="wwlbl" id="wwlbl_curateOrgForm_organization_statusCode">
-		            <label class="label" for="curateOrgForm_organization_statusCode">        
-		            Current <s:text name="organization.statusCode"/>:
-		            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_statusCode">
+	            <po:field labelKey="organization.priorEntityStatus">
 		            ${organization.priorEntityStatus} 
-		            </div>
-	            </div>
-                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_id">
-		            <div class="wwlbl" id="wwlbl_curateOrgForm_organization_id">
-		            <label class="label" for="curateOrgForm_organization_id">        
-		            <s:text name="organization.id"/>:
-		            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgForm_organization_id">
-		            ${organization.id} 
-		            </div>
-	            </div>
+	            </po:field>
+	            <po:field labelKey="organization.id">
+                    ${organization.id} 
+	            </po:field>
 			    <s:select
 			       label="New %{getText('organization.statusCode')}"
 			       name="organization.statusCode"
@@ -124,7 +114,6 @@
 	                    
 	                </div>
 				    <s:hidden key="organization.duplicateOf" id="curateOrgForm.organization.duplicateOf.id"/>
-	
 			    </div>
 	        </s:else>
 				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>

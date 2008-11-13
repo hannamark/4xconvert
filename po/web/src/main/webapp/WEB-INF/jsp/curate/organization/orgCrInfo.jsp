@@ -17,13 +17,9 @@
 		            </div>        
 	        </po:copyButton>
 	        
-            <div class="wwgrp" id="wwgrp_curateOrgCrForm_cr_id">
-            <div class="wwlbl" id="wwlbl_curateOrgCrForm_cr_id">
-            <label class="label" for="curateOrgCrForm_cr_id">        
-            <s:text name="cr.id"/>:
-            </label></div> <br/><div class="wwctrl" id="wwctrl_curateOrgCrForm_cr_id">
-            ${cr.id} 
-            </div></div> 
+	        <po:field labelKey="cr.id"> 
+	        ${cr.id} 
+	        </po:field>
             
             <po:copyButton id="copy_curateOrgForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateOrgForm_organization_name');" 
                 bodyStyle="float:left;" buttonStyle="clear:right;float:right;">
