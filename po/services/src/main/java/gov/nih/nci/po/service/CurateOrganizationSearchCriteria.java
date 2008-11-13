@@ -82,21 +82,17 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 
-import java.util.ArrayList;
-import java.util.List;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.Map;
+import org.hibernate.Query;
 
 /**
  * Criteria to find Organizations to curate.
  */
-public class CurateOrganizationSearchCriteria extends AbstractEntitySearchCriteria implements
+public final class CurateOrganizationSearchCriteria extends AbstractEntitySearchCriteria implements
         SearchCriteria<Organization> {
-
-    private static final String ORGANIZAITON_CHANGEREQUESTS_PROPERTY = "changeRequests";
-    static final String ORGANIZATION_STATUS_PROPERTY = "statusCode";
 
     /**
      * {@inheritDoc}
@@ -108,13 +104,62 @@ public class CurateOrganizationSearchCriteria extends AbstractEntitySearchCriter
     /**
      * {@inheritDoc}
      */
-    protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String orgAlias) {
-        List<String> whereClause = new ArrayList<String>();
-        String orgAliasDot = orgAlias + DOT;
-        whereClause.add(orgAliasDot + ORGANIZATION_STATUS_PROPERTY + " = '" + EntityStatus.PENDING.name() + "'");
-        whereClause
-                .add("((select count(*) from " + orgAliasDot + ORGANIZAITON_CHANGEREQUESTS_PROPERTY + " as cr) > 0)");
-        return buildWhereClause(whereClause, WhereClauseOperator.DISJUNCTION);
+    @Override
+    public String getRootAlias() {
+        return "o";
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        final String prehql = 
+                " from Organization o" 
+                + " LEFT OUTER JOIN o.changeRequests as ocr"
+                + " LEFT OUTER JOIN o.researchOrganization as ro"
+                + " LEFT OUTER JOIN ro.changeRequests as rocr"
+                + " LEFT OUTER JOIN o.oversightCommittee as oc"
+                + " LEFT OUTER JOIN oc.changeRequests as occr"
+                + " LEFT OUTER JOIN o.healthCareFacility as hcf"
+                + " LEFT OUTER JOIN hcf.changeRequests as hcfcr"
+                + " LEFT OUTER JOIN o.identifiedOrganization as io"
+                + " LEFT OUTER JOIN io.changeRequests as iocr"
+                + " where   o.statusCode = 'PENDING' "
+                + " or ocr.processed = 'false'"
+                + " or ro.status = 'PENDING'"
+                + " or rocr.processed = 'false'"
+                + " or oc.status = 'PENDING'"
+                + " or occr.processed = 'false'"
+                + " or hcf.status = 'PENDING'"
+                + " or hcfcr.processed = 'false'"
+                + " or io.status = 'PENDING'"
+                + " or iocr.processed = 'false'";
+
+        StringBuffer hql = new StringBuffer(SELECT).append(" ");
+        
+        if (isCountOnly) {
+            hql.append("COUNT(DISTINCT o)");
+        } else {
+            hql.append("DISTINCT o");
+        }
+        hql.append(prehql);
+        if (!isCountOnly) {
+            hql.append(orderByProperty);
+        }
+
+        return PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String rootTypeAlias) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+
 
 }

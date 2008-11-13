@@ -125,6 +125,11 @@ public class Organization extends AbstractOrganization
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
     private Date statusDate;
 
+    private Set<ResearchOrganization> researchOrganization = new HashSet<ResearchOrganization>();
+    private Set<OversightCommittee> oversightCommittee = new HashSet<OversightCommittee>();
+    private Set<HealthCareFacility> healthCareFacility = new HashSet<HealthCareFacility>();
+    private Set<IdentifiedOrganization> identifiedOrganization = new HashSet<IdentifiedOrganization>();
+
     /**
      * Create a new, empty org.
      */
@@ -283,5 +288,70 @@ public class Organization extends AbstractOrganization
      */
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
+    }
+
+
+    /**
+     * @return healthCareFacility.
+     */
+    @OneToMany(mappedBy = "player")
+    public Set<HealthCareFacility> getHealthCareFacility() {
+        return healthCareFacility;
+    }
+
+    /**
+     * @param healthCareFacility healthCareFacility.
+     */
+    @SuppressWarnings("unused")
+    private void setHealthCareFacility(Set<HealthCareFacility> healthCareFacility) {
+        this.healthCareFacility = healthCareFacility;
+    }
+
+    /**
+     * @return identifiedOrganization.
+     */
+    @OneToMany(mappedBy = "player")
+    public Set<IdentifiedOrganization> getIdentifiedOrganization() {
+        return identifiedOrganization;
+    }
+
+    /**
+     * @param identifiedOrganization.
+     */
+    @SuppressWarnings("unused")
+    private void setIdentifiedOrganization(Set<IdentifiedOrganization> identifiedOrganization) {
+        this.identifiedOrganization = identifiedOrganization;
+    }
+
+    /**
+     * @return oversightCommittee
+     */
+    @OneToMany(mappedBy = "player")
+    public Set<OversightCommittee> getOversightCommittee() {
+        return oversightCommittee;
+    }
+
+    /**
+     * @param oversightCommittee
+     */
+    @SuppressWarnings("unused")
+    private void setOversightCommittee(Set<OversightCommittee> oversightCommittee) {
+        this.oversightCommittee = oversightCommittee;
+    }
+
+    /**
+     * @return researchOrganization.
+     */
+    @OneToMany(mappedBy = "player")
+    public Set<ResearchOrganization> getResearchOrganization() {
+        return researchOrganization;
+    }
+
+    /**
+     * @return researchOrganization.
+     */
+    @SuppressWarnings("unused")
+    private void setResearchOrganization(Set<ResearchOrganization> researchOrganization) {
+        this.researchOrganization = researchOrganization;
     }
 }
