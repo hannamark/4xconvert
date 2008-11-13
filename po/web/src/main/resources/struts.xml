@@ -217,16 +217,16 @@
         
         <action name="roles/organizational/*/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="input">/WEB-INF/jsp/roles/organizational/{1}_/form.jsp</result>
-            <result name="success">/WEB-INF/jsp/roles/organizational/{1}_/manage.jsp</result>
+            <result name="input">/WEB-INF/jsp/roles/organizational/{1}/form.jsp</result>
+            <result name="success">/WEB-INF/jsp/roles/organizational/{1}/manage.jsp</result>
         </action>
         <action name="ajax/roles/organizational/*/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/roles/organizational/{1}_/roleCrInfo.jsp</result>
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/roles/organizational/{1}/roleCrInfo.jsp</result>
         </action>
         <action name="ajax/roles/organizational/*/results/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/roles/organizational/{1}_/list.jsp</result>
+            <result name="success">/WEB-INF/jsp/roles/organizational/{1}/list.jsp</result>
         </action>  
        
     </package>
