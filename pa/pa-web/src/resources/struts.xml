@@ -143,6 +143,10 @@
             <result name="edit">/WEB-INF/jsp/trialArmsedit.jsp</result>  
             <result>/WEB-INF/jsp/trialArms.jsp</result>
         </action>
-
+		<action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
+			<interceptor-ref name="nci-commonsParams" />
+			<result name="eligibility">/WEB-INF/jsp/isEligibilityCriteria.jsp</result>
+			<result name="eligibilityAdd">/WEB-INF/jsp/isEligibilityCriteriaAdd.jsp</result>
+		</action>
 	</package>
 </struts>
