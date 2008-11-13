@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
-<c:url value="/protected/ajax/roles/organizational/identifiedorganization/results/list.action" var="sortUrl" />
+<c:url value="/protected/ajax/roles/organizational/IdentifiedOrganization/results/list.action" var="sortUrl" />
 <ajax:displayTag id="roleSearchResults" ajaxFlag="true" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}" >
         <po:displayTagProperties/>
@@ -27,7 +27,7 @@
         </display:column> 
         <display:column titleKey="identifiedOrganization.statusDate" property="statusDate" sortable="true" sortProperty="STATUS_DATE" format="{0,date,yyyy-MM-dd}" />
         <display:column titleKey="th.action" class="action">
-            <c:url var="editUrl" value="/protected/roles/organizational/identifiedorganization/input.action">
+            <c:url var="editUrl" value="/protected/roles/organizational/IdentifiedOrganization/input.action">
                 <c:param name="organization.id" value="${organization.id}"/>
                 <c:param name="role.id" value="${row.id}"/>
             </c:url>

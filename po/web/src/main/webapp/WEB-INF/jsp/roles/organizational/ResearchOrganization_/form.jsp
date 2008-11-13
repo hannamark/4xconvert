@@ -30,7 +30,7 @@ function handleDuplicateOf() {
 
 <s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
-    <s:form action="ajax/roles/organizational/researchorganization/changeCurrentChangeRequest.action" id="changeCrForm">
+    <s:form action="ajax/roles/organizational/ResearchOrganization/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization.id"/>
         <s:hidden key="role.id" />
         <s:hidden key="role.player.id"/>
@@ -54,11 +54,11 @@ function handleDuplicateOf() {
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
 				<s:set name="formAction"
-					value="'roles/organizational/researchorganization/add.action'" />
+					value="'roles/organizational/ResearchOrganization/add.action'" />
 				<h2>Research Organization Role Information</h2>
 			</s:if> <s:else>
 				<s:set name="formAction"
-					value="'roles/organizational/researchorganization/edit.action'" />
+					value="'roles/organizational/ResearchOrganization/edit.action'" />
 				<h2>Research Organization Role Information</h2>
 			</s:else>
 		    <div class="box_white">
@@ -137,7 +137,7 @@ function handleDuplicateOf() {
     <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="$('curateRoleForm').submit();" style="save" text="Save"/>
-       <c:url var="manageResearchOrgs" value="/protected/roles/organizational/researchorganization/start.action">
+       <c:url var="manageResearchOrgs" value="/protected/roles/organizational/ResearchOrganization/start.action">
            <c:param name="organization.id" value="${organization.id}"/>
        </c:url>
        <po:button id="continue_button" href="${manageResearchOrgs}" onclick="" style="continue" text="Close"/>

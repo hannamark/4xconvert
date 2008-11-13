@@ -1,18 +1,18 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-<title>Manage Research Organization(s)</title>
+<title>Manage Identified Organization(s)</title>
 </head> 
 <body>
 
 <po:successMessages/>
 
     <div class="boxouter">
-    <h2>Research Organization Information</h2>
+    <h2>Identified Organization Information</h2>
         <div class="boxouter">
         <h2>Organization Information</h2>
             <div class="box_white">
-                <s:form action="roles/organizational/researchorganization/start.action" id="basicOrgDetailForm" theme="css_xhtml_readonly">
+                <s:form action="roles/organizational/IdentifiedOrganization/start.action" id="basicOrgDetailForm" theme="css_xhtml_readonly">
 	            <po:inputRow>
 	            <po:inputRowElement><s:textfield key="organization.id" /></po:inputRowElement>
 	            <po:inputRowElement><s:textfield key="organization.statusCode" /></po:inputRowElement>
@@ -23,7 +23,7 @@
             </div>
         </div>
 		<div class="boxouter">
-		<h2>Research Organizational Roles</h2>
+		<h2>Identified Organizational Roles</h2>
 		    <div id="roles">
 		    <%@include file="list.jsp"%> 
 		    </div> 
@@ -31,7 +31,7 @@
     </div> 
     <div class="btnwrapper" style="margin-bottom:20px;">
         <po:buttonRow>
-            <c:url var="addUrl" value="/protected/roles/organizational/researchorganization/input.action">
+            <c:url var="addUrl" value="/protected/roles/organizational/IdentifiedOrganization/input.action">
                 <c:param name="organization.id" value="${organization.id}"/>
             </c:url>
             <po:button id="add_button" href="${addUrl}" style="add" text="Add"/>
