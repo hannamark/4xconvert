@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gov.nih.nci.pa.enums;
 
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
@@ -8,27 +5,37 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * @author Hugh Reinhart
- * @since 10/28/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- */
-public enum ActivityCategoryCode implements CodedEnum<String> {
-    
-    /** Intervention. */
-    INTERVENTION("Intervention"), 
-    /** Eligibility Criterion. */
-    ELIGIBILITY_CRITERION("Eligibility Criterion"), 
-    /** Other. */
-    OTHER("Other");
-     
+*
+* @author Kalpana Guthikonda
+* @since 11/11/2008
+* copyright NCI 2008.  All rights reserved.
+* This code may not be used without the express written permission of the
+* copyright holder, NCI.
+*/
+public enum UnitsCode implements CodedEnum<String> {
+
+
+    /** Years. */
+    YEARS("Years"),
+    /** Months. */
+    MONTHS("Months"),
+    /** Weeks. */
+    WEEKS("Weeks"),
+    /** Days. */
+    DAYS("Days"),
+    /** Hours. */
+    HOURS("Hours"),
+    /** Minutes. */
+    MINUTES("Minutes"),
+    /** NA. */
+    NA("NA");    
+
     private String code;
     /**
      * 
      * @param code
      */
-    private ActivityCategoryCode(String code) {
+    private UnitsCode(String code) {
         this.code = code;
         register(this);
     }
@@ -57,22 +64,21 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return UnitsCode 
      */
-    public static ActivityCategoryCode getByCode(String code) {
-        return getByClassAndCode(ActivityCategoryCode.class, code);
+    public static UnitsCode getByCode(String code) {
+        return getByClassAndCode(UnitsCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        ActivityCategoryCode[] l = ActivityCategoryCode.values();
+        UnitsCode[] l = UnitsCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();
         }
         return a;
     }
-}    
- 
+}
