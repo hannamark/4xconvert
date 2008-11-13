@@ -76,7 +76,7 @@ function handleDuplicateOf() {
                         <s:param value="%{'role.scoper'}"/>
                     </s:fielderror>
                     <div style="float:right;">
-                        <c:url value="/protected/duplicates/organization/start.action" var="findScoperUrl">
+                        <c:url value="/protected/selector/organization/start.action" var="findScoperUrl">
                             <c:param name="source.id" value="${organization.id}"/>
                         </c:url>
                         <po:buttonRow>

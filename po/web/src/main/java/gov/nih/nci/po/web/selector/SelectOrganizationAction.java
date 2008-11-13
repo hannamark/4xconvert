@@ -1,4 +1,4 @@
-package gov.nih.nci.po.web.duplicates;
+package gov.nih.nci.po.web.selector;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.PoRegistry;
@@ -7,9 +7,9 @@ import gov.nih.nci.po.web.search.SearchOrganizationAction;
 import com.opensymphony.xwork2.Preparable;
 
 /**
- * Action to search for duplicate organizations.
+ * Action to search for organizations.
  */
-public class DuplicatesOrganizationAction extends SearchOrganizationAction implements Preparable {
+public class SelectOrganizationAction extends SearchOrganizationAction implements Preparable {
 
     /**
      * action result to view entity's detail.
@@ -43,14 +43,14 @@ public class DuplicatesOrganizationAction extends SearchOrganizationAction imple
     }
 
     /**
-     * @return source organization to find duplicates for.
+     * @return source organization to search for.
      */
     public Organization getSource() {
         return source;
     }
 
     /**
-     * @param source organization to find duplicates for.
+     * @param source organization to search for.
      */
     public void setSource(Organization source) {
         this.source = source;

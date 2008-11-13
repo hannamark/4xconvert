@@ -1,4 +1,4 @@
-package gov.nih.nci.po.web.duplicates;
+package gov.nih.nci.po.web.selector;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,13 +7,14 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.selector.SelectOrganizationAction;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
-public class DuplicatesOrganizationActionTest extends AbstractPoTest {
+public class SelectOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void search() {
@@ -21,11 +22,11 @@ public class DuplicatesOrganizationActionTest extends AbstractPoTest {
         assertEquals(Action.SUCCESS, action.search());
     }
 
-    private DuplicatesOrganizationAction action;
+    private SelectOrganizationAction action;
 
     @Before
     public void setUp() {
-        action = new DuplicatesOrganizationAction();
+        action = new SelectOrganizationAction();
         assertNotNull(action.getCriteria());
     }
 
@@ -61,7 +62,7 @@ public class DuplicatesOrganizationActionTest extends AbstractPoTest {
     public void testDetail() {
         action.setOrganization(new Organization());
         action.getOrganization().setId(1L);
-        assertEquals(DuplicatesOrganizationAction.DETAIL_RESULT, action.detail());
+        assertEquals(SelectOrganizationAction.DETAIL_RESULT, action.detail());
     }
 
     @Test

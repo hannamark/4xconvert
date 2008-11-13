@@ -18,7 +18,7 @@
 	        <div class="box_white">
 	            <div class="po_form">
 	                <s:actionerror/>
-	                <s:form action="duplicates/organization/search.action" id="duplicateOrganizationForm" onsubmit="$('duplicateSearchResultDetails').hide();">
+	                <s:form action="selector/organization/search.action" id="duplicateOrganizationForm" onsubmit="$('duplicateSearchResultDetails').hide();">
 	                    <s:hidden name="rootKey"/>
 	                    <s:hidden name="source.id"/>
 				        <div class="boxouter">

@@ -104,7 +104,7 @@
         	    <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curateOrgForm_organization_duplicateOf_id">
 	                    <div style="float:right;">
-	                        <c:url value="/protected/duplicates/organization/start.action" var="duplicatesUrl">
+	                        <c:url value="/protected/selector/organization/start.action" var="duplicatesUrl">
 	                            <c:param name="source.id" value="${organization.id}"/>
 	                        </c:url>
 	                        <po:buttonRow>

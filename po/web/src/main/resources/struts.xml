@@ -171,27 +171,25 @@
                 <param name="namespace">/protected</param>
                 <param name="actionName">curate/search/listOrgs</param>
             </result>
-            <!-- 
-            <result name="success">/WEB-INF/jsp/curate/organization/curate.jsp</result>
-             -->
         </action>        
         <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/organization/orgCrInfo.jsp</result>
         </action>
-        <action name="duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
+        
+        <action name="selector/organization/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
-            <result name="input">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
+            <result name="success">/WEB-INF/jsp/selector/organization/search.jsp</result>
+            <result name="input">/WEB-INF/jsp/selector/organization/search.jsp</result>
         </action>      
-        <action name="ajax/duplicates/organization/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
+        <action name="ajax/selector/organization/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/duplicates/organization/search.jsp</result>
-            <result name="detail">/WEB-INF/jsp/duplicates/organization/detail.jsp</result>
+            <result name="success">/WEB-INF/jsp/selector/organization/search.jsp</result>
+            <result name="detail">/WEB-INF/jsp/selector/organization/detail.jsp</result>
         </action>            
-        <action name="ajax/duplicates/organization/results/*" class="gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction" method="{1}">
+        <action name="ajax/selector/organization/results/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/duplicates/organization/results.jsp</result>
+            <result name="success">/WEB-INF/jsp/selector/organization/results.jsp</result>
         </action>            
         
         <action name="search/organization/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
@@ -235,7 +233,6 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/roles/organizational/researchorganization/list.jsp</result>
         </action>
-        
         
         <action name="roles/organizational/identifiedorganization/*" class="gov.nih.nci.po.web.roles.IdentifiedOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />

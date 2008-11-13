@@ -15,7 +15,7 @@
     <decorator name="popup" page="popup.jsp">
         <pattern>/*/popup/*</pattern>
         <pattern>/popup/*</pattern>
-        <pattern>/*/duplicates/*</pattern>
+        <pattern>/*/selector/*</pattern>
     </decorator>
     
     <decorator name="main" page="main.jsp">

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<c:url value="/protected/ajax/duplicates/organization/results/search.action" var="sortUrl" />
+<c:url value="/protected/ajax/selector/organization/results/search.action" var="sortUrl" />
 <ajax:displayTag id="duplicateOrganizationSearchResults" ajaxFlag="true" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}">
         <po:displayTagProperties/>
@@ -8,7 +8,7 @@
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         
         <display:column titleKey="organization.id" sortable="true" sortProperty="ORGANIZATION_ID" >
-            <c:url var="viewDetailsUrl" value="/protected/ajax/duplicates/organization/detail.action">
+            <c:url var="viewDetailsUrl" value="/protected/ajax/selector/organization/detail.action">
                 <c:param name="organization.id" value="${row.id}"/>
             </c:url>
             <a href="javascript://nop/" onclick="$('findDuplicates').hide(); loadDiv('${viewDetailsUrl}','duplicateSearchResultDetails', true);">

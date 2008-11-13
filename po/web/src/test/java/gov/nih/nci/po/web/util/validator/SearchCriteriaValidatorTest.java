@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.duplicates.DuplicatesOrganizationAction;
+import gov.nih.nci.po.web.selector.SelectOrganizationAction;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class SearchCriteriaValidatorTest extends AbstractPoTest {
 
     SearchCriteriaValidator validator;
     String fieldName = "criteria";
-    ValidatorContext validatorContext = new DelegatingValidatorContext(new DuplicatesOrganizationAction());
+    ValidatorContext validatorContext = new DelegatingValidatorContext(new SelectOrganizationAction());
     
     @Before
     public void init() {
