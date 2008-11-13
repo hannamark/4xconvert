@@ -91,22 +91,14 @@ function handleDuplicateOf() {
 				   onchange="handleDuplicateOf();" 
 				   />
                 <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
-                    <div class="wwgrp" id="wwgrp_curateRoleForm_role_duplicateOf">
-	                    <div class="wwlbl" id="wwlbl_curateRoleForm.role.duplicateOf">
-		                    <label class="label" for="curateRoleForm.role.duplicateOf">        
-		                    <s:text name="oversightCommittee.duplicateOf"/>:
-		                    </label>
-	                    </div> 
-	                    <br/>
-	                    <div class="wwctrl" id="wwctrl_curateRoleForm.role.duplicateOf">
+                    <po:field labelKey="oversightCommittee.duplicateOf">
 							<select id="curateRoleForm.role.duplicateOf" name="oversightCommittee.duplicateOf">
 							<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
 							<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
 							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
 							</c:forEach>
 							</select>
-	                    </div>
-                    </div>
+                    </po:field>
                 </div>	
                 <input id="enableEnterSubmit" type="submit"/>			    
 			    </s:form>

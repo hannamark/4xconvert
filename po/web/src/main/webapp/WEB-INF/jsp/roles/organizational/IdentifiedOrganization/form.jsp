@@ -83,7 +83,6 @@ function handleDuplicateOf() {
                         <po:button id="select_scoper" href="javascript://noop/" onclick="showPopWin('${findScoperUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Scoper"/>
                         </po:buttonRow>
                     </div>
-                    
                     <div class="wwlbl" id="wwlbl_curateRoleForm_role_scoper_id">
                         <label class="label" for="curateOrgForm_organization_duplicateOf_id">   
                         <span class="required">*</span>     
@@ -94,7 +93,6 @@ function handleDuplicateOf() {
                     <div class="wwctrl" id="wwctrl_curateRoleForm_role_scoper_id">
                        ${role.scoper.id} 
                     </div>
-                    
                 </div>
                 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
                 <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
@@ -119,24 +117,16 @@ function handleDuplicateOf() {
 				   onchange="handleDuplicateOf();" 
 				   />
                 <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
-                    <div class="wwgrp" id="wwgrp_curateRoleForm_role_duplicateOf">
-	                    <div class="wwlbl" id="wwlbl_curateRoleForm.role.duplicateOf">
-		                    <label class="label" for="curateRoleForm.role.duplicateOf">        
-		                    <s:text name="identifiedOrganization.duplicateOf"/>:
-		                    </label>
-	                    </div> 
-	                    <br/>
-	                    <div class="wwctrl" id="wwctrl_curateRoleForm.role.duplicateOf">
-							<select id="curateRoleForm.role.duplicateOf" name="role.duplicateOf">
-							<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
-							<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
-							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} -  ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
-							</c:forEach>
-							</select>
-	                    </div>
-                    </div>
+				   <po:field labelKey="identifiedOrganization.duplicateOf">
+						<select id="curateRoleForm.role.duplicateOf" name="role.duplicateOf">
+						<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
+						<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
+						   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} -  ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
+						</c:forEach>
+						</select>
+				   </po:field>
                 </div>	
-                <input id="enableEnterSubmit" type="submit"/>			    
+                 <input id="enableEnterSubmit" type="submit"/>			    
 			    </s:form>
 		    </div>
         </div>
