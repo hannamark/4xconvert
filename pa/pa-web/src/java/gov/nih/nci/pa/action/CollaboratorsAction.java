@@ -7,7 +7,6 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.OrganizationWebDTO;
-import gov.nih.nci.pa.dto.PAResearchOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StatusCode;
@@ -18,8 +17,8 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
-import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
-import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -54,8 +53,8 @@ public class CollaboratorsAction extends ActionSupport
     private static final String ACT_CREATE = "create";
 
     private StudyParticipationServiceRemote sPartService;
-    private PAResearchOrganizationServiceRemote paroService;
-    private PAOrganizationServiceRemote paoService;
+    private OrganizationCorrelationServiceBean ocService;
+    private CorrelationUtils cUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
     private List<OrganizationWebDTO> organizationList = null;
@@ -73,8 +72,8 @@ public class CollaboratorsAction extends ActionSupport
      */
     public void prepare() throws Exception {
         sPartService = PaRegistry.getStudyParticipationService();
-        paroService = PaRegistry.getPAResearchOrganizationService();
-        paoService = PaRegistry.getPAOrganizationService();
+        ocService = new OrganizationCorrelationServiceBean();
+        cUtils = new CorrelationUtils();
 
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
         .getRequest().getSession()
@@ -124,34 +123,29 @@ public class CollaboratorsAction extends ActionSupport
         }
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
 
-        Organization org = new Organization();
-        org.setIdentifier(poOrgId);
-        Organization paOrg = paoService.getOrganizationByIndetifers(org);
+//        Organization org = new Organization();
+//        org.setIdentifier(poOrgId);
+//        Organization paOrg = paoService.getOrganizationByIndetifers(org);
+//
+//        if (paOrg == null) {
+        Long paOrgId = ocService.createResearchOrganizationCorrelations(poOrgId);
+//            paOrg = paoService.getOrganizationByIndetifers(org);
+//        } else {
+//            List<PAResearchOrganizationDTO> paroList = paroService.getByOrganization(paOrg.getId());
+//            if (paroList.isEmpty()) {
+//                ocService.createResearchOrganizationCorrelations(poOrgId);
+//            }
+//        }
 
-        if (paOrg == null) {
-            org.setCity(tab.getFacilityOrganization().getCity());
-            org.setCountryName(tab.getFacilityOrganization().getCountryName());
-            org.setName(tab.getFacilityOrganization().getName());
-            org.setPostalCode(tab.getFacilityOrganization().getPostalCode());
-            paOrg = paoService.createOrganization(org);
-        }
-
-        PAResearchOrganizationDTO roDto = null;
-        List<PAResearchOrganizationDTO> roList = paroService.getByOrganization(paOrg.getId());
-
-        if (!roList.isEmpty()) {
-            roDto = roList.get(0);
-        } else {
-            roDto = new PAResearchOrganizationDTO();
-            roDto.setOrganizationId(paOrg.getId());
-            roDto = paroService.create(roDto);
-        }
+//        PAResearchOrganizationDTO roDto = null;
+//        List<PAResearchOrganizationDTO> roList = paroService.getByOrganization(paOrg.getId());
+//        roDto = roList.get(0);
 
         StudyParticipationDTO sp = new StudyParticipationDTO();
         sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.getByCode(functionalCode)));
         sp.setHealthcareFacilityIi(null);
-        sp.setResearchOrganizationIi(IiConverter.convertToIi(roDto.getId()));
+        sp.setResearchOrganizationIi(IiConverter.convertToIi(paOrgId));
         sp.setIdentifier(null);
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
         sp.setStudyProtocolIi(spIi);
@@ -198,10 +192,8 @@ public class CollaboratorsAction extends ActionSupport
     public String edit() throws Exception {
         setCurrentAction(ACT_EDIT);
         StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
-        PAResearchOrganizationDTO roDto = paroService.get(IiConverter.convertToLong(spDto.getResearchOrganizationIi()));
-        Organization org = new Organization();
-        org.setId(roDto.getOrganizationId());
-        Organization editOrg = paoService.getOrganizationByIndetifers(org);
+        Organization editOrg = cUtils.getPAOrganizationByPAResearchOrganizationId(
+                IiConverter.convertToLong(spDto.getResearchOrganizationIi()));
         orgFromPO.setOrgCity(editOrg.getCity());
         orgFromPO.setOrgCountry(editOrg.getCountryName());
         orgFromPO.setOrgName(editOrg.getName());
@@ -211,7 +203,7 @@ public class CollaboratorsAction extends ActionSupport
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
         tab.setFacilityOrganization(null);
-        tab.setResearchOrganization(org);
+        tab.setResearchOrganization(editOrg);
         tab.setPoHealthCareFacilityIi(null);
         tab.setPoOrganizationIi(null);
         tab.setNewParticipation(false);
@@ -246,11 +238,8 @@ public class CollaboratorsAction extends ActionSupport
         organizationList = new ArrayList<OrganizationWebDTO>();
         List<StudyParticipationDTO> spList = sPartService.getByStudyProtocol(spIi, criteriaList);
         for (StudyParticipationDTO sp : spList) {
-            PAResearchOrganizationDTO ro = paroService.get(IiConverter.convertToLong(sp.getResearchOrganizationIi()));
-            Organization orgBo = new Organization();
-            orgBo.setId(ro.getOrganizationId());
-            orgBo = paoService.getOrganizationByIndetifers(orgBo);
-
+            Organization orgBo = cUtils.getPAOrganizationByPAResearchOrganizationId(
+                    IiConverter.convertToLong(sp.getResearchOrganizationIi()));
             OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
