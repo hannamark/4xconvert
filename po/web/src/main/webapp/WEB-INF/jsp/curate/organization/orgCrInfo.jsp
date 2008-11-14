@@ -5,16 +5,16 @@
     <div class="boxouter">
     <h2>Basic Identifying Information</h2>
         <div class="box_white">
+	        <po:field labelKey="cr.id"> 
+	        ${cr.id} 
+	        </po:field>
+            
 	        <po:copyButton id="copy_curateOrgForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateOrgForm.organization.statusCode');"
 	            bodyStyle="float:left;" buttonStyle="float:right;">
 	            <po:field labelKey="organization.statusCode">
 		            ${cr.statusCode}
 	            </po:field>
 	        </po:copyButton>
-	        
-	        <po:field labelKey="cr.id"> 
-	        ${cr.id} 
-	        </po:field>
             
             <po:copyButton id="copy_curateOrgForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateOrgForm_organization_name');" 
                 bodyStyle="float:left;" buttonStyle="clear:right;float:right;">

@@ -80,12 +80,13 @@
 	               id="curateOrgForm.organization.statusCode"/>		        
 	        </s:if>
 	        <s:else>
-	            <po:field labelKey="organization.priorEntityStatus">
-		            ${organization.priorEntityStatus} 
-	            </po:field>
-	            <po:field labelKey="organization.id">
-                    ${organization.id} 
-	            </po:field>
+		        <po:inputRow>
+		        <po:inputRowElement><po:field labelKey="organization.id">${organization.id}</po:field></po:inputRowElement>
+		        <po:inputRowElement>&nbsp;</po:inputRowElement>
+		        <po:inputRowElement><po:field labelKey="organization.statusCode">${organization.statusCode}</po:field></po:inputRowElement>
+		        <po:inputRowElement>&nbsp;</po:inputRowElement>
+		        <po:inputRowElement><po:field labelKey="organization.statusDate"><s:date name="organization.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
+		        </po:inputRow>
 			    <s:select
 			       label="New %{getText('organization.statusCode')}"
 			       name="organization.statusCode"
