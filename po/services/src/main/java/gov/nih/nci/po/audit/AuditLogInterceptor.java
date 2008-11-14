@@ -234,7 +234,9 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private static String getValueStringHelper(Object newV) {
         String newValStr;
-        if (newV instanceof Collection<?>) {
+        if (newV == null) {
+            return null;
+        } else if (newV instanceof Collection<?>) {
             newValStr = getValueString((Collection<?>) newV);
         } else if (newV instanceof Map<?, ?>) {
             newValStr = getValueString((Map<?, ?>) newV);

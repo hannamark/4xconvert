@@ -93,17 +93,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         List<Organization> results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
     }
-    /*
-     LEFT OUTER JOIN ResearchOrganization ro " +
-                "LEFT OUTER JOIN ResearchOrganizationCR rocr " +
-                "LEFT OUTER JOIN OversightCommittee oc " +
-                "LEFT OUTER JOIN OversightCommitteeCR occr " +
-                "LEFT OUTER JOIN HealthCareFacility hcf " +
-                "LEFT OUTER JOIN HealthCareFacilityCR hcfcr " +
-                "LEFT OUTER JOIN IdentifiedOrganization io " +
-                "LEFT OUTER JOIN IdentifiedOrganizationCR iocr " +
-     */
-
+    
     @Test
     public void findByIdentifiedOrganization() throws Exception {
 
@@ -147,6 +137,15 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(0, results.size());
+
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        rocr.setProcessed(false);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
     }
 
     @Test
@@ -186,6 +185,14 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         // exclude the role's CR
         HealthCareFacilityCR rocr = (HealthCareFacilityCR) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacilityCR.class).uniqueResult();
         rocr.setProcessed(true);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        rocr.setProcessed(false);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(0, results.size());
@@ -234,6 +241,14 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(0, results.size());
+
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        rocr.setProcessed(false);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
     }
 
     @Test
@@ -275,6 +290,14 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         // exclude the role's CR
         ResearchOrganizationCR rocr = (ResearchOrganizationCR) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganizationCR.class).uniqueResult();
         rocr.setProcessed(true);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        rocr.setProcessed(false);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(0, results.size());

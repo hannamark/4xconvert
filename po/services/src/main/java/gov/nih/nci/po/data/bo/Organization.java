@@ -125,10 +125,10 @@ public class Organization extends AbstractOrganization
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
     private Date statusDate;
 
-    private Set<ResearchOrganization> researchOrganization = new HashSet<ResearchOrganization>();
-    private Set<OversightCommittee> oversightCommittee = new HashSet<OversightCommittee>();
-    private Set<HealthCareFacility> healthCareFacility = new HashSet<HealthCareFacility>();
-    private Set<IdentifiedOrganization> identifiedOrganization = new HashSet<IdentifiedOrganization>();
+    private Set<ResearchOrganization> researchOrganizations = new HashSet<ResearchOrganization>();
+    private Set<OversightCommittee> oversightCommittees = new HashSet<OversightCommittee>();
+    private Set<HealthCareFacility> healthCareFacilities = new HashSet<HealthCareFacility>();
+    private Set<IdentifiedOrganization> identifiedOrganizations = new HashSet<IdentifiedOrganization>();
 
     /**
      * Create a new, empty org.
@@ -292,66 +292,70 @@ public class Organization extends AbstractOrganization
 
 
     /**
-     * @return healthCareFacility.
+     * @return healthCareFacilities.
      */
     @OneToMany(mappedBy = "player")
-    public Set<HealthCareFacility> getHealthCareFacility() {
-        return healthCareFacility;
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<HealthCareFacility> getHealthCareFacilities() {
+        return healthCareFacilities;
     }
 
     /**
      * @param healthCareFacility healthCareFacility.
      */
     @SuppressWarnings("unused")
-    private void setHealthCareFacility(Set<HealthCareFacility> healthCareFacility) {
-        this.healthCareFacility = healthCareFacility;
+    private void setHealthCareFacilities(Set<HealthCareFacility> healthCareFacilities) {
+        this.healthCareFacilities = healthCareFacilities;
     }
 
     /**
-     * @return identifiedOrganization.
+     * @return identifiedOrganizations.
      */
     @OneToMany(mappedBy = "player")
-    public Set<IdentifiedOrganization> getIdentifiedOrganization() {
-        return identifiedOrganization;
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<IdentifiedOrganization> getIdentifiedOrganizations() {
+        return identifiedOrganizations;
     }
 
     /**
-     * @param identifiedOrganization.
+     * @param identifiedOrganizations.
      */
     @SuppressWarnings("unused")
-    private void setIdentifiedOrganization(Set<IdentifiedOrganization> identifiedOrganization) {
-        this.identifiedOrganization = identifiedOrganization;
+    private void setIdentifiedOrganizations(Set<IdentifiedOrganization> identifiedOrganizations) {
+        this.identifiedOrganizations = identifiedOrganizations;
     }
 
     /**
      * @return oversightCommittee
      */
     @OneToMany(mappedBy = "player")
-    public Set<OversightCommittee> getOversightCommittee() {
-        return oversightCommittee;
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<OversightCommittee> getOversightCommittees() {
+        return oversightCommittees;
     }
 
     /**
      * @param oversightCommittee
      */
     @SuppressWarnings("unused")
-    private void setOversightCommittee(Set<OversightCommittee> oversightCommittee) {
-        this.oversightCommittee = oversightCommittee;
+    private void setOversightCommittees(Set<OversightCommittee> oversightCommittees) {
+        this.oversightCommittees = oversightCommittees;
     }
 
     /**
      * @return researchOrganization.
      */
     @OneToMany(mappedBy = "player")
-    public Set<ResearchOrganization> getResearchOrganization() {
-        return researchOrganization;
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<ResearchOrganization> getResearchOrganizations() {
+        return researchOrganizations;
     }
 
     /**
      * @return researchOrganization.
      */
     @SuppressWarnings("unused")
-    private void setResearchOrganization(Set<ResearchOrganization> researchOrganization) {
-        this.researchOrganization = researchOrganization;
+    private void setResearchOrganizations(Set<ResearchOrganization> researchOrganizations) {
+        this.researchOrganizations = researchOrganizations;
     }
 }
