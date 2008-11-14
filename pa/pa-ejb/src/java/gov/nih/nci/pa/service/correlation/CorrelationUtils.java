@@ -1,5 +1,9 @@
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.pa.domain.AbstractEntity;
@@ -59,7 +63,7 @@ public class CorrelationUtils {
         LOG.debug("Leaving createStudyResourcing ");
         return organization;
     }
-
+    
     /**
      * method to create pa org from po.
      * 
@@ -75,6 +79,18 @@ public class CorrelationUtils {
         paOrg.setName(EnOnConverter.convertEnOnToString(poOrg.getName()));
         paOrg.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poOrg.getStatusCode()));
         paOrg.setIdentifier(poOrg.getIdentifier().getExtension());
+        List<Adxp> partList = poOrg.getPostalAddress().getPart();
+        for (Adxp part : partList) {
+            if (part instanceof AdxpCty) {
+                paOrg.setCity(part.getValue());
+            }
+            if (part instanceof AdxpZip) {
+                paOrg.setPostalCode(part.getValue());
+            }
+            if (part instanceof AdxpCnt) {
+                paOrg.setCountryName(part.getCode());
+            }
+        }
         return createPAOrganization(paOrg);
     }
 
