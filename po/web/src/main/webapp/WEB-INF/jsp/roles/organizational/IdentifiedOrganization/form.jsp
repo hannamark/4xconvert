@@ -63,7 +63,7 @@ function handleDuplicateOf() {
 			</s:else>
 		    <div class="box_white">
 				<s:actionerror/> 
-				<s:form action="%{formAction}" id="curateRoleForm">
+				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
 				<s:hidden key="role" />
@@ -153,8 +153,9 @@ function handleDuplicateOf() {
             $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = $('curateRoleForm.role.scoper.id').value;
         }
     </script>    
+    <%@include file="../confirmThenSubmit.jsp" %>    
     <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="$('curateRoleForm').submit();" style="save" text="Save"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>
        <c:url var="manageIdentifiedOrgs" value="/protected/roles/organizational/IdentifiedOrganization/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>

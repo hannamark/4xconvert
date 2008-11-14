@@ -62,7 +62,7 @@ function handleDuplicateOf() {
 			<h2>Research Organization Role Information</h2>
 		    <div class="box_white">
 				<s:actionerror/> 
-				<s:form action="%{formAction}" id="curateRoleForm">
+				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
 				<s:hidden key="role" />
@@ -126,8 +126,9 @@ function handleDuplicateOf() {
 <div style="clear:left;">
 </div>    
     <div class="btnwrapper" style="margin-bottom:20px;">
+    <%@include file="../confirmThenSubmit.jsp" %>    
     <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="$('curateRoleForm').submit();" style="save" text="Save"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>
        <c:url var="manageResearchOrgs" value="/protected/roles/organizational/ResearchOrganization/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>
