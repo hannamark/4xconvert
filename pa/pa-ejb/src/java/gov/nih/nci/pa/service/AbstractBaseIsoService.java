@@ -27,7 +27,7 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  * @param <DTO> data transfer object
  * @param <BO> domain object
- * @param <CONVERTER> conveter class
+ * @param <CONVERTER> converter class
  */
 public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends AbstractEntity,
                                             CONVERTER extends AbstractConverter<DTO, BO>>
@@ -162,6 +162,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
                 BO oldBo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
                 bo.setDateLastCreated(oldBo.getDateLastCreated());
                 bo.setUserLastCreated(oldBo.getUserLastCreated());
+                session.evict(oldBo);
             }
             bo = (BO) session.merge(bo);
             session.flush();

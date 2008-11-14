@@ -7,6 +7,8 @@ import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -216,15 +218,45 @@ public class CorrelationUtils {
             ResearchOrganization researchOrg = (ResearchOrganization) session.get(ResearchOrganization.class, 
                     paResearchOrganizationId);
             if (researchOrg == null) {
-                String errMsg = "Object not found using getPAResearchOrganization() for id = " 
+                String errMsg = "Object not found using getPAOrganizationByPAResearchOrganizationId() for id = " 
                     + paResearchOrganizationId + ".  ";
                 LOG.error(errMsg);
                 throw new PAException(errMsg);
             }
             organization = researchOrg.getOrganization();
         } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAResearchOrganization().  ", hbe);
-            throw new PAException("Hibernate exception in getPAResearchOrganization().  ", hbe);
+            LOG.error("Hibernate exception in  getPAOrganizationByPAResearchOrganizationId().  ", hbe);
+            throw new PAException("Hibernate exception in  getPAOrganizationByPAResearchOrganizationId().  ", hbe);
+        }
+        return organization;
+    }
+    
+    /**
+     * @param paHealthCareFacilityId id
+     * @return Organization
+     * @throws PAException e
+     */
+    public Organization getPAOrganizationByPAHealthCareFacilityId(Long paHealthCareFacilityId) throws PAException {
+        if (paHealthCareFacilityId == null) {
+            LOG.error("Check the id value.  Null found.  ");
+            throw new PAException("Check the id value.  Null found.  ");
+        }
+        Organization organization = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            HealthCareFacility healthCareFac = (HealthCareFacility) session.get(HealthCareFacility.class, 
+                    paHealthCareFacilityId);
+            if (healthCareFac == null) {
+                String errMsg = "Object not found using getPAOrganizationByPAHealthCareFacilityId() for id = " 
+                    + paHealthCareFacilityId + ".  ";
+                LOG.error(errMsg);
+                throw new PAException(errMsg);
+            }
+            organization = healthCareFac.getOrganization();
+        } catch (HibernateException hbe) {
+            LOG.error("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
+            throw new PAException("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
         }
         return organization;
     }
@@ -276,6 +308,36 @@ public class CorrelationUtils {
             per = queryList.get(0);
         }
         return per;
+    }
+
+    /**
+     * @param paClinicalResearchStaffId id
+     * @return Person
+     * @throws PAException e
+     */
+    public Person getPAPersonByPAClinicalResearchStaffId(Long paClinicalResearchStaffId) throws PAException {
+        if (paClinicalResearchStaffId == null) {
+            LOG.error("Check the id value.  Null found.  ");
+            throw new PAException("Check the id value.  Null found.  ");
+        }
+        Person person = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            ClinicalResearchStaff clinicalResearchStaff = 
+                (ClinicalResearchStaff) session.get(ClinicalResearchStaff.class, paClinicalResearchStaffId);
+            if (clinicalResearchStaff == null) {
+                String errMsg = "Object not found using getPAPersonByPAClinicalResearchStaffId() for id = " 
+                    + paClinicalResearchStaffId + ".  ";
+                LOG.error(errMsg);
+                throw new PAException(errMsg);
+            }
+            person = clinicalResearchStaff.getPerson();
+        } catch (HibernateException hbe) {
+            LOG.error("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
+            throw new PAException("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
+        }
+        return person;
     }
 
     /**
