@@ -44,6 +44,7 @@ import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
@@ -53,7 +54,6 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.YesNoCode;
-import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -421,6 +421,7 @@ public class TestSchema {
             Arm arm = new Arm();
             arm.setStudyProtocol(sp);
             arm.setName("ARM 01");
+            arm.setTypeCode(ArmTypeCode.EXPERIMENTAL);
             arm.setUserLastCreated("old user");
             arm.setUserLastUpdated("old user");
             arm.getInterventions().add(pa);

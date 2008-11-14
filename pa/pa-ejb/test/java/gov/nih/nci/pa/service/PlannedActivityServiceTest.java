@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -26,6 +27,7 @@ import org.junit.Test;
  */
 public class PlannedActivityServiceTest {
     private PlannedActivityServiceRemote remoteEjb = new PlannedActivityServiceBean();
+    private ArmServiceRemote remoteArmEjb = new ArmServiceBean();
     private Ii ii;
     private Ii spIi;
     private Ii armIi;
@@ -88,6 +90,11 @@ public class PlannedActivityServiceTest {
     public void deleteTest() throws Exception {
         List<PlannedActivityDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);
         int originalCount = dtoList.size();
+        for (Long armId : TestSchema.armIds) {
+            ArmDTO arm = remoteArmEjb.get(IiConverter.convertToIi(armId));
+            arm.setInterventions(null);
+            remoteArmEjb.update(arm);
+        }
         remoteEjb.delete(ii);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
         assertEquals (originalCount - 1, dtoList.size());

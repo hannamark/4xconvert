@@ -9,7 +9,6 @@ import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -104,7 +103,7 @@ public class PlannedActivity extends Activity {
      * @return the arms
      */
     @ManyToMany(
-            cascade = {CascadeType.ALL },
+//            cascade = {CascadeType.ALL },
             mappedBy = "interventions",
             targetEntity = Arm.class)
     public Collection<Arm> getArms() {

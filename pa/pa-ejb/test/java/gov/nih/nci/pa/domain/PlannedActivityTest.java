@@ -80,6 +80,11 @@ public class PlannedActivityTest {
     public void deleteTest() {
         PlannedActivity pa2 = (PlannedActivity) sess.get(PlannedActivity.class, TestSchema.plannedActivityIds.get(0));
         assertNotNull(pa2);
+        for (Long armId : TestSchema.armIds) {
+            Arm arm = (Arm) sess.get(Arm.class, armId);
+            arm.setInterventions(null);
+            sess.update(arm);
+        }
         sess.delete(pa2);
         sess.flush();
         PlannedActivity pa3 = (PlannedActivity) sess.get(PlannedActivity.class, TestSchema.plannedActivityIds.get(0));
