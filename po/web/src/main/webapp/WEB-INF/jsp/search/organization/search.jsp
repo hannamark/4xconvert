@@ -13,7 +13,11 @@
          <div class="boxouter" style="float:left;margin-right: 10px;">
          <h2>Basic Identifying Information</h2>
              <div class="box_white">
+             <po:inputRow>
+             <po:inputRowElement>
                  <s:textfield label="%{getText('organization.id')}" name="criteria.organization.id" size="10"/>
+             </po:inputRowElement>
+             <po:inputRowElement>
                  <s:set name="statusValues" value="@gov.nih.nci.po.data.bo.EntityStatus@values()" />
                     <s:select
                  label="%{getText('organization.statusCode')}"
@@ -24,9 +28,9 @@
                  value="criteria.organization.statusCode" 
                  headerKey="" headerValue="--Select a Status--" 
                  /> 
+             </po:inputRowElement>
+             </po:inputRow>
                  <s:textfield label="%{getText('organization.name')}" name="criteria.organization.name" size="70"/>
-                 <s:textfield label="%{getText('organization.abbreviatedName')}" name="criteria.organization.abbreviatedName" size="70"/>
-                 <s:textfield label="%{getText('organization.description')}" name="criteria.organization.description" size="70"/>
                  <div class="clear"></div>
              </div>
          </div>
@@ -43,11 +47,14 @@
           <h2>Contact Information</h2>
               <div class="box_white">
                   <div class="clear"></div>
-                     <s:textfield label="%{getText('emailEntry.value')}" name="criteria.emailEntry.value" size="20"/>
-                     <s:textfield label="%{getText('urlEntry.value')}" name="criteria.urlEntry.value" size="20"/>
-                     <s:textfield label="%{getText('phoneEntry.value')}" name="criteria.phoneEntry.value" size="20"/>
-                     <s:textfield label="%{getText('faxEntry.value')}" name="criteria.faxEntry.value" size="20"/>
-                     <s:textfield label="%{getText('ttyEntry.value')}" name="criteria.ttyEntry.value" size="20"/>
+                  <po:inputRow>
+                  <po:inputRowElement><s:textfield label="%{getText('emailEntry.value')}" name="criteria.emailEntry.value" size="20"/></po:inputRowElement>
+                  <po:inputRowElement><s:textfield label="%{getText('urlEntry.value')}" name="criteria.urlEntry.value" size="20"/></po:inputRowElement>
+                  </po:inputRow>
+                  <po:inputRow>
+                  <po:inputRowElement><s:textfield label="%{getText('phoneEntry.value')}" name="criteria.phoneEntry.value" size="20"/></po:inputRowElement>
+                  <po:inputRowElement><s:textfield label="%{getText('faxEntry.value')}" name="criteria.faxEntry.value" size="20"/></po:inputRowElement>
+                  </po:inputRow>
               </div>
           </div>
          </div>
