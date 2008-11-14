@@ -20,6 +20,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,17 +108,24 @@ public class StudyParticipationContactConverter {
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
             bo.setPhone(retList.get(0).toString());
         }
-        ClinicalResearchStaff crs = new ClinicalResearchStaff();
-        crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
-        bo.setClinicalResearchStaff(crs);
 
-        HealthCareProvider healthCareProvider = new HealthCareProvider();
-        healthCareProvider.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
-        bo.setHealthCareProvider(healthCareProvider);
+        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
+            ClinicalResearchStaff crs = new ClinicalResearchStaff();
+            crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
+            bo.setClinicalResearchStaff(crs);
+        }
+
+        if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
+            HealthCareProvider healthCareProvider = new HealthCareProvider();
+            healthCareProvider.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
+            bo.setHealthCareProvider(healthCareProvider);
+        }
         
-        OrganizationalContact oc = new OrganizationalContact();
-        oc.setId(IiConverter.convertToLong(dto.getOrganizationalContactIi()));
-        bo.setOrganizationalContact(oc);
+        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {
+            OrganizationalContact oc = new OrganizationalContact();
+            oc.setId(IiConverter.convertToLong(dto.getOrganizationalContactIi()));
+            bo.setOrganizationalContact(oc);
+        }
         
         StudyProtocol protocolBo = new StudyProtocol();
         protocolBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
