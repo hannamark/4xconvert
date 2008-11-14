@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -180,6 +181,36 @@ public class CorrelationUtils {
             org = queryList.get(0);
         }
         return org;
+    }
+    
+    /**
+     * @param paResearchOrganizationId id
+     * @return Organization
+     * @throws PAException e
+     */
+    public Organization getPAOrganizationByPAResearchOrganizationId(Long paResearchOrganizationId) throws PAException {
+        if (paResearchOrganizationId == null) {
+            LOG.error("Check the id value.  Null found.  ");
+            throw new PAException("Check the id value.  Null found.  ");
+        }
+        Organization organization = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            ResearchOrganization researchOrg = (ResearchOrganization) session.get(ResearchOrganization.class, 
+                    paResearchOrganizationId);
+            if (researchOrg == null) {
+                String errMsg = "Object not found using getPAResearchOrganization() for id = " 
+                    + paResearchOrganizationId + ".  ";
+                LOG.error(errMsg);
+                throw new PAException(errMsg);
+            }
+            organization = researchOrg.getOrganization();
+        } catch (HibernateException hbe) {
+            LOG.error("Hibernate exception in getPAResearchOrganization().  ", hbe);
+            throw new PAException("Hibernate exception in getPAResearchOrganization().  ", hbe);
+        }
+        return organization;
     }
 
     /**
