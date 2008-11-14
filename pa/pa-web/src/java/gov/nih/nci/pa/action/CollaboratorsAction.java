@@ -122,24 +122,7 @@ public class CollaboratorsAction extends ActionSupport
             return ACT_CREATE;
         }
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
-
-//        Organization org = new Organization();
-//        org.setIdentifier(poOrgId);
-//        Organization paOrg = paoService.getOrganizationByIndetifers(org);
-//
-//        if (paOrg == null) {
         Long paOrgId = ocService.createResearchOrganizationCorrelations(poOrgId);
-//            paOrg = paoService.getOrganizationByIndetifers(org);
-//        } else {
-//            List<PAResearchOrganizationDTO> paroList = paroService.getByOrganization(paOrg.getId());
-//            if (paroList.isEmpty()) {
-//                ocService.createResearchOrganizationCorrelations(poOrgId);
-//            }
-//        }
-
-//        PAResearchOrganizationDTO roDto = null;
-//        List<PAResearchOrganizationDTO> roList = paroService.getByOrganization(paOrg.getId());
-//        roDto = roList.get(0);
 
         StudyParticipationDTO sp = new StudyParticipationDTO();
         sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
