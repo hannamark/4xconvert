@@ -18,7 +18,9 @@ import org.displaytag.properties.SortOrderEnum;
 
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
@@ -88,7 +90,11 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Validations(requiredFields = { 
+    @Validations(
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedOrganization") }) 
+        },
+        requiredFields = { 
             @RequiredFieldValidator(type = ValidatorType.SIMPLE, 
                     fieldName = "role.assignedIdentifier.extension", 
                     message = "Extension must be set") 
@@ -107,7 +113,11 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Validations(requiredFields = { 
+    @Validations(
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedOrganization") }) 
+        },            
+        requiredFields = { 
             @RequiredFieldValidator(type = ValidatorType.SIMPLE, 
                     fieldName = "role.assignedIdentifier.extension", 
                     message = "Extension must be set") 

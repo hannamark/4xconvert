@@ -11,10 +11,15 @@ import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.ArrayList;
 
+import javax.jms.JMSException;
+
 import org.displaytag.properties.SortOrderEnum;
 
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action to manage ResearchOrganization(s).
@@ -70,7 +75,36 @@ public class ResearchOrganizationAction
             getRole().setPlayer(getOrganization());
         }
     }
-
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Validations(
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") }) 
+        }
+    )
+    @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    public String add() throws JMSException {
+        return super.add();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Validations(
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") }) 
+        }
+    )
+    @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    public String edit() throws JMSException {
+        return super.edit();
+    }
+    
     /**
      * {@inheritDoc}
      */

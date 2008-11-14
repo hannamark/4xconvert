@@ -26,8 +26,6 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.CustomValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author smatyas
@@ -111,7 +109,6 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @return success
      * @throws JMSException if an error occurred while publishing announcement
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "role") })
     public String add() throws JMSException {
         getRoleService().curate(getRole());
         list();
@@ -128,7 +125,6 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @return success
      * @throws JMSException if an error occurred while publishing announcement
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "role") })
     public String edit() throws JMSException {
         getRoleService().curate(getRole());
         list();

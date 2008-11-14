@@ -78,7 +78,7 @@ function handleDuplicateOf() {
 				   listValue="code"
 				   value="role.typeCode.id" 
 				   headerKey="" headerValue="--Select a Type--" 
-				   required="true" cssClass="required" /> 
+				   /> 
 				<s:select id="curateRoleForm.role.status"
 				   label="%{getText('oversightCommittee.status')}"
 				   name="role.status"

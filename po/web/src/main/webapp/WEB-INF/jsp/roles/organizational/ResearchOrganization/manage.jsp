@@ -9,7 +9,7 @@
 
     <div class="boxouter">
     <h2>Research Organization Information</h2>
-        <%@ include file="../orgInfo.jsp" %>>
+        <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
 		<h2>Research Organizational Roles</h2>
 		    <div id="roles">
