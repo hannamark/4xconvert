@@ -20,7 +20,7 @@
                 <s:textfield key="cr.fundingMechanism" required="true" cssClass="required" />
             </po:copyButton>
             <po:copyButton
-             id="copy_curateCrForm_role_fundingMechanism"
+             id="copy_curateCrForm_role_status"
              onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield key="cr.status" required="true" cssClass="required"/>

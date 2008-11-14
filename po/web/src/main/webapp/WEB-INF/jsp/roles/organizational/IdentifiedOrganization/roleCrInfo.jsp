@@ -27,6 +27,7 @@
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield key="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
+            
             <script type="text/javascript">
             function copyIsoIIFields() {
                 selectValueInSelectField('${cr.assignedIdentifier.displayable}', 'curateRoleForm.role.assignedIdentifier.displayable');
