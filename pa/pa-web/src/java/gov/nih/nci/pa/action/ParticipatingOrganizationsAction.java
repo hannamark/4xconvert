@@ -15,7 +15,6 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
-import gov.nih.nci.pa.iso.dto.PAHealthCareFacilityDTO;
 import gov.nih.nci.pa.iso.dto.PersonWebDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -30,19 +29,19 @@ import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
-import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -74,11 +73,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private StudyProtocolServiceRemote sProService;
     private StudyParticipationServiceRemote sPartService;
     private StudySiteAccrualStatusServiceRemote ssasService;
-    private PAHealthCareFacilityServiceRemote pahfService;
-    private PAOrganizationServiceRemote paoService;
     private StudyParticipationContactServiceRemote sPartContactService;
-    private HealthCareFacilityCorrelationServiceRemote pohfService;
     private HealthCareProviderCorrelationServiceRemote pohcpService;
+    private OrganizationCorrelationServiceBean oCService;
+    private CorrelationUtils cUtils;
+    
     private Ii spIi;
     private List<OrganizationWebDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
@@ -105,11 +104,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sProService = PaRegistry.getStudyProtocolService();
         sPartService = PaRegistry.getStudyParticipationService();
         ssasService = PaRegistry.getStudySiteAccrualStatusService();
-        pahfService = PaRegistry.getPAHealthCareFacilityService();
-        paoService = PaRegistry.getPAOrganizationService();
-        pohfService = PaRegistry.getHealthCareFacilityCorrelationService();
         sPartContactService = PaRegistry.getStudyParticipationContactService();
         pohcpService = PaRegistry.getHealthCareProviderCorrelationService();
+        cUtils = new CorrelationUtils();
+        oCService = new OrganizationCorrelationServiceBean();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
@@ -146,7 +144,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (hasFieldErrors()) {
             return ERROR;
         }
-        // 1) get the po identifer from input field ( user selected from pop-up)
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab == null) {
@@ -155,68 +152,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             return SUCCESS;
         }
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
-        // 2) using the poIdentifer call
-        // po.getHealthcareFacility(poOrganizationid) (this
-        //
-        // if (poHealthcareFacilityIi == null) {
-        // poHealthcareFacilityIi =
-        // pa.regisitry.poCreateHealthcareFacility(poISOHealthcareFacilityDTO)
-        //
-        HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
-        hcf.setPlayerIdentifier(tab.getPoOrganizationIi());
-        List<HealthCareFacilityDTO> poHfList = pohfService.search(hcf);
-        if (poHfList.isEmpty()) {
-            tab.setPoHealthCareFacilityIi(pohfService.createCorrelation(hcf));
-        }
-        // 3) at this point we have both poOrganizationIi &
-        // poHealthcareFacilityIi
-        // 4) check if PA has organization and healthcarefacitly (local copy)
-        // 5) paOrganizationIi =
-        // PAOrganizationServiceRemote.getOrganizationByIndetifers(poOrganizationIi)
-        // (this method is implemented )
-        Organization org = new Organization();
-        org.setIdentifier(poOrgId);
-        Organization paOrg = paoService.getOrganizationByIndetifers(org);
-        // 6) if (paOrganizationIi == null ) {
-        // create an organization in pa
-        // paOrganizationIi =
-        // PAOrganizationServiceRemote.createOrganization(Organization)
-        // (this method is implemented)
-        // }
-        if (paOrg == null) {
-            org.setCity(tab.getFacilityOrganization().getCity());
-            org.setCountryName(tab.getFacilityOrganization().getCountryName());
-            org.setName(tab.getFacilityOrganization().getName());
-            org.setPostalCode(tab.getFacilityOrganization().getPostalCode());
-            paOrg = paoService.createOrganization(org);
-        }
-        // 7) paHealthcareFacilityIi =
-        // PAHealthcareFacilityServiceRemote.getHealthcareFacility(poHealthcareFacilityIi)
-        // 8) if (paHealthcareFacilityIi == null ) {
-        // create an HealthcareFacilityIi in pa
-        // paHealthcareFacilityIi =
-        // PAHealthcareFacilityServiceRemote.createHealthcareFacility(HealthcareFacility)
-        // (this method is NOT impemented)
-        // }
-        PAHealthCareFacilityDTO hfDto = null;
-        List<PAHealthCareFacilityDTO> hfList = pahfService.getByOrganization(IiConverter.convertToIi(poOrgId));
-        if (hfList.size() > 0) {
-            hfDto = hfList.get(0);
-        } else {
-            hfDto = new PAHealthCareFacilityDTO();
-            hfDto.setAssignedIdentifier(StConverter.convertToSt("1234"));
-            hfDto.setOrganizationIi(IiConverter.convertToIi(paOrg.getId()));
-            hfDto = pahfService.create(hfDto);
-        }
-        // 9) now you have paOrganizationIi & paHealthcareFacilityIi and you can
-        // create Participations and Studyprotocol
+        Long paHealthCareFacilityId = oCService.createHealthCareFacilityCorrelations(poOrgId);
         StudyParticipationDTO sp = new StudyParticipationDTO();
         sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
-        sp.setHealthcareFacilityIi(hfDto.getIdentifier());
-        sp.setIdentifier(IiConverter.convertToIi((Long) null));
+        sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
+        sp.setIdentifier(null);
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
         sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
-        sp.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2001")));
+        sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         sp.setStudyProtocolIi(spIi);
         sp = sPartService.create(sp);
         tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
@@ -230,8 +173,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (tab.getFacilityOrganization().getName() != null) {
             organizationName = "for " + tab.getFacilityOrganization().getName();
         }
-        // ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-        // Constants.CREATE_MESSAGE);
         loadForm();
         setCurrentAction("edit");
         return ACT_FACILITY_SAVE;
@@ -243,7 +184,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public String facilityUpdate() throws Exception {
         clearErrorsAndMessages();
-        // enforceBusinessRules();
         String resStatus = ServletActionContext.getRequest().getParameter("recStatus");
         String resStatusDate = ServletActionContext.getRequest().getParameter("resStatusDate");
         if (!PAUtil.isNotNullOrNotEmpty(resStatus)) {
@@ -262,8 +202,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         Organization org = new Organization();
         if (tab.getFacilityOrganization().getId() != null) {
-            org.setId(tab.getFacilityOrganization().getId());
-            org = paoService.getOrganizationByIndetifers(org);
+            org = cUtils.getPAOrganizationByIndetifers(tab.getFacilityOrganization().getId(), null);
         } else {
             org = tab.getFacilityOrganization();
         }
@@ -303,8 +242,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         this.setRecStatus(resStatus);
         this.setRecStatusDate(resStatusDate);
         return this.ACT_EDIT;
-        // return ACT_FACILITY_SAVE;
-        // return "displayJsp";
     }
 
     /**
@@ -314,10 +251,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String edit() throws Exception {
         setCurrentAction("edit");
         StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
-        PAHealthCareFacilityDTO hfDto = pahfService.get(spDto.getHealthcareFacilityIi());
-        Organization org = new Organization();
-        org.setId(IiConverter.convertToLong(hfDto.getOrganizationIi()));
-        editOrg = paoService.getOrganizationByIndetifers(org);
+        editOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
+                IiConverter.convertToLong(spDto.getHealthcareFacilityIi()));
         orgFromPO.setOrgCity(editOrg.getCity());
         orgFromPO.setOrgCountry(editOrg.getCountryName());
         orgFromPO.setOrgName(editOrg.getName());
@@ -331,7 +266,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         setNewParticipation(false);
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
-        tab.setFacilityOrganization(org);
+        tab.setFacilityOrganization(editOrg);
         tab.setPoHealthCareFacilityIi(null);
         tab.setPoOrganizationIi(null);
         tab.setNewParticipation(false);
@@ -382,10 +317,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         for (StudyParticipationDTO sp : spList) {
             List<StudySiteAccrualStatusDTO> ssasList = ssasService
                     .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
-            PAHealthCareFacilityDTO hf = pahfService.get(sp.getHealthcareFacilityIi());
-            Organization orgBo = new Organization();
-            orgBo.setId(IiConverter.convertToLong(hf.getOrganizationIi()));
-            orgBo = paoService.getOrganizationByIndetifers(orgBo);
+            Organization orgBo = cUtils.getPAOrganizationByPAHealthCareFacilityId(
+                    IiConverter.convertToLong(sp.getHealthcareFacilityIi()));
             OrganizationWebDTO orgWebDTO = new OrganizationWebDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
