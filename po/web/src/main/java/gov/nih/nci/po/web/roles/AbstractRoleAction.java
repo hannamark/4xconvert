@@ -66,6 +66,9 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     @Override
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", UNCHECKED })
     public String input() throws Exception {
+        if (getRole().getId() == null) {
+            getRole().setStatus(RoleStatus.PENDING);
+        }
         if (!getRole().getChangeRequests().isEmpty()) {
             setCr((ROLECR) getRole().getChangeRequests().iterator().next());
         }
