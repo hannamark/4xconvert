@@ -12,6 +12,9 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -35,7 +38,12 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     private final Class<CONVERTER> converterArgument;
     @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
     private final Logger logger;
+    private SessionContext ejbContext;
 
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+        this.ejbContext = ctx;
+    }
     /**
      * default constructor.
      */
@@ -145,14 +153,14 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
             bo = convertFromDtoToDomain(dto);
+            bo.setUserLastUpdated((ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {
-                bo.setDateLastCreated(new Date());
-                bo.setDateLastUpdated(bo.getDateLastCreated());
-                bo.setUserLastUpdated(bo.getUserLastCreated());
+                bo.setUserLastCreated(bo.getUserLastUpdated());
+                bo.setDateLastCreated(bo.getDateLastUpdated());
             } else {
                 BO oldBo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
                 bo.setDateLastCreated(oldBo.getDateLastCreated());
-                bo.setDateLastUpdated(new Date());
                 bo.setUserLastCreated(oldBo.getUserLastCreated());
             }
             bo = (BO) session.merge(bo);
