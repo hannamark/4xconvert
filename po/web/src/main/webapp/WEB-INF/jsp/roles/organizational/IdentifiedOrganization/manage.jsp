@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-<title>Manage Identified Organization(s)</title>
+<title><s:text name="identifiedOrganization.manage.title"/></title>
 </head> 
 <body>
 
@@ -26,7 +26,8 @@
             <c:url var="curateUrl" value="/protected/organization/curate/start.action">
                 <c:param name="organization" value="${organization.id}"/>
             </c:url>
-            <po:button id="continue_button" href="${curateUrl}" style="continue" text="Close"/>
+            <s:set name="returnToPageTitle" value="%{'Return to ' + getText('organization.details.title')}"/>
+            <po:button id="return_to_button" href="${curateUrl}" style="continue" text="${returnToPageTitle}"/>
         </po:buttonRow>
     </div>
 </body>

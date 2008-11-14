@@ -8,10 +8,10 @@
     </s:if>
     <s:else>
 	    <c:if test="${fn:length(organization.changeRequests) > 0}">
-	       <title>Organization Details - Comparison</title>
+	       <title><s:text name="organization.details.title"/> - Comparison</title>
 	    </c:if>
 	    <c:if test="${fn:length(organization.changeRequests) == 0}">
-	       <title>Organization Details</title>
+	       <title><s:text name="organization.details.title"/></title>
 	    </c:if>
     </s:else>
     <script type="text/javascript">
@@ -158,9 +158,9 @@
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
 	            <ul>
-	                <li><a href="${manageResearchOrgs}">Manage Research Organizations</a>
-	                <li><a href="${manageIdentifiedOrgs}">Manage Identified Organizations</a>
-	                <li><a href="${manageOversightComms}">Manage Oversight Committees</a>
+	                <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a>
+	                <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a>
+	                <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a>
 	            </ul>
                 <div class="clear"></div>
             </div>

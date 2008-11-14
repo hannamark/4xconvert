@@ -129,10 +129,11 @@ function handleDuplicateOf() {
     <%@include file="../confirmThenSubmit.jsp" %>    
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>
-       <c:url var="manageResearchOrgs" value="/protected/roles/organizational/ResearchOrganization/start.action">
+       <c:url var="managePage" value="/protected/roles/organizational/ResearchOrganization/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>
-       <po:button id="continue_button" href="${manageResearchOrgs}" onclick="" style="continue" text="Close"/>
+       <s:set name="managePageTitle" value="%{'Return to ' + getText('researchOrganization.manage.title')}"/>
+       <po:button id="return_to_button" href="${managePage}" onclick="" style="continue" text="${managePageTitle}"/>
     </po:buttonRow>
     </div>
 </body>
