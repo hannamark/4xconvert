@@ -49,7 +49,7 @@
            </label>
          </td>
          <td class="value">
-    		<s:textarea name="gtdDTO.publicTitle" cssStyle="width:206px" rows="2"/> 
+    		<s:textarea name="gtdDTO.publicTitle" cssStyle="width:306px" rows="5"/> 
     	</td>
     </tr>
     <tr>
@@ -73,7 +73,7 @@
           </label>
        </td>
        <td class="value">
-            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:206px" rows="2"/> 
+            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:306px" rows="5"/> 
        </td>
     </tr>
     <tr>
@@ -93,7 +93,7 @@
            </label>
          </td>
          <td class="value">
-    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:206px" rows="4"/> 
+    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:306px" rows="6"/> 
     	</td>
     </tr>
     <tr>
@@ -105,7 +105,7 @@
            </label>
          </td>
          <td class="value">
-   			 <s:textarea name="gtdDTO.scientificDescription" cssStyle="width:206px" rows="5" /> 
+   			 <s:textarea name="gtdDTO.scientificDescription" cssStyle="width:306px" rows="7" /> 
    		</td>
     </tr>
     <tr>
@@ -117,11 +117,19 @@
            </label>
          </td>
          <td class="value">
-   			 <s:textarea name="gtdDTO.keywordText" cssStyle="width:206px" rows="6" /> 
+   			 <s:textarea name="gtdDTO.keywordText" cssStyle="width:306px" rows="7" /> 
    		</td>
     </tr>
     </table>  
-                  
+         <div class="actionsrow">
+            <del class="btnwrapper">
+                <ul class="btnrow">
+                    <li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                    <li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+					<li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
+                </ul>   
+            </del>
+        </div>          
     </s:form>
    </div>
 
