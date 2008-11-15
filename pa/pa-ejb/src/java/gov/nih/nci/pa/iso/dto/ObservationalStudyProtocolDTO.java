@@ -20,6 +20,7 @@ public class ObservationalStudyProtocolDTO extends StudyProtocolDTO {
     private St studyModelOtherText;
     private Cd timePerspectiveCode;
     private St timePerspectiveOtherText;
+    private St studyPopulationDescription;
     
     /**
      * @return biospecimenDescription
@@ -116,5 +117,17 @@ public class ObservationalStudyProtocolDTO extends StudyProtocolDTO {
      */
     public void setTimePerspectiveOtherText(St timePerspectiveOtherText) {
         this.timePerspectiveOtherText = timePerspectiveOtherText;
+    }
+    /**
+     * @return studyPopulationDescription
+     */
+    public St getStudyPopulationDescription() {
+      return studyPopulationDescription;
+    }
+    /**
+     * @param studyPopulationDescription studyPopulationDescription
+     */
+    public void setStudyPopulationDescription(St studyPopulationDescription) {
+      this.studyPopulationDescription = studyPopulationDescription;
     }
 }
