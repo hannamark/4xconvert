@@ -2,9 +2,12 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
+import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.UnitsCode;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -50,6 +53,8 @@ public class EligibilityCriteriaAction extends ActionSupport  {
     private String minimumValueId = null;
     private List<ISDesignDetailsWebDTO> eligibilityList = null;
     private static final int RECORDSVALUE = 3;
+    private String studyPopulationDescription;
+    private String samplingMethodCode;
     /**  
      * @return res
      */
@@ -82,7 +87,20 @@ public class EligibilityCriteriaAction extends ActionSupport  {
             spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
                 acceptHealthyVolunteersIndicator = spDTO.getAcceptHealthyVolunteersIndicator().getValue().toString();
-            }                
+            } 
+            StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
+            .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+              ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+              ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+              if (ospDTO.getSamplingMethodCode().getCode() != null) {
+                samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
+              }
+              if (ospDTO.getStudyPopulationDescription().getValue() != null) {
+                studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
+              }
+            }
+            
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } 
@@ -100,6 +118,18 @@ public class EligibilityCriteriaAction extends ActionSupport  {
         try {  
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
+            
+            StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
+            .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+              ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+              ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+              ospDTO.setStudyPopulationDescription(StConverter.convertToSt(studyPopulationDescription));
+              ospDTO.setSamplingMethodCode(CdConverter.convertToCd(
+                        SamplingMethodCode.getByCode(samplingMethodCode)));
+              ospDTO = PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospDTO);
+            }
+            
             StudyProtocolDTO spDTO = new StudyProtocolDTO();
             spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             spDTO.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(
@@ -302,6 +332,18 @@ public class EligibilityCriteriaAction extends ActionSupport  {
     }
     
     private void enforceBusinessRules() {
+      if (PAUtil.isEmpty(samplingMethodCode)) {
+        addFieldError("samplingMethodCode",
+                getText("error.samplingMethod"));
+    }
+      if (PAUtil.isEmpty(studyPopulationDescription)) {
+        addFieldError("studyPopulationDescription",
+                getText("error.trialPopulationDescription"));
+    }
+      if (PAUtil.isEmpty(acceptHealthyVolunteersIndicator)) {
+        addFieldError("acceptHealthyVolunteersIndicator",
+                getText("error.acceptHealthyVolunteersIndicator"));
+    }
         if (PAUtil.isEmpty(acceptHealthyVolunteersIndicator)) {
             addFieldError("acceptHealthyVolunteersIndicator",
                     getText("error.acceptHealthyVolunteersIndicator"));
@@ -523,6 +565,34 @@ public class EligibilityCriteriaAction extends ActionSupport  {
      */
     public void setEligibilityList(List<ISDesignDetailsWebDTO> eligibilityList) {
         this.eligibilityList = eligibilityList;
+    }
+
+    /**
+     * @return studyPopulationDescription
+     */
+    public String getStudyPopulationDescription() {
+      return studyPopulationDescription;
+    }
+
+    /**
+     * @param studyPopulationDescription studyPopulationDescription
+     */
+    public void setStudyPopulationDescription(String studyPopulationDescription) {
+      this.studyPopulationDescription = studyPopulationDescription;
+    }
+
+    /**
+     * @return samplingMethodCode
+     */
+    public String getSamplingMethodCode() {
+      return samplingMethodCode;
+    }
+
+    /**
+     * @param samplingMethodCode samplingMethodCode
+     */
+    public void setSamplingMethodCode(String samplingMethodCode) {
+      this.samplingMethodCode = samplingMethodCode;
     }
 
 }
