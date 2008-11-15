@@ -5,7 +5,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></title>
+    <title>
+     <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></s:else> 
+     </title>   
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -30,6 +35,44 @@ BubbleTips.activateTipOn("dfn");
     <s:form><s:actionerror/>    
     <h2><fmt:message key="isdesign.eligibilitycriteria.title"/></h2>
     <table class="form">
+    <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+                <tr>
+                    <td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+                        <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/> </dfn><span class="required">*</span></label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" />
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>studyPopulationDescription</s:param>
+                               </s:fielderror>                            
+                         </span>
+                    </td>                   
+                    <td>
+                    </td>
+                    <td class="value">                      
+                    </td>
+                </tr>
+                    <tr>
+                    <td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+                        <fmt:message key="osdesign.eligibilitycriteria.samplingMethod"/> </dfn><span class="required">*</span></label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <s:set name="samplingMethodValues" value="@gov.nih.nci.pa.enums.SamplingMethodCode@getDisplayNames()" />
+                        <s:select headerKey="" headerValue="" 
+                                name="samplingMethodCode" 
+                                list="#samplingMethodValues"  
+                                cssStyle="width:136px" />
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>samplingMethodCode</s:param>
+                               </s:fielderror>                            
+                         </span>
+                    </td>                   
+                    <td>
+                    </td>
+                    <td class="value">                      
+                    </td>
+                </tr>
+    </s:if>
     			<tr>
 					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 						<fmt:message key="isdesign.eligibilitycriteria.ahv"/> </dfn><span class="required">*</span></label>
