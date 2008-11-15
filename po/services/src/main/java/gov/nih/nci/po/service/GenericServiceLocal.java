@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import javax.ejb.Local;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.service.GenericDataService;
 
 
@@ -93,4 +94,10 @@ import com.fiveamsolutions.nci.commons.service.GenericDataService;
  */
 @Local
 public interface GenericServiceLocal extends GenericDataService {
+
+    /**
+     * Refresh the given object from the db.
+     * @param o the object to refresh.
+     */
+    void refreshObject(PersistentObject o);
 }

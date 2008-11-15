@@ -106,4 +106,11 @@ public class GenericServiceBean implements GenericServiceLocal {
     public <T extends PersistentObject> T getPersistentObject(Class<T> toClass, Long id) {
         return (T) PoHibernateUtil.getCurrentSession().get(toClass, id);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void refreshObject(PersistentObject o) {
+        PoHibernateUtil.getCurrentSession().refresh(o);
+    }
 }

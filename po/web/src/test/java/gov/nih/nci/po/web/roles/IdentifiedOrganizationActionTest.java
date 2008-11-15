@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.Organization;
@@ -56,8 +56,19 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         assertNotNull(action.getRole().getScoper());
         assertNotNull(action.getRole().getAssignedIdentifier());
         assertNull(action.getRole().getAssignedIdentifier().getNullFlavor());
+
+        // calling again exercises the path where the object already has the player set
+        Organization o = action.getOrganization();
+        Organization scoper = action.getRole().getScoper();
+        Ii id = action.getRole().getAssignedIdentifier();
+        action.setOrganization(null);
+        action.prepare();
+        assertSame(o, action.getRole().getPlayer());
+        assertSame(scoper, action.getRole().getScoper());
+        assertSame(id, action.getRole().getAssignedIdentifier());
+        assertNull(action.getRole().getAssignedIdentifier().getNullFlavor());
     }
-    
+
     @Test
     public void testStart() {
         assertEquals(Action.SUCCESS, action.start());
@@ -69,7 +80,7 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         action.setOrganization(null);
         assertNull(action.getOrganization());
     }
-    
+
     @Test
     public void testRoleProperty() {
         assertNotNull(action.getRole());
@@ -88,7 +99,7 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         assertEquals(ResearchOrganizationSortCriterion.ID.name(), action.getResults().getSortCriterion());
         assertEquals(SortOrderEnum.ASCENDING, action.getResults().getSortDirection());
     }
-    
+
     @Test
     public void list() {
         assertEquals(Action.SUCCESS, action.list());
@@ -109,17 +120,17 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableStatusForAddForm() {
-        List expected = new ArrayList();
-        expected.add(EntityStatus.PENDING);
-        expected.add(EntityStatus.ACTIVE);
-        
+        List<RoleStatus> expected = new ArrayList<RoleStatus>();
+        expected.add(RoleStatus.PENDING);
+        expected.add(RoleStatus.ACTIVE);
+
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
-        
+
         assertTrue(availableStatus.containsAll(expected));
         assertTrue(expected.containsAll(availableStatus));
     }
-    
+
     @Test
     public void testGetAvailableStatusForEditForm() {
         verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
@@ -135,19 +146,19 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
         assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
     }
-    
+
     @Test
     public void testGetAvailableDuplicateOfs() {
         final Long playerId = 1L;
-        
+
         action.getRole().setId(null);
         action.getOrganization().setId(playerId);
         assertNull(action.getAvailableDuplicateOfs());
-        
+
         action.getRole().setId(5L);
         action.getOrganization().setId(playerId);
         assertNull(action.getAvailableDuplicateOfs());
-        
+
         action = new IdentifiedOrganizationAction() {
             private static final long serialVersionUID = 1L;
 
@@ -184,7 +195,7 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         assertEquals(4L, iterator.next().getId().longValue());
         assertFalse(iterator.hasNext());
     }
-    
+
     @Test
     public void changeCurrentChangeRequest() {
         assertEquals(ResearchOrganizationAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
@@ -199,7 +210,7 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
         action.setCr(null);
         assertNull(action.getCr());
     }
-    
+
     @Test
     public void testGetSelectChangeRequests() {
         action.getRole().setId(1L);
@@ -217,5 +228,5 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
             assertEquals("CR-ID-" + i, value);
             i++;
         }
-    }    
+    }
 }

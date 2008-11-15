@@ -80,50 +80,96 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.web.roles;
 
-import java.lang.reflect.InvocationTargetException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.web.AbstractPoTest;
 
-import org.apache.commons.beanutils.BeanUtils;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.Action;
 
 /**
- * generic service stub.
- * @author smatyas
+ * @author Scott Miller
+ *
  */
-public class GenericServiceStub implements GenericServiceLocal {
+public class HealthCareFacilityActionTest extends AbstractPoTest {
+    HealthCareFacilityAction action = new HealthCareFacilityAction();
 
-    /**
-     * {@inheritDoc}
-     */
-    public <T extends PersistentObject> T getPersistentObject(Class<T> toClass, Long id) {
-        if (id == null) {
-            return null;
-        }
-
-        T newInstance;
-        try {
-            newInstance = toClass.newInstance();
-        } catch (InstantiationException e1) {
-            throw new RuntimeException(e1);
-        } catch (IllegalAccessException e1) {
-            throw new RuntimeException(e1);
-        }
-        try {
-            BeanUtils.setProperty(newInstance, "id", id);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-
-        return newInstance;
+    @Test
+    public void testLoad() {
+        assertEquals(Action.INPUT, action.load());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void refreshObject(PersistentObject o) {
+    @Test
+    public void testPrepare() {
+        Organization o = new Organization();
+        action.setOrganization(o);
+        assertNull(action.getRole());
+        action.prepare();
+        assertEquals(o, action.getRole().getPlayer());
+        assertEquals(o, action.getOrganization());
+    }
+
+    @Test
+    public void testAdd() throws Exception {
+        assertEquals(Action.INPUT, action.add());
+        assertEquals(1, ActionHelper.getMessages().size());
+    }
+
+    @Test
+    public void testEdit() throws Exception {
+        HealthCareFacility role = new HealthCareFacility();
+        action.setRole(role);
+        action.getRole().setStatus(RoleStatus.ACTIVE);
+        assertEquals(Action.INPUT, action.edit());
+        assertEquals(1, ActionHelper.getMessages().size());
+        assertSame(role, action.getRole());
+
+        action.getRole().setStatus(RoleStatus.NULLIFIED);
+        assertEquals(Action.INPUT, action.edit());
+        assertNotSame(role, action.getRole());
+    }
+
+    @Test
+    public void testGetAvailableStatus() throws Exception {
+        HealthCareFacility hcf = new HealthCareFacility();
+        action.setRole(hcf);
+        List<RoleStatus> expected = new ArrayList<RoleStatus>();
+        expected.add(RoleStatus.PENDING);
+        expected.add(RoleStatus.ACTIVE);
+
+        Collection<RoleStatus> availableStatus = action.getAvailableStatus();
+        assertTrue(availableStatus.containsAll(expected));
+        assertTrue(expected.containsAll(availableStatus));
+
+        hcf.setId(1L);
+        hcf.setStatus(RoleStatus.ACTIVE);
+        Method privateMethod = AbstractOrganizationRole.class.getDeclaredMethod("setPriorAsString",
+                new Class[] {String.class});
+        privateMethod.setAccessible(true); //hack
+        privateMethod.invoke(hcf, new Object[] {RoleStatus.ACTIVE.name()});
+
+        expected.clear();
+        expected.add(RoleStatus.ACTIVE);
+        expected.add(RoleStatus.SUSPENDED);
+        expected.add(RoleStatus.NULLIFIED);
+        availableStatus = action.getAvailableStatus();
+        assertTrue(availableStatus.containsAll(expected));
+        assertTrue(expected.containsAll(availableStatus));
     }
 }

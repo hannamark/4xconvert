@@ -80,50 +80,140 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.web.roles;
 
-import java.lang.reflect.InvocationTargetException;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.po.util.PoRegistry;
 
-import org.apache.commons.beanutils.BeanUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import javax.jms.JMSException;
+
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
- * generic service stub.
- * @author smatyas
+ * @author Scott Miller
+ *
  */
-public class GenericServiceStub implements GenericServiceLocal {
+public class HealthCareFacilityAction extends ActionSupport implements Preparable {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * {@inheritDoc}
-     */
-    public <T extends PersistentObject> T getPersistentObject(Class<T> toClass, Long id) {
-        if (id == null) {
-            return null;
-        }
+    private Organization organization = new Organization();
+    private HealthCareFacility role;
 
-        T newInstance;
-        try {
-            newInstance = toClass.newInstance();
-        } catch (InstantiationException e1) {
-            throw new RuntimeException(e1);
-        } catch (IllegalAccessException e1) {
-            throw new RuntimeException(e1);
-        }
-        try {
-            BeanUtils.setProperty(newInstance, "id", id);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-
-        return newInstance;
+    private void useDefaultHealthCareFacility() {
+        HealthCareFacility newRole = new HealthCareFacility();
+        newRole.setStatus(RoleStatus.PENDING);
+        newRole.setPlayer(organization);
+        setRole(newRole);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void refreshObject(PersistentObject o) {
+    public void prepare() {
+        // serch to
+        HealthCareFacility example = new HealthCareFacility();
+        example.setPlayer(organization);
+        AnnotatedBeanSearchCriteria<HealthCareFacility> criteria =
+            new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
+        List<HealthCareFacility> hcfs =
+            PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().search(criteria);
+        if (hcfs != null && !hcfs.isEmpty()) {
+            // current org has a non-nullified role, use it
+            setRole(hcfs.get(0));
+        } else {
+            useDefaultHealthCareFacility();
+        }
+    }
+
+    /**
+     * Action to load the role.
+     * @return INPUT
+     */
+    public String load() {
+        return INPUT;
+    }
+
+    /**
+     * Action for the curator to save the role.
+     * @return INPUT
+     * @throws JMSException on error
+     */
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "role") })
+    public String add() throws JMSException {
+        PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().curate(role);
+        ActionHelper.saveMessage(getText("hcf.add.success"));
+        PoRegistry.getGenericService().refreshObject(role);
+        return INPUT;
+    }
+
+    /**
+     * Action for the curator to save the role.
+     * @return INPUT
+     * @throws JMSException on error
+     */
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "role") })
+    public String edit() throws JMSException {
+        PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().curate(role);
+        ActionHelper.saveMessage(getText("hcf.update.success"));
+        if (role.getStatus().equals(RoleStatus.NULLIFIED)) {
+            useDefaultHealthCareFacility();
+        } else {
+            PoRegistry.getGenericService().refreshObject(role);
+        }
+        return INPUT;
+    }
+
+    /**
+     * Get the available statuses for the drop down.
+     * @return the statuses.
+     */
+    public Collection<RoleStatus> getAvailableStatus() {
+        if (getRole().getId() != null) {
+            return getRole().getPriorStatus().getAllowedTransitions();
+        } else {
+            List<RoleStatus> set = new ArrayList<RoleStatus>();
+            set.add(RoleStatus.PENDING);
+            set.add(RoleStatus.ACTIVE);
+            return set;
+        }
+    }
+
+    /**
+     * @return the organization
+     */
+    public Organization getOrganization() {
+        return this.organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the role
+     */
+    public HealthCareFacility getRole() {
+        return this.role;
+    }
+
+    /**
+     * @param role the role to set
+     */
+    public void setRole(HealthCareFacility role) {
+        this.role = role;
     }
 }

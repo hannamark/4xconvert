@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
@@ -42,13 +41,19 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         action = new ResearchOrganizationAction();
         assertNotNull(action.getRole());
         assertNotNull(action.getCr());
-        assertNotNull(action.getOrganization());        
+        assertNotNull(action.getOrganization());
     }
 
     @Test
     public void testPrepareNoOrgId() throws Exception {
         action.prepare();
         assertSame(action.getOrganization(), action.getRole().getPlayer());
+
+        // calling again exercises the path where the object already has the player set
+        Organization o = action.getOrganization();
+        action.setOrganization(null);
+        action.prepare();
+        assertSame(o, action.getRole().getPlayer());
     }
 
     @Test
@@ -99,9 +104,9 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testGetAvailableStatusForAddForm() {
-        List<EntityStatus> expected = new ArrayList<EntityStatus>();
-        expected.add(EntityStatus.PENDING);
-        expected.add(EntityStatus.ACTIVE);
+        List<RoleStatus> expected = new ArrayList<RoleStatus>();
+        expected.add(RoleStatus.PENDING);
+        expected.add(RoleStatus.ACTIVE);
 
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();

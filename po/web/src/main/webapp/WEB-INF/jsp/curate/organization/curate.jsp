@@ -157,10 +157,14 @@
                 <c:url var="manageOversightComms" value="/protected/roles/organizational/OversightCommittee/start.action">
                     <c:param name="organization" value="${organization.id}"/>
                 </c:url>
+                <c:url var="manageHcf" value="/protected/roles/organizational/HealthCareFacility/load.action">
+                    <c:param name="organization" value="${organization.id}"/>
+                </c:url>
 	            <ul>
 	                <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a> (${fn:length(organization.researchOrganizations)})</li>
 	                <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${fn:length(organization.identifiedOrganizations)})</li>
 	                <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a> (${fn:length(organization.oversightCommittees)})</li>
+                    <li><a href="${manageHcf}">Manage Health Care Facility</a>
 	            </ul>
                 <div class="clear"></div>
             </div>

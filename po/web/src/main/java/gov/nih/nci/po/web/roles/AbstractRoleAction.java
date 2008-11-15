@@ -2,7 +2,6 @@ package gov.nih.nci.po.web.roles;
 
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
@@ -29,12 +28,12 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author smatyas
- * 
+ *
  * @param <ROLE>
  * @param <ROLECR>
  * @param <ROLESERVICE>
  */
-public abstract class AbstractRoleAction<ROLE extends Correlation, 
+public abstract class AbstractRoleAction<ROLE extends Correlation,
     ROLECR extends CorrelationChangeRequest<ROLE>, ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
         extends ActionSupport {
 
@@ -59,7 +58,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * Implement to provide default constructor initialization.
      */
     protected abstract void defaultConstructorInit();
-    
+
     /**
      * {@inheritDoc}
      */
@@ -82,7 +81,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
         search();
         return SUCCESS;
     }
-    
+
     /**
      * @return success
      */
@@ -145,7 +144,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @return to add/edit/remove
      */
     public abstract ROLE getRole();
-    
+
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
@@ -207,14 +206,13 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     /**
      * @return the allowable EntityStatus values
      */
-    @SuppressWarnings(UNCHECKED)
     public Collection<RoleStatus> getAvailableStatus() {
         if (getRole().getId() != null) {
             return getRole().getPriorStatus().getAllowedTransitions();
         } else {
-            List set = new ArrayList();
-            set.add(EntityStatus.PENDING);
-            set.add(EntityStatus.ACTIVE);
+            List<RoleStatus> set = new ArrayList<RoleStatus>();
+            set.add(RoleStatus.PENDING);
+            set.add(RoleStatus.ACTIVE);
             return set;
         }
     }
@@ -255,7 +253,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     protected void remove(List<? extends PersistentObject> duplicateOfList, Long id) {
         if (id != null && CollectionUtils.isNotEmpty(duplicateOfList)) {
             for (Iterator<? extends PersistentObject> itr = duplicateOfList.iterator(); itr.hasNext();) {
-                PersistentObject ro = (PersistentObject) itr.next();
+                PersistentObject ro = itr.next();
                 if (ro.getId().equals(id)) {
                     itr.remove();
                 }
