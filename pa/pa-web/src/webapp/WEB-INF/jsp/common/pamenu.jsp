@@ -54,7 +54,7 @@
                             <ul id="part_sites">
                                 <li><a href="observationalStudyDesigndetailsQuery.action" >Design Details</a></li>
                                 <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
-                                <li><a href="#" >Eligibility Criteria</a></li>
+                                <li><a href="eligibilityCriteriaquery.action" >Eligibility Criteria</a></li>
                             </ul>
     					</li>
                         </s:else>
