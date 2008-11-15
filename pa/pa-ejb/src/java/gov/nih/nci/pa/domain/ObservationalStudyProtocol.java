@@ -38,6 +38,7 @@ public class ObservationalStudyProtocol extends StudyProtocol {
     private String studyModelOtherText;
     private TimePerspectiveCode timePerspectiveCode;
     private String timePerspectiveOtherText;
+    private String studyPopulationDescription;
     /**
      * 
      * @return biospecimenDescription
@@ -152,6 +153,18 @@ public class ObservationalStudyProtocol extends StudyProtocol {
      */
     public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
         this.timePerspectiveOtherText = timePerspectiveOtherText;
-    }   
-
+    }
+    /**
+     * @return studyPopulationDescription
+     */
+    @Column(name = "STUDY_POPULATION_DESCRIPTION")
+    public String getStudyPopulationDescription() {
+      return studyPopulationDescription;
+    }
+    /**
+     * @param studyPopulationDescription studyPopulationDescription
+     */
+    public void setStudyPopulationDescription(String studyPopulationDescription) {
+      this.studyPopulationDescription = studyPopulationDescription;
+    }
 }
