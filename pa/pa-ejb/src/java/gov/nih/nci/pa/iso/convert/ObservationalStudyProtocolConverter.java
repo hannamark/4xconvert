@@ -24,8 +24,8 @@ public class ObservationalStudyProtocolConverter extends StudyProtocolConverter 
     
     /**
      * 
-     * @param osp InterventionalStudyProtocol
-     * @return InterventionalStudyProtocolDTO InterventionalStudyProtocolDTO
+     * @param osp ObservationalStudyProtocol
+     * @return ObservationalStudyProtocolDTO ObservationalStudyProtocolDTO
      */
     public static ObservationalStudyProtocolDTO convertFromDomainToDTO(ObservationalStudyProtocol osp) {
         ObservationalStudyProtocolDTO ospDTO = (ObservationalStudyProtocolDTO) 
@@ -40,12 +40,13 @@ public class ObservationalStudyProtocolConverter extends StudyProtocolConverter 
         ospDTO.setStudyModelOtherText(StConverter.convertToSt(osp.getStudyModelOtherText()));
         ospDTO.setTimePerspectiveCode(CdConverter.convertToCd(osp.getTimePerspectiveCode()));
         ospDTO.setTimePerspectiveOtherText(StConverter.convertToSt(osp.getTimePerspectiveOtherText()));
+        ospDTO.setStudyPopulationDescription(StConverter.convertToSt(osp.getStudyPopulationDescription()));
         return ospDTO;
     }
     /**
      * 
-     * @param ospDTO InterventionalStudyProtocolDTO 
-     * @return InterventionalStudyProtocol InterventionalStudyProtocol
+     * @param ospDTO ObservationalStudyProtocolDTO 
+     * @return ObservationalStudyProtocol ObservationalStudyProtocol
      */
     public static ObservationalStudyProtocol convertFromDTOToDomain(ObservationalStudyProtocolDTO ospDTO) {
         ObservationalStudyProtocol osp =  (ObservationalStudyProtocol) StudyProtocolConverter.convertFromDTOToDomain(
@@ -71,6 +72,9 @@ public class ObservationalStudyProtocolConverter extends StudyProtocolConverter 
         }
         if (ospDTO.getTimePerspectiveOtherText() != null) {
             osp.setTimePerspectiveOtherText(StConverter.convertToString(ospDTO.getTimePerspectiveOtherText()));
+        }
+        if (ospDTO.getStudyPopulationDescription() != null) {
+          osp.setStudyPopulationDescription(StConverter.convertToString(ospDTO.getStudyPopulationDescription()));
         }
         return osp;
     }
