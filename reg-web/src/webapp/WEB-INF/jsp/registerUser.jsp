@@ -20,6 +20,7 @@ function handleAction(){
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="register.user.page.header"/></h1>
+    <c:set var="topic" scope="request" value="register"/> 
     <div class="box" id="filters">
     <s:form name="registerUser" validate="true" method="POST" ><s:actionerror />
         <input type="hidden" name="page" />
