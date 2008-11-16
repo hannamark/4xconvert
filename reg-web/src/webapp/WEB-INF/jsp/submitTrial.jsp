@@ -26,7 +26,9 @@
 </script>
 <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
 <!-- c:url value="/protected/ajaxorganizationContactsavePI.action" var="lookupOrgUrl"/-->
+
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
+<c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="submitProtocol"/>
 <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
@@ -86,10 +88,22 @@ function loadSummary4SponsorDiv() {
     callAjax(url, div);
 }
 //
-function handleAction(){   
+function handleAction(){  
     document.forms[0].page.value = "Submit";
     document.forms[0].action="submitTrialcreate.action";
     document.forms[0].submit();  
+}
+function submitProtocol (){	
+	var dateObject = new Date();	 
+	var time = dateObject.getTime();
+	var action = "submitTrialcreate.action?uuid="+time;
+	
+    document.forms[0].page.value = "Submit";
+    document.forms[0].action=action;
+    document.forms[0].submit(); 
+    var url = '${submitProtocol}?uuid='+time;
+    
+	showPopWin(url, 600, 200, '', 'Submit protocol');
 }
 function callAjax(url, div){
 
@@ -97,69 +111,52 @@ function callAjax(url, div){
     return false;
 }
 function manageRespPartyLookUp(){		
-		for(var i=0; i<2; i++) {			
-			if(document.forms[0].respparty[i].checked==true) {
-				if(document.forms[0].respparty[i].value == 'sponsor') {					
-						document.getElementById('rpcid').style.display='';
-				}
-				if(document.forms[0].respparty[i].value == 'pi') {					
-						document.getElementById('rpcid').style.display='none';
-				}
+	for(var i=0; i<2; i++) {			
+		if(document.forms[0].respparty[i].checked==true) {
+			if(document.forms[0].respparty[i].value == 'sponsor') {					
+					document.getElementById('rpcid').style.display='';
 			}
-			
+			if(document.forms[0].respparty[i].value == 'pi') {					
+					document.getElementById('rpcid').style.display='none';
+			}
 		}
-}
-function setRequiredFieldIndicators() {
-	var size = document.forms[0].trialType.length;	
-	for(var i=0; i < size; i++) {		
-		if(document.forms[0].trialType[i].checked == true)			 
-			if(document.forms[0].trialType[i].value == 'Observational') {				
-				document.getElementById('summary4fundingcatid').style.display='none';
-				return;
-			}
-			if(document.forms[0].trialType[i].value == 'Interventional') {				
-				document.getElementById('summary4fundingcatid').style.display = '';				
-			}
+		
 	}
 }
 function addGrant(){
-	var fundingMechanismCode = document.getElementById('submitTrial_trialFundingWebDTO_fundingMechanismCode').value;
-	var nihInstitutionCode = document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value;
-	var serialNumber = document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value;
-	var nciDivisionProgramCode = document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value;
-	var  url = '/registry/protected/ajaxSubmitTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;
-	
-   	var div = document.getElementById('grantdiv');
-   
+	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;
+	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
+	var serialNumber = document.getElementById('serialNumber').value;
+	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
+	var  url = '/registry/protected/ajaxSubmitTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;	
+   	var div = document.getElementById('grantdiv');   
    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
    	callAjax(url, div);
 	resetGrantRow();
 }
-
-function deleteGrantRow(rowid){
-	
-		var  url = '/registry/protected/ajaxSubmitTrialActiondeleteGrant.action?uuid='+rowid;
-    	var div = document.getElementById('grantdiv');
-    	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
-    	callAjax(url, div);				
+function deleteGrantRow(rowid){	
+	var  url = '/registry/protected/ajaxSubmitTrialActiondeleteGrant.action?uuid='+rowid;
+   	var div = document.getElementById('grantdiv');
+   	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+   	callAjax(url, div);				
 }
-
-function enableGrantAddButton(){
-	var fundingMechanismCode = document.getElementById('submitTrial_trialFundingWebDTO_fundingMechanismCode').value;
-	var nihInstitutionCode = document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value;
-	var serialNumber = document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value;
-	var nciDivisionProgramCode = document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value;
-	if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber.length > 0 && nciDivisionProgramCode != '') {
+function enableGrantAddButton(){	
+	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;	
+	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
+	var serialNumber = document.getElementById('serialNumber').value;
+	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
+	//alert("fundingMechanismCode "+fundingMechanismCode+"+"+nihInstitutionCode+"+"+serialNumber+"+"+nciDivisionProgramCode);
+	if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber != '' && nciDivisionProgramCode != '') {
 		document.getElementById('grantbtnid').disabled = false;
 	} else {
 		document.getElementById('grantbtnid').disabled = true;
 	}
 }
 function resetGrantRow(){
-	document.getElementById('submitTrial_trialFundingWebDTO_fundingMechanismCode').value = '';
-	document.getElementById('submitTrial_trialFundingWebDTO_nihInstitutionCode').value = '';
-	document.getElementById('submitTrial_trialFundingWebDTO_serialNumber').value = '';
-	document.getElementById('submitTrial_trialFundingWebDTO_nciDivisionProgramCode').value = '';
+	document.getElementById('fundingMechanismCode').value = '';
+	document.getElementById('nihInstitutionCode').value = '';
+	document.getElementById('serialNumber').value = '';
+	document.getElementById('nciDivisionProgramCode').value = '';
 	document.getElementById('grantbtnid').disabled = true;
 }
 </SCRIPT>
@@ -227,7 +224,7 @@ function toggledisplay2 (it) {
               
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="protocolWebDTO.trialPhase" list="#phaseCodeValues"  value="protocolWebDTO.trialPhase" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="All" name="protocolWebDTO.trialPhase" list="#phaseCodeValues" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.trialPhase</s:param>
@@ -240,7 +237,7 @@ function toggledisplay2 (it) {
                     <label for="trialType"> <fmt:message key="submit.trial.type"/></label> 
                 </td>
                 <td>
-				<input type="radio" name="trialType" value="Observational" checked="checked" onclick="setRequiredFieldIndicators();"> Observational 
+				<input type="radio" name="trialType" value="Observational" checked="checked"> Observational 
 				<input type="radio" name="trialType" value="Interventional" onclick="setRequiredFieldIndicators();"> Interventional
 				</td>
           </tr>
@@ -355,7 +352,7 @@ function toggledisplay2 (it) {
           </tr>          
           <tr>
 					<td scope="row" class="label">
-						<label for="org">Summary 4 Funding Category<span id="summary4fundingcatid" style="display:none" class="required">*</span></label> 
+						<label for="org">Summary 4 Funding Category :</label> 
 					</td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
@@ -373,7 +370,7 @@ function toggledisplay2 (it) {
           <tr>
                
 					<td scope="row" class="label">
-						<label for="sponsor"> Summary 4 Funding Sponsor :  <span class="required">*</span></label> 
+						<label for="sponsor"> Summary 4 Funding Sponsor : </label> 
 					</td>
 					<td class="value">
 						<div id="loadSummary4FundingSponsorField">
@@ -402,7 +399,7 @@ function toggledisplay2 (it) {
 							<th><fmt:message key="submit.trial.serialNumber"/></th>
 							<th><fmt:message key="submit.trial.divProgram"/></th>
 							<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
-					</tr>
+				 	</tr>
 					   
 					   <tr>
 							<s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
@@ -412,6 +409,7 @@ function toggledisplay2 (it) {
 							         list="#fundingMechanismValues"                             
                                      listKey="fundingMechanismCode"  
                                      listValue="fundingMechanismCode" 
+                                     id="fundingMechanismCode"
                                      value="trialFundingWebDTO.fundingMechanismCode" 
                                      cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 							</td>
@@ -421,7 +419,8 @@ function toggledisplay2 (it) {
 							         name="trialFundingWebDTO.nihInstitutionCode" 
 							         list="#nihInstituteCodes"
                                      listKey="nihInstituteCode" 
-                                     listValue="nihInstituteCode"   
+                                     listValue="nihInstituteCode"
+                                     id="nihInstitutionCode"
 							         value="trialFundingWebDTO.nihInstitutionCode" 
 							         cssStyle="width:150px" onblur="enableGrantAddButton();" />
 						             <span class="formErrorMsg" >
@@ -431,7 +430,7 @@ function toggledisplay2 (it) {
 				                     </span>
 							</td>
 							<td>
-                                <s:textfield name="trialFundingWebDTO.serialNumber"  maxlength="200" size="100"  cssStyle="width:150px" onblur="enableGrantAddButton();" />
+                                <s:textfield name="trialFundingWebDTO.serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px" onblur="enableGrantAddButton();" />
 	                            <span class="formErrorMsg"> 
 	                                <s:fielderror>
 	                                <s:param>trialFundingWebDTO.serialNumber</s:param>
@@ -440,7 +439,7 @@ function toggledisplay2 (it) {
                             </td>
 							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
+							    <s:select headerKey="" headerValue="All" name="trialFundingWebDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 		                        <span class="formErrorMsg"> 
                                    <s:fielderror>
                                    <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
@@ -482,7 +481,7 @@ function toggledisplay2 (it) {
                 </td>
                     <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="All" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="overallStatusWebDTO.statusCode" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="-Select-" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="overallStatusWebDTO.statusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>overallStatusWebDTO.statusCode</s:param>
@@ -628,7 +627,7 @@ function toggledisplay2 (it) {
          <tr>
               <td scope="row" class="label">
               <label for="particpating sites">
-                     Participating Sites Document
+                     List of Participating Sites
                      
               </label>
              </td>
@@ -674,12 +673,12 @@ function toggledisplay2 (it) {
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li><li>            
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Submit Trial Details</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="submitProtocol()"><span class="btn_img"><span class="save">Submit Trial Details</span></span></s:a>  
                         </li>
                 </ul>   
             </del>
         </div>  
-        
+      <input type="hidden" name="uuidhidden"/>  
    </s:form>
 
  </div> 

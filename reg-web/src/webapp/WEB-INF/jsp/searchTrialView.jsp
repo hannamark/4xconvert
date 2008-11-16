@@ -37,7 +37,7 @@
                   	</label>
                 </td>
                 <td class="value">
-                	<c:out value="${requestScope.trialSummary.identifier.extension }"/> 
+                	<c:out value="${requestScope.trialSummary.identifier.extension}"/> 
                 </td>
           </tr>
           <tr>     
@@ -183,24 +183,24 @@
         </td>
       </tr> 
      </table>
-     	<div class="box">
-     		<c:if test="${requestScope.studyIndIde != null}">						
+     <c:if test="${requestScope.studyIndIde != null}">
+     	<div class="box">     								
      			<h3>IND/IDE Information</h3>  
-     			<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>	
-     		</c:if>
+     			<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>     		
 		</div>
-        <div class="box">
-    		<c:if test="${requestScope.trialFundingList != null}">						
+		</c:if>
+		<c:if test="${requestScope.trialFundingList != null}">			
+        	<div class="box">
     			<h3>NIH Grant Information</h3>  
-    			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>	
-    		</c:if>
-		</div>
-		<div class="box">
-				<c:if test="${requestScope.protocolDocument != null}">						
-					<h3>Trial Related Documents</h3>  
-					<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>	
-				</c:if>
-		</div>
+    			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>
+			</div>
+		</c:if>
+		<c:if test="${requestScope.protocolDocument != null}">
+			<div class="box">		
+				<h3>Trial Related Documents</h3>  
+				<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+			</div>
+		</c:if>
 
 		<div class="actionsrow">
 		<del class="btnwrapper">

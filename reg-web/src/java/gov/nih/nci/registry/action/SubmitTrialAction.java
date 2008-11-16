@@ -119,6 +119,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String summary4FundingCategory = null;
 
     /**
+     * 
+     * @return res
+     */
+    public String execute() {
+        return SUCCESS;
+    }
+
+    /**
      * create protocol.
      * 
      * @return String
@@ -130,6 +138,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             // validate the form elements
             validateForm();
             if (hasFieldErrors()) {
+                resetValuesFromSession();
                 return ERROR;
             }
             Ii studyProtocolIi = null;
@@ -199,31 +208,45 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
             // after creating the study protocol, query the protocol for viewing
-           protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
-                    studyProtocolIi);
+            protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             final MailManager mailManager = new MailManager();
-            mailManager.sendNotificationMail(
-                    ServletActionContext.getRequest().getRemoteUser(), // remote user
-                    protocolDTO.getAssignedIdentifier().getExtension(), //generated identifier
-                    participationWebDTO.getLocalProtocolIdentifier() // lead org trial identifier
+            mailManager.sendNotificationMail(ServletActionContext.getRequest().getRemoteUser(), // remote
+                    // user
+                    protocolDTO.getAssignedIdentifier().getExtension(), // generated
+                    // identifier
+                    participationWebDTO.getLocalProtocolIdentifier() // lead
+                    // org
+                    // trial
+                    // identifier
                     );
-        } catch (Exception e) {
-            addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
-            LOG.error("Exception occured while submitting trial: " + e);
-            return SUCCESS;
-        } finally {
             ServletActionContext.getRequest().getSession().removeAttribute("INDIDE_LIST");
             ServletActionContext.getRequest().getSession().removeAttribute("GRANT_LIST");
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
             ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
             ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
+            ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
+        } catch (Exception e) {
+            if (e != null && e.getMessage() != null) {
+                addActionError(e.getMessage());
+            } else {
+                addActionError("Please try again");
+            }
+            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            LOG.error("Exception occured while submitting trial: " + e);
+            return ERROR;
         }
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.SUCCESS_MESSAGE, 
-                                                    "Trial has been successfully created and assigned " 
-                                                    + protocolDTO.getAssignedIdentifier().getExtension());
         return "redirect_to_search";
+    }
+
+    /**
+     * Keeps the user looking at the spinning wheel until a SUCCESS/EXCEPTION
+     * occurs.
+     * 
+     * @return res
+     */
+    public String showWaitDialog() {
+        return "show_ok_create";
     }
 
     private StudyProtocolDTO createProtocolDTO(String type) {
@@ -271,7 +294,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             docDTO.setFileName(StConverter.convertToSt(fileName));
             // docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(file))));
-            
             RegistryServiceLocator.getDocumentService().create(docDTO);
         } catch (PAException pae) {
             // pae.printStackTrace();
@@ -285,6 +307,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private void createIndIdeIndicators(Ii studyProtocolIi) throws PAException {
         ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
                 "INDIDE_LIST");
+        if (sessionList == null) {
+            return;
+        }
         if (!(sessionList.size() > 0)) {
             return;
         }
@@ -313,6 +338,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         try {
             ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
                     .getAttribute("GRANT_LIST");
+            if (sessionList == null) {
+                return;
+            }
             if (!(sessionList.size() > 0)) {
                 return;
             }
@@ -549,27 +577,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(protocolWebDTO.getTrialPhase())) {
             addFieldError("protocolWebDTO.trialPhase", getText("error.submit.trialPhase"));
         }
-        // if funding mechanism is selected, make all other
-        // funding fields required
-        if (!PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-            if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
-                addFieldError("trialFundingWebDTO.nihInstitutionCode", getText("error.submit.nihInstitutionCode"));
-            }
-            if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
-                addFieldError("trialFundingWebDTO.serialNumber", getText("error.submit.serialNumber"));
-            } else if (!PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
-                try {
-                    Long.valueOf(trialFundingWebDTO.getSerialNumber());
-                } catch (NumberFormatException nfe) {
-                    // if cannot be converted to long then it's not a number
-                    addFieldError("trialFundingWebDTO.serialNumber", getText("error.submit.serialNumberType"));
-                }
-            }
-            if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
-                addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
-                        getText("error.submit.nciDivisionProgramCode"));
-            }
-        }
         if (PAUtil.isEmpty(overallStatusWebDTO.getStatusCode())) {
             addFieldError("overallStatusWebDTO.statusCode", getText("error.submit.statusCode"));
         }
@@ -626,11 +633,11 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("summary4FundingCategory", getText("error.submit.summary4FundingCategory"));
             }
         }
-        selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
-                "PoSummary4Sponsor");
-        if (selectedSummary4Sponsor == null) {
-            addFieldError("summary4FundingSponsor", getText("error.submit.summary4FundingSponsor"));
-        }
+//        selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
+//                "PoSummary4Sponsor");
+//        if (selectedSummary4Sponsor == null) {
+//            addFieldError("summary4FundingSponsor", getText("error.submit.summary4FundingSponsor"));
+//        }
     }
 
     /**
@@ -642,30 +649,24 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
 
     /** Read an input stream in its entirety into a byte array. */
     private static byte[] readInputStream(InputStream inputStream) throws IOException {
-
         int bufSize = MAXF * MAXF;
         byte[] content;
-
         List<byte[]> parts = new LinkedList();
         InputStream in = new BufferedInputStream(inputStream);
-
         byte[] readBuffer = new byte[bufSize];
         byte[] part = null;
         int bytesRead = 0;
-
         // read everyting into a list of byte arrays
         while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
             part = new byte[bytesRead];
             System.arraycopy(readBuffer, 0, part, 0, bytesRead);
             parts.add(part);
         }
-
         // calculate the total size
         int totalSize = 0;
         for (byte[] partBuffer : parts) {
             totalSize += partBuffer.length;
         }
-
         // allocate the array
         content = new byte[totalSize];
         int offset = 0;
@@ -673,8 +674,24 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
             offset += partBuffer.length;
         }
-
         return content;
+    }
+
+    private void resetValuesFromSession() {
+        ArrayList<IndIdeHolder> sessionList1 = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "INDIDE_LIST");
+        if (sessionList1 != null && sessionList1.size() > 0) {
+            for (int i = 0; i < sessionList1.size(); i++) {
+                ideInd.add(sessionList1.get(i));
+            }
+        }
+        ArrayList<GrantHolder> sessionList2 = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
+                "GRANT_LIST");
+        if (sessionList2 != null && sessionList2.size() > 0) {
+            for (int i = 0; i < sessionList2.size(); i++) {
+                grants.add(sessionList2.get(i));
+            }
+        }
     }
 
     /**
@@ -690,6 +707,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         String expandedAccessType = ServletActionContext.getRequest().getParameter("expandedaccesstype");
         String holderType = ServletActionContext.getRequest().getParameter("holdertype");
         String indIde = ServletActionContext.getRequest().getParameter("indIde");
+        // TODO DO A NOT NULL CHECK HERE -Harsha
         if (number.equals("") && grantor.equals("") && programCode.equals("") && expandedAccess.equals("No")
                 && expandedAccessType.equals("") && holderType.equals("") && indIde.equals("undefined")) {
             return SUCCESS;
@@ -752,6 +770,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         String nihInstitutionCode = ServletActionContext.getRequest().getParameter("nihInstitutionCode");
         String serialNumber = ServletActionContext.getRequest().getParameter("serialNumber");
         String nciDivisionProgramCode = ServletActionContext.getRequest().getParameter("nciDivisionProgramCode");
+        // TODO DO A NOT NULL CHECK HERE -Harsha
         GrantHolder grantHolder = new GrantHolder();
         grantHolder.setFundingMechanism(fundingMechanismCode);
         grantHolder.setInstituteCode(nihInstitutionCode);
@@ -848,7 +867,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         return "display_responsible_contact";
     }
-
 
     /**
      * 

@@ -189,11 +189,22 @@ public class SearchTrialAction extends ActionSupport {
      * @return res
      */
     public String view() {
+        boolean maskFields = false;
         try {
             // remove the session variables stored during a previous view if any
             
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+            if (studyProtocolId == null) {
+                String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+                studyProtocolIi = IiConverter.convertToIi(pId);
+            }
+            String usercreated = (String) ServletActionContext.getRequest().getParameter("usercreated");
+            if (usercreated != null) {
+                if (!usercreated.equals(ServletActionContext.getRequest().getRemoteUser())) {
+                    maskFields = true;
+                }
+            }            
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
             StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
@@ -204,7 +215,7 @@ public class SearchTrialAction extends ActionSupport {
             // query the study grants
             List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService()
                     .getstudyResourceByStudyProtocol(studyProtocolIi);
-            if (!(isoList.isEmpty())) {
+            if (!maskFields && !(isoList.isEmpty())) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST, isoList);
             }
@@ -240,19 +251,21 @@ public class SearchTrialAction extends ActionSupport {
                     .getsummary4ReportedResource(studyProtocolIi);
             
             // get the organzation name
-            
-            Organization o = new CorrelationUtils().
-                getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
-                        getOrganizationIdentifier().getExtension()), null);
+            if (resourcingDTO != null) {
+                Organization o = new CorrelationUtils().
+                    getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
+                            getOrganizationIdentifier().getExtension()), null);
+                ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
+            }
 
-            ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
+           
             // put an entry in the session and avoid conflict using
-            // NIH_INSTITUTE for now
+            // NIH_INSTITUTE for now           
             ServletActionContext.getRequest().setAttribute(Constants.NIH_INSTITUTE, resourcingDTO);
             List<StudyIndldeDTO> studyIndldeDTOList = RegistryServiceLocator.getStudyIndldeService()
                     .getByStudyProtocol(studyProtocolIi);
             // List<StudyIndldeDTO> studyIndldeDTOList
-            if (!(studyIndldeDTOList.isEmpty())) {
+            if (!maskFields && !(studyIndldeDTOList.isEmpty())) {
                 // put an entry in the session and store TrialFunding
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, studyIndldeDTOList);
             }
@@ -260,7 +273,7 @@ public class SearchTrialAction extends ActionSupport {
             List<DocumentDTO> documentISOList = RegistryServiceLocator.getDocumentService()
                     .getDocumentsByStudyProtocol(studyProtocolIi);
             // List <TrialDocumentWebDTO> documentList;
-            if (!(documentISOList.isEmpty())) {
+            if (!maskFields && !(documentISOList.isEmpty())) {
                 ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
             }
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));

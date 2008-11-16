@@ -11,7 +11,7 @@
 				    </c:when>
 			        <c:otherwise>
                         <li><a href="/registry/protected/searchTrial.action" >Login</a></li>
-                        <li><a href="/registry/registerUser.action" >Register</a></li>
+                        <li><a href="/registry/registerUser.action" >User Register</a></li>
 				    </c:otherwise>
 				</c:choose>
 				<li><a href="#">Help</a></li>

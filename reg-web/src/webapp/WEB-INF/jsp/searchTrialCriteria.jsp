@@ -30,13 +30,17 @@ function handleMyAction(){
     document.forms[0].action="searchTrialquery.action";
     document.forms[0].submit(); 
 }
+	function viewProtocol(pId,user) {		
+		document.forms[0].action="searchTrialview.action?studyProtocolId="+pId+"&usercreated="+user;
+		document.forms[0].submit(); 
+	}
 </SCRIPT>
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="search.trial.page.header"/></h1>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">
-    <s:form><s:actionerror/>
+    <s:form>
     <input type="hidden" name="criteria.clientName" id="clientName" value="SearchTrial"/>
         <table class="form">
         

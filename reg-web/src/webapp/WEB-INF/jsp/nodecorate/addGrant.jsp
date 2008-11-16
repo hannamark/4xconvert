@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
 <reg-web:failureMessage/> 
-<c:if test="${grants != null}">
+<s:if test="${(grants != null)}">
 <display:table class="data" sort="list"  uid="row"  name="grants" requestURI="submitTrialdisplayIndIde.action">
 	<display:column title="Funding Mechanism Type" property="fundingMechanism"  headerClass="sortable"/>
 	<display:column title="Institute Code" property="instituteCode"  headerClass="sortable"/>
@@ -14,4 +14,4 @@
 	
 </display:table>
 
-</c:if>
+</s:if>
