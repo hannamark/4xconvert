@@ -1,0 +1,26 @@
+function FileData_Pairs(x)
+{
+x.t("managing","account");
+x.t("managing","password");
+x.t("trials","reporting");
+x.t("instructions","modifying");
+x.t("user","information");
+x.t("editing","user");
+x.t("resetting","password");
+x.t("includes","following");
+x.t("account","managing");
+x.t("account","resetting");
+x.t("account","section");
+x.t("provides","instructions");
+x.t("modifying","nci");
+x.t("portal","account");
+x.t("reporting","portal");
+x.t("section","includes");
+x.t("section","provides");
+x.t("information","managing");
+x.t("nci","clinical");
+x.t("topics","editing");
+x.t("following","topics");
+x.t("password","section");
+x.t("clinical","trials");
+}

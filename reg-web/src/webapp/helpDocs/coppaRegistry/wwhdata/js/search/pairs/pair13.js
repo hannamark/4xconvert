@@ -1,0 +1,27 @@
+function FileData_Pairs(x)
+{
+x.t("trials","registering");
+x.t("trials","reporting");
+x.t("trials","section");
+x.t("trials","using");
+x.t("describes","submit");
+x.t("register","trials");
+x.t("new","trials");
+x.t("includes","following");
+x.t("registering","new");
+x.t("registering","organizations");
+x.t("registering","principal");
+x.t("portal","section");
+x.t("reporting","portal");
+x.t("section","describes");
+x.t("section","includes");
+x.t("organizations","registering");
+x.t("principal","investigators");
+x.t("submit","register");
+x.t("nci","clinical");
+x.t("topics","adding");
+x.t("following","topics");
+x.t("using","nci");
+x.t("adding","new");
+x.t("clinical","trials");
+}
