@@ -13,7 +13,8 @@
         <pattern>*Ajax.action*</pattern>  
         <pattern>*ajax*</pattern>
         <pattern>*nodecor*</pattern>   
-        <pattern>*lookup*</pattern>        
+        <pattern>*lookup*</pattern>
+        <pattern>/helpDocs/*</pattern> 
     </excludes>
 
     <decorator name="popup" page="popup.jsp">
