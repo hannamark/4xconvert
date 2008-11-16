@@ -13,6 +13,7 @@
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
  <h1><fmt:message key="registry.home.title" /></h1>
+ <c:set var="topic" scope="request" value=""/> 
 
 <!--Help Content-->
     <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
