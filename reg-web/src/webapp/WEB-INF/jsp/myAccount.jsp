@@ -196,15 +196,15 @@ function handleAction(){
                                     RegistryServiceLocator@getLookUpTableService().
                                     getCountries()" />
                             <s:select headerKey="" headerValue="All" 
-                                     name="registryUserWebDTO.countryId" 
+                                     name="registryUserWebDTO.country" 
                                      list="#countries"
                                      listKey="id" 
                                      listValue="name"   
-                                     value="registryUserWebDTO.countryId" 
+                                     value="registryUserWebDTO.country" 
                                      cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.countryId</s:param>
+                                <s:param>registryUserWebDTO.country</s:param>
                                </s:fielderror>                            
                              </span>
                         </td>                
