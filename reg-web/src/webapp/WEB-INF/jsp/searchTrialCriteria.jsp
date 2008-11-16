@@ -38,6 +38,7 @@ function handleMyAction(){
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="search.trial.page.header"/></h1>
+    <c:set var="topic" scope="request" value="search_trials"/>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">
     <s:form>
@@ -125,7 +126,8 @@ function handleMyAction(){
      </div>
     	<div class="line"></div>
     	 <c:if test="${records != null}">						
-			<h2>Search Results</h2>  
+			<h2>Search Results</h2>
+			   <c:set var="topic" scope="request" value="search_results"/>   
 				<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp">
 					<jsp:param name="listName" value="records" />        
 				</jsp:include>
