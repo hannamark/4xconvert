@@ -24,6 +24,11 @@
 			<result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
 			<result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
 			<result name="registryHome">/WEB-INF/jsp/registryHome.jsp</result>
+            <result name="redirect_to_login" type="redirect-action">
+                 <param name="actionName">searchTrial.action</param>
+                 <param name="namespace">/protected</param>
+                 <param name="isRedirect">true</param>
+            </result>
         </action> 
         <action name="login">
 	       <result>/WEB-INF/jsp/login.jsp</result>
