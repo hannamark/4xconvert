@@ -8,16 +8,6 @@
 	<title><decorator:title default="NCI Registry"/></title>	
     <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
     <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
-	<script language="JavaScript" type="text/javascript">
-        window.onload = function(){
-            if(!NiftyCheck()) {
-                return;
-            }
-            // perform niftycorners rounding
-            // eg.
-            // Rounded("blockquote","tr bl","#ECF1F9","#CDFFAA","smooth border #88D84F");
-        }
-    </script>    
     <decorator:head/>
 </head>
 <body> 
@@ -28,7 +18,7 @@
 	     <div id="main">	
 			<div id="contentwrapper">
 					 <div id="content">
-						<a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol');">Help</a> 
+						<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/> ');">Help</a> 
 						
 							<decorator:body/>
 						
