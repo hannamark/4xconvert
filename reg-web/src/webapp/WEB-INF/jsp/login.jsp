@@ -7,8 +7,16 @@
 </head>
 <body><h1>Login</h1>
 <div class="box"> 
-<p style="margin:0; padding:0">Please log in to search, view and submit clinical trial details. </p>
-
+ <c:choose>
+     <c:when test="${param.isRedirect == true}">
+		<div class="confirm_msg">
+		  <strong>Your User Account has been successfully created. Please log in using your username and password</strong>
+		</div>
+     </c:when>
+     <c:otherwise>
+           <p style="margin:0; padding:0">Please log in to search, view and submit clinical trial details. </p>
+     </c:otherwise>
+ </c:choose>
 <form action="j_security_check" method="post" id="loginForm">   
 
  <table style="margin:0 auto">                 
