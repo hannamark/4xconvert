@@ -153,6 +153,8 @@ public class RegisterUserAction extends ActionSupport {
      * @return String
      */
     public String updateAccount() {
+        boolean isNewUser = false;
+        String redirectPage =  null;
         try {
             // first validate the form fields before creating user
             validateForm(true);
@@ -185,6 +187,8 @@ public class RegisterUserAction extends ActionSupport {
             
             // check if it's  update action
             if (registryUser.getId() != null) {
+                isNewUser = false;
+                redirectPage = "registryHome";
                 // first update the CSM user
                 User csmUser = CSMUserService.getInstance().
                                         updateCSMUser(registryUser, 
@@ -197,6 +201,8 @@ public class RegisterUserAction extends ActionSupport {
                 
             } else { //create user
                 // first create the CSM user
+                isNewUser = true;
+                redirectPage = "redirect_to_login";
                 User csmUser = CSMUserService.getInstance().
                                         createCSMUser(registryUser, 
                                         registryUserWebDTO.getLoginName(), 
@@ -225,8 +231,8 @@ public class RegisterUserAction extends ActionSupport {
         // show the My Account page
         //return Constants.MY_ACCOUNT;
         
-        //forward to the registry home page
-        return "registryHome";
+        //redirect to the appropriate page
+        return redirectPage;
 
     }
     
