@@ -20,6 +20,7 @@ function handleAction(){
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="register.user.myaccount.header"/></h1>
+    <c:set var="topic" scope="request" value="my_account"/> 
     <div class="box" id="filters">
     <s:form name="myAccount" method="POST" ><s:actionerror/>
         <s:hidden name="registryUserWebDTO.id" />
@@ -195,15 +196,15 @@ function handleAction(){
                                     RegistryServiceLocator@getLookUpTableService().
                                     getCountries()" />
                             <s:select headerKey="" headerValue="All" 
-                                     name="registryUserWebDTO.country" 
+                                     name="registryUserWebDTO.countryId" 
                                      list="#countries"
-                                     listKey="name" 
+                                     listKey="id" 
                                      listValue="name"   
-                                     value="registryUserWebDTO.country" 
+                                     value="registryUserWebDTO.countryId" 
                                      cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.country</s:param>
+                                <s:param>registryUserWebDTO.countryId</s:param>
                                </s:fielderror>                            
                              </span>
                         </td>                
