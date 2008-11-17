@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
 
 import org.apache.log4j.Logger;
@@ -116,6 +117,35 @@ public class CSMUserService {
         }
         
         return createdCSMUser;
+        
+    }
+    
+    /**
+     * Retrieve an existing CSM user.
+     * @param loginName loginName
+     * @return user
+     * @throws PAException PAException
+     */
+    public User getCSMUser(String loginName) 
+                                    throws PAException {
+        User csmUser = null;
+        try {
+            UserProvisioningManager upManager = SecurityServiceProvider.
+                                                   getUserProvisioningManager("pa");
+            csmUser = upManager.getUser(loginName);
+        } catch (CSConfigurationException csce) {
+            LOG.error(" CSM Exception while retrieving CSM user : " 
+                                        + loginName, csce);
+            throw new PAException(" CSM exception while "
+                                        + "retrieving CSM user :" + loginName, csce);
+        } catch (CSException cse) {
+            LOG.error(" CSM Exception while retrieving CSM user : " 
+                                                + loginName, cse);
+            throw new PAException(" CSM exception while "
+                    + "retrieving CSM user :" + loginName, cse);
+        }        
+   
+        return csmUser;
         
     }
     
