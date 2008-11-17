@@ -23,42 +23,42 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action to manage ResearchOrganization(s).
- * 
+ *
  * @author smatyas
  */
-public class ResearchOrganizationAction 
-    extends AbstractRoleAction<ResearchOrganization, ResearchOrganizationCR, ResearchOrganizationServiceLocal> 
+public class ResearchOrganizationAction
+    extends AbstractRoleAction<ResearchOrganization, ResearchOrganizationCR, ResearchOrganizationServiceLocal>
     implements Preparable {
 
     private static final long serialVersionUID = 1L;
     private ResearchOrganization role = new ResearchOrganization();
     private ResearchOrganizationCR cr = new ResearchOrganizationCR();
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public ResearchOrganization getRole() {
         return role;
     }
-    
-    
+
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public void setRole(ResearchOrganization role) {
         this.role = role;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public ResearchOrganizationCR getCr() {
         return cr;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -71,18 +71,22 @@ public class ResearchOrganizationAction
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
+        if (getRole() == null) {
+            setRole(new ResearchOrganization());
+        }
+
         if (getRole().getPlayer() == null) { //if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
     }
-    
+
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") }) 
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") })
         }
     )
     @Override
@@ -90,13 +94,13 @@ public class ResearchOrganizationAction
     public String add() throws JMSException {
         return super.add();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") }) 
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") })
         }
     )
     @Override
@@ -104,13 +108,14 @@ public class ResearchOrganizationAction
     public String edit() throws JMSException {
         return super.edit();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SearchCriteria<ResearchOrganization> getDuplicateCriteria() {
         ResearchOrganization dupOfBOCrit = new ResearchOrganization();
-        AnnotatedBeanSearchCriteria<ResearchOrganization> duplicateOfCriteria 
+        AnnotatedBeanSearchCriteria<ResearchOrganization> duplicateOfCriteria
             = new AnnotatedBeanSearchCriteria<ResearchOrganization>(dupOfBOCrit);
         dupOfBOCrit.setPlayer(getOrganization());
         return duplicateOfCriteria;
@@ -119,6 +124,7 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void defaultConstructorInit() {
         setResults(new PaginatedList<ResearchOrganization>(0,
                 new ArrayList<ResearchOrganization>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
@@ -128,6 +134,7 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ResearchOrganizationServiceLocal getRoleService() {
         return PoRegistry.getInstance().getServiceLocator().getResearchOrganizationService();
     }
@@ -135,25 +142,28 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SearchCriteria<ResearchOrganization> getSearchCriteria() {
         ResearchOrganization boCrit = new ResearchOrganization();
-        AnnotatedBeanSearchCriteria<ResearchOrganization> criteria 
+        AnnotatedBeanSearchCriteria<ResearchOrganization> criteria
             = new AnnotatedBeanSearchCriteria<ResearchOrganization>(boCrit);
         Organization player = new Organization();
         player.setId(getOrganization().getId());
         boCrit.setPlayer(player);
         return criteria;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Class<ResearchOrganizationSortCriterion> getSortCriterion() {
         return ResearchOrganizationSortCriterion.class;
     }
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getAddSuccessMessageKey() {
         return "researchorganization.create.success";
     }
@@ -161,6 +171,7 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getEditSuccessMessageKey() {
         return "researchorganization.update.success";
     }

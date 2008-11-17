@@ -26,13 +26,13 @@ import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
 /**
  * Action to manage IdentifiedOrganization(s).
- * 
+ *
  * @author smatyas
  */
-public class IdentifiedOrganizationAction 
-    extends AbstractRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR, IdentifiedOrganizationServiceLocal> 
+public class IdentifiedOrganizationAction
+    extends AbstractRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR, IdentifiedOrganizationServiceLocal>
     implements Preparable {
-    
+
     private static final long serialVersionUID = 1L;
     private IdentifiedOrganization role = new IdentifiedOrganization();
     private IdentifiedOrganizationCR cr = new IdentifiedOrganizationCR();
@@ -42,6 +42,10 @@ public class IdentifiedOrganizationAction
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
+        if (getRole() == null) {
+            setRole(new IdentifiedOrganization());
+        }
+
         if (getRole().getPlayer() == null) { //if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
@@ -53,7 +57,7 @@ public class IdentifiedOrganizationAction
         }
         getRole().getAssignedIdentifier().setNullFlavor(null);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -61,8 +65,8 @@ public class IdentifiedOrganizationAction
     public IdentifiedOrganization getRole() {
         return role;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -70,38 +74,38 @@ public class IdentifiedOrganizationAction
     public void setRole(IdentifiedOrganization role) {
         this.role = role;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public IdentifiedOrganizationCR getCr() {
         return cr;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public void setCr(IdentifiedOrganizationCR cr) {
         this.cr = cr;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedOrganization") }) 
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedOrganization") })
         },
-        requiredFields = { 
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE, 
-                    fieldName = "role.assignedIdentifier.extension", 
-                    message = "Extension must be set") 
-            , 
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE, 
-                    fieldName = "role.assignedIdentifier.root", 
-                    message = "Root must be set") 
+        requiredFields = {
+            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
+                    fieldName = "role.assignedIdentifier.extension",
+                    message = "Extension must be set")
+            ,
+            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
+                    fieldName = "role.assignedIdentifier.root",
+                    message = "Root must be set")
         }
     )
     @Override
@@ -109,22 +113,22 @@ public class IdentifiedOrganizationAction
     public String add() throws JMSException {
         return super.add();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedOrganization") }) 
-        },            
-        requiredFields = { 
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE, 
-                    fieldName = "role.assignedIdentifier.extension", 
-                    message = "Extension must be set") 
-            , 
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE, 
-                    fieldName = "role.assignedIdentifier.root", 
-                    message = "Root must be set") 
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedOrganization") })
+        },
+        requiredFields = {
+            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
+                    fieldName = "role.assignedIdentifier.extension",
+                    message = "Extension must be set")
+            ,
+            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
+                    fieldName = "role.assignedIdentifier.root",
+                    message = "Root must be set")
         }
     )
     @Override
@@ -132,13 +136,14 @@ public class IdentifiedOrganizationAction
     public String edit() throws JMSException {
         return super.edit();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SearchCriteria<IdentifiedOrganization> getDuplicateCriteria() {
         IdentifiedOrganization dupOfBOCrit = new IdentifiedOrganization();
-        AnnotatedBeanSearchCriteria<IdentifiedOrganization> duplicateOfCriteria 
+        AnnotatedBeanSearchCriteria<IdentifiedOrganization> duplicateOfCriteria
             = new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(dupOfBOCrit);
         dupOfBOCrit.setPlayer(getOrganization());
         return duplicateOfCriteria;
@@ -147,6 +152,7 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void defaultConstructorInit() {
         setResults(new PaginatedList<IdentifiedOrganization>(0,
                 new ArrayList<IdentifiedOrganization>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
@@ -156,6 +162,7 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected IdentifiedOrganizationServiceLocal getRoleService() {
         return PoRegistry.getInstance().getServiceLocator().getIdentifiedOrganizationService();
     }
@@ -163,19 +170,21 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SearchCriteria<IdentifiedOrganization> getSearchCriteria() {
         IdentifiedOrganization boCrit = new IdentifiedOrganization();
-        AnnotatedBeanSearchCriteria<IdentifiedOrganization> criteria 
+        AnnotatedBeanSearchCriteria<IdentifiedOrganization> criteria
             = new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(boCrit);
         Organization player = new Organization();
         player.setId(getOrganization().getId());
         boCrit.setPlayer(player);
         return criteria;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Class<IdentifiedOrganizationSortCriterion> getSortCriterion() {
         return IdentifiedOrganizationSortCriterion.class;
     }
@@ -183,6 +192,7 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getAddSuccessMessageKey() {
         return "identifiedorganization.create.success";
     }
@@ -190,6 +200,7 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getEditSuccessMessageKey() {
         return "identifiedorganization.update.success";
     }

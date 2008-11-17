@@ -47,9 +47,8 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepare() throws Exception {
-        action.setRole(new IdentifiedOrganization());
-        assertNull(action.getRole().getScoper());
-        assertNull(action.getRole().getAssignedIdentifier());
+        action.setRole(null);
+        assertNull(action.getRole());
         action.setOrganization(new Organization());
         action.prepare();
         assertSame(action.getOrganization(), action.getRole().getPlayer());

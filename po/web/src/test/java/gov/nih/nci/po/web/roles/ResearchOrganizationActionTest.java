@@ -46,6 +46,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepareNoOrgId() throws Exception {
+        action.setRole(null);
         action.prepare();
         assertSame(action.getOrganization(), action.getRole().getPlayer());
 

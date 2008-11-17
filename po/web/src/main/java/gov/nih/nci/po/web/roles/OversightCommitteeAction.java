@@ -23,7 +23,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action to manage OversightCommittee(s).
- * 
+ *
  * @author smatyas
  */
 public class OversightCommitteeAction extends
@@ -71,18 +71,21 @@ public class OversightCommitteeAction extends
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
+        if (getRole() == null) {
+            setRole(new OversightCommittee());
+        }
         if (getRole().getPlayer() == null) { // if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
     }
-    
+
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "oversightCommittee") }) 
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "oversightCommittee") })
         }
     )
     @Override
@@ -90,13 +93,13 @@ public class OversightCommitteeAction extends
     public String add() throws JMSException {
         return super.add();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" , 
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "oversightCommittee") }) 
+        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "oversightCommittee") })
         }
     )
     @Override
@@ -104,13 +107,14 @@ public class OversightCommitteeAction extends
     public String edit() throws JMSException {
         return super.edit();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SearchCriteria<OversightCommittee> getDuplicateCriteria() {
         OversightCommittee dupOfBOCrit = new OversightCommittee();
-        AnnotatedBeanSearchCriteria<OversightCommittee> duplicateOfCriteria 
+        AnnotatedBeanSearchCriteria<OversightCommittee> duplicateOfCriteria
             = new AnnotatedBeanSearchCriteria<OversightCommittee>(dupOfBOCrit);
         dupOfBOCrit.setPlayer(getOrganization());
         return duplicateOfCriteria;
@@ -119,6 +123,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void defaultConstructorInit() {
         setResults(new PaginatedList<OversightCommittee>(0, new ArrayList<OversightCommittee>(),
                 PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, OversightCommitteeSortCriterion.ID.name(),
@@ -128,6 +133,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected OversightCommitteeServiceLocal getRoleService() {
         return PoRegistry.getInstance().getServiceLocator().getOversightCommitteeService();
     }
@@ -135,6 +141,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SearchCriteria<OversightCommittee> getSearchCriteria() {
         OversightCommittee boCrit = new OversightCommittee();
         AnnotatedBeanSearchCriteria<OversightCommittee> criteria = new AnnotatedBeanSearchCriteria<OversightCommittee>(
@@ -148,6 +155,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Class<OversightCommitteeSortCriterion> getSortCriterion() {
         return OversightCommitteeSortCriterion.class;
     }
@@ -155,6 +163,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getAddSuccessMessageKey() {
         return "oversightcommittee.create.success";
     }
@@ -162,6 +171,7 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getEditSuccessMessageKey() {
         return "oversightcommittee.update.success";
     }
