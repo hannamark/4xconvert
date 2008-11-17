@@ -35,6 +35,9 @@
         </action>
 		<action name="home">
 			<result>/WEB-INF/jsp/registryHome.jsp</result>
+        </action>
+        <action name="contact">
+           <result>/WEB-INF/jsp/registryContact.jsp</result>
         </action> 
     </package>
     <package name="protected" namespace="/protected" extends="default">
