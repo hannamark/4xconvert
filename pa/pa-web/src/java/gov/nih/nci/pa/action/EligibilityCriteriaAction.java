@@ -230,7 +230,14 @@ public class EligibilityCriteriaAction extends ActionSupport {
                             .createPlannedEligibilityCriterion(pecDTO3);
                 }
             }
-            query();
+            if (eligibleGenderCodeId.length() != 0) {
+              ServletActionContext.getRequest().setAttribute(
+                  Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            } else {
+              ServletActionContext.getRequest().setAttribute(
+                  Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+            }
+            query();            
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getMessage());
@@ -439,7 +446,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             try {
                 Integer.valueOf(maximumValue);
             } catch (NumberFormatException e) {
-                addFieldError("maximumValue", getText("error.maximumValue"));
+                addFieldError("maximumValue", getText("error.numeric"));
             }
         }
         if (PAUtil.isEmpty(this.minimumUnit)) {
@@ -452,7 +459,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             try {
                 Integer.valueOf(minimumValue);
             } catch (NumberFormatException e) {
-                addFieldError("minimumValue", getText("error.minimumValue"));
+                addFieldError("minimumValue", getText("error.numeric"));
             }
         }
     }
