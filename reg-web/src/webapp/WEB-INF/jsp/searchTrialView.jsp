@@ -38,7 +38,7 @@
                   	</label>
                 </td>
                 <td class="value">
-                	<c:out value="${requestScope.trialSummary.identifier.extension}"/> 
+                	<c:out value="${requestScope.trialSummary.assignedIdentifier.extension}"/> 
                 </td>
           </tr>
           <tr>     
