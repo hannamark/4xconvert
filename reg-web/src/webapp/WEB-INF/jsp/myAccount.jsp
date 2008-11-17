@@ -34,7 +34,7 @@ function handleAction(){
 	        </c:when>
 	        <c:otherwise >
                 <p>You may update your account information. 
-                Please note: asterisks (*) indicate required fields.  </p>
+                Please note: asterisks (<span class="required">*</span>) indicate required fields.  </p>
             </c:otherwise>
         </c:choose>
         <table class="form">
@@ -53,7 +53,7 @@ function handleAction(){
 		                    <label for="emailAddress"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
 		                </td>
 		                <td>
-		                    <s:textfield name="registryUserWebDTO.loginName"  maxlength="200" size="100"  cssStyle="width:200px" />
+		                    <s:textfield name="registryUserWebDTO.loginName"  maxlength="200" size="100" readonly="true"  cssStyle="width:200px" />
 		                    <span class="formErrorMsg"> 
 		                        <s:fielderror>
 		                        <s:param>registryUserWebDTO.loginName</s:param>
@@ -66,7 +66,7 @@ function handleAction(){
 		                    <label for="password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
 		                </td>
 		                <td>
-		                    <s:password  name="registryUserWebDTO.password"  maxlength="200" size="100"  cssStyle="width:200px"  />
+		                    <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
 		                    <span class="formErrorMsg"> 
 		                        <s:fielderror>
 		                        <s:param>registryUserWebDTO.password</s:param>
@@ -79,7 +79,7 @@ function handleAction(){
 		                    <label for="retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
 		                </td>
 		                <td>
-		                    <s:password  name="registryUserWebDTO.retypePassword"  maxlength="200" size="100"  cssStyle="width:200px"  />
+		                    <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
 		                    <span class="formErrorMsg"> 
 		                        <s:fielderror>
 		                        <s:param>registryUserWebDTO.retypePassword</s:param>
@@ -204,7 +204,7 @@ function handleAction(){
                                      cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.country</s:param>
+                                <s:param>registryUserWebDTO.countryId</s:param>
                                </s:fielderror>                            
                              </span>
                         </td>                
@@ -224,7 +224,7 @@ function handleAction(){
                   </tr> 
                   <tr>
                         <td scope="row" class="label">
-                            <label for="phone"> <fmt:message key="register.user.phone"/></label>
+                            <label for="phone"> <fmt:message key="register.user.phone"/><span class="required">*</span></label>
                         </td>
                         <td>
                             <s:textfield name="registryUserWebDTO.phone"  maxlength="200" size="100"  cssStyle="width:200px" />
