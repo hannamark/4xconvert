@@ -8,24 +8,23 @@
     <title><fmt:message key="studyProtocol.search.title"/></title>   
     <s:head/>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+    <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
+    <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-function resetValues () {
-    document.forms.queryProtocol.queryProtocol_criteria_nciIdentifier.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationTrialIdentifier.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationId.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_studyPhaseCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_studyStatusCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_documentWorkflowStatusCode.value="";
-
-
-}
 
 function handleAction(){
      document.forms[0].action="studyProtocolquery.action";
      document.forms[0].submit();     
 }
+function generateReport(pid) {
+    showPopWin('/pa/protected/ajaxStudyProtocolgenerateXML.action?studyProtocolId='+pid, 1050, 400, '', 'CLinical Trial XML Generation');
+}
+
 </SCRIPT>
 <body>
 <!-- main content begins-->

@@ -67,11 +67,10 @@ public class CorrelationUtils {
     }
     
     /**
-     * method to create pa org from po.
      * 
-     * @param poOrg
-     * @return
-     * @throws PAException
+     * @param poOrg po
+     * @return Organization o
+     * @throws PAException pe
      */
     Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
         if (poOrg == null) {

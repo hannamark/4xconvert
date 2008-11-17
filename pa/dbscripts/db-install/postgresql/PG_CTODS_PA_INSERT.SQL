@@ -4,21 +4,30 @@ DELETE FROM organization
 ;
 DELETE FROM person
 ;
-INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001','InterventionalStudyProtocol' );
-INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00001','ObservationalStudyProtocol' );
+INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 1, 'NCI-2008-00001','Interventional-XXXXX-NCI-2008-00001','InterventionalStudyProtocol' );
+INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00002','ObservationalStudyProtocol' );
+INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 3, 'NCI-2008-00003','Interventional -NCI-2008-003 trial for cancer related','InterventionalStudyProtocol' );
+INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 4, 'NCI-2008-00004','Interventional trial for cancer related','InterventionalStudyProtocol' );
 
 
 
 --- insert into document workflow status
 
 insert into document_workflow_status (id,status_code,common_text,status_date_range_low, study_protocol_id, date_last_updated, user_last_updated) 
-values (1,'ACCEPTED', NULL, '2008-01-11', 1, current_timestamp, 'abstractor' ) 
+values (1,'SUBMITTED', NULL, '2008-01-11', 1, current_timestamp, 'abstractor' ) 
 ;
 
 insert into document_workflow_status (id,status_code,common_text,status_date_range_low, study_protocol_id, date_last_updated, user_last_updated) 
 values (2,'ACCEPTED', NULL, '2008-02-21', 2, current_timestamp, 'abstractor' ) 
 ;
 
+insert into document_workflow_status (id,status_code,common_text,status_date_range_low, study_protocol_id, date_last_updated, user_last_updated) 
+values (3,'ABSTRACTION_VERIFIED', NULL, '2008-02-21', 3, current_timestamp, 'abstractor' ) 
+;
+
+insert into document_workflow_status (id,status_code,common_text,status_date_range_low, study_protocol_id, date_last_updated, user_last_updated) 
+values (4,'ACCEPTED', NULL, '2008-02-21', 4, current_timestamp, 'abstractor' ) 
+;
 
 
 -- insert into study_overall_status 
@@ -30,6 +39,13 @@ insert into study_overall_status (id, status_code, status_date, study_protocol_i
 values (2, 'APPROVED', '2007-07-21', 2, current_timestamp, 'abstractor' ) 
 ;
 
+insert into study_overall_status (id, status_code, status_date, study_protocol_id, date_last_updated, user_last_updated) 
+values (3, 'APPROVED', '2007-07-21', 3, current_timestamp, 'abstractor' ) 
+;
+
+insert into study_overall_status (id, status_code, status_date, study_protocol_id, date_last_updated, user_last_updated) 
+values (4, 'APPROVED', '2007-07-21', 4, current_timestamp, 'abstractor' ) 
+;
 
 --- organization insert
 insert into organization (id, name, identifier, date_last_updated, user_last_updated ,status_code) 
@@ -89,7 +105,15 @@ insert into study_participation
 values (2,'LEAD_ORAGANIZATION','CCG-09032-A443',2 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
 ;
 
+insert into study_participation 
+	   (id, functional_code, local_sp_indentifier, study_protocol_id, healthcare_facility_id , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+values (3,'LEAD_ORAGANIZATION','CCG-09032-A443',3 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+;
 
+insert into study_participation 
+	   (id, functional_code, local_sp_indentifier, study_protocol_id, healthcare_facility_id , status_code, status_date_range_low, date_last_updated, user_last_updated ) 
+values (4,'LEAD_ORAGANIZATION','CCG-09032-A443',4 ,2,'ACTIVE', current_timestamp, current_timestamp , 'abstractor' ) 
+;
 
 ------ person -----------------
 
@@ -146,4 +170,14 @@ values(1, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de'
 insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
 	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ,CLINICAL_RESEARCH_STAFF_id)  
 values(2, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,2,2,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ,1) 
+;
+
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ,CLINICAL_RESEARCH_STAFF_id)  
+values(3, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,2,3,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ,1) 
+;
+
+insert into study_contact (id,role_code,primary_indicator,address_line, delivery_address_line, city,state, postal_code,country_id, 
+	healthcare_provider_id,study_protocol_id, status_code, status_date_range_low, date_last_updated,user_last_updated ,CLINICAL_RESEARCH_STAFF_id)  
+values(4, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,2,4,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ,1) 
 ;

@@ -36,6 +36,11 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
      */
     PROTOCOL_MANAGEMENT_CENTER("Protocol Management Center", false),
     /**
+     * Collaborators.
+     */
+    COLLABORATORS("Collaborators", false),
+
+    /**
      * Fundtion Source.
      */
     FUNDING_SOURCE("Funding Source", true),

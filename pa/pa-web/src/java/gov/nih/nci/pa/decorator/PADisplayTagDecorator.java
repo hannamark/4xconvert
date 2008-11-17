@@ -55,7 +55,20 @@ public class PADisplayTagDecorator extends TableDecorator {
         } else {
             return "";
         }
-            
     }
     
+    /**
+     * 
+     * @return xml generation
+     */
+    public String getGenerateXml() {
+        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
+                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        if (dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)) {
+            return "Generate XML";
+        } else {
+            return "";
+        }
+    }
+
 }

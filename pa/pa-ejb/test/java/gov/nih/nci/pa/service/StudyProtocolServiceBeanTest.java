@@ -41,13 +41,13 @@ public class StudyProtocolServiceBeanTest {
         TestSchema.reset();
     }
 
-    //@Test(expected=PAException.class)
+    @Test(expected=PAException.class)
     public void nullParameter() throws Exception {
         //InterventionalStudyProtocolDTO ispDTO ;
         remoteEjb.createInterventionalStudyProtocol(null);
     }
 
-    //@Test(expected=PAException.class)
+    @Test(expected=PAException.class)
     public void nullExtension() throws Exception {
         InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
         Ii ii = new Ii();
@@ -93,20 +93,20 @@ public class StudyProtocolServiceBeanTest {
         assertNotNull(ii.getExtension());
         InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
 
-//        saved.setAcronym(StConverter.convertToSt("1234"));
-//
-//        InterventionalStudyProtocolDTO update =  remoteEjb.updateInterventionalStudyProtocol(saved);
-//
-//        assertNotNull(saved);
-//        assertEquals(saved.getAccrualReportingMethodCode().getCode(), update.getAccrualReportingMethodCode().getCode());
-//        assertEquals(saved.getAcronym().getValue(),update.getAcronym().getValue());
-//        assertEquals(saved.getAllocationCode().getCode(),update.getAllocationCode().getCode());
-//        assertEquals(saved.getDelayedpostingIndicator().getValue(),update.getDelayedpostingIndicator().getValue());
-//        assertEquals(saved.getExpandedAccessIndicator().getValue(),update.getExpandedAccessIndicator().getValue());
-//        assertEquals(saved.getFdaRegulatedIndicator().getValue(),update.getFdaRegulatedIndicator().getValue());
-//        assertEquals(saved.getOfficialTitle().getValue(),update.getOfficialTitle().getValue());
-//        assertEquals(saved.getPhaseCode().getCode(),update.getPhaseCode().getCode());
-//        assertNotNull(update.getIdentifier().getExtension());
+        saved.setAcronym(StConverter.convertToSt("1234"));
+
+        InterventionalStudyProtocolDTO update =  remoteEjb.updateInterventionalStudyProtocol(saved);
+
+        assertNotNull(saved);
+        assertEquals(saved.getAccrualReportingMethodCode().getCode(), update.getAccrualReportingMethodCode().getCode());
+        assertEquals(saved.getAcronym().getValue(),update.getAcronym().getValue());
+        assertEquals(saved.getAllocationCode().getCode(),update.getAllocationCode().getCode());
+        assertEquals(saved.getDelayedpostingIndicator().getValue(),update.getDelayedpostingIndicator().getValue());
+        assertEquals(saved.getExpandedAccessIndicator().getValue(),update.getExpandedAccessIndicator().getValue());
+        assertEquals(saved.getFdaRegulatedIndicator().getValue(),update.getFdaRegulatedIndicator().getValue());
+        assertEquals(saved.getOfficialTitle().getValue(),update.getOfficialTitle().getValue());
+        assertEquals(saved.getPhaseCode().getCode(),update.getPhaseCode().getCode());
+        assertNotNull(update.getIdentifier().getExtension());
     }
     @Test
     public void getObservationalStudyProtocol() throws Exception {

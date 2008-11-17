@@ -110,39 +110,13 @@ import org.hibernate.Session;
             throw new PAException(" studyProtocolDTO should not be null ");
 
         }
-        Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
-        Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
-        ActualAnticipatedTypeCode sCode = ActualAnticipatedTypeCode.getByCode(
-                studyProtocolDTO.getStartDateTypeCode().getCode());
-        ActualAnticipatedTypeCode cCode = ActualAnticipatedTypeCode.getByCode(
-                studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
-        Timestamp now = new Timestamp((new Date()).getTime());
-        if (sDate == null) {
-            throw new PAException("Start date must be set.  ");
-        }
-        if (cDate == null) {
-            throw new PAException("Completion date must be set.  ");
-        }
-        if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
-            throw new PAException("Actual start dates cannot be in the future.  ");
-        }
-        if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(cDate)) {
-            throw new PAException("Actual primary completion dates cannot be in the future.  ");
-        }
-        if (sCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(sDate)) {
-            throw new PAException("Anticipated start dates must be in the future.  ");
-        }
-        if (cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(cDate)) {
-            throw new PAException("Anticipated primary completion dates must be in the future.  ");
-        }
-        if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
-            throw new PAException("Primary completion date must be >= start date.");
-
-        }
-
+        
+        enForceBusinessRules(studyProtocolDTO);
 
         StudyProtocolDTO  spDTO = null;
         Session session = null;
+        Timestamp now = new Timestamp((new Date()).getTime());
+
         try {
             session = HibernateUtil.getCurrentSession();
             StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
@@ -226,6 +200,7 @@ import org.hibernate.Session;
             throw new PAException(" InterventionalstudyProtocolDTO should not be null ");
 
         }
+        enForceBusinessRules(ispDTO);
         if (ispDTO.getBlindedRoleCode() != null && ispDTO.getBlindedRoleCode().getItem() != null) {
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
@@ -294,6 +269,7 @@ import org.hibernate.Session;
             throw new PAException("  Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
 
         }
+        enForceBusinessRules(ispDTO);
         LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
         convertFromDTOToDomain(ispDTO);
@@ -376,6 +352,7 @@ import org.hibernate.Session;
             throw new PAException(" studyProtocolDTO should not be null ");
 
         }
+        enForceBusinessRules(ospDTO);
         Timestamp now = new Timestamp((new Date()).getTime());
         ObservationalStudyProtocolDTO  ospRetDTO = null;
         Session session = null;
@@ -427,6 +404,7 @@ import org.hibernate.Session;
             throw new PAException("  Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
 
         }
+        enForceBusinessRules(ispDTO);
         LOG.debug("Entering createObservationalStudyProtocol");
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
         convertFromDTOToDomain(ispDTO);
@@ -515,4 +493,35 @@ import org.hibernate.Session;
     }
     
 
+    private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
+        Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
+        ActualAnticipatedTypeCode sCode = ActualAnticipatedTypeCode.getByCode(
+                studyProtocolDTO.getStartDateTypeCode().getCode());
+        ActualAnticipatedTypeCode cCode = ActualAnticipatedTypeCode.getByCode(
+                studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
+        Timestamp now = new Timestamp((new Date()).getTime());
+        if (sDate == null) {
+            throw new PAException("Start date must be set.  ");
+        }
+        if (cDate == null) {
+            throw new PAException("Completion date must be set.  ");
+        }
+        if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
+            throw new PAException("Actual start dates cannot be in the future.  ");
+        }
+        if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(cDate)) {
+            throw new PAException("Actual primary completion dates cannot be in the future.  ");
+        }
+        if (sCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(sDate)) {
+            throw new PAException("Anticipated start dates must be in the future.  ");
+        }
+        if (cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(cDate)) {
+            throw new PAException("Anticipated primary completion dates must be in the future.  ");
+        }
+        if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
+            throw new PAException("Primary completion date must be >= start date.");
+        }
+    }
+        
 }

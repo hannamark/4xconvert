@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -326,6 +327,72 @@ public class OrganizationCorrelationServiceBean {
         
         LOG.debug("Leaving create HealthCareFacility ");
         return hcf;
+    }
+    
+    
+    
+    /***
+     * 
+     * @param studyProtocolId sp id
+     * @param functionalCode functional code
+     * @return List org
+     * @throws PAException e
+     */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
+    public List<Organization> getOrganizationByStudyParticipation(Long studyProtocolId , 
+            StudyParticipationFunctionalCode functionalCode) throws PAException {
+
+        Session session  = HibernateUtil.getCurrentSession();
+        StringBuffer sb = new StringBuffer();
+        sb.append("select org from Organization as org ");
+        if (StudyParticipationFunctionalCode.TREATING_SITE.equals(functionalCode)) {
+            sb.append(" join org.healthCareFacilities as orgRole  ");
+        } else if (StudyParticipationFunctionalCode.COLLABORATORS.equals(functionalCode)) {
+            sb.append(" join org.researchOrganizations as orgRole  ");
+        } else if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.equals(functionalCode)) {
+            sb.append(" join org.healthCareFacilities as orgRole  ");
+        }
+        
+        sb.append(" join org.researchOrganizations as orgRole  "
+                + " join orgRole.studyParticipations as sps "
+                + " join sps.studyProtocol as sp "
+                + " where 1 = 1 and sp.id = " + studyProtocolId);
+        if (StudyParticipationFunctionalCode.TREATING_SITE.equals(functionalCode)) {
+            sb.append(" and sps.functionalCode in ('" + StudyParticipationFunctionalCode.TREATING_SITE + "')");
+        } else if (StudyParticipationFunctionalCode.COLLABORATORS.equals(functionalCode)) {
+            sb.append(" and sps.functionalCode in (" 
+                    + "'" + StudyParticipationFunctionalCode.FUNDING_SOURCE + "',"
+                    + "'" + StudyParticipationFunctionalCode.LABORATORY + "',"
+                    + "'" + StudyParticipationFunctionalCode.AGENT_SOURCE + "')");
+        } else if (StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.equals(functionalCode)) {
+            sb.append(" and sps.functionalCode in ('" 
+                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "')");
+        }
+        List<Organization> queryList = new ArrayList<Organization>();
+        try {
+            Query query = null;
+            query = session.createQuery(sb.toString());
+            //query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + studyProtocolId , hbe);
+            throw new PAException(" Hibernate exception while retrieving "
+                    + "StudyProtocol for id = " + studyProtocolId , hbe);
+            
+        }
+
+        return queryList; 
+        
+    }
+    
+    /**
+     * 
+     * @param poOrg po
+     * @return Organization o
+     * @throws PAException pe
+     */
+    public Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException {
+        return new CorrelationUtils().createPAOrganization(poOrg);
     }
     
 

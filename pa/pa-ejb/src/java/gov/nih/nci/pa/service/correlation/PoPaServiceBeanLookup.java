@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -156,4 +157,15 @@ public class PoPaServiceBeanLookup  {
         return (StudyResourcingServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
     
+    /**
+     * @return StudyOutcomeMeasureServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyOutcomeMeasureServiceRemote
+        getStudyOutcomeMeasureService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/StudyOutcomeMeasureServiceBean/remote";
+        return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+
 }

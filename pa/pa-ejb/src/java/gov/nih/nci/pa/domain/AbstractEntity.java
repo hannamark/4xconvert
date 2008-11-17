@@ -91,7 +91,7 @@ public  class AbstractEntity implements Serializable, Auditable {
      * 
      * @return dateLastCreated
      */
-    @Column(name = "DATE_LAST_CREATED")
+    @Column(name = "DATE_LAST_CREATED" , updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDateLastCreated() {
         return dateLastCreated;
@@ -109,7 +109,7 @@ public  class AbstractEntity implements Serializable, Auditable {
      * 
      * @return userLastCreated
      */
-    @Column(name = "USER_LAST_CREATED")
+    @Column(name = "USER_LAST_CREATED" , updatable = false)
     public String getUserLastCreated() {
         return userLastCreated;
     }

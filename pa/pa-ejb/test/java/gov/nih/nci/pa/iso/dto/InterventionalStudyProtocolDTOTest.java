@@ -1,15 +1,19 @@
 package gov.nih.nci.pa.iso.dto;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
+import org.junit.Test;
 
 public class InterventionalStudyProtocolDTOTest {
     
@@ -35,6 +39,11 @@ public class InterventionalStudyProtocolDTOTest {
         ispDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
         ispDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
         ispDTO.setOfficialTitle(StConverter.convertToSt("Phase Ii trial"));
+        Timestamp now = new Timestamp((new Date()).getTime());
+        ispDTO.setStartDate(TsConverter.convertToTs(now));
+        ispDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now));
+        ispDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
         ispDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
         return ispDTO;
     }

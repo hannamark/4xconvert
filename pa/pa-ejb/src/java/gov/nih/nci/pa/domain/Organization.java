@@ -37,6 +37,7 @@ public class Organization extends AbstractEntity {
     private String postalCode;
     private StatusCode statusCode;
     private List<HealthCareFacility> healthCareFacilities = new ArrayList<HealthCareFacility>();
+    private List<ResearchOrganization> researchOrganizations = new ArrayList<ResearchOrganization>();
     
     /**
      * @return the name
@@ -152,6 +153,23 @@ public class Organization extends AbstractEntity {
         this.healthCareFacilities = healthCareFacilities;
     }
     
+    /**
+     * 
+     * @return researchOrganizations
+     */
+    @OneToMany(mappedBy = "organization")
+    public List<ResearchOrganization> getResearchOrganizations() {
+        return researchOrganizations;
+    }
+
+    /**
+     * 
+     * @param researchOrganizations researchOrganizations
+     */
+    public void setResearchOrganizations(
+            List<ResearchOrganization> researchOrganizations) {
+        this.researchOrganizations = researchOrganizations;
+    }
     
     
 }

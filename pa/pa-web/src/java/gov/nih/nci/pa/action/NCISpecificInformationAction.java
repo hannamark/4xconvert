@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -115,12 +116,16 @@ public class NCISpecificInformationAction extends ActionSupport {
                 o.setIdentifier(poIdentifer);
                 Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
                 if (org == null) {
+                    OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
+                    OrganizationDTO oDto = PaRegistry.getPoOrganizationEntityService().getOrganization(
+                            IiConverter.converToPoOrganizationIi(poIdentifer)); 
                     // create a new org if its null
-                    org = new Organization();
-                    org.setIdentifier(poIdentifer);
-                    org.setName(nciSpecificInformationWebDTO.getOrganizationName());
-                    Organization crOrg = PaRegistry.getPAOrganizationService().createOrganization(org);
-                    orgId = crOrg.getId();
+//                    org = new Organization();
+//                    org.setIdentifier(poIdentifer);
+//                    org.setName(nciSpecificInformationWebDTO.getOrganizationName());
+//                    Organization crOrg = PaRegistry.getPAOrganizationService().createOrganization(org);
+//                    ocsb.createPAOrganizationUsingPO(oDto);
+                    orgId = ocsb.createPAOrganizationUsingPO(oDto).getId();
                 } else {
                     // get the org from the database
                     orgId = org.getId();

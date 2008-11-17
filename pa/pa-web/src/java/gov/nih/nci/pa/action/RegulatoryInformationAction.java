@@ -3,6 +3,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthorityWebDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -29,7 +30,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class RegulatoryInformationAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private static final String VIEW_PAGE = "view_page";
-    private InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
+    private StudyProtocolDTO ispDTO = new StudyProtocolDTO();
     private List countryList = new ArrayList();
     private String lst = null;
     private String selectedAuthOrg = null;
@@ -52,17 +53,19 @@ public class RegulatoryInformationAction extends ActionSupport {
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                 Constants.STUDY_PROTOCOL_II);
         //Update InterventionalSP
-        InterventionalStudyProtocolDTO ispFromDatabaseDTO = PaRegistry.getStudyProtocolService()
-                .getInterventionalStudyProtocol(studyProtocolIi);
-        ispFromDatabaseDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
+                .getStudyProtocol(studyProtocolIi);
+        
+        spDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getSection801Indicator())));
-        ispFromDatabaseDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+        spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getFdaRegulatedInterventionIndicator())));
-        ispFromDatabaseDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+        spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getDelayedPostingIndicator())));
-        ispFromDatabaseDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+        spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
                 .getDataMonitoringIndicator())));
-        PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispFromDatabaseDTO);
+        
+        PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
         
         
         // Update StudyRegulatoryAuthority
@@ -112,10 +115,6 @@ public class RegulatoryInformationAction extends ActionSupport {
                     webDTO.setDelayedPostingIndicator(BlConverter.convertToString(ispFromDatabaseDTO
                             .getDelayedpostingIndicator()));
                 }
-//                if (ispFromDatabaseDTO.getIndIdeIndicator().getValue() != null) {
-//                    webDTO.setIdeTrialIndicator((BlConverter.convertToString(ispFromDatabaseDTO
-//                            .getIndIdeIndicator())));
-//                }        
                 if (ispFromDatabaseDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
                     webDTO.setDataMonitoringIndicator((BlConverter.convertToString(ispFromDatabaseDTO
                             .getDataMonitoringCommitteeAppointedIndicator())));
@@ -124,7 +123,7 @@ public class RegulatoryInformationAction extends ActionSupport {
                 List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);
                 setLst(regInfo.get(1).toString());
             }
-            ispDTO = PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolIi);
+            ispDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         } catch (PAException e) {
             return SUCCESS;
         }

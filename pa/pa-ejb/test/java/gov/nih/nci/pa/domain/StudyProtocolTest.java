@@ -15,9 +15,13 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -189,6 +193,12 @@ public class StudyProtocolTest  {
      * @return isp
      */
     public static InterventionalStudyProtocol createInterventionalStudyProtocolObj(InterventionalStudyProtocol isp) {
+        
+        Timestamp now = new Timestamp((new Date()).getTime());
+        isp.setStartDate(now);
+        isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        isp.setPrimaryCompletionDate(now);
+        isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
         isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);
