@@ -22,6 +22,7 @@ function handleAction(){
     <h1><fmt:message key="register.user.myaccount.header"/></h1>
     <c:set var="topic" scope="request" value="my_account"/> 
     <div class="box" id="filters">
+    <reg-web:sucessMessage/>
     <s:form name="myAccount" method="POST" ><s:actionerror/>
         <s:hidden name="registryUserWebDTO.id" />
         <s:hidden name="registryUserWebDTO.csmUserId" />
@@ -198,13 +199,13 @@ function handleAction(){
                             <s:select headerKey="" headerValue="All" 
                                      name="registryUserWebDTO.country" 
                                      list="#countries"
-                                     listKey="id" 
+                                     listKey="name" 
                                      listValue="name"   
                                      value="registryUserWebDTO.country" 
                                      cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.countryId</s:param>
+                                <s:param>registryUserWebDTO.country</s:param>
                                </s:fielderror>                            
                              </span>
                         </td>                
