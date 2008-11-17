@@ -13,6 +13,10 @@
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
+	function handleAction(){
+ 	document.forms[0].action="generalTrialDesignupdate.action";
+ 	document.forms[0].submit(); 
+}
 	</SCRIPT>
 </head>
 
@@ -25,6 +29,8 @@
    <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 
   <div class="box">
+  <pa:sucessMessage/>
+   <pa:failureMessage/>
     <s:form ><s:actionerror/> 
 	 <h2><fmt:message key="studyProtocol.information"/></h2>
     <table class="form">
@@ -124,7 +130,7 @@
          <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                    <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                     <li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
                 </ul>   
