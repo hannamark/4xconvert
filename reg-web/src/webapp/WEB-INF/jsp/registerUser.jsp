@@ -55,7 +55,7 @@ function handleAction(){
                     <label for="password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
                 </td>
                 <td>
-                    <s:password  name="registryUserWebDTO.password"  maxlength="200" size="100"  cssStyle="width:200px"  />
+                    <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>registryUserWebDTO.password</s:param>
@@ -68,7 +68,7 @@ function handleAction(){
                     <label for="retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
                 </td>
                 <td>
-                    <s:password  name="registryUserWebDTO.retypePassword"  maxlength="200" size="100"  cssStyle="width:200px"  />
+                    <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>registryUserWebDTO.retypePassword</s:param>
