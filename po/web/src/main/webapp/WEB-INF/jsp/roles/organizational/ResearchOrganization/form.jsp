@@ -33,7 +33,6 @@ function handleDuplicateOf() {
     <s:form action="ajax/roles/organizational/ResearchOrganization/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization"/>
         <s:hidden key="role" />
-        <s:hidden key="role.player"/>
         <s:select
            label="Current Change Request"
            name="cr"
@@ -65,8 +64,7 @@ function handleDuplicateOf() {
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
-				<s:hidden key="role" />
-				<s:hidden key="role.player"/>
+				<s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
 				<s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
 				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
 				<s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
