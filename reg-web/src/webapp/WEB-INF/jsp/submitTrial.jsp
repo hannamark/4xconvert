@@ -69,17 +69,18 @@ function loadLeadPersDiv() {
     callAjax(url, div);    
 }
 function loadSponsorDiv() {
-	
 	var url = '/registry/protected/ajaxSubmitTrialActiondisplaySelectedSponsor.action?orgId='+orgid;
     var div = document.getElementById('loadSponsorField');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
-    callAjax(url, div);
+    callAjax(url, div);        			
+	document.getElementById('lookupbtn4RP').disabled = "";
 }
 function createOrgContactDiv() {	
 	var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
     var div = document.getElementById('loadResponsibleContactField');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
     callAjax(url, div);
+    document.getElementById('lookupbtn4RP').disabled = "";
 }
 function loadSummary4SponsorDiv() {
 	var url = '/registry/protected/ajaxSubmitTrialActiondisplaySummary4FundingSponsor.action?orgId='+orgid;
@@ -94,33 +95,26 @@ function handleAction(){
     document.forms[0].submit();  
 }
 function submitProtocol (){	
-	var dateObject = new Date();	 
-	var time = dateObject.getTime();
-	var action = "submitTrialcreate.action?uuid="+time;
-	
+	var action = "submitTrialcreate.action";	
     document.forms[0].page.value = "Submit";
     document.forms[0].action=action;
-    document.forms[0].submit(); 
-    var url = '${submitProtocol}?uuid='+time;
-    
-	showPopWin(url, 600, 200, '', 'Submit protocol');
+    document.forms[0].submit();
+	showPopWin('${submitProtocol}', 600, 200, '', 'Submit protocol');
 }
 function callAjax(url, div){
-
     var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
     return false;
 }
 function manageRespPartyLookUp(){		
 	for(var i=0; i<2; i++) {			
 		if(document.forms[0].respparty[i].checked==true) {
-			if(document.forms[0].respparty[i].value == 'sponsor') {					
-					document.getElementById('rpcid').style.display='';
+			if(document.forms[0].respparty[i].value == 'sponsor') {				
+				document.getElementById('rpcid').style.display='';
 			}
 			if(document.forms[0].respparty[i].value == 'pi') {					
 					document.getElementById('rpcid').style.display='none';
 			}
-		}
-		
+		}		
 	}
 }
 function addGrant(){
@@ -160,9 +154,7 @@ function resetGrantRow(){
 	document.getElementById('grantbtnid').disabled = true;
 }
 </SCRIPT>
-
 <script language="javascript">
-
 function toggledisplay (it, box) {
   var vis = (box.checked) ? "block" : "none";
   document.getElementById(it).style.display = vis;
@@ -171,11 +163,7 @@ function toggledisplay2 (it) {
   var vis = document.getElementById(it).style.display
   if (vis == "block") { document.getElementById(it).style.display = "none"; }
                  else { document.getElementById(it).style.display = "block"; }
-} 
-
-
-
-
+}
 </script>	
 
 <body>
@@ -297,8 +285,7 @@ function toggledisplay2 (it) {
 						<%@ include file="/WEB-INF/jsp/nodecorate/displaySponsor.jsp" %>
 						</div>		
 					</td>
-		</tr>    
-				
+		</tr>   
 				<tr>
 				<td scope="row" class="label">Responsible Party: </td>
 				<td>
@@ -589,7 +576,7 @@ function toggledisplay2 (it) {
         <tr>
               <td colspan="2" class="space">&nbsp;</td>
         </tr>
-      
+      	
         <tr>
               <td scope="row" class="label">
               <label for="protocolDocument">
@@ -622,22 +609,13 @@ function toggledisplay2 (it) {
                    </s:fielderror>                            
                  </span>
                </td>         
-         </tr>
-         
+         </tr>         
          <tr>
               <td scope="row" class="label">
-              <label for="particpating sites">
-                     List of Participating Sites
-                     
-              </label>
+              <label for="particpating sites">List of Participating Sites</label>
              </td>
              <td class="value">
-                 <s:file name="participatingSites" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.participatingSites</s:param>
-                   </s:fielderror>                            
-                 </span>
+                 <s:file name="participatingSites" cssStyle="width:270px"/>                 
                </td>         
          </tr>         
          
@@ -646,12 +624,7 @@ function toggledisplay2 (it) {
               <label for="informedConsent">Informed Consent Document</label>
              </td>
              <td class="value">
-                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.informedConsentFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
+                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>            
                </td>         
          </tr>         
          <tr>
@@ -659,12 +632,7 @@ function toggledisplay2 (it) {
               <label for="otherDocument">Other</label>
              </td>
              <td class="value">
-                 <s:file name="otherDocument" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDocumentWebDTO.otherDocument</s:param>
-                   </s:fielderror>                            
-                 </span>
+                 <s:file name="otherDocument" cssStyle="width:270px"/>                 
                </td>         
          </tr> 
 
