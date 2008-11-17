@@ -34,6 +34,7 @@ public class RegisterUserAction extends ActionSupport {
     
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);
     private RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
+    private String userAction;
 
     /**
      * Send e-mail to the registering user.
@@ -127,15 +128,13 @@ public class RegisterUserAction extends ActionSupport {
         try {
             loginName =  ServletActionContext.
                                         getRequest().getRemoteUser();
-            String password = (String) ServletActionContext.getRequest().
-                                        getSession().getAttribute("j_password"); 
             // retrieve user info
             RegistryUser registryUser = RegistryServiceLocator.getRegistryUserService().
                                             getUser(loginName);
-            
-            if (registryUser != null) {
+            User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
+            if (registryUser != null && csmUser != null) {
                 registryUserWebDTO = new RegistryUserWebDTO(
-                                           registryUser, loginName, password);
+                                           registryUser, loginName, csmUser.getPassword());
             }
         } catch (Exception ex) {
             LOG.error("error while displaying My Account page for user :" + loginName);
@@ -153,7 +152,6 @@ public class RegisterUserAction extends ActionSupport {
      * @return String
      */
     public String updateAccount() {
-        boolean isNewUser = false;
         String redirectPage =  null;
         try {
             // first validate the form fields before creating user
@@ -187,8 +185,14 @@ public class RegisterUserAction extends ActionSupport {
             
             // check if it's  update action
             if (registryUser.getId() != null) {
-                isNewUser = false;
-                redirectPage = "registryHome";
+                String loginName =  ServletActionContext.
+                                            getRequest().getRemoteUser();
+                if (loginName != null) {
+                    redirectPage = "myAccount";
+                } else {
+                    userAction =  "reset";
+                    redirectPage = "redirect_to_login";
+                }
                 // first update the CSM user
                 User csmUser = CSMUserService.getInstance().
                                         updateCSMUser(registryUser, 
@@ -201,7 +205,7 @@ public class RegisterUserAction extends ActionSupport {
                 
             } else { //create user
                 // first create the CSM user
-                isNewUser = true;
+                userAction =  "create";
                 redirectPage = "redirect_to_login";
                 User csmUser = CSMUserService.getInstance().
                                         createCSMUser(registryUser, 
@@ -217,11 +221,11 @@ public class RegisterUserAction extends ActionSupport {
                                         createUser(registryUser);           
     
             }
-            // set the login name and password in the session
-            ServletActionContext.getRequest().
-                        getSession().setAttribute("j_username" , registryUserWebDTO.getLoginName());
-            ServletActionContext.getRequest().
-                        getSession().setAttribute("j_password" , registryUserWebDTO.getPassword());
+            if (ServletActionContext.
+                    getRequest().getRemoteUser() != null) {
+                ServletActionContext.getRequest().setAttribute(
+                                    Constants.SUCCESS_MESSAGE, "Your account was successfully updated");
+            }
             
         } catch (Exception ex) {
             LOG.error("error while updating user info");
@@ -317,6 +321,10 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.country",
                         getText("error.register.country"));
             }
+            if (PAUtil.isEmpty(registryUserWebDTO.getPhone())) {
+                addFieldError("registryUserWebDTO.phone",
+                        getText("error.register.phone"));
+            }
             if (PAUtil.isEmpty(registryUserWebDTO.getAffiliateOrg())) {
                 addFieldError("registryUserWebDTO.affiliateOrg",
                         getText("error.register.affiliateOrg"));
@@ -343,6 +351,20 @@ public class RegisterUserAction extends ActionSupport {
         Pattern email = Pattern.compile("^[A-Za-z]\\w[A-Za-z0-9]+$");
         Matcher fit = email.matcher(userName);
         return fit.matches();
+    }
+    
+    /**
+     * @return the userAction
+     */
+    public String getUserAction() {
+        return userAction;
+    }
+
+    /**
+     * @param userAction the userAction to set
+     */
+    public void setUserAction(String userAction) {
+        this.userAction = userAction;
     }
 
 }
