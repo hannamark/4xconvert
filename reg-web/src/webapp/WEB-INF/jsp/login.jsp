@@ -9,10 +9,15 @@
 <c:set var="topic" scope="request" value="login"/> 
 <div class="box"> 
  <c:choose>
-     <c:when test="${param.isRedirect == true}">
+     <c:when test="${param.userAction == 'create'}">
 		<div class="confirm_msg">
-		  <strong>Your User Account has been successfully created. Please log in using your username and password</strong>
+		  <strong>Your User Account has been successfully created. Please log in using your username and password.</strong>
 		</div>
+     </c:when>
+     <c:when test="${param.userAction == 'reset'}">
+        <div class="confirm_msg">
+          <strong>Your password has been successfully reset. Please log in using your username and password.</strong>
+        </div>
      </c:when>
      <c:otherwise>
            <p style="margin:0; padding:0">Please log in to search, view and submit clinical trial details. </p>
