@@ -39,7 +39,7 @@
                     <ul>
                         <li><a href="/registry/protected/searchTrial.action"><strong>Search for NCI clinical trials</strong></a> submitted by members of the <a href="https://cabig.nci.nih.gov" class="external" target="new">caBIG&trade; community.</a> You can view detailed trial information such as the title, NCI and Lead Organization Trial Identifier, phase, status, principal investigators, and more.</li>
                         <li><a href="/registry/protected/submitTrial.action"><strong>Submit your NCI clinical trials</strong></a> and join our community of contributing scientists.</li>
-                        <li><a href="/registry/protected/searchTrial.action" class="selected"><strong>Login</strong></a> /<a href="/registry/registerUser.action" class="selected"><strong>Register</strong></a>to enter protocol details into the system.</li>
+                        <li><a href="/registry/protected/searchTrial.action" class="selected"><strong>Login</strong></a> /<a href="/registry/registerUser.action" class="selected"><strong> Register</strong></a> to enter protocol details into the system.</li>
                     </ul>
 
                     <!--/ADD CONTENT HERE-->
