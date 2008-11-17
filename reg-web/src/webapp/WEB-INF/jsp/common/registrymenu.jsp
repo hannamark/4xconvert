@@ -14,7 +14,7 @@
                         <li><a href="/registry/registerUser.action" >User Register</a></li>
 				    </c:otherwise>
 				</c:choose>
-				<li><a href="#">Help</a></li>
+				<li><a href="#" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/> ');">Help</a></li>
         	</ul>
         </li>
         
