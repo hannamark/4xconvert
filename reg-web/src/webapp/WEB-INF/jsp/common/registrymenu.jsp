@@ -11,7 +11,7 @@
 				    </c:when>
 			        <c:otherwise>
                         <li><a href="/registry/protected/searchTrial.action" >Login</a></li>
-                        <li><a href="/registry/registerUser.action" >User Register</a></li>
+                        <li><a href="/registry/registerUser.action" >User Registration</a></li>
 				    </c:otherwise>
 				</c:choose>
 				<li><a href="#" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/> ');">Help</a></li>
