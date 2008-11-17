@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body><h1>Login</h1>
+<c:set var="topic" scope="request" value="login"/> 
 <div class="box"> 
  <c:choose>
      <c:when test="${param.isRedirect == true}">
