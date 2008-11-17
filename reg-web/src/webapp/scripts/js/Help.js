@@ -1,6 +1,9 @@
 var Help = {
 	url : "/registry/helpDocs/coppaRegistry/index.html?context=coppaRegistry&topic=",
 	popHelp: function(topic) {
+		if(topic.length < 1){
+			topic=null;
+		}
 		//window.open (Help.url+topic, "Help", "status,scrollbars,resizable,width=800,height=500");
 		WWHAPI_Object("/registry/helpDocs/coppaRegistry", null);
 		WWHAPI_DisplayHelpWithNavigation("coppaRegistry", topic);
