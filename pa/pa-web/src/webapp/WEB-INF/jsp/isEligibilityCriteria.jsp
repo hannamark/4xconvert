@@ -39,54 +39,43 @@ BubbleTips.activateTipOn("dfn");
                 <tr>
                     <td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                         <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/> </dfn><span class="required">*</span></label>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     </td> <td class="value">               
                         <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" />
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>studyPopulationDescription</s:param>
                                </s:fielderror>                            
                          </span>
-                    </td>                   
-                    <td>
-                    </td>
-                    <td class="value">                      
-                    </td>
-                </tr>
-                    <tr>
+                    </td>      
+               </tr>
+               <tr>
                     <td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                         <fmt:message key="osdesign.eligibilitycriteria.samplingMethod"/> </dfn><span class="required">*</span></label>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>   
                        <s:set name="samplingMethodValues" value="@gov.nih.nci.pa.enums.SamplingMethodCode@getDisplayNames()" />
+					  <td class="value">
                         <s:select headerKey="" headerValue="" 
                                 name="samplingMethodCode" 
                                 list="#samplingMethodValues"  
-                                cssStyle="width:136px" />
+                                cssStyle="width:185px" />
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>samplingMethodCode</s:param>
                                </s:fielderror>                            
                          </span>
-                    </td>                   
-                    <td>
-                    </td>
-                    <td class="value">                      
                     </td>
                 </tr>
     </s:if>
     			<tr>
 					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 						<fmt:message key="isdesign.eligibilitycriteria.ahv"/> </dfn><span class="required">*</span></label>
-										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					 </td> <td class="value">   
 						<s:select name="acceptHealthyVolunteersIndicator" list="#{'':'','false':'No', 'true':'Yes'}" />
 						<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>acceptHealthyVolunteersIndicator</s:param>
                                </s:fielderror>                            
                          </span>
-					</td>					
-					<td>
-					</td>
-					<td class="value">						
 					</td>
 				</tr>
 				<tr>
@@ -94,32 +83,28 @@ BubbleTips.activateTipOn("dfn");
                      <label for="fileName"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="isdesign.eligibilitycriteria.eligibleGender"/></dfn><span class="required">*</span>
                      </label>
-                   
+                    </td> 
                     <s:set name="genderValues" value="@gov.nih.nci.pa.enums.EligibleGenderCode@getDisplayNames()" />
-                   
+                   <td class="value">   
                         <s:select headerKey="" headerValue="" 
                            		name="eligibleGenderCode" 
                            		list="#genderValues"  
-                           		cssStyle="width:106px" /> 
+                           		cssStyle="width:75px" /> 
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>eligibleGenderCode</s:param>
                                </s:fielderror>                            
                          </span>
                          <input type="hidden" name="eligibleGenderCodeId" value="${eligibleGenderCodeId}"/>
-                      </td> 
-					  <td>
-					</td>
-					<td class="value">						
-					</td>
+                      </td>
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
                      <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/></dfn><span class="required">*</span>
                      </label>
-                    
-							<s:textfield name="minimumValue" maxlength="12" cssStyle="width:100px" />
+                     </td> <td class="value">   
+							<s:textfield name="minimumValue" maxlength="12" cssStyle="width:85px" />
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>minimumValue</s:param>
@@ -130,13 +115,13 @@ BubbleTips.activateTipOn("dfn");
                      <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="isdesign.eligibilitycriteria.unit"/></dfn><span class="required">*</span>
                      </label>
-                    
+                     </td> 
     				<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
-                   
+                   <td class="value">   
                         <s:select headerKey="" headerValue="" 
                            		name="minimumUnit" 
                            		list="#unitsValues"  
-                           		cssStyle="width:106px" /> 
+                           		cssStyle="width:76px" /> 
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>minimumUnit</s:param>
@@ -150,8 +135,8 @@ BubbleTips.activateTipOn("dfn");
                      <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/></dfn><span class="required">*</span>
                      </label>
-                    
-							<s:textfield name="maximumValue" maxlength="12" cssStyle="width:100px" />
+                     </td> <td class="value">   
+							<s:textfield name="maximumValue" maxlength="12" cssStyle="width:85px" />
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>maximumValue</s:param>
@@ -162,13 +147,13 @@ BubbleTips.activateTipOn("dfn");
                      <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                             <fmt:message key="isdesign.eligibilitycriteria.unit"/></dfn><span class="required">*</span>
                      </label>
-                   
+                    </td>
     				<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
-                    
+                     <td class="value">   
                         <s:select headerKey="" headerValue="" 
                            		name="maximumUnit" 
                            		list="#unitsValues"  
-                           		cssStyle="width:106px" /> 
+                           		cssStyle="width:76px" /> 
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>maximumUnit</s:param>
@@ -176,9 +161,7 @@ BubbleTips.activateTipOn("dfn");
                          </span>
                          <input type="hidden" name="maximumValueId" value="${maximumValueId}"/>
                       </td>            
-                </tr>     		                
-                     
-                     
+                </tr> 		                                     
         </table>
         <s:if test="eligibilityList != null">    
 		<input type="hidden" name="page" />
