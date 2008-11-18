@@ -23,7 +23,9 @@
              listKey="alpha3" listValue="name" headerKey="aaa" headerValue="--Select--" cssStyle="width:206px" />
         </td>		
 	</tr>
-	<tr><td scope="row" class="label"><label for="createOrgPhoneNumber">Phone Number :</label></td><td><s:textfield name="createOrg.phoneNumber"  maxlength="200" size="100"  cssStyle="width:200px" /></td></tr>
+	<tr><td scope="row" class="label"><label for="createOrgPhoneNumber">Phone Number :</label></td><td><s:textfield name="createOrg.phoneNumber"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+		<td scope="row" class="label"><label for="createOrgEmailAddress">Email :</label></td><td><s:textfield name="createOrg.email"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+	</tr>
 </table>
  <div class="actionsrow">
  <del class="btnwrapper">

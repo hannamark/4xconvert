@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -184,6 +185,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
         String phoneNumer = ServletActionContext.getRequest().getParameter("phoneNumber");
+        String email = ServletActionContext.getRequest().getParameter("email");
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         //orgDto.setAbbreviatedName(StringConverter.convertToEnOn(orgAbrName));
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, orgDelAddress, cityName, stateName, zipCode,
@@ -191,9 +193,12 @@ public class PopupAction extends ActionSupport implements Preparable {
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         Tel t = new Tel();
+        TelEmail telemail = new TelEmail();        
         try {
             t.setValue(new URI("tel", phoneNumer, null));
+            telemail.setValue(new URI("mailto:" + email));
             telco.getItem().add(t);
+            telco.getItem().add(telemail);
             orgDto.setTelecomAddress(telco);
             Ii id = RegistryServiceLocator.getPoOrganizationEntityService().createOrganization(orgDto);
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();

@@ -20,7 +20,8 @@
 		var zip = document.getElementById("poOrganizations_createOrg_Zip").value;
 		var country = document.getElementById("poOrganizations_createOrg_orgCountry").value;	
 		var phone = document.getElementById("poOrganizations_createOrg_phoneNumber").value;
-		var url = '/registry/protected/popupcreateOrganization.action?orgName='+orgName+'&orgAbrName='+orgAbr+'&orgStAddress='+stAddress+'&orgDelAddress='+delAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone;
+		var email = document.getElementById("poOrganizations_createOrg_email").value;
+		var url = '/registry/protected/popupcreateOrganization.action?orgName='+orgName+'&orgAbrName='+orgAbr+'&orgStAddress='+stAddress+'&orgDelAddress='+delAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email;
 		var div = document.getElementById('getOrgs'); 
 		div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
 		ajaxCall(div, url);
