@@ -457,7 +457,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         // Step 2: create a record in PO
         if (pohcpService.getCorrelation(selectedPersTO.getIdentifier()) == null) {
             HealthCareProviderDTO healthCareProviderDTO = new HealthCareProviderDTO();
-            healthCareProviderDTO.setPersonIdentifier(selectedPersTO.getIdentifier());
+//            healthCareProviderDTO.setPersonIdentifier(selectedPersTO.getIdentifier());
+            healthCareProviderDTO.setPlayerIdentifier(selectedPersTO.getIdentifier());
+            
             // pohcpService.createCorrelation(healthCareProviderDTO); uncomment
             // this later!
         }
