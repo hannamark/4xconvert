@@ -56,11 +56,13 @@ public class AddressConverterUtil {
         setValue(l, cityOrMunicipality, AddressPartType.CTY);
         setValue(l, stateOrProvince, AddressPartType.STA);
         setValue(l, postalCode, AddressPartType.ZIP);
-
-        Adxp x;
-        x = Adxp.createAddressPart(AddressPartType.CNT);
-        x.setCode(countryAlpha3);
-        l.add(x);
+        
+        if (countryAlpha3 != null) {
+            Adxp x;
+            x = Adxp.createAddressPart(AddressPartType.CNT);
+            x.setCode(countryAlpha3);
+            l.add(x);
+        }
         return iso;
     }
     
