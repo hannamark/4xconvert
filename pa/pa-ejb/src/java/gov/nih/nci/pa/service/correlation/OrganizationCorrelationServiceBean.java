@@ -36,6 +36,7 @@ import org.hibernate.Session;
 public class OrganizationCorrelationServiceBean {
     
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
+    private static final String CANCER_CENTER_CODE = "CCR";
     
     /**
      * 
@@ -66,12 +67,12 @@ public class OrganizationCorrelationServiceBean {
         List<HealthCareFacilityDTO> hcfDTOs = null;
         hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
      
-        try {
+//        try {
             hcfDTOs = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
-        } catch (NullifiedRoleException e) {
-            LOG.error("check with scoot", e);
-            // @todo: this should not happen, check with 
-        }
+//        } catch (NullifiedRoleException e) {
+//            LOG.error("check with scoot", e);
+//            // @todo: this should not happen, check with 
+//        }
         if (hcfDTOs != null && hcfDTOs.size() > 1) {
             throw new PAException("PO hcfDTOs Correlation should not have more than 1  ");
         }
@@ -144,15 +145,16 @@ public class OrganizationCorrelationServiceBean {
         List<ResearchOrganizationDTO> roDTOs = null;
         roDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         Cd cd = new Cd();
-        cd.setCode("Cancer Center");
-        roDTO.setType(cd);
+        cd.setCode(CANCER_CENTER_CODE);
+//        roDTO.setType(cd);
+        roDTO.setTypeCode(cd);
         roDTO.setFundingMechanism(StConverter.convertToSt("foo"));
-        try {
+//        try {
             roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
-        } catch (NullifiedRoleException e) {
-            LOG.error("check with scoot", e);
-            // @todo: this should not happen, check with 
-        }
+//        } catch (NullifiedRoleException e) {
+//            LOG.error("check with scoot", e);
+//            // @todo: this should not happen, check with 
+//        }
         if (roDTOs != null && roDTOs.size() > 1) {
             throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
         }
