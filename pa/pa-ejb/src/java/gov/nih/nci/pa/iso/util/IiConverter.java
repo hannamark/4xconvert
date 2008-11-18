@@ -2,7 +2,6 @@ package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.convert.IdConverter;
 
 /**
  * utility method for converting Ii and Id.
@@ -144,6 +143,7 @@ public class IiConverter {
      */
     public static final String QUALIFIED_ENTITY_ROOT = "UID.for.nci.role.qualifiedentity";
     
+
     /**
      * 
      * @param id id
@@ -264,7 +264,7 @@ public class IiConverter {
     public static Ii converToPoHealtcareProviderIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.HEALTH_CARE_PROVIDER_ROOT);
+        ii.setRoot(HEALTH_CARE_PROVIDER_ROOT);
         return ii;
     }
 
@@ -276,7 +276,7 @@ public class IiConverter {
     public static Ii converToPoHealthCareFacilityIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
+        ii.setRoot(HEALTH_CARE_FACILITY_ROOT);
         return ii;
     }
 
