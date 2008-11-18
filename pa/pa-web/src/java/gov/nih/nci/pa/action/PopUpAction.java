@@ -1,12 +1,12 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.RemoteApiUtil;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -111,7 +111,7 @@ public class PopUpAction extends ActionSupport {
             }
             OrganizationDTO criteria = new OrganizationDTO();
             criteria.setName(EnOnConverter.convertToEnOn(orgName));
-            criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName, null, zipCode, countryName));
+            criteria.setPostalAddress(AddressConverterUtil.create("", "", cityName, "", zipCode, countryName));
             orgs = PaRegistry.getPoOrganizationEntityService().search(criteria);
             return SUCCESS;
         } catch (Exception e) {           
