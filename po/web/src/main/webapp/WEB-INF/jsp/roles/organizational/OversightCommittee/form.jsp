@@ -67,11 +67,11 @@ function handleDuplicateOf() {
 				<s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
 				<s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
 				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OversightCommitteeType@class"/>
-				<s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
+				<s:set name="oversightCommitteeTypes" value="#genericCodeValueService.list(#codeValueClass)" />
 				<s:select 
 				   label="%{getText('oversightCommittee.typeCode')}"
 				   name="role.typeCode"
-				   list="#researchOrgTypes"
+				   list="#oversightCommitteeTypes"
 				   listKey="id"
 				   listValue="code"
 				   value="role.typeCode.id" 
@@ -93,7 +93,7 @@ function handleDuplicateOf() {
 							<select id="curateRoleForm.role.duplicateOf" name="oversightCommittee.duplicateOf">
 							<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
 							<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
-							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
+							   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.code} - ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
 							</c:forEach>
 							</select>
                     </po:field>
