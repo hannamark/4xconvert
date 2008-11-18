@@ -147,13 +147,13 @@
                 <filter token="register.mail.body.url" value="${register.mail.body.url}"/>
                 <filter token="submission.mail.subject" value="${submission.mail.subject}"/>
                 <filter token="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
-                <filter token="submission.notify.body.para2" value="${submission.notify.body.para2}"/>
+                <filter token="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
                 <filter token="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
                 <filter token="rejection.mail.subject" value="${rejection.mail.subject}"/>
                 <filter token="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
                 <filter token="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
-            	<filter token="po.server.name" value="${po.server.name}" />
-            	<filter token="po.port.number" value="${po.port.number}" />
+                <filter token="po.server.name" value="${po.server.name}" />
+                <filter token="po.port.number" value="${po.port.number}" />
             </filterset>
         </copy>
     </target>
