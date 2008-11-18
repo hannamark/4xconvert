@@ -330,6 +330,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
             <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
             <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
+            <property name="po.port.number" value="${po.port.number}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
