@@ -37,7 +37,6 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
-    @Override
     public OversightCommittee getRole() {
         return role;
     }
@@ -45,7 +44,6 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setRole(OversightCommittee role) {
         this.role = role;
     }
@@ -53,7 +51,6 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
-    @Override
     public OversightCommitteeCR getCr() {
         return cr;
     }
@@ -61,9 +58,40 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCr(OversightCommitteeCR cr) {
         this.cr = cr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OversightCommitteeCR getBaseCr() {
+        return getCr();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OversightCommittee getBaseRole() {
+        return getRole();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseCr(OversightCommitteeCR baseCr) {
+        setCr(baseCr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseRole(OversightCommittee baseRole) {
+        setRole(baseRole);
     }
 
     /**

@@ -37,16 +37,13 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public ResearchOrganization getRole() {
         return role;
     }
 
-
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setRole(ResearchOrganization role) {
         this.role = role;
     }
@@ -54,7 +51,6 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public ResearchOrganizationCR getCr() {
         return cr;
     }
@@ -62,10 +58,43 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCr(ResearchOrganizationCR cr) {
         this.cr = cr;
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResearchOrganizationCR getBaseCr() {
+        return getCr();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResearchOrganization getBaseRole() {
+        return getRole();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseCr(ResearchOrganizationCR baseCr) {
+        setCr(baseCr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseRole(ResearchOrganization baseRole) {
+        setRole(baseRole);
+    }
+
     /**
      * {@inheritDoc}
      */

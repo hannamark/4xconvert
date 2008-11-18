@@ -61,7 +61,6 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public IdentifiedOrganization getRole() {
         return role;
     }
@@ -70,7 +69,6 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setRole(IdentifiedOrganization role) {
         this.role = role;
     }
@@ -78,7 +76,6 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public IdentifiedOrganizationCR getCr() {
         return cr;
     }
@@ -86,9 +83,40 @@ public class IdentifiedOrganizationAction
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setCr(IdentifiedOrganizationCR cr) {
         this.cr = cr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentifiedOrganizationCR getBaseCr() {
+        return getCr();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentifiedOrganization getBaseRole() {
+        return getRole();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseCr(IdentifiedOrganizationCR basecr) {
+        setCr(basecr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBaseRole(IdentifiedOrganization baseRole) {
+        setRole(baseRole);
     }
 
     /**

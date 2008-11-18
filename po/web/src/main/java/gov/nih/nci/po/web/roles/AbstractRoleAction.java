@@ -65,15 +65,15 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     @Override
     @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", UNCHECKED })
     public String input() throws Exception {
-        if (getRole().getId() == null) {
-            getRole().setStatus(RoleStatus.PENDING);
+        if (getBaseRole().getId() == null) {
+            getBaseRole().setStatus(RoleStatus.PENDING);
         }
-        if (!getRole().getChangeRequests().isEmpty()) {
-            setCr((ROLECR) getRole().getChangeRequests().iterator().next());
+        if (!getBaseRole().getChangeRequests().isEmpty()) {
+            setBaseCr((ROLECR) getBaseRole().getChangeRequests().iterator().next());
         }
         return INPUT;
     }
-    
+
     /**
      * @return success
      */
@@ -112,7 +112,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @throws JMSException if an error occurred while publishing announcement
      */
     public String add() throws JMSException {
-        getRoleService().curate(getRole());
+        getRoleService().curate(getBaseRole());
         list();
         ActionHelper.saveMessage(getText(getAddSuccessMessageKey()));
         return SUCCESS;
@@ -128,7 +128,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @throws JMSException if an error occurred while publishing announcement
      */
     public String edit() throws JMSException {
-        getRoleService().curate(getRole());
+        getRoleService().curate(getBaseRole());
         list();
         ActionHelper.saveMessage(getText(getEditSuccessMessageKey()));
         return SUCCESS;
@@ -143,14 +143,14 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @return to add/edit/remove
      */
-    public abstract ROLE getRole();
+    public abstract ROLE getBaseRole();
 
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @param role to add/edit/remove
      */
-    public abstract void setRole(ROLE role);
+    public abstract void setBaseRole(ROLE role);
 
     /**
      * @return organization player
@@ -170,13 +170,13 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @return active change request
      */
-    public abstract ROLECR getCr();
+    public abstract ROLECR getBaseCr();
 
     /**
      * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
      * @param cr active change request
      */
-    public abstract void setCr(ROLECR cr);
+    public abstract void setBaseCr(ROLECR cr);
 
     /**
      * @return the service for the ROLE
@@ -196,7 +196,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
     @SuppressWarnings(UNCHECKED)
     public Map<String, String> getSelectChangeRequests() {
         TreeMap<String, String> treeMap = new TreeMap<String, String>();
-        Set<ROLECR> unprocessedChangeRequests = getRole().getChangeRequests();
+        Set<ROLECR> unprocessedChangeRequests = getBaseRole().getChangeRequests();
         for (ROLECR changeRequest : unprocessedChangeRequests) {
             treeMap.put(changeRequest.getId().toString(), "CR-ID-" + changeRequest.getId().toString());
         }
@@ -207,8 +207,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * @return the allowable EntityStatus values
      */
     public Collection<RoleStatus> getAvailableStatus() {
-        if (getRole().getId() != null) {
-            return getRole().getPriorStatus().getAllowedTransitions();
+        if (getBaseRole().getId() != null) {
+            return getBaseRole().getPriorStatus().getAllowedTransitions();
         } else {
             List<RoleStatus> set = new ArrayList<RoleStatus>();
             set.add(RoleStatus.PENDING);
@@ -236,7 +236,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      */
     public List<ROLE> getAvailableDuplicateOfs() {
         List<ROLE> duplicateOfList = getRoleService().search(getDuplicateCriteria());
-        remove(duplicateOfList, getRole().getId());
+        remove(duplicateOfList, getBaseRole().getId());
         return duplicateOfList;
     }
 
