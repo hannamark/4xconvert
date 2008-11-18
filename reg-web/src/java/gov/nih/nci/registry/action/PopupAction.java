@@ -7,10 +7,9 @@ import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
@@ -185,8 +184,8 @@ public class PopupAction extends ActionSupport implements Preparable {
         String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
         String phoneNumer = ServletActionContext.getRequest().getParameter("phoneNumber");
-        orgDto.setName(StringConverter.convertToEnOn(orgName));
-        orgDto.setAbbreviatedName(StringConverter.convertToEnOn(orgAbrName));
+        orgDto.setName(EnOnConverter.convertToEnOn(orgName));
+        //orgDto.setAbbreviatedName(StringConverter.convertToEnOn(orgAbrName));
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, orgDelAddress, cityName, stateName, zipCode,
                 countryName));
         DSet<Tel> telco = new DSet<Tel>();
