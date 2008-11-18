@@ -2,7 +2,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -41,16 +40,20 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
         OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-        contactDTO.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
-        contactDTO.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
-        contactDTO.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
+//        contactDTO.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
+//        contactDTO.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
+//        contactDTO.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
+        contactDTO.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
+        contactDTO.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
+        contactDTO.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
         try {
             List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
             for (OrganizationalContactDTO organizationalContactDTO : list) {
                 try {
                     persons.add(RegistryServiceLocator.getPoPersonEntityService().getPerson(
-                            organizationalContactDTO.getPersonIdentifier()));
+//                            organizationalContactDTO.getPersonIdentifier()));
+                            organizationalContactDTO.getPlayerIdentifier()));
                 } catch (NullifiedEntityException e) {
                     addActionError(e.getMessage());
                     ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
@@ -58,11 +61,11 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
                     return "display_org_contacts";
                 }
             }
-        } catch (NullifiedRoleException e) {
-            addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
-            LOG.error("Exception occured while getting organization contact : " + e);
-            return "display_org_contacts";
+//        } catch (NullifiedRoleException e) {
+//            addActionError(e.getMessage());
+//            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+//            LOG.error("Exception occured while getting organization contact : " + e);
+//            return "display_org_contacts";
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());

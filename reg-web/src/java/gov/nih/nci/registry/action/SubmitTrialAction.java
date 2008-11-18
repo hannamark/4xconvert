@@ -38,7 +38,6 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -827,9 +826,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             String orgId = ServletActionContext.getRequest().getParameter("orgId");
             String persId = ServletActionContext.getRequest().getParameter("persId");
             OrganizationalContactDTO dto = new OrganizationalContactDTO();
-            dto.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
-            dto.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
-            dto.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
+//            dto.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
+//            dto.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
+//            dto.getOrganizationIdentifier().setIdentifierName("NCI organization entity identifier");
+            dto.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
+            dto.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
+            dto.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
             // Use these two values and check if the contact already exists, if
             // they do then this means that the user selected from the list and
             // did not create a new user
@@ -837,15 +839,19 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     .search(dto);
             //             
             for (OrganizationalContactDTO contactDTO : list) {
-                String persIdfromOrgContact = contactDTO.getPersonIdentifier().getExtension();
+//                String persIdfromOrgContact = contactDTO.getPersonIdentifier().getExtension();
+                String persIdfromOrgContact = contactDTO.getPlayerIdentifier().getExtension();
                 if (persIdfromOrgContact.equals(persId)) {
                     contactExists = true;
                 }
             }
             if (!contactExists) {
-                dto.setPersonIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
-                dto.getPersonIdentifier().setRoot("UID.for.nci.entity.person");
-                dto.getPersonIdentifier().setIdentifierName("NCI person entity identifier");
+//                dto.setPersonIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
+//                dto.getPersonIdentifier().setRoot("UID.for.nci.entity.person");
+//                dto.getPersonIdentifier().setIdentifierName("NCI person entity identifier");
+                dto.setPlayerIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
+                dto.getPlayerIdentifier().setRoot("UID.for.nci.entity.person");
+                dto.getPlayerIdentifier().setIdentifierName("NCI person entity identifier");
                 dto.setPrimaryIndicator(RemoteApiUtil.convertToBl(Boolean.TRUE));
                 RegistryServiceLocator.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
             }
@@ -861,9 +867,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             // TODO Auto-generated catch block
         } catch (PAException e) {
             // TODO Auto-generated catch block
-        } catch (NullifiedRoleException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+//        } catch (NullifiedRoleException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
         }
         return "display_responsible_contact";
     }
