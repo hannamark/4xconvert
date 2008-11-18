@@ -86,14 +86,16 @@ public class HealthCareProviderCorrelationBean {
         // Step 2 : check if PO has hcp correlation if not create one 
         HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
         List<HealthCareProviderDTO> hcpDTOs = null;
-        hcpDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        hcpDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-        try {
+//        hcpDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+//        hcpDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        hcpDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        hcpDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+//        try {
             hcpDTOs = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().search(hcpDTO);
-        } catch (NullifiedRoleException e) {
-            LOG.error("check with scott");
-            // @todo: this should not happen, check with 
-        }
+//        } catch (NullifiedRoleException e) {
+//            LOG.error("check with scott");
+//            // @todo: this should not happen, check with 
+//        }
         if (hcpDTOs != null && hcpDTOs.size() > 1) {
             LOG.error("PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
             throw new PAException(

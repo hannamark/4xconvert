@@ -82,14 +82,16 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 2 : check if PO has crs correlation if not create one 
         ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
         List<ClinicalResearchStaffDTO> crsDTOs = null;
-        crsDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        crsDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-        try {
+//        crsDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+//        crsDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        crsDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        crsDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+//        try {
             crsDTOs = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().search(crsDTO);
-        } catch (NullifiedRoleException e) {
-            LOG.error("check with scoot", e);
-            // @todo: this should not happen, check with 
-        }
+//        } catch (NullifiedRoleException e) {
+//            LOG.error("check with scoot", e);
+//            // @todo: this should not happen, check with 
+//        }
         if (crsDTOs != null && crsDTOs.size() > 1) {
             throw new PAException("PO CRS Correlation should not have more than 1  ");
         }

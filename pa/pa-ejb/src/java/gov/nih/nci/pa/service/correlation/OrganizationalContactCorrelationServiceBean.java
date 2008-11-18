@@ -4,9 +4,9 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -84,14 +84,16 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 2 : check if PO has oc correlation if not create one 
         OrganizationalContactDTO ocDTO = new OrganizationalContactDTO();
         List<OrganizationalContactDTO> ocDTOs = null;
-        ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-        try {
+//        ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+//        ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+        ocDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        ocDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
+//        try {
             ocDTOs = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
-        } catch (NullifiedRoleException e) {
-            LOG.error("check with scoot", e);
-            // @todo: this should not happen, check with 
-        }
+//        } catch (NullifiedRoleException e) {
+//            LOG.error("check with scoot", e);
+//            // @todo: this should not happen, check with 
+//        }
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO oc Correlation should not have more than 1  ");
         }
