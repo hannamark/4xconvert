@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -42,6 +43,7 @@ public class StudyResourcingConverter {
         srDTO.setSuffixGrantYear(StConverter.convertToSt(studyResourcing.getSuffixGrantYear()));
         srDTO.setSuffixOther(StConverter.convertToSt(studyResourcing.getSuffixOther()));
         srDTO.setSerialNumber(IntConverter.convertToInt(studyResourcing.getSerialNumber()));
+        srDTO.setStudyProtocolIi(IiConverter.convertToIi(studyResourcing.getStudyProtocol().getId()));
         //@tdo: date range
         return srDTO;
     }
@@ -53,9 +55,12 @@ public class StudyResourcingConverter {
      */
     public static StudyResourcing convertFromDTOToDomain(StudyResourcingDTO studyResourcingDTO) {
         StudyResourcing studyResourcing = new StudyResourcing();
+        StudyProtocol spBo = new StudyProtocol();
+        spBo.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIi()));
         if (studyResourcingDTO.getIdentifier() != null) {
-            studyResourcing.setId(Long.valueOf(studyResourcingDTO.getIdentifier().getExtension()));
+            studyResourcing.setId(IiConverter.convertToLong(studyResourcingDTO.getIdentifier()));
         }
+        studyResourcing.setStudyProtocol(spBo);
         if (studyResourcingDTO.getOrganizationIdentifier() != null) {
             studyResourcing.setOrganizationIdentifier(studyResourcingDTO.getOrganizationIdentifier().getExtension());
         }
