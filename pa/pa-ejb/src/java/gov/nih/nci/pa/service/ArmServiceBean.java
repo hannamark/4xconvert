@@ -3,7 +3,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.iso.convert.ArmConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import javax.ejb.Stateless;
@@ -27,11 +26,6 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
             || (StConverter.convertToString(dto.getName()) == null)
             || (StConverter.convertToString(dto.getName()).trim().length() < 1)) {
             serviceError("The arm label (name) must be set.  ");
-        }
-        if ((dto.getTypeCode() == null) 
-            || (CdConverter.convertCdToString(dto.getTypeCode()) == null)
-            || (CdConverter.convertCdToString(dto.getTypeCode()).trim().length() < 1)) {
-            serviceError("The arm type code must be set.  ");
         }
     }
 
