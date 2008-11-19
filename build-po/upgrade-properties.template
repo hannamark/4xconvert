@@ -1,29 +1,89 @@
+#####################
+###	DEPLOY SETTINGS	###
+#####################
+# Hostname of the JBOSS instance (where application with be installed/deployed) to establish SSH connection
+# /Should not need to change this value/
+ssh.server.hostname=${jboss.server.hostname}
+# Username to establish SSH connection on the remote server (ssh.server.hostname)
+ssh.server.username=
+# SSH port on the remote server (ssh.server.hostname), e.g. ssh.port=22
+# /Should not need to change this value/
+ssh.port=22
+# The absolute path to the SSH identity file (private key file) that is used to authenticate on the remote server (ssh.server.hostname), e.g. >ssh -i <ssh.key.file> <ssh.server.username>@<ssh.server.hostname>
+ssh.key.file=/usr/local/AnthillPro/work/subversiondriver/common-retrieve-properties.trunk.retrieve-properties/trunk/common/ssh-keys/id_dsa_bda
+# Default remote dir for SHH connections on the remote server (ssh.server.hostname)
+ssh.dir.temp=deploy
+
+
 ##############################
 ###  APPLICATION SETTINGS  ###
 ##############################
+# The base path of where JBOSS resides, e.g. application.base.path=/usr/local
 application.base.path=
-authentication.type=
-application.url=
+# Default authentication mechanism type [ldap|database]
+# /Should not need to change this value/
+authentication.type=database
+
+###################################
+#  URL TO ACCESS THE APPLICATION  #
+###################################
+# URL to access the application, e.g. http://${jboss.server.hostname}:${jboss.server.port}/po-web
+# MAY NEED TO PROVIDE THE PUBLIC FRIENDLY NAME, e.g. https://trails.nci.nih.gov/po-web (hostname may be different)
+application.url=http://${jboss.server.hostname}:${jboss.server.port}/po-web
 
 ###########################
 ###  DATABASE SETTINGS  ###
 ###########################
-database.type=
+# Configurable installation/upgrade option to drop the schema during install / upgrade
+database.drop-schema=true
+# Type of database used by application, use database.type=postgresql
+database.type=postgresql
+# hostname or IP of the database server used by application, e.g.  
 database.server=
+# database port to connect, e.g. database.port=5432
 database.port=
+# application's predefined database name (provided by DBA team), e.g. database.name=po
+database.name=
+# application's predefined username & password  (provided by DBA team), e.g. database.user=pouser
+database.user=podev
+# application's predefined password for  (provided by DBA team), e.g. database.password=po123user
+database.password=
+# Java-based JDBC URL to connect to the application's database, e.g. jdbc:postgresql://${database.server}:${database.port}/${database.name}
+database.url=jdbc:postgresql://${database.server}:${database.port}/${database.name}
 
 ########################
 ###  JBOSS SETTINGS  ###
 ########################
+# The root directory for the JBoss installation, e.g. jboss.home=${application.base.path}/jboss-4.0.5.GA.
 jboss.home=
+# The hostname of the host OS (VM or domU) running JBoss (hosts and runs the application)
 jboss.server.hostname=
+# The JNDI Port for the server instance within JBoss containing the application, e.g. jboss.server.jndi.port=1099
 jboss.server.jndi.port=
+# The JBoss Server instance name, the name of the directory user JBOSS_HOME/server/<SERVERINSTANCE>/...
 jboss.server.name=
+# The HTTP Port for the server instance within JBoss containing the application, e.g. jboss.server.port=8080
 jboss.server.port=
+
+##############
+###  LDAP  ###
+##############
+#ldap.url=ldaps://ncids4a.nci.nih.gov:636
+#ldap.basedn=ou=nci,o=nih
+
+########################
+###  MAIL  SETTINGS  ###
+########################
+# The SMTP Mail gateway, requires anonymous access
+mail.smtp.server=mailfwd.nih.gov
 
 ###################################
 #  PRE-POST VALIDATION PROPERTIES #
 ###################################
-validation.pre.port.list=
-validation.post.http.list=
-validation.post.socket.list=
+# DO NOT MODIFY
+validation.pre.port.list=${jboss.server.jndi.port},${jboss.server.port}
+# DO NOT MODIFY
+validation.post.http.list=${jboss.server.port}
+# DO NOT MODIFY
+validation.post.socket.list=${jboss.server.jndi.port}
+
