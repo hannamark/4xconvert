@@ -37,12 +37,18 @@ import com.opensymphony.xwork2.Preparable;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.SignatureDeclareThrowsException" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.SignatureDeclareThrowsException", "PMD.TooManyMethods" })
 public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1884666890L;
 
-    private static final String ACT_CREATE = "create";
     private static final String ACT_EDIT = "edit";
+    private static final String ACT_LIST = "list";
+    private static final String ACT_LIST_ARM = "listArm";
+    private static final String ACT_EDIT_NEW_ARM = "editNewArm";
+    private static final String ACT_EDIT_ARM = "editArm";
+    private static final String ACT_LIST_GROUP = "listGroup";
+    private static final String ACT_EDIT_NEW_GROUP = "editNewGroup";
+    private static final String ACT_EDIT_GROUP = "editGroup";
     private static final int MAX_DESCRIPTION_LENGTH = 1000;
         
     private ArmServiceRemote armService;
@@ -84,7 +90,18 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     @Override
     public String execute() throws Exception {
         loadForm();
-        return SUCCESS;
+        setCurrentAction(ACT_LIST_ARM);
+        return ACT_LIST;
+    }
+    
+    /**
+     * @return Action result.
+     * @throws Exception exception.
+     */
+    public String observational() throws Exception {
+        loadForm();
+        setCurrentAction(ACT_LIST_GROUP);
+        return ACT_LIST;
     }
 
     /**
@@ -93,7 +110,17 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      */
     public String create() throws Exception {
         loadEditForm(null);
-        setCurrentAction(ACT_CREATE);
+        setCurrentAction(ACT_EDIT_NEW_ARM);
+        return ACT_EDIT;
+    }
+
+    /**
+     * @return result
+     * @throws Exception exception
+     */
+    public String createGroup() throws Exception {
+        loadEditForm(null);
+        setCurrentAction(ACT_EDIT_NEW_GROUP);
         return ACT_EDIT;
     }
 
@@ -103,7 +130,16 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      */
     public String edit() throws Exception {
         loadEditForm(getSelectedArmIdentifier());
-        setCurrentAction(ACT_EDIT);
+        setCurrentAction(ACT_EDIT_ARM);
+        return ACT_EDIT;
+    }
+    /**
+     * @return result
+     * @throws Exception exception
+     */
+    public String editGroup() throws Exception {
+        loadEditForm(getSelectedArmIdentifier());
+        setCurrentAction(ACT_EDIT_GROUP);
         return ACT_EDIT;
     }
 
@@ -115,19 +151,26 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         armService.delete(IiConverter.convertToIi(getSelectedArmIdentifier()));
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
-        return SUCCESS;
+        return ACT_LIST;
     }
     /**
      * @return result
      * @throws Exception exception
      */
     public String add() throws Exception {
+        businessRules();
+        if (hasActionErrors()) {
+            reloadInterventions();
+            return ACT_EDIT;
+        }
         ArmDTO newArm = new ArmDTO();
         newArm.setIdentifier(null);
         newArm.setDescriptionText(StConverter.convertToSt(getArmDescription()));
         newArm.setName(StConverter.convertToSt(getArmName()));
         newArm.setStudyProtocolIdentifier(spIdIi);
-        newArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
+        if (getCurrentAction().equals(ACT_EDIT_NEW_ARM)) {
+            newArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
+        }
         newArm.setInterventions(getAssociatedInterventions());
         try {
             armService.create(newArm);
@@ -138,19 +181,27 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
-        return SUCCESS;
+        setCurrentAction(getCurrentAction().equals(ACT_EDIT_NEW_ARM) ? ACT_LIST_ARM : ACT_LIST_GROUP); 
+        return ACT_LIST;
     }
     /**
      * @return result
      * @throws Exception exception
      */
     public String update() throws Exception {
+        businessRules();
+        if (hasActionErrors()) {
+            reloadInterventions();
+            return ACT_EDIT;
+        }
         ArmDTO updatedArm = new ArmDTO();
         updatedArm.setIdentifier(IiConverter.convertToIi(getSelectedArmIdentifier()));
         updatedArm.setDescriptionText(StConverter.convertToSt(getArmDescription()));
         updatedArm.setName(StConverter.convertToSt(getArmName()));
         updatedArm.setStudyProtocolIdentifier(spIdIi);
-        updatedArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
+        if (getCurrentAction().equals(ACT_EDIT_ARM)) {
+            updatedArm.setTypeCode(CdConverter.convertStringToCd(getArmType()));
+        }
         updatedArm.setInterventions(getAssociatedInterventions());
         try {
             armService.update(updatedArm);
@@ -161,7 +212,15 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
-        return SUCCESS;
+        setCurrentAction(getCurrentAction().equals(ACT_EDIT_ARM) ? ACT_LIST_ARM : ACT_LIST_GROUP); 
+        return ACT_LIST;
+    }
+    
+    private void businessRules() throws Exception {
+        if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
+           && (this.getArmType().length() == 0)) {
+            this.addActionError("Arm type must be set");
+        }
     }
 
     private void loadForm() throws Exception {

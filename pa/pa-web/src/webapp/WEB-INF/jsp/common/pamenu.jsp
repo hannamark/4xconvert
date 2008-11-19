@@ -55,6 +55,7 @@
                                 <li><a href="observationalStudyDesigndetailsQuery.action" >Design Details</a></li>
                                 <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
                                 <li><a href="eligibilityCriteriaquery.action" >Eligibility Criteria</a></li>
+                                <li><a href="trialArmsobservational.action" >Groups</a></li>
                             </ul>
     					</li>
                         </s:else>

@@ -16,7 +16,7 @@
 		<action name="login">
 			<result>/WEB-INF/jsp/login.jsp</result>
 		</action>	   
-	</package>
+    </package>
 	<package name="protected" namespace="/protected" extends="default">      
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
@@ -144,8 +144,8 @@
             <result>/WEB-INF/jsp/trialInterventions.jsp</result>
         </action>
         <action name="trialArms*" class="gov.nih.nci.pa.action.TrialArmsAction" method="{1}">
-            <result name="edit">/WEB-INF/jsp/trialArmsedit.jsp</result>  
-            <result>/WEB-INF/jsp/trialArms.jsp</result>
+            <result name="edit">/WEB-INF/jsp/trialArmsedit.jsp</result>              
+            <result name="list">/WEB-INF/jsp/trialArms.jsp</result>  
         </action>
 		<action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />

@@ -8,10 +8,7 @@
 <title><fmt:message
     key="interventions.main.title" /></title>
 <s:head />
-<script type="text/javascript"
-    src='<c:url value="/scripts/js/coppa.js"/>'></script>
-<script type="text/javascript"
-    src='<c:url value="/scripts/js/scriptaculous.js"/>'></script>
+<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 
 <script type="text/javascript">
@@ -45,15 +42,26 @@
     <div class="error_msg"><s:actionerror /></div>
 </s:if>
 <h2>
-    <s:if test="%{currentAction == 'edit'}"><fmt:message key="arms.edit.title" /></s:if>
-    <s:else><fmt:message key="arms.add.title" /></s:else>
+    <s:if test="%{currentAction == 'editArm'}">
+        <fmt:message key="arms.edit.title" /></s:if>
+    <s:elseif test="%{currentAction == 'editNewArm'}">
+        <fmt:message key="arms.add.title" /></s:elseif>
+    <s:elseif test="%{currentAction == 'editGroup'}">
+        <fmt:message key="arms.obs.edit.title" /></s:elseif>
+    <s:elseif test="%{currentAction == 'editNewGroup'}">
+        <fmt:message key="arms.obs.add.title" /></s:elseif>
 </h2>
 
 <table class="form">
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <td colspan="2">
-        <h3>Arm</h3>
+            <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
+                <h3>Arm</h3>
+            </s:if>
+            <s:elseif test="%{(currentAction == 'editGroup')||(currentAction == 'editNewGroup')}">
+                <h3>Group</h3>
+            </s:elseif>
         </td>
     </tr>
     <tr>
@@ -69,14 +77,16 @@
                         <s:textfield name="armName"maxlength="62" size="62" cssStyle="width:280px;float:left"/> 
                     </td>
                 </tr>
-                <s:set name="armTypeValues" value="@gov.nih.nci.pa.enums.ArmTypeCode@getDisplayNames()" />
-                <tr>
-                    <td class="label"><s:label for="armType">Type:</s:label><span class="required">*</span></td>
-                    <td class="value">
-                    <s:select onchange="statusChange()" headerKey=""
+                <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
+                    <s:set name="armTypeValues" value="@gov.nih.nci.pa.enums.ArmTypeCode@getDisplayNames()" />
+                    <tr>
+                        <td class="label"><s:label for="armType">Type:</s:label><span class="required">*</span></td>
+                        <td class="value">
+                        <s:select onchange="statusChange()" headerKey=""
                             headerValue="--Select--" name="armType" list="#armTypeValues" />
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                </s:if>
                 <tr>
                     <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
                     <td class="value">
@@ -103,15 +113,18 @@
         <td colspan="2">
         <div class="actionsrow"><del class="btnwrapper">
         <ul class="btnrow">
-            <li><s:if test="%{currentAction == 'edit'}">
+            <li>
+            <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editGroup')}">
                 <s:a href="#" cssClass="btn" onclick="armUpdate();">
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
-            </s:if> <s:else>
+            </s:if> 
+            <s:elseif test="%{(currentAction == 'editNewArm')||(currentAction == 'editNewGroup')}">
                 <s:a href="#" cssClass="btn" onclick="armAdd();">
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
-            </s:else></li>
+            </s:elseif>
+            </li>
         </ul>
         </del></div>
         </td>
@@ -120,7 +133,7 @@
 
 <div class="actionsrow"><del class="btnwrapper">
 <ul class="btnrow">
-        <li><a href="#" class="btn"
+        <li><a href="eligibilityCriteriaquery.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>
         <li><a href="trialInterventions.action" class="btn"

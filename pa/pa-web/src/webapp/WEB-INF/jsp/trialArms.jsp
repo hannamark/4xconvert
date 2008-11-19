@@ -7,16 +7,18 @@
 <head>
 <title><fmt:message key="arms.main.title" /></title>
 <s:head />
-<script type="text/javascript"
-    src='<c:url value="/scripts/js/coppa.js"/>'></script>
-<script type="text/javascript"
-    src='<c:url value="/scripts/js/scriptaculous.js"/>'></script>
+<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-function handleEdit(rowId){
+function handleEditArm(rowId){
     document.armForm.selectedArmIdentifier.value = rowId;
     document.armForm.action="trialArmsedit.action";
+    document.armForm.submit(); 
+}
+function handleEditGroup(rowId){
+    document.armForm.selectedArmIdentifier.value = rowId;
+    document.armForm.action="trialArmseditGroup.action";
     document.armForm.submit(); 
 }
 function handleDelete(rowId){
@@ -27,8 +29,12 @@ function handleDelete(rowId){
         document.armForm.submit();
     }
 }
-function handleCreate(){
+function handleCreateArm(){
     document.armForm.action="trialArmscreate.action";
+    document.armForm.submit(); 
+}
+function handleCreateGroup(){
+    document.armForm.action="trialArmscreateGroup.action";
     document.armForm.submit(); 
 }
 </SCRIPT>
@@ -41,8 +47,12 @@ function handleCreate(){
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if> <s:form name="armForm"><s:hidden name="selectedArmIdentifier"/> 
-    <h2><fmt:message
-        key="arms.details.title" /></h2>
+    <h2>
+    <s:if test="%{currentAction == 'listArm'}">
+        <fmt:message key="arms.details.title" /></s:if>
+    <s:elseif test="%{currentAction == 'listGroup'}">
+        <fmt:message key="arms.obs.details.title" /></s:elseif>
+    </h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
@@ -51,18 +61,25 @@ function handleCreate(){
                 <display:column property="name" sortable="true"
                     titleKey="arms.name" 
                     headerClass="sortable"  />
-                <display:column property="type" sortable="true"
-                    titleKey="arms.type"
-                    headerClass="sortable"  />
+                <s:if test="%{currentAction == 'listArm'}"><display:column property="type" sortable="true"
+                    titleKey="arms.type" headerClass="sortable"/></s:if>
                 <display:column property="description" sortable="true"
                     titleKey="arms.description"
                     headerClass="sortable" />
                 <display:column property="interventions" titleKey="arms.interventions"/>
                 <display:column titleKey="arms.edit" class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                    <s:if test="%{currentAction == 'listArm'}">
+                    <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
+                    </s:if>
+                    <s:elseif test="%{currentAction == 'listGroup'}">
+                    <s:a href="#" onclick="handleEditGroup(%{#attr.row.identifier})">
+                        <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
+                            alt="Edit" width="16" height="16" />
+                    </s:a>
+                    </s:elseif>
                 </display:column>
                 <display:column titleKey="arms.delete" class="action">
                     <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
@@ -75,9 +92,14 @@ function handleCreate(){
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-        <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
-            class="btn_img"><span class="add">Add </span></span></a></li>
-        <li><a href="#" class="btn"
+        <s:if test="%{currentAction == 'listArm'}">
+            <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span
+                class="btn_img"><span class="add">Add </span></span></a></li>
+        </s:if><s:elseif test="%{currentAction == 'listGroup'}">
+            <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span
+                class="btn_img"><span class="add">Add </span></span></a></li>
+        </s:elseif>
+        <li><a href="eligibilityCriteriaquery.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>
         <li><a href="trialInterventions.action" class="btn"
