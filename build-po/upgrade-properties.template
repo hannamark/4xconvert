@@ -1,20 +1,3 @@
-#####################
-###	DEPLOY SETTINGS	###
-#####################
-# Hostname of the JBOSS instance (where application with be installed/deployed) to establish SSH connection
-# /Should not need to change this value/
-ssh.server.hostname=${jboss.server.hostname}
-# Username to establish SSH connection on the remote server (ssh.server.hostname)
-ssh.server.username=
-# SSH port on the remote server (ssh.server.hostname), e.g. ssh.port=22
-# /Should not need to change this value/
-ssh.port=22
-# The absolute path to the SSH identity file (private key file) that is used to authenticate on the remote server (ssh.server.hostname), e.g. >ssh -i <ssh.key.file> <ssh.server.username>@<ssh.server.hostname>
-ssh.key.file=/usr/local/AnthillPro/work/subversiondriver/common-retrieve-properties.trunk.retrieve-properties/trunk/common/ssh-keys/id_dsa_bda
-# Default remote dir for SHH connections on the remote server (ssh.server.hostname)
-ssh.dir.temp=deploy
-
-
 ##############################
 ###  APPLICATION SETTINGS  ###
 ##############################
