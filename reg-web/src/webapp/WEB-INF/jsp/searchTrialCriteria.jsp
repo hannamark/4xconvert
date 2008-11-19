@@ -59,14 +59,14 @@ function handleMyAction(){
 				</td>
 					<s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
 				<td>
-					<s:select headerKey="" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
+					<s:select headerKey="" headerValue="-Select Trial Phase-" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
 				</td>
 				<td scope="row" class="label">
 					<label for="type"> <fmt:message key="search.trial.type"/></label>
 				</td>
 					<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
 				<td>
-					<s:select headerKey="" headerValue="All" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
+					<s:select headerKey="" headerValue="-Select Trial Type-" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
 				</td>
 			</tr>
 			<tr>
@@ -77,7 +77,7 @@ function handleMyAction(){
 				<td>
 					<s:select 
 						headerKey="" 
-						headerValue="-Select-" 
+						headerValue="-Select Identifier Type-" 
 						name="criteria.identifierType"  
 						list="#identifierTypeValues" 
 						value="criteria.identifierType" 
@@ -99,14 +99,14 @@ function handleMyAction(){
 				</td>
 					<s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.OrganizationTypeCode@getDisplayNames()" />
 				<td>
-					<s:select headerKey="" headerValue="-Select-" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:206px"/> 
+					<s:select headerKey="" headerValue="-Select Organization Type-" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:206px"/> 
 				</td>
 				<td scope="row" class="label">
 					<label for="organization"> <fmt:message key="search.trial.organization"/></label>
 				</td>
 				<s:set name="protocolOrgs" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol()" />
 				<td>
-				<s:select name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="All" cssStyle="width:206px"/>
+				<s:select name="criteria.leadOrganizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="-Select Organization-" cssStyle="width:206px"/>
 					
 				</select> 
 				</td>
