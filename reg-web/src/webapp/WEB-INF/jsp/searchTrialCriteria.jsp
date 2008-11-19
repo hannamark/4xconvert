@@ -14,9 +14,9 @@ function resetValues(){
 	document.forms.queryProtocol.queryProtocol_criteria_officialTitle.value="";
     document.forms.queryProtocol.queryProtocol_criteria_phaseCode.value="";
     document.forms.queryProtocol.queryProtocol_criteria_primaryPurposeCode.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_identifierType.value="NCI";
+    document.forms.queryProtocol.queryProtocol_criteria_identifierType.value="";
     document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationTrialIdentifier.value="";
-    document.forms.queryProtocol.queryProtocol_criteria_organizationType.value="Lead";
+    document.forms.queryProtocol.queryProtocol_criteria_organizationType.value="";
     document.forms.queryProtocol.queryProtocol_criteria_leadOrganizationId.value="";
 }
 
@@ -77,7 +77,7 @@ function handleMyAction(){
 				<td>
 					<s:select 
 						headerKey="" 
-						headerValue="NCI" 
+						headerValue="-Select-" 
 						name="criteria.identifierType"  
 						list="#identifierTypeValues" 
 						value="criteria.identifierType" 
@@ -99,7 +99,7 @@ function handleMyAction(){
 				</td>
 					<s:set name="organizationTypeValues" value="@gov.nih.nci.pa.enums.OrganizationTypeCode@getDisplayNames()" />
 				<td>
-					<s:select headerKey="" headerValue="Lead" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:206px"/> 
+					<s:select headerKey="" headerValue="-Select-" name="criteria.organizationType"  list="#organizationTypeValues" value="criteria.organizationType" cssStyle="width:206px"/> 
 				</td>
 				<td scope="row" class="label">
 					<label for="organization"> <fmt:message key="search.trial.organization"/></label>
@@ -116,8 +116,8 @@ function handleMyAction(){
             <del class="btnwrapper">
                <ul class="btnrow">         
                 <li>           
-                <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="Search">My Trials</span></span></s:a>       
-                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="Search">Search Trials</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="search">My Trials</span></span></s:a>       
+                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search Trials</span></span></s:a>
                 </li>
                </ul>   
             </del>
