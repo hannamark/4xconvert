@@ -26,6 +26,7 @@ public class StudyRegulatoryAuthorityConverter {
         StudyRegulatoryAuthorityDTO sriDTO = new StudyRegulatoryAuthorityDTO();
         sriDTO.setProtocolId(IiConverter.convertToIi(sra.getStudyProtocol().getId()));
         sriDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(sra.getRegulatoryAuthority().getId()));
+        sriDTO.setIdentifier(IiConverter.convertToIi(sra.getId()));
         return sriDTO;
     }
     
