@@ -199,7 +199,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
      <!-- The bind address -->
      <attribute name="BindAddress">${jboss.bind.address}</attribute>
      <!-- The bind port -->
-     <attribute name="ServerBindPort">${jboss.mq:service.POInvocationLayer.type.UIL2.ServerBindPort}</attribute>
+     <attribute name="ServerBindPort">${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}</attribute>
      <!-- The ping period in millis -->
      <attribute name="PingPeriod">60000</attribute>
      <!-- Whether tcp/ip does not wait for buffer fills -->
