@@ -18,14 +18,14 @@
                 id="copy_curateCrForm_role_typeCode" 
                 onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.typeCode.description" required="true" cssClass="required" />
+                <s:textfield label="%{getText('identifiedOrganization.typeCode')}" name="cr.typeCode.description" required="true" cssClass="required" />
             </po:copyButton>
 
             <po:copyButton
              id="copy_curateCrForm_role_status"
              onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.status" required="true" cssClass="required"/>
+                <s:textfield label="%{getText('identifiedOrganization.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
             
             <script type="text/javascript">

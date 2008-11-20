@@ -10,20 +10,20 @@
                 id="copy_curateCrForm_role_typeCode" 
                 onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');" 
                 bodyStyle="float:left;" buttonStyle="float:right;">
-                <s:textfield key="cr.typeCode.description" required="true" cssClass="required" />
+                <s:textfield label="%{getText('researchOrganization.typeCode')}" name="cr.typeCode.description" required="true" cssClass="required" />
             </po:copyButton>
                
             <po:copyButton
              id="copy_curateCrForm_role_fundingMechanism"
              onclick="selectValueInSelectField('${cr.fundingMechanism}', 'curateRoleForm_role_fundingMechanism');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.fundingMechanism" required="true" cssClass="required" />
+                <s:textfield label="%{getText('researchOrganization.fundingMechanism')}" name="cr.fundingMechanism" required="true" cssClass="required" />
             </po:copyButton>
             <po:copyButton
              id="copy_curateCrForm_role_status"
              onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield key="cr.status" required="true" cssClass="required"/>
+                <s:textfield label="%{getText('researchOrganization.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
             <div class="clear"></div>
             </div>
