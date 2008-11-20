@@ -49,7 +49,7 @@ public class StudyParticipationContactConverterTest {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
     assertEquals(bo.getPrimaryIndicator(), dto.getPrimaryIndicator().getValue());
     assertEquals(bo.getRoleCode().getCode(), dto.getRoleCode().getCode());
-    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     assertEquals(bo.getStudyParticipation().getId(), IiConverter.convertToLong(dto.getStudyParticipationIi()));
   }
 
@@ -60,7 +60,7 @@ public class StudyParticipationContactConverterTest {
     StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
     dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-    dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+    dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setStudyParticipationIi(IiConverter.convertToIi(spa.getId()));
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));

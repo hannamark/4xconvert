@@ -160,7 +160,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
         sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        sp.setStudyProtocolIi(spIi);
+        sp.setStudyProtocolIdentifier(spIi);
         sp = sPartService.create(sp);
         tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
@@ -650,7 +650,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             spContactDTOSave.setRoleCode(CdConverter.convertStringToCd(roleCode));
         }
         spContactDTOSave.setStatusCode(CdConverter.convertStringToCd("Active"));
-        spContactDTOSave.setStudyProtocolIi(spIi);
+        spContactDTOSave.setStudyProtocolIdentifier(spIi);
         spContactDTOSave.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProvider));
         sPartContactService.create(spContactDTOSave);
         ServletActionContext.getRequest().getSession().removeAttribute("emailEntered");

@@ -131,7 +131,7 @@ public class CollaboratorsAction extends ActionSupport
         sp.setResearchOrganizationIi(IiConverter.convertToIi(paOrgId));
         sp.setIdentifier(null);
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
-        sp.setStudyProtocolIi(spIi);
+        sp.setStudyProtocolIdentifier(spIi);
         sp = sPartService.create(sp);
 
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);

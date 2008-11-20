@@ -22,8 +22,6 @@ import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -79,7 +77,7 @@ public class StudyParticipationContactServiceTest {
         spc.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         spc.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2005")));
         spc.setStudyParticipationIi(participationIi);
-        spc.setStudyProtocolIi(protocolIi);
+        spc.setStudyProtocolIdentifier(protocolIi);
         spc.setHealthCareProviderIi(healthCareProviderIi);
         StudyParticipationContactDTO result = remoteEjb.create(spc);
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));

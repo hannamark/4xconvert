@@ -35,14 +35,14 @@ public class StudyParticipationConverterTest {
     bo.setLocalStudyProtocolIdentifier("Ecog1");
     bo.setStudyProtocol(sp);
     StudyParticipationConverter sg = new StudyParticipationConverter();
-    StudyParticipationDTO dto = sg.convertFromDomainToDTO(bo);
+    StudyParticipationDTO dto = sg.convertFromDomainToDto(bo);
     assertStudyParticipationConverter(bo, dto);
   }
 
   private void assertStudyParticipationConverter(StudyParticipation bo,
       StudyParticipationDTO dto) {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIi()));
+    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     assertEquals(bo.getLocalStudyProtocolIdentifier(),  dto.getLocalStudyProtocolIdentifier().getValue());
     assertEquals(bo.getFunctionalCode().getCode(),  dto.getFunctionalCode().getCode());
   }
@@ -54,7 +54,7 @@ public class StudyParticipationConverterTest {
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
     dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Ecog1"));
     dto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
-    dto.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
+    dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
     StudyParticipationConverter sg = new StudyParticipationConverter();
     StudyParticipation bo = sg.convertFromDtoToDomain(dto);

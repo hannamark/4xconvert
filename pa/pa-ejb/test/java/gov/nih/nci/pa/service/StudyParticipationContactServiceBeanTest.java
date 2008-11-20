@@ -47,14 +47,14 @@ public class StudyParticipationContactServiceBeanTest {
   public void create() throws Exception {
     StudyParticipationContactDTO dto = new StudyParticipationContactDTO();
     dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-    dto.setStudyProtocolIi(pid);
+    dto.setStudyProtocolIdentifier(pid);
     dto.setStudyParticipationIi(studyParticipationId);
     dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
     dto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
       StudyParticipationContactDTO dto2 = null;
       dto2 = new StudyParticipationContactDTO();
       dto2 = remoteEjb.create(dto);
-      assertEquals(dto.getStudyProtocolIi()
+      assertEquals(dto.getStudyProtocolIdentifier()
               , pid);
   }
 

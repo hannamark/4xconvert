@@ -61,7 +61,7 @@ public class StudyParticipationContactConverter {
             dto.setStudyParticipationIi(IiConverter.convertToIi(bo.getStudyParticipation().getId()));
         }
         if (bo.getStudyProtocol() != null) {
-            dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+            dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         }
         if (bo.getHealthCareProvider() != null) {
             dto.setHealthCareProviderIi(IiConverter.convertToIi(bo.getHealthCareProvider().getId()));
@@ -128,7 +128,7 @@ public class StudyParticipationContactConverter {
         }
         
         StudyProtocol protocolBo = new StudyProtocol();
-        protocolBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        protocolBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         bo.setStudyProtocol(protocolBo);
         
         StudyParticipation participationBo = new StudyParticipation();

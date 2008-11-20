@@ -31,6 +31,7 @@ import org.junit.Test;
  */
 public class StudyParticipationServiceTest {
     private StudyParticipationServiceRemote remoteEjb = new StudyParticipationServiceBean();
+    private StudyParticipationConverter studyParticipationConverter = new StudyParticipationConverter();
     Long studyId;
     Ii studyIi;
     Long participationId;
@@ -52,7 +53,7 @@ public class StudyParticipationServiceTest {
     @Test
     public void get() throws Exception {
         StudyParticipationDTO spDto = remoteEjb.get(participationIi);
-        StudyParticipation spBo = StudyParticipationConverter.convertFromDtoToDomain(spDto);
+        StudyParticipation spBo = studyParticipationConverter.convertFromDtoToDomain(spDto);
         assertEquals(studyId, spBo.getStudyProtocol().getId());
         assertEquals(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getName()
                     , spBo.getFunctionalCode().getName());
@@ -68,7 +69,7 @@ public class StudyParticipationServiceTest {
         spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP ID 02"));
         spDto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         spDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/15/2008")));
-        spDto.setStudyProtocolIi(participationIi);
+        spDto.setStudyProtocolIdentifier(participationIi);
         StudyParticipationDTO result = remoteEjb.create(spDto);
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())

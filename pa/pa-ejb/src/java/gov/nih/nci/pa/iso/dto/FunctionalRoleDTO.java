@@ -4,7 +4,6 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -15,12 +14,11 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-public class FunctionalRoleDTO extends BaseDTO {
+public class FunctionalRoleDTO extends StudyDTO {
     private static final long serialVersionUID = 123489324790L;
 
     Cd statusCode;
     Ts statusDateRangeLow;
-    Ii studyProtocolIi;
     
     /**
      * @return the statusCode
@@ -45,17 +43,5 @@ public class FunctionalRoleDTO extends BaseDTO {
      */
     public void setStatusDateRangeLow(Ts statusDateRangeLow) {
         this.statusDateRangeLow = statusDateRangeLow;
-    }
-    /**
-     * @return the studyProtocolIi
-     */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
-    /**
-     * @param studyProtocolIi the studyProtocolIi to set
-     */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
     }
 }
