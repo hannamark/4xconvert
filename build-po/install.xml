@@ -445,7 +445,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/po-ear"/>
 		<unzip src="${temp.dir}/po-ear/po-web.war" dest="${temp.dir}/po-web"/>
 		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-		<property name="file.list" value="po-ear/po-ds.xml,po-ear/po-log4j.xml,po-ear/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties"/>
+		<property name="file.list" value="po-ear/po-ds.xml,po-ear/po-log4j.xml,po-ear/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,po-ear/jboss-service.xml"/>
 
 		<for list="${file.list}" param="file.relative.name">
 			<sequential>
