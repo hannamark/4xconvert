@@ -63,7 +63,7 @@ public class PARelationServiceBean {
                 .convertStringToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode()));
         studyPartDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localSpIdentifier));
         studyPartDTO.setHealthcareFacilityIi(IiConverter.convertToIi(hcfId));
-        studyPartDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
         // System.out.println(" study part id = "+
@@ -193,7 +193,7 @@ public class PARelationServiceBean {
         studyPartDTO.setFunctionalCode(CdConverter.convertStringToCd(StudyParticipationFunctionalCode.FUNDING_SOURCE
                 .getCode()));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
-        studyPartDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
         // now create study participation contact as responsible party
@@ -213,7 +213,7 @@ public class PARelationServiceBean {
         spcDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));
         spcDTO.setRoleCode(CdConverter.convertToCd(StudyParticipationContactRoleCode.STUDY_RESPONSIBLE_PARTY_CONTACT));
         spcDTO.setStudyParticipationIi(studyPartDTO.getIdentifier());
-        spcDTO.setStudyProtocolIi(spDTO.getIdentifier());
+        spcDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         spcDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
         PoPaServiceBeanLookup.getStudyParticipationContactService().create(spcDTO);
     }
