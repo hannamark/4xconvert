@@ -43,6 +43,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd startDateTypeCode;
     private St keywordText;
     private Bl acceptHealthyVolunteersIndicator;
+    private St studyProtocolType;
     
     /**
      * 
@@ -421,5 +422,23 @@ public class StudyProtocolDTO extends BaseDTO {
             Bl acceptHealthyVolunteersIndicator) {
         this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
     }
+
+    /**
+     * 
+     * @return studyProtocolType
+     */
+    public St getStudyProtocolType() {
+        return studyProtocolType;
+    }
+
+    /**
+     * 
+     * @param studyProtocolType studyProtocolType
+     */
+    public void setStudyProtocolType(St studyProtocolType) {
+        this.studyProtocolType = studyProtocolType;
+    }
+    
+    
 }
 

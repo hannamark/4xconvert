@@ -2,7 +2,6 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthorityWebDTO;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -40,11 +39,12 @@ public class RegulatoryInformationAction extends ActionSupport {
      * Method to save the regulatory information to the database.
      * 
      * @return String success or failure
-     * @throws Exception on error
      */
-    public String update() throws Exception {
-        String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-                Long.valueOf(selectedAuthOrg), "RegulatoryAuthority");
+    public String update()  {
+        String orgName;
+        try {
+            orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                    Long.valueOf(selectedAuthOrg), "RegulatoryAuthority");
         String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(getLst()),
                 "Country");
         webDTO.setTrialOversgtAuthOrgName(orgName);
@@ -81,8 +81,12 @@ public class RegulatoryInformationAction extends ActionSupport {
             PaRegistry.getStudyRegulatoryAuthorityService().updateStudyRegulatoryAuthority(sraFromDatabaseDTO);
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+       } catch (PAException e) {
+           addActionError(e.getMessage());
+           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+           return VIEW_PAGE;
+        }
         
-       // webDTO.setFdaRegulatedInterventionIndicator( )
         return VIEW_PAGE;
     }
 
@@ -101,22 +105,22 @@ public class RegulatoryInformationAction extends ActionSupport {
             if (authorityDTO != null) { // load values from database
                 StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
                         .getStudyRegulatoryAuthority(studyProtocolIi);
-                InterventionalStudyProtocolDTO ispFromDatabaseDTO = PaRegistry.getStudyProtocolService()
-                        .getInterventionalStudyProtocol(studyProtocolIi);
-                if (ispFromDatabaseDTO.getSection801Indicator().getValue() != null) {
-                    webDTO.setSection801Indicator(BlConverter.convertToString(ispFromDatabaseDTO
+                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
+                        .getStudyProtocol(studyProtocolIi);
+                if (spDTO.getSection801Indicator().getValue() != null) {
+                    webDTO.setSection801Indicator(BlConverter.convertToString(spDTO
                             .getSection801Indicator()));
                 }
-                if (ispFromDatabaseDTO.getFdaRegulatedIndicator().getValue() != null) {
-                    webDTO.setFdaRegulatedInterventionIndicator(BlConverter.convertToString(ispFromDatabaseDTO
+                if (spDTO.getFdaRegulatedIndicator().getValue() != null) {
+                    webDTO.setFdaRegulatedInterventionIndicator(BlConverter.convertToString(spDTO
                             .getFdaRegulatedIndicator()));
                 }
-                if (ispFromDatabaseDTO.getDelayedpostingIndicator().getValue() != null) {
-                    webDTO.setDelayedPostingIndicator(BlConverter.convertToString(ispFromDatabaseDTO
+                if (spDTO.getDelayedpostingIndicator().getValue() != null) {
+                    webDTO.setDelayedPostingIndicator(BlConverter.convertToString(spDTO
                             .getDelayedpostingIndicator()));
                 }
-                if (ispFromDatabaseDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
-                    webDTO.setDataMonitoringIndicator((BlConverter.convertToString(ispFromDatabaseDTO
+                if (spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
+                    webDTO.setDataMonitoringIndicator((BlConverter.convertToString(spDTO
                             .getDataMonitoringCommitteeAppointedIndicator())));
                 }                 
                 Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityId().getExtension());
@@ -125,7 +129,9 @@ public class RegulatoryInformationAction extends ActionSupport {
             }
             ispDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         } catch (PAException e) {
-            return SUCCESS;
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return VIEW_PAGE;
         }
         return SUCCESS;
     }

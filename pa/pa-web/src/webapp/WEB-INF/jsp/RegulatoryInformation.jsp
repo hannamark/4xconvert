@@ -57,6 +57,8 @@
 <h1><fmt:message key="regulatory.title" /></h1>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
+   <pa:sucessMessage/>
+   <pa:failureMessage/>
 
 <s:form action="regulatoryInfoupdate" id="saveRegAuthority" theme="simple">
 <s:actionerror/>

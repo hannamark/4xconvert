@@ -35,6 +35,7 @@ public class Organization extends AbstractEntity {
     private String city;
     private String countryName;
     private String postalCode;
+    private String state;
     private StatusCode statusCode;
     private List<HealthCareFacility> healthCareFacilities = new ArrayList<HealthCareFacility>();
     private List<ResearchOrganization> researchOrganizations = new ArrayList<ResearchOrganization>();
@@ -115,6 +116,22 @@ public class Organization extends AbstractEntity {
      */
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    /**
+     * 
+     * @return state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * 
+     * @param state state 
+     */
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**

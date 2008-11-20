@@ -1,6 +1,8 @@
 package gov.nih.nci.pa.iso.convert;
 
 
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -90,6 +92,14 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setKeywordText(StConverter.convertToSt(studyProtocol.getKeywordText()));
         studyProtocolDTO.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(
                 studyProtocol.getAcceptHealthyVolunteersIndicator()));
+        if (studyProtocol instanceof ObservationalStudyProtocol) {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
+        } else if (studyProtocol instanceof InterventionalStudyProtocol) {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
+        } else {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyProtocol.getClass().getName()));
+        }
+        
         return studyProtocolDTO;
     }
 

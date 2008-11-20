@@ -1,12 +1,16 @@
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -166,6 +170,49 @@ public class PoPaServiceBeanLookup  {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                                 + "/pa/StudyOutcomeMeasureServiceBean/remote";
         return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+
+    /**
+     * @return ProtocolQueryServiceRemote
+     * @throws PAException on error
+     */
+    public static ProtocolQueryServiceLocal
+        getProtocolQueryService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/ProtocolQueryServiceBean/local";
+        return (ProtocolQueryServiceLocal) JNDIUtil.lookup(serverInfo);
+    } 
+    /**
+     * @return ArmServiceRemote
+     * @throws PAException on error
+     */
+    public static ArmServiceRemote
+        getArmService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/ArmServiceBean/remote";
+        return (ArmServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+    
+    /**
+     * @return PlannedActivityServiceRemote
+     * @throws PAException on error
+     */
+    public static PlannedActivityServiceRemote
+        getPlannedActivityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/PlannedActivityServiceBean/remote";
+        return (PlannedActivityServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+    
+    /**
+     * @return StudySiteAccrualStatusServiceRemote
+     * @throws PAException on error
+     */
+    public static StudySiteAccrualStatusServiceRemote
+        getStudySiteAccrualStatusService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/StudySiteAccrualStatusServiceBean/remote";
+        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
 
 }

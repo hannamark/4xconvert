@@ -4,6 +4,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -82,6 +83,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements
             if (pId == null) {
                 return DISPLAY_XML;
             }
+            
+            PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                Long.valueOf(pId));
+            
             CTGovXmlGeneratorServiceBean ct = new CTGovXmlGeneratorServiceBean();
             String xmlDate = ct.generateCTGovXml(IiConverter
                     .convertToIi(studyProtocolId));
