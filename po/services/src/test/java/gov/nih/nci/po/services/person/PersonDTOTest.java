@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.AdxpAdl;
@@ -25,8 +24,6 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.RaceCode;
-import gov.nih.nci.po.data.bo.SexCode;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.util.MockCountryServiceLocator;
@@ -34,7 +31,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.services.PoIsoConstraintException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
@@ -42,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.After;
 import org.junit.Before;
@@ -161,212 +156,6 @@ public class PersonDTOTest {
         assertEquals("f", p.getSuffix());
     }
 
-    @Test
-    public void covertRaceCode1() {
-        DSet<Cd> raceCode = new DSet<Cd>();
-        raceCode.setItem(new HashSet<Cd>());
-        Cd race1 = new Cd();
-        race1.setCode("01");
-        raceCode.getItem().add(race1);
-        dto.setRaceCode(raceCode);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(RaceCode.WH, p.getRaces().iterator().next());
-        assertEquals(1, p.getRaces().size());
-    }
-
-    @Test
-    public void covertRaceCode2() {
-        DSet<Cd> raceCode = new DSet<Cd>();
-        raceCode.setItem(new HashSet<Cd>());
-        Cd race1 = new Cd();
-        race1.setCode("01");
-        raceCode.getItem().add(race1);
-        Cd race2 = new Cd();
-        race2.setCode("03");
-        raceCode.getItem().add(race2);
-        dto.setRaceCode(raceCode);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-
-        assertEquals(2, p.getRaces().size());
-        assertTrue(p.getRaces().contains(RaceCode.WH));
-        assertTrue(p.getRaces().contains(RaceCode.WH));
-    }
-
-    @Test
-    public void covertRaceCode3() {
-        DSet<Cd> raceCode = new DSet<Cd>();
-        raceCode.setItem(new HashSet<Cd>());
-        Cd race1 = new Cd();
-        race1.setCode("01");
-        raceCode.getItem().add(race1);
-        Cd race2 = new Cd();
-        race2.setCode("03");
-        raceCode.getItem().add(race2);
-        Cd race3 = new Cd();
-        race3.setNullFlavor(NullFlavor.ASKU);
-        raceCode.getItem().add(race3);
-        dto.setRaceCode(raceCode);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(2, p.getRaces().size());
-        assertTrue(p.getRaces().contains(RaceCode.WH));
-        assertTrue(p.getRaces().contains(RaceCode.B_AA));
-    }
-
-    @Test
-    public void covertRaceCode4() {
-        DSet<Cd> raceCode = new DSet<Cd>();
-        raceCode.setItem(new HashSet<Cd>());
-        Cd race3 = new Cd();
-        race3.setNullFlavor(NullFlavor.ASKU);
-        raceCode.getItem().add(race3);
-        dto.setRaceCode(raceCode);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(0, p.getRaces().size());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void covertRaceCodeCdCodeEmpty() {
-        dto.setRaceCode(new DSet<Cd>());
-        dto.getRaceCode().setItem(new HashSet<Cd>());
-        Cd race = new Cd();
-        race.setCode("");
-        dto.getRaceCode().getItem().add(race);
-        try {
-            PoXsnapshotHelper.createModel(dto);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            assertEquals("code must be set", e.getMessage());
-        }
-    }
-    @Test
-    @SuppressWarnings("unchecked")
-    public void covertRaceCodeCdCodeNull() {
-        dto.setRaceCode(new DSet<Cd>());
-        dto.getRaceCode().setItem(new HashSet<Cd>());
-        Cd race = new Cd();
-        race.setCode(null);
-        dto.getRaceCode().getItem().add(race);
-        try {
-            PoXsnapshotHelper.createModel(dto);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            assertEquals("code must be set", e.getMessage());
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void covertRaceCodeCdHasNullFlavor() {
-        dto.setRaceCode(new DSet<Cd>());
-        dto.getRaceCode().setItem(new HashSet<Cd>());
-        Cd race = new Cd();
-        race.setNullFlavor(NullFlavor.ASKU);
-        dto.getRaceCode().getItem().add(race);
-        Person p;
-        p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertTrue(p.getRaces().isEmpty());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void covertRaceCodeUnsupportedCode() {
-        dto.setRaceCode(new DSet<Cd>());
-        dto.getRaceCode().setItem(new HashSet<Cd>());
-        Cd race = new Cd();
-        race.setCode("Z");
-        dto.getRaceCode().getItem().add(race);
-        try {
-            PoXsnapshotHelper.createModel(dto);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            assertEquals("unsupported code " + race.getCode(), e.getMessage());
-        }
-    }
-
-    @Test
-    public void covertSexCode1() {
-        Cd sex = new Cd();
-        sex.setCode("F");
-        dto.setSexCode(sex);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(SexCode.F, p.getSex());
-    }
-
-    @Test
-    public void covertSexCode2() {
-        Cd sex = new Cd();
-        sex.setCode("M");
-        dto.setSexCode(sex);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(SexCode.M, p.getSex());
-    }
-
-    @Test
-    public void covertSexCode3() {
-        Cd sex = new Cd();
-        sex.setCode("U");
-        dto.setSexCode(sex);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(SexCode.U, p.getSex());
-    }
-
-    @Test
-    public void covertSexCode4() {
-        Cd sex = new Cd();
-        sex.setCode("un");
-        dto.setSexCode(sex);
-        Person p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertEquals(SexCode.UN, p.getSex());
-    }
-
-    @Test
-    public void covertSexCodeCdCodeEmpty() {
-        Cd sex = new Cd();
-        sex.setCode("");
-        dto.setSexCode(sex);
-        try {
-            PoXsnapshotHelper.createModel(dto);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            assertEquals("code must be set", e.getMessage());
-        }
-    }
-    @Test
-    public void covertSexCodeCdCodeNull() {
-        Cd sex = new Cd();
-        sex.setCode(null);
-        dto.setSexCode(sex);
-        try {
-            PoXsnapshotHelper.createModel(dto);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            assertEquals("code must be set", e.getMessage());
-        }
-    }
-    @Test
-    public void covertSexCodeCdHasNullFlavor() {
-        Cd sex = new Cd();
-        sex.setNullFlavor(NullFlavor.ASKU);
-        dto.setSexCode(sex);
-        Person p;
-        p = (Person) PoXsnapshotHelper.createModel(dto);
-        assertNull(p.getSex());
-    }
-
-    @Test
-    public void covertSexCodeUnsupportedCode() {
-        Cd sex = new Cd();
-        sex.setCode("Z");
-        dto.setSexCode(sex);
-        try {
-            PoXsnapshotHelper.createModel(dto);
-            fail();
-        } catch (PoIsoConstraintException e) {
-            assertEquals("unsupported code " + sex.getCode(), e.getMessage());
-        }
-    }
-
     /**
      * This is the data from the CTEP mapping document.  If this test does not pass, we need
      * to talk to CTEP about why the data they are providing isn't enough for us to persist.
@@ -417,9 +206,6 @@ public class PersonDTOTest {
         statusCode.setCode("active");
         dto.setStatusCode(statusCode);
 
-        dto.setRaceCode(null);
-        dto.setSexCode(null); // TODO
-
         EnPn pn = new EnPn();
         List<Enxp> part2 = pn.getPart();
 
@@ -468,8 +254,6 @@ public class PersonDTOTest {
         assertEquals("USA", p.getPostalAddress().getCountry().getAlpha3());
         assertEquals("37232-6307", p.getPostalAddress().getPostalCode());
         assertEquals(EntityStatus.ACTIVE, p.getStatusCode());
-        assertTrue(CollectionUtils.isEmpty(p.getRaces()));
-        assertNull(p.getSex());
         assertEquals("Sosman", p.getLastName());
         assertEquals("Jeffrey", p.getFirstName());
         assertEquals("A.", p.getMiddleName());

@@ -51,8 +51,6 @@ public class EqualsByValue {
                 .append(a.getMiddleName(), b.getMiddleName())
                 .append(a.getPrefix(), b.getPrefix())
                 .append(a.getSuffix(), b.getSuffix())
-                .append(a.getSex(), b.getSex())
-                .append(a.getRaces(), b.getRaces())
 
                 .append(a.getStatusCode(), b.getStatusCode())
                 .append(a.getDuplicateOf(), b.getDuplicateOf())
@@ -145,8 +143,6 @@ public class EqualsByValue {
         Assert.assertEquals("middleName", a.getMiddleName(), b.getMiddleName());
         Assert.assertEquals("prefix", a.getPrefix(), b.getPrefix());
         Assert.assertEquals("suffix", a.getSuffix(), b.getSuffix());
-        Assert.assertEquals("sex", a.getSex(), b.getSex());
-        Assert.assertEquals("races", a.getRaces(), b.getRaces());
 
         Assert.assertEquals("statusCode", a.getStatusCode(), b.getStatusCode());
         Assert.assertEquals("duplicateOf", a.getDuplicateOf(), b.getDuplicateOf());

@@ -97,7 +97,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
@@ -230,20 +229,6 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
     public List<PhoneNumber> getTty() {
         return super.getTty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @CollectionOfElements
-    @JoinTable(
-            name = "person_racecodes",
-            joinColumns = { @JoinColumn(name = "person_id") }
-    )
-    @ForeignKey(name = "PER_RACE_PER_FK", inverseName = "PER_RACE_RACE_FK")
-    @Override
-    public Set<RaceCode> getRaces() {
-        return super.getRaces();
     }
 
     /**

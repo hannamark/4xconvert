@@ -8,8 +8,6 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
-import gov.nih.nci.po.data.bo.RaceCode;
-import gov.nih.nci.po.data.bo.SexCode;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.junit.Before;
@@ -39,8 +37,6 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
         o.setLastName("lastName");
         o.setMiddleName("middleName");
         o.setPrefix("prefix");
-        o.getRaces().add(RaceCode.AI_AN);
-        o.setSex(SexCode.F);
         o.setSuffix("suffix");
 
         o.setStatusCode(EntityStatus.PENDING);

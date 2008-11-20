@@ -88,9 +88,7 @@ import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -145,8 +143,6 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
-    private Set<RaceCode> races = new HashSet<RaceCode>();
-    private SexCode sex;
     private Date statusDate;
 
 
@@ -408,46 +404,6 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @Transient
     public EntityStatus getPriorEntityStatus() {
        return priorStatusCode;
-    }
-
-    /**
-     * Get race codes.
-     * @xsnapshot.property name="raceCode"
-     *                     match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$DSetCdConverter"
-     *
-     *   @return a person's set of race code(s)
-     */
-    @Transient
-    public Set<RaceCode> getRaces() {
-        return this.races;
-    }
-
-    /**
-     * @param races a person's set of race code(s)
-     */
-    public void setRaces(Set<RaceCode> races) {
-        this.races = races;
-    }
-
-    /**
-     * @return person's sex code
-     * @xsnapshot.property name="sexCode" match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$EnumConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$CdConverter"
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "SEX")
-    public SexCode getSex() {
-        return sex;
-    }
-
-    /**
-     * @param sex sex code
-     */
-    public void setSex(SexCode sex) {
-        this.sex = sex;
     }
 
     /**

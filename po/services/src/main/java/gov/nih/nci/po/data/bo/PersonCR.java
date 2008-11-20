@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.bo;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -93,7 +92,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
@@ -126,7 +124,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     public void setProcessed(boolean processed) {
         this.processed = processed;
     }
-    
+
     /**
      * default ctor.
      */
@@ -241,20 +239,6 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @Override
     public List<PhoneNumber> getTty() {
         return super.getTty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @CollectionOfElements
-    @JoinTable(
-            name = "per_cr_racecodes",
-            joinColumns = { @JoinColumn(name = "per_cr_id") }
-    )
-    @ForeignKey(name = "PERCR_RACE_PER_FK", inverseName = "PERCR_RACE_RACE_FK")
-    @Override
-    public Set<RaceCode> getRaces() {
-        return super.getRaces();
     }
 
     /**
