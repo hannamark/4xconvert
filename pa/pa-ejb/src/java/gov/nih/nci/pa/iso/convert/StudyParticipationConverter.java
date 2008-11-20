@@ -26,15 +26,15 @@ import gov.nih.nci.pa.util.PAUtil;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class StudyParticipationConverter {
+public class StudyParticipationConverter extends AbstractConverter<StudyParticipationDTO, StudyParticipation> {
     /**
-     *
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
-     */
-    public static StudyParticipationDTO convertFromDomainToDTO(
-            StudyParticipation bo) throws PAException {
+    * @param bo StudyProtocol domain object
+    * @return dto
+    * @throws PAException PAException
+    */
+    @Override
+    public StudyParticipationDTO convertFromDomainToDto(StudyParticipation bo)
+            throws PAException {
         StudyParticipationDTO dto = new StudyParticipationDTO();
         dto.setFunctionalCode(CdConverter.convertToCd(bo.getFunctionalCode()));
         if (bo.getHealthCareFacility() != null) {
@@ -47,7 +47,7 @@ public class StudyParticipationConverter {
         dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(bo.getLocalStudyProtocolIdentifier()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-        dto.setStudyProtocolIi(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         return dto;
     }
 
@@ -57,10 +57,11 @@ public class StudyParticipationConverter {
      * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public static StudyParticipation convertFromDtoToDomain(
-            StudyParticipationDTO dto) throws PAException {
+    @Override
+    public StudyParticipation convertFromDtoToDomain(StudyParticipationDTO dto)
+            throws PAException {
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
         HealthCareFacility hfBo = null;
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
@@ -87,4 +88,5 @@ public class StudyParticipationConverter {
         bo.setStudyProtocol(spBo);
         return bo;
     }
+
 }
