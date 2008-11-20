@@ -21,6 +21,7 @@ public class Converters {
     private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
     private static InterventionConverter intervention = new InterventionConverter();
     private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
+    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
 
     /**
      * @param clazz class
@@ -46,6 +47,9 @@ public class Converters {
         }
         if (clazz.equals(InterventionAlternateNameConverter.class)) {
             return intervAltName;
+        }
+        if (clazz.equals(StudyParticipationConverter.class)) {
+            return sParticipation;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }
