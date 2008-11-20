@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -30,16 +29,8 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class StudyParticipationServiceBean
-        extends AbstractStudyPaService<StudyParticipationDTO>
+        extends AbstractStudyIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
         implements StudyParticipationServiceRemote {
-
-    private static final Logger LOG  = Logger.getLogger(StudyParticipationServiceBean.class);
-
-    /**
-     * @return log4j Logger
-     */
-    @Override
-    protected Logger getLogger() { return LOG; }
 
     /**
      * @param ii Index
@@ -60,7 +51,7 @@ public class StudyParticipationServiceBean
             if (bo == null) {
                 serviceError("Object not found using get() for id = " + IiConverter.convertToString(ii));
             }
-            resultDto = StudyParticipationConverter.convertFromDomainToDTO(bo);
+            resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
             serviceError("Hibernate exception in get().", hbe);
         }
@@ -88,10 +79,10 @@ public class StudyParticipationServiceBean
         try {
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
-            StudyParticipation bo = StudyParticipationConverter.convertFromDtoToDomain(dto);
+            StudyParticipation bo = convertFromDtoToDomain(dto);
             session.saveOrUpdate(bo);
             session.flush();
-            resultDto = StudyParticipationConverter.convertFromDomainToDTO(bo);
+            resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
             serviceError(" Hibernate exception in createStudyParticipation ", hbe);
         }
@@ -120,13 +111,13 @@ public class StudyParticipationServiceBean
             String hql = "select sp "
                        + "from StudyParticipation sp "
                        + "where sp.id =  " + Long.valueOf(dto.getIdentifier().getExtension());
-            LOG.info(" query StudyParticipation = " + hql);
+            getLogger().info(" query StudyParticipation = " + hql);
 
             Query query = session.createQuery(hql);
             queryList = query.list();
 
             StudyParticipation sp = queryList.get(0);
-            StudyParticipation spNew = StudyParticipationConverter.convertFromDtoToDomain(dto);
+            StudyParticipation spNew = convertFromDtoToDomain(dto);
 
             sp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             sp.setUserLastUpdated(spNew.getUserLastUpdated());
@@ -147,7 +138,7 @@ public class StudyParticipationServiceBean
             }
             session.update(sp);
             session.flush();
-            resultDto =  StudyParticipationConverter.convertFromDomainToDTO(sp);
+            resultDto =  convertFromDomainToDto(sp);
         }  catch (HibernateException hbe) {
             serviceError("Hibernate exception while updating StudyParticipation for id = "
                     + IiConverter.convertToString(dto.getIdentifier()) + ".  ", hbe);
@@ -165,7 +156,7 @@ public class StudyParticipationServiceBean
         if ((ii == null) || PAUtil.isIiNull(ii)) {
             serviceError("Ii has null value ");
         }
-        LOG.info("Entering delete().");
+        getLogger().info("Entering delete().");
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -178,7 +169,7 @@ public class StudyParticipationServiceBean
             serviceError(" Hibernate exception while deleting "
                 + "StudyParticipation for pid = " + ii.getExtension(), hbe);
         }
-        LOG.info("Leaving delete().");
+        getLogger().info("Leaving delete().");
     }
 
     /**
@@ -192,7 +183,7 @@ public class StudyParticipationServiceBean
         if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
             serviceError(" Ii should not be null ");
         }
-        LOG.info("Entering getStudyParticipationByStudyProtocol");
+        getLogger().info("Entering getStudyParticipationByStudyProtocol");
         Session session = null;
         List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
         try {
@@ -206,7 +197,7 @@ public class StudyParticipationServiceBean
                        + "join spart.studyProtocol spro "
                        + "where spro.id = :studyProtocolId "
                        + " order by spart.id ";
-            LOG.info(" query StudyParticipation = " + hql);
+            getLogger().info(" query StudyParticipation = " + hql);
 
             // step 2: construct query object
             query = session.createQuery(hql);
@@ -220,9 +211,9 @@ public class StudyParticipationServiceBean
 
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipation sp : queryList) {
-            resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
+            resultList.add(convertFromDomainToDto(sp));
         }
-        LOG.info("Leaving getByStudyProtocol");
+        getLogger().info("Leaving getByStudyProtocol");
         return resultList;
     }
 
@@ -237,7 +228,7 @@ public class StudyParticipationServiceBean
         if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
             serviceError("Ii is null ");
         }
-        LOG.info("Entering getStudyParticipationByStudyProtocol");
+        getLogger().info("Entering getStudyParticipationByStudyProtocol");
         Session session = null;
         List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
         try {
@@ -253,7 +244,7 @@ public class StudyParticipationServiceBean
                        + " and spart.functionalCode = '"
                        + StudyParticipationFunctionalCode.getByCode(spDTO.getFunctionalCode().getCode()) + "'"
                        + " order by spart.id ";
-            LOG.info(" query StudyParticipation = " + hql);
+            getLogger().info(" query StudyParticipation = " + hql);
 
             // step 2: construct query object
             query = session.createQuery(hql);
@@ -267,10 +258,10 @@ public class StudyParticipationServiceBean
 
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipation sp : queryList) {
-            resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
+            resultList.add(convertFromDomainToDto(sp));
         }
 
-        LOG.info("Leaving etStudyParticipationByStudyProtocol");
+        getLogger().info("Leaving etStudyParticipationByStudyProtocol");
         return resultList;
     }
 
@@ -287,10 +278,10 @@ public class StudyParticipationServiceBean
             serviceError("Ii is null ");
         }
         if ((spDTOList == null) || (spDTOList.isEmpty())) {
-            LOG.info("Using method getByStudyProtocol(Ii).  ");
+            getLogger().info("Using method getByStudyProtocol(Ii).  ");
             return getByStudyProtocol(studyProtocolIi);
         }
-        LOG.info("Entering getStudyParticipationByStudyProtocol");
+        getLogger().info("Entering getStudyParticipationByStudyProtocol");
         Session session = null;
         List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
         try {
@@ -311,7 +302,7 @@ public class StudyParticipationServiceBean
                     + StudyParticipationFunctionalCode.getByCode(crit.getFunctionalCode().getCode()) + "' ");
             }
             hql.append(") order by spart.id ");
-            LOG.info(" query StudyParticipation = " + hql);
+            getLogger().info(" query StudyParticipation = " + hql);
 
             Query query = session.createQuery(hql.toString());
             query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
@@ -324,10 +315,10 @@ public class StudyParticipationServiceBean
 
         List<StudyParticipationDTO> resultList = new ArrayList<StudyParticipationDTO>();
         for (StudyParticipation sp : queryList) {
-            resultList.add(StudyParticipationConverter.convertFromDomainToDTO(sp));
+            resultList.add(convertFromDomainToDto(sp));
         }
 
-        LOG.info("Leaving etStudyParticipationByStudyProtocol");
+        getLogger().info("Leaving etStudyParticipationByStudyProtocol");
         return resultList;
     }
 
