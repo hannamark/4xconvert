@@ -128,7 +128,6 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
     public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
         dto1.setName(RemoteApiUtils.convertToEnOn("Test Name"));
-        dto1.setAbbreviatedName(RemoteApiUtils.convertToEnOn("TST"));
         Ii id = getOrgService().createOrganization(dto1);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -145,16 +144,15 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setName(RemoteApiUtils.convertToEnOn("_"));
-            dto.setAbbreviatedName(RemoteApiUtils.convertToEnOn("_"));
             dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);
-            
+
             TelEmail email = new TelEmail();
             email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
             dto.getTelecomAddress().getItem().add(email);
-            
+
             TelUrl url = new TelUrl();
             url.setValue(new URI(DEFAULT_URL));
             dto.getTelecomAddress().getItem().add(url);
@@ -192,7 +190,6 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
         rs.close();
 
         OrganizationDTO dto = getOrgService().getOrganization(orgId);
-        dto.setDescription(RemoteApiUtils.convertToSt("new Desc"));
         TelEmail e = new TelEmail();
         e.setValue(new URI("mailto:new.address@example.com"));
         dto.getTelecomAddress().getItem().add(e);

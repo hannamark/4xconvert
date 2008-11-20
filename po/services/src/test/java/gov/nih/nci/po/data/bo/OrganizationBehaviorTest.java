@@ -8,7 +8,6 @@ public class OrganizationBehaviorTest {
     public void testBasicGetterSetters() {
         Organization org = new Organization();
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "name");
-        GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "abbreviatedName");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "postalAddress");
         GetterSetterTesterUtil.assertBasicGetterSetterBehavior(org, "statusCode");
     }

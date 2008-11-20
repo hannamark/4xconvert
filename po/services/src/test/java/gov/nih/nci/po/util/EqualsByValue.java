@@ -27,8 +27,6 @@ public class EqualsByValue {
         if ((a == null && b != null) || (a != null && b == null)) { return false; }
         EqualsBuilder eq = new EqualsBuilder()
                 .append(a.getName(), b.getName())
-                .append(a.getAbbreviatedName(), b.getAbbreviatedName())
-                .append(a.getDescription(), b.getDescription())
                 .append(a.getStatusCode(), b.getStatusCode())
                 .append(a.getDuplicateOf(), b.getDuplicateOf())
                 .append(a.getPriorEntityStatus(), b.getPriorEntityStatus());
@@ -125,8 +123,6 @@ public class EqualsByValue {
         if ((a == null && b != null) || (a != null && b == null)) { Assert.fail("one is null"); }
 
         Assert.assertEquals("name", a.getName(), b.getName());
-        Assert.assertEquals("abbreviatedName", a.getAbbreviatedName(), b.getAbbreviatedName());
-        Assert.assertEquals("description", a.getDescription(), b.getDescription());
         Assert.assertEquals("statusCode", a.getStatusCode(), b.getStatusCode());
         Assert.assertEquals("duplicateOf", a.getDuplicateOf(), b.getDuplicateOf());
         Assert.assertEquals("priorEntityStatus", a.getPriorEntityStatus(), b.getPriorEntityStatus());

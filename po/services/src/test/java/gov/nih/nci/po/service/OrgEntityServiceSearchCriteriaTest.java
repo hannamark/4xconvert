@@ -39,16 +39,6 @@ public class OrgEntityServiceSearchCriteriaTest extends AbstractHibernateTestCas
 
         yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
         assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getCriteria().setAbbreviatedName("name");
-        assertTrue(yesCrit.hasOneCriterionSpecified());
-
-        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
-        assertFalse(yesCrit.hasOneCriterionSpecified());
-        yesCrit.getCriteria().setDescription("name");
-        assertTrue(yesCrit.hasOneCriterionSpecified());
-
-        yesCrit = new AnnotatedBeanSearchCriteria<Organization>(new Organization());
-        assertFalse(yesCrit.hasOneCriterionSpecified());
         yesCrit.getCriteria().getPhone().add(new PhoneNumber("123-123-1234"));
         assertTrue(yesCrit.hasOneCriterionSpecified());
 

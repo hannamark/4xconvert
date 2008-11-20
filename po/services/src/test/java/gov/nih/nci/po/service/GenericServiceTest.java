@@ -112,7 +112,6 @@ public class GenericServiceTest extends AbstractHibernateTestCase {
         Organization org = new Organization();
         org.setPostalAddress(new Address("test", "test", "test", "test", country));
         org.setName("testOrg");
-        org.setAbbreviatedName("abbr");
         org.setStatusCode(EntityStatus.PENDING);
         org.getEmail().add(new Email("abc@example.com"));
         org.getUrl().add(new URL("http://example.com"));

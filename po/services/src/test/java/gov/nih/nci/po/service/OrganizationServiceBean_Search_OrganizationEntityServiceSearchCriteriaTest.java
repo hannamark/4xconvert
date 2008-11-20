@@ -50,32 +50,6 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     }
 
     @Test
-    public void findByDesc() throws EntityValidationException {
-        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-
-        sc.getCriteria().setDescription("%Desc%");
-        assertEquals(1, getOrgServiceBean().count(sc));
-        assertEquals(1, getOrgServiceBean().search(sc).size());
-
-        sc.getCriteria().setDescription("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
-    }
-
-    @Test
-    public void findByAbbrvName() throws EntityValidationException {
-        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-
-        sc.getCriteria().setAbbreviatedName("%Org%");
-        assertEquals(1, getOrgServiceBean().count(sc));
-        assertEquals(1, getOrgServiceBean().search(sc).size());
-
-        sc.getCriteria().setAbbreviatedName("foobar");
-        assertEquals(0, getOrgServiceBean().count(sc));
-        assertEquals(0, getOrgServiceBean().search(sc).size());
-    }
-
-    @Test
     public void findByEmail() throws EntityValidationException {
         /* create a person with two email addresses */
         createOrganization();

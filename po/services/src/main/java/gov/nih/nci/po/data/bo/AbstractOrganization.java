@@ -126,8 +126,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     private static final int DEFAULT_TEXT_COL_LENGTH = 100;
     private Long id;
     private String name;
-    private String abbreviatedName;
-    private String description;
     private Address postalAddress;
 
     private List<Email> email = new ArrayList<Email>();
@@ -179,46 +177,6 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * @return abbreviated name
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.EnOn"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
-     */
-    @Length(max = DEFAULT_TEXT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "abbreviation")
-    public String getAbbreviatedName() {
-        return abbreviatedName;
-    }
-
-    /**
-     * @param abbreviatedName abbreviation name
-     */
-    public void setAbbreviatedName(String abbreviatedName) {
-        this.abbreviatedName = abbreviatedName;
-    }
-
-    /**
-     * @return the description
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
-     */
-    @Length(max = DEFAULT_TEXT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_START)
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "desc")
-    public String getDescription() {
-        return this.description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

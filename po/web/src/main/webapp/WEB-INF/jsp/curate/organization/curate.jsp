@@ -122,8 +122,6 @@
 			    </div>
 	        </s:else>
 				<s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
-				<s:textfield key="organization.abbreviatedName" required="false" cssClass="required" size="70"/>
-				<s:textfield key="organization.description" required="false" cssClass="required" size="70"/>
 		        <div class="clear"></div>
 		    </div>
 		</div>

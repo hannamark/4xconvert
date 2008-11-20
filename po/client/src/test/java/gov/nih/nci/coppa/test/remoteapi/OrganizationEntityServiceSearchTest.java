@@ -32,15 +32,13 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
         return id;
     }
 
-    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress) throws URISyntaxException {
-        return create(name, abbrv, desc, postalAddress, null);
+    private OrganizationDTO create(String name, Ad postalAddress) throws URISyntaxException {
+        return create(name, postalAddress, null);
     }
 
-    private OrganizationDTO create(String name, String abbrv, String desc, Ad postalAddress, DSet<Tel> telecomAddress) throws URISyntaxException {
+    private OrganizationDTO create(String name, Ad postalAddress, DSet<Tel> telecomAddress) throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
         org.setName(RemoteApiUtils.convertToEnOn(name));
-        org.setAbbreviatedName(RemoteApiUtils.convertToEnOn(abbrv));
-        org.setDescription(RemoteApiUtils.convertToSt(desc));
         org.setPostalAddress(postalAddress);
         org.setTelecomAddress(telecomAddress);
 
@@ -72,93 +70,93 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
 
             DSet<Tel> telecomAddress = createDSetTel(email, tels, tels, urls, tels);
 
-            remoteCreateAndCatalog(create("Z Inc.", "Z", "Z org", createPostalAddress("123 abc ave.", null, "mycity",
+            remoteCreateAndCatalog(create("Z Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     null, "12345", "USA"), telecomAddress));
-            remoteCreateAndCatalog(create("A Inc.", "A", "A org", createPostalAddress("123 abc ave.", null, "mycity",
+            remoteCreateAndCatalog(create("A Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     null, "12345", "USA"), telecomAddress));
-            remoteCreateAndCatalog(create("B Inc.", "B", "B org", createPostalAddress("123 abc ave.", null, "mycity",
+            remoteCreateAndCatalog(create("B Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     null, "12345", "USA"), telecomAddress));
-            remoteCreateAndCatalog(create("C Inc.", "C", "C org", createPostalAddress("123 abc ave.", null, "mycity",
+            remoteCreateAndCatalog(create("C Inc.", createPostalAddress("123 abc ave.", null, "mycity",
                     null, "12345", "USA"), telecomAddress));
-            remoteCreateAndCatalog(create("AB Inc.", "AB", "AB org", createPostalAddress("123 abc ave.", null,
+            remoteCreateAndCatalog(create("AB Inc.", createPostalAddress("123 abc ave.", null,
                     "mycity", null, "12345", "USA"), telecomAddress));
 
-            remoteCreateAndCatalog(create("BC Inc.", "BC", "BC org", createPostalAddress("123 abc ave.", null,
+            remoteCreateAndCatalog(create("BC Inc.", createPostalAddress("123 abc ave.", null,
                     "mycity", null, "12345", "USA")));
-            remoteCreateAndCatalog(create("CA Inc.", "CA", "CA org", createPostalAddress("123 abc ave.", null,
+            remoteCreateAndCatalog(create("CA Inc.", createPostalAddress("123 abc ave.", null,
                     "mycity", null, "12345", "USA")));
 
             // for street searches
             String state = "WY";
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Rst", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Rst", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Uvw", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Uvw", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Xyz", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Xyz", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("Rsu", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Rsu", "delivery", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("stu", "delivery", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("stu", "delivery", "city", state,
                     "zip", "USA")));
 
             // for delivery searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Abc", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Abc", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Dfg", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Dfg", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Ghi", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Ghi", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "jkl", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "jkl", "city", state,
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "Abe", "city", state,
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "Abe", "city", state,
                     "zip", "USA")));
 
             // for city searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "Reston",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "Reston",
                     state, "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "reston",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "reston",
                     state, "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "New Falls",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "New Falls",
                     state, "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "Old Falls",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "Old Falls",
                     state, "zip", "USA")));
 
             // for state searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "VA",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city", "VA",
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "MD",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city", "MD",
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city", "VT",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city", "VT",
                     "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     "AL", "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     "AK", "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     "LA", "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     "IN", "zip", "USA")));
 
             // for zip searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "Abc", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "Def", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "Ghi", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "Abe", "USA")));
 
             // for country searches
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "zip", "USA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "zip", "UGA")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "zip", "UKR")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "zip", "UMI")));
-            remoteCreateAndCatalog(create("ZZZ", "ZZZ", "ZZZ", createPostalAddress("street", "delivery", "city",
+            remoteCreateAndCatalog(create("ZZZ", createPostalAddress("street", "delivery", "city",
                     state, "zip", "URY")));
             testDataLoaded = true;
         }
@@ -204,22 +202,6 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
         crit.setName(RemoteApiUtils.convertToEnOn("a"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(2, results.size());
-    }
-
-    @Test
-    public void findOrgByDescriptionExact() {
-        OrganizationDTO crit = new OrganizationDTO();
-        crit.setDescription(RemoteApiUtils.convertToSt("CA org"));
-        List<OrganizationDTO> results = getOrgService().search(crit);
-        assertEquals(1, results.size());
-    }
-
-    @Test
-    public void findOrgByAbbreviatedNameExact() {
-        OrganizationDTO crit = new OrganizationDTO();
-        crit.setAbbreviatedName(RemoteApiUtils.convertToEnOn("CA"));
-        List<OrganizationDTO> results = getOrgService().search(crit);
-        assertEquals(1, results.size());
     }
 
     @Test

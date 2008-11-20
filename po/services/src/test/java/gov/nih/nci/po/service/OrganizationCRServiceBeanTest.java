@@ -30,8 +30,6 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
     }
 
     public static void fill(AbstractOrganization o, Country country) {
-        o.setAbbreviatedName("abbreviatedName");
-        o.setDescription("description");
         o.setName("name");
         o.setStatusCode(EntityStatus.PENDING);
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country);
@@ -51,14 +49,12 @@ public class OrganizationCRServiceBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().save(o);
         OrganizationCR ocr = new OrganizationCR(o);
         fill(ocr);
-        ocr.setAbbreviatedName("changed abbr.");
         Long id = (Long) PoHibernateUtil.getCurrentSession().save(ocr);
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
         OrganizationCR cr = instance.getById(id);
-        assertEquals(ocr.getAbbreviatedName(), cr.getAbbreviatedName());
         assertEquals(1, cr.getTarget().getChangeRequests().size());
     }
 }

@@ -83,7 +83,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     public void createOrg() throws EntityValidationException, URISyntaxException {
         OrganizationDTO dto = new OrganizationDTO();
         dto.setName(StringConverter.convertToEnOn("some name"));
-        dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
@@ -106,7 +105,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertNotNull(id.getExtension());
         Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, Long.parseLong(id.getExtension()));
         assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
-        assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
         assertEquals(1, o.getPhone().size());
         assertEquals(phone, o.getPhone().get(0).getValue());
         assertEquals("another.email@example.com", o.getEmail().get(0).getValue());
@@ -118,7 +116,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setName(StringConverter.convertToEnOn("some name"));
-            dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
             dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3()));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
@@ -137,7 +134,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
             assertNotNull(id.getExtension());
             Organization o = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, IiConverter.convertToLong(id));
             assertEquals(ISOUtils.EN.convertToString(dto.getName()), o.getName());
-            assertEquals(ISOUtils.EN.convertToString(dto.getAbbreviatedName()), o.getAbbreviatedName());
             assertEquals("another.email@example.com", o.getEmail().get(0).getValue());
             assertEquals("http://example.com", o.getUrl().get(0).getValue());
         } catch (EntityValidationException e) {
@@ -148,7 +144,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     @Test
     public void validate() {
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setAbbreviatedName(StringConverter.convertToEnOn("short"));
         Map<String, String[]> errors = remote.validate(dto);
         assertEquals(3, errors.size()) ;
         assertTrue(errors.containsKey("name"));
@@ -156,13 +151,11 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertTrue(errors.containsKey("email"));
     }
 
-    private Organization createOrg(String name, String abbreviatedName, String desc, String addr1, String addr2,
+    private Organization createOrg(String name, String addr1, String addr2,
             String city, String state, String zip, Country country, String[] emails, String[] phones, String[] faxes,
             String[] ttys, String[] urls) {
         Organization org = new Organization();
         org.setName(name);
-        org.setAbbreviatedName(abbreviatedName);
-        org.setDescription(desc);
         Address a = new Address(addr1, city, state, zip, getDefaultCountry());
         a.setDeliveryAddressLine(addr2);
         org.setPostalAddress(a);
@@ -189,7 +182,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     }
 
     public void testSearch() throws Exception {
-        Organization o1 = createOrg("oRg1", "o1", "The FiRst Org", "1 HaPPy StreEt", "aPt 1", "HaPPyville",
+        Organization o1 = createOrg("oRg1", "1 HaPPy StreEt", "aPt 1", "HaPPyville",
                 "Happyland", "11111", getDefaultCountry(),
                 new String[] { "admin@org1.com", "sAlEs@org1.com" },
                 new String[] { "111-222-3333", "444-555-6666" },
@@ -197,7 +190,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
                 null,
                 new String[] { "www.org1.com", "www.orG1.NET" });
 
-        createOrg("oRg2", "o2", "The SecOnd Org", "2 HaPPy StreEt", "aPt 2", "HaPPyburb",
+        createOrg("oRg2", "2 HaPPy StreEt", "aPt 2", "HaPPyburb",
                 "Happycomonwealth", "11112", getDefaultCountry(),
                 new String[] { "admin@org2.com", "sAlEs@org2.com" },
                 new String[] { "111-222-4444", "444-555-7777" },
@@ -205,7 +198,7 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
                 null,
                 new String[] { "www.org2.com", "www.orG2.NET" });
 
-        createOrg("oRg3", "o3", "The Third Org", "3 HaPPy StreEt", "aPt 3", "HaPPytown",
+        createOrg("oRg3", "3 HaPPy StreEt", "aPt 3", "HaPPytown",
                 "Happystate", "11113", getDefaultCountry(),
                 new String[] { "admin@org3.com", "sAlEs@org3.com" },
                 new String[] { "111-222-5555", "444-555-8888" },
@@ -245,36 +238,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertEquals(0, results.size());
 
         sc.setName(null);
-
-        // search by abbreviation
-        sc.setAbbreviatedName(o1dto.getAbbreviatedName());
-        sc.getAbbreviatedName().getPart().get(0).setValue("O");
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.getAbbreviatedName().getPart().get(0).setValue("o");
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-
-        sc.getAbbreviatedName().getPart().get(0).setValue("o2");
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-        sc.getAbbreviatedName().getPart().get(0).setValue("noresults");
-        results = remote.search(sc);
-        assertEquals(0, results.size());
-        sc.setAbbreviatedName(null);
-
-
-        // search by desc
-        sc.setDescription(o1dto.getDescription());
-        results = remote.search(sc);
-        assertEquals(1, results.size());
-
-        sc.getDescription().setValue("The ");
-        results = remote.search(sc);
-        assertEquals(3, results.size());
-        sc.setDescription(null);
 
         // search by ad
         sc.setPostalAddress(AddressConverterUtil.create("1 hAp", null, null, null, null, null));
@@ -343,7 +306,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
 
         Organization org = new Organization();
         org.setName("name");
-        org.setAbbreviatedName("abbreviatedName");
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         org.setPostalAddress(a);
         org.getEmail().add(new Email("foo@example.com"));
@@ -359,7 +321,6 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
 
         assertEquals(id.toString(), dto.getIdentifier().getExtension());
         assertEquals(org.getName(), dto.getName().getPart().get(0).getValue());
-        assertEquals(org.getAbbreviatedName(), dto.getAbbreviatedName().getPart().get(0).getValue());
         assertEquals(org.getPostalAddress().getCityOrMunicipality(), getAddressPart(dto.getPostalAddress(), AddressPartType.CTY).getValue());
         assertEquals(org.getPostalAddress().getStateOrProvince(), getAddressPart(dto.getPostalAddress(), AddressPartType.STA).getValue());
         assertEquals(org.getPostalAddress().getPostalCode(), getAddressPart(dto.getPostalAddress(), AddressPartType.ZIP).getValue());

@@ -20,14 +20,6 @@
                 bodyStyle="float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield name="cr.name" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
             </po:copyButton>
-            <po:copyButton id="copy_curateOrgForm_organization_abbreviatedName" onclick="copyValueToTextField('${cr.abbreviatedName}', 'curateOrgForm_organization_abbreviatedName');"
-                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield name="cr.abbreviatedName" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
-            </po:copyButton>            
-            <po:copyButton id="copy_curateOrgForm_organization_description" onclick="copyValueToTextField('${cr.description}', 'curateOrgForm_organization_description');"
-                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield name="cr.description" label="%{getText('organization.description')}" required="false" cssClass="required" size="70"/>
-            </po:copyButton>            
             
             <div class="clear"></div>
         </div>

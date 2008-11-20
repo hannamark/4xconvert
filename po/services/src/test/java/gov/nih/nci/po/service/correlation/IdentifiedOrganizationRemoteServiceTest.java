@@ -222,7 +222,6 @@ public class IdentifiedOrganizationRemoteServiceTest
     @Override
     public void testSearch() throws Exception {
         Organization org2 = new Organization();
-        org2.setAbbreviatedName("org2 abbreviated name");
         org2.setName("org2 name");
         org2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         org2.setStatusCode(EntityStatus.ACTIVE);

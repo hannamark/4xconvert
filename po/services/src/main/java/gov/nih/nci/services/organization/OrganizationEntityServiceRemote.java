@@ -100,7 +100,7 @@ import javax.ejb.Remote;
 public interface OrganizationEntityServiceRemote {
 
     /**
-     * @param id org id (the Ii.extension must be populated with desired IdentifierReliability.ISS value) 
+     * @param id org id (the Ii.extension must be populated with desired IdentifierReliability.ISS value)
      * @return organization
      * @throws NullifiedEntityException if the requested id has a NULLIFIED entity status
      */
@@ -120,18 +120,14 @@ public interface OrganizationEntityServiceRemote {
      * @return return validation error messages per invalid field path.
      */
     Map<String, String[]> validate(OrganizationDTO org);
-    
+
     /**
-     * Provides the ability to find organizations using conjunctional insensitive substring matching.   
-     * 
+     * Provides the ability to find organizations using conjunctional insensitive substring matching.
+     *
      * <pre>
-     * You may search by specifying combinations of the following: 
+     * You may search by specifying combinations of the following:
      * <li>EnOn name (name)</li>
-     * <li>EnOn abbreviatedName (abbreviatedName)</li>
      * <li>St description (description).</li>
-     * <li></li>
-     * 
-     * The following are unsupported:
      * <li>OrganizationDTO.identifier</li>
      * <li>OrganizationDTO.telecomAddress</li>
      * <li>OrganizationDTO.postalAddress</li>
@@ -140,14 +136,14 @@ public interface OrganizationEntityServiceRemote {
      * @return list of matching organizations
      */
     List<OrganizationDTO> search(OrganizationDTO organization);
-    
+
     /**
      * Propose a new entity value to the curator.
      * @param proposedState the CR containg the proposed stated.
      * @throws EntityValidationException if the CR proposes an invalid state for the target.
      */
     void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException;
-    
+
     /**
      * Propose a new status code to the curator.
      * @param targetOrg the ID of the Org to update.

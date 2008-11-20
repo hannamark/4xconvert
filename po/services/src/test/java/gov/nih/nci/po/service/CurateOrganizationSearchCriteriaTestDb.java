@@ -1,32 +1,28 @@
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
-import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
-import gov.nih.nci.po.service.correlation.AbstractStructrualRoleServiceTest;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.correlation.IdentifiedOrganizationServiceTest;
 import gov.nih.nci.po.service.correlation.OversightCommitteeServiceTest;
+import gov.nih.nci.po.service.correlation.ResearchOrganizationServiceTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.correlation.ResearchOrganizationServiceTest;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
@@ -93,8 +89,9 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         List<Organization> results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
     }
-    
+
     @Test
+    @SuppressWarnings("unchecked")
     public void findByIdentifiedOrganization() throws Exception {
 
         IdentifiedOrganizationServiceTest test = new IdentifiedOrganizationServiceTest();
@@ -149,12 +146,13 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void findByHealthCareFacility() throws Exception {
 
         HealthCareFacilityServiceTest test = new HealthCareFacilityServiceTest();
         test.setDefaultCountry(ost.getDefaultCountry());
         test.setUpData();
-        
+
         test.testSimpleCreateAndGet();
         HealthCareFacility ro = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class).uniqueResult();
         assertEquals(RoleStatus.PENDING, ro.getStatus());
@@ -197,9 +195,10 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         results = sc.getQuery("", false).list();
         assertEquals(0, results.size());
     }
-    
+
 
     @Test
+    @SuppressWarnings("unchecked")
     public void findByOversightCommittee() throws Exception {
 
         OversightCommitteeServiceTest test = new OversightCommitteeServiceTest();
@@ -252,6 +251,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void findByResearchOrganization() throws Exception {
 
         ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest();

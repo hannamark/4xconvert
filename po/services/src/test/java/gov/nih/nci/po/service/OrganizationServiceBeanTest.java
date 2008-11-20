@@ -144,8 +144,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization org = new Organization();
         org.setPostalAddress(mailingAddress);
         org.setName("oName");
-        org.setAbbreviatedName("abbrvName");
-        org.setDescription("oDesc");
         org.setStatusCode(EntityStatus.PENDING);
 
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
@@ -192,8 +190,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         assertEquals(expected.getId(), found.getId());
         assertEquals(expected.getStatusCode(), found.getStatusCode());
         assertEquals(expected.getName(), found.getName());
-        assertEquals(expected.getDescription(), found.getDescription());
-        assertEquals(expected.getAbbreviatedName(), found.getAbbreviatedName());
 
         assertEquals(expected.getEmail().size(), found.getEmail().size());
         assertEquals(expected.getPhone().size(), found.getPhone().size());
@@ -213,8 +209,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         Organization org = new Organization();
         org.setPostalAddress(mailingAddress);
         org.setName(oName);
-        org.setAbbreviatedName(abbrvName);
-        org.setDescription(desc);
         org.setStatusCode(EntityStatus.PENDING);
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
@@ -239,7 +233,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
         Organization org = new Organization();
         org.setName("testOrg");
-        org.setAbbreviatedName("abbr");
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
         org.setStatusCode(EntityStatus.NULLIFIED);

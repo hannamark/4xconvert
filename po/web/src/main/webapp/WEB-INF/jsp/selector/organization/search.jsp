@@ -36,8 +36,6 @@
 		                           headerKey="" headerValue="--Select a Status--" 
 		                           />				            
 				                <s:textfield label="%{getText('organization.name')}" name="criteria.organization.name" size="70"/>
-				                <s:textfield label="%{getText('organization.abbreviatedName')}" name="criteria.organization.abbreviatedName" size="70"/>
-				                <s:textfield label="%{getText('organization.description')}" name="criteria.organization.description" size="70"/>
 				                <div class="clear"></div>
 				            </div>
 				        </div>
