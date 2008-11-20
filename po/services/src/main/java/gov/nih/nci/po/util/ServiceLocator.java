@@ -90,11 +90,9 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
@@ -151,16 +149,6 @@ public interface ServiceLocator {
     OversightCommitteeServiceLocal getOversightCommitteeService();
 
     /**
-     * @return person resource provider service
-     */
-    PersonResourceProviderServiceLocal getPersonResourceProviderService();
-
-    /**
-     * @return organization resource provider service
-     */
-    OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService();
-
-    /**
      * @return the service.
      */
     IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
@@ -169,12 +157,12 @@ public interface ServiceLocator {
      * @return the service.
      */
     IdentifiedPersonServiceLocal getIdentifiedPersonService();
-    
+
     /**
      * @return the service.
      */
     OrganizationalContactServiceLocal getOrganizationalContactService();
-    
+
     /**
      * @return the service.
      */
@@ -184,5 +172,5 @@ public interface ServiceLocator {
      * @return the service.
      */
     GenericCodeValueServiceLocal getGenericCodeValueService();
-    
+
 }

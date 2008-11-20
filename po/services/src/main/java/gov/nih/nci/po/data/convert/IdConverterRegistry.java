@@ -88,11 +88,9 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationResourceProvider;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PersonResourceProvider;
 import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
@@ -101,11 +99,9 @@ import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.IdentifiedOrganizationIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.IdentifiedPersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgResourceProviderIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OrganizationalContactIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonResourceProviderIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.QualifiedEntityIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
 
@@ -132,8 +128,6 @@ public class IdConverterRegistry {
         tmp.put(ClinicalResearchStaff.class, new ClinicalResearchStaffIdConverter());
         tmp.put(HealthCareProvider.class, new HealthCareProviderIdConverter());
         tmp.put(HealthCareFacility.class, new HealthCareFacilityIdConverter());
-        tmp.put(PersonResourceProvider.class, new PersonResourceProviderIdConverter());
-        tmp.put(OrganizationResourceProvider.class, new OrgResourceProviderIdConverter());
         tmp.put(ResearchOrganization.class, new ResearchOrganizationIdConverter());
         tmp.put(OversightCommittee.class, new OversightCommitteeIdConverter());
         tmp.put(IdentifiedOrganization.class, new IdentifiedOrganizationIdConverter());
@@ -172,7 +166,7 @@ public class IdConverterRegistry {
         }
         return clz;
     }
-    
+
     static Map<Class<? extends PersistentObject>, IdConverter> getRegistry() {
         return REGISTRY;
     }

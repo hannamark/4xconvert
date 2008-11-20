@@ -88,10 +88,8 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.OrganizationResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.PersonResourceProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -115,8 +113,6 @@ public class RemoteServiceHelper {
     static final String HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareProviderCorrelationServiceBean/remote";
     static final String CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE = "po/ClinicalResearchStaffCorrelationServiceBean/remote";
     static final String HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareFacilityCorrelationServiceBean/remote";
-    static final String PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/PersonResourceProviderCorrelationServiceBean/remote";
-    static final String ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/OrganizationResourceProviderCorrelationServiceBean/remote";
     static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/OversightCommitteeCorrelationServiceBean/remote";
     static final String RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE = "po/ResearchOrganizationCorrelationServiceBean/remote";
     static final String QUALIFIED_ENTITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/QualifiedEntityCorrelationServiceBean/remote";
@@ -145,7 +141,7 @@ public class RemoteServiceHelper {
 
     /**
      * Closes the context.
-     * 
+     *
      * @throws NamingException on error.
      */
     public static void close() throws NamingException {
@@ -161,7 +157,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
-     * 
+     *
      * @return the service.
      * @throws NamingException on error.
      */
@@ -171,7 +167,7 @@ public class RemoteServiceHelper {
 
     /**
      * Get the person service.
-     * 
+     *
      * @return the service.
      * @throws NamingException on error.
      */
@@ -194,19 +190,9 @@ public class RemoteServiceHelper {
         return (HealthCareProviderCorrelationServiceRemote) lookup(HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
-    public static OrganizationResourceProviderCorrelationServiceRemote getOrganizationResourceProviderCorrelationService()
-            throws NamingException {
-        return (OrganizationResourceProviderCorrelationServiceRemote) lookup(ORGANIZATION_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
-    }
-
     public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService()
             throws NamingException {
         return (OversightCommitteeCorrelationServiceRemote) lookup(OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE);
-    }
-
-    public static PersonResourceProviderCorrelationServiceRemote getPersonResourceProviderCorrelationService()
-            throws NamingException {
-        return (PersonResourceProviderCorrelationServiceRemote) lookup(PERSON_RESOURCE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote()
@@ -218,7 +204,7 @@ public class RemoteServiceHelper {
             throws NamingException {
         return (IdentifiedPersonCorrelationServiceRemote) lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
     }
-    
+
     public static QualifiedEntityCorrelationServiceRemote getQualifiedEntityCorrelationService() throws NamingException {
         return (QualifiedEntityCorrelationServiceRemote) lookup(QUALIFIED_ENTITY_CORRELATION_SERVICE_BEAN_REMOTE);
     }

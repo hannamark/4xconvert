@@ -170,26 +170,6 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The identifier name for.
      */
-    public static final String PERSON_RESOURCE_PROVIDER_IDENTIFIER_NAME = "Person Resource Provider identifier";
-
-    /**
-     * The ii root value.
-     */
-    public static final String PERSON_RESOURCE_PROVIDER_ROOT = "UID.for.nci.role.personresourceprovider";
-
-    /**
-     * The identifier name for.
-     */
-    public static final String ORG_RESOURCE_PROVIDER_IDENTIFIER_NAME = "Org Resource Provider identifier";
-
-    /**
-     * The ii root value.
-     */
-    public static final String ORG_RESOURCE_PROVIDER_ROOT = "UID.for.nci.role.orgresourceprovider";
-
-    /**
-     * The identifier name for.
-     */
     public static final String IDENTIFIED_ORG_IDENTIFIER_NAME = "Identified org identifier";
 
     /**
@@ -210,7 +190,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The identifier name for.
      */
     public static final String ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME = "Organizational contact identifier";
-    
+
     /**
      * The ii root value.
      */
@@ -344,38 +324,6 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     }
 
     /**
-     * convert the id of a person resource provider.
-     */
-    public static class PersonResourceProviderIdConverter extends IdConverter {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Ii convertToIi(Long value) {
-            Ii iso = super.convertToIi(value);
-            iso.setIdentifierName(PERSON_RESOURCE_PROVIDER_IDENTIFIER_NAME);
-            iso.setRoot(IdConverter.PERSON_RESOURCE_PROVIDER_ROOT);
-            return iso;
-        }
-    }
-
-    /**
-     * convert the id of a org resource provider.
-     */
-    public static class OrgResourceProviderIdConverter extends IdConverter {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Ii convertToIi(Long value) {
-            Ii iso = super.convertToIi(value);
-            iso.setIdentifierName(ORG_RESOURCE_PROVIDER_IDENTIFIER_NAME);
-            iso.setRoot(IdConverter.ORG_RESOURCE_PROVIDER_ROOT);
-            return iso;
-        }
-    }
-
-    /**
      * convert the id of a clinical research staff.
      * @author Scott Miller
      */
@@ -442,7 +390,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             return iso;
         }
     }
-    
+
     /**
      * convert the id of a organizational contact.
      * @author smatyas

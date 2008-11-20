@@ -90,11 +90,9 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
@@ -166,21 +164,6 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
         return (ClinicalResearchStaffServiceLocal) JNDIUtil.lookup("po/ClinicalResearchStaffServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return (PersonResourceProviderServiceLocal) JNDIUtil.lookup("po/PersonResourceProviderServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return (OrganizationResourceProviderServiceLocal)
-            JNDIUtil.lookup("po/OrganizationResourceProviderServiceBean/local");
     }
 
     /**

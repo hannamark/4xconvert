@@ -91,11 +91,9 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
@@ -165,20 +163,6 @@ public class TestServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
-        return EjbTestHelper.getPersonResourceProviderServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return EjbTestHelper.getOrganizationResourceProviderServiceBean();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
         return EjbTestHelper.getIdentifiedOrganizationServiceBean();
     }
@@ -203,7 +187,7 @@ public class TestServiceLocator implements ServiceLocator {
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
         return EjbTestHelper.getOrganizationalContactService();
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -92,11 +92,9 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationResourceProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PersonResourceProviderServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
@@ -153,13 +151,6 @@ public class MockCountryServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public OrganizationResourceProviderServiceLocal getOrganizationResourceProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public OrganizationServiceLocal getOrganizationService() {
         return null;
     }
@@ -168,13 +159,6 @@ public class MockCountryServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonResourceProviderServiceLocal getPersonResourceProviderService() {
         return null;
     }
 
@@ -219,7 +203,7 @@ public class MockCountryServiceLocator implements ServiceLocator {
     public QualifiedEntityServiceLocal getQualifiedEntityService() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
