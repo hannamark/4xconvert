@@ -22,6 +22,7 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -46,13 +47,18 @@ import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.YesNoCode;
 
 import java.sql.Connection;
@@ -114,6 +120,7 @@ public class TestSchema {
             addAnnotatedClass(StratumGroup.class).
             addAnnotatedClass(ResearchOrganization.class).
             addAnnotatedClass(PlannedActivity.class).
+            addAnnotatedClass(PlannedEligibilityCriterion.class).
             addAnnotatedClass(Intervention.class).
             addAnnotatedClass(InterventionAlternateName.class).
             addAnnotatedClass(ObservationalStudyProtocol.class).
@@ -161,7 +168,12 @@ public class TestSchema {
                 try {
                     Statement statement = connection.createStatement();
                     try {
+                        statement.executeUpdate("delete from STUDY_CONTACT");
+                        statement.executeUpdate("delete from STUDY_REGULATORY_AUTHORITY");
+                        statement.executeUpdate("delete from REGULATORY_AUTHORITY");
+                        statement.executeUpdate("delete from DOCUMENT_WORKFLOW_STATUS");
                         statement.executeUpdate("delete from ARM_INTERVENTION");
+                        statement.executeUpdate("delete from PLANNED_ACTIVITY");
                         statement.executeUpdate("delete from ARM");
                         statement.executeUpdate("delete from STUDY_OUTCOME_MEASURE");
                         statement.executeUpdate("delete from STUDY_INDLDE");
@@ -181,7 +193,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
                         statement.executeUpdate("delete from HEALTHCARE_PROVIDER");
                         statement.executeUpdate("delete from ORGANIZATION");
-                        statement.executeUpdate("delete from PERSON");
+                        statement.executeUpdate("delete from PERSON");                            
                         connection.commit();
                     } finally {
                         statement.close();
@@ -427,6 +439,45 @@ public class TestSchema {
             arm.getInterventions().add(pa);
             addUpdObject(arm);
             armIds.add(arm.getId());
+            
+            DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+            dws.setStudyProtocol(sp);
+            dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_NOT_VERIFIED);
+            dws.setCommonText("Common Text1");
+            dws.setUserLastUpdated("curator");
+            addUpdObject(dws);
+            
+            RegulatoryAuthority ra = new RegulatoryAuthority();
+            ra.setAuthorityName("AuthorityName");
+            ra.setCountry(country);
+            addUpdObject(ra);
+            
+            StudyRegulatoryAuthority sra = new StudyRegulatoryAuthority();
+            sra.setRegulatoryAuthority(ra);
+            sra.setStudyProtocol(sp);
+            addUpdObject(sra);
+            
+            StudyContact sc = new StudyContact();
+            sc.setPrimaryIndicator(Boolean.TRUE);    
+            sc.setStudyProtocol(sp);
+            sc.setRoleCode(StudyContactRoleCode.SCIENTIFIC_LEADERSHIP);
+            sc.setStatusCode(StatusCode.ACTIVE);
+            addUpdObject(sc);
+            
+            StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+            ssas.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+            ssas.setStatusDate(new java.sql.Timestamp((new java.util.Date()).getTime()));
+            ssas.setStudyParticipation(sPart);
+            addUpdObject(ssas);
+            
+            PlannedEligibilityCriterion pec = new PlannedEligibilityCriterion();
+            pec.setCriterionName("WHC");
+            pec.setInclusionIndicator(Boolean.TRUE);
+            pec.setOperator(">");
+            pec.setStudyProtocol(sp);
+            pec.setAgeValue("14");
+            pec.setUnit(UnitsCode.MONTHS);
+            addUpdObject(pec);
             
             HibernateUtil.getCurrentSession().clear();
             

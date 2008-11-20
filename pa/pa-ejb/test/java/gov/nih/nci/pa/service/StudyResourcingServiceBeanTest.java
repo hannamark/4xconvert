@@ -2,10 +2,14 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudyResourcingTest;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -25,7 +29,7 @@ public class StudyResourcingServiceBeanTest {
     }
     
     @Test
-    public void getsummary4ReportedResourceTest() throws Exception {
+    public void getTest() throws Exception {
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
@@ -36,6 +40,9 @@ public class StudyResourcingServiceBeanTest {
         
         StudyResourcingDTO srDTO = remoteEjb.getsummary4ReportedResource(IiConverter.convertToIi(sp.getId()));
         assertNotNull(srDTO);
+        StudyResourcingDTO srDTO2 = remoteEjb.getStudyResourceByID(srDTO.getIdentifier());
+        assertNotNull(srDTO2);
+        remoteEjb.deleteStudyResourceByID(srDTO2);
         
     }
     
@@ -83,7 +90,7 @@ public class StudyResourcingServiceBeanTest {
 
         srDTO2.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
         srDTO2.setSerialNumber(IntConverter.convertToInt("123123"));
-        StudyResourcingDTO srDTO3 = remoteEjb.createStudyResourcing(srDTO2);
+        StudyResourcingDTO srDTO3 = remoteEjb.updateStudyResourcing(srDTO2);
         assertNotNull(srDTO3);
         assertEquals (srDTO3.getSerialNumber().getValue().toString(), "123123");
 

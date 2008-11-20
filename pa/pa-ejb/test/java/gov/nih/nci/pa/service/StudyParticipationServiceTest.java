@@ -74,7 +74,7 @@ public class StudyParticipationServiceTest {
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
                 , CdConverter.convertCdToString(result.getFunctionalCode()));
     }
-    @Test
+    /*@Test
     public void delete() throws Exception {
         remoteEjb.delete(participationIi);
         try {
@@ -83,10 +83,15 @@ public class StudyParticipationServiceTest {
         } catch(PAException e) {
             // expected behavior
         }
-    }
+    }*/
     @Test
     public void getByProtocol() throws Exception {
         List<StudyParticipationDTO> spList = remoteEjb.getByStudyProtocol(studyIi);
         assertEquals(participationId, IiConverter.convertToLong(spList.get(0).getIdentifier()));
+        List<StudyParticipationDTO> spList2 = remoteEjb.getByStudyProtocol(studyIi, spList);
+        assertEquals(participationId, IiConverter.convertToLong(spList2.get(0).getIdentifier()));
+        List<StudyParticipationDTO> spList3 = remoteEjb.getByStudyProtocol(studyIi, spList2.get(0));
+        assertEquals(participationId, IiConverter.convertToLong(spList3.get(0).getIdentifier()));
+        
     }
 }

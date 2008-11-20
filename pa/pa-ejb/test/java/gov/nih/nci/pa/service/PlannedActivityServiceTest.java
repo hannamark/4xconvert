@@ -10,10 +10,15 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -48,7 +53,7 @@ public class PlannedActivityServiceTest {
     @Test
     public void getByStudyProtocolTest() throws Exception {
         List<PlannedActivityDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);
-        assertEquals(1, dtoList.size());
+        assertEquals(2, dtoList.size());
     }
     @Test
     public void getByArmTest() throws Exception {
@@ -98,5 +103,40 @@ public class PlannedActivityServiceTest {
         remoteEjb.delete(ii);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
         assertEquals (originalCount - 1, dtoList.size());
+    }
+    @Test
+    public void getPlannedEligibilityCriterion() throws Exception {
+        List<PlannedEligibilityCriterionDTO> statusList =
+            remoteEjb.getPlannedEligibilityCriterionByStudyProtocol(spIi);
+        assertEquals(1, statusList.size());
+
+        PlannedEligibilityCriterionDTO dto =
+            remoteEjb.getPlannedEligibilityCriterion(statusList.get(0).getIdentifier());
+        assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier())
+                , (IiConverter.convertToLong(dto.getIdentifier())));
+        PlannedEligibilityCriterionDTO dto2 = null;
+
+            dto2 = new PlannedEligibilityCriterionDTO();
+            dto2 = remoteEjb.updatePlannedEligibilityCriterion(dto);
+            assertEquals(dto.getCriterionName().getValue()
+                    , dto2.getCriterionName().getValue());
+
+         remoteEjb.delete(dto.getIdentifier());
+    }
+
+    @Test
+    public void createPlannedEligibilityCriterion() throws Exception {
+      PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setCriterionName(StConverter.convertToSt("WHC"));
+        dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setOperator(StConverter.convertToSt(">"));
+        dto.setAgeValue(StConverter.convertToSt("80"));
+        dto.setUnit(CdConverter.convertToCd(UnitsCode.YEARS));
+        PlannedEligibilityCriterionDTO dto2 = null;
+        dto2 = new PlannedEligibilityCriterionDTO();
+        dto2 = remoteEjb.createPlannedEligibilityCriterion(dto);
+        assertEquals(dto.getStudyProtocolIdentifier()
+                , spIi);
     }
 }
