@@ -25,9 +25,11 @@
 				<!-- po-log4j.xml -->
 				<log.level.nci-commons>%%app.log.level%%</log.level.nci-commons>
 				<log.level.po>%%app.log.level%%</log.level.po>
+				<log.level.default>%%app.log.level.default%%</log.level.default>
 				<!-- jndi.properties -->
 				<jboss.naming.port>%%jboss.server.jndi.port%%</jboss.naming.port>
-
+                <jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>%%jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort%%</jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>
+                
                 <!-- SMM: Preliminary: used to drive Selenium tests 
                 <jboss.port>@jboss.server.port@</jboss.port>
                 <test.selenium.server.port>@selenium.proxy.port@</test.selenium.server.port>

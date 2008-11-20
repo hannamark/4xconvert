@@ -165,6 +165,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<filter token="database.driver" value="${database.driver}"/>
 		<filter token="database.dialect" value="${database.dialect}"/>
 		<filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
+		<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
 	</filterset>
 	
 
@@ -475,8 +476,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						<filter token="ldap.base.dn" value="${ldap.base.dn}"/>
 						<filter token="ldap.user.field" value="userid"/>
 						-->
-						<filter token="app.log.level" value="DEBUG"/>
+						<filter token="app.log.level" value="${app.log.level}"/>
+						<filter token="app.log.level.default" value="${app.log.level.default}"/>
 						<filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+						<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
 					</filterset>
 				</copy>
 				<copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>

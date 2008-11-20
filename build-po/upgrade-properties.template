@@ -6,7 +6,10 @@ application.base.path=
 # Default authentication mechanism type [ldap|database]
 # /Should not need to change this value/
 authentication.type=database
-
+# Used to control the applications logging level (suggested: DEBUG)
+app.log.level=DEBUG
+# Used to control the container's logging level (suggested: WARN)
+app.log.level.default=WARN
 ###################################
 #  URL TO ACCESS THE APPLICATION  #
 ###################################
@@ -47,7 +50,8 @@ jboss.server.jndi.port=
 jboss.server.name=
 # The HTTP Port for the server instance within JBoss containing the application, e.g. jboss.server.port=8080
 jboss.server.port=
-
+# The JBoss MQ Port that our custom JBossMQ-related mbeans must bind to (JBossMQ using the Unified Invocation Layer. All communication uses one socket connection)
+jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort=
 ##############
 ###  LDAP  ###
 ##############
@@ -64,9 +68,9 @@ mail.smtp.server=mailfwd.nih.gov
 #  PRE-POST VALIDATION PROPERTIES #
 ###################################
 # DO NOT MODIFY
-validation.pre.port.list=${jboss.server.jndi.port},${jboss.server.port}
+validation.pre.port.list=${jboss.server.jndi.port},${jboss.server.port},${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}
 # DO NOT MODIFY
 validation.post.http.list=${jboss.server.port}
 # DO NOT MODIFY
-validation.post.socket.list=${jboss.server.jndi.port}
+validation.post.socket.list=${jboss.server.jndi.port},${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}
 
