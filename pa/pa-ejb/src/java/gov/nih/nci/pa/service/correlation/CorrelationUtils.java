@@ -5,7 +5,6 @@ import gov.nih.nci.coppa.iso.AdxpCnt;
 import gov.nih.nci.coppa.iso.AdxpCty;
 import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
@@ -14,6 +13,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -133,15 +133,15 @@ public class CorrelationUtils {
         if (poPerson == null) {
             throw new PAException(" PO Person cannot be null");
         }
-        Person per = new Person();
-        
-        try {
-            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.GIV)) {
-                per.setFirstName(poPerson.getName().getPart().get(0).getValue());
-            }
-            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.FAM)) {
-                per.setLastName(poPerson.getName().getPart().get(0).getValue());
-            }
+        Person per = new Person();        
+        try {            
+            per = EnPnConverter.convertToPaPerson(poPerson);
+//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.GIV)) {
+//                per.setFirstName(poPerson.getName().getPart().get(0).getValue());
+//            }
+//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.FAM)) {
+//                per.setLastName(poPerson.getName().getPart().get(0).getValue());
+//            }                       
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOG.error("Error while converting Person ISO " , e);

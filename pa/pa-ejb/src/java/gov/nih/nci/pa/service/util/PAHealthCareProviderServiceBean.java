@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyParticipationContact;
@@ -29,8 +30,7 @@ import org.hibernate.Session;
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final Logger LOG = Logger.getLogger(PAHealthCareProviderServiceBean.class);
     private static final int THREE = 3;
-    private static final int TWO = 2;
-   
+    
 
     /**
      * 
@@ -87,7 +87,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             Query query = null;
             List<Object> queryList = new ArrayList<Object>();
             String queryString = "select sp, spc, hcp from StudyParticipation as sp"
-                    + " join sp.studyParticipationContacts as spc" + " join spc.healthCareProvider as hcp"
+                    + " join sp.studyParticipationContacts as spc" + " join spc.clinicalResearchStaff as hcp"
                     + " where sp.id = '" + spId + "' and hcp.identifier = '" + poIdentifier + "'"
                     + " and spc.roleCode = '" + roleCode + "'";
             query = session.createQuery(queryString);
@@ -160,7 +160,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             List<Object> queryList = new ArrayList<Object>();
             Query query = null;
             String queryStr = "select sp , spc , hcp , p from StudyParticipation as sp  "
-                    + " join sp.studyParticipationContacts as spc " + " join spc.healthCareProvider as hcp "
+                    + " join sp.studyParticipationContacts as spc " + " join spc.clinicalResearchStaff as hcp "
                     + " join hcp.person as p " + " where sp.id = " + id + " and spc.roleCode = '" + roleCd + "'";
             query = session.createQuery(queryStr);
             queryList = query.list();
@@ -190,7 +190,9 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO.setRoleName((((StudyParticipationContact) searchResult[1]).getRoleCode()));
             personWebDTO.setTelephone((((StudyParticipationContact) searchResult[1]).getPhone()));
             personWebDTO.setEmail((((StudyParticipationContact) searchResult[1]).getEmail()));
-            personWebDTO.setSelectedPersId(Long.valueOf(((HealthCareProvider) searchResult[TWO]).getIdentifier()));
+            //personWebDTO.setSelectedPersId(Long.valueOf(((HealthCareProvider) searchResult[TWO]).getIdentifier()));
+            personWebDTO.setSelectedPersId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
+            personWebDTO.setPaPersonId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
             retList.add(personWebDTO);
         }
         return retList;
@@ -199,31 +201,38 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     /**
      *  
      * @param id the study participation id
-     * @return Long as the identifier
+     * @return PersonWebDTO
      * @throws PAException on error
      */
-    public Long getIdentifierBySPCId(Long id) throws PAException {
+    public PersonWebDTO getIdentifierBySPCId(Long id) throws PAException {
         LOG.debug("Entering  getIdentifierBySPCId");
         Session session = null;
-        HealthCareProvider careProvider = null;
+        //HealthCareProvider
+        ClinicalResearchStaff careProvider = null;
+        PersonWebDTO personWebDTO = new PersonWebDTO();
         try {
             session = HibernateUtil.getCurrentSession();           
             List<Object> queryList = new ArrayList<Object>();
             Query query = null;
             String queryStr = "select spc , hcp from StudyParticipationContact as spc" 
-                    + " join spc.healthCareProvider as hcp"
+                    + " join spc.clinicalResearchStaff as hcp"
                     + " where spc.id = " + id
                     + " and spc.roleCode <> 'STUDY_PRIMARY_CONTACT'";
             query = session.createQuery(queryStr);
             queryList = query.list();           
-            Object[] searchResult = null;
+            Object[] searchResult = null;            
             for (int i = 0; i < queryList.size(); i++) {
                 searchResult = (Object[]) queryList.get(i);
                 if (searchResult == null) {
                     return null;
                 }
-                careProvider = ((HealthCareProvider) searchResult[1]);
-                return Long.valueOf(careProvider.getIdentifier());
+                careProvider = ((ClinicalResearchStaff) searchResult[1]);
+                personWebDTO.setFirstName(careProvider.getPerson().getFirstName());
+                personWebDTO.setLastName(careProvider.getPerson().getLastName());
+                personWebDTO.setMiddleName(careProvider.getPerson().getMiddleName()); 
+                personWebDTO.setSelectedPersId(Long.valueOf(careProvider.getPerson().getIdentifier()));
+                personWebDTO.setPaPersonId(careProvider.getPerson().getId());
+                break;
             }
             LOG.debug("Leaving  getIdentifierBySPCId");
         } catch (HibernateException hbe) {
@@ -232,7 +241,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
         } finally {
             session.flush();
         }     
-        return null;
+        return personWebDTO;
     }
     
 }

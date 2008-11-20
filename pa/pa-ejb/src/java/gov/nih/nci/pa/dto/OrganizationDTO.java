@@ -19,6 +19,7 @@ public class OrganizationDTO implements Serializable {
     private String name;
     private String city;
     private String country;
+    private String zip;
     
     /**
      * 
@@ -89,6 +90,18 @@ public class OrganizationDTO implements Serializable {
      */
     public void setCountry(String country) {
         this.country = country;
+    }
+    /**
+     * @return the zip
+     */
+    public String getZip() {
+        return zip;
+    }
+    /**
+     * @param zip the zip to set
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
     }
     
     

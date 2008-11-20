@@ -2,11 +2,11 @@ package gov.nih.nci.pa.service.util;
 
 
 
-import java.util.List;
-
 import gov.nih.nci.pa.dto.PAHealthCareProviderDTO;
 import gov.nih.nci.pa.iso.dto.PersonWebDTO;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.List;
 
 import javax.ejb.Remote;
 
@@ -57,11 +57,11 @@ public interface PAHealthCareProviderRemote {
     Long findHcpByIdentifier(Long identifier) throws PAException;
     
     /**
-     * 
+     *  
      * @param id the study participation id
-     * @return Long as the identifier
+     * @return PersonWebDTO
      * @throws PAException on error
      */
-    Long getIdentifierBySPCId(Long id) throws PAException; 
+    PersonWebDTO getIdentifierBySPCId(Long id) throws PAException; 
     
 }

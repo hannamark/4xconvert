@@ -14,6 +14,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 public enum StudyParticipationContactRoleCode implements CodedEnum<String> {
     
+    /** Sdy primary contact 3rd tab. */
+    STUDY_PRIMARY_CONTACT("Study Primary Contact"),
     /** Study Principal Investigator. */
     STUDY_PRINCIPAL_INVESTIGATOR("Study Principal Investigator"),
     /** Study sub Investigator. */

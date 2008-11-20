@@ -8,7 +8,6 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.OrganizationWebDTO;
-import gov.nih.nci.pa.dto.PAHealthCareProviderDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -29,13 +28,15 @@ import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOOrgDisplayConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -59,6 +60,11 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  *
+ */
+
+/*********
+ * PLEASE DO NOT CODE-REVIEW : THIS REQUIRES CLEAN UP.
+ * 
  */
 @Validation
 @SuppressWarnings("PMD")
@@ -340,29 +346,32 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * @throws Exception on error.
      */
     public String displayOrg() throws Exception {
+        gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new gov.nih.nci.pa.dto.OrganizationDTO();
         clearErrorsAndMessages();
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         selectedOrgDTO = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+        // convert the PO DTO to the pa domain
+        paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
         // store selection
         Organization org = new Organization();
-        org.setCity(selectedOrgDTO.getPostalAddress().getPart().get(AD_CITY_IDX).getValue());
-        org.setCountryName(selectedOrgDTO.getPostalAddress().getPart().get(AD_COUNTRY_IDX).getCode());
+        org.setCity(paOrgDTO.getCity());
+        org.setCountryName(paOrgDTO.getCountry());
         org.setIdentifier(IiConverter.convertToString(selectedOrgDTO.getIdentifier()));
-        org.setName(selectedOrgDTO.getName().getPart().get(0).getValue());
-        org.setPostalCode(selectedOrgDTO.getPostalAddress().getPart().get(AD_ZIP_IDX).getValue());
+        org.setName(paOrgDTO.getName());
+        org.setPostalCode(paOrgDTO.getZip());
         editOrg = new Organization();
-        editOrg.setCity(selectedOrgDTO.getPostalAddress().getPart().get(AD_CITY_IDX).getValue());
-        editOrg.setCountryName(selectedOrgDTO.getPostalAddress().getPart().get(AD_COUNTRY_IDX).getCode());
+        editOrg.setCity(paOrgDTO.getCity());
+        editOrg.setCountryName(paOrgDTO.getCountry());
         editOrg.setIdentifier(IiConverter.convertToString(selectedOrgDTO.getIdentifier()));
-        editOrg.setName(selectedOrgDTO.getName().getPart().get(0).getValue());
-        editOrg.setPostalCode(selectedOrgDTO.getPostalAddress().getPart().get(AD_ZIP_IDX).getValue());
+        editOrg.setName(paOrgDTO.getName());
+        editOrg.setPostalCode(paOrgDTO.getZip());
         // setting the org values to the member var
-        orgFromPO.setOrgCity(selectedOrgDTO.getPostalAddress().getPart().get(AD_CITY_IDX).getValue());
-        orgFromPO.setOrgCountry(selectedOrgDTO.getPostalAddress().getPart().get(AD_COUNTRY_IDX).getCode());
-        orgFromPO.setOrgName(selectedOrgDTO.getName().getPart().get(0).getValue());
-        orgFromPO.setOrgZip(selectedOrgDTO.getPostalAddress().getPart().get(AD_ZIP_IDX).getValue());
+        orgFromPO.setOrgCity(paOrgDTO.getCity());
+        orgFromPO.setOrgCountry(paOrgDTO.getCountry());
+        orgFromPO.setOrgName(paOrgDTO.getName());
+        orgFromPO.setOrgZip(paOrgDTO.getZip());
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setPoOrganizationIi(selectedOrgDTO.getIdentifier());
         tab.setFacilityOrganization(org);
@@ -384,7 +393,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         returnDisplaySPContacts(tab);
         return "display_StudyPartipants";
     }
-
+    
     /**
      * @return the result
      * @throws Exception on error.
@@ -405,7 +414,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 hasErrors = true;
             } else {
                 selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
-                        EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+                        EnOnConverter.convertToOrgIi(Long.valueOf(persId)));           
             }
             if (!PAUtil.isNotNullOrNotEmpty(email)) {
                 addFieldError("personContactWebDTO.email", getText("error.enterEmailAddress"));
@@ -434,79 +443,23 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 return "error_prim_contacts";
             }
         }
-
-        selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
-                EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
-        ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
-        ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        // Step 1: Check if a Health care provider exists for a given
-        // identitfier
-        Long healthCareProvider = PaRegistry.getPAHealthCareProviderService().findHcpByIdentifier(
-                IiConverter.convertToLong(selectedPersTO.getIdentifier()));
-        if (healthCareProvider == null) { // Since, Healthcareprovider is
-                                            // null, create one
-            PAHealthCareProviderDTO healthCareProviderDTO = new PAHealthCareProviderDTO();
-            healthCareProviderDTO.setFirstName((selectedPersTO.getName().getPart()).get(1).getValue());
-            healthCareProviderDTO.setLastName((selectedPersTO.getName().getPart()).get(0).getValue());
-            healthCareProviderDTO.setMiddleName((selectedPersTO.getName().getPart()).get(2).getValue());
-            healthCareProviderDTO.setAssignedIdentifier(IiConverter.convertToLong(selectedPersTO.getIdentifier()));
-            healthCareProvider = PaRegistry.getPAHealthCareProviderService().createPAHealthCareProvider(
-                    healthCareProviderDTO);
+        if (selectedPersTO == null) {
+            selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
+                    EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
         }
-        // Step 2: create a record in PO
-        if (pohcpService.getCorrelation(selectedPersTO.getIdentifier()) == null) {
-            HealthCareProviderDTO healthCareProviderDTO = new HealthCareProviderDTO();
-//            healthCareProviderDTO.setPersonIdentifier(selectedPersTO.getIdentifier());
-            healthCareProviderDTO.setPlayerIdentifier(selectedPersTO.getIdentifier());
-            
-            // pohcpService.createCorrelation(healthCareProviderDTO); uncomment
-            // this later!
-        }
-        // Step 3: Check the Study Participation contact Info
-        Long studyPartContactPrincipalInv = PaRegistry.getPAHealthCareProviderService()
-                .getStudyParticationContactByPersonAndSPId(IiConverter.convertToLong(selectedPersTO.getIdentifier()),
-                        organizationsTabWebDTO.getStudyParticipationId(), "STUDY_PRINCIPAL_INVESTIGATOR");
-        Long studyPartContactSubInv = PaRegistry.getPAHealthCareProviderService()
-                .getStudyParticationContactByPersonAndSPId(IiConverter.convertToLong(selectedPersTO.getIdentifier()),
-                        organizationsTabWebDTO.getStudyParticipationId(), "STUDY_SUB_INVESTIGATOR");
-        boolean studyPartContact = ((studyPartContactPrincipalInv == null) && (studyPartContactSubInv == null));
-        if (studyPartContact && !isPrimaryContact) {
-            createStudyParticationContactRecord(healthCareProvider, organizationsTabWebDTO, isPrimaryContact, roleCode);
-        }
-        // Handle the condition when the changing the Primary Contact;
-        if (isPrimaryContact) {
-            // Check if a different person is chosen this time.
-            // Check for a row with StudyParticipation and rolecode =
-            // "STUDY_PRIMARY_CONTACT"
-            List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
-                    organizationsTabWebDTO.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT");
-            if (returnlist.size() > 0) {
-                sPartContactService.delete(IiConverter.convertToIi(((PersonWebDTO) returnlist.get(0)).getId()));
-            }
-            boolean validationError = createStudyParticationContactRecord(healthCareProvider, organizationsTabWebDTO,
-                    isPrimaryContact, StudyContactRoleCode.STUDY_PRIMARY_CONTACT.getCode());
-            if (validationError) {
-                personContactWebDTO = new PersonWebDTO();
-                personContactWebDTO.setFirstName((selectedPersTO.getName().getPart()).get(1).getValue());
-                personContactWebDTO.setLastName((selectedPersTO.getName().getPart()).get(0).getValue());
-                personContactWebDTO.setMiddleName((selectedPersTO.getName().getPart()).get(2).getValue());
-                personContactWebDTO.setSelectedPersId(Long.valueOf(selectedPersTO.getIdentifier().getExtension()));
-                personContactWebDTO.setEmail(ServletActionContext.getRequest().getParameter("email"));
-                personContactWebDTO.setTelephone(ServletActionContext.getRequest().getParameter("tel"));
-                return "error_prim_contacts";
-            }
-        }
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
+                                    .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        createStudyParticationContactRecord(tab, isPrimaryContact, roleCode);
         // This makes a fresh db call to show the result on the JSP
         if (!isPrimaryContact) {
-            return returnDisplaySPContacts(organizationsTabWebDTO);
+            return returnDisplaySPContacts(tab);
         } else {
             personContactWebDTO = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
-                    organizationsTabWebDTO.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT").get(0);
+                    tab.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT").get(0);
             return "display_primContacts";
         }
     }
-
+    
     /**
      * @return the result
      * @throws Exception on error
@@ -514,7 +467,35 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String deleteStudyPartContact() throws Exception {
         clearErrorsAndMessages();
         String invId = ServletActionContext.getRequest().getParameter("persid");
-        StudyParticipationContactDTO contactDTO = sPartContactService.get(IiConverter.convertToIi(invId));
+        StudyParticipationContactDTO contactDTO = sPartContactService.get(IiConverter.convertToIi(invId));        
+        //Long identifier = IiConverter.convertToLong(contactDTO.getHealthCareProviderIi());
+        Long identifier = IiConverter.convertToLong(contactDTO.getClinicalResearchStaffIi());
+        ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
+        ServletActionContext
+                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        sPartContactService.delete(IiConverter.convertToIi(invId));
+        // If a primary contact also exists delete that as well
+        List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
+                organizationsTabWebDTO.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT");
+        if (returnlist.size() > 0) {
+            StudyParticipationContactDTO contactDTODB = sPartContactService.get(IiConverter
+                    .convertToIi(((PersonWebDTO) returnlist.get(0)).getId()));
+            Long identifierDB = IiConverter.convertToLong(contactDTODB.getClinicalResearchStaffIi());
+            if (identifier.equals(identifierDB)) {
+                sPartContactService.delete(IiConverter.convertToIi(((PersonWebDTO) returnlist.get(0)).getId()));
+            }
+        }
+        return returnDisplaySPContacts(organizationsTabWebDTO);
+    }
+       
+    /**
+     * @return the result
+     * @throws Exception on error
+     */
+    public String deleteStudyPartContact1() throws Exception {
+        clearErrorsAndMessages();
+        String invId = ServletActionContext.getRequest().getParameter("persid");
+        StudyParticipationContactDTO contactDTO = sPartContactService.get(IiConverter.convertToIi(invId));        
         Long identifier = IiConverter.convertToLong(contactDTO.getHealthCareProviderIi());
         ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
         ServletActionContext
@@ -568,6 +549,30 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         return "display_spContacts";
     }
 
+    
+    private boolean doesSPCRecordExistforPerson(Long persid) throws Exception {
+        ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
+        ServletActionContext
+                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        personWebDTOList = new ArrayList<PersonWebDTO>();
+        List<PersonWebDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
+                .getPersonsByStudyParticpationId(organizationsTabWebDTO.getStudyParticipationId(),
+                        "STUDY_PRINCIPAL_INVESTIGATOR");
+        List<PersonWebDTO> subInvresults = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
+                organizationsTabWebDTO.getStudyParticipationId(), "STUDY_SUB_INVESTIGATOR");
+        for (int i = 0; i < principalInvresults.size(); i++) {
+            if (((PersonWebDTO) principalInvresults.get(i)).getSelectedPersId().equals(persid)) {
+                return true;
+            }
+        }
+        for (int i = 0; i < subInvresults.size(); i++) {
+            if (((PersonWebDTO) subInvresults.get(i)).getPaPersonId().equals(persid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      *
      * @return the result
@@ -600,21 +605,20 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         clearErrorsAndMessages();
         String contactPersId = ServletActionContext.getRequest().getParameter("contactpersid");
         String editmode = ServletActionContext.getRequest().getParameter("editmode");
-        Long identifier = PaRegistry.getPAHealthCareProviderService().getIdentifierBySPCId(Long.valueOf(contactPersId));
-        selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(EnOnConverter.convertToOrgIi(identifier));
+        PersonWebDTO webDTO = PaRegistry.getPAHealthCareProviderService().getIdentifierBySPCId(Long.valueOf(
+                contactPersId));
+        //selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(EnOnConverter.convertToOrgIi(identifier));
         ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
         ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        Long healthCareProvider = PaRegistry.getPAHealthCareProviderService().findHcpByIdentifier(
-                IiConverter.convertToLong(selectedPersTO.getIdentifier()));
         // check if primary contact already exists; if it exists delete it
         List returnlist = PaRegistry.getPAHealthCareProviderService().getPersonsByStudyParticpationId(
                 organizationsTabWebDTO.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT");
         if (returnlist.size() > 0) {
             sPartContactService.delete(IiConverter.convertToIi(((PersonWebDTO) returnlist.get(0)).getId()));
         }
-        boolean validationError = createStudyParticationContactRecord(healthCareProvider, organizationsTabWebDTO, true,
-                StudyContactRoleCode.STUDY_PRIMARY_CONTACT.getCode());
+        boolean validationError = createStudyParticationContactRecord(organizationsTabWebDTO, true,
+                                                            StudyContactRoleCode.STUDY_PRIMARY_CONTACT.getCode());
         if (validationError) {
             return "error_prim_contacts";
         }
@@ -623,16 +627,37 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         return returnDisplaySPContacts(organizationsTabWebDTO);
     }
-
-    private boolean createStudyParticationContactRecord(Long healthCareProvider,
-            ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO, boolean isPrimaryContact, String roleCode)
-            throws Exception {
-        clearErrorsAndMessages();
-        boolean returnValue = false;
-        Long spId = organizationsTabWebDTO.getStudyParticipationId();
-        StudyParticipationContactDTO spContactDTOSave = new StudyParticipationContactDTO();
-        StudyParticipationDTO spDTO = sPartService.get(IiConverter.convertToIi(spId));
-        spContactDTOSave.setStudyParticipationIi(spDTO.getIdentifier());
+    
+    
+    private boolean createStudyParticationContactRecord(ParticipatingOrganizationsTabWebDTO organizationsTabWebDTO, 
+                                                                              boolean isPrimaryContact, String roleCode)
+                                                                                                    throws Exception {
+        String orgPoIdentifier = organizationsTabWebDTO.getFacilityOrganization().getIdentifier();       
+        Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().createClinicalResearchStaffCorrelations(
+                orgPoIdentifier, IiConverter.convertToString(selectedPersTO.getIdentifier()));
+        StudyProtocolQueryDTO studyProtocolQueryDto =  (StudyProtocolQueryDTO) ServletActionContext.getRequest().
+                                                                    getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        String trialType = studyProtocolQueryDto.getStudyProtocolType();
+        Long healthCareProviderIi = null;
+        if (trialType.startsWith("Interventional")) {
+            healthCareProviderIi = new HealthCareProviderCorrelationBean().createHealthCareProviderCorrelationBeans(
+                    orgPoIdentifier, IiConverter.convertToString(selectedPersTO.getIdentifier()));
+        }
+        StudyParticipationContactDTO participationContactDTO = new StudyParticipationContactDTO();
+        participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid));
+        if (healthCareProviderIi != null) {
+            participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
+        }
+        if (!isPrimaryContact) {
+            participationContactDTO.setRoleCode(CdConverter.convertStringToCd(roleCode));
+        } else {
+            participationContactDTO.setRoleCode(CdConverter.convertStringToCd("Study Primary Contact"));
+        }
+        participationContactDTO.setStudyProtocolIdentifier(
+                IiConverter.convertToIi(studyProtocolQueryDto.getStudyProtocolId()));
+        participationContactDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
+        participationContactDTO.setStudyParticipationIi(IiConverter.convertToIi(
+                organizationsTabWebDTO.getStudyParticipationId()));
         if (isPrimaryContact) {
             String email = ServletActionContext.getRequest().getParameter("email");
             String telephone = ServletActionContext.getRequest().getParameter("tel");
@@ -643,19 +668,22 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             DSet<Tel> list = new DSet<Tel>();
             list = DSetConverter.convertListToDSet(emailList, "EMAIL", list);
             list = DSetConverter.convertListToDSet(telList, "PHONE", list);
-            spContactDTOSave.setTelecomAddresses(list);
-            spContactDTOSave.setRoleCode(CdConverter.convertStringToCd(StudyContactRoleCode.STUDY_PRIMARY_CONTACT
-                    .getCode()));
-        } else {
-            spContactDTOSave.setRoleCode(CdConverter.convertStringToCd(roleCode));
+            participationContactDTO.setTelecomAddresses(list);
+            //if a old record exists delete it and create a new one
+            List<PersonWebDTO> resultsList = PaRegistry.getPAHealthCareProviderService().
+            getPersonsByStudyParticpationId(
+                    organizationsTabWebDTO.getStudyParticipationId(), "STUDY_PRIMARY_CONTACT");
+            if (resultsList.size() > 0) {
+                Long idToDelete = ((PersonWebDTO) resultsList.get(0)).getId();
+                sPartContactService.delete(IiConverter.convertToIi(idToDelete));
+            }
+            sPartContactService.create(participationContactDTO);
         }
-        spContactDTOSave.setStatusCode(CdConverter.convertStringToCd("Active"));
-        spContactDTOSave.setStudyProtocolIdentifier(spIi);
-        spContactDTOSave.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProvider));
-        sPartContactService.create(spContactDTOSave);
-        ServletActionContext.getRequest().getSession().removeAttribute("emailEntered");
-        ServletActionContext.getRequest().getSession().removeAttribute("telephoneEntered");
-        return returnValue;
+        if (!isPrimaryContact && !doesSPCRecordExistforPerson(
+                                Long.valueOf(selectedPersTO.getIdentifier().getExtension()))) {
+            sPartContactService.create(participationContactDTO);
+        }
+        return true;
     }
 
     /**
@@ -708,6 +736,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     /**
+     * SET AS PRIMARY CONTACT. This method does not save it simply sets the values.
      * @return the result
      * @throws Exception on error.
      */
@@ -715,20 +744,22 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         clearErrorsAndMessages();
         String contactPersId = ServletActionContext.getRequest().getParameter("contactpersid");
         String editmode = ServletActionContext.getRequest().getParameter("editmode");
-        Long identifier = null;
+        PersonWebDTO webDTO = null;
         personContactWebDTO = new PersonWebDTO();
         if ("yes".equals(editmode)) {
-            identifier = PaRegistry.getPAHealthCareProviderService().getIdentifierBySPCId(Long.valueOf(contactPersId));
-            selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(EnOnConverter.convertToOrgIi(identifier));
-            personContactWebDTO.setSelectedPersId(Long.valueOf(identifier));
+            webDTO = PaRegistry.getPAHealthCareProviderService().getIdentifierBySPCId(Long.valueOf(contactPersId));
+            personContactWebDTO.setFirstName(webDTO.getFirstName());
+            personContactWebDTO.setLastName(webDTO.getLastName());
+            personContactWebDTO.setMiddleName(webDTO.getMiddleName());
+            personContactWebDTO.setSelectedPersId(webDTO.getSelectedPersId());
         } else {
             selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(contactPersId)));
-            personContactWebDTO.setSelectedPersId(Long.valueOf(contactPersId));
+            personContactWebDTO.setSelectedPersId(Long.valueOf(selectedPersTO.getIdentifier().getExtension()));
+            personContactWebDTO.setFirstName((selectedPersTO.getName().getPart()).get(1).getValue());
+            personContactWebDTO.setLastName((selectedPersTO.getName().getPart()).get(0).getValue());
+            personContactWebDTO.setMiddleName((selectedPersTO.getName().getPart()).get(2).getValue());
         }
-        personContactWebDTO.setFirstName((selectedPersTO.getName().getPart()).get(1).getValue());
-        personContactWebDTO.setLastName((selectedPersTO.getName().getPart()).get(0).getValue());
-        personContactWebDTO.setMiddleName((selectedPersTO.getName().getPart()).get(2).getValue());
         String email = (String) ServletActionContext.getRequest().getSession().getAttribute("emailEntered");
         String telephone = (String) ServletActionContext.getRequest().getSession().getAttribute("telephoneEntered");
         if (email != null) {

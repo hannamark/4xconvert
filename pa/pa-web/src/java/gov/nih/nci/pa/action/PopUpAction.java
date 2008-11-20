@@ -1,5 +1,8 @@
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -7,10 +10,13 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.RemoteApiUtil;
+import gov.nih.nci.pa.util.SearchOrgResultDisplay;
+import gov.nih.nci.pa.util.SearchPersonResultDisplay;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -26,8 +32,8 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings("PMD")
 public class PopUpAction extends ActionSupport {
     private List<Country> countryList = new ArrayList<Country>();
-    private List<OrganizationDTO> orgs = new ArrayList<OrganizationDTO>();
-    private List<PersonDTO> persons = new ArrayList<PersonDTO>();
+    private List<SearchOrgResultDisplay> orgs = new ArrayList<SearchOrgResultDisplay>();
+    private List<SearchPersonResultDisplay> persons = new ArrayList<SearchPersonResultDisplay>();
     private OrgSearchCriteria orgSearchCriteria = new OrgSearchCriteria();
 
     /**
@@ -112,7 +118,9 @@ public class PopUpAction extends ActionSupport {
             OrganizationDTO criteria = new OrganizationDTO();
             criteria.setName(EnOnConverter.convertToEnOn(orgName));
             criteria.setPostalAddress(AddressConverterUtil.create("", "", cityName, "", zipCode, countryName));
-            orgs = PaRegistry.getPoOrganizationEntityService().search(criteria);
+            List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
+            callConvert = PaRegistry.getPoOrganizationEntityService().search(criteria);
+            convertPoOrganizationDTO(callConvert);
             return SUCCESS;
         } catch (Exception e) {           
             return SUCCESS;
@@ -138,7 +146,11 @@ public class PopUpAction extends ActionSupport {
         // (RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         try {
-            persons = PaRegistry.getPoPersonEntityService().search(p);
+            List<PersonDTO> list = new ArrayList<PersonDTO>();
+            list = PaRegistry.getPoPersonEntityService().search(p);
+            for (PersonDTO dto : list) {
+                persons.add(convertToPaPerson(dto));
+            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -164,7 +176,11 @@ public class PopUpAction extends ActionSupport {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         try {
-            persons = PaRegistry.getPoPersonEntityService().search(p);
+            List<PersonDTO> list = new ArrayList<PersonDTO>();
+            list = PaRegistry.getPoPersonEntityService().search(p);
+            for (PersonDTO dto : list) {
+                persons.add(convertToPaPerson(dto));
+            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -190,7 +206,11 @@ public class PopUpAction extends ActionSupport {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         try {
-            persons = PaRegistry.getPoPersonEntityService().search(p);
+            List<PersonDTO> list = new ArrayList<PersonDTO>();
+            list = PaRegistry.getPoPersonEntityService().search(p);
+            for (PersonDTO dto : list) {
+                persons.add(convertToPaPerson(dto));
+            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -232,13 +252,80 @@ public class PopUpAction extends ActionSupport {
             OrganizationDTO criteria = new OrganizationDTO();
             criteria.setName(EnOnConverter.convertToEnOn(orgName));
             criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName, null, zipCode, countryName));
-            orgs = PaRegistry.getPoOrganizationEntityService().search(criteria);
+            List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
+            callConvert = PaRegistry.getPoOrganizationEntityService().search(criteria);
+            convertPoOrganizationDTO(callConvert);
             return "orgs";
         } catch (Exception e) {
             return "orgs";
         }
     }
-
+    
+    private void convertPoOrganizationDTO(List<OrganizationDTO> poOrgDtos) throws PAException {
+        SearchOrgResultDisplay displayElement = null;
+        for (int i = 0; i < poOrgDtos.size(); i++) {
+            displayElement = new SearchOrgResultDisplay();
+            displayElement.setId(poOrgDtos.get(i).getIdentifier().getExtension().toString());
+            displayElement.setName(poOrgDtos.get(i).getName().getPart().get(0).getValue());
+            //
+            int partSize = poOrgDtos.get(i).getPostalAddress().getPart().size();
+            AddressPartType type = null;
+            for (int k = 0; k < partSize; k++) {
+                type = poOrgDtos.get(i).getPostalAddress().getPart().get(k).getType();               
+                if (type.name().equals("CNT")) {
+                    displayElement.setCountry(getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart().
+                            get(k).getCode()));
+                }
+                if (type.name().equals("ZIP")) {
+                    displayElement.setZip(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
+                }
+                if (type.name().equals("CTY")) {
+                    displayElement.setCity(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
+                }              
+                if (type.name().equals("STA")) {
+                    displayElement.setState(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
+                }
+            }            
+            orgs.add(displayElement);
+        }
+    }
+    
+    private String getCountryNameUsingCode(String code) throws PAException {
+        if (!(countryList.size() > 0)) {
+            countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
+            if (countryList == null) {
+                countryList = PaRegistry.getLookUpTableService().getCountries();
+                ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
+            }
+        }
+        for (int i = 0; i < countryList.size(); i++) {
+            gov.nih.nci.pa.domain.Country country = (gov.nih.nci.pa.domain.Country) countryList.get(i);
+            if (country.getAlpha3().toString().equals(code)) {
+                return country.getName();
+            }
+        }
+        return null;
+    }
+    
+    private SearchPersonResultDisplay convertToPaPerson(PersonDTO poPerson) {
+        SearchPersonResultDisplay prs = new SearchPersonResultDisplay();
+        List<Enxp> list = poPerson.getName().getPart();
+        Iterator ite = list.iterator();
+        while (ite.hasNext()) {
+           Enxp part = (Enxp) ite.next();          
+           if (EntityNamePartType.FAM == part.getType()) {
+               prs.setLastName(part.getValue());
+           } else if (EntityNamePartType.GIV == part.getType()) {
+               if (prs.getFirstName() == null) {
+                   prs.setFirstName(part.getValue());
+               } else {
+                   prs.setMiddleName(part.getValue());
+               }
+           }
+        }
+        prs.setId(Long.valueOf(poPerson.getIdentifier().getExtension().toString()));
+        return prs;
+    }
     /**
      * @return the countryList
      */
@@ -256,28 +343,28 @@ public class PopUpAction extends ActionSupport {
     /**
      * @return the orgs
      */
-    public List<OrganizationDTO> getOrgs() {
+    public List<SearchOrgResultDisplay> getOrgs() {
         return orgs;
     }
 
     /**
      * @param orgs the orgs to set
      */
-    public void setOrgs(List<OrganizationDTO> orgs) {
+    public void setOrgs(List<SearchOrgResultDisplay> orgs) {
         this.orgs = orgs;
     }
 
     /**
      * @return the persons
      */
-    public List<PersonDTO> getPersons() {
+    public List<SearchPersonResultDisplay> getPersons() {
         return persons;
     }
 
     /**
      * @param persons the persons to set
      */
-    public void setPersons(List<PersonDTO> persons) {
+    public void setPersons(List<SearchPersonResultDisplay> persons) {
         this.persons = persons;
     }
 }
