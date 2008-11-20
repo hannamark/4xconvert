@@ -40,7 +40,6 @@
                <li><li>            
                    <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search">Search</span></span></s:a>
                    <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();"><span class="btn_img"><span class="add">Add Org</span></span></s:a>  
-                   <a href="#" class="btn" onclick="closePopup();"><span class="btn_img"><span class="cancel">Cancel</span></span></a>
                    </li>
                </ul>   
           </del>

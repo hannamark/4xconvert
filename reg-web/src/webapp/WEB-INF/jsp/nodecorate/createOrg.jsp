@@ -33,7 +33,6 @@
        <li>
            <s:a href="#" cssClass="btn" onclick="createOrg()"><span class="btn_img"><span class="save">Save</span></span></s:a>
            <s:a href="#" cssClass="btn" onclick="setSearchFormVisible();"><span class="btn_img"><span class="search">Search</span></span></s:a>
-           <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin(true);"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
        </li>
        </ul>   
   </del>
