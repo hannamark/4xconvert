@@ -222,7 +222,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td  scope="row" class="label">
-                    <label for="trialType"> <fmt:message key="submit.trial.type"/></label> 
+                    <label for="trialType"> <fmt:message key="submit.trial.type"/><span class="required">*</span></label> 
                 </td>
                 <td>
 				<input type="radio" name="trialType" value="Observational" checked="checked"> Observational 
@@ -231,7 +231,7 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td  scope="row" class="label">
-                    <label for="trialPurpose">Purpose :</label> 
+                    <label for="trialPurpose"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label> 
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
@@ -243,14 +243,14 @@ function toggledisplay2 (it) {
           </tr> 
           
         <tr>
-              <th colspan="2">Lead Organization/Principal Investigator</th>
+              <th colspan="2"><fmt:message key="submit.trial.leadOrgInvestigator"/></th>
         </tr>
                     <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
           <tr>
 					<td scope="row" class="label">
-						<label for="org"> Organization :</label> 
+						<label for="org"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label> 
 					</td>
 					<td class="value">
 						<div id="loadOrgField">
@@ -261,7 +261,7 @@ function toggledisplay2 (it) {
           <!-- include po person jsp -->
           <tr>
 					<td scope="row" class="label">
-						<label for="org"> Person :</label> 
+						<label for="org"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label> 
 					</td>
 					<td class="value">
 						<div id="loadPersField">
@@ -273,7 +273,7 @@ function toggledisplay2 (it) {
           <tr>          
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
-             <th colspan="2">Sponsor</th>
+             <th colspan="2"><fmt:message key="submit.trial.sponsorResParty"/></th>
         </tr>          
         <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
