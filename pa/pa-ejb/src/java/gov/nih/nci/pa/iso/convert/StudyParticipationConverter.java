@@ -4,9 +4,11 @@
 package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -43,8 +45,14 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         if (bo.getResearchOrganization() != null) {
             dto.setResearchOrganizationIi(IiConverter.convertToIi(bo.getResearchOrganization().getId()));
         }
+        if (bo.getOversightCommittee() != null) {
+            dto.setOversightCommitteeIi(IiConverter.convertToIi(bo.getOversightCommittee().getId()));
+        }
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(bo.getLocalStudyProtocolIdentifier()));
+        dto.setReviewBoardApprovalDate(TsConverter.convertToTs(bo.getReviewBoardApprovalDate()));
+        dto.setReviewBoardApprovalNumber(StConverter.convertToSt(bo.getReviewBoardApprovalNumber()));
+        dto.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(bo.getReviewBoardApprovalStatusCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
@@ -74,18 +82,31 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
             roBo = new ResearchOrganization();
             roBo.setId(IiConverter.convertToLong(dto.getResearchOrganizationIi()));
         }
-
+        
+        OversightCommittee ocBo = null;
+        if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            ocBo = new OversightCommittee();
+            ocBo.setId(IiConverter.convertToLong(dto.getOversightCommitteeIi()));
+        }
 
         StudyParticipation bo = new StudyParticipation();
         bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setFunctionalCode(StudyParticipationFunctionalCode.getByCode(dto.getFunctionalCode().getCode()));
         bo.setHealthCareFacility(hfBo);
         bo.setResearchOrganization(roBo);
+        bo.setOversightCommittee(ocBo);
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
         bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setStudyProtocol(spBo);
+        bo.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
+        bo.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
+        
+        if (dto.getReviewBoardApprovalStatusCode() != null) {
+            bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
+                    dto.getReviewBoardApprovalStatusCode().getCode()));
+        }
         return bo;
     }
 

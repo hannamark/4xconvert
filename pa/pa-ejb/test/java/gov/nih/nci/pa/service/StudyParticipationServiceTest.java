@@ -5,9 +5,12 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
@@ -38,6 +41,10 @@ public class StudyParticipationServiceTest {
     Ii participationIi;
     Long facilityId;
     Ii facilityIi;
+    Long researchOrgId;
+    Ii researchOrgIi;
+    Long oversightCommitteeId;
+    Ii oversightCommitteeIi;
 
     @Before
     public void setUp() throws Exception {
@@ -49,6 +56,10 @@ public class StudyParticipationServiceTest {
         participationIi = IiConverter.convertToIi(participationId);
         facilityId = TestSchema.healthCareFacilityIds.get(0);
         facilityIi = IiConverter.convertToIi(facilityId);
+        researchOrgId = TestSchema.researchOrganizationIds.get(0);
+        researchOrgIi = IiConverter.convertToIi(researchOrgId);
+        oversightCommitteeId = TestSchema.oversightCommitteeIds.get(0);
+        oversightCommitteeIi = IiConverter.convertToIi(oversightCommitteeId);
     }
     @Test
     public void get() throws Exception {
@@ -75,7 +86,7 @@ public class StudyParticipationServiceTest {
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
                 , CdConverter.convertCdToString(result.getFunctionalCode()));
     }
-    /*@Test
+    @Test
     public void delete() throws Exception {
         remoteEjb.delete(participationIi);
         try {
@@ -84,7 +95,7 @@ public class StudyParticipationServiceTest {
         } catch(PAException e) {
             // expected behavior
         }
-    }*/
+    }
     @Test
     public void getByProtocol() throws Exception {
         List<StudyParticipationDTO> spList = remoteEjb.getByStudyProtocol(studyIi);
@@ -94,5 +105,57 @@ public class StudyParticipationServiceTest {
         List<StudyParticipationDTO> spList3 = remoteEjb.getByStudyProtocol(studyIi, spList2.get(0));
         assertEquals(participationId, IiConverter.convertToLong(spList3.get(0).getIdentifier()));
         
+    }
+    @Test
+    public void businessRules() throws Exception {
+        StudyParticipationDTO dto = remoteEjb.get(participationIi);
+        dto.setHealthcareFacilityIi(null);
+        dto.setResearchOrganizationIi(null);
+        try {
+            remoteEjb.update(dto);
+            fail("Should have thrown an exception for either Healthcare Facility or Research Organization must be set.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setHealthcareFacilityIi(facilityIi);
+        dto.setResearchOrganizationIi(researchOrgIi);
+        try {
+            remoteEjb.update(dto);
+            fail("Should have thrown an exception for either Healthcare Facility or Research Organization must null.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setHealthcareFacilityIi(null);
+        try {
+            remoteEjb.update(dto);
+            // expected behavior
+        } catch (PAException e) {
+            fail("Exception thrown during update which should have worked.  ");
+        }
+    }
+    @Test
+    public void enforceOnlyOneOversightCommittee() throws Exception {
+        StudyParticipationDTO sp1 = remoteEjb.get(participationIi);
+        
+        // set first study participation IRB
+        sp1.setOversightCommitteeIi(oversightCommitteeIi);
+        sp1.setReviewBoardApprovalDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2001")));
+        sp1.setReviewBoardApprovalNumber(StConverter.convertToSt("approval number"));
+        sp1.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED));
+        remoteEjb.update(sp1);
+        sp1 = remoteEjb.get(participationIi);
+        assertFalse(PAUtil.isIiNull(sp1.getOversightCommitteeIi()));
+
+        // create another study participation IRB
+        sp1.setIdentifier(null);
+        StudyParticipationDTO sp2 = remoteEjb.create(sp1);
+        assertFalse(PAUtil.isIiNull(sp2.getOversightCommitteeIi()));
+
+        // confirm first one modified
+        sp1 = remoteEjb.get(participationIi);
+        assertTrue(PAUtil.isIiNull(sp1.getOversightCommitteeIi()));
+        assertNull(TsConverter.convertToTimestamp(sp1.getReviewBoardApprovalDate()));
+        assertNull(StConverter.convertToString(sp1.getReviewBoardApprovalNumber()));
+        assertTrue(PAUtil.isCdNull(sp1.getReviewBoardApprovalStatusCode()));
     }
 }

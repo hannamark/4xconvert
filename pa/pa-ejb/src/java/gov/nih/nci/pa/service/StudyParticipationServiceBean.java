@@ -39,16 +39,34 @@ public class StudyParticipationServiceBean
         }
     }
     
+    private void enforceOnlyOneOversightCommittee(StudyParticipationDTO dto) throws PAException {
+        if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            List<StudyParticipationDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (StudyParticipationDTO sp : spList) {
+                if (!IiConverter.convertToLong(dto.getIdentifier()).
+                        equals(IiConverter.convertToLong(sp.getIdentifier())) 
+                        && !PAUtil.isIiNull(sp.getOversightCommitteeIi())) {
+                    sp.setOversightCommitteeIi(null);
+                    sp.setReviewBoardApprovalDate(null);
+                    sp.setReviewBoardApprovalNumber(null);
+                    sp.setReviewBoardApprovalStatusCode(null);
+                    update(sp);
+                }
+            }
+        }
+    }
+    
     /**
      * @param dto StudyParticipationDTO
      * @return StudyParticipationDTO
      * @throws PAException PAException
      */
     @Override
-    public StudyParticipationDTO create(
-            StudyParticipationDTO dto) throws PAException {
+    public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
         businessRules(dto);
-        return super.create(dto);
+        StudyParticipationDTO resultDto = super.create(dto);
+        enforceOnlyOneOversightCommittee(resultDto);
+        return resultDto;
     }
 
     /**
@@ -60,7 +78,9 @@ public class StudyParticipationServiceBean
     public StudyParticipationDTO update(StudyParticipationDTO dto)
             throws PAException {
         businessRules(dto);
-        return super.update(dto);
+        StudyParticipationDTO resultDto = super.update(dto);
+        enforceOnlyOneOversightCommittee(resultDto);
+        return resultDto;
     }
 
     /**
@@ -134,8 +154,8 @@ public class StudyParticipationServiceBean
         for (StudyParticipation sp : queryList) {
             resultList.add(convertFromDomainToDto(sp));
         }
-
         getLogger().info("Leaving getByStudyProtocol() for (" + criteria + ").  ");
+        getLogger().info("Returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 }

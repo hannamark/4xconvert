@@ -17,6 +17,7 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceR
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -171,7 +172,16 @@ public class PoPaServiceBeanLookup  {
                                 + "/pa/StudyOutcomeMeasureServiceBean/remote";
         return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
-
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public static OversightCommitteeCorrelationServiceRemote
+        getOversightCommitteeCorrelationService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/po/OversightCommitteeCorrelationServiceBean/remote";
+        return (OversightCommitteeCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    } 
     /**
      * @return ProtocolQueryServiceRemote
      * @throws PAException on error
@@ -214,5 +224,4 @@ public class PoPaServiceBeanLookup  {
                                 + "/pa/StudySiteAccrualStatusServiceBean/remote";
         return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
-
 }

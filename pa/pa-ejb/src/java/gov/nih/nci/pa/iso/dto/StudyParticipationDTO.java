@@ -6,20 +6,27 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * StudyParticipationDTO for transferring StudyParticipation object .
  * @author Hugh Reinhart
- * @since 07/22/2007
+ * @since 07/22/2008
  
- * copyright NCI 2007.  All rights reserved.
+ * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
-    Ii healthcareFacilityIi;
-    Ii researchOrganizationIi;
-    Cd functionalCode;
-    St localStudyProtocolIdentifier;
+    private static final long serialVersionUID = 1234587878L;
+    
+    private Ii healthcareFacilityIi;
+    private Ii researchOrganizationIi;
+    private Ii oversightCommitteeIi;
+    private Cd functionalCode;
+    private St localStudyProtocolIdentifier;
+    private Cd reviewBoardApprovalStatusCode;
+    private St reviewBoardApprovalNumber;
+    private Ts reviewBoardApprovalDate;
     
     /**
      * @return the healthcareFacilityIi
@@ -46,6 +53,18 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
         this.researchOrganizationIi = researchOrganizationIi;
     }
     /**
+     * @return the oversightCommitteeIi
+     */
+    public Ii getOversightCommitteeIi() {
+        return oversightCommitteeIi;
+    }
+    /**
+     * @param oversightCommitteeIi the oversightCommitteeIi to set
+     */
+    public void setOversightCommitteeIi(Ii oversightCommitteeIi) {
+        this.oversightCommitteeIi = oversightCommitteeIi;
+    }
+    /**
      * @return the functionalCode
      */
     public Cd getFunctionalCode() {
@@ -68,5 +87,41 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
      */
     public void setLocalStudyProtocolIdentifier(St localStudyProtocolIdentifier) {
         this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
+    }
+    /**
+     * @return the reviewBoardApprovalStatusCode
+     */
+    public Cd getReviewBoardApprovalStatusCode() {
+        return reviewBoardApprovalStatusCode;
+    }
+    /**
+     * @param reviewBoardApprovalStatusCode the reviewBoardApprovalStatusCode to set
+     */
+    public void setReviewBoardApprovalStatusCode(Cd reviewBoardApprovalStatusCode) {
+        this.reviewBoardApprovalStatusCode = reviewBoardApprovalStatusCode;
+    }
+    /**
+     * @return the reviewBoardApprovalNumber
+     */
+    public St getReviewBoardApprovalNumber() {
+        return reviewBoardApprovalNumber;
+    }
+    /**
+     * @param reviewBoardApprovalNumber the reviewBoardApprovalNumber to set
+     */
+    public void setReviewBoardApprovalNumber(St reviewBoardApprovalNumber) {
+        this.reviewBoardApprovalNumber = reviewBoardApprovalNumber;
+    }
+    /**
+     * @return the reviewBoardApprovalDate
+     */
+    public Ts getReviewBoardApprovalDate() {
+        return reviewBoardApprovalDate;
+    }
+    /**
+     * @param reviewBoardApprovalDate the reviewBoardApprovalDate to set
+     */
+    public void setReviewBoardApprovalDate(Ts reviewBoardApprovalDate) {
+        this.reviewBoardApprovalDate = reviewBoardApprovalDate;
     }
 }

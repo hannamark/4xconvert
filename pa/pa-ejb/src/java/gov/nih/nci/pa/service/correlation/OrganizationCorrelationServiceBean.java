@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -13,6 +14,7 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -108,7 +110,7 @@ public class OrganizationCorrelationServiceBean {
             hcf.setOrganization(paOrg);
             hcf.setIdentifier(hcfDTO.getIdentifier().getExtension());
             hcf.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
-            createPAHealthCareFacility(hcf);
+            corrUtils.createPADomain(hcf);
         }
         LOG.debug("Leaving createClinicalResearchStaffCorrelation");
         return hcf.getId();
@@ -117,7 +119,6 @@ public class OrganizationCorrelationServiceBean {
     
 
     /**
-     * 
      * @param orgPoIdentifier org id
      * @return Long
      * @throws PAException pe
@@ -195,6 +196,70 @@ public class OrganizationCorrelationServiceBean {
         LOG.debug("Leaving createResearchOrganizationCorrelation");
         return ro.getId();
         
+    }
+    /**
+     * @param orgPoIdentifier org id
+     * @return Long
+     * @throws PAException pe
+     */
+    public Long createOversightCommitteeCorrelations(String orgPoIdentifier) throws PAException { 
+        LOG.debug("Entering createOversightCommitteeCorrelations().  ");
+
+        CorrelationUtils corrUtils = new CorrelationUtils();
+        if (orgPoIdentifier == null) {
+            throw new PAException(" Organization PO Identifier is null");
+        }
+        // Step 1 : get the PO Organization
+        OrganizationDTO poOrg = null;
+        try {
+            poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+                getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        } catch (NullifiedEntityException e) {
+            throw new PAException("This Organization is no longer available instead use ", e);
+        }
+
+        // Step 2 : check if PO has oc correlation if not create one 
+        OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
+        List<OversightCommitteeDTO> ocDTOs = null;
+        ocDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
+        ocDTOs = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().search(ocDTO);
+        if (ocDTOs != null && ocDTOs.size() > 1) {
+            throw new PAException("PO OversightCommitteeDTOs Correlation should not have more than 1.  ");
+        }
+        if (ocDTOs == null || ocDTOs.isEmpty()) {
+            try {
+                Ii ii = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().createCorrelation(ocDTO);
+                ocDTO = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().getCorrelation(ii);
+            } catch (NullifiedRoleException e) {
+                throw new PAException("Validation exception during get OversightCommittee.  " , e);
+            } catch (EntityValidationException e) {
+                throw new PAException("Validation exception during create OversightCommittee.  " , e);
+            } 
+        } else {
+            ocDTO = ocDTOs.get(0);
+        }
+
+        
+        // Step 3 : check for pa org, if not create one
+        Organization paOrg = corrUtils.getPAOrganizationByIndetifers(null , orgPoIdentifier);
+        if (paOrg == null) {
+            paOrg = corrUtils.createPAOrganization(poOrg);
+        }
+
+        // Step 4 : Check of PA has oc , if not create one
+        OversightCommittee oc = new OversightCommittee();
+        oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+        oc = getPAOversightCommittee(oc);
+        if (oc == null) {
+            // create a new oversight committee
+            oc = new OversightCommittee();
+            oc.setOrganization(paOrg);
+            oc.setIdentifier(ocDTO.getIdentifier().getExtension());
+            oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
+            corrUtils.createPADomain(oc);
+        }
+        LOG.debug("Leaving createOversightCommitteeCorrelations().  ");
+        return oc.getId();
     }
     
     /**
@@ -303,35 +368,50 @@ public class OrganizationCorrelationServiceBean {
     }
     
     /**
-     * 
-     * @param crs ClinicalResearchStaff 
-     * @return ClinicalResearchStaff
-     * @throws PAException PAException
+     * @param crs crs
+     * @return crs
+     * @throws PAException
      */
-    private HealthCareFacility createPAHealthCareFacility(HealthCareFacility hcf) throws PAException {
-        if (hcf == null) {
-            LOG.error(" HealthCareFacility should not be null ");
-            throw new PAException(" HealthCareFacility should not be null ");
-        }     
-        LOG.debug("Entering createPAHealthCareFacility ");
+    private OversightCommittee getPAOversightCommittee(OversightCommittee oc) throws PAException {
+        if (oc == null) {
+            throw new PAException("OversightCommittee cannot be null.  ");
+        }
+        OversightCommittee ocOut = null;
         Session session = null;
-        
+        List<OversightCommittee> queryList = new ArrayList<OversightCommittee>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select oc from OversightCommittee oc  " 
+                + "join oc.organization as org where 1 = 1 ");
+        if (oc.getId() != null) {
+            hql.append(" and oc.id = ").append(oc.getId());
+        }
+        if (oc.getOrganization() != null && oc.getOrganization().getId() != null) {
+            hql.append(" and org.id = ").append(oc.getOrganization().getId());
+        }
+        if (oc.getIdentifier() != null) {
+            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
+        }
         try {
             session = HibernateUtil.getCurrentSession();
-            session.save(hcf);
-        } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while createPAHealthCareFacility " , hbe);
-            throw new PAException(" Hibernate exception while create createPAHealthCareFacility" , hbe);
+            Query query = null;
+        
+            query = session.createQuery(hql.toString());
+            queryList = query.list();
+        
+            if (queryList.size() > 1) {
+                throw new PAException("Oversight committee count should not be more than 1 for any given criteria.  ");
+            }
+        }  catch (HibernateException hbe) {
+            throw new PAException(" Error while retrieving OversightCommittee.  " , hbe);
         } finally {
             session.flush();
         }
         
-        LOG.debug("Leaving create HealthCareFacility ");
-        return hcf;
+        if (!queryList.isEmpty()) {
+            ocOut = queryList.get(0);
+        }
+        return ocOut;
     }
-    
-    
     
     /***
      * 

@@ -1,7 +1,9 @@
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -31,8 +33,12 @@ public class StudyParticipation extends OrganizationFunctionalRole {
 
     private StudyParticipationFunctionalCode functionalCode;
     private String localStudyProtocolIdentifier;
+    private String reviewBoardApprovalNumber;
+    private ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode; 
+    private Timestamp reviewBoardApprovalDate;
     private HealthCareFacility healthCareFacility;
     private ResearchOrganization researchOrganization;
+    private OversightCommittee oversightCommittee;
     private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
     private List<StudyParticipationContact> studyParticipationContacts;
     
@@ -68,6 +74,48 @@ public class StudyParticipation extends OrganizationFunctionalRole {
         this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
     /**
+     * @return the reviewBoardApprovalNumber
+     */
+    @Column(name = "REVIEW_BOARD_APPROVAL_NUMBER")
+    public String getReviewBoardApprovalNumber() {
+        return reviewBoardApprovalNumber;
+    }
+    /**
+     * @param reviewBoardApprovalNumber the reviewBoardApprovalNumber to set
+     */
+    public void setReviewBoardApprovalNumber(String reviewBoardApprovalNumber) {
+        this.reviewBoardApprovalNumber = reviewBoardApprovalNumber;
+    }
+    /**
+     * @return the reviewBoardApprovalDate
+     */
+    @Column(name = "REVIEW_BOARD_APPROVAL_DATE")
+    @Enumerated(EnumType.STRING)
+    public Timestamp getReviewBoardApprovalDate() {
+        return reviewBoardApprovalDate;
+    }
+    /**
+     * @param reviewBoardApprovalDate the reviewBoardApprovalDate to set
+     */
+    public void setReviewBoardApprovalDate(Timestamp reviewBoardApprovalDate) {
+        this.reviewBoardApprovalDate = reviewBoardApprovalDate;
+    }
+    /**
+     * @return the reviewBoardApprovalStatusCode
+     */
+    @Column(name = "REVIEW_BOARD_APPROVAL_STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    public ReviewBoardApprovalStatusCode getReviewBoardApprovalStatusCode() {
+        return reviewBoardApprovalStatusCode;
+    }
+    /**
+     * @param reviewBoardApprovalStatusCode the reviewBoardApprovalStatusCode to set
+     */
+    public void setReviewBoardApprovalStatusCode(
+            ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode) {
+        this.reviewBoardApprovalStatusCode = reviewBoardApprovalStatusCode;
+    }
+    /**
      * 
      * @return healthCareFacility
      */
@@ -100,9 +148,24 @@ public class StudyParticipation extends OrganizationFunctionalRole {
         this.researchOrganization = researchOrganization;
     }
     /**
+     * @return the oversightCommittee
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "OVERSIGHT_COMMITTEE_ID", nullable = true, updatable = false)
+    public OversightCommittee getOversightCommittee() {
+        return oversightCommittee;
+    }
+    /**
+     * @param oversightCommittee the oversightCommittee to set
+     */
+    public void setOversightCommittee(OversightCommittee oversightCommittee) {
+        this.oversightCommittee = oversightCommittee;
+    }
+    /**
      * @return the studySiteAccrualStatuses
      */
     @OneToMany(mappedBy = "studyParticipation")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudySiteAccrualStatus> getStudySiteAccrualStatuses() {
         return studySiteAccrualStatuses;
     }

@@ -19,6 +19,7 @@ import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -57,7 +58,6 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.YesNoCode;
 
@@ -89,6 +89,8 @@ public class TestSchema {
         public static ArrayList<Long> plannedActivityIds;
         public static ArrayList<Long> interventionIds;
         public static ArrayList<Long> armIds;
+        public static ArrayList<Long> researchOrganizationIds;
+        public static ArrayList<Long> oversightCommitteeIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -114,6 +116,7 @@ public class TestSchema {
             addAnnotatedClass(FundingMechanism.class).
             addAnnotatedClass(StudySiteAccrualStatus.class).
             addAnnotatedClass(StudyParticipationContact.class).
+            addAnnotatedClass(OversightCommittee.class).
 
             addAnnotatedClass(Document.class).
             addAnnotatedClass(StudyRecruitmentStatus.class).
@@ -192,6 +195,8 @@ public class TestSchema {
                         statement.executeUpdate("delete from INTERVENTION");
                         statement.executeUpdate("delete from HEALTHCARE_FACILITY");
                         statement.executeUpdate("delete from HEALTHCARE_PROVIDER");
+                        statement.executeUpdate("delete from RESEARCH_ORGANIZATION");
+                        statement.executeUpdate("delete from OVERSIGHT_COMMITTEE");
                         statement.executeUpdate("delete from ORGANIZATION");
                         statement.executeUpdate("delete from PERSON");                            
                         connection.commit();
@@ -251,6 +256,8 @@ public class TestSchema {
             plannedActivityIds = new ArrayList<Long>();
             interventionIds = new ArrayList<Long>();
             armIds = new ArrayList<Long>();
+            researchOrganizationIds = new ArrayList<Long>();
+            oversightCommitteeIds = new ArrayList<Long>();
                 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -297,7 +304,17 @@ public class TestSchema {
             addUpdObject(hfc);
             healthCareFacilityIds.add(hfc.getId());
             
-
+            ResearchOrganization rOrg = new ResearchOrganization();
+            rOrg.setOrganization(org);
+            rOrg.setStatusCode(StatusCode.ACTIVE);
+            addUpdObject(rOrg);
+            researchOrganizationIds.add(rOrg.getId());
+            
+            OversightCommittee oCommittee = new OversightCommittee();
+            oCommittee.setOrganization(org);
+            oCommittee.setStatusCode(StatusCode.ACTIVE);
+            addUpdObject(oCommittee);
+            oversightCommitteeIds.add(oCommittee.getId());
             
             Person per = PersonTest.createPersonObj();
             per.setFirstName("Joe");

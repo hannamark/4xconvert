@@ -46,7 +46,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         if (PAUtil.isIiNull(ii)) {
             serviceError("Check the Ii value; null found.  ");
         }
-        getLogger().info("Entering getByStudyProtocol");
+        getLogger().info("Entering getByStudyProtocol.  ");
 
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
@@ -69,7 +69,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            serviceError("Hibernate exception in getStudyProtocolByCriteria.  ", hbe);
+            serviceError("Hibernate exception in getByStudyProtocol.  ", hbe);
         }
         ArrayList<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {
