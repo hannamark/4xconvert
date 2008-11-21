@@ -7,6 +7,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -243,5 +244,12 @@ public class JndiServiceLocator implements ServiceLocator {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
             + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
         return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+    /**
+     * @return StudyIndldeServiceRemote
+     *
+     */
+    public StudyIndldeServiceRemote getStudyIndldeService() {
+        return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
     }
 }
