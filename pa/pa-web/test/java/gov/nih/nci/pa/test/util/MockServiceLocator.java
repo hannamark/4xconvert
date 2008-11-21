@@ -6,6 +6,7 @@ import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
@@ -40,7 +41,6 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
  */
 public class MockServiceLocator implements ServiceLocator {
     
-
     private final DiseaseCondServiceRemote condServiceLocal = new MockDiseaseConditionService();
     private final StudyProtocolServiceRemote studyProtocolService = new MockStudyProtocolService();
     private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
@@ -236,6 +236,11 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getArmService()
      */
     public ArmServiceRemote getArmService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyIndldeServiceRemote getStudyIndldeService() {
         // TODO Auto-generated method stub
         return null;
     }
