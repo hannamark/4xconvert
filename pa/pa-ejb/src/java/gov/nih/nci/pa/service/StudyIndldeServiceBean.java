@@ -142,14 +142,33 @@ implements StudyIndldeServiceRemote {
     }
 
     /**
-     * @param ii Index of StudyParticipation object
+     * @param ii Index of StudyIndlde object
      * @throws PAException PAException
      */
     @Override
     public void delete(Ii ii)
             throws PAException {
         LOG.info("Entering delete");
+        
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
+            serviceError("Ii has null value ");
+        }
+        LOG.info("Entering delete().");
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.beginTransaction();
+            StudyIndlde bo = (StudyIndlde) session.get(StudyIndlde.class
+                    , IiConverter.convertToLong(ii));
+            session.delete(bo);
+            session.flush();
+        }  catch (HibernateException hbe) {
+            serviceError(" Hibernate exception while deleting "
+                + "StudyIndlde for pid = " + ii.getExtension(), hbe);
+        }
+        LOG.info("Leaving delete().");
     }
+
 
     /**
      * @param studyProtocolIi id of protocol
