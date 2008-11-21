@@ -152,5 +152,14 @@
 			<result name="eligibility">/WEB-INF/jsp/isEligibilityCriteria.jsp</result>
 			<result name="eligibilityAdd">/WEB-INF/jsp/isEligibilityCriteriaAdd.jsp</result>
 		</action>
+		<action name="trialIndide*" class="gov.nih.nci.pa.action.TrialIndideAction" method="{1}">
+			<interceptor-ref name="nci-commonsParams" />			
+			<result>/WEB-INF/jsp/trialIndideAdd.jsp</result>
+			<result name="add">/WEB-INF/jsp/trialIndideAdd.jsp</result>
+			<result name="edit">/WEB-INF/jsp/trialIndideEdit.jsp</result>
+			<result name="query">/WEB-INF/jsp/trialIndide.jsp</result>
+			<result name="error">/WEB-INF/jsp/trialIndideAdd.jsp</result>
+			<result name="delete">/WEB-INF/jsp/trialIndide.jsp</result>
+		</action>
 	</package>
 </struts>
