@@ -13,8 +13,11 @@
         </display:column>
         <display:column titleKey="identifiedOrganization.scoper.id" property="scoper.id" sortable="true" sortProperty="SCOPER_ID" maxLength="10"/>
         <display:column titleKey="identifiedOrganization.scoper.name" property="scoper.name" sortable="true" sortProperty="SCOPER_NAME" maxLength="30"/>
-        <display:column titleKey="identifiedOrganization.assignedIdentifier">
-            displayable='${row.assignedIdentifier.displayable}', extension='${row.assignedIdentifier.extension}', identifierName='${row.assignedIdentifier.identifierName}', reliability='${row.assignedIdentifier.reliability}', root='${row.assignedIdentifier.root}', scope='${row.assignedIdentifier.scope}'
+        <display:column titleKey="identifiedOrganization.assignedIdentifier.root">
+            ${row.assignedIdentifier.root}
+        </display:column>
+        <display:column titleKey="identifiedOrganization.assignedIdentifier.extension">
+            ${row.assignedIdentifier.extension}
         </display:column>
         <display:column titleKey="identifiedOrganization.status" sortable="true" sortProperty="ROLE_STATUS">
             <c:choose>
