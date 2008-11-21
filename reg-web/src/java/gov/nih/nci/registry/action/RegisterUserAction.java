@@ -259,13 +259,6 @@ public class RegisterUserAction extends ActionSupport {
      * validate the  form elements.
      */
     private void validateForm(boolean isMyAccountPage)  {
-        // TODO password fields are empty after validation
-        // setting in the request is only a workaround.
-        // have to find a better solution
-//        ServletActionContext.getRequest().getSession().
-//                        setAttribute("password" , registryUserWebDTO.getPassword());
-//        ServletActionContext.getRequest().getSession().
-//                        setAttribute("retypePassword" , registryUserWebDTO.getRetypePassword());
         
         if (PAUtil.isEmpty(registryUserWebDTO.getLoginName())) {
             addFieldError("registryUserWebDTO.loginName",
@@ -279,15 +272,15 @@ public class RegisterUserAction extends ActionSupport {
             addFieldError("registryUserWebDTO.retypePassword",
                     getText("error.register.retypePassword"));
         }
-        if (!PAUtil.isEmpty(registryUserWebDTO.getPassword()) 
-                && !PAUtil.isEmpty(registryUserWebDTO.getRetypePassword())) {            
+        if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
+                && PAUtil.isNotEmpty(registryUserWebDTO.getRetypePassword())) {            
             if (!registryUserWebDTO.getPassword().equals(
                         registryUserWebDTO.getRetypePassword())) {
                 addFieldError("registryUserWebDTO.retypePassword",
                     getText("error.register.matchPassword"));
             }
         }
-        if (!PAUtil.isEmpty(registryUserWebDTO.getPassword())) {            
+        if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword())) {            
             if (registryUserWebDTO.getPassword().length() 
                             < Constants.MIN_PASSWORD_LENGTH) {
                 addFieldError("registryUserWebDTO.password",
@@ -295,8 +288,8 @@ public class RegisterUserAction extends ActionSupport {
             }
         }
         // check if the login name is a valid e-mail address
-        if (!PAUtil.isEmpty(registryUserWebDTO.getLoginName())) {
-            if (!isValidEmailID(registryUserWebDTO.getLoginName())) {
+        if (PAUtil.isNotEmpty(registryUserWebDTO.getLoginName())) {
+            if (!isValidEmailAddress(registryUserWebDTO.getLoginName())) {
                 addFieldError("registryUserWebDTO.loginName",
                         getText("error.register.invalidEmailAddress"));                
             }
@@ -332,27 +325,17 @@ public class RegisterUserAction extends ActionSupport {
         }
     }
     
-    private  boolean isValidEmailID(String userName)  {
-        boolean flag = false;
-        Pattern email = Pattern.compile("^[a-zA-Z]+([\\.-_]?[a-zA-Z0-9]+)*@[a-zA-Z]+([\\.-]?\\w+)*(\\.\\w{2,5})+$");
+    private  boolean isValidEmailAddress(String emailAddress)  {
+        boolean isvalidEmailAddr = false;
+        Pattern email = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
 
-        Matcher fit = email.matcher(userName);
+        Matcher fit = email.matcher(emailAddress);
         if (fit.matches()) {
-             flag = true;
-        } else if (containsAlphaNumeric(userName)) {
-              flag = true;
-        } else {
-              flag = false;
-        }
-        return flag;
+            isvalidEmailAddr = true;
+        } 
+        return isvalidEmailAddr;
     }
 
-    private  boolean containsAlphaNumeric(String userName)   {
-        Pattern email = Pattern.compile("^[A-Za-z]\\w[A-Za-z0-9]+$");
-        Matcher fit = email.matcher(userName);
-        return fit.matches();
-    }
-    
     /**
      * @return the userAction
      */
