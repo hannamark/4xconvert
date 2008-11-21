@@ -174,7 +174,7 @@
 <c:if test="${fn:length(organization.changeRequests) > 0}">
 <div id="page" style="margin-top:10px;">
 <div id="crinfo">
-<%@ include file="orgCrInfo.jsp" %>
+<%@ include file="crInfo.jsp" %>
 </div>
 </div>
 </c:if>

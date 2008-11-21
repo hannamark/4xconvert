@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.audit.Auditable;
+import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
@@ -143,6 +144,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @Valid
     @Override
     @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_START)
+    @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<Email> getEmail() {
         return super.getEmail();
     }

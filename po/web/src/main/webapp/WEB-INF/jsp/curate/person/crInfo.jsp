@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
     <div class="boxouter_nobottom">
     <h2>Change Request Information</h2>
-    <s:form action="ajax/organization/curate/no.action" id="curateOrgCrForm" theme="css_xhtml_readonly">
+    <s:form action="ajax/person/curate/no.action" id="curatePersonCrForm" theme="css_xhtml_readonly">
     <div class="boxouter">
     <h2>Basic Identifying Information</h2>
         <div class="box_white">
@@ -9,16 +9,32 @@
 	        ${cr.id} 
 	        </po:field>
             
-	        <po:copyButton id="copy_curateOrgForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateOrgForm.organization.statusCode');"
-	            bodyStyle="float:left;" buttonStyle="float:right;">
-	            <po:field labelKey="organization.statusCode">
+	        <po:copyButton id="copy_curatePersonForm_person_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curatePersonForm.person.statusCode');"
+	            bodyStyle="float:left;" buttonStyle="clear:right;float:right;">
+	            <po:field labelKey="person.statusCode">
 		            ${cr.statusCode}
 	            </po:field>
 	        </po:copyButton>
             
-            <po:copyButton id="copy_curateOrgForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateOrgForm_organization_name');" 
-                bodyStyle="float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield name="cr.name" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
+            <po:copyButton id="copy_curatePersonForm_person_prefix" onclick="copyValueToTextField('${cr.prefix}', 'curatePersonForm_person_prefix');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+                <s:textfield name="cr.prefix" label="%{getText('person.prefix')}" size="10"/>
+            </po:copyButton>
+            <po:copyButton id="copy_curatePersonForm_person_firstName" onclick="copyValueToTextField('${cr.firstName}', 'curatePersonForm_person_firstName');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+                <s:textfield name="cr.firstName" label="%{getText('person.firstName')}" required="false" cssClass="required" size="50"/>
+            </po:copyButton>
+            <po:copyButton id="copy_curatePersonForm_person_middleName" onclick="copyValueToTextField('${cr.middleName}', 'curatePersonForm_person_middleName');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+                <s:textfield name="cr.middleName" label="%{getText('person.middleName')}" size="50"/>
+            </po:copyButton>
+            <po:copyButton id="copy_curatePersonForm_person_lastName" onclick="copyValueToTextField('${cr.lastName}', 'curatePersonForm_person_lastName');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+                <s:textfield name="cr.lastName" label="%{getText('person.lastName')}" required="false" cssClass="required" size="50"/>
+            </po:copyButton>
+            <po:copyButton id="copy_curatePersonForm_person_suffix" onclick="copyValueToTextField('${cr.suffix}', 'curatePersonForm_person_suffix');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+                <s:textfield name="cr.suffix" label="%{getText('person.suffix')}" size="10"/>
             </po:copyButton>
             
             <div class="clear"></div>
@@ -29,17 +45,17 @@
         <div class="box_white">
             <script type="text/javascript">
             function copyPostalAddressField() {
-            	selectValueInSelectField('${cr.postalAddress.country.id}', 'curateOrgForm.organization.postalAddress.country');
-            	copyValueToTextField('${cr.postalAddress.streetAddressLine}', 'curateOrgForm_organization_postalAddress_streetAddressLine');
-            	copyValueToTextField('${cr.postalAddress.deliveryAddressLine}', 'curateOrgForm_organization_postalAddress_deliveryAddressLine');
-            	copyValueToTextField('${cr.postalAddress.cityOrMunicipality}', 'curateOrgForm_organization_postalAddress_cityOrMunicipality');
-            	copyValueToTextField('${cr.postalAddress.postalCode}', 'curateOrgForm_organization_postalAddress_postalCode');
-            	copyValueToTextField('${cr.postalAddress.stateOrProvince}', 'curateOrgForm.organization.postalAddress.stateOrProvince');
-            	selectValueInSelectField('${cr.postalAddress.stateOrProvince}', 'curateOrgForm.organization.postalAddress._selectStateOrProvince');
+            	selectValueInSelectField('${cr.postalAddress.country.id}', 'curatePersonForm.person.postalAddress.country');
+            	copyValueToTextField('${cr.postalAddress.streetAddressLine}', 'curatePersonForm_person_postalAddress_streetAddressLine');
+            	copyValueToTextField('${cr.postalAddress.deliveryAddressLine}', 'curatePersonForm_person_postalAddress_deliveryAddressLine');
+            	copyValueToTextField('${cr.postalAddress.cityOrMunicipality}', 'curatePersonForm_person_postalAddress_cityOrMunicipality');
+            	copyValueToTextField('${cr.postalAddress.postalCode}', 'curatePersonForm_person_postalAddress_postalCode');
+            	copyValueToTextField('${cr.postalAddress.stateOrProvince}', 'curatePersonForm.person.postalAddress.stateOrProvince');
+            	selectValueInSelectField('${cr.postalAddress.stateOrProvince}', 'curatePersonForm.person.postalAddress._selectStateOrProvince');
             }
             </script>
-            <po:copyButton id="copy_curateOrgForm_organization_postalAddress" onclick="copyPostalAddressField();" bodyStyle="clear:left;float:left;" buttonStyle="float:right;">
-	            <po:addressForm formNameBase="curateOrgCrForm" addressKeyBase="cr.postalAddress" address="${cr.postalAddress}" required="false"/>
+            <po:copyButton id="copy_curatePersonForm_person_postalAddress" onclick="copyPostalAddressField();" bodyStyle="clear:left;float:left;" buttonStyle="float:right;">
+	            <po:addressForm formNameBase="curatePersonCrForm" addressKeyBase="cr.postalAddress" address="${cr.postalAddress}" required="false"/>
             </po:copyButton>
             <div class="clear"></div>
         </div>

@@ -43,7 +43,16 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     private void goHome() {
+        if (!isLoggedIn()) {
+            loginAsCurator();
+        }
         selenium.open("/po-web/protected/home.action");
+        waitForPageToLoad();
+    }
+
+    protected void openCreatePerson() {
+        goHome();
+        selenium.click("CreatePerson");
         waitForPageToLoad();
     }
     

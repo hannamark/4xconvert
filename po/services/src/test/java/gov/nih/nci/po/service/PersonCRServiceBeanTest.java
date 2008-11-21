@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.junit.Before;
@@ -32,17 +34,19 @@ public class PersonCRServiceBeanTest extends AbstractHibernateTestCase {
         fill(o, country);
     }
 
-    public static void fill(AbstractPerson o, Country country) {
-        o.setFirstName("firstName");
-        o.setLastName("lastName");
-        o.setMiddleName("middleName");
-        o.setPrefix("prefix");
-        o.setSuffix("suffix");
+    public static void fill(AbstractPerson p, Country country) {
+        p.setFirstName("firstName");
+        p.setLastName("lastName");
+        p.setMiddleName("middleName");
+        p.setPrefix("prefix");
+        p.setSuffix("suffix");
 
-        o.setStatusCode(EntityStatus.PENDING);
+        p.setStatusCode(EntityStatus.PENDING);
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", country);
-        o.setPostalAddress(a);
-        o.getFax().add(new PhoneNumber("123-123-1234"));
+        p.setPostalAddress(a);
+        p.getFax().add(new PhoneNumber("123-123-1234"));
+        p.getEmail().add(new Email("foo@example.com"));
+        p.getUrl().add(new URL("http://example.com"));
     }
 
     @Test

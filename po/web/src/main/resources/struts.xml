@@ -174,7 +174,20 @@
         </action>        
         <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
-            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/organization/orgCrInfo.jsp</result>
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/organization/crInfo.jsp</result>
+        </action>
+        <action name="person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="curate">/WEB-INF/jsp/curate/person/curate.jsp</result>
+            <result name="input">/WEB-INF/jsp/curate/person/{1}.jsp</result>
+            <result name="success" type="redirect-action">
+                <param name="namespace">/protected</param>
+                <param name="actionName">curate/search/listPersons</param>
+            </result>
+        </action>        
+        <action name="ajax/person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/person/crInfo.jsp</result>
         </action>
         
         <action name="selector/organization/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
@@ -213,6 +226,16 @@
 	            <param name="namespace">/protected</param>
 	            <param name="actionName">organization/curate/start</param>
 	            <param name="organization.id">${organization.id}</param>
+            </result>
+        </action>      
+        
+        <action name="create/person/*" class="gov.nih.nci.po.web.create.CreatePersonAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/curate/person/curate.jsp</result>
+            <result name="success" type="redirect-action">
+	            <param name="namespace">/protected</param>
+	            <param name="actionName">person/curate/start</param>
+	            <param name="person.id">${person.id}</param>
             </result>
         </action>      
         

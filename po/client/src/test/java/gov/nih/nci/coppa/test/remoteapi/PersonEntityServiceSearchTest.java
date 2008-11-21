@@ -6,11 +6,16 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -27,15 +32,29 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         return id;
     }
 
-    private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress) {
+    private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress) throws URISyntaxException {
         return create(fName, mName, lName, prefix, suffix, postalAddress, null);
     }
 
-    private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress, DSet<Tel> telecomAddress) {
+    private PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress, DSet<Tel> telecomAddress) throws URISyntaxException {
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
         p.setPostalAddress(postalAddress);
-        p.setTelecomAddress(telecomAddress);
+        if (telecomAddress != null) {
+            p.setTelecomAddress(telecomAddress);
+        } else {
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            p.setTelecomAddress(telco);
+    
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:default@example.com"));
+            p.getTelecomAddress().getItem().add(email);
+    
+            TelUrl url = new TelUrl();
+            url.setValue(new URI("http://default.example.com"));
+            p.getTelecomAddress().getItem().add(url);        
+        }
         return p;
     }
 

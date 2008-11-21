@@ -88,11 +88,15 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -100,6 +104,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.HashSet;
 
 import javax.ejb.EJBException;
 
@@ -110,7 +115,8 @@ import org.junit.Test;
  *
  */
 public class PersonEntityServiceTest extends AbstractPersonEntityService {
-
+    private static final String DEFAULT_URL = "http://default.example.com";
+    private static final String DEFAULT_EMAIL = "default@example.com";
     private Ii personId;
 
     public Ii getPersonId() {
@@ -132,6 +138,17 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             part.setValue("__");
             dto.getName().getPart().add(part);
             dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", null, "zip", "USA"));
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            dto.setTelecomAddress(telco);
+
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:" + DEFAULT_EMAIL));
+            dto.getTelecomAddress().getItem().add(email);
+
+            TelUrl url = new TelUrl();
+            url.setValue(new URI(DEFAULT_URL));
+            dto.getTelecomAddress().getItem().add(url);
             personId = getPersonService().createPerson(dto);
             assertNotNull(personId);
             assertNotNull(personId.getExtension());

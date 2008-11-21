@@ -40,19 +40,21 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
         OrganizationDTO org = new OrganizationDTO();
         org.setName(RemoteApiUtils.convertToEnOn(name));
         org.setPostalAddress(postalAddress);
-        org.setTelecomAddress(telecomAddress);
-
-        DSet<Tel> telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
-        org.setTelecomAddress(telco);
-
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:default@example.com"));
-        org.getTelecomAddress().getItem().add(email);
-
-        TelUrl url = new TelUrl();
-        url.setValue(new URI("http://default.example.com"));
-        org.getTelecomAddress().getItem().add(url);
+        if (telecomAddress != null) {
+            org.setTelecomAddress(telecomAddress);
+        } else {
+            DSet<Tel> telco = new DSet<Tel>();
+            telco.setItem(new HashSet<Tel>());
+            org.setTelecomAddress(telco);
+    
+            TelEmail email = new TelEmail();
+            email.setValue(new URI("mailto:default@example.com"));
+            org.getTelecomAddress().getItem().add(email);
+    
+            TelUrl url = new TelUrl();
+            url.setValue(new URI("http://default.example.com"));
+            org.getTelecomAddress().getItem().add(url);        
+        }
         return org;
     }
 

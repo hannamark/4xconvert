@@ -23,5 +23,13 @@
             <c:otherwise>${row.statusCode}</c:otherwise>
             </c:choose>
         </display:column>
+        <display:column titleKey="th.action" class="action">
+            <c:url var="curateUrl" value="/protected/person/curate/start.action">
+                <c:param name="person.id" value="${row.id}"/>
+            </c:url>
+            <po:buttonRow>
+                <po:button href="${curateUrl}" style="select_person" text="Curate" id="person_id_${row.id}"/>
+            </po:buttonRow>
+        </display:column>        
 	</display:table>
 </ajax:displayTag>

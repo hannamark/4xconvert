@@ -80,50 +80,114 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.web.curation;
 
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PersonCR;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.Map;
 
-import javax.ejb.Local;
 import javax.jms.JMSException;
 
-/**
- *
- * @author lpower
- */
-@Local
-public interface PersonServiceLocal extends GenericSearchService<Person, SearchCriteria<Person>> {
+import org.junit.Before;
+import org.junit.Test;
 
-    /**
-     * @param person new Person
-     * @return id
-     * @throws EntityValidationException if validation fails
-     */
-    long create(Person person) throws EntityValidationException;
+import com.opensymphony.xwork2.Action;
 
-    /**
-     * @param id db id to get
-     * @return person with matching id
-     */
-    Person getById(long id);
+public class CuratePersonActionTest extends AbstractPoTest {
+    private CuratePersonAction action;
 
-    /**
-     * @param entity the entity to validate
-     * @return return validation error messages per invalid field path.
-     */
-    Map<String, String[]> validate(Person entity);
+    @Before
+    public void setUp() {
+        action = new CuratePersonAction();
+        assertNotNull(action.getPerson());
+    }
 
-     /**
-     * @param updatedEntity the entity to save.
-     */
-    void update(Person updatedEntity);
-    /**
-     * @param curatedPerson method to curate/accept Person w/ EntityStatus.NEW and transition to
-     *            EntityStatus.ACTIVE
-     * @throws JMSException if problem occurred publishing the announcement message for updates.
-     */
-    void curate(Person curatedPerson) throws JMSException;
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        Person initial = action.getPerson();
+        action.prepare();
+        assertSame(initial, action.getPerson());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("a");
+        action.prepare();
+        assertNull(action.getPerson());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        Person o = new Person();
+        action.setRootKey("a");
+        getSession().setAttribute(action.getRootKey(), o);
+        action.prepare();
+        assertSame(o, action.getPerson());
+    }
+
+    @Test
+    public void testStart() {
+        action.getPerson().setId(1L);
+        assertEquals(CuratePersonAction.CURATE_RESULT, action.start());
+        assertEquals(1l, action.getPerson().getId().longValue());
+        assertEquals("firstName", action.getPerson().getFirstName());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testStartNoOrgId() {
+        assertEquals(CuratePersonAction.CURATE_RESULT, action.start());
+    }
+
+    @Test
+    public void testCurate() throws EntityValidationException, JMSException {
+        assertEquals(Action.SUCCESS, action.curate());
+    }
+
+    @Test
+    public void changeCurrentChangeRequest() {
+        assertEquals(CuratePersonAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+
+        action.getCr().setId(1L);
+        assertEquals(CuratePersonAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action.changeCurrentChangeRequest());
+    }
+
+    @Test
+    public void testCrProperty() {
+        assertNotNull(action.getCr());
+        action.setCr(null);
+        assertNull(action.getCr());
+    }
+
+    @Test
+    public void testOrganizationProperty() {
+        assertNotNull(action.getPerson());
+        action.setPerson(null);
+        assertNull(action.getPerson());
+    }
+    
+    @Test
+    public void testGetSelectChangeRequests() {
+        action.getPerson().setId(1L);
+        PersonCR cr1 = new PersonCR();
+        cr1.setId(1L);
+        action.getPerson().getChangeRequests().add(cr1);
+        PersonCR cr2 = new PersonCR();
+        cr2.setId(2L);
+        action.getPerson().getChangeRequests().add(cr2);
+        Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
+        assertEquals(2, selectChangeRequests.size());
+        selectChangeRequests.values();
+        int i = 1;
+        for (String value : selectChangeRequests.values()) {
+            assertEquals("CR-ID-" + i, value);
+            i++;
+        }
+    }
 }

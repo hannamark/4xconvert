@@ -95,7 +95,7 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends AbstractBaseServiceBean<Person> implements PersonServiceLocal {
+public class PersonServiceBean extends AbstractCuratableServiceBean<Person> implements PersonServiceLocal {
 
     /**
      * {@inheritDoc}

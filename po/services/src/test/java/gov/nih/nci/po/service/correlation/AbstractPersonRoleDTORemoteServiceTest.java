@@ -154,6 +154,8 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
         person2.setMiddleName("mname2");
         person2.setPostalAddress(new Address("1600 Penn Ave", "Washington", "DC", "20202", getDefaultCountry()));
         person2.setStatusCode(EntityStatus.ACTIVE);
+        person2.getEmail().add(new Email("foo@example.com"));
+        person2.getUrl().add(new URL("http://example.com"));
         PoHibernateUtil.getCurrentSession().saveOrUpdate(person2);
 
         T correlation1 = getSampleDto();

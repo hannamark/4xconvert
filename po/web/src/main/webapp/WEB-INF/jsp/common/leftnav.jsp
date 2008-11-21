@@ -15,7 +15,7 @@
             <li class="lisubheader">Person</li>
 	            <li><a id="EntityInboxPerson" href="<c:url value="/protected/curate/search/listPersons.action"/>">Inbox</a></li>
                 <li><a id="SearchPerson" href="<c:url value="/notYetImplemented.jsp"/>">Search</a></li>
-                <li><a id="CreatePerson" href="<c:url value="/notYetImplemented.jsp"/>">Create</a></li>	            
+                <li><a id="CreatePerson" href="<c:url value="/protected/create/person/start.action"/>">Create</a></li>	            
         </c:when>
         <c:otherwise>
             <li><a href="<c:url value="/protected/home.action"/>">Login</a></li>

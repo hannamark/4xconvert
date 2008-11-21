@@ -8,16 +8,20 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
+import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.ISOUtils;
 import gov.nih.nci.po.data.convert.IiConverter;
@@ -35,6 +39,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +88,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
         p.setPostalAddress(a);
+        p.getEmail().add(new Email("abc@example.com"));
+        p.getUrl().add(new URL("http://example.com"));
         return p;
     }
 
@@ -97,7 +104,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void createPersonRemote() throws EntityValidationException {
+    public void createPersonRemote() throws EntityValidationException, URISyntaxException {
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
         Enxp part = new Enxp(EntityNamePartType.GIV);
@@ -109,6 +116,22 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         Address a = makePerson().getPostalAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        Tel t = new Tel();
+        String phone = "+1-201-555-0123;extension=4756";
+        t.setValue(new URI("tel", phone, null));
+        telco.getItem().add(t);
+        dto.setTelecomAddress(telco);
+
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://example.com"));
+        dto.getTelecomAddress().getItem().add(url);
+        
         Ii id = remote.createPerson(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -130,9 +153,10 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         part.setValue("Firsty");
         dto.getName().getPart().add(part);
         Map<String, String[]> errors = remote.validate(dto);
-        assertEquals(2, errors.size());
+        assertEquals(3, errors.size());
         assertTrue(errors.containsKey("lastName"));
         assertTrue(errors.containsKey("postalAddress"));
+        assertTrue(errors.containsKey("email"));
 
         Ad add = new Ad();
         add.setPart(new ArrayList<Adxp>());
@@ -141,18 +165,19 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         add.getPart().add(apart);
         dto.setPostalAddress(add);
         errors = remote.validate(dto);
-        assertEquals(5, errors.size());
+        assertEquals(6, errors.size());
         assertTrue(errors.containsKey("lastName"));
         assertTrue(errors.containsKey("postalAddress.streetAddressLine"));
         assertTrue(errors.containsKey("postalAddress.cityOrMunicipality"));
         assertTrue(errors.containsKey("postalAddress.postalCode"));
         assertTrue(errors.containsKey("postalAddress.country"));
         assertFalse(errors.containsKey("postalAddress.stateOrProvince"));// for clarity
+        assertTrue(errors.containsKey("email"));
 
     }
 
     @Test
-    public void findByFirstName() throws EntityValidationException, NullifiedEntityException {
+    public void findByFirstName() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -162,7 +187,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException {
+    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "%a%", null, null));
@@ -171,7 +196,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException {
+    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "b%b", null, null));
@@ -180,7 +205,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException {
+    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "?a?", null, null));
@@ -189,7 +214,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException {
+    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "_a_", null, null));
@@ -198,7 +223,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException {
+    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
@@ -206,7 +231,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(0, result.size());
     }
 
-    private void init() throws EntityValidationException, NullifiedEntityException {
+    private void init() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         PersonDTO dto = new PersonDTO();
         dto.setName(PersonNameConverterUtil.convertToEnPn("bab", "m", "a", "c", "d"));
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
@@ -218,7 +243,21 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         Address a = makePerson().getPostalAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        Tel t = new Tel();
+        String phone = "+1-201-555-0123;extension=4756";
+        t.setValue(new URI("tel", phone, null));
+        telco.getItem().add(t);
+        dto.setTelecomAddress(telco);
 
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://example.com"));
+        dto.getTelecomAddress().getItem().add(url);
         Ii id = remote.createPerson(dto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
@@ -234,7 +273,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException {
+    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException, URISyntaxException {
         init();
 
         PersonDTO crit = new PersonDTO();

@@ -84,56 +84,24 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  *
  */
 public class MockPersonService implements PersonServiceLocal {
 
-    private static final Queue<SearchPair<Person>> QUEUE =
-        new LinkedList<SearchPair<Person>>();
-
-    public static SearchPair<Person> poll() {
-        return QUEUE.poll();
-    }
-
-    private final HashMap<Long, Person> personMap = new HashMap<Long, Person>();
     private long currentId = 0;
-
-    /**
-     * Resets the service back to an initial state.
-     */
-    public void reset() {
-        personMap.clear();
-        currentId = 0;
-        Object o = null;
-        do {
-            o = poll();
-        } while (o != null);
-    }
-
-    public List<Person> search(CuratePersonSearchCriteria sc) {
-        return search(sc, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<Person> getAllPersons() {
-        return new ArrayList<Person>(personMap.values());
-    }
 
     /**
      * {@inheritDoc}
      */
     public Person getById(long id) {
-        return personMap.get(id);
+        Person p = new Person();
+        p.setId(id);
+        p.setFirstName("firstName");
+        return p;
     }
 
     /**
@@ -144,7 +112,6 @@ public class MockPersonService implements PersonServiceLocal {
             currentId++;
             person.setId(currentId);
         }
-        personMap.put(person.getId(), person);
         return currentId;
     }
 
@@ -152,37 +119,29 @@ public class MockPersonService implements PersonServiceLocal {
      * {@inheritDoc}
      */
     public void update(Person person) {
-        personMap.put(person.getId(), person);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
-        QUEUE.add(new SearchPair<Person>(criteria, pageSortParams));
-        return new ArrayList<Person>(personMap.values());
     }
 
     /**
      * {@inheritDoc}
      */
     public int count(SearchCriteria<Person> criteria) {
-        return personMap.size();
+        return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public List<Person> search(SearchCriteria<Person> criteria) {
-        return search(criteria, null);
+        return null;
     }
 
-    public HashMap<Long, Person> getPersonMap() {
-        return personMap;
+    public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
+        return null;
     }
 
     public Map<String, String[]> validate(Person entity) {
         return null;
+    }
+
+    public void curate(Person curatedPerson) {
+
     }
 
 }
