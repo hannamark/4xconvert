@@ -27,6 +27,7 @@
     					<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
     					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
+    					<li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                         <li class="hassubmenu">Participating Sites
                            <ul id="part_sites">
                                 <li><a href="participatingOrganizations.action">Treating Sites</a></li>
