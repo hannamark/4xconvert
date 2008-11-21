@@ -115,6 +115,7 @@ function handleDuplicateOf() {
 				   onchange="handleDuplicateOf();" 
 				   />
                 <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
+                <c:if test="${fn:length(availableDuplicateOfs) > 0}">
 				   <po:field labelKey="identifiedOrganization.duplicateOf">
 						<select id="curateRoleForm.role.duplicateOf" name="role.duplicateOf">
 						<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
@@ -123,6 +124,7 @@ function handleDuplicateOf() {
 						</c:forEach>
 						</select>
 				   </po:field>
+                </c:if>
                 </div>	
 				<fieldset>
 				    <legend><s:text name="identifiedOrganization.assignedIdentifier"/></legend>
