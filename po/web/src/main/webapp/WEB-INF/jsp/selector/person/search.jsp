@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-    <title><fmt:message key="organization.search.title"/></title>
+    <title><fmt:message key="person.search.title"/></title>
     <script type="text/javascript">
         var returnVal;
 	    function markAsDuplicate(id) {
@@ -14,28 +14,32 @@
 <div id="findDuplicates">
 	<div class="po_wrapper">
 	    <div class="po_inner">
-	        <h1><fmt:message key="organization.search.title"/></h1>
+	        <h1><fmt:message key="person.search.title"/></h1>
 	        <div class="box_white">
 	            <div class="po_form">
 	                <s:actionerror/>
-	                <s:form action="selector/organization/search.action" id="duplicateOrganizationForm" onsubmit="$('duplicateSearchResultDetails').hide();">
+	                <s:form action="selector/person/search.action" id="duplicatePersonForm" onsubmit="$('duplicateSearchResultDetails').hide();">
 	                    <s:hidden name="rootKey"/>
 	                    <s:hidden name="source.id"/>
 				        <div class="boxouter">
 				        <h2>Basic Identifying Information</h2>
 				            <div class="box_white">
-		                        <s:textfield label="%{getText('organization.id')}" name="criteria.organization.id" size="10"/>
+		                        <s:textfield label="%{getText('person.id')}" name="criteria.person.id" size="10"/>
 		                        <s:set name="statusValues" value="@gov.nih.nci.po.data.bo.EntityStatus@values()" />
 		                        <s:select
-		                           label="%{getText('organization.statusCode')}"
-		                           name="criteria.organization.statusCode"
+		                           label="%{getText('person.statusCode')}"
+		                           name="criteria.person.statusCode"
 		                           list="#statusValues"
 		                           listKey="name()"
 		                           listValue="name()"
-		                           value="criteria.organization.statusCode" 
+		                           value="criteria.person.statusCode" 
 		                           headerKey="" headerValue="--Select a Status--" 
 		                           />				            
-				                <s:textfield label="%{getText('organization.name')}" name="criteria.organization.name" size="70"/>
+				                 <s:textfield label="%{getText('person.prefix')}" name="criteria.person.prefix" size="10"/>
+				                 <s:textfield label="%{getText('person.firstName')}" name="criteria.person.firstName" size="50"/>
+				                 <s:textfield label="%{getText('person.middleName')}" name="criteria.person.middleName" size="50"/>
+				                 <s:textfield label="%{getText('person.lastName')}" name="criteria.person.lastName" size="50"/>
+				                 <s:textfield label="%{getText('person.suffix')}" name="criteria.person.suffix" size="10"/>
 				                <div class="clear"></div>
 				            </div>
 				        </div>
@@ -43,7 +47,7 @@
 				        <div class="boxouter">
 				        <h2>Address Information</h2>
 				            <div class="box_white">
-				                <po:addressForm formNameBase="duplicateOrganizationForm" addressKeyBase="criteria.organization.postalAddress" address="${criteria.organization.postalAddress}" required="false"/>
+				                <po:addressForm formNameBase="duplicatePersonForm" addressKeyBase="criteria.person.postalAddress" address="${criteria.person.postalAddress}" required="false"/>
 				                <div class="clear"></div>
 				            </div>
 				        </div>
@@ -64,9 +68,9 @@
 	                </s:form>
 					<div style="float:right;">
 					    <po:button href="javascript://nop/" 
-					        onclick="$('duplicateOrganizationForm').submit();" 
+					        onclick="$('duplicatePersonForm').submit();" 
 					        style="search" text="Search" 
-					        id="submitDuplicateOrganizationForm"/>
+					        id="submitDuplicatePersonForm"/>
 					</div>                
 	            </div>
 	        </div>
@@ -81,7 +85,7 @@
 	    <div class="po_inner">
 	        <div class="box_white">
 				<div class="boxouter">
-				<h2><fmt:message key="organization.search.results"/></h2>
+				<h2><fmt:message key="person.search.results"/></h2>
 					<div id="duplicateSearchResults">     
 		            <%@ include file="results.jsp" %>
 		            </div>

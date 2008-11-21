@@ -136,7 +136,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         }
     }
 
-    public void _testCurateNewPersonThenCurateAfterRemoteUpdateToNullifyWithDuplicateId() throws Exception {
+    public void testCurateNewPersonThenCurateAfterRemoteUpdateToNullifyWithDuplicateId() throws Exception {
         /* create an org to serve as a duplicate */
         Ii dupId = createNewPersonThenCurateAsActive();
         Ii id = curateNewPersonThenCurateAfterRemoteUpdate();

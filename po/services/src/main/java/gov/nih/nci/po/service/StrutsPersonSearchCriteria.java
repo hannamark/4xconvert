@@ -85,16 +85,16 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 
 import java.io.Serializable;
 
 /**
- * Criteria class to search for organizations. 
+ * Criteria class to search for people. 
  */
-public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteria<Organization> implements
+public class StrutsPersonSearchCriteria extends AnnotatedBeanSearchCriteria<Person> implements
         Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -108,26 +108,26 @@ public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteri
      * Default Constructor.
      */
     @SuppressWarnings("deprecation")
-    public StrutsOrganizationSearchCriteria() {
-        super(new Organization());
-        getOrganization().setPostalAddress(new Address());
-        getOrganization().getPostalAddress().setCountry(new Country());
+    public StrutsPersonSearchCriteria() {
+        super(new Person());
+        getPerson().setPostalAddress(new Address());
+        getPerson().getPostalAddress().setCountry(new Country());
         emailEntry = new Email();
-        getOrganization().getEmail().add(emailEntry);
+        getPerson().getEmail().add(emailEntry);
         faxEntry = new PhoneNumber();
-        getOrganization().getFax().add(faxEntry);
+        getPerson().getFax().add(faxEntry);
         phoneEntry = new PhoneNumber();
-        getOrganization().getPhone().add(phoneEntry);
+        getPerson().getPhone().add(phoneEntry);
         ttyEntry = new PhoneNumber();
-        getOrganization().getTty().add(ttyEntry);
+        getPerson().getTty().add(ttyEntry);
         urlEntry = new URL();
-        getOrganization().getUrl().add(urlEntry);
+        getPerson().getUrl().add(urlEntry);
     }
 
     /**
      * @return organization used to find matches
      */
-    public Organization getOrganization() {
+    public Person getPerson() {
         return getCriteria();
     }
 

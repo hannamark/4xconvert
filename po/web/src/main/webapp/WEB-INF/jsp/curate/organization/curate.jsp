@@ -20,6 +20,7 @@
             	
     	if ($('curateOrgForm.organization.statusCode').value != 'NULLIFIED') {
     		$('curateOrgForm.organization.duplicateOf.id').value = '';
+    		$('wwctrl_curateOrgForm_organization_duplicateOf_id').innerHTML = '';
     	}
     	return true;
     }

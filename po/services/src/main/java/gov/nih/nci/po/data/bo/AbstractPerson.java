@@ -156,6 +156,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }

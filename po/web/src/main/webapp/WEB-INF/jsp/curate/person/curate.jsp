@@ -20,6 +20,7 @@
             	
     	if ($('curatePersonForm.person.statusCode').value != 'NULLIFIED') {
     		$('curatePersonForm.person.duplicateOf.id').value = '';
+    		$('wwctrl_curatePersonForm_person_duplicateOf_id').innerHTML = '';
     	}
     	return true;
     }
@@ -99,7 +100,7 @@
         	    <div id="duplicateOfDiv" <s:if test="person.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
 	                <div class="wwgrp" id="wwgrp_curatePersonForm_person_duplicateOf_id">
 	                    <div style="float:right;">
-	                        <c:url value="/notYetImplemented.jsp" var="duplicatesUrl">
+	                        <c:url value="/protected/selector/person/start.action" var="duplicatesUrl">
 	                            <c:param name="source.id" value="${person.id}"/>
 	                        </c:url>
 	                        <po:buttonRow>

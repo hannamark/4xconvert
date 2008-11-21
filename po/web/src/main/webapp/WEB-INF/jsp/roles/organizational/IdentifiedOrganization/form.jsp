@@ -21,6 +21,7 @@ function handleDuplicateOf() {
             
     if ($('curateRoleForm.role.status').value != 'NULLIFIED') {
         $('curateRoleForm.role.duplicateOf').value = '';
+        $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = '';
     }
     return true;
 }

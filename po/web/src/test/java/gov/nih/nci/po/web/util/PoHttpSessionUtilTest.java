@@ -6,6 +6,7 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
+import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.ArrayList;
@@ -46,9 +47,20 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
     }
     
     @Test
-    public void testAddAttribute_DOSC() {
+    public void testAddAttribute_SOSC() {
         StrutsOrganizationSearchCriteria x = new StrutsOrganizationSearchCriteria();
         StrutsOrganizationSearchCriteria y = new StrutsOrganizationSearchCriteria();
+        String resultX = PoHttpSessionUtil.addAttribute(x);
+        String resultY = PoHttpSessionUtil.addAttribute(y);
+        assertFalse(resultX.equals(resultY));
+        assertSame(x, PoHttpSessionUtil.getSession().getAttribute(resultX));
+        assertSame(y, PoHttpSessionUtil.getSession().getAttribute(resultY));
+    }
+    
+    @Test
+    public void testAddAttribute_SPSC() {
+        StrutsPersonSearchCriteria x = new StrutsPersonSearchCriteria();
+        StrutsPersonSearchCriteria y = new StrutsPersonSearchCriteria();
         String resultX = PoHttpSessionUtil.addAttribute(x);
         String resultY = PoHttpSessionUtil.addAttribute(y);
         assertFalse(resultX.equals(resultY));
