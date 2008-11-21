@@ -108,6 +108,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -305,6 +307,10 @@ public class NullifiedEntityInterceptorTest {
 
         public List<Person> search(SearchCriteria<Person> criteria, PageSortParams<Person> pageSortParams) {
             return null;
+        }
+
+        public void curate(Person curatedPerson) throws JMSException {
+            
         }
     }
 
