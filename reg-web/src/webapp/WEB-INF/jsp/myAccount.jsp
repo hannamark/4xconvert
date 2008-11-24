@@ -175,7 +175,7 @@ function handleAction(){
                         <td>
                             <s:set name="stateCodeValues" 
                                     value="@gov.nih.nci.pa.enums.USStateCode@getDisplayNames()" />                                           
-                            <s:select headerKey="" headerValue="All" 
+                            <s:select headerKey="" headerValue="--Select--" 
                                 name="registryUserWebDTO.state" 
                                 list="#stateCodeValues"  
                                 value="registryUserWebDTO.state" 
@@ -196,7 +196,7 @@ function handleAction(){
                                     value="@gov.nih.nci.registry.util.
                                     RegistryServiceLocator@getLookUpTableService().
                                     getCountries()" />
-                            <s:select headerKey="" headerValue="All" 
+                            <s:select headerKey="" headerValue="--Select--" 
                                      name="registryUserWebDTO.country" 
                                      list="#countries"
                                      listKey="name" 
