@@ -17,6 +17,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -73,6 +74,14 @@ public class JndiServiceLocator implements ServiceLocator {
         return (RegulatoryInformationServiceRemote) JNDIUtil.lookup("pa/RegulatoryInformationBean/remote");
     }
 
+    /**
+     * @return StudyIndldeServiceRemote
+     *
+     */
+    public StudyIndldeServiceRemote getStudyIndldeService() {
+        return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
+    }
+    
     /**
      * @return StudyOverallStatusServiceRemote
      */
@@ -246,10 +255,15 @@ public class JndiServiceLocator implements ServiceLocator {
         return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
     /**
-     * @return StudyIndldeServiceRemote
-     *
+     * @return CTGovXmlGeneratorServiceRemote
+     * @throws PAException e
      */
-    public StudyIndldeServiceRemote getStudyIndldeService() {
-        return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService()  
+    throws PAException { 
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+            + "/pa/CTGovXmlGeneratorServiceBean/remote";
+        return (CTGovXmlGeneratorServiceRemote) JNDIUtil.lookup(serverInfo);
     }
+
+
 }

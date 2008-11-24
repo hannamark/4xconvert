@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
@@ -224,4 +225,16 @@ public class PoPaServiceBeanLookup  {
                                 + "/pa/StudySiteAccrualStatusServiceBean/remote";
         return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
+
+    /**
+     * @return StudyIndldeServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyIndldeServiceRemote
+        getStudyIndldeService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/StudyIndldeServiceBean/remote";
+        return (StudyIndldeServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+
 }

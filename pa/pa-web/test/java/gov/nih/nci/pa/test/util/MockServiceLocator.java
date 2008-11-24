@@ -16,6 +16,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -241,6 +242,14 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public StudyIndldeServiceRemote getStudyIndldeService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getCTGovXmlGeneratorService()
+     */
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() {
         // TODO Auto-generated method stub
         return null;
     }

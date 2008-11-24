@@ -6,13 +6,16 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -29,6 +32,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -51,9 +55,8 @@ import org.w3c.dom.Text;
 * copyright holder, NCI.
 */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods"  })
-
-public class CTGovXmlGeneratorServiceBean {
-//implements  CTGovXmlGeneratorServiceRemote {
+@Stateless
+public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
     private static final String TEXT_BLOCK = "textblock"; 
@@ -357,10 +360,67 @@ public class CTGovXmlGeneratorServiceBean {
             if (ssasList != null && (!ssasList.isEmpty())) {
                 appendElement(location , createElement("status" , ssasList.get(0).getStatusCode() , doc));
             }
+
+            List<StudyParticipationContactDTO> spcDTOs = PoPaServiceBeanLookup.
+                getStudyParticipationContactService().getByStudyParticipation(sp.getIdentifier());
+            
             appendElement(root , location);
+            createContact(spcDTOs , location , doc);
+            createInvestigators(spcDTOs , location , doc);
+            createContact(spcDTOs , location , doc);
         }
     }
     
+    private static void createInvestigators(List<StudyParticipationContactDTO> spcDTOs, Element location, Document doc) 
+    throws PAException {
+        CorrelationUtils corr = new CorrelationUtils();
+        for (StudyParticipationContactDTO spcDTO : spcDTOs) {
+            if (StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode().
+                    equals(spcDTO.getRoleCode().getCode())) {
+                continue;
+            }
+            Person p = corr.getPAPersonByPAClinicalResearchStaffId(
+                    Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
+            Element investigator = doc.createElement("investigator");
+            appendElement(investigator , createElement("first_name" , p.getFirstName() , doc));
+            appendElement(investigator , createElement("middle_name" , p.getMiddleName() , doc));
+            appendElement(investigator , createElement("last_name" , p.getLastName() , doc));
+            appendElement(investigator , createElement("role" , spcDTO.getRoleCode() , doc));
+            if (investigator.hasChildNodes()) {
+                appendElement(location , investigator); 
+            }
+        }
+    }
+
+    private static void createContact(List<StudyParticipationContactDTO> spcDTOs, Element location, Document doc) 
+    throws PAException {
+        CorrelationUtils corr = new CorrelationUtils();
+        for (StudyParticipationContactDTO spcDTO : spcDTOs) {
+            
+            if (!StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode().
+                    equals(spcDTO.getRoleCode().getCode())) {
+                continue;
+            }
+            List<String> phones = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "PHONE");
+            List<String> emails = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "EMAIL");
+            Person p = corr.getPAPersonByPAClinicalResearchStaffId(
+                    Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
+            Element contact = doc.createElement("contact");
+            appendElement(contact , createElement("first_name" , p.getFirstName() , doc));
+            appendElement(contact , createElement("middle_name" , p.getMiddleName() , doc));
+            appendElement(contact , createElement("last_name" , p.getLastName() , doc));
+            if (phones != null && !phones.isEmpty()) {
+                appendElement(contact , createElement("phone" , phones.get(0) , doc));
+            }
+            if (emails != null && !emails.isEmpty()) {
+                appendElement(contact , createElement("email" , emails.get(0) , doc));
+            }
+            if (contact.hasChildNodes()) {
+                appendElement(location , contact); 
+            }
+        }
+    }
+
     private static Element createElement(final String elementName , final Document doc) throws PAException {
         if (PAUtil.isEmpty(elementName)) {
             LOG.error("Elementname is null");

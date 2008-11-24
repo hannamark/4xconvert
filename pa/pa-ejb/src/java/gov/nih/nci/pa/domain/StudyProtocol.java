@@ -172,7 +172,7 @@ public class StudyProtocol extends AbstractEntity {
     /**
      * @return the reviewBoardApprovalRequiredIndicator
      */
-    @Column(name = "REVIEW_BOARD_APPROVAL_REQUIRED_INDICATOR")
+    @Column(name = "REVIEW_BRD_APPROVAL_REQ_INDICATOR")
     public Boolean getReviewBoardApprovalRequiredIndicator() {
         return reviewBoardApprovalRequiredIndicator;
     }

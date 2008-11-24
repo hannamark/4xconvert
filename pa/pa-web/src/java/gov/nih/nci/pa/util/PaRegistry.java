@@ -17,6 +17,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -310,4 +311,15 @@ public final class PaRegistry {
         throws PAException {
         return getInstance().getServiceLocator().getPoClinicalResearchStaffCorrelationService();
     }
+
+    /**
+     * 
+     * @return CTGovXmlGeneratorServiceRemote
+     * @throws PAException on error 
+     */
+    public static CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() 
+        throws PAException {
+        return getInstance().getServiceLocator().getCTGovXmlGeneratorService();
+    }
+    
 }
