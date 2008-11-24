@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -119,6 +120,10 @@ public class HealthCareFacilityServiceBean extends AbstractCuratableServiceBean<
         super.update(updatedEntity);
     }
 
-
-
+    /**
+     * {@inheritDoc}
+     */
+    public int getHotRoleCount(Organization org) {
+        return super.getHotRoleCount(org.getId(), HealthCareFacility.class);
+    }
 }

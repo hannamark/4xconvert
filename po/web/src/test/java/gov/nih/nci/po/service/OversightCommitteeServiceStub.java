@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 
 import java.util.List;
@@ -129,5 +130,9 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
     }
 
     public void curate(OversightCommittee correlation) throws JMSException {
+    }
+
+    public int getHotRoleCount(Organization org) {
+        return 0;
     }
 }

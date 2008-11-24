@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 
+import gov.nih.nci.po.data.bo.Organization;
 import java.util.List;
 import java.util.Map;
 
@@ -128,5 +129,9 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
     }
 
     public void curate(HealthCareFacility correlation) throws JMSException {
+    }
+
+    public int getHotRoleCount(Organization org) {
+        return 0;
     }
 }

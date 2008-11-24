@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 
 import javax.ejb.Stateless;
@@ -104,5 +105,12 @@ public class IdentifiedOrganizationServiceBean extends AbstractCuratableServiceB
     public long create(IdentifiedOrganization obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
         return super.create(obj);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getHotRoleCount(Organization org) {
+        return super.getHotRoleCount(org.getId(), IdentifiedOrganization.class);
     }
 }

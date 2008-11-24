@@ -193,4 +193,13 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
         getService().create(hcf);        
         getService().create(hcf2);
     }
+
+    @Test
+    public void testHotRoleCount() throws EntityValidationException {
+        HealthCareFacility hcf = getSampleStructuralRole();
+        HealthCareFacilityServiceLocal s = (HealthCareFacilityServiceLocal) getService();
+        s.create(hcf);
+        int c = s.getHotRoleCount(hcf.getPlayer());
+        assertEquals(1, c);
+    }
 }

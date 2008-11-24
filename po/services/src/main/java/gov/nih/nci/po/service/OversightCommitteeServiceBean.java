@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.RoleStatus;
 
@@ -104,5 +105,12 @@ public class OversightCommitteeServiceBean extends AbstractCuratableServiceBean<
     public long create(OversightCommittee obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
         return super.create(obj);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getHotRoleCount(Organization org) {
+        return super.getHotRoleCount(org.getId(), OversightCommittee.class);
     }
 }

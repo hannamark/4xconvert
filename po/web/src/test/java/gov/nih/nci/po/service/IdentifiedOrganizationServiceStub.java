@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 
+import gov.nih.nci.po.data.bo.Organization;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,10 @@ public class IdentifiedOrganizationServiceStub implements IdentifiedOrganization
 
     public void curate(IdentifiedOrganization correlation) throws JMSException {
         
+    }
+
+    public int getHotRoleCount(Organization org) {
+        return 0;
     }
 
 }

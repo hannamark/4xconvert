@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ChangeRequest;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -154,4 +155,20 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         return o;
     }
 
+    /**
+     * Get the number of roles that need attention from the curator.
+     * @param orgId the player org's id for the roles.
+     * @param roleClass the type of role.
+     * @return the count of roles that need attention.
+     */
+    protected int getHotRoleCount(long orgId, Class<? extends Correlation> roleClass) {
+        final String hql =
+                "select count(distinct r) from " + roleClass.getName() + " r"
+                + " LEFT OUTER JOIN r.changeRequests as rcr"
+                + " where r.player.id = " + orgId
+                + " and "
+                + " (r.status = 'PENDING' or rcr.processed = 'false')";
+        Number n = (Number) PoHibernateUtil.getCurrentSession().createQuery(hql).uniqueResult();
+        return n.intValue();
+    }
 }

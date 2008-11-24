@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 
+import gov.nih.nci.po.data.bo.Organization;
 import javax.ejb.Local;
 
 /**
@@ -92,5 +93,10 @@ import javax.ejb.Local;
 @Local
 public interface HealthCareFacilityServiceLocal extends GenericStructrualRoleServiceLocal<HealthCareFacility> {
 
-    // empty interface - all methods are defined by generic service
+    /**
+     * Get the number of roles that need attention from the curator.
+     * @param org the player org for the roles.
+     * @return the count of roles that need attention.
+     */
+    int getHotRoleCount(Organization org);
 }

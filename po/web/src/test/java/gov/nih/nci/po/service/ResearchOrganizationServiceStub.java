@@ -1,5 +1,6 @@
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,10 @@ public class ResearchOrganizationServiceStub implements ResearchOrganizationServ
     public List<ResearchOrganization> search(SearchCriteria<ResearchOrganization> criteria,
             PageSortParams<ResearchOrganization> pageSortParams) {
         return null;
+    }
+
+    public int getHotRoleCount(Organization org) {
+        return 0;
     }
 
 }

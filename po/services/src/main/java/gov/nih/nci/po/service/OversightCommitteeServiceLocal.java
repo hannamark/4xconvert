@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 
 import javax.ejb.Local;
@@ -92,5 +93,11 @@ import javax.ejb.Local;
 @Local
 public interface OversightCommitteeServiceLocal extends GenericStructrualRoleServiceLocal<OversightCommittee> {
 
-    // empty interface - all methods are defined by generic interface
+    /**
+     * Get the number of roles that need attention from the curator.
+     * @param org the player org for the roles.
+     * @return the count of roles that need attention.
+     */
+    int getHotRoleCount(Organization org);
+
 }

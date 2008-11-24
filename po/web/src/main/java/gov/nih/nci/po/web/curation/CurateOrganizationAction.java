@@ -3,6 +3,9 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -20,6 +23,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 
 /**
  * Action class to handle curation of Organization entities.
@@ -167,4 +171,39 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
         return treeMap;
     }
 
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotHealthCareFacilityCount() {
+        HealthCareFacilityServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getHealthCareFacilityService();
+        return service.getHotRoleCount(organization);
+    }
+
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotResearchOrganizationCount() {
+        ResearchOrganizationServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getResearchOrganizationService();
+        return service.getHotRoleCount(organization);
+    }
+
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotIdentifiedOrganizationCount() {
+        IdentifiedOrganizationServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getIdentifiedOrganizationService();
+        return service.getHotRoleCount(organization);
+    }
+    
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotOversightCommitteeCount() {
+        OversightCommitteeServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getOversightCommitteeService();
+        return service.getHotRoleCount(organization);
+    }
 }
