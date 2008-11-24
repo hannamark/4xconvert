@@ -322,6 +322,22 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.affiliateOrg",
                         getText("error.register.affiliateOrg"));
             }
+            if (PAUtil.isNotEmpty(registryUserWebDTO.getState())
+                        && PAUtil.isNotEmpty(registryUserWebDTO.getCountry())) {
+                if (registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
+                                && registryUserWebDTO.getState().startsWith("None")) {
+                    addFieldError("registryUserWebDTO.state",
+                            getText("error.register.validState"));
+                    
+                }
+                if (!registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
+                        && !registryUserWebDTO.getState().startsWith("None")) {
+                             addFieldError("registryUserWebDTO.state",
+                             getText("error.register.validNonUSState"));
+            
+                }
+                
+            }
         }
     }
     
