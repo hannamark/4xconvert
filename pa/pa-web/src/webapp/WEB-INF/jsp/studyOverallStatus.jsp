@@ -56,10 +56,10 @@
         
         <tr>
             <td class="label"><s:label for="currentTrialStatus"><fmt:message
-                key="trialStatus.current.trial.status" /></s:label></td>
+                key="trialStatus.current.trial.status" /></s:label><span class="required">*</span></td>
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-            <td class="value"><s:select headerValue="--Select--" onchange="statusChange()"  onfocus="statusChange()"
+            <td class="value"><s:select onchange="statusChange()" onfocus="statusChange()"
                 name="currentTrialStatus"
                 list="#currentTrialStatusValues" /></td>
             <td>
@@ -70,7 +70,7 @@
         </tr>
         <tr>
             <td class="label"><s:label for="statusDate"><fmt:message
-                key="trialStatus.current.trial.status.date" /></s:label></td>
+                key="trialStatus.current.trial.status.date" /></s:label><span class="required">*</span></td>
             <td class="value"><s:textfield name="statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
@@ -91,7 +91,7 @@
         <tr><td>&nbsp</td></tr>
         <tr>
             <td class="label"><s:label for="startDate"><fmt:message
-                key="trialStatus.trial.start.date" /></s:label></td>
+                key="trialStatus.trial.start.date" /></s:label><span class="required">*</span></td>
             <td class="value"><s:textfield name="startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal2')">
@@ -100,7 +100,7 @@
         </tr>
         <tr>
             <td class="label"><s:label for="completionDate">
-            <fmt:message key="trialStatus.primary.completion.date" /></s:label></td>
+            <fmt:message key="trialStatus.primary.completion.date" /></s:label><span class="required">*</span></td>
             <td class="value"><s:textfield name="completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal3')">
@@ -112,7 +112,7 @@
     <del class="btnwrapper">
         <ul class="btnrow">
             <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
-            <li><a href="regulatoryInfoquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+            <li><a href="irb.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="trialFundingquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
         </ul>   
     </del>

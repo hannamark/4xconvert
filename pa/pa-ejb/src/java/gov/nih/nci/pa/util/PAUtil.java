@@ -173,6 +173,13 @@ public class PAUtil {
         return (dt == null) ? null : new Timestamp(dt.getTime());
     }
     
+    /**
+     * @return today's date as a string
+     */
+    public static String today() {
+        return normalizeDateString(new Timestamp((new Date()).getTime()).toString());
+    }
+    
     /** 
     * Returns whether the argument is null or has only whitespace characters 
     * within it. This method is more efficient than performing a trim() operation 

@@ -9,6 +9,7 @@ import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StatusCode;
@@ -261,6 +262,36 @@ public class CorrelationUtils {
     }
 
     /**
+     * @param paOversightCommitteeId id
+     * @return Organization
+     * @throws PAException e
+     */
+    public Organization getPAOrganizationByPAOversightCommitteeId(Long paOversightCommitteeId) throws PAException {
+        if (paOversightCommitteeId == null) {
+            LOG.error("Check the id value.  Null found.  ");
+            throw new PAException("Check the id value.  Null found.  ");
+        }
+        Organization organization = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            OversightCommittee healthCareFac = (OversightCommittee) session.get(OversightCommittee.class, 
+                    paOversightCommitteeId);
+            if (healthCareFac == null) {
+                String errMsg = "Object not found using getPAOrganizationByPAOversightCommitteeId() for id = " 
+                    + paOversightCommitteeId + ".  ";
+                LOG.error(errMsg);
+                throw new PAException(errMsg);
+            }
+            organization = healthCareFac.getOrganization();
+        } catch (HibernateException hbe) {
+            LOG.error("Hibernate exception in getPAOrganizationByPAOversightCommitteeId().  ", hbe);
+            throw new PAException("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
+        }
+        return organization;
+    }
+
+    /**
      * 
      * @param poIdentifer id
      * @param paIdentifer id
@@ -333,8 +364,8 @@ public class CorrelationUtils {
             }
             person = clinicalResearchStaff.getPerson();
         } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
-            throw new PAException("Hibernate exception in getPAOrganizationByPAHealthCareFacilityId().  ", hbe);
+            LOG.error("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
+            throw new PAException("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
         }
         return person;
     }

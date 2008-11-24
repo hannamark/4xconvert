@@ -2,10 +2,13 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -30,25 +33,47 @@ public class StudyParticipationServiceBean
         extends AbstractStudyIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
         implements StudyParticipationServiceRemote {
 
-    private void businessRules(StudyParticipationDTO dto) throws PAException {
+    @SuppressWarnings("PMD.NPathComplexity")
+    private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
             serviceError("Either healthcare facility or research organization must be set.  ");
         }
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
             serviceError("Healthcare facility and research organization cannot both be set.  ");
         }
+        ReviewBoardApprovalStatusCode code = ReviewBoardApprovalStatusCode.getByCode(
+                CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode()));
+        if (code != null) {
+            String approvalNumber = StConverter.convertToString(dto.getReviewBoardApprovalNumber());
+            if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().toString().equals(code.getCode().toString())
+                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
+                serviceError("Review board approval number must be set for status '"
+                        + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "'.  ");
+            }
+            if (ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().toString().equals(code.getCode().toString())
+                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
+                dto.setReviewBoardApprovalNumber(StConverter.convertToSt(PAUtil.today()));
+            }
+            if (PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+                serviceError("Oversight committee (board) must be set when review board approval status is '"
+                        + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "' or '"
+                        + ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getDisplayName() + "'.  ");
+            }
+        } else {
+            dto.setOversightCommitteeIi(null);
+            dto.setReviewBoardApprovalDate(null);
+            dto.setReviewBoardApprovalNumber(null);
+        }
+        return dto;
     }
     
     private void enforceOnlyOneOversightCommittee(StudyParticipationDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+        if (!PAUtil.isCdNull(dto.getReviewBoardApprovalStatusCode())) {
             List<StudyParticipationDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
             for (StudyParticipationDTO sp : spList) {
                 if (!IiConverter.convertToLong(dto.getIdentifier()).
                         equals(IiConverter.convertToLong(sp.getIdentifier())) 
-                        && !PAUtil.isIiNull(sp.getOversightCommitteeIi())) {
-                    sp.setOversightCommitteeIi(null);
-                    sp.setReviewBoardApprovalDate(null);
-                    sp.setReviewBoardApprovalNumber(null);
+                        && !PAUtil.isCdNull(sp.getReviewBoardApprovalStatusCode())) {
                     sp.setReviewBoardApprovalStatusCode(null);
                     update(sp);
                 }
@@ -63,8 +88,8 @@ public class StudyParticipationServiceBean
      */
     @Override
     public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
-        businessRules(dto);
-        StudyParticipationDTO resultDto = super.create(dto);
+        StudyParticipationDTO createDto = businessRules(dto);
+        StudyParticipationDTO resultDto = super.create(createDto);
         enforceOnlyOneOversightCommittee(resultDto);
         return resultDto;
     }
@@ -77,8 +102,8 @@ public class StudyParticipationServiceBean
     @Override
     public StudyParticipationDTO update(StudyParticipationDTO dto)
             throws PAException {
-        businessRules(dto);
-        StudyParticipationDTO resultDto = super.update(dto);
+        StudyParticipationDTO updateDto = businessRules(dto);
+        StudyParticipationDTO resultDto = super.update(updateDto);
         enforceOnlyOneOversightCommittee(resultDto);
         return resultDto;
     }

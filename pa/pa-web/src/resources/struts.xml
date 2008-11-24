@@ -85,11 +85,14 @@
 			<result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
 			<result name="delete">/WEB-INF/jsp/trialFundingDelete.jsp</result>
 		</action>				
-		<action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
-			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/WEB-INF/jsp/RegulatoryInformation.jsp</result>
-			<result name="view_page">/WEB-INF/jsp/regulatoryinformationview.jsp</result>
-		</action>			
+        <action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
+            <interceptor-ref name="nci-commonsParams" />                         
+            <result>/WEB-INF/jsp/RegulatoryInformation.jsp</result>
+            <result name="view_page">/WEB-INF/jsp/regulatoryinformationview.jsp</result>
+        </action>           
+        <action name="irb*" class="gov.nih.nci.pa.action.IrbAction" method="{1}">
+            <result>/WEB-INF/jsp/irb.jsp</result>
+        </action>           
 		<action name="nciSpecificInformation*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />			
 			<result>/WEB-INF/jsp/nciSpecificInformation.jsp</result>
@@ -108,14 +111,14 @@
 
         <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>
-        </action>       
+        </action>
 
         <action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
             <result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
             <result name="contactpersons">/WEB-INF/jsp/nodecorate/lookupcontactpersons.jsp</result>
-        </action>       
+        </action>
 
 		<action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
  			<result>/WEB-INF/jsp/subGroups.jsp</result>

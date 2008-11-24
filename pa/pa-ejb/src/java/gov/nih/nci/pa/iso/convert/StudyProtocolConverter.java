@@ -68,6 +68,8 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
         studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(studyProtocol.getFdaRegulatedIndicator()));
+        studyProtocolDTO.setReviewBoardApprovalRequiredIndicator(
+                BlConverter.convertToBl(studyProtocol.getReviewBoardApprovalRequiredIndicator()));
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(studyProtocol.getOfficialTitle()));
         studyProtocolDTO.setMaximumTargetAccrualNumber(
                 IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));
@@ -132,6 +134,8 @@ public class StudyProtocolConverter {
                BlConverter.covertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
        studyProtocol.setFdaRegulatedIndicator(
                BlConverter.covertToBoolean(studyProtocolDTO.getFdaRegulatedIndicator()));
+       studyProtocol.setReviewBoardApprovalRequiredIndicator(
+               BlConverter.covertToBoolean(studyProtocolDTO.getReviewBoardApprovalRequiredIndicator()));
        studyProtocol.setMaximumTargetAccrualNumber(
                IntConverter.convertToInteger(studyProtocolDTO.getMaximumTargetAccrualNumber()));
        studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));

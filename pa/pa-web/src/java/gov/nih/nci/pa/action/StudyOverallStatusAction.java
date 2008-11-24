@@ -247,33 +247,36 @@ public class StudyOverallStatusAction extends ActionSupport implements
             oldDate = TsConverter.convertToTimestamp(sosList.get(0).getStatusDate());
             oldReason = StConverter.convertToString(sosList.get(0).getReasonText());
         }
-        if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
-            if (!startTimestamp.equals(statusTimestamp)) {
-                addActionError("When transitioning from 'Approved' to 'Active' the trial start "
-                        + "date must be the same as the status date.");
+        if ((startDateType != null) && (completionDateType != null)) {
+            if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
+                if (!startTimestamp.equals(statusTimestamp)) {
+                    addActionError("When transitioning from 'Approved' to 'Active' the trial start "
+                            + "date must be the same as the status date.");
+                }
+                if (!startDateType.equals(actualString)) {
+                    addActionError("When transitioning from 'Approved' to 'Active' "
+                            + "the trial start date must be 'Actual'.");
+                }
             }
-            if (!startDateType.equals(actualString)) {
-                addActionError("When transitioning from 'Approved' to 'Active the trial start date must be 'Actual'.");
+            if (!StudyStatusCode.APPROVED.equals(newCode) && !StudyStatusCode.WITHDRAWN.equals(newCode)
+                    && startDateType.equals(anticipatedString)) {
+                addActionError("Trial start date can be 'Anticipated' only if the status is "
+                            + "'Approved' or 'Withdrawn'.");
             }
-        }
-        if (!StudyStatusCode.APPROVED.equals(newCode) && !StudyStatusCode.WITHDRAWN.equals(newCode)
-                && startDateType.equals(anticipatedString)) {
-            addActionError("Trial start date can be 'Anticipated' only if the status is "
-                        + "'Approved' or 'Withdrawn'.");
-        }
-        if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
-            if (completionDateType.equals(anticipatedString)) {
-                addActionError("Trial completion date can not be 'Anticipated' when the status is "
-                        + "'Complete' or 'Administratively Complete'.");
-            }
-            if (!statusTimestamp.equals(completionTimestamp)) {
-                addActionError("The trial completion date must be the same as the date when status "
-                        + "changed to 'Complete' or 'Administratively Complete'.");
-            }
-        } else {
-            if (!completionDateType.equals(anticipatedString)) {
-                addActionError("Trial completion date must be 'Anticipated' when the status is "
-                        + "not 'Complete' or 'Administratively Complete'.");
+            if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
+                if (completionDateType.equals(anticipatedString)) {
+                    addActionError("Trial completion date can not be 'Anticipated' when the status is "
+                            + "'Complete' or 'Administratively Complete'.");
+                }
+                if (!statusTimestamp.equals(completionTimestamp)) {
+                    addActionError("The trial completion date must be the same as the date when status "
+                            + "changed to 'Complete' or 'Administratively Complete'.");
+                }
+            } else {
+                if (!completionDateType.equals(anticipatedString)) {
+                    addActionError("Trial completion date must be 'Anticipated' when the status is "
+                            + "not 'Complete' or 'Administratively Complete'.");
+                }
             }
         }
         boolean codeChanged = (newCode == null) ? (oldCode != null) : !newCode.equals(oldCode);

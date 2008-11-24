@@ -24,7 +24,12 @@
     			<li><div>Administrative Data</div>
     				<ul>
     					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
-    					<li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
+                        <li class="hassubmenu">Regulatory Information
+                           <ul id="part_sites">
+                                <li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
+                                <li><a href="irb.action">Human Subject Review</a></li>
+                           </ul>
+                        </li>    
     					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
     					<li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>

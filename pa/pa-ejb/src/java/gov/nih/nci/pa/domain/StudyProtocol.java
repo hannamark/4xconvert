@@ -49,6 +49,7 @@ public class StudyProtocol extends AbstractEntity {
     private Boolean delayedpostingIndicator;
     private Boolean expandedAccessIndicator;
     private Boolean fdaRegulatedIndicator;
+    private Boolean reviewBoardApprovalRequiredIndicator;
     private String identifier; // used to store nci-accession number
     private String keywordText;
     private Integer maximumTargetAccrualNumber;
@@ -168,6 +169,20 @@ public class StudyProtocol extends AbstractEntity {
        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
     }
 
+    /**
+     * @return the reviewBoardApprovalRequiredIndicator
+     */
+    @Column(name = "REVIEW_BOARD_APPROVAL_REQUIRED_INDICATOR")
+    public Boolean getReviewBoardApprovalRequiredIndicator() {
+        return reviewBoardApprovalRequiredIndicator;
+    }
+    /**
+     * @param reviewBoardApprovalRequiredIndicator the reviewBoardApprovalRequiredIndicator to set
+     */
+    public void setReviewBoardApprovalRequiredIndicator(
+            Boolean reviewBoardApprovalRequiredIndicator) {
+        this.reviewBoardApprovalRequiredIndicator = reviewBoardApprovalRequiredIndicator;
+    }
     /**
      * 
      * @return identifier

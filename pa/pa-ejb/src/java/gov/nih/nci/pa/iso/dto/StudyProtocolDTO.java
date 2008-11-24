@@ -26,6 +26,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Bl delayedpostingIndicator;
     private Bl expandedAccessIndicator;
     private Bl fdaRegulatedIndicator;
+    private Bl reviewBoardApprovalRequiredIndicator;
     private St officialTitle;
     private Int maximumTargetAccrualNumber;
     private Cd phaseCode;
@@ -161,6 +162,21 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     
+    /**
+     * @return the reviewBoardApprovalRequiredIndicator
+     */
+    public Bl getReviewBoardApprovalRequiredIndicator() {
+        return reviewBoardApprovalRequiredIndicator;
+    }
+
+    /**
+     * @param reviewBoardApprovalRequiredIndicator the reviewBoardApprovalRequiredIndicator to set
+     */
+    public void setReviewBoardApprovalRequiredIndicator(
+            Bl reviewBoardApprovalRequiredIndicator) {
+        this.reviewBoardApprovalRequiredIndicator = reviewBoardApprovalRequiredIndicator;
+    }
+
     /**
      * 
      * @return maximumTargetAccrualNumber

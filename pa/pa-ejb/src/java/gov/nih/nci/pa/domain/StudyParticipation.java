@@ -151,7 +151,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      * @return the oversightCommittee
      */
     @ManyToOne(optional = true)
-    @JoinColumn(name = "OVERSIGHT_COMMITTEE_ID", nullable = true, updatable = false)
+    @JoinColumn(name = "OVERSIGHT_COMMITTEE_ID", nullable = true)
     public OversightCommittee getOversightCommittee() {
         return oversightCommittee;
     }

@@ -7,6 +7,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -39,6 +40,7 @@ public class OrganizationCorrelationServiceBean {
     
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
     private static final String CANCER_CENTER_CODE = "CCR";
+    private static final String IRB_CODE = "Institutional Review Board (IRB)";
     
     /**
      * 
@@ -59,9 +61,12 @@ public class OrganizationCorrelationServiceBean {
             poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-//            Map m = e.getNullifiedEntities();
            LOG.error("This Organization is no longer available instead use ");
            throw new PAException("This Organization is no longer available instead use ", e);
+        }
+        if (poOrg == null) {
+            throw new PAException("PO and PA databases out of synchronization.  Error getting " 
+                    + "organization from PO for id = " + orgPoIdentifier + ".  ");
         }
 
         // Step 2 : check if PO has hcf correlation if not create one 
@@ -69,12 +74,7 @@ public class OrganizationCorrelationServiceBean {
         List<HealthCareFacilityDTO> hcfDTOs = null;
         hcfDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
      
-//        try {
-            hcfDTOs = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
-//        } catch (NullifiedRoleException e) {
-//            LOG.error("check with scoot", e);
-//            // @todo: this should not happen, check with 
-//        }
+        hcfDTOs = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().search(hcfDTO);
         if (hcfDTOs != null && hcfDTOs.size() > 1) {
             throw new PAException("PO hcfDTOs Correlation should not have more than 1  ");
         }
@@ -136,9 +136,12 @@ public class OrganizationCorrelationServiceBean {
             poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
                 getOrganization(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-//            Map m = e.getNullifiedEntities();
            LOG.error("This Organization is no longer available instead use ");
            throw new PAException("This Organization is no longer available instead use ", e);
+        }
+        if (poOrg == null) {
+            throw new PAException("PO and PA databases out of synchronization.  Error getting " 
+                    + "organization from PO for id = " + orgPoIdentifier + ".  ");
         }
 
         // Step 2 : check if PO has hcf correlation if not create one 
@@ -147,15 +150,9 @@ public class OrganizationCorrelationServiceBean {
         roDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         Cd cd = new Cd();
         cd.setCode(CANCER_CENTER_CODE);
-//        roDTO.setType(cd);
         roDTO.setTypeCode(cd);
         roDTO.setFundingMechanism(StConverter.convertToSt("foo"));
-//        try {
-            roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
-//        } catch (NullifiedRoleException e) {
-//            LOG.error("check with scoot", e);
-//            // @todo: this should not happen, check with 
-//        }
+        roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
         if (roDTOs != null && roDTOs.size() > 1) {
             throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
         }
@@ -217,6 +214,10 @@ public class OrganizationCorrelationServiceBean {
         } catch (NullifiedEntityException e) {
             throw new PAException("This Organization is no longer available instead use ", e);
         }
+        if (poOrg == null) {
+            throw new PAException("PO and PA databases out of synchronization.  Error getting " 
+                    + "organization from PO for id = " + orgPoIdentifier + ".  ");
+        }
 
         // Step 2 : check if PO has oc correlation if not create one 
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
@@ -228,13 +229,17 @@ public class OrganizationCorrelationServiceBean {
         }
         if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
+                ocDTO.setTypeCode(CdConverter.convertStringToCd(IRB_CODE));
                 Ii ii = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().createCorrelation(ocDTO);
                 ocDTO = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                throw new PAException("Validation exception during get OversightCommittee.  " , e);
+                throw new PAException("Validation exception during get PO OversightCommittee.  " , e);
             } catch (EntityValidationException e) {
-                throw new PAException("Validation exception during create OversightCommittee.  " , e);
-            } 
+                throw new PAException("Validation exception during create PO OversightCommittee.  " , e);
+            } catch (Exception e) {
+                throw new PAException("Error thrown during get/create PO OversightCommitte w/type code = " 
+                        + IRB_CODE + ".  ", e);
+            }
         } else {
             ocDTO = ocDTOs.get(0);
         }
