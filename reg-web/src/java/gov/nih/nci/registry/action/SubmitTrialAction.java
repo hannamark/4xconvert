@@ -53,6 +53,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -635,6 +636,48 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(contactPhone)) {
             addFieldError("contactPhone", getText("error.submit.contactPhone"));
         }
+        
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
+                  && PAUtil.isNotEmpty(protocolWebDTO.getStartDateType())) {
+            if (StudyStatusCode.APPROVED.getDisplayName().equals(overallStatusWebDTO.getStatusCode()) 
+                    || StudyStatusCode.WITHDRAWN.getDisplayName().equals(overallStatusWebDTO.getStatusCode())) {
+                
+                if (protocolWebDTO.getStartDateType().equals("Anticipated")) {
+                    addFieldError("protocolWebDTO.startDateType", getText("error.submit.startDateType"));
+                }                
+            }            
+        }
+        
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
+                && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())) {
+          if (StudyStatusCode.COMPLETE.getDisplayName().equals(overallStatusWebDTO.getStatusCode()) 
+                  || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getDisplayName().
+                          equals(overallStatusWebDTO.getStatusCode())) {
+              if (protocolWebDTO.getCompletionDateType().equals("Anticipated")) {
+                  addFieldError("protocolWebDTO.completionDateType", getText("error.submit.completionDateType"));
+              }
+              if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate()) 
+                          && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())) {
+                  Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
+                  Timestamp completionTimestamp = PAUtil.dateStringToTimestamp(protocolWebDTO.getCompletionDate());
+                  if (!statusTimestamp.equals(completionTimestamp)) {
+                      addFieldError("protocolWebDTO.completionDate", getText("error.submit.completionDateValue"));
+
+                  }                  
+              }
+              
+          } else {
+              
+              if (PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())
+                      && !protocolWebDTO.getCompletionDateType().equals("Anticipated")) {
+                  addFieldError("protocolWebDTO.completionDateType", getText("error.submit.completionDateTypeValue"));
+                  
+              }
+              
+          }
+          
+        }
+
         // LeadOrgNotSelected;check the session;
         selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoLeadOrg");
         if (selectedLeadOrg == null) {
