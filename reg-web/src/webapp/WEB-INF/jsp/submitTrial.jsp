@@ -212,7 +212,7 @@ function toggledisplay2 (it) {
               
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="-Select-" name="protocolWebDTO.trialPhase" list="#phaseCodeValues" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="protocolWebDTO.trialPhase" list="#phaseCodeValues" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.trialPhase</s:param>
@@ -235,7 +235,7 @@ function toggledisplay2 (it) {
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="-Select-" name="trialPurpose" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="trialPurpose" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
                 </td>
           </tr>          
                     <tr>
@@ -343,7 +343,7 @@ function toggledisplay2 (it) {
 					</td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
-                        <s:select headerKey="" headerValue="-Select-" 
+                        <s:select headerKey="" headerValue="--Select--" 
                             name="summary4FundingCategory" 
                             list="#summaryFourFundingCategoryCodeValues"
                             cssStyle="width:206px" />
@@ -391,7 +391,7 @@ function toggledisplay2 (it) {
 					   <tr>
 							<s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="-Select-" 
+							    <s:select headerKey="" headerValue="--Select--" 
 							         name="trialFundingWebDTO.fundingMechanismCode" 
 							         list="#fundingMechanismValues"                             
                                      listKey="fundingMechanismCode"  
@@ -402,7 +402,7 @@ function toggledisplay2 (it) {
 							</td>
 							<s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="-Select-" 
+							    <s:select headerKey="" headerValue="--Select--" 
 							         name="trialFundingWebDTO.nihInstitutionCode" 
 							         list="#nihInstituteCodes"
                                      listKey="nihInstituteCode" 
@@ -426,7 +426,7 @@ function toggledisplay2 (it) {
                             </td>
 							<s:set name="programCodes" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
 							<td>                                             
-							    <s:select headerKey="" headerValue="-Select-" name="trialFundingWebDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
+							    <s:select headerKey="" headerValue="--Select--" name="trialFundingWebDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingWebDTO.nciDivisionProgramCode" cssStyle="width:150px" onblur="enableGrantAddButton();"/>
 		                        <span class="formErrorMsg"> 
                                    <s:fielderror>
                                    <s:param>trialFundingWebDTO.nciDivisionProgramCode</s:param>
@@ -468,7 +468,7 @@ function toggledisplay2 (it) {
                 </td>
                     <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="-Select-" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="overallStatusWebDTO.statusCode" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="overallStatusWebDTO.statusCode" list="#statusCodeValues"  value="overallStatusWebDTO.statusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>overallStatusWebDTO.statusCode</s:param>
