@@ -62,7 +62,7 @@ function handleMyAction(){
 					<s:select headerKey="" headerValue="-Select-" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
 				</td>
 				<td scope="row" class="label">
-					<label for="type"> <fmt:message key="search.trial.type"/></label>
+					<label for="type"> <fmt:message key="search.trial.purpose"/></label>
 				</td>
 					<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
 				<td>
