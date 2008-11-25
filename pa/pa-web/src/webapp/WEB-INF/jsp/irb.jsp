@@ -115,7 +115,7 @@ function loadDiv(orgid){
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td class="label">Board Approval Status:</td>
+            <td class="label">Board Approval Status:<s:label cssClass="required" value="*"/></td>
             <s:set name="approvalStatusValues"
                 value="@gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode@getDisplayNames()" />
             <td class="value"><s:select headerKey="" headerValue="--Select--" 
