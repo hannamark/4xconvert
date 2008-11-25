@@ -5,8 +5,10 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -14,10 +16,12 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -81,7 +85,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             //create the root element
             Element root = createElement("clinical_study" , doc);
             doc.appendChild(root);
-            root.appendChild(createIndInfo(spDTO , doc));
+            createIndInfo(spDTO , doc , root);
             createElement("is_fda_regulated" , 
                     convertBLToString(spDTO.getFdaRegulatedIndicator()) , doc , root);
             createElement("is_section_801" , 
@@ -96,6 +100,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             if (sponsor != null && sponsor.hasChildNodes()) {
                 root.appendChild(sponsor);
             }
+            createOversightInfo(spDTO , doc , root);
             appendElement(createElement("brief_summary" , doc), 
                     createElement(TEXT_BLOCK, spDTO.getPublicDescription(), doc), root);
             appendElement(createElement("detailed_description" , doc), 
@@ -131,16 +136,52 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     
-    private static Element createIndInfo(StudyProtocolDTO spDTO , Document doc) {
+    private static void createOversightInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
+        //Element overSightInfo  = doc.createElement("oversight_info");    
+        StudyRegulatoryAuthorityDTO sraDTO = PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService().
+            getByStudyProtocol(spDTO.getIdentifier());
+        
+        if (sraDTO == null) {
+            return;
+        }
+        String data = null;
+        RegulatoryAuthority ra = PoPaServiceBeanLookup.getRegulatoryInformationService().
+                get(Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
+        
+        Country country =  PoPaServiceBeanLookup.getRegulatoryInformationService().getRegulatoryAuthorityCountry(
+                Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
+        if (country != null && ra != null) {
+            data = country.getName() + " : " + ra.getAuthorityName();
+        } else if (country != null) {
+            data = country.getName();
+        } else if (ra != null) {
+            data = ra.getAuthorityName();
+        }
+
+        appendElement(root , createElement("regulatory_authority" ,  data , doc));
+        
+    }
+
+    private static void createIndInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         //create info element
+        
+        List<StudyIndldeDTO> ideDtos = 
+            PoPaServiceBeanLookup.getStudyIndldeService().getByStudyProtocol(spDTO.getIdentifier());
+        if (ideDtos == null || ideDtos.isEmpty()) {
+            appendElement(root , createElement("is_ind_study" , "No", doc));
+            return;
+        }
+        appendElement(root , createElement("is_ind_study" , YES, doc));
+        StudyIndldeDTO ideDTO = ideDtos.get(0);
+        
         Element idInfo = doc.createElement("id_info");
-        //appendElement(idInfo , createElement("provider_name" , "provider_name data...", doc));
-        //appendElement(idInfo , createElement("provider_study_id" , "provider_study_id data...", doc));
-        appendElement(idInfo , createElement("org_name" , "NCI", doc));
-        appendElement(idInfo , createElement("org_study_id" , spDTO.getAssignedIdentifier().getExtension(), doc));
-        //appendElement(idInfo , createElement("secondary_id" , "NCI..333.", doc));
-        //@todo : handle a way to create secondary contact
-        return idInfo;
+        appendElement(idInfo , createElement("ind_grantor" , ideDTO.getGrantorCode(), doc));
+        appendElement(idInfo , createElement("ind_number" , ideDTO.getIndldeNumber(), doc));
+        appendElement(idInfo , createElement("has_expanded_access" , 
+                convertBLToString(ideDTO.getExpandedAccessIndicator()), doc));
+        if (idInfo.hasChildNodes()) {
+            appendElement(root, idInfo);
+        }
         
     }
     private static Element createEligibility(StudyProtocolDTO spDTO , Document doc) throws PAException {

@@ -41,9 +41,9 @@ public class GetAuthorityOrgsAction extends ActionSupport {
             StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                     .getAttribute(Constants.TRIAL_SUMMARY);
             StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                    .getStudyRegulatoryAuthority(IiConverter.convertToIi(spDTO.getStudyProtocolId()));
+                    .getByStudyProtocol(IiConverter.convertToIi(spDTO.getStudyProtocolId()));
             if (sraFromDatabaseDTO != null) {
-                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityId().getExtension());
+                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
                 List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);
                 setSelectedAuthOrg(regInfo.get(0).toString());
             }

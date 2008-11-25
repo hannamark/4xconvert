@@ -24,8 +24,8 @@ public class StudyRegulatoryAuthorityConverter {
      */
     public static StudyRegulatoryAuthorityDTO convertFromDomainToDTO(StudyRegulatoryAuthority sra) {
         StudyRegulatoryAuthorityDTO sriDTO = new StudyRegulatoryAuthorityDTO();
-        sriDTO.setProtocolId(IiConverter.convertToIi(sra.getStudyProtocol().getId()));
-        sriDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(sra.getRegulatoryAuthority().getId()));
+        sriDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(sra.getStudyProtocol().getId()));
+        sriDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(sra.getRegulatoryAuthority().getId()));
         sriDTO.setIdentifier(IiConverter.convertToIi(sra.getId()));
         return sriDTO;
     }
@@ -37,12 +37,12 @@ public class StudyRegulatoryAuthorityConverter {
      */
     public static StudyRegulatoryAuthority convertFromDTOToDomain(StudyRegulatoryAuthorityDTO dto) {
         StudyRegulatoryAuthority authority = new StudyRegulatoryAuthority();
-        StudyProtocol  prot = new StudyProtocol();
-        prot.setId(IiConverter.convertToLong(dto.getProtocolId()));
+        StudyProtocol  sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         RegulatoryAuthority ra = new RegulatoryAuthority();
-        ra.setId(IiConverter.convertToLong(dto.getRegulatoryAuthorityId()));
+        ra.setId(IiConverter.convertToLong(dto.getRegulatoryAuthorityIdentifier()));
         authority.setRegulatoryAuthority(ra);
-        authority.setStudyProtocol(prot);
+        authority.setStudyProtocol(sp);
         return authority;
     }
 

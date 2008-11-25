@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -57,4 +59,21 @@ public interface RegulatoryInformationServiceRemote  {
       * @throws PAException on error
       */
      String getCountryOrOrgName(Long id, String className) throws PAException;
+     
+     /**
+      * 
+      * @param id primary id
+      * @return RegulatoryAuthority
+      * @throws PAException on error
+      */
+     RegulatoryAuthority get(Long id) throws PAException;
+     
+     /**
+      * 
+      * @param id regulatory id
+      * @return Country 
+      * @throws PAException on error
+      */
+     Country getRegulatoryAuthorityCountry(Long id)  throws PAException;
+     
 }

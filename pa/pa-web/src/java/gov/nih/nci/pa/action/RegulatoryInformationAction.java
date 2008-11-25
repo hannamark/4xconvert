@@ -70,15 +70,15 @@ public class RegulatoryInformationAction extends ActionSupport {
         
         // Update StudyRegulatoryAuthority
         StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                .getStudyRegulatoryAuthority(studyProtocolIi);
+                .getByStudyProtocol(studyProtocolIi);
         StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
-        sraDTO.setProtocolId(studyProtocolIi);
-        sraDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(selectedAuthOrg));
+        sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedAuthOrg));
         if (sraFromDatabaseDTO == null) {
-            PaRegistry.getStudyRegulatoryAuthorityService().createStudyRegulatoryAuthority(sraDTO);
+            PaRegistry.getStudyRegulatoryAuthorityService().create(sraDTO);
         } else {
-            sraFromDatabaseDTO.setRegulatoryAuthorityId(IiConverter.convertToIi(selectedAuthOrg));
-            PaRegistry.getStudyRegulatoryAuthorityService().updateStudyRegulatoryAuthority(sraFromDatabaseDTO);
+            sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedAuthOrg));
+            PaRegistry.getStudyRegulatoryAuthorityService().update(sraFromDatabaseDTO);
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
        } catch (PAException e) {
@@ -98,13 +98,14 @@ public class RegulatoryInformationAction extends ActionSupport {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            StudyRegulatoryAuthorityDTO authorityDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                    .getStudyRegulatoryAuthority(studyProtocolIi);
+            StudyRegulatoryAuthorityDTO authorityDTO = PaRegistry.getStudyRegulatoryAuthorityService().
+                getByStudyProtocol(studyProtocolIi);
             //
             countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
             if (authorityDTO != null) { // load values from database
                 StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                        .getStudyRegulatoryAuthority(studyProtocolIi);
+                        .getByStudyProtocol(studyProtocolIi);
+      
                 StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
                         .getStudyProtocol(studyProtocolIi);
                 if (spDTO.getSection801Indicator().getValue() != null) {
@@ -123,7 +124,7 @@ public class RegulatoryInformationAction extends ActionSupport {
                     webDTO.setDataMonitoringIndicator((BlConverter.convertToString(spDTO
                             .getDataMonitoringCommitteeAppointedIndicator())));
                 }                 
-                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityId().getExtension());
+                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
                 List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);
                 setLst(regInfo.get(1).toString());
             }

@@ -50,8 +50,8 @@ public class StudyRegulatoryAuthorityConverterTest {
   private void assertStudyRegulatoryAuthorityConverter(StudyRegulatoryAuthority bo,
       StudyRegulatoryAuthorityDTO dto) {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-    assertEquals(bo.getRegulatoryAuthority().getId(), IiConverter.convertToLong(dto.getRegulatoryAuthorityId()));
-    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getProtocolId()));
+    assertEquals(bo.getRegulatoryAuthority().getId(), IiConverter.convertToLong(dto.getRegulatoryAuthorityIdentifier()));
+    assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
   }
 
   @Test
@@ -59,8 +59,8 @@ public class StudyRegulatoryAuthorityConverterTest {
     StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
-    dto.setRegulatoryAuthorityId(IiConverter.convertToIi(ra.getId()));
-    dto.setProtocolId(IiConverter.convertToIi(sp.getId()));
+    dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(ra.getId()));
+    dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
     StudyRegulatoryAuthorityConverter sg = new StudyRegulatoryAuthorityConverter();
     StudyRegulatoryAuthority bo = sg.convertFromDTOToDomain(dto);

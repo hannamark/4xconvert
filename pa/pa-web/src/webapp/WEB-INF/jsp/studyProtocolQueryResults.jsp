@@ -13,7 +13,7 @@
     <display:column titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" sortable="true" headerClass="sortable"/>
     <display:column class="title" 
         titleKey="studyProtocol.action" 
-        href="generalTrialDesignquery.action" property="action"
+        href="studyProtocolview.action" property="action"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
     

@@ -9,9 +9,11 @@ import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -237,4 +239,26 @@ public class PoPaServiceBeanLookup  {
         return (StudyIndldeServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
 
+    /**
+     * @return StudyRegulatoryAuthorityServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyRegulatoryAuthorityServiceRemote
+        getStudyRegulatoryAuthorityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/StudyRegulatoryAuthorityServiceBean/remote";
+        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+
+    /**
+     * @return RegulatoryInformationServiceRemote
+     * @throws PAException on error
+     */
+    public static RegulatoryInformationServiceRemote
+        getRegulatoryInformationService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/RegulatoryInformationBean/remote";
+        return (RegulatoryInformationServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
+    
 }

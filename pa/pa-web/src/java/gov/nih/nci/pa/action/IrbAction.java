@@ -289,8 +289,8 @@ public class IrbAction extends ActionSupport implements Preparable {
 
     private void loadForm() throws Exception {
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
-        if (!BlConverter.covertToBoolean(study.getReviewBoardApprovalRequiredIndicator()))
-        {
+        Boolean b = BlConverter.covertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
+        if (b == null || !b) {
             setApprovalStatus(ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
             setApprovalNumber(null);
             setSiteRelated(null);

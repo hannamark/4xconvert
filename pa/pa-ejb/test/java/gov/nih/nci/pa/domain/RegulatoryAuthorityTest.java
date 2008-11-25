@@ -64,6 +64,10 @@ public class RegulatoryAuthorityTest {
         queryList = query.list();
         //System.out.println("-------------------------------****************************8"+queryList.get(0));
             
+        List results = session.createQuery("select distinct country from RegulatoryAuthority ra where ra.id = " 
+                + id).list();
+
+         
     }
     
     public static RegulatoryAuthority createRegulatoryObj(Country c){

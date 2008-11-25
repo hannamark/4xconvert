@@ -12,31 +12,31 @@ import gov.nih.nci.coppa.iso.Ii;
  */
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class StudyRegulatoryAuthorityDTO extends BaseDTO {
-    private Ii protocolId;
-    private Ii regulatoryAuthorityId;
+    private Ii studyProtocolIdentifier;
+    private Ii regulatoryAuthorityIdentifier;
     /**
-     * @return the protocolId
+     * @return the studyProtocolIdentifer
      */
-    public Ii getProtocolId() {
-        return protocolId;
+    public Ii getStudyProtocolIdentifier() {
+        return studyProtocolIdentifier;
     }
     /**
-     * @param protocolId the protocolId to set
+     * @param studyProtocolIdentifier the protocolId to set
      */
-    public void setProtocolId(Ii protocolId) {
-        this.protocolId = protocolId;
+    public void setStudyProtocolIdentifier(Ii studyProtocolIdentifier) {
+        this.studyProtocolIdentifier = studyProtocolIdentifier;
     }
     /**
-     * @return the regulatoryAuthorityId
+     * @return the regulatoryAuthorityIdentifier
      */
-    public Ii getRegulatoryAuthorityId() {
-        return regulatoryAuthorityId;
+    public Ii getRegulatoryAuthorityIdentifier() {
+        return regulatoryAuthorityIdentifier;
     }
     /**
-     * @param regulatoryAuthorityId the regulatoryAuthorityId to set
+     * @param regulatoryAuthorityIdentifier the regulatoryAuthorityId to set
      */
-    public void setRegulatoryAuthorityId(Ii regulatoryAuthorityId) {
-        this.regulatoryAuthorityId = regulatoryAuthorityId;
+    public void setRegulatoryAuthorityIdentifier(Ii regulatoryAuthorityIdentifier) {
+        this.regulatoryAuthorityIdentifier = regulatoryAuthorityIdentifier;
     }
 
 }

@@ -20,6 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name =  "COUNTRY")
 @org.hibernate.annotations.Entity(mutable = false)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
+
 public class Country extends AbstractEntity {
     private static final long serialVersionUID = 1L;
     private String alpha2;

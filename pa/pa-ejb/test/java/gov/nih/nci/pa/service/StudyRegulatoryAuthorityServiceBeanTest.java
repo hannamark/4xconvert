@@ -36,27 +36,26 @@ public class StudyRegulatoryAuthorityServiceBeanTest {
 
   @Test
   public void get() throws Exception {
-    StudyRegulatoryAuthorityDTO dto =
-      remoteEjb.getStudyRegulatoryAuthority(pid);
+    StudyRegulatoryAuthorityDTO dto =  remoteEjb.getByStudyProtocol(pid);
     assertEquals(IiConverter.convertToLong(pid)
-        , (IiConverter.convertToLong(dto.getProtocolId())));
+        , (IiConverter.convertToLong(dto.getStudyProtocolIdentifier())));
     StudyRegulatoryAuthorityDTO dto2 = null;
 
     dto2 = new StudyRegulatoryAuthorityDTO();
-    dto2 = remoteEjb.updateStudyRegulatoryAuthority(dto);
-    assertEquals(dto.getRegulatoryAuthorityId().getExtension()
-        , dto2.getRegulatoryAuthorityId().getExtension());       
+    dto2 = remoteEjb.update(dto);
+    assertEquals(dto.getRegulatoryAuthorityIdentifier().getExtension()
+        , dto2.getRegulatoryAuthorityIdentifier().getExtension());       
   }
 
   @Test
   public void create() throws Exception {
     StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
-    dto.setProtocolId(pid);
-    dto.setRegulatoryAuthorityId(IiConverter.convertToIi(ra.getId()));
+    dto.setStudyProtocolIdentifier(pid);
+    dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(ra.getId()));
     StudyRegulatoryAuthorityDTO dto2 = null;
     dto2 = new StudyRegulatoryAuthorityDTO();
-    dto2 = remoteEjb.createStudyRegulatoryAuthority(dto);
-    assertEquals(dto.getProtocolId()
+    dto2 = remoteEjb.create(dto);
+    assertEquals(dto.getStudyProtocolIdentifier()
         , pid);
   }
 }

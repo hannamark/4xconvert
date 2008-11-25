@@ -20,11 +20,11 @@ public interface StudyRegulatoryAuthorityServiceRemote {
     
     /**
      * 
-     * @param ii to be retrieved
+     * @param studyProtocolIi sp id
      * @return StudyRegulatoryAuthorityDTO as the dto
      * @throws PAException on error
      */
-    StudyRegulatoryAuthorityDTO getStudyRegulatoryAuthority(Ii ii)  throws PAException;
+    StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi)  throws PAException;
     
     /**
      * 
@@ -32,14 +32,12 @@ public interface StudyRegulatoryAuthorityServiceRemote {
      * @return StudyRegulatoryAuthorityDTO as the return object
      * @throws PAException on error
      */ 
-    StudyRegulatoryAuthorityDTO createStudyRegulatoryAuthority(StudyRegulatoryAuthorityDTO sraDTO) 
-                                                                                            throws PAException;
+    StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
     /**
      * 
      * @param sraDTO as parameter
      * @return StudyRegulatoryAuthorityDTO as DTO
      * @throws PAException on exception
      */
-    StudyRegulatoryAuthorityDTO updateStudyRegulatoryAuthority(StudyRegulatoryAuthorityDTO sraDTO) 
-                                                    throws PAException;
+    StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException;
 }

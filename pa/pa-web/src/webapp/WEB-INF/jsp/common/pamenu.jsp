@@ -19,20 +19,30 @@
 					<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Identification</a></li>
 				</ul>
 			</li>
-			
+			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+			<li><div>Validation</div>
+                <ul>
+                    <li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                    <li><a href="trialFundingquery.action" >Trial Funding</a></li>
+                    <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
+                    <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
+                </ul>
+			</s:if>
 			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
     			<li><div>Administrative Data</div>
     				<ul>
+                        <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
     					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
                         <li class="hassubmenu">Regulatory Information
                            <ul id="part_sites">
                                 <li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
                                 <li><a href="irb.action">Human Subject Review</a></li>
+                                <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                            </ul>
                         </li>    
     					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-    					<li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
+    					
                         <li class="hassubmenu">Participating Sites
                            <ul id="part_sites">
                                 <li><a href="participatingOrganizations.action">Treating Sites</a></li>

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -37,17 +39,24 @@ import org.hibernate.Session;
 public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAuthorityServiceRemote {
     private static final Logger LOG = Logger.getLogger(StudyRegulatoryAuthorityServiceBean.class);
 
+    private SessionContext ejbContext;
+    
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+    this.ejbContext = ctx;
+    }
+    
     /**
      *
-     * @param ii to be retrieved
+     * @param studyProtocolIi ii
      * @return StudyRegulatoryAuthorityDTO as the dto
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyRegulatoryAuthorityDTO getStudyRegulatoryAuthority(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+    public StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        if (PAUtil.isIiNull(studyProtocolIi)) {
+            LOG.error(" studyProtocolIi should not be null ");
+            throw new PAException(" studyProtocolIi should not be null ");
         }
         LOG.info("Entering getStudyRegulatoryAuthority");
         Session session = null;
@@ -58,7 +67,7 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
             session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
-                    + " where sp.id = " + IiConverter.convertToLong(ii);
+                    + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi);
             LOG.info(" query StudyRegulatoryAuthority = " + hql);
             query = session.createQuery(hql);
             queryList = query.list();
@@ -66,19 +75,17 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
                 return null;
             }
             sra = queryList.get(0);
-            session.flush();
         } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving StudyRegulatoryAuthority for id = " + ii.getExtension(),
+            LOG.error(" Hibernate exception while retrieving StudyRegulatoryAuthority for id = " 
+                    + studyProtocolIi.getExtension(),
                     hbe);
             throw new PAException(" Hibernate exception while retrieving StudyRegulatoryAuthority for id = "
-                    + ii.getExtension(), hbe);
-        } finally {
-            session.flush();
+                    + studyProtocolIi.getExtension(), hbe);
         }
-        StudyRegulatoryAuthorityDTO studyProtocolDTO = StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(sra);
+        StudyRegulatoryAuthorityDTO sraDTO = StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(sra);
 
         LOG.info("Leaving getStudyRegulatoryAuthority");
-        return studyProtocolDTO;
+        return sraDTO;
 
     }
 
@@ -89,8 +96,7 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyRegulatoryAuthorityDTO createStudyRegulatoryAuthority(StudyRegulatoryAuthorityDTO sraDTO)
-                                                                                            throws PAException {
+    public StudyRegulatoryAuthorityDTO create(StudyRegulatoryAuthorityDTO sraDTO) throws PAException {
         if (sraDTO == null) {
             LOG.error(" StudyRegulatoryAuthorityDTO should not be null ");
             throw new PAException(" StudyRegulatoryAuthorityDTO should not be null ");
@@ -100,22 +106,24 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
         StudyRegulatoryAuthority sra = StudyRegulatoryAuthorityConverter.convertFromDTOToDomain(sraDTO);
         //
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        sra.setDateLastUpdated(now);
+        sra.setDateLastCreated(now);
         StudyProtocol studyProtocol = new StudyProtocol();
-        studyProtocol.setId(IiConverter.convertToLong(sraDTO.getProtocolId()));
+        studyProtocol.setId(IiConverter.convertToLong(sraDTO.getStudyProtocolIdentifier()));
         sra.setStudyProtocol(studyProtocol);
         //
         RegulatoryAuthority ra = new RegulatoryAuthority();
-        ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityId()));
+        ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityIdentifier()));
         sra.setRegulatoryAuthority(ra);
+        if (ejbContext != null) {
+            sra.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
+        }
         try {
             session = HibernateUtil.getCurrentSession();
             session.save(sra);
+            session.flush();
         } catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while createStudyResourcing " , hbe);
             throw new PAException(" Hibernate exception while createStudyResourcing " , hbe);
-        } finally {
-            session.flush();
         }
         LOG.debug("Leaving createStudyRegulatoryAuthority ");
         return StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(sra);
@@ -128,55 +136,48 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
      * @throws PAException on exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyRegulatoryAuthorityDTO updateStudyRegulatoryAuthority(StudyRegulatoryAuthorityDTO sraDTO)
-                                                    throws PAException {
+    public StudyRegulatoryAuthorityDTO update(StudyRegulatoryAuthorityDTO sraDTO) throws PAException {
+        StudyRegulatoryAuthorityDTO sraDTO1 = null;
         if (sraDTO == null) {
             LOG.error(" StudyRegulatoryAuthorityDTO should not be null ");
             throw new PAException(" StudyRegulatoryAuthorityDTO should not be null ");
 
         }
         Timestamp now = new Timestamp((new Date()).getTime());
-        StudyRegulatoryAuthorityDTO  spDTO = null;
         Session session = null;
         List<StudyRegulatoryAuthority> queryList = new ArrayList<StudyRegulatoryAuthority>();
         try {
             session = HibernateUtil.getCurrentSession();
-
+            
             Query query = null;
             String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
-            + " where sp.id = " + IiConverter.convertToLong(sraDTO.getProtocolId());
+            + " where sp.id = " + IiConverter.convertToLong(sraDTO.getStudyProtocolIdentifier());
             LOG.info(" query StudyRegulatoryAuthority = " + hql);
-            query = session.createQuery(hql);
-            queryList = query.list();
-            StudyRegulatoryAuthority sra = queryList.get(0);
-
-            ///////// because of update of the object is not working, we will delete the record
-            //////// and create it
-            session.delete(sra);
-
-            StudyRegulatoryAuthority createSra = new StudyRegulatoryAuthority();
-            StudyProtocol sp = new StudyProtocol();
-            sp.setId(IiConverter.convertToLong(sraDTO.getProtocolId()));
-            createSra.setStudyProtocol(sp);
-
-            RegulatoryAuthority ra = new RegulatoryAuthority();
-            ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityId()));
-            createSra.setRegulatoryAuthority(ra);
-
-            createSra.setDateLastUpdated(now);
-            createSra.setRegulatoryAuthority(ra);
-            createSra.setStudyProtocol(sp);
-            session.save(createSra);
-            spDTO =  StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(createSra);
+                query = session.createQuery(hql);
+                queryList = query.list();
+                StudyRegulatoryAuthority sra = queryList.get(0);
+            
+                
+                
+              RegulatoryAuthority ra = new RegulatoryAuthority();
+              ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityIdentifier()));
+              sra.setRegulatoryAuthority(ra);
+              sra.setDateLastUpdated(now);
+              if (ejbContext != null) {
+                  sra.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+              }
+            
+              session.update(sra);
+              session.flush();
+              sraDTO1 =  StudyRegulatoryAuthorityConverter.convertFromDomainToDTO(sra);
+            
         }  catch (HibernateException hbe) {
             LOG.error(" Hibernate exception while updating StudyProtocol for id = "
                     + sraDTO.getIdentifier().getExtension() , hbe);
             throw new PAException(" Hibernate exception while updating StudyProtocol for id = "
                       + sraDTO.getIdentifier().getExtension() , hbe);
-        } finally {
-            session.flush();
         }
-        return spDTO;
+        return sraDTO1;
     }
 
 

@@ -2,9 +2,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -21,39 +19,19 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class GeneralTrialDesignAction extends ActionSupport {
     
-    private Long studyProtocolId = null;
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
-    /**
-     * 
-     * @return studyProtocolId
-     */
-    public Long getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     * 
-     * @param studyProtocolId studyProtocolId
-     */
-    public void setStudyProtocolId(Long studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
     
     /**  
      * @return res
      */
     public String query() {
-        try {            
-            StudyProtocolQueryDTO  studyProtocolQueryDTO = 
-                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(studyProtocolId);
-            // put an entry in the session and store StudyProtocolQueryDTO 
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(studyProtocolId));
+        try {        
+
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+            getAttribute(Constants.STUDY_PROTOCOL_II);             
                 
             StudyProtocolDTO spDTO = null;
-            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(IiConverter.convertToIi(studyProtocolId));
+            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             copy(spDTO);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
