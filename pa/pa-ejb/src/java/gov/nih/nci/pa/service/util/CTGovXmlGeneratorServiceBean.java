@@ -1,15 +1,25 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -32,6 +42,8 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.StringWriter;
 import java.util.List;
@@ -58,7 +70,8 @@ import org.w3c.dom.Text;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods"  })
+//@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods"  })
+@SuppressWarnings("PMD")
 @Stateless
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
@@ -121,7 +134,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createArmGroup(spDTO, doc, root);
             appendElement(root, createEligibility(spDTO, doc));
             createLocation(spDTO.getIdentifier() , doc , root);
-
+            //createIrbInfo(spDTO , doc , root);
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);
@@ -137,7 +150,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     
     private static void createOversightInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
-        //Element overSightInfo  = doc.createElement("oversight_info");    
+        Element overSightInfo  = doc.createElement("oversight_info");    
         StudyRegulatoryAuthorityDTO sraDTO = PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService().
             getByStudyProtocol(spDTO.getIdentifier());
         
@@ -157,11 +170,74 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         } else if (ra != null) {
             data = ra.getAuthorityName();
         }
+        appendElement(overSightInfo , createElement("regulatory_authority" ,  data , doc));
+        appendElement(overSightInfo , createIrbInfo(spDTO ,  doc));
+        appendElement(overSightInfo, createElement(
+                "has_dmc", convertBLToString(spDTO.getDataMonitoringCommitteeAppointedIndicator()), doc));
 
-        appendElement(root , createElement("regulatory_authority" ,  data , doc));
-        
+        if (overSightInfo.hasChildNodes()) {
+            appendElement(root, overSightInfo);
+        }
     }
 
+    
+    
+    private static Element createIrbInfo(StudyProtocolDTO spDTO , Document doc) throws PAException {
+        Element irbInfo  = doc.createElement("irb_info");
+        List<StudyParticipationDTO> spDTOs = 
+            PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(spDTO.getIdentifier());
+        for (StudyParticipationDTO spart : spDTOs) {
+            appendElement(irbInfo , createElement("approval_status" ,  spart.getReviewBoardApprovalStatusCode() , doc));
+            if (ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode().equals(
+                    spart.getReviewBoardApprovalStatusCode().getCode())) {
+                break;
+            }
+            if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
+                        spart.getReviewBoardApprovalStatusCode().getCode())
+                        || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
+                        spart.getReviewBoardApprovalStatusCode().getCode())) {
+                CorrelationUtils cUtils = new CorrelationUtils();
+                Organization paOrg = cUtils.getPAOrganizationByPAOversightCommitteeId(
+                        IiConverter.convertToLong(spart.getOversightCommitteeIi()));     
+                if (paOrg != null) {
+                    OrganizationDTO poOrg = null;
+                    try {
+                        poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
+                            getOrganization(IiConverter.converToPoOrganizationIi(paOrg.getIdentifier()));
+                    } catch (NullifiedEntityException e) {
+                        throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier());
+                    }
+                    appendElement(irbInfo , createElement("name" ,  paOrg.getName() , doc));
+                    Organization affOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
+                            IiConverter.convertToLong(spart.getHealthcareFacilityIi()));      
+                    if (affOrg != null) {
+                        appendElement(irbInfo , createElement("affiliation" ,  affOrg.getName() , doc));
+                    }
+                    Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
+                    for (Object tel : telList) {
+                        if (tel instanceof TelPhone) {
+                            appendElement(irbInfo , 
+                                    createElement("phone" , ((TelPhone) tel).getValue().getSchemeSpecificPart(), doc));
+                            break;
+                        }
+                    }
+
+                    for (Object tel : telList) {
+                        if (tel instanceof TelEmail) {
+                            appendElement(irbInfo , createElement("email"  ,  
+                                    ((TelEmail) tel).getValue().getSchemeSpecificPart(), doc));
+                            break;
+                        }
+                    } // for
+                    
+                    appendElement(irbInfo , createElement("full_address" , 
+                            convertToAddress(poOrg.getPostalAddress()) , doc));
+                } // po org
+            } // pa org
+        } // for
+        return irbInfo;
+    } // method 
+  
     private static void createIndInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         //create info element
         
@@ -539,4 +615,37 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             return "No";
         }
     }
+
+    private static String convertToAddress(Ad ad) {
+        
+        if (ad == null || ad.getPart() == null || ad.getPart().isEmpty()) {
+            return null;
+        }
+        List<Adxp> adxpList = ad.getPart();
+        StringBuffer sb = new StringBuffer();
+        for (Adxp adxp : adxpList) {
+            
+            if (adxp instanceof AdxpAl) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpCty) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpSta) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpZip) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpCnt) {
+                sb.append(adxp.getCode());
+            }
+        }
+        if (sb.lastIndexOf(",") > 0) {
+            sb.deleteCharAt(sb.lastIndexOf(","));
+        }
+        return sb.toString();
+        
+    }
+
 }

@@ -85,7 +85,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
             Long studyProtocolId) throws PAException {
         LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
-        LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
         if (studyProtocolId == null) {
             LOG.error(" studyProtocolId cannot be null ");
             throw new PAException(" studyProtocolId cannot be null ");
@@ -186,8 +185,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             .setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                     studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated());
-                    // @todo : hardcoded for interventional, its has to be
-                    // derived
                 }
                 if (studyOverallStatus != null) {
                     studyProtocolDto.setStudyStatusCode(studyOverallStatus
@@ -323,7 +320,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         studyProtocolQueryCriteria.getStudyProtocolId());
 
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
                     .getOfficialTitle())) {
                 where.append(" and upper(sp.officialTitle)  like '%"
                         + studyProtocolQueryCriteria.getOfficialTitle()
@@ -336,15 +333,14 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + PhaseCode.getByCode(studyProtocolQueryCriteria
                                 .getPhaseCode()) + "'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
                     .getNciIdentifier())) {
                 where.append(" and upper(sp.identifier)  like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier()
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
-            /////// deleted by naveen Nov 11 2008
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
                     .getStudyStatusCode())) {
                 where.append(" and sos.statusCode  = '"
                         + StudyStatusCode.getByCode(studyProtocolQueryCriteria
@@ -356,69 +352,46 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                 + "                where sos.studyProtocol = sos1.studyProtocol )"
                                 + " or sos.id is null ) ");
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
-                    .getPrimaryPurposeCode())) {
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
                 where.append(" and sp.primaryPurposeCode  = '"
-                        + PrimaryPurposeCode
-                                .getByCode(studyProtocolQueryCriteria
+                        + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria
                                         .getPrimaryPurposeCode()) + "'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria
                     .getDocumentWorkflowStatusCode())) {
-                where
-                        .append(" and dws.statusCode  = '"
-                                + DocumentWorkflowStatusCode
-                                        .getByCode(studyProtocolQueryCriteria
-                                                .getDocumentWorkflowStatusCode())
-                                + "'");
+                where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
+                        getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
             } else {
                 // add the subquery to pick the latest record
-                where
-                        .append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                 + "                where dws.studyProtocol = dws1.studyProtocol )"
                                 + " or dws.id is null ) ");
+           }
+            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
+                where
+                        .append(" and upper(sps.localStudyProtocolIdentifier) like '%"
+                                + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
+                                        .toUpperCase().trim().replaceAll("'", "''") + "%'");
             }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
-                    .getLeadOrganizationId())) {
-                if ((studyProtocolQueryCriteria.getOrganizationType() == null)
-                        || (studyProtocolQueryCriteria.getOrganizationType()
-                                .equalsIgnoreCase("Lead"))) {
-                    // if org is added, add the where clause
-                    where.append(" and org.id = "
-                            + studyProtocolQueryCriteria
-                                    .getLeadOrganizationId());
-                    where
-                            .append(" and sps.functionalCode ='"
-                                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION
-                                    + "'");
-                } else if (studyProtocolQueryCriteria.getOrganizationType()
-                        .equalsIgnoreCase("Participating")) {
-                    where.append(" and org.id = "
-                            + studyProtocolQueryCriteria
-                                    .getLeadOrganizationId());
-                    where.append(" and sps.functionalCode = '").append(
-                            StudyParticipationFunctionalCode.TREATING_SITE
-                                    + "'");
-                }
-            }
-            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria
-                    .getPrincipalInvestigatorId())) {
-                where.append(" and per.id = "
-                        + studyProtocolQueryCriteria
-                                .getPrincipalInvestigatorId());
-            }
-                where.append(" and dws.statusCode  <>  '"
-                    + DocumentWorkflowStatusCode.REJECTED + "'");
-           if  ((PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getClientName())) 
-                       && (studyProtocolQueryCriteria.getClientName().equalsIgnoreCase("MyTrials"))) {
+            
+           if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
+                    where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
+
+           }
+           if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
+                where.append(" and per.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId());
+           }
+           if  (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
                where.append(" and sp.userLastCreated = '").append(
                        studyProtocolQueryCriteria.getUserLastCreated() + "'");
            }
+           if (studyProtocolQueryCriteria.getExcludeRejectProtocol() != null 
+                   && studyProtocolQueryCriteria.getExcludeRejectProtocol()) {
+               where.append(" and dws.statusCode  <>   '" + DocumentWorkflowStatusCode.REJECTED + "'");
+           }
            
-           where
-           .append(" and sps.functionalCode ='"
-                   + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION
-                   + "'");
+           where.append(" and sps.functionalCode ='"
+                   + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
 
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");

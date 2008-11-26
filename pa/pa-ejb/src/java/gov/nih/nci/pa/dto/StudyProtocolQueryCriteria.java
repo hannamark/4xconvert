@@ -41,6 +41,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String organizationType;
     private String userLastCreated;
     private String clientName;
+    private Boolean excludeRejectProtocol;
     
     
     
@@ -236,6 +237,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setClientName(String clientName) {
         this.clientName = clientName;
+    }
+    /**
+     * 
+     * @return excludeRejectProtocol excludeRejectProtocol
+     */
+    public Boolean getExcludeRejectProtocol() {
+        return excludeRejectProtocol;
+    }
+    /**
+     * 
+     * @param excludeRejectProtocol excludeRejectProtocol
+     */
+    public void setExcludeRejectProtocol(Boolean excludeRejectProtocol) {
+        this.excludeRejectProtocol = excludeRejectProtocol;
     }
     
     
