@@ -329,6 +329,10 @@ public class IrbAction extends ActionSupport implements Preparable {
     private void loadOrg(String poOrgId) throws Exception {
         OrganizationDTO poOrg = PaRegistry.getPoOrganizationEntityService().
             getOrganization(IiConverter.converToPoOrganizationIi(poOrgId));
+        if (poOrg == null) {
+            throw new PAException("Error getting organization data from PO for id =" + poOrgId
+                    + ".  Check that PO service is running databases are synchronized.  ");
+        }
         getCandidateBoardList().put(poOrgId, EnOnConverter.convertEnOnToString(poOrg.getName()));
         ct = new ContactWebDTO();
         ct.setName(poOrgId);
