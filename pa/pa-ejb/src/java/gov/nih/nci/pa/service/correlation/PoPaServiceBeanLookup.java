@@ -42,6 +42,16 @@ public class PoPaServiceBeanLookup  {
         return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }    
     
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public static OversightCommitteeCorrelationServiceRemote
+        getOversightCommitteeCorrelationService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/po/OversightCommitteeCorrelationServiceBean/remote";
+        return (OversightCommitteeCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    } 
     
     /** 
      * @return OrganizationEntityServiceRemote
@@ -53,8 +63,6 @@ public class PoPaServiceBeanLookup  {
         return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
-    
-    
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
      * @throws PAException e
@@ -116,9 +124,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyProtocolServiceRemote
         getStudyProtocolService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyProtocolServiceBean/remote";
-        return (StudyProtocolServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyProtocolServiceRemote) JNDIUtil.lookup("/pa/StudyProtocolServiceBean/remote");
     } 
 
     /**
@@ -127,9 +133,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyParticipationServiceRemote
         getStudyParticipationService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyParticipationServiceBean/remote";
-        return (StudyParticipationServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyParticipationServiceRemote) JNDIUtil.lookup("/pa/StudyParticipationServiceBean/remote");
     } 
 
     /**
@@ -138,9 +142,8 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyParticipationContactServiceRemote
         getStudyParticipationContactService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyParticipationContactServiceBean/remote";
-        return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyParticipationContactServiceRemote) 
+            JNDIUtil.lookup("/pa/StudyParticipationContactServiceBean/remote");
     } 
 
     /**
@@ -149,9 +152,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyContactServiceRemote
         getStudyContactService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyContactServiceBean/remote";
-        return (StudyContactServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyContactServiceRemote) JNDIUtil.lookup("/pa/StudyContactServiceBean/remote");
     } 
 
     /**
@@ -160,9 +161,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyResourcingServiceRemote
         getStudyResourcingService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyResourcingServiceBean/remote";
-        return (StudyResourcingServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyResourcingServiceRemote) JNDIUtil.lookup("/pa/StudyResourcingServiceBean/remote");
     } 
     
     /**
@@ -171,19 +170,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyOutcomeMeasureServiceRemote
         getStudyOutcomeMeasureService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyOutcomeMeasureServiceBean/remote";
-        return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup(serverInfo);
-    } 
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public static OversightCommitteeCorrelationServiceRemote
-        getOversightCommitteeCorrelationService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/po/OversightCommitteeCorrelationServiceBean/remote";
-        return (OversightCommitteeCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+        return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup("/pa/StudyOutcomeMeasureServiceBean/remote");
     } 
     /**
      * @return ProtocolQueryServiceRemote
@@ -191,9 +178,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static ProtocolQueryServiceLocal
         getProtocolQueryService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/ProtocolQueryServiceBean/local";
-        return (ProtocolQueryServiceLocal) JNDIUtil.lookup(serverInfo);
+        return (ProtocolQueryServiceLocal) JNDIUtil.lookup("/pa/ProtocolQueryServiceBean/local");
     } 
     /**
      * @return ArmServiceRemote
@@ -201,9 +186,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static ArmServiceRemote
         getArmService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/ArmServiceBean/remote";
-        return (ArmServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (ArmServiceRemote) JNDIUtil.lookup("/pa/ArmServiceBean/remote");
     } 
     
     /**
@@ -212,9 +195,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static PlannedActivityServiceRemote
         getPlannedActivityService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/PlannedActivityServiceBean/remote";
-        return (PlannedActivityServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (PlannedActivityServiceRemote) JNDIUtil.lookup("/pa/PlannedActivityServiceBean/remote");
     } 
     
     /**
@@ -223,9 +204,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudySiteAccrualStatusServiceRemote
         getStudySiteAccrualStatusService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudySiteAccrualStatusServiceBean/remote";
-        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup("/pa/StudySiteAccrualStatusServiceBean/remote");
     } 
 
     /**
@@ -234,9 +213,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyIndldeServiceRemote
         getStudyIndldeService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyIndldeServiceBean/remote";
-        return (StudyIndldeServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyIndldeServiceRemote) JNDIUtil.lookup("/pa/StudyIndldeServiceBean/remote");
     } 
 
     /**
@@ -245,9 +222,8 @@ public class PoPaServiceBeanLookup  {
      */
     public static StudyRegulatoryAuthorityServiceRemote
         getStudyRegulatoryAuthorityService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/StudyRegulatoryAuthorityServiceBean/remote";
-        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (StudyRegulatoryAuthorityServiceRemote) 
+            JNDIUtil.lookup("/pa/StudyRegulatoryAuthorityServiceBean/remote");
     } 
 
     /**
@@ -256,9 +232,6 @@ public class PoPaServiceBeanLookup  {
      */
     public static RegulatoryInformationServiceRemote
         getRegulatoryInformationService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/RegulatoryInformationBean/remote";
-        return (RegulatoryInformationServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (RegulatoryInformationServiceRemote) JNDIUtil.lookup("/pa/RegulatoryInformationBean/remote");
     } 
-    
 }
