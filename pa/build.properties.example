@@ -13,6 +13,11 @@ po.username=ejbclient
 po.pass=pass
 doc.upload.filepath.loc=D://doc
 
+# CSM group for Trial Submitters
+# Note: The value has to be in sync with CSM Bootstrap data 
+# loaded during deployment or created via UPT.
+csm.submitter.group=Submitter
+
 # Mail server hostname
 mail.smtp.host=mailfwd.nih.gov
 # From address for emails
