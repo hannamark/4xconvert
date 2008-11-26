@@ -28,6 +28,7 @@ public class PaEarPropertyReader {
     private static String docUploadPath = "doc.upload.path";
     private static String lookUpServer = "po.server.name";
     private static String lookUpPort = "po.port.number";
+    private static String csmSubmitterGroup = "csm.submitter.group";
  
     
     static {
@@ -78,6 +79,21 @@ public class PaEarPropertyReader {
        }
        return server + ":" + port;
    }
+   
+   /**
+   *
+   * @return String for the CSM Trial Submitter Group
+   * @throws PAException on error
+   */
+    public static String getCSMSubmitterGroup() throws PAException {
+        String submitterGroupName = props.getProperty(csmSubmitterGroup);
+        if (submitterGroupName == null) {
+            LOG.error("'submitterGroupName' does not have value in paear.properties ");
+            throw new PAException("'submitterGroupName' does not have value in paear.properties");
+        }
+        return submitterGroupName;
+    }
+
    
    /**
     * @return the properties
