@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -49,10 +50,10 @@ public class CSMUserService {
             UserProvisioningManager upManager = SecurityServiceProvider.
                                             getUserProvisioningManager("pa");
             upManager.createUser(csmUser);
-            //TODO define an appropriate group and also figure out a way 
-            //to get group by not hard coding it.
             //assign the created user to the appropriate group
-            upManager.assignUserToGroup(loginName, "Curator");
+            // read the CSM group name from the properties
+            String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
 
         } catch (HibernateException hbe) {
@@ -94,14 +95,10 @@ public class CSMUserService {
             csmUser.setLastName(user.getLastName());
             csmUser.setOrganization(user.getAffiliateOrg());
             csmUser.setPhoneNumber(user.getPhone());
-            ///create new user in CSM table           
+            ///update the user info in CSM table           
             UserProvisioningManager upManager = SecurityServiceProvider.
                                             getUserProvisioningManager("pa");
             upManager.modifyUser(csmUser);
-            //TODO define an appropriate group and also figure out a way 
-            //to get group by not hard coding it.
-            //assign the created user to the appropriate group
-            upManager.assignUserToGroup(loginName, "Curator");
             createdCSMUser = upManager.getUser(loginName);
 
         } catch (HibernateException hbe) {
