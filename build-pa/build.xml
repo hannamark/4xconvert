@@ -283,42 +283,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
-            <target name="${pa-ivy-clean.build.target}"/>
-            <target name="${pa-clean.build.target}"/>
-            <target name="${pa-ear.build.target}"/>
-        </ant>
-    </target>
-
-    <target name="build:pa-web" depends="init">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
-            dir="${pa-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
-            <property name="po.server.name" value="${po.server.name}"/>
-            <property name="po.port.number" value="${po.port.number}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
-            <target name="${pa-clean.build.target}"/>
-            <target name="${pa-web.build.target}"/>
-        </ant>
-    </target>
-
-    <target name="build:reg-web" depends="init">
-        <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
-            dir="${reg-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
-            <property name="po.server.name" value="${po.server.name}"/>
-            <property name="po.port.number" value="${po.port.number}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
-            <target name="${pa-clean.build.target}"/>
-            <target name="${reg-web.build.target}"/>
-        </ant>
-    </target>
-
-    <target name="build:pa-ejb" depends="init">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
-            dir="${pa-ejb.base.dir}" >
+            <property name="jboss.port" value="${jboss.server.port}"/> 
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
             <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
             <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
             <property name="mail.smtp.host" value="${mail.smtp.host}"/>
             <property name="mail.from.address" value="${mail.from.address}"/>
@@ -334,9 +305,114 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
             <property name="po.server.name" value="${po.server.name}"/>
             <property name="po.port.number" value="${po.port.number}"/>
-            <property name="po.username" value="po.username"/>
-            <property name="po.pass" value="po.pass"/>
-            <property name="hibernate.dialect" value="hibernate.dialect"/>
+            <property name="po.username" value="${po.username}"/>
+            <property name="po.pass" value="${po.pass}"/>
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-clean.build.target}"/>
+            <target name="${pa-ear.build.target}"/>
+        </ant>
+    </target>
+
+    <target name="build:pa-web" depends="init">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
+            dir="${pa-web.base.dir}" >
+            <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
+            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
+            <property name="mail.from.address" value="${mail.from.address}"/>
+            <property name="register.mail.subject" value="${register.mail.subject}"/>
+            <property name="register.mail.body" value="${register.mail.body}"/>
+            <property name="register.mail.body.url" value="${register.mail.body.url}"/>
+            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
+            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
+            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
+            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
+            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
+            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
+            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
+            <property name="po.port.number" value="${po.port.number}"/>
+            <property name="po.username" value="${po.username}"/>
+            <property name="po.pass" value="${po.pass}"/>
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-clean.build.target}"/>
+            <target name="${pa-web.build.target}"/>
+        </ant>
+    </target>
+
+    <target name="build:reg-web" depends="init">
+        <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
+            dir="${reg-web.base.dir}" >
+            <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
+            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
+            <property name="mail.from.address" value="${mail.from.address}"/>
+            <property name="register.mail.subject" value="${register.mail.subject}"/>
+            <property name="register.mail.body" value="${register.mail.body}"/>
+            <property name="register.mail.body.url" value="${register.mail.body.url}"/>
+            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
+            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
+            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
+            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
+            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
+            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
+            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
+            <property name="po.port.number" value="${po.port.number}"/>
+            <property name="po.username" value="${po.username}"/>
+            <property name="po.pass" value="${po.pass}"/>
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-clean.build.target}"/>
+            <target name="${reg-web.build.target}"/>
+        </ant>
+    </target>
+
+    <target name="build:pa-ejb" depends="init">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
+            dir="${pa-ejb.base.dir}" >
+            <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+            <property name="jboss.port" value="${jboss.server.port}"/> 
+            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+            <property name="jboss.deploy.directory" location="${local.jboss.home}/server/default/deploy" />
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
+            <property name="mail.smtp.host" value="${mail.smtp.host}"/>
+            <property name="mail.from.address" value="${mail.from.address}"/>
+            <property name="register.mail.subject" value="${register.mail.subject}"/>
+            <property name="register.mail.body" value="${register.mail.body}"/>
+            <property name="register.mail.body.url" value="${register.mail.body.url}"/>
+            <property name="submission.mail.subject" value="${submission.mail.subject}"/>
+            <property name="submission.mail.body.para1" value="${submission.mail.body.para1}"/>
+            <property name="submission.mail.body.para2" value="${submission.mail.body.para2}"/>
+            <property name="submission.mail.body.para3" value="${submission.mail.body.para3}"/>
+            <property name="rejection.mail.subject" value="${rejection.mail.subject}"/>
+            <property name="rejection.mail.body.para1" value="${rejection.mail.body.para1}"/>
+            <property name="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
+            <property name="po.port.number" value="${po.port.number}"/>
+            <property name="po.username" value="${po.username}"/>
+            <property name="po.pass" value="${po.pass}"/>
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
