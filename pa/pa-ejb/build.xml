@@ -154,6 +154,7 @@
                 <filter token="rejection.mail.body.para2" value="${rejection.mail.body.para2}"/>
                 <filter token="po.server.name" value="${po.server.name}" />
                 <filter token="po.port.number" value="${po.port.number}" />
+                <filter token="csm.submitter.group" value="${csm.submitter.group}" />
             </filterset>
         </copy>
     </target>
