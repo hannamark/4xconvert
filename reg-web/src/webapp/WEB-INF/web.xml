@@ -102,7 +102,7 @@
             <url-pattern>/protected/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>Curator</role-name>
+            <role-name>Submitter</role-name>
         </auth-constraint>
     </security-constraint>
 
@@ -115,7 +115,7 @@
     </login-config>
 
     <security-role>
-        <description>Curators organize and oversee data quality in PA.</description>
-        <role-name>Curator</role-name>
+        <description>Trial Submitters can submit trials in Registry.</description>
+        <role-name>Submitter</role-name>
     </security-role>
 </web-app>
