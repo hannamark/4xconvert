@@ -94,6 +94,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private Long id = null;
     private HttpServletResponse servletResponse;
     private static final int MAXF = 1024;
+    private String trialAction = "submit";
     /**
      * Adding new members for PO integration and additional Use cases.
      */
@@ -1417,4 +1418,19 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     public void setSummary4FundingCategory(String summary4FundingCategory) {
         this.summary4FundingCategory = summary4FundingCategory;
     }
+
+    /**
+     * @param trialAction the trialAction to set
+     */
+    public void setTrialAction(String trialAction) {
+        this.trialAction = trialAction;
+    }
+
+    /**
+     * @return the trialAction
+     */
+    public String getTrialAction() {
+        return trialAction;
+    }
+
 }
