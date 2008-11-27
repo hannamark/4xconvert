@@ -188,16 +188,30 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             createIndIdeIndicators(studyProtocolIi);
             // create the Study Grants *Multiple - times*
             createStudyResources(studyProtocolIi);
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), protocolDocFileName,
-                    protocolDoc);
-            uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(), irbApprovalFileName,
-                    irbApproval);
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
-                    informedConsentDocumentFileName, informedConsentDocument);
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), otherDocumentFileName,
-                    informedConsentDocument);
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Participating_sites.getCode(), participatingSitesFileName,
-                    participatingSites);
+            if (PAUtil.isNotEmpty(protocolDocFileName)) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), protocolDocFileName,
+                        protocolDoc);
+            }
+            if (PAUtil.isNotEmpty(irbApprovalFileName)) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(), irbApprovalFileName,
+                        irbApproval);
+            }
+            
+            if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
+                        informedConsentDocumentFileName, informedConsentDocument);
+            }
+            
+            if (PAUtil.isNotEmpty(participatingSitesFileName)) {
+                uploadDocument(studyProtocolIi,
+                        DocumentTypeCode.Participating_sites.getCode(),
+                        participatingSitesFileName, participatingSites);
+            }
+            
+            if (PAUtil.isNotEmpty(otherDocumentFileName)) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), otherDocumentFileName,
+                        otherDocument);  
+            }
             // ----------- Begin calling the PO related
             selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
                     "PoSummary4Sponsor");
