@@ -278,7 +278,7 @@ function toggledisplay2 (it) {
         <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
 					<td scope="row" class="label">
-						<label for="sponsor"> Sponsor :</label> 
+						<label for="sponsor"> Sponsor:<span class="required">*</span></label> 
 					</td>
 					<td class="value">
 						<div id="loadSponsorField">
@@ -287,7 +287,7 @@ function toggledisplay2 (it) {
 					</td>
 		</tr>   
 				<tr>
-				<td scope="row" class="label">Responsible Party: </td>
+				<td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
 				<td>
 				<input type="radio" name="respparty" value="pi" checked="checked" onclick="manageRespPartyLookUp();"> PI 
 				<input type="radio" name="respparty" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
