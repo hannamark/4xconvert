@@ -202,6 +202,8 @@
                 <filter token="jdbc.url" value="${jdbc.url}"/>
                 <filter token="db.username" value="${db.username}"/>
                 <filter token="db.password" value="${db.password}"/>
+            	<filter token="po.topic.serverName" value="${po.topic.serverName}"/>
+            	<filter token="po.topic.port" value="${po.topic.port}"/>
             </filterset>
             <fileset dir="${pa-ear.build.resourceDir.0}" 
                      includes="**/*" 

@@ -157,6 +157,16 @@
                 <filter token="csm.submitter.group" value="${csm.submitter.group}" />
             </filterset>
         </copy>
+        <copy file="${pa.resourceDir}/ejb-jar.xml" 
+              tofile="${pa-ejb.build.resourceDir.0}/META-INF/ejb-jar.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+                <filter token="po.topic.userName" value="${po.topic.userName}" />
+                <filter token="po.topic.password" value="${po.topic.password}" />
+            	<filter token="po.topic.clientId" value="${po.topic.clientId}" />
+            </filterset>
+        </copy>    	
     </target>
     
     <!-- ====================================================================== -->
@@ -195,7 +205,7 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure test compilation target                                                     -->
+    <!-- Configure test compilation target                                      -->
     <!-- ====================================================================== -->
 
     <target name="configure-tests">
