@@ -25,6 +25,11 @@
    <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 
   <div class="box">
+     <c:if test="${param.trialAction == 'submit'}">
+        <div class="confirm_msg">
+          <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.trialSummary.assignedIdentifier.extension}</strong>
+        </div>
+     </c:if>
     <s:form > <s:actionerror/>          
     	
     <table class="form">
