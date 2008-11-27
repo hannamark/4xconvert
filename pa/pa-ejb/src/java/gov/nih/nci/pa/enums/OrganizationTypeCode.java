@@ -15,9 +15,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum OrganizationTypeCode implements CodedEnum<String> {
 
     /** Lead. */
-    LEAD("Lead"),
-    /** Participating. */
-    PARTICIPATING("Participating");
+    LEAD("Lead");
 
     private String code;
 
