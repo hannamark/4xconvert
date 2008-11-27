@@ -1,11 +1,13 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -234,4 +236,23 @@ public class PoPaServiceBeanLookup  {
         getRegulatoryInformationService() throws PAException {
         return (RegulatoryInformationServiceRemote) JNDIUtil.lookup("/pa/RegulatoryInformationBean/remote");
     } 
+
+    /**
+     * @return StudyOverallStatusServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyOverallStatusServiceRemote
+        getStudyOverallStatusService() throws PAException {
+        return (StudyOverallStatusServiceRemote) JNDIUtil.lookup("/pa/StudyOverallStatusServiceBean/remote");
+    } 
+
+    /**
+     * @return InterventionServiceRemote
+     * @throws PAException on error
+     */
+    public static InterventionServiceRemote
+        getInterventionService() throws PAException {
+        return (InterventionServiceRemote) JNDIUtil.lookup("/pa/InterventionServiceBean/remote");
+    } 
+
 }
