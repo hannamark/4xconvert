@@ -17,6 +17,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
@@ -264,6 +265,17 @@ public class JndiServiceLocator implements ServiceLocator {
             + "/pa/CTGovXmlGeneratorServiceBean/remote";
         return (CTGovXmlGeneratorServiceRemote) JNDIUtil.lookup(serverInfo);
     }
+    /**
+     * @return AbstractionCompletionServiceRemote
+     * @throws PAException e
+     */
+    public AbstractionCompletionServiceRemote getAbstractionCompletionService()  
+    throws PAException { 
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+            + "/pa/AbstractionCompletionServiceBean/remote";
+        return (AbstractionCompletionServiceRemote) JNDIUtil.lookup(serverInfo);
+    }
+
 
 
 }

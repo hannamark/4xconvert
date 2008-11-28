@@ -17,6 +17,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.SubGroupsServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareFacilityServiceRemote;
@@ -215,6 +216,12 @@ public interface ServiceLocator {
      * @throws PAException on error 
      */
     CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws PAException;
+    
+    /**
+     * @return AbstractionCompletionService
+     * @throws PAException on error 
+     */
+    AbstractionCompletionServiceRemote getAbstractionCompletionService() throws PAException;
 
 }
 
