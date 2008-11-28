@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
@@ -254,6 +255,16 @@ public class PoPaServiceBeanLookup  {
         getInterventionService() throws PAException {
         return (InterventionServiceRemote) JNDIUtil.lookup("/pa/InterventionServiceBean/remote");
     } 
-
+    
+    /**
+     * @return DocumentServiceRemote
+     * @throws PAException on error
+     */
+    public static DocumentServiceRemote
+        getDocumentService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/pa/DocumentServiceBean/remote";
+        return (DocumentServiceRemote) JNDIUtil.lookup(serverInfo);
+    } 
 
 }
