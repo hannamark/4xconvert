@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.IdentifierTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -14,7 +15,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 
@@ -41,7 +44,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @Validation
 public class SearchTrialAction extends ActionSupport {
     private List<StudyProtocolQueryDTO> records = null;
-    private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+    private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
 
@@ -134,15 +137,46 @@ public class SearchTrialAction extends ActionSupport {
      * @return res
      */
     public String query() {
-        try {
-            criteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
+        try {            
+            // validate the form elements
+            validateForm();
+            if (hasFieldErrors()) {
+                return ERROR;
+            }
             records = new ArrayList<StudyProtocolQueryDTO>();
-            records = RegistryServiceLocator.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
+            records = RegistryServiceLocator.getProtocolQueryService().
+                              getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
+    }
+
+    /**
+     * @return StudyProtocolQueryCriteria
+     */
+    private StudyProtocolQueryCriteria convertToStudyProtocolQueryCriteria() {
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        queryCriteria.setOfficialTitle(criteria.getOfficialTitle());
+        queryCriteria.setPhaseCode(criteria.getPhaseCode());
+        queryCriteria.setPrimaryPurposeCode(criteria.getPrimaryPurposeCode());
+        if (PAUtil.isNotEmpty(criteria.getIdentifierType())
+                 && PAUtil.isNotEmpty(criteria.getIdentifier())) {            
+            if (criteria.getIdentifierType().equals(IdentifierTypeCode.NCI.getCode())) {
+                queryCriteria.setNciIdentifier(criteria.getIdentifier());
+            } else if (criteria.getIdentifierType().equals(
+                        IdentifierTypeCode.LEAD_ORGANIZATION.getCode())) {
+                queryCriteria.setLeadOrganizationTrialIdentifier(criteria.getIdentifier());
+            }
+        }
+        queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
+        queryCriteria.setClientName(criteria.getClientName());
+        queryCriteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
+        // exclude rejected protocols during search
+        queryCriteria.setExcludeRejectProtocol(new Boolean(true));        
+        return queryCriteria;
     }
 
     /**
@@ -155,17 +189,17 @@ public class SearchTrialAction extends ActionSupport {
 
     /**
      * 
-     * @return StudyProtocolQueryCriteria StudyProtocolQueryCriteria
+     * @return SearchProtocolCriteria SearchProtocolCriteria
      */
-    public StudyProtocolQueryCriteria getCriteria() {
+    public SearchProtocolCriteria getCriteria() {
         return criteria;
     }
 
     /**
      * 
-     * @param criteria StudyProtocolQueryCriteria
+     * @param criteria SearchProtocolCriteria
      */
-    public void setCriteria(StudyProtocolQueryCriteria criteria) {
+    public void setCriteria(SearchProtocolCriteria criteria) {
         this.criteria = criteria;
     }
 
@@ -327,5 +361,27 @@ public class SearchTrialAction extends ActionSupport {
             LOG.error("Exception occured while retrieving document " + e);
         }
         return NONE;
+    }
+    
+    /**
+     * validate the search trial form elements.
+     */
+    private void validateForm() {
+        if (PAUtil.isNotEmpty(criteria.getIdentifierType()) 
+                 && PAUtil.isEmpty(criteria.getIdentifier())) {
+            addFieldError("criteria.identifier",
+                    getText("error.search.identifier"));
+        }
+        if (PAUtil.isNotEmpty(criteria.getIdentifier()) 
+                && PAUtil.isEmpty(criteria.getIdentifierType())) {
+           addFieldError("criteria.identifierType",
+                   getText("error.search.identifierType"));
+       }
+       if (PAUtil.isNotEmpty(criteria.getOrganizationType()) 
+                && criteria.getOrganizationId() == null) {
+           addFieldError("criteria.organizationId",
+                   getText("error.search.organization"));
+       }
+
     }
 }
