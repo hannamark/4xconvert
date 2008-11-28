@@ -59,7 +59,7 @@
           <tr>     
             	<td scope="row" class="label">
                 	<label for="officialTitle">
-                    	<fmt:message key="search.trial.view.officialTitle"/>                
+                    	<fmt:message key="view.trial.title"/>                
                     </label>
                 </td>
                 <td class="value">
@@ -169,7 +169,7 @@
       <tr>     
           <td scope="row" class="label">
               <label for="Trial Start Date">
-                  <fmt:message key="search.trial.view.trialStartDate"/>                
+                  <fmt:message key="view.trial.trialStartDate"/>                
               </label>
           </td>
           <td class="value">
