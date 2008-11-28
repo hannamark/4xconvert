@@ -164,5 +164,8 @@
 			<result name="error">/WEB-INF/jsp/trialIndideAdd.jsp</result>
 			<result name="delete">/WEB-INF/jsp/trialIndide.jsp</result>
 		</action>
+		<action name="abstractionCompletion*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
+            <result>/WEB-INF/jsp/abstractionCompletion.jsp</result> 
+        </action>
 	</package>
 </struts>
