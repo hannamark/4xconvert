@@ -21,6 +21,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -28,7 +29,8 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
-import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+//import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
@@ -48,6 +50,7 @@ import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+//import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.StringWriter;
 import java.sql.Timestamp;
@@ -56,6 +59,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.Stateless;
 import javax.xml.parsers.DocumentBuilder;
@@ -79,8 +83,9 @@ import org.w3c.dom.Text;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-//@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods"  })
-@SuppressWarnings("PMD")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" , 
+    "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods" , "PMD.NPathComplexity"  })
+//@SuppressWarnings("PMD")
 @Stateless
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
@@ -115,7 +120,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     convertBLToString(spDTO.getSection801Indicator()) , doc , root);
             createElement("delayed_posting" , 
                     convertBLToString(spDTO.getDelayedpostingIndicator()) , doc , root);
-            createIndInfo(spDTO , doc , root);
+            ////// error createIndInfo(spDTO , doc , root);
 
             createElement("brief_title" , spDTO.getPublicTitle().getValue() , doc , root);
             createElement("acronym" , spDTO.getAcronym().getValue() , doc , root);
@@ -141,13 +146,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createSecondaryOutcome(somDtos , doc , root);
             appendElement(root ,  createElement("enrollment", spDTO.getMaximumTargetAccrualNumber(), doc)); 
             createArmGroup(spDTO, doc, root);
-            createIntervention(spDTO, doc, root);
+            //createIntervention(spDTO, doc, root);
             createEligibility(spDTO, doc , root);
+            createOverallOfficial(spDTO, doc , root);
             createLocation(spDTO , doc , root);
             appendElement(root ,  createElement("keyword", spDTO.getKeywordText(), doc)); 
             appendElement(root ,  createElement("verification_date", convertTsToYYYYMMFormart(
                     spDTO.getRecordVerificationDate()), doc));
-
 
             DOMSource domSource = new DOMSource(doc);
             StringWriter writer = new StringWriter();
@@ -179,6 +184,36 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
+    private static void createOverallOfficial(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
+
+        List<StudyContactDTO> scDTOs = PoPaServiceBeanLookup.getStudyContactService().
+                        getByStudyProtocol(spDTO.getIdentifier());
+        for (StudyContactDTO scDTO : scDTOs) {
+            if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode().equals(scDTO.getRoleCode().getCode())) {
+                Person p  = new CorrelationUtils().getPAPersonByPAClinicalResearchStaffId(
+                                Long.valueOf(scDTO.getClinicalResearchStaffIi().getExtension()));
+//                PersonDTO pDto = null;
+//                try {
+//                    pDto = PoPaServiceBeanLookup.getPersonEntityService().
+//                                getPerson(IiConverter.converToPoPersonIi(p.getIdentifier()));
+//                } catch (NullifiedEntityException e) {
+//                    throw new PAException("Person is nullified " + p.getFullName() + " id = " + p.getIdentifier(), e);
+//                }
+                
+                Element overallofficial = doc.createElement("overall_official");
+                appendElement(overallofficial, createElement("first_name", p.getFirstName() , doc));
+                appendElement(overallofficial, createElement("last_name", p.getLastName() , doc));
+                appendElement(overallofficial, createElement("role", 
+                        StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode() , doc));
+                
+                
+                if (overallofficial.hasChildNodes()) {
+                    appendElement(root , overallofficial);
+                }
+            }
+        }
+    }
+    
     private static void createOversightInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         Element overSightInfo  = doc.createElement("oversight_info");
         appendElement(overSightInfo , createRegulatoryAuthority(spDTO , doc));
@@ -234,7 +269,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
                             getOrganization(IiConverter.converToPoOrganizationIi(paOrg.getIdentifier()));
                     } catch (NullifiedEntityException e) {
-                        throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier());
+                        throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                     }
                     appendElement(irbInfo , createElement("name" ,  paOrg.getName() , doc));
                     Organization affOrg = cUtils.getPAOrganizationByPAHealthCareFacilityId(
@@ -289,6 +324,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     
+    /*
     private static void createIndInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         //create info element
         
@@ -311,7 +347,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(root, idInfo);
         }
         
-    }
+    }*/
  
     private static void createEligibility(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = 
@@ -365,12 +401,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
         }
     }
+/*
     private static void createIntervention(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         // @ todo :
         Element studyDesign = doc.createElement("study_design");
         return;
     }
-    
+*/    
     
     private static Element createStudyDesign(StudyProtocolDTO spDTO , Document doc) throws PAException {
         Element studyDesign = doc.createElement("study_design");
@@ -671,9 +708,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
         Boolean b = bl.getValue();
         if (b != null && b.booleanValue()) {
-            return "Yes";
+            return YES;
         } else {
-            return "No";
+            return NO;
         }
     }
 
@@ -716,11 +753,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             return  null;
         }
         String dateStr  = PAUtil.normalizeDateString(ts.toString());
-        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        DateFormat formatter1 =  new SimpleDateFormat("yyyy-MM" , Locale.getDefault());
         Date date;
         try {
             date = (Date) formatter.parse(dateStr);
-            yyyyMM = formatter.format(date);
+            yyyyMM = formatter1.format(date);
         } catch (ParseException e) {
             yyyyMM = "";
         }

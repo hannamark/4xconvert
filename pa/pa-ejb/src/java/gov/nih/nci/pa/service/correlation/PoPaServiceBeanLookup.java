@@ -255,4 +255,5 @@ public class PoPaServiceBeanLookup  {
         return (InterventionServiceRemote) JNDIUtil.lookup("/pa/InterventionServiceBean/remote");
     } 
 
+
 }
