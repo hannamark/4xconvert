@@ -79,8 +79,12 @@
     				</ul>
     			</li>
             </s:if>
-
-		</ul>
+			<li><div>Completion</div>
+				<ul>
+					<li><a href="abstractionCompletionquery.action" >Abstraction Completion</a></li>
+				</ul>
+			</li>	
+		</ul>					
 	</li>
 </c:if>
         
