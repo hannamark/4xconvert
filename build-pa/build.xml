@@ -308,6 +308,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+            <property name="po.topic.port" value="${po.topic.port}"/>
+            <property name="po.topic.userName" value="${po.topic.userName}"/>
+            <property name="po.topic.password" value="${po.topic.password}"/>
+            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
@@ -343,6 +349,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+            <property name="po.topic.port" value="${po.topic.port}"/>
+            <property name="po.topic.userName" value="${po.topic.userName}"/>
+            <property name="po.topic.password" value="${po.topic.password}"/>
+            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
@@ -378,6 +390,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+            <property name="po.topic.port" value="${po.topic.port}"/>
+            <property name="po.topic.userName" value="${po.topic.userName}"/>
+            <property name="po.topic.password" value="${po.topic.password}"/>
+            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
@@ -413,6 +431,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+            <property name="po.topic.port" value="${po.topic.port}"/>
+            <property name="po.topic.userName" value="${po.topic.userName}"/>
+            <property name="po.topic.password" value="${po.topic.password}"/>
+            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
