@@ -13,6 +13,20 @@ po.username=ejbclient
 po.pass=pass
 doc.upload.filepath.loc=D://doc
 
+# Messaging properties
+
+# Po Server name to look up
+po.topic.serverName=localhost
+# Po Server port number for the look up 
+po.topic.port=11099
+# The user name for the secured topic 'topic/POTopic', this user name will be provisioned by PO team, they will creating the CSM user and providing the principla/credentials to log in.
+po.topic.userName=subscriber
+# The password for the secured user
+po.topic.password=pass
+# The client id in this case PA so PAApplication
+po.topic.clientId=PAApplication
+
+
 # CSM group for Trial Submitters
 # Note: The value has to be in sync with CSM Bootstrap data 
 # loaded during deployment or created via UPT.
