@@ -493,7 +493,7 @@ function toggledisplay2 (it) {
         <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
         <tr>
             <td scope="row" class="label"><label for="startDate"><fmt:message
-                key="submit.trial.studyStartDate" /><span class="required">*</span></label></td>
+                key="submit.trial.trialStartDate" /><span class="required">*</span></label></td>
             <td class="value"><s:textfield name="protocolWebDTO.startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal2')">
@@ -585,7 +585,7 @@ function toggledisplay2 (it) {
               </label>
              </td>
              <td class="value">
-                 <s:file name="protocolDoc" cssStyle="width:270px"/>
+                 <s:file name="protocolDoc" value="true" cssStyle="width:270px"/>
                  <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>trialDocumentWebDTO.protocolDocFileName</s:param>
@@ -612,7 +612,7 @@ function toggledisplay2 (it) {
          </tr>         
          <tr>
               <td scope="row" class="label">
-              <label for="particpating sites">List of Participating Sites</label>
+              <label for="particpating sites"><fmt:message key="submit.trial.participatingSites"/></label>
              </td>
              <td class="value">
                  <s:file name="participatingSites" cssStyle="width:270px"/>                 
@@ -621,7 +621,7 @@ function toggledisplay2 (it) {
          
          <tr>
               <td scope="row" class="label">
-              <label for="informedConsent">Informed Consent Document</label>
+              <label for="informedConsent"><fmt:message key="submit.trial.informedConsent"/></label>
              </td>
              <td class="value">
                  <s:file name="informedConsentDocument" cssStyle="width:270px"/>            
@@ -629,7 +629,7 @@ function toggledisplay2 (it) {
          </tr>         
          <tr>
               <td scope="row" class="label">
-              <label for="otherDocument">Other</label>
+              <label for="otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
              </td>
              <td class="value">
                  <s:file name="otherDocument" cssStyle="width:270px"/>                 
