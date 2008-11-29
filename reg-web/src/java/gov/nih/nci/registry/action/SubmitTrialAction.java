@@ -1,13 +1,12 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.IdentifierTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.OrganizationTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -147,30 +146,29 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 return ERROR;
             }
             Ii studyProtocolIi = null;
-            // TODO the duplicate check is not working
-            // the protocol search query needs to be modified
-            
             // before creating the protocol check for duplicate
             // using the Lead Org Trial Identifier and Lead Org Identifier
-            StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-            criteria.setIdentifierType(IdentifierTypeCode.LEAD_ORGANIZATION.getCode());
-            criteria.setLeadOrganizationTrialIdentifier(
-                                participationWebDTO.getLocalProtocolIdentifier());
-            criteria.setOrganizationType(OrganizationTypeCode.LEAD.getCode());
-            criteria.setLeadOrganizationId(IiConverter.convertToLong(
-                                selectedLeadOrg.getIdentifier()));
+            Organization paOrg = new Organization();
+            paOrg.setIdentifier(IiConverter.convertToString(selectedLeadOrg.getIdentifier()));
+            paOrg = RegistryServiceLocator.getPAOrganizationService().getOrganizationByIndetifers(paOrg);
             
-            List<StudyProtocolQueryDTO> records = RegistryServiceLocator.
-                                getProtocolQueryService().getStudyProtocolByCriteria(criteria);
-            if (records != null && records.size() > 0) {
-                addActionError("Duplicate Trial Submission: A trial exists in the system "
-                                    + " for the Lead Organization selected and entered Trial Identifier");
-                ServletActionContext.getRequest().setAttribute(
-                                "failureMessage" , "Duplicate Trial Submission: A trial exists in the system "
-                                  + " for the Lead Organization selected and entered Trial Identifier");
-                return ERROR;
-            }
-            
+            if (paOrg != null && paOrg.getId() != null) {            
+                StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+                criteria.setLeadOrganizationTrialIdentifier(
+                                    participationWebDTO.getLocalProtocolIdentifier());
+                criteria.setLeadOrganizationId(paOrg.getId());
+                
+                List<StudyProtocolQueryDTO> records = RegistryServiceLocator.
+                                    getProtocolQueryService().getStudyProtocolByCriteria(criteria);
+                if (records != null && records.size() > 0) {
+                    addActionError("Duplicate Trial Submission: A trial exists in the system "
+                                        + " for the Lead Organization selected and entered Trial Identifier");
+                    ServletActionContext.getRequest().setAttribute(
+                                    "failureMessage" , "Duplicate Trial Submission: A trial exists in the system "
+                                      + " for the Lead Organization selected and entered Trial Identifier");
+                    return ERROR;
+                }
+            }            
             
             if (trialType.equals("Observational")) {
                 studyProtocolIi = RegistryServiceLocator.getStudyProtocolService().createObservationalStudyProtocol(
@@ -623,6 +621,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         if (PAUtil.isEmpty(overallStatusWebDTO.getStatusCode())) {
             addFieldError("overallStatusWebDTO.statusCode", getText("error.submit.statusCode"));
+        }
+        if (PAUtil.isEmpty(trialType)) {
+            addFieldError("trialType", getText("error.submit.trialType"));
+        }
+        if (PAUtil.isEmpty(trialPurpose)) {
+            addFieldError("trialPurpose", getText("error.submit.trialPurpose"));
         }
         if (PAUtil.isEmpty(overallStatusWebDTO.getStatusDate())) {
             addFieldError("overallStatusWebDTO.statusDate", getText("error.submit.statusDate"));
