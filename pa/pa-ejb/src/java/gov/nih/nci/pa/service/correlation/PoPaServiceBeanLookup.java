@@ -267,4 +267,15 @@ public class PoPaServiceBeanLookup  {
         return (DocumentServiceRemote) JNDIUtil.lookup(serverInfo);
     } 
 
+
+    /**
+     * @return OrganizationSynchronizationServiceRemote
+     * @throws PAException on error
+     */
+    public static OrganizationSynchronizationServiceRemote
+        getOrganizationSynchronizationService() throws PAException {
+        return (OrganizationSynchronizationServiceRemote) 
+            JNDIUtil.lookup("/pa/OrganizationSynchronizationServiceBean/remote");
+    } 
+    
 }

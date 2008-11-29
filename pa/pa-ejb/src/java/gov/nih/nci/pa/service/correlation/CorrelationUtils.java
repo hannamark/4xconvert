@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.AdxpCnt;
 import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpSta;
 import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.domain.AbstractEntity;
@@ -41,121 +42,11 @@ import org.hibernate.Session;
 public class CorrelationUtils {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
 
-    /**
-     * 
-     * @param organization Organization
-     * @return Organization
-     * @throws PAException PAException
-     */
-    private Organization createPAOrganization(Organization organization) throws PAException {
-        if (organization == null) {
-            LOG.error(" organization should not be null ");
-            throw new PAException(" organization should not be null ");
-        }
-        LOG.debug("Entering createOrganization ");
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(organization);
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while createOrganization ", hbe);
-            throw new PAException(" Hibernate exception while createOrganization ", hbe);
-        } finally {
-            session.flush();
-        }
-        LOG.debug("Leaving createStudyResourcing ");
-        return organization;
-    }
-    
-    /**
-     * 
-     * @param poOrg po
-     * @return Organization o
-     * @throws PAException pe
-     */
-    Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
-        if (poOrg == null) {
-            throw new PAException(" PO Organization cannot be null");
-        }
-        Organization paOrg = new Organization();
-        paOrg.setName(EnOnConverter.convertEnOnToString(poOrg.getName()));
-        paOrg.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poOrg.getStatusCode()));
-        paOrg.setIdentifier(poOrg.getIdentifier().getExtension());
-        List<Adxp> partList = poOrg.getPostalAddress().getPart();
-        for (Adxp part : partList) {
-            if (part instanceof AdxpCty) {
-                paOrg.setCity(part.getValue());
-            }
-            if (part instanceof AdxpZip) {
-                paOrg.setPostalCode(part.getValue());
-            }
-            if (part instanceof AdxpCnt) {
-                paOrg.setCountryName(part.getCode());
-            }
-        }
-        return createPAOrganization(paOrg);
-    }
 
     /**
      * 
-     * @param person person
-     * @return Person
-     * @throws PAException PAException
-     */
-    private Person createPAPerson(Person person) throws PAException {
-        if (person == null) {
-            LOG.error(" Person should not be null ");
-            throw new PAException(" Person should not be null ");
-        }
-        LOG.debug("Entering createPerson ");
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(person);
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while createPerson ", hbe);
-            throw new PAException(" Hibernate exception while create Person ", hbe);
-        } finally {
-            session.flush();
-        }
-        LOG.debug("Leaving create Person ");
-        return person;
-    }
-
-    /**
-     * 
-     * method to create pa person from po.
-     * 
-     * @param poOrg
-     * @return
-     * @throws PAException
-     */
-    Person createPAPerson(PersonDTO poPerson) throws PAException {
-        if (poPerson == null) {
-            throw new PAException(" PO Person cannot be null");
-        }
-        Person per = new Person();        
-        try {            
-            per = EnPnConverter.convertToPaPerson(poPerson);
-//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.GIV)) {
-//                per.setFirstName(poPerson.getName().getPart().get(0).getValue());
-//            }
-//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.FAM)) {
-//                per.setLastName(poPerson.getName().getPart().get(0).getValue());
-//            }                       
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            LOG.error("Error while converting Person ISO " , e);
-        }
-        per.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poPerson.getStatusCode()));
-        per.setIdentifier(poPerson.getIdentifier().getExtension());
-        return createPAPerson(per);
-    }
-
-    /**
-     * 
-     * @param poIdentifer id
      * @param paIdentifer id
+     * @param poIdentifer id
      * @return Organization
      * @throws PAException e
      */
@@ -290,6 +181,177 @@ public class CorrelationUtils {
         }
         return organization;
     }
+    
+    /**
+     * 
+     * @param crs crs
+     * @return crs
+     * @throws PAException
+     */
+    HealthCareFacility getPAHealthCareFacility(HealthCareFacility hcf) 
+    throws PAException {
+        if (hcf == null) {
+            LOG.error("HealthCareFacility Staff cannot be null");
+            throw new PAException("HealthCareFacility Staff cannot be null");
+        }
+        HealthCareFacility hcfOut = null;
+        Session session = null;
+        List<HealthCareFacility> queryList = new ArrayList<HealthCareFacility>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select hcf from HealthCareFacility hcf  " 
+                + "join hcf.organization as org where 1 = 1 ");
+        if (hcf.getId() != null) {
+            hql.append(" and hcf.id = ").append(hcf.getId());
+        }
+        if (hcf.getOrganization() != null && hcf.getOrganization().getId() != null) {
+            hql.append(" and org.id = ").append(hcf.getOrganization().getId());
+        }
+        if (hcf.getIdentifier() != null) {
+            hql.append(" and hcf.identifier = '").append(hcf.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error(" HealthCareFacility should be more than 1 for any given criteria");
+            throw new PAException(" HealthCareFacility should be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving HealthCareFacility" , hbe);
+        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
+    } finally {
+        session.flush();
+    }
+    
+    if (!queryList.isEmpty()) {
+        hcfOut = queryList.get(0);
+    }
+    return hcfOut;
+    }
+    
+    /**
+     * @param crs crs
+     * @return crs
+     * @throws PAException
+     */
+    OversightCommittee getPAOversightCommittee(OversightCommittee oc) throws PAException {
+        if (oc == null) {
+            throw new PAException("OversightCommittee cannot be null.  ");
+        }
+        OversightCommittee ocOut = null;
+        Session session = null;
+        List<OversightCommittee> queryList = new ArrayList<OversightCommittee>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select oc from OversightCommittee oc  " 
+                + "join oc.organization as org where 1 = 1 ");
+        if (oc.getId() != null) {
+            hql.append(" and oc.id = ").append(oc.getId());
+        }
+        if (oc.getOrganization() != null && oc.getOrganization().getId() != null) {
+            hql.append(" and org.id = ").append(oc.getOrganization().getId());
+        }
+        if (oc.getIdentifier() != null) {
+            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+            query = session.createQuery(hql.toString());
+            queryList = query.list();
+        
+            if (queryList.size() > 1) {
+                throw new PAException("Oversight committee count should not be more than 1 for any given criteria.  ");
+            }
+        }  catch (HibernateException hbe) {
+            throw new PAException(" Error while retrieving OversightCommittee.  " , hbe);
+        } finally {
+            session.flush();
+        }
+        
+        if (!queryList.isEmpty()) {
+            ocOut = queryList.get(0);
+        }
+        return ocOut;
+    }
+    
+    
+    
+    /**
+     * 
+     * @param poOrg po
+     * @return Organization o
+     * @throws PAException pe
+     */
+    Organization createPAOrganization(OrganizationDTO poOrg) throws PAException {
+        return createPAOrganization(convertPOToPAOrganization(poOrg));
+    }
+
+    Organization convertPOToPAOrganization(OrganizationDTO poOrg) throws PAException {
+        if (poOrg == null) {
+            throw new PAException(" PO Organization cannot be null");
+        }
+
+        Organization paOrg = new Organization();
+        paOrg.setName(EnOnConverter.convertEnOnToString(poOrg.getName()));
+        paOrg.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poOrg.getStatusCode()));
+        paOrg.setIdentifier(poOrg.getIdentifier().getExtension());
+        List<Adxp> partList = poOrg.getPostalAddress().getPart();
+        for (Adxp part : partList) {
+            if (part instanceof AdxpCty) {
+                paOrg.setCity(part.getValue());
+            }
+            if (part instanceof AdxpZip) {
+                paOrg.setPostalCode(part.getValue());
+            }
+            if (part instanceof AdxpCnt) {
+                paOrg.setCountryName(part.getCode());
+            }
+            if (part instanceof AdxpSta) {
+                paOrg.setState(part.getValue());
+            }
+        }
+        return paOrg;
+        
+    }
+    
+    
+
+    /**
+     * 
+     * method to create pa person from po.
+     * 
+     * @param poOrg
+     * @return
+     * @throws PAException
+     */
+    Person createPAPerson(PersonDTO poPerson) throws PAException {
+        if (poPerson == null) {
+            throw new PAException(" PO Person cannot be null");
+        }
+        Person per = new Person();        
+        try {            
+            per = EnPnConverter.convertToPaPerson(poPerson);
+//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.GIV)) {
+//                per.setFirstName(poPerson.getName().getPart().get(0).getValue());
+//            }
+//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.FAM)) {
+//                per.setLastName(poPerson.getName().getPart().get(0).getValue());
+//            }                       
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            LOG.error("Error while converting Person ISO " , e);
+        }
+        per.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poPerson.getStatusCode()));
+        per.setIdentifier(poPerson.getIdentifier().getExtension());
+        return createPAPerson(per);
+    }
+
 
     /**
      * 
@@ -437,8 +499,64 @@ public class CorrelationUtils {
             return StatusCode.NULLIFIED;
         } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
             return StatusCode.PENDING;
+        } else if ("SUSPENDED".equalsIgnoreCase(cd.getCode())) {
+            return StatusCode.SUSPENDED;
         } else {
             throw new PAException(" Unsuported PA known status " + cd.getCode());
         }
     }
+
+    /**
+     * 
+     * @param organization Organization
+     * @return Organization
+     * @throws PAException PAException
+     */
+    private Organization createPAOrganization(Organization organization) throws PAException {
+        if (organization == null) {
+            LOG.error(" organization should not be null ");
+            throw new PAException(" organization should not be null ");
+        }
+        LOG.debug("Entering createOrganization ");
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.save(organization);
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while createOrganization ", hbe);
+            throw new PAException(" Hibernate exception while createOrganization ", hbe);
+        } finally {
+            session.flush();
+        }
+        LOG.debug("Leaving createStudyResourcing ");
+        return organization;
+    }
+
+
+    /**
+     * 
+     * @param person person
+     * @return Person
+     * @throws PAException PAException
+     */
+    private Person createPAPerson(Person person) throws PAException {
+        if (person == null) {
+            LOG.error(" Person should not be null ");
+            throw new PAException(" Person should not be null ");
+        }
+        LOG.debug("Entering createPerson ");
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.save(person);
+        } catch (HibernateException hbe) {
+            LOG.error(" Hibernate exception while createPerson ", hbe);
+            throw new PAException(" Hibernate exception while create Person ", hbe);
+        } finally {
+            session.flush();
+        }
+        LOG.debug("Leaving create Person ");
+        return person;
+    }
+
 }

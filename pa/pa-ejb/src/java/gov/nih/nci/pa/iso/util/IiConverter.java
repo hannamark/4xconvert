@@ -12,6 +12,7 @@ import gov.nih.nci.coppa.iso.NullFlavor;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class IiConverter {
 
     /**
@@ -277,6 +278,18 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         ii.setRoot(HEALTH_CARE_FACILITY_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Po crs contact  Ii Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToPoOversightCommitteeIi(String id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+        ii.setRoot(OVERSIGHT_COMMITTEE_ROOT);
         return ii;
     }
 

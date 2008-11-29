@@ -21,6 +21,8 @@ public enum StatusCode implements CodedEnum<String> {
      PENDING("Pending"),
      /*** In Active. **/
      INACTIVE("InActive"),
+     /*** Suspended. */
+     SUSPENDED("Suspended"),
      /*** Nullified. */
      NULLIFIED("Nullified");
      

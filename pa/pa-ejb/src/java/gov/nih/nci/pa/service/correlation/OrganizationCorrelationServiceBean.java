@@ -103,7 +103,7 @@ public class OrganizationCorrelationServiceBean {
         // Step 4 : Check of PA has hcf , if not create one
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setIdentifier(hcfDTO.getIdentifier().getExtension());
-        hcf = getPAHealthCareFacility(hcf);
+        hcf = corrUtils.getPAHealthCareFacility(hcf);
         if (hcf == null) {
             // create a new crs
             hcf = new HealthCareFacility();
@@ -254,7 +254,7 @@ public class OrganizationCorrelationServiceBean {
         // Step 4 : Check of PA has oc , if not create one
         OversightCommittee oc = new OversightCommittee();
         oc.setIdentifier(ocDTO.getIdentifier().getExtension());
-        oc = getPAOversightCommittee(oc);
+        oc = corrUtils.getPAOversightCommittee(oc);
         if (oc == null) {
             // create a new oversight committee
             oc = new OversightCommittee();
@@ -267,156 +267,6 @@ public class OrganizationCorrelationServiceBean {
         return oc.getId();
     }
     
-    /**
-     * 
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    private HealthCareFacility getPAHealthCareFacility(HealthCareFacility hcf) 
-    throws PAException {
-        if (hcf == null) {
-            LOG.error("HealthCareFacility Staff cannot be null");
-            throw new PAException("HealthCareFacility Staff cannot be null");
-        }
-        HealthCareFacility hcfOut = null;
-        Session session = null;
-        List<HealthCareFacility> queryList = new ArrayList<HealthCareFacility>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select hcf from HealthCareFacility hcf  " 
-                + "join hcf.organization as org where 1 = 1 ");
-        if (hcf.getId() != null) {
-            hql.append(" and hcf.id = ").append(hcf.getId());
-        }
-        if (hcf.getOrganization() != null && hcf.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(hcf.getOrganization().getId());
-        }
-        if (hcf.getIdentifier() != null) {
-            hql.append(" and hcf.identifier = '").append(hcf.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error(" HealthCareFacility should be more than 1 for any given criteria");
-            throw new PAException(" HealthCareFacility should be more than 1 for any given criteria");
-            
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving HealthCareFacility" , hbe);
-        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
-    } finally {
-        session.flush();
-    }
-    
-    if (!queryList.isEmpty()) {
-        hcfOut = queryList.get(0);
-    }
-    return hcfOut;
-    }
-    
-
-    /**
-     * 
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    private ResearchOrganization getPAResearchOrganization(ResearchOrganization ro) 
-    throws PAException {
-        if (ro == null) {
-            LOG.error("ResearchOrganization Staff cannot be null");
-            throw new PAException("ResearchOrganization Staff cannot be null");
-        }
-        ResearchOrganization roOut = null;
-        Session session = null;
-        List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select ro from ResearchOrganization ro  " 
-                + "join ro.organization as org where 1 = 1 ");
-        if (ro.getId() != null) {
-            hql.append(" and ro.id = ").append(ro.getId());
-        }
-        if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(ro.getOrganization().getId());
-        }
-        if (ro.getIdentifier() != null) {
-            hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
-            throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
-            
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving ResearchOrganization" , hbe);
-        throw new PAException(" Error while retrieving ResearchOrganization" , hbe);
-    } finally {
-        session.flush();
-    }
-    
-    if (!queryList.isEmpty()) {
-        roOut = queryList.get(0);
-    }
-    return roOut;
-    }
-    
-    /**
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    private OversightCommittee getPAOversightCommittee(OversightCommittee oc) throws PAException {
-        if (oc == null) {
-            throw new PAException("OversightCommittee cannot be null.  ");
-        }
-        OversightCommittee ocOut = null;
-        Session session = null;
-        List<OversightCommittee> queryList = new ArrayList<OversightCommittee>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select oc from OversightCommittee oc  " 
-                + "join oc.organization as org where 1 = 1 ");
-        if (oc.getId() != null) {
-            hql.append(" and oc.id = ").append(oc.getId());
-        }
-        if (oc.getOrganization() != null && oc.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(oc.getOrganization().getId());
-        }
-        if (oc.getIdentifier() != null) {
-            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-            query = session.createQuery(hql.toString());
-            queryList = query.list();
-        
-            if (queryList.size() > 1) {
-                throw new PAException("Oversight committee count should not be more than 1 for any given criteria.  ");
-            }
-        }  catch (HibernateException hbe) {
-            throw new PAException(" Error while retrieving OversightCommittee.  " , hbe);
-        } finally {
-            session.flush();
-        }
-        
-        if (!queryList.isEmpty()) {
-            ocOut = queryList.get(0);
-        }
-        return ocOut;
-    }
     
     /***
      * 
@@ -481,6 +331,61 @@ public class OrganizationCorrelationServiceBean {
     public Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException {
         return new CorrelationUtils().createPAOrganization(poOrg);
     }
+
+
     
 
+    /**
+     * 
+     * @param crs crs
+     * @return crs
+     * @throws PAException
+     */
+    private ResearchOrganization getPAResearchOrganization(ResearchOrganization ro) 
+    throws PAException {
+        if (ro == null) {
+            LOG.error("ResearchOrganization Staff cannot be null");
+            throw new PAException("ResearchOrganization Staff cannot be null");
+        }
+        ResearchOrganization roOut = null;
+        Session session = null;
+        List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select ro from ResearchOrganization ro  " 
+                + "join ro.organization as org where 1 = 1 ");
+        if (ro.getId() != null) {
+            hql.append(" and ro.id = ").append(ro.getId());
+        }
+        if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
+            hql.append(" and org.id = ").append(ro.getOrganization().getId());
+        }
+        if (ro.getIdentifier() != null) {
+            hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
+            throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving ResearchOrganization" , hbe);
+        throw new PAException(" Error while retrieving ResearchOrganization" , hbe);
+    } finally {
+        session.flush();
+    }
+    
+    if (!queryList.isEmpty()) {
+        roOut = queryList.get(0);
+    }
+    return roOut;
+    }
+    
+    
 }
