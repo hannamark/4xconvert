@@ -225,8 +225,12 @@ function toggledisplay2 (it) {
                     <label for="trialType"> <fmt:message key="submit.trial.type"/><span class="required">*</span></label> 
                 </td>
                 <td>
-				<input type="radio" name="trialType" value="Observational" checked="checked"> Observational 
-				<input type="radio" name="trialType" value="Interventional" onclick="setRequiredFieldIndicators();"> Interventional
+				    <s:radio name="trialType" list="#{'Interventional':'Interventional', 'Observational':'Observational'}"  />
+				     <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>trialType</s:param>
+                       </s:fielderror>                            
+                     </span>				
 				</td>
           </tr>
           <tr>
@@ -235,7 +239,12 @@ function toggledisplay2 (it) {
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="--Select--" name="trialPurpose" list="#typeCodeValues"  value="trialType" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="trialPurpose" list="#typeCodeValues"  value="trialPurpose" cssStyle="width:206px" />
+                     <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>trialPurpose</s:param>
+                       </s:fielderror>                            
+                     </span>
                 </td>
           </tr>          
                     <tr>
@@ -641,7 +650,7 @@ function toggledisplay2 (it) {
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li><li>            
-                            <s:a href="#" cssClass="btn" onclick="submitProtocol()"><span class="btn_img"><span class="save">Submit Trial Details</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="submitProtocol()"><span class="btn_img"><span class="save">Submit Trial</span></span></s:a>  
                         </li>
                 </ul>   
             </del>
