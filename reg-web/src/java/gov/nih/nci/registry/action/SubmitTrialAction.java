@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -655,6 +656,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(contactPhone)) {
             addFieldError("contactPhone", getText("error.submit.contactPhone"));
         }
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())) {
+            Timestamp statusDate = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
+            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+            if (currentTimeStamp.before(statusDate)) {
+                addFieldError("overallStatusWebDTO.statusDate", 
+                        getText("error.submit.invalidStatusDate"));                
+            }
+        }
         
         if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
                   && PAUtil.isNotEmpty(protocolWebDTO.getStartDateType())) {
@@ -718,11 +727,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
             }
         }
-        if (trialType.equals("Interventional")) {
-            if (PAUtil.isEmpty(contactPhone)) {
-                addFieldError("summary4FundingCategory", getText("error.submit.summary4FundingCategory"));
-            }
-        }
+
 //        selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
 //                "PoSummary4Sponsor");
 //        if (selectedSummary4Sponsor == null) {
