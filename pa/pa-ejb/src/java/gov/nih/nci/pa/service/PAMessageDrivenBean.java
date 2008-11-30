@@ -54,6 +54,9 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceBean;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
 import javax.ejb.ActivationConfigProperty;
@@ -91,14 +94,23 @@ public class PAMessageDrivenBean implements MessageListener {
             if (message instanceof ObjectMessage) {
                 msg = (ObjectMessage) message;
                 SubscriberUpdateMessage updateMessage = (SubscriberUpdateMessage) msg.getObject();
-                System.out.println("==================================================================");
-                System.out.println("Received new update for " + updateMessage.getId().getIdentifierName());
-                System.out.println(updateMessage.getId().getExtension());
-                System.out.println("==================================================================");
-            }
+                String identifierName = updateMessage.getId().getIdentifierName();
+//                System.out.println("==============================================================" 
+//                        + "====Received new update for " + updateMessage.getId().getExtension());               
+                HibernateUtil.getHibernateHelper().openAndBindSession();
+                if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
+                   new OrganizationSynchronizationServiceBean().synchronizeOrganization(updateMessage.getId());
+                }
+                if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
+                    new OrganizationSynchronizationServiceBean().synchronizeHealthCareFacility(updateMessage.getId());
+                }
+                HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+            }            
             msg.acknowledge();
         } catch (JMSException e) {           
-           LOG.error("MDBs onMessage() threw an exception " + e.getMessage());
+           LOG.error("MDBs onMessage() threw an JMSException " + e.getMessage());
+        } catch (PAException e) {
+            LOG.error("MDBs onMessage() threw an PAException " + e.getMessage());
         }
     }
 }
