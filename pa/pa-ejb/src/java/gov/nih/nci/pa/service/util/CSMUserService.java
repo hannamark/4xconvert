@@ -50,7 +50,7 @@ public class CSMUserService {
             UserProvisioningManager upManager = SecurityServiceProvider.
                                             getUserProvisioningManager("pa");
             upManager.createUser(csmUser);
-            //assign the created user to the appropriate group
+            // assign the created user to the appropriate group
             // read the CSM group name from the properties
             String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
             upManager.assignUserToGroup(loginName, submitterGroup);
@@ -99,6 +99,10 @@ public class CSMUserService {
             UserProvisioningManager upManager = SecurityServiceProvider.
                                             getUserProvisioningManager("pa");
             upManager.modifyUser(csmUser);
+            // assign the updated user to the appropriate group
+            // read the CSM group name from the properties
+            String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
 
         } catch (HibernateException hbe) {
