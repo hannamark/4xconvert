@@ -4,11 +4,13 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -34,6 +36,8 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
+@SuppressWarnings({ "PMD.TooManyMethods" })
+
 public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(OrganizationSynchronizationServiceBean.class);
@@ -67,7 +71,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     
     /***
      * 
-     * @param oscIdentifer po osc identifier
+     * @param oscIdentifer po OversightCommittee identifier
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -88,7 +92,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     
     /***
      * 
-     * @param hcfIdentifer po hcf identifier
+     * @param hcfIdentifer po HealthCareFacility identifier
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -104,6 +108,26 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            nulifyHealthCareFacility(hcfIdentifer);
         }
         LOG.debug("Leaving synchronizeOrganization");
+    }
+
+    /***
+     * 
+     * @param roIdentifer po ResearchOrganization identifier
+     * @throws PAException on error
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void synchronizeResearchOrganization(Ii roIdentifer) throws PAException {
+
+        ResearchOrganizationDTO roDto = null;
+        LOG.debug("Entering synchronizeResearchOrganization");
+        try {
+            roDto = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().getCorrelation(roIdentifer);
+            updateResearchOrganization(roDto);
+        } catch (NullifiedRoleException e) {
+           LOG.error("This ResearchOrganization is nullified " + roIdentifer.getExtension());
+           nulifyResearchOrganization(roIdentifer);
+        }
+        LOG.debug("Leaving synchronizeResearchOrganization");
     }
 
     private void nulifyOrganization(Ii organizationIdentifer) throws PAException {
@@ -255,6 +279,56 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             }
         }
         LOG.debug("Leaving updateOversightCommittee");
+    }
+
+    private void nulifyResearchOrganization(Ii roIdentifer) throws PAException {
+        LOG.debug("Entering nulifyResearchOrganization");
+        ResearchOrganization ro = new ResearchOrganization();
+        CorrelationUtils cUtils = new CorrelationUtils();
+        ro.setIdentifier(roIdentifer.getExtension());
+        ro = cUtils.getPAResearchOrganization(ro);
+        if (ro != null) {
+            // delete the hcf and all of on delete cascade will delete the entire child
+            Session session = null;
+            try {
+                session = HibernateUtil.getCurrentSession();
+                ResearchOrganization researchOrganization = 
+                        (ResearchOrganization) session.get(ResearchOrganization.class, ro.getId());
+                session.delete(researchOrganization);
+                session.flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Hibernate exception while deleting ResearchOrganization for id = " 
+                        + ro.getId() , hbe);
+            }
+        }
+        LOG.debug("Leaving nulifyResearchOrganization");
+    }
+
+    private void updateResearchOrganization(ResearchOrganizationDTO roDto) throws PAException {
+        LOG.debug("Entering updateResearchOrganization");
+        CorrelationUtils cUtils = new CorrelationUtils();
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier(roDto.getIdentifier().getExtension());
+        ro = cUtils.getPAResearchOrganization(ro);
+        if (ro != null) {
+            // update the organization
+            Session session = null;
+            try {
+                session = HibernateUtil.getCurrentSession();
+                ResearchOrganization rOg = (ResearchOrganization) session.get(ResearchOrganization.class, ro.getId());
+                rOg.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()));
+                rOg.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+                if (ejbContext != null) {
+                    rOg.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+                }
+                session.update(rOg);
+                session.flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Hibernate exception while updating ResearchOrganization for id = " 
+                        + ro.getId() , hbe);
+            }
+        }
+        LOG.debug("Leaving updateResearchOrganization");
     }
 
 }

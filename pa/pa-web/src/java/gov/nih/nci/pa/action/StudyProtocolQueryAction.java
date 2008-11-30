@@ -100,6 +100,28 @@ public class StudyProtocolQueryAction extends ActionSupport implements
         return DISPLAY_XML;
     }
 
+//    /**
+//     * @return res
+//     */
+//    public String proMsg() {
+//            String ii = (String) ServletActionContext.getRequest()
+//                    .getParameter("Ii");
+//            
+//            try {
+////                PoPaServiceBeanLookup.getOrganizationSynchronizationService().synchronizeOrganization(
+////                        IiConverter.converToPoOrganizationIi(oId));
+////              PoPaServiceBeanLookup.getOrganizationSynchronizationService().synchronizeHealthCareFacility(
+////                          IiConverter.converToPoHealthCareFacilityIi(ii));
+//              PoPaServiceBeanLookup.getOrganizationSynchronizationService().synchronizeOversightCommittee(
+//                      IiConverter.converToPoOversightCommitteeIi(ii));
+//
+//            } catch (PAException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            return SUCCESS;
+//    }
+
     /**
      * 
      * @return records

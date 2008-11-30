@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
@@ -280,7 +281,178 @@ public class CorrelationUtils {
         return ocOut;
     }
     
+    /**
+     * 
+     * @param ro ro
+     * @return ro
+     * @throws PAException
+     */
+    ResearchOrganization getPAResearchOrganization(ResearchOrganization ro) 
+    throws PAException {
+        if (ro == null) {
+            LOG.error("ResearchOrganization Staff cannot be null");
+            throw new PAException("ResearchOrganization Staff cannot be null");
+        }
+        ResearchOrganization roOut = null;
+        Session session = null;
+        List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select ro from ResearchOrganization ro  " 
+                + "join ro.organization as org where 1 = 1 ");
+        if (ro.getId() != null) {
+            hql.append(" and ro.id = ").append(ro.getId());
+        }
+        if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
+            hql.append(" and org.id = ").append(ro.getOrganization().getId());
+        }
+        if (ro.getIdentifier() != null) {
+            hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
+            throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving ResearchOrganization" , hbe);
+        throw new PAException(" Error while retrieving ResearchOrganization" , hbe);
+    } finally {
+        session.flush();
+    }
     
+    if (!queryList.isEmpty()) {
+        roOut = queryList.get(0);
+    }
+    return roOut;
+    }
+    
+    /**
+     * 
+     * @param crs crs
+     * @return crs
+     * @throws PAException
+     */
+    ClinicalResearchStaff getPAClinicalResearchStaff(ClinicalResearchStaff crs) 
+    throws PAException {
+        if (crs == null) {
+            LOG.error("Clinicial Research Staff cannot be null");
+            throw new PAException("Clinicial Research Staff cannot be null");
+        }
+        if (crs.getPerson() != null && crs.getOrganization() == null  
+            || crs.getPerson() == null && crs.getOrganization() != null) {
+            LOG.error("Both person and organization should be specified and it cannot be either");
+            throw new PAException("Both person and organization should be specified and it cannot be either");
+            
+        }
+        ClinicalResearchStaff crsOut = null;
+        Session session = null;
+        List<ClinicalResearchStaff> queryList = new ArrayList<ClinicalResearchStaff>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select crs from ClinicalResearchStaff crs  " 
+                + "join crs.person as per "
+                + "join crs.organization as org where 1 = 1 ");
+        if (crs.getId() != null) {
+            hql.append(" and crs.id = ").append(crs.getId());
+        }
+        if (crs.getPerson() != null && crs.getOrganization()  != null 
+                && crs.getPerson().getId() != null && crs.getOrganization().getId() != null) {
+            hql.append(" and per.id = ").append(crs.getPerson().getId());
+            hql.append(" and org.id = ").append(crs.getOrganization().getId());
+        }
+        if (crs.getIdentifier() != null) {
+            hql.append(" and crs.identifier = '").append(crs.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
+            throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
+        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
+    } finally {
+        session.flush();
+    }
+    
+    if (!queryList.isEmpty()) {
+        crsOut = queryList.get(0);
+    }
+    return crsOut;
+    }
+    
+    /**
+     * 
+     * @param hcp HealthCareProvider
+     * @return  HealthCareProvider
+     * @throws PAException
+     */
+    HealthCareProvider getPAHealthCareProvider(HealthCareProvider hcp) 
+    throws PAException {
+        if (hcp == null) {
+            LOG.error("HealthCareProvider  cannot be null");
+            throw new PAException("HealthCareProvider cannot be null");
+        }
+        if (hcp.getPerson() != null && hcp.getOrganization() == null 
+                || hcp.getPerson() == null && hcp.getOrganization() != null) {
+            LOG.error("Both person and organization should be specified and it cannot be either");
+            throw new PAException("Both person and organization should be specified and it cannot be either");
+        }
+        HealthCareProvider hcpOut = null;
+        Session session = null;
+        List<HealthCareProvider> queryList = new ArrayList<HealthCareProvider>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select hcp from HealthCareProvider hcp  " 
+                + "join hcp.person as per  "
+                + "join hcp.organization as org where 1 = 1 ");
+        if (hcp.getId() != null) {
+            hql.append(" and hcp.id = ").append(hcp.getId());
+        }
+        if (hcp.getPerson() != null && hcp.getPerson().getId() != null 
+                && hcp.getOrganization() != null && hcp.getOrganization().getId() != null) {
+            hql.append(" and per.id = ").append(hcp.getPerson().getId());
+            hql.append(" and org.id = ").append(hcp.getOrganization().getId());
+        }
+        if (hcp.getIdentifier() != null) {
+            hql.append(" and hcp.identifier = '").append(hcp.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error("HealthCareProvider should not be more than 1 for any given criteria");
+            throw new PAException("HealthCareProvider should not be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving HealthCareProvider" , hbe);
+        throw new PAException(" Error while retrieving HealthCareProvider" , hbe);
+    } finally {
+        session.flush();
+    }
+    
+    if (!queryList.isEmpty()) {
+        hcpOut = queryList.get(0);
+    }
+    return hcpOut;
+    }
     
     /**
      * 
@@ -319,8 +491,6 @@ public class CorrelationUtils {
         return paOrg;
         
     }
-    
-    
 
     /**
      * 
@@ -331,26 +501,35 @@ public class CorrelationUtils {
      * @throws PAException
      */
     Person createPAPerson(PersonDTO poPerson) throws PAException {
+        return createPAPerson(convertPOToPAPerson(poPerson));
+    }
+    
+    
+    /**
+     * 
+     * method to create pa person from po.
+     * 
+     * @param poOrg
+     * @return
+     * @throws PAException
+     */
+    Person convertPOToPAPerson(PersonDTO poPerson) throws PAException {
         if (poPerson == null) {
             throw new PAException(" PO Person cannot be null");
         }
         Person per = new Person();        
         try {            
             per = EnPnConverter.convertToPaPerson(poPerson);
-//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.GIV)) {
-//                per.setFirstName(poPerson.getName().getPart().get(0).getValue());
-//            }
-//            if (poPerson.getName().getPart().get(0).getType().equals(EntityNamePartType.FAM)) {
-//                per.setLastName(poPerson.getName().getPart().get(0).getValue());
-//            }                       
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOG.error("Error while converting Person ISO " , e);
         }
         per.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poPerson.getStatusCode()));
         per.setIdentifier(poPerson.getIdentifier().getExtension());
-        return createPAPerson(per);
+        return per;
     }
+
+    
 
 
     /**

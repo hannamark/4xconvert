@@ -14,12 +14,10 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -82,16 +80,9 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 2 : check if PO has crs correlation if not create one 
         ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
         List<ClinicalResearchStaffDTO> crsDTOs = null;
-//        crsDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-//        crsDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         crsDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         crsDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-//        try {
-            crsDTOs = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().search(crsDTO);
-//        } catch (NullifiedRoleException e) {
-//            LOG.error("check with scoot", e);
-//            // @todo: this should not happen, check with 
-//        }
+        crsDTOs = PoPaServiceBeanLookup.getClinicalResearchStaffCorrelationService().search(crsDTO);
         if (crsDTOs != null && crsDTOs.size() > 1) {
             throw new PAException("PO CRS Correlation should not have more than 1  ");
         }
@@ -124,7 +115,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 6 : Check of PA has crs , if not create one
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
         crs.setIdentifier(crsDTO.getIdentifier().getExtension());
-        crs = getPAClinicalResearchStaff(crs);
+        crs = corrUtils.getPAClinicalResearchStaff(crs);
         if (crs == null) {
             // create a new crs
             crs = new ClinicalResearchStaff();
@@ -138,66 +129,6 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         return crs.getId();
     }
 
-    /**
-     * 
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    private ClinicalResearchStaff getPAClinicalResearchStaff(ClinicalResearchStaff crs) 
-    throws PAException {
-        if (crs == null) {
-            LOG.error("Clinicial Research Staff cannot be null");
-            throw new PAException("Clinicial Research Staff cannot be null");
-        }
-        if (crs.getPerson() != null && crs.getOrganization() == null  
-            || crs.getPerson() == null && crs.getOrganization() != null) {
-            LOG.error("Both person and organization should be specified and it cannot be either");
-            throw new PAException("Both person and organization should be specified and it cannot be either");
-            
-        }
-        ClinicalResearchStaff crsOut = null;
-        Session session = null;
-        List<ClinicalResearchStaff> queryList = new ArrayList<ClinicalResearchStaff>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select crs from ClinicalResearchStaff crs  " 
-                + "join crs.person as per "
-                + "join crs.organization as org where 1 = 1 ");
-        if (crs.getId() != null) {
-            hql.append(" and crs.id = ").append(crs.getId());
-        }
-        if (crs.getPerson() != null && crs.getOrganization()  != null 
-                && crs.getPerson().getId() != null && crs.getOrganization().getId() != null) {
-            hql.append(" and per.id = ").append(crs.getPerson().getId());
-            hql.append(" and org.id = ").append(crs.getOrganization().getId());
-        }
-        if (crs.getIdentifier() != null) {
-            hql.append(" and crs.identifier = '").append(crs.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
-        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
-    } finally {
-        session.flush();
-    }
-    
-    if (!queryList.isEmpty()) {
-        crsOut = queryList.get(0);
-    }
-    return crsOut;
-    }
     
     /**
      * 

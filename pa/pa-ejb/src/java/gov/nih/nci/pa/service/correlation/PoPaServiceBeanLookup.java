@@ -262,9 +262,7 @@ public class PoPaServiceBeanLookup  {
      */
     public static DocumentServiceRemote
         getDocumentService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/pa/DocumentServiceBean/remote";
-        return (DocumentServiceRemote) JNDIUtil.lookup(serverInfo);
+        return (DocumentServiceRemote) JNDIUtil.lookup("/pa/DocumentServiceBean/remote");
     } 
 
 
@@ -278,4 +276,14 @@ public class PoPaServiceBeanLookup  {
             JNDIUtil.lookup("/pa/OrganizationSynchronizationServiceBean/remote");
     } 
     
+    /**
+     * @return PersonSynchronizationServiceRemote
+     * @throws PAException on error
+     */
+    public static PersonSynchronizationServiceRemote
+        getPersonSynchronizationService() throws PAException {
+        return (PersonSynchronizationServiceRemote) 
+            JNDIUtil.lookup("/pa/PersonSynchronizationServiceBean/remote");
+    } 
+
 }

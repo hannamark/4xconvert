@@ -178,10 +178,11 @@ public class OrganizationCorrelationServiceBean {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
 
+        
         // Step 4 : Check of PA has hcf , if not create one
         ResearchOrganization ro = new ResearchOrganization();
         ro.setIdentifier(roDTO.getIdentifier().getExtension());
-        ro = getPAResearchOrganization(ro);
+        ro = corrUtils.getPAResearchOrganization(ro);
         if (ro == null) {
             // create a new crs
             ro = new ResearchOrganization();
@@ -335,57 +336,6 @@ public class OrganizationCorrelationServiceBean {
 
     
 
-    /**
-     * 
-     * @param crs crs
-     * @return crs
-     * @throws PAException
-     */
-    private ResearchOrganization getPAResearchOrganization(ResearchOrganization ro) 
-    throws PAException {
-        if (ro == null) {
-            LOG.error("ResearchOrganization Staff cannot be null");
-            throw new PAException("ResearchOrganization Staff cannot be null");
-        }
-        ResearchOrganization roOut = null;
-        Session session = null;
-        List<ResearchOrganization> queryList = new ArrayList<ResearchOrganization>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select ro from ResearchOrganization ro  " 
-                + "join ro.organization as org where 1 = 1 ");
-        if (ro.getId() != null) {
-            hql.append(" and ro.id = ").append(ro.getId());
-        }
-        if (ro.getOrganization() != null && ro.getOrganization().getId() != null) {
-            hql.append(" and org.id = ").append(ro.getOrganization().getId());
-        }
-        if (ro.getIdentifier() != null) {
-            hql.append(" and ro.identifier = '").append(ro.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error(" ResearchOrganization should be more than 1 for any given criteria");
-            throw new PAException(" ResearchOrganization should be more than 1 for any given criteria");
-            
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving ResearchOrganization" , hbe);
-        throw new PAException(" Error while retrieving ResearchOrganization" , hbe);
-    } finally {
-        session.flush();
-    }
-    
-    if (!queryList.isEmpty()) {
-        roOut = queryList.get(0);
-    }
-    return roOut;
-    }
     
     
 }

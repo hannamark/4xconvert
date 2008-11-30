@@ -14,12 +14,10 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -86,16 +84,9 @@ public class HealthCareProviderCorrelationBean {
         // Step 2 : check if PO has hcp correlation if not create one 
         HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
         List<HealthCareProviderDTO> hcpDTOs = null;
-//        hcpDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-//        hcpDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         hcpDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         hcpDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-//        try {
-            hcpDTOs = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().search(hcpDTO);
-//        } catch (NullifiedRoleException e) {
-//            LOG.error("check with scott");
-//            // @todo: this should not happen, check with 
-//        }
+        hcpDTOs = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().search(hcpDTO);
         if (hcpDTOs != null && hcpDTOs.size() > 1) {
             LOG.error("PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
             throw new PAException(
@@ -130,7 +121,7 @@ public class HealthCareProviderCorrelationBean {
         // Step 6 : Check of PA has hcp , if not create one
         HealthCareProvider hcp = new HealthCareProvider();
         hcp.setIdentifier(hcpDTO.getIdentifier().getExtension());
-        hcp = getPAHealthCareProvider(hcp);
+        hcp = corrUtils.getPAHealthCareProvider(hcp);
         if (hcp == null) {
             // create a new crs
             hcp = new HealthCareProvider();
@@ -144,65 +135,6 @@ public class HealthCareProviderCorrelationBean {
         return hcp.getId();
     }
 
-    /**
-     * 
-     * @param hcp HealthCareProvider
-     * @return  HealthCareProvider
-     * @throws PAException
-     */
-    private HealthCareProvider getPAHealthCareProvider(HealthCareProvider hcp) 
-    throws PAException {
-        if (hcp == null) {
-            LOG.error("HealthCareProvider  cannot be null");
-            throw new PAException("HealthCareProvider cannot be null");
-        }
-        if (hcp.getPerson() != null && hcp.getOrganization() == null 
-                || hcp.getPerson() == null && hcp.getOrganization() != null) {
-            LOG.error("Both person and organization should be specified and it cannot be either");
-            throw new PAException("Both person and organization should be specified and it cannot be either");
-        }
-        HealthCareProvider hcpOut = null;
-        Session session = null;
-        List<HealthCareProvider> queryList = new ArrayList<HealthCareProvider>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select hcp from HealthCareProvider hcp  " 
-                + "join hcp.person as per  "
-                + "join hcp.organization as org where 1 = 1 ");
-        if (hcp.getId() != null) {
-            hql.append(" and hcp.id = ").append(hcp.getId());
-        }
-        if (hcp.getPerson() != null && hcp.getPerson().getId() != null 
-                && hcp.getOrganization() != null && hcp.getOrganization().getId() != null) {
-            hql.append(" and per.id = ").append(hcp.getPerson().getId());
-            hql.append(" and org.id = ").append(hcp.getOrganization().getId());
-        }
-        if (hcp.getIdentifier() != null) {
-            hql.append(" and hcp.identifier = '").append(hcp.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error("HealthCareProvider should not be more than 1 for any given criteria");
-            throw new PAException("HealthCareProvider should not be more than 1 for any given criteria");
-            
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving HealthCareProvider" , hbe);
-        throw new PAException(" Error while retrieving HealthCareProvider" , hbe);
-    } finally {
-        session.flush();
-    }
-    
-    if (!queryList.isEmpty()) {
-        hcpOut = queryList.get(0);
-    }
-    return hcpOut;
-    }
     
     /**
      * 

@@ -37,6 +37,12 @@ public interface OrganizationSynchronizationServiceRemote {
      */
     void synchronizeOversightCommittee(Ii oscIdentifer) throws PAException;
     
+    /***
+     * 
+     * @param roIdentifer po ResearchOrganization identifier
+     * @throws PAException on error
+     */
+    void synchronizeResearchOrganization(Ii roIdentifer) throws PAException;
     
 
 }
