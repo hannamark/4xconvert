@@ -322,6 +322,12 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.affiliateOrg",
                         getText("error.register.affiliateOrg"));
             }
+            if (PAUtil.isNotEmpty(registryUserWebDTO.getPhone())) {
+                if (!isValidPhoneNumber(registryUserWebDTO.getPhone())) {
+                    addFieldError("registryUserWebDTO.phone",
+                            getText("error.register.invalidPhoneNumber"));                
+                }
+            }
             if (PAUtil.isNotEmpty(registryUserWebDTO.getState())
                         && PAUtil.isNotEmpty(registryUserWebDTO.getCountry())) {
                 if (registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
@@ -350,6 +356,15 @@ public class RegisterUserAction extends ActionSupport {
             isvalidEmailAddr = true;
         } 
         return isvalidEmailAddr;
+    }
+    
+    private boolean isValidPhoneNumber(String phoneNumber) {
+            boolean isValidPhoneNumber = false;
+            String numPattern = "(\\d-)?(\\d{3}-)?\\d{3}-\\d{4}";
+            if (phoneNumber.matches(numPattern)) {
+                isValidPhoneNumber = true;
+            }       
+            return isValidPhoneNumber;
     }
 
     /**
