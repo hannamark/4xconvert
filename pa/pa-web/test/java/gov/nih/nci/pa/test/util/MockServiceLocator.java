@@ -3,6 +3,7 @@ package gov.nih.nci.pa.test.util;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
@@ -27,6 +28,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockDiseaseConditionService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
@@ -260,6 +262,11 @@ public class MockServiceLocator implements ServiceLocator {
         throws PAException {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
