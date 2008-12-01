@@ -83,7 +83,10 @@
 package gov.nih.nci.po.service.correlation;
 
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.EntityValidationException;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 /**
  * @author Scott Miller
  *
@@ -106,5 +109,14 @@ public class ClinicalResearchStaffServiceTest extends AbstractStructrualRoleServ
     @Override
     void verifyStructuralRole(ClinicalResearchStaff expected, ClinicalResearchStaff actual) {
         verifyPersonRole(expected, actual);
+    }
+
+    @Test
+    public void testHotRoleCount() throws EntityValidationException {
+        ClinicalResearchStaff hcf = getSampleStructuralRole();
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
+        s.create(hcf);
+        int c = s.getHotRoleCount(hcf.getPlayer());
+        assertEquals(1, c);
     }
 }

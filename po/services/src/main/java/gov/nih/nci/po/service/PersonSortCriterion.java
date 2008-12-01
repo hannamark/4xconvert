@@ -98,7 +98,7 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
     /**
      * Sort by person's id.
      */
-    PERSON_ID(CuratePersonSearchCriteria.PERSON_ID_PROPERTY),
+    PERSON_ID("id"),
     /**
      * Sort by person's status.
      */
@@ -106,15 +106,15 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
     /**
      * Sort by person's first name.
      */
-    PERSON_FIRSTNAME(CuratePersonSearchCriteria.PERSON_FIRST_NAME_PROPERTY),
+    PERSON_FIRSTNAME("firstName"),
     /**
      * Sort by person's middle name.
      */
-    PERSON_MIDDLENAME(CuratePersonSearchCriteria.PERSON_MIDDLE_NAME_PROPERTY),
+    PERSON_MIDDLENAME("middleName"),
     /**
      * Sort by person's last name.
      */
-    PERSON_LASTNAME(CuratePersonSearchCriteria.PERSON_LAST_NAME_PROPERTY),
+    PERSON_LASTNAME("lastName"),
     /**
      * Sort by person's full name.
      */        
@@ -122,11 +122,11 @@ public enum PersonSortCriterion implements SortCriterion<Person> {
     /**
      * Sort by person's suffix.
      */
-    PERSON_SUFFIX(CuratePersonSearchCriteria.PERSON_SUFFIX_PROPERTY),
+    PERSON_SUFFIX("suffix"),
     /**
      * Sort by person's prefix.
      */
-    PERSON_PREFIX(CuratePersonSearchCriteria.PERSON_PREFIX_PROPERTY);
+    PERSON_PREFIX("prefix");
     
 
     private final String orderField;

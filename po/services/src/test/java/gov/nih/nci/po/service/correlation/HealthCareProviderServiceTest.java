@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.service.EntityValidationException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -280,5 +281,14 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         if (numExpected > 0) {
             assertTrue(l.contains(hcp));
         }
+    }
+
+    @Test
+    public void testHotRoleCount() throws EntityValidationException {
+        HealthCareProvider hcf = getSampleStructuralRole();
+        HealthCareProviderServiceLocal s = (HealthCareProviderServiceLocal) getService();
+        s.create(hcf);
+        int c = s.getHotRoleCount(hcf.getPlayer());
+        assertEquals(1, c);
     }
 }

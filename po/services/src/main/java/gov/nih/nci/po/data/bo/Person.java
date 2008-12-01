@@ -120,6 +120,10 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private Person duplicateOf;
     private Set<PersonCR> changeRequests = new HashSet<PersonCR>();
 
+    private Set<OrganizationalContact> organizationalContacts = new HashSet<OrganizationalContact>();
+    private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
+    private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
+
      /**
      * Create a new, empty person.
      */
@@ -264,4 +268,57 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private void setChangeRequests(Set<PersonCR> changeRequests) {
         this.changeRequests = changeRequests;
     }
+
+    /**
+     * @return clinicalResearchStaff.
+     */
+    @OneToMany(mappedBy = "player")
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<ClinicalResearchStaff> getClinicalResearchStaff() {
+        return clinicalResearchStaff;
+    }
+
+    /**
+     * @param clinicalResearchStaff clinicalResearchStaff.
+     */
+    @SuppressWarnings("unused")
+    private void setClinicalResearchStaff(Set<ClinicalResearchStaff> clinicalResearchStaff) {
+        this.clinicalResearchStaff = clinicalResearchStaff;
+    }
+
+    /**
+     * @return healthCareProviders.
+     */
+    @OneToMany(mappedBy = "player")
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<HealthCareProvider> getHealthCareProviders() {
+        return healthCareProviders;
+    }
+
+    /**
+     * @param healthCareProviders healthCareProviders.
+     */
+    @SuppressWarnings("unused")
+    private void setHealthCareProviders(Set<HealthCareProvider> healthCareProviders) {
+        this.healthCareProviders = healthCareProviders;
+    }
+
+    /**
+     * @return organizationalContacts.
+     */
+    @OneToMany(mappedBy = "player")
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<OrganizationalContact> getOrganizationalContacts() {
+        return organizationalContacts;
+    }
+
+    /**
+     * @param organizationalContacts organizationalContacts.
+     */
+    @SuppressWarnings("unused")
+    private void setOrganizationalContacts(Set<OrganizationalContact> organizationalContacts) {
+        this.organizationalContacts = organizationalContacts;
+    }
+
+    
 }

@@ -3,6 +3,9 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -167,4 +170,30 @@ public class CuratePersonAction extends ActionSupport implements Preparable {
         return treeMap;
     }
 
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotOrganizationalContactCount() {
+        OrganizationalContactServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getOrganizationalContactService();
+        return service.getHotRoleCount(person);
+    }
+
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotHealthCareProviderCount() {
+        HealthCareProviderServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getHealthCareProviderService();
+        return service.getHotRoleCount(person);
+    }
+
+    /**
+     * @return number of role that need the curator's attention.
+     */
+    public int getHotClinicalResearchStaffCount() {
+        ClinicalResearchStaffServiceLocal service  = PoRegistry.getInstance()
+                .getServiceLocator().getClinicalResearchStaffService();
+        return service.getHotRoleCount(person);
+    }
 }

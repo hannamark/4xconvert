@@ -82,19 +82,6 @@
 */
 package gov.nih.nci.po.service;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-
 /**
  * Base class for HQL-based query generation.
  */
@@ -188,72 +175,5 @@ public abstract class AbstractHQLSearchCriteria extends AbstractSearchCriteria {
      */
     protected static final String ID = "id";
 
-    /**
-     * @param value criteria value
-     * @return true if valid; false otherwise
-     */
-    protected boolean isValueSpecified(String value) {
-        return StringUtils.isNotBlank(value);
-    }
-
-    /**
-     * @param namedParameters map to use to set named parameter values in the Query
-     * @param query Hibernate HQL query to set named parameters on
-     */
-    protected void setNamedParameters(Map<String, Object> namedParameters, Query query) {
-        Set<String> keySet = namedParameters.keySet();
-        for (String paramName : keySet) {
-            // Structure lifted from AbstractQueryImpl.setProperties(Map)
-            Object object = namedParameters.get(paramName);
-            Class<?> retType = object.getClass();
-            if (Collection.class.isAssignableFrom(retType)) {
-                query.setParameterList(paramName, (Collection<?>) object);
-            } else if (retType.isArray()) {
-                query.setParameterList(paramName, (Object[]) object);
-            } else {
-                query.setParameter(paramName, object);
-            }
-        }
-    }
-
-    /**
-     * @param type Hibernate mapped type
-     * @param alias table alias
-     * @return HQL table with alias
-     */
-    protected String tableAlias(Class<? extends PersistentObject> type, String alias) {
-        return " " + type.getName() + " " + alias;
-    }
-
-    /**
-     * @param subselectWhereClause operands to be included
-     * @param isConjunction controls clause operator (true is AND; false is OR)
-     * @return HQL where clause
-     */
-    protected StringBuffer buildWhereClause(List<String> subselectWhereClause, WhereClauseOperator isConjunction) {
-        CollectionUtils.filter(subselectWhereClause, new Predicate() {
-            public boolean evaluate(Object input) {
-                return StringUtils.isNotBlank(input.toString());
-            }
-        });
-        if (subselectWhereClause.isEmpty()) {
-            return new StringBuffer(StringUtils.EMPTY);
-        } else {
-            StringBuffer buf = new StringBuffer();
-            buf.append(WHERE);
-            for (Iterator<String> iterator = subselectWhereClause.iterator(); iterator.hasNext();) {
-                String clause = iterator.next();
-                buf.append(clause);
-                if (iterator.hasNext()) {
-                    if (isConjunction.isConjunction()) {
-                        buf.append(AND);
-                    } else {
-                        buf.append(OR);
-                    }
-                }
-            }
-            return buf;
-        }
-    }
-
+    
 }

@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 
+import gov.nih.nci.po.data.bo.Person;
 import java.util.List;
 import java.util.Map;
 
@@ -141,5 +142,9 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
     }
 
     public void curate(HealthCareProvider correlation) throws JMSException {
+    }
+
+    public int getHotRoleCount(Person per) {
+        return 0;
     }
 }

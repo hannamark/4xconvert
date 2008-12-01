@@ -85,7 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Organization;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
-import java.util.Map;
 import org.hibernate.Query;
 
 /**
@@ -150,16 +149,5 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
 
         return PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String rootTypeAlias) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
-
 
 }

@@ -82,31 +82,15 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import org.hibernate.Query;
 
 /**
  * Criteria to find Organizations to curate.
  */
 public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria implements SearchCriteria<Person> {
-    private static final String PERSON_CHANGEREQUESTS_PROPERTY = "changeRequests";
-
-    static final String PERSON_FIRST_NAME_PROPERTY = "firstName";
-    static final String PERSON_LAST_NAME_PROPERTY = "lastName";
-    static final String PERSON_MIDDLE_NAME_PROPERTY = "middleName";
-    static final String PERSON_SUFFIX_PROPERTY = "suffix";
-    static final String PERSON_PREFIX_PROPERTY = "prefix";
-    static final String PERSON_ID_PROPERTY = "id";
-    static final String PERSON_EMAIL_PROPERTY_NAME = "email";
-    static final String PERSON_PHONE_PROPERTY_NAME = "phone";
-    static final String PERSON_FAX_PROPERTY_NAME = "fax";
-    static final String PERSON_TTY_PROPERTY_NAME = "tty";
-    static final String PERSON_URL_PROPERTY_NAME = "url";
-    static final String PERSON_STATUS_PROPERTY = "statusCode";
 
     /**
      * {@inheritDoc}
@@ -118,12 +102,47 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria imp
     /**
      * {@inheritDoc}
      */
-    protected StringBuffer getQueryWhereClause(Map<String, Object> namedParameters, String personAlias) {
-        List<String> whereClause = new ArrayList<String>();
-        String personAliasDot = personAlias + DOT;
-        whereClause.add(personAliasDot + PERSON_STATUS_PROPERTY + " = '" + EntityStatus.PENDING.name() + "'");
-        whereClause.add("((select count(*) from " + personAliasDot + PERSON_CHANGEREQUESTS_PROPERTY + " as cr) > 0)");
-        return buildWhereClause(whereClause, WhereClauseOperator.DISJUNCTION);
+    @Override
+    public String getRootAlias() {
+        return "p";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        final String prehql =
+                " from Person p"
+                + " LEFT OUTER JOIN p.changeRequests as pcr"
+                + " LEFT OUTER JOIN p.organizationalContacts as oc"
+                + " LEFT OUTER JOIN oc.changeRequests as occr"
+                + " LEFT OUTER JOIN p.clinicalResearchStaff as crs"
+                + " LEFT OUTER JOIN crs.changeRequests as crscr"
+                + " LEFT OUTER JOIN p.healthCareProviders as hcp"
+                + " LEFT OUTER JOIN hcp.changeRequests as hcpcr"
+                + " where   p.statusCode = 'PENDING' "
+                + " or pcr.processed = 'false'"
+                + " or oc.status = 'PENDING'"
+                + " or occr.processed = 'false'"
+                + " or crs.status = 'PENDING'"
+                + " or crscr.processed = 'false'"
+                + " or hcp.status = 'PENDING'"
+                + " or hcpcr.processed = 'false'";
+
+        StringBuffer hql = new StringBuffer(SELECT).append(" ");
+
+        if (isCountOnly) {
+            hql.append("COUNT(DISTINCT p)");
+        } else {
+            hql.append("DISTINCT p");
+        }
+        hql.append(prehql);
+        if (!isCountOnly) {
+            hql.append(orderByProperty);
+        }
+
+        return PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
     }
 
 }
