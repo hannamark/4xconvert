@@ -58,6 +58,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -656,6 +658,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(contactPhone)) {
             addFieldError("contactPhone", getText("error.submit.contactPhone"));
         }
+        // check if the contact e-mail address is valid
+        if (PAUtil.isNotEmpty(contactEmail)) {
+            if (!isValidEmailAddress(contactEmail)) {
+                addFieldError("contactEmail",
+                        getText("error.submit.invalidContactEmailAddress"));                
+            }
+            
+        }
         if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())) {
             Timestamp statusDate = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
             Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
@@ -733,6 +743,17 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
 //        if (selectedSummary4Sponsor == null) {
 //            addFieldError("summary4FundingSponsor", getText("error.submit.summary4FundingSponsor"));
 //        }
+    }
+    
+    private  boolean isValidEmailAddress(String emailAddress)  {
+        boolean isvalidEmailAddr = false;
+        Pattern email = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
+
+        Matcher fit = email.matcher(emailAddress);
+        if (fit.matches()) {
+            isvalidEmailAddr = true;
+        } 
+        return isvalidEmailAddr;
     }
 
     /**
