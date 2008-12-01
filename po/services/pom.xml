@@ -18,6 +18,7 @@
     <properties>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <schema.file>schema.sql</schema.file>
+        <csm.users.file>csmTestUsers.sql</csm.users.file>
         <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
         <test.jdbc.username>sa</test.jdbc.username>
         <test.jdbc.password></test.jdbc.password>
@@ -385,6 +386,7 @@
                                 <srcFile>src/main/sql/qualifiedentitytypes.sql</srcFile>
                                 <srcFile>src/main/sql/identifiedentitytypes.sql</srcFile>
                                 <srcFile>src/main/sql/csmBootstrapData.sql</srcFile>
+                                <srcFile>src/main/sql/${csm.users.file}</srcFile>
                                 <srcFile>src/main/sql/extraCreateSchema.sql</srcFile>
                             </srcFiles>
                         </configuration>
