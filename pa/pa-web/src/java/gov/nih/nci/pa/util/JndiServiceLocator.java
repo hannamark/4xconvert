@@ -3,6 +3,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
@@ -32,6 +33,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
 
 /**
  * 
@@ -81,6 +83,14 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public StudyIndldeServiceRemote getStudyIndldeService() {
         return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
+    }
+   
+    /**
+     * @return DocumentWorkflowStatusServiceRemote
+     *
+     */
+    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() {
+        return (DocumentWorkflowStatusServiceRemote) JNDIUtil.lookup("pa/DocumentWorkflowStatusServiceBean/remote");
     }
     
     /**
