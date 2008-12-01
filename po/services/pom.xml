@@ -28,7 +28,7 @@
     	<hbm2ddl.drop.table>true</hbm2ddl.drop.table>
         <hbm2ddl.create.table>true</hbm2ddl.create.table>
         <jboss.home>target/jbossDeploy</jboss.home>
-        <xsnapshot.version>1.1-beta3</xsnapshot.version>
+        <xsnapshot.version>1.1-beta4</xsnapshot.version>
     </properties>
     
     <dependencies>

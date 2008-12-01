@@ -107,6 +107,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 public abstract class AbstractOrganizationRole implements PersistentObject {
@@ -201,7 +202,7 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
             this.priorStatus = null;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -213,12 +214,12 @@ public abstract class AbstractOrganizationRole implements PersistentObject {
         }
         return null;
     }
-    
+
     /**
      * @return the prior curation status
      */
     @Transient
     public RoleStatus getPriorStatus() {
         return priorStatus;
-    }    
+    }
 }

@@ -100,6 +100,7 @@ import org.hibernate.validator.NotNull;
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractIdentifiedOrganizationDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedEntity"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedEntity<Organization> {

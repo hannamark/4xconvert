@@ -107,6 +107,7 @@ import org.hibernate.annotations.Where;
  *      class="gov.nih.nci.services.correlation.IdentifiedPersonDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedPerson"
  *      implements="gov.nih.nci.services.CorrelationDto"
+ *      serial-version-uid="1L"
  */
 @Entity
 @Table(appliesTo = "IdentifiedPerson", indexes = {

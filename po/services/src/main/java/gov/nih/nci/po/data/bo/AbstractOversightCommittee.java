@@ -97,6 +97,7 @@ import org.hibernate.annotations.Index;
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractOversightCommitteeDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.UselessOverridingMethod")

@@ -110,6 +110,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @author gax
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractQualifiedEntityDTO"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 public abstract class AbstractQualifiedEntity implements PersistentObject {
@@ -241,7 +242,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
-    
+
     @SuppressWarnings("unused")
     private void setPriorAsString(String prior) {
         if (prior != null) {
@@ -250,7 +251,7 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
             this.priorStatus = null;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -269,5 +270,5 @@ public abstract class AbstractQualifiedEntity implements PersistentObject {
     @Transient
     public RoleStatus getPriorStatus() {
         return priorStatus;
-    }    
+    }
 }

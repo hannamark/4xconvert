@@ -86,6 +86,7 @@ import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -93,6 +94,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
@@ -105,6 +107,7 @@ import org.hibernate.annotations.Where;
  *      class="gov.nih.nci.services.correlation.OversightCommitteeDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOversightCommittee"
  *      implements="gov.nih.nci.services.CorrelationDto"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")

@@ -83,10 +83,11 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.Searchable;
-
 import gov.nih.nci.po.util.UniqueHealthCareFacility;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -94,6 +95,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
@@ -105,6 +107,7 @@ import org.hibernate.annotations.Where;
  *      class="gov.nih.nci.services.correlation.HealthCareFacilityDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
@@ -129,7 +132,7 @@ public class HealthCareFacility extends AbstractOrganizationRole implements Corr
     }
 
     private Set<HealthCareFacilityCR> changeRequests = new HashSet<HealthCareFacilityCR>();
-    
+
     private HealthCareFacility duplicateOf;
 
     /**

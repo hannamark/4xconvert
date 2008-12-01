@@ -113,6 +113,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractPersonRoleDTO"
  *      extends="gov.nih.nci.services.correlation.AbstractBasePersonRoleDTO"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
@@ -324,7 +325,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
         }
         return null;
     }
-    
+
     @SuppressWarnings("unused")
     private void setPriorAsString(String prior) {
         if (prior != null) {
@@ -333,7 +334,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
             this.priorStatus = null;
         }
     }
-    
+
     /**
      * @return the prior curation status
      */
@@ -356,5 +357,5 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
-    
+
 }

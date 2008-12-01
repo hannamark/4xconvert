@@ -92,12 +92,13 @@ import javax.persistence.Transient;
 
 /**
  * Class that stores organizational contact information.
- * 
+ *
  * @author smatyas
- * 
+ *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
  *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
+ *                           serial-version-uid="1L"
  */
 @MappedSuperclass
 public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
@@ -116,7 +117,7 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
     public Boolean isPrimaryIndicator() {
         return primaryIndicator;
     }
-    
+
     /**
      * @return true if primary otherwise, false
      */
@@ -135,11 +136,11 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
 
     /**
      * Get org contact type codes.
-     * 
+     *
      * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
      *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
      *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
-     * 
+     *
      * @return a person's set of race code(s)
      */
     @Transient

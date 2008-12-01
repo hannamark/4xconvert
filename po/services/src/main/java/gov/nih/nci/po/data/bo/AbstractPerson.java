@@ -121,6 +121,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *      class="gov.nih.nci.services.person.AbstractPersonDTO"
  *      extends="gov.nih.nci.services.person.BasePersonDTO"
  *      generate-helper-methods="false"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })

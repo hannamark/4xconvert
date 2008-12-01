@@ -85,12 +85,15 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
@@ -104,6 +107,7 @@ import org.hibernate.validator.NotNull;
  *      class="gov.nih.nci.services.correlation.QualifiedEntityDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractQualifiedEntity"
  *      implements="gov.nih.nci.services.CorrelationDto"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings({ "PMD.UselessOverridingMethod" })
@@ -144,7 +148,7 @@ public class QualifiedEntity extends AbstractQualifiedEntity implements Correlat
     private void setDuplicateOf(QualifiedEntity duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-    
+
     /**
      * {@inheritDoc}
      */

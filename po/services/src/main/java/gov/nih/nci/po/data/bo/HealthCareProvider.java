@@ -113,6 +113,7 @@ import org.hibernate.validator.Valid;
  *      class="gov.nih.nci.services.correlation.HealthCareProviderDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractHealthCareProvider"
  *      implements="gov.nih.nci.services.CorrelationDto"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
@@ -152,7 +153,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     private void setDuplicateOf(HealthCareProvider duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-    
+
     /**
      * {@inheritDoc}
      *

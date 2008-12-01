@@ -114,6 +114,7 @@ import org.hibernate.validator.Valid;
  *      class="gov.nih.nci.services.organization.OrganizationDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganization"
  *      generate-helper-methods="false"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })

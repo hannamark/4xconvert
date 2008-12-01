@@ -118,6 +118,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *      class="gov.nih.nci.services.organization.AbstractOrganizationDTO"
  *      extends="gov.nih.nci.services.organization.BaseOrganizationDTO"
  *      generate-helper-methods="false"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 @SuppressWarnings({ "PMD.UnusedPrivateMethod" })

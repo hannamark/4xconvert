@@ -111,6 +111,7 @@ import org.hibernate.validator.Valid;
  *      class="gov.nih.nci.services.person.PersonDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractPerson"
  *      generate-helper-methods="false"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
@@ -356,5 +357,5 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
         this.identifiedPersons = identifiedPersons;
     }
 
-    
+
 }

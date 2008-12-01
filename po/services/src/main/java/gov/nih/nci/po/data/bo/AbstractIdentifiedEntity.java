@@ -112,6 +112,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @param <T> the type of the identify being identified
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractIdentifiedEntityDTO"
+ *      serial-version-uid="1L"
  */
 @MappedSuperclass
 public abstract class AbstractIdentifiedEntity<T extends PersistentObject> implements PersistentObject {
@@ -225,7 +226,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
     public void setAssignedIdentifier(Ii assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
-    
+
     @SuppressWarnings("unused")
     private void setPriorAsString(String prior) {
         if (prior != null) {
@@ -234,7 +235,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
             this.priorStatus = null;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -246,7 +247,7 @@ public abstract class AbstractIdentifiedEntity<T extends PersistentObject> imple
         }
         return null;
     }
-    
+
     /**
      * @return the prior curation status
      */

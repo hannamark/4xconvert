@@ -111,6 +111,7 @@ import org.hibernate.validator.Valid;
  *      class="gov.nih.nci.services.correlation.ClinicalResearchStaffDTO"
  *      model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
  *      implements="gov.nih.nci.services.CorrelationDto"
+ *      serial-version-uid="1L"
  */
 @Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
@@ -150,7 +151,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     private void setDuplicateOf(ClinicalResearchStaff duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-    
+
     /**
      * {@inheritDoc}
      *
