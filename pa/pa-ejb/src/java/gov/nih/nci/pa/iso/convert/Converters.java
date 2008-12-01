@@ -13,7 +13,7 @@ import gov.nih.nci.pa.service.PAException;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class Converters {
     private static ArmConverter arm = new ArmConverter();
     private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
@@ -22,6 +22,10 @@ public class Converters {
     private static InterventionConverter intervention = new InterventionConverter();
     private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
     private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
+    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
+    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
+    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
+    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
 
     /**
      * @param clazz class
@@ -50,6 +54,18 @@ public class Converters {
         }
         if (clazz.equals(StudyParticipationConverter.class)) {
             return sParticipation;
+        }
+        if (clazz.equals(DiseaseConverter.class)) {
+            return diseaseConverter;
+        }
+        if (clazz.equals(DiseaseAlternameConverter.class)) {
+            return diseaseAlternameConverter;
+        }
+        if (clazz.equals(DiseaseParentConverter.class)) {
+            return diseaseParentConverter;
+        }
+        if (clazz.equals(StudyDiseaseConverter.class)) {
+            return studyDiseaseConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

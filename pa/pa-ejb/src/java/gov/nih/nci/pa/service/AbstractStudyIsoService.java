@@ -6,7 +6,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
-import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -73,7 +72,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         }
         ArrayList<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {
-            resultList.add((DTO) Converters.get(getConverterArgument()).convertFromDomainToDto(bo));
+            resultList.add(convertFromDomainToDto(bo));
         }
         getLogger().info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
         return resultList;

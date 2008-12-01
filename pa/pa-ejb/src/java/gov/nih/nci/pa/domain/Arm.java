@@ -15,7 +15,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -27,28 +26,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ARM")
-public class Arm extends AbstractEntity {
+public class Arm extends AbstractStudyEntity {
     private static final long serialVersionUID = 1237144890L;
 
-    private StudyProtocol studyProtocol;
     private String name;
     private String descriptionText;
     private ArmTypeCode typeCode;
     private Collection<PlannedActivity> interventions = new ArrayList<PlannedActivity>();
-    /**
-     * @return the studyProtocol
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID")
-    public StudyProtocol getStudyProtocol() {
-        return studyProtocol;
-    }
-    /**
-     * @param studyProtocol the studyProtocol to set
-     */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
-    }
     /**
      * @return the name
      */

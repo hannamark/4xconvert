@@ -5,6 +5,12 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.DiseaseAltername;
+import gov.nih.nci.pa.domain.DiseaseAlternameTest;
+import gov.nih.nci.pa.domain.DiseaseParent;
+import gov.nih.nci.pa.domain.DiseaseParentTest;
+import gov.nih.nci.pa.domain.DiseaseTest;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.FundingMechanism;
@@ -31,6 +37,8 @@ import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
+import gov.nih.nci.pa.domain.StudyDisease;
+import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -91,6 +99,7 @@ public class TestSchema {
         public static ArrayList<Long> armIds;
         public static ArrayList<Long> researchOrganizationIds;
         public static ArrayList<Long> oversightCommitteeIds;
+        public static ArrayList<Long> diseaseIds;
 
         static {            
             Configuration config = new AnnotationConfiguration().
@@ -117,7 +126,6 @@ public class TestSchema {
             addAnnotatedClass(StudySiteAccrualStatus.class).
             addAnnotatedClass(StudyParticipationContact.class).
             addAnnotatedClass(OversightCommittee.class).
-
             addAnnotatedClass(Document.class).
             addAnnotatedClass(StudyRecruitmentStatus.class).
             addAnnotatedClass(StratumGroup.class).
@@ -132,6 +140,10 @@ public class TestSchema {
             addAnnotatedClass(Arm.class).
             addAnnotatedClass(ClinicalResearchStaff.class).
             addAnnotatedClass(OrganizationalContact.class).
+            addAnnotatedClass(Disease.class).
+            addAnnotatedClass(DiseaseAltername.class).
+            addAnnotatedClass(DiseaseParent.class).
+            addAnnotatedClass(StudyDisease.class).
             setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
             setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
             setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
@@ -189,6 +201,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from STUDY_PARTICIPATION");
                         statement.executeUpdate("delete from DOCUMENT");
                         statement.executeUpdate("delete from STRATUM_GROUP");
+                        statement.executeUpdate("delete from STUDY_DISEASE");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
                         statement.executeUpdate("delete from CLINICAL_RESEARCH_STAFF");
                         statement.executeUpdate("delete from COUNTRY");
@@ -198,7 +211,10 @@ public class TestSchema {
                         statement.executeUpdate("delete from RESEARCH_ORGANIZATION");
                         statement.executeUpdate("delete from OVERSIGHT_COMMITTEE");
                         statement.executeUpdate("delete from ORGANIZATION");
-                        statement.executeUpdate("delete from PERSON");                            
+                        statement.executeUpdate("delete from PERSON");
+                        statement.executeUpdate("delete from DISEASE_PARENT");
+                        statement.executeUpdate("delete from DISEASE_ALTERNAME");
+                        statement.executeUpdate("delete from DISEASE");
                         connection.commit();
                     } finally {
                         statement.close();
@@ -258,6 +274,7 @@ public class TestSchema {
             armIds = new ArrayList<Long>();
             researchOrganizationIds = new ArrayList<Long>();
             oversightCommitteeIds = new ArrayList<Long>();
+            diseaseIds = new ArrayList<Long>();
                 
             StudyProtocol sp = new StudyProtocol();   
             sp.setOfficialTitle("cacncer for THOLA");
@@ -495,6 +512,32 @@ public class TestSchema {
             pec.setAgeValue("14");
             pec.setUnit(UnitsCode.MONTHS);
             addUpdObject(pec);
+            
+            Disease dis01 = DiseaseTest.createDiseaseObj("Toe Cancer");
+            addUpdObject(dis01);
+            diseaseIds.add(dis01.getId());
+            Disease dis02 = DiseaseTest.createDiseaseObj("Heel Cancer");
+            addUpdObject(dis02);
+            diseaseIds.add(dis02.getId());
+            Disease dis03 = DiseaseTest.createDiseaseObj("Foot Cancer");
+            addUpdObject(dis03);
+            diseaseIds.add(dis03.getId());
+            Disease dis04 = DiseaseTest.createDiseaseObj("Leg Cancer");
+            addUpdObject(dis04);
+            diseaseIds.add(dis04.getId());
+            
+            DiseaseParent disPar1 = DiseaseParentTest.createDiseaseParentObj(dis01, dis03);
+            addUpdObject(disPar1);
+            DiseaseParent disPar2 = DiseaseParentTest.createDiseaseParentObj(dis02, dis03);
+            addUpdObject(disPar2);
+            DiseaseParent disPar3 = DiseaseParentTest.createDiseaseParentObj(dis03, dis04);
+            addUpdObject(disPar3);
+            
+            DiseaseAltername diseaseAltername = DiseaseAlternameTest.createDiseaseAlternameObj("Little Piggy Cancer", dis01);
+            addUpdObject(diseaseAltername);
+            
+            StudyDisease studyDisease = StudyDiseaseTest.createStudyDiseaseObj(sp, dis01);
+            addUpdObject(studyDisease);
             
             HibernateUtil.getCurrentSession().clear();
             

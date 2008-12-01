@@ -11,11 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
 
 /**
  * Describes the recruitment state of the study.
@@ -28,13 +24,11 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name = "STUDY_RECRUITMENT_STATUS")
-public class StudyRecruitmentStatus extends AbstractEntity {
+public class StudyRecruitmentStatus extends AbstractStudyEntity {
     private static final long serialVersionUID = 1234568364L;
     
     private StudyRecruitmentStatusCode statusCode;
     private Timestamp statusDate;
-    private StudyProtocol studyProtocol;
-    
     
     /**
      * @return statusCode
@@ -67,23 +61,5 @@ public class StudyRecruitmentStatus extends AbstractEntity {
      */
     public void setStatusDate(Timestamp statusDate) {
         this.statusDate = statusDate;
-    }
-
-    /**
-     * 
-     * @return protocol
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
-    @NotNull
-    public StudyProtocol getStudyProtocol() {
-       return studyProtocol;
-    }
-    /**
-     * 
-     * @param studyProtocol studyProtocol
-     */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
     }
 }

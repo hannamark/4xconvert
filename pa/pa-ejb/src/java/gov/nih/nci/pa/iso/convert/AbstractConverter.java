@@ -3,18 +3,19 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author Hugh Reinhart
  * @since 11/05/2008
- 
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  * @param <BO> domain object
  * @param <DTO> dto
  */
-public abstract class AbstractConverter<DTO, BO> {
+public abstract class AbstractConverter<DTO extends BaseDTO, BO extends AbstractEntity> {
     /**
      * @param dto dto
      * @return domain object

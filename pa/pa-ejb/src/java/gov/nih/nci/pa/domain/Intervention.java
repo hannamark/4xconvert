@@ -6,7 +6,6 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +29,12 @@ import org.hibernate.validator.Length;
  */
 @Entity
 @Table(name = "INTERVENTION")
-public class Intervention extends AbstractEntity {
+public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePendingCode> {
     private static final long serialVersionUID = 7367567890L;
     
     private String name;
     private InterventionTypeCode typeCode;
     private String descriptionText;
-    private ActiveInactivePendingCode statusCode;
-    private Timestamp statusDateRangeLow;
     private List<InterventionAlternateName> interventionAlternateNames = new ArrayList<InterventionAlternateName>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
 
@@ -82,33 +79,6 @@ public class Intervention extends AbstractEntity {
      */
     public void setDescriptionText(String descriptionText) {
         this.descriptionText = descriptionText;
-    }
-    /**
-     * @return the statusCode
-     */
-    @Column(name = "STATUS_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActiveInactivePendingCode getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(ActiveInactivePendingCode statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRangeLow
-     */
-    @Column(name = "STATUS_DATE_RANGE_LOW")
-    public Timestamp getStatusDateRangeLow() {
-        return statusDateRangeLow;
-    }
-    /**
-     * @param statusDateRangeLow the statusDateRangeLow to set
-     */
-    public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
-        this.statusDateRangeLow = statusDateRangeLow;
     }
     /**
      * @return the interventionOthers

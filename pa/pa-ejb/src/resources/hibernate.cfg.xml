@@ -55,6 +55,10 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.OrganizationalContact" />
         <mapping class="gov.nih.nci.pa.domain.RegistryUser" />
         <mapping class="gov.nih.nci.pa.domain.PlannedEligibilityCriterion" />
-        <mapping class="gov.nih.nci.pa.domain.OversightCommittee" />
+        <mapping class="gov.nih.nci.pa.domain.OversightCommittee" />        
+        <mapping class="gov.nih.nci.pa.domain.StudyDisease" />
+        <mapping class="gov.nih.nci.pa.domain.Disease" />
+        <mapping class="gov.nih.nci.pa.domain.DiseaseAltername" />
+        <mapping class="gov.nih.nci.pa.domain.DiseaseParent" />
     </session-factory>
 </hibernate-configuration>

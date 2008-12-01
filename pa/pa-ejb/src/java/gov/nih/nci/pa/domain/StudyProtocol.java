@@ -76,6 +76,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
     private List<Arm> arms = new ArrayList<Arm>();
+    private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
 
     /** 
      * @return accrualReportingMethodCode
@@ -594,4 +595,19 @@ public class StudyProtocol extends AbstractEntity {
             Boolean acceptHealthyVolunteersIndicator) {
         this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
     }
+    /**
+     * @return the studyDiseases
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<StudyDisease> getStudyDiseases() {
+        return studyDiseases;
+    }
+    /**
+     * @param studyDiseases the studyDiseases to set
+     */
+    public void setStudyDiseases(List<StudyDisease> studyDiseases) {
+        this.studyDiseases = studyDiseases;
+    }
 }
+
