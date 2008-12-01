@@ -138,7 +138,7 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria imp
                 + " or ip.status = 'PENDING'"
                 + " or ipcr.processed = 'false'";
 
-        StringBuffer hql = new StringBuffer(SELECT).append(" ");
+        StringBuffer hql = new StringBuffer("select ");
 
         if (isCountOnly) {
             hql.append("COUNT(DISTINCT p)");

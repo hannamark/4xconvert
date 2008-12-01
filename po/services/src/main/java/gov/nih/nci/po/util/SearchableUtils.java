@@ -88,7 +88,6 @@ import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.AbstractHQLSearchCriteria;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -106,6 +105,57 @@ import org.hibernate.Session;
  * @see Searchable
  */
 public final class SearchableUtils {
+
+    /**
+     * HQL select statement.
+     */
+    public static final String SELECT = " SELECT ";
+
+    /**
+     * HQL from statement.
+     */
+    public static final String FROM = " FROM ";
+
+    /**
+     * HQL as keyword.
+     */
+    public static final String AS = " as ";
+    /**
+     * HQL comma keyword.
+     */
+    public static final String COMMA = " , ";
+
+    /**
+     * HQL JOIN statement.
+     */
+    public static final String JOIN = " JOIN ";
+
+    /**
+     * HQL WHERE statement.
+     */
+    public static final String WHERE = " WHERE ";
+
+    /**
+     * HQL AND operator.
+     */
+    public static final String AND = " AND ";
+
+    /**
+     * HQL OR operator.
+     */
+    public static final String OR = " OR ";
+
+    /**
+     * HQL property separator.
+     */
+    public static final String DOT = ".";
+
+    /**
+     * PersistentObject property name.
+     */
+    public static final String ID = "id";
+    
+    
     /**
      * root object alias name.
      */
@@ -144,12 +194,12 @@ public final class SearchableUtils {
      */
     public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly, boolean disallowNullified,
             String orderByClause) {
-        final StringBuffer selectClause = new StringBuffer(AbstractHQLSearchCriteria.SELECT);
+        final StringBuffer selectClause = new StringBuffer(SELECT);
         final StringBuffer whereClause = new StringBuffer();
         final Map<String, Object> params = new HashMap<String, Object>();
 
         selectClause.append((isCountOnly ? "COUNT(" + ROOT_OBJ_ALIAS + ") " : ROOT_OBJ_ALIAS));
-        selectClause.append(AbstractHQLSearchCriteria.FROM);
+        selectClause.append(FROM);
         selectClause.append(obj.getClass().getName());
         selectClause.append(' ');
         selectClause.append(ROOT_OBJ_ALIAS);
@@ -188,10 +238,10 @@ public final class SearchableUtils {
     private static String determineOperator(final StringBuffer whereClause) {
         String operator = "";
         if (StringUtils.isBlank(whereClause.toString())) {
-            operator = AbstractHQLSearchCriteria.WHERE;
-        } else if (!AbstractHQLSearchCriteria.WHERE.equals(whereClause.toString())) {
+            operator = WHERE;
+        } else if (!WHERE.equals(whereClause.toString())) {
             //handle case when no criterion are provided. 
-            operator = AbstractHQLSearchCriteria.AND;
+            operator = AND;
         }
         return operator;
     }

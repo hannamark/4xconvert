@@ -83,7 +83,6 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.AbstractHQLSearchCriteria;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -103,7 +102,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
     private final StringBuffer whereClause;
     private final StringBuffer selectClause;
     private final Map<String, Object> params;
-    private String whereOrAnd = AbstractHQLSearchCriteria.WHERE;
+    private String whereOrAnd = SearchableUtils.WHERE;
 
     /**
      * @param whereClause stringbuffer
@@ -141,7 +140,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
             return;
         }
         whereClause.append(whereOrAnd);
-        whereOrAnd = AbstractHQLSearchCriteria.AND;
+        whereOrAnd = SearchableUtils.AND;
 
         if (startsWithSearch && canBeUsedInLikeExpression(result)) {
             whereClause.append(String.format("lower(%s.%s) like :%s", SearchableUtils.ROOT_OBJ_ALIAS, fieldName,
@@ -186,7 +185,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
     private void handleProcessFieldWithSubProp(Object subPropResult, String fieldName, boolean startsWithQuery,
             String currentProp, String subPropParamName) {
         whereClause.append(whereOrAnd);
-        whereOrAnd = AbstractHQLSearchCriteria.AND;
+        whereOrAnd = SearchableUtils.AND;
         
         if (startsWithQuery && canBeUsedInLikeExpression(subPropResult)) {
             whereClause.append(String.format(" lower(%s.%s.%s) like :%s ",
@@ -229,7 +228,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
         if (processCollectionPropertiesResult.length() > 0) {
 
             whereClause.append(whereOrAnd);
-            whereOrAnd = AbstractHQLSearchCriteria.AND;
+            whereOrAnd = SearchableUtils.AND;
 
             // Need to add ", zClass obj_<field>" to select clause
             selectClause.append(", ");
@@ -239,7 +238,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
             // now add the where clauses
             whereClause.append(String
                     .format("%s IN ELEMENTS(%s.%s) ", alias, SearchableUtils.ROOT_OBJ_ALIAS, fieldName));
-            whereClause.append(AbstractHQLSearchCriteria.AND);
+            whereClause.append(SearchableUtils.AND);
             whereClause.append(" ( ");
             whereClause.append(processCollectionPropertiesResult);
             whereClause.append(" ) ");
@@ -264,7 +263,7 @@ class SearchCallback implements SearchableUtils.AnnotationCallback {
                     result.append(addInClauseForCollectionProp(paramName, alias, propName, valueCollection)
                             .toString());
                 }
-                andClause = AbstractHQLSearchCriteria.AND;
+                andClause = SearchableUtils.AND;
             }
         }
         return result;

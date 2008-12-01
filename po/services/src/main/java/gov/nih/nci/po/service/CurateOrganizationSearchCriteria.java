@@ -135,7 +135,7 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
                 + " or io.status = 'PENDING'"
                 + " or iocr.processed = 'false'";
 
-        StringBuffer hql = new StringBuffer(SELECT).append(" ");
+        StringBuffer hql = new StringBuffer("select ");
         
         if (isCountOnly) {
             hql.append("COUNT(DISTINCT o)");

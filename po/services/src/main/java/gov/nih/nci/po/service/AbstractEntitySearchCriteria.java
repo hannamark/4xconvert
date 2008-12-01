@@ -91,7 +91,7 @@ import org.hibernate.Query;
 /**
  * Abstract search criteria class for Entity types.
  */
-public abstract class AbstractEntitySearchCriteria extends AbstractHQLSearchCriteria {
+public abstract class AbstractEntitySearchCriteria extends AbstractSearchCriteria {
     
     /**
      * {@inheritDoc}
