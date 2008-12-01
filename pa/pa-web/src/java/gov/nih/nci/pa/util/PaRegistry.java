@@ -32,6 +32,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 
 
 /**
@@ -331,6 +332,17 @@ public final class PaRegistry {
     public static AbstractionCompletionServiceRemote getAbstractionCompletionService() 
         throws PAException {
         return getInstance().getServiceLocator().getAbstractionCompletionService();
+    }
+    
+    //DocumentWorkflowStatusServiceRemote
+    /**
+     * 
+     * @return DocumentWorkflowStatusServiceRemote
+     * @throws PAException on error 
+     */
+    public static DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() 
+        throws PAException {
+        return getInstance().getServiceLocator().getDocumentWorkflowStatusService();
     }
     
 }
