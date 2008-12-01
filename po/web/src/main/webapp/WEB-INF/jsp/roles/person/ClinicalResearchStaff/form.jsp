@@ -135,7 +135,7 @@ function handleDuplicateOf() {
        <h2>Contact Information</h2>
            <div class="box_white">
                <div class="clear"></div>
-               <po:contacts contactableKeyBase="person"/>
+               <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="true" />
            </div>
        </div>			    
     </div> 

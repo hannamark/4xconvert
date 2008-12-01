@@ -147,7 +147,7 @@ public class ClinicalResearchStaffRemoteServiceTest
     public void testValidate() throws Exception {
         ClinicalResearchStaffDTO pr = new ClinicalResearchStaffDTO();
         Map<String, String[]> errors = getCorrelationService().validate(pr);
-        assertEquals(3, errors.keySet().size());
+        assertEquals(4, errors.keySet().size());
     }
 
     @Override

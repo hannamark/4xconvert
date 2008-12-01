@@ -1,13 +1,29 @@
 <%@ tag display-name="contacts" description="Renders the contactable form" body-content="empty" %>
 <%@ attribute name="contactableKeyBase" type="java.lang.String" required="true" %>
+<%@ attribute name="emailRequired" type="java.lang.Boolean" required="false" description="By default email is required"%>
+<%@ attribute name="phoneRequired" type="java.lang.Boolean" required="false" description="By default phone is not required"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
+<s:if test="%{#attr.emailRequired == null || #attr.emailRequired == true}">
+<s:set name="emailRequiredBool" value="true"/>
+</s:if>
+<s:else>
+<s:set name="emailRequiredBool" value="false"/>
+</s:else>
+
+<s:if test="%{#attr.phoneRequired == null || #attr.phoneRequired == false}">
+<s:set name="phoneRequiredBool" value="false"/>
+</s:if>
+<s:else>
+<s:set name="phoneRequiredBool" value="true"/>
+</s:else>
+
 <fieldset>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.email'}"/>
    </s:fielderror>
-    <legend><span class="required">*</span>&nbsp;Email Addresses</legend>
+    <legend><s:if test="%{emailRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Email Addresses</legend>
     <c:url value="contactable/email/edit.action" var="viewEmailAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -21,7 +37,7 @@
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.phone'}"/>
    </s:fielderror>
-    <legend>Phone Numbers</legend>
+    <legend><s:if test="%{phoneRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Phone Numbers</legend>
     <c:url value="contactable/phone/edit.action" var="viewPhoneAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
