@@ -26,6 +26,7 @@
                     <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                     <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
+                    <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
                 </ul>
 			</s:if>
 			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
