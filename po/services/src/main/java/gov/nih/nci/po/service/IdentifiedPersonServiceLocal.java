@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 
+import gov.nih.nci.po.data.bo.Person;
 import javax.ejb.Local;
 
 /**
@@ -92,5 +93,10 @@ import javax.ejb.Local;
  */
 @Local
 public interface IdentifiedPersonServiceLocal extends GenericStructrualRoleServiceLocal<IdentifiedPerson> {
-    // empty interface
+    /**
+     * Get the number of roles that need attention from the curator.
+     * @param per the player person for the roles.
+     * @return the count of roles that need attention.
+     */
+    int getHotRoleCount(Person per);
 }

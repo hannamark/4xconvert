@@ -4,15 +4,23 @@ import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
+import gov.nih.nci.po.data.bo.QualifiedEntity;
+import gov.nih.nci.po.data.bo.QualifiedEntityCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.correlation.ClinicalResearchStaffServiceTest;
 import gov.nih.nci.po.service.correlation.HealthCareProviderServiceTest;
+import gov.nih.nci.po.service.correlation.IdentifiedPersonServiceTest;
 import gov.nih.nci.po.service.correlation.OrganizationalContactServiceTest;
+import gov.nih.nci.po.service.correlation.QualifiedEntityServiceTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.correlation.QualifiedEntityDTO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -225,6 +233,113 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
 
         // exclude the role's CR
         HealthCareProviderCR rocr = (HealthCareProviderCR) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareProviderCR.class).uniqueResult();
+        rocr.setProcessed(true);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        rocr.setProcessed(false);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+    }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void findByIdentifiedPerson() throws Exception {
+
+        IdentifiedPersonServiceTest test = new IdentifiedPersonServiceTest();
+        test.setDefaultCountry(pst.getDefaultCountry());
+        test.setUpData();
+        test.initData();
+        test.testSimpleCreateAndGet();
+        IdentifiedPerson ro = (IdentifiedPerson) PoHibernateUtil.getCurrentSession().createCriteria(IdentifiedPerson.class).uniqueResult();
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+        ro.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro.getPlayer());
+
+        List<Person> results = sc.getQuery("", false).list();
+        assertEquals(2, results.size());
+
+        // exclude the old org
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        o.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(o);
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+
+        // exclude the role
+        ro.setStatus(RoleStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
+        // add change request to the role.
+        IdentifiedPersonDTO rodto = (IdentifiedPersonDTO) PoXsnapshotHelper.createSnapshot(ro);
+        EjbTestHelper.getIdentifiedPersonServiceBeanAsRemote().updateCorrelation(rodto);
+        PoHibernateUtil.getCurrentSession().flush();
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+
+        // exclude the role's CR
+        IdentifiedPersonCR rocr = (IdentifiedPersonCR) PoHibernateUtil.getCurrentSession().createCriteria(IdentifiedPersonCR.class).uniqueResult();
+        rocr.setProcessed(true);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        rocr.setProcessed(false);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void findByQualifiedEnity() throws Exception {
+
+        QualifiedEntityServiceTest test = new QualifiedEntityServiceTest();
+        test.setDefaultCountry(pst.getDefaultCountry());
+        test.setUpData();
+        test.setupType();
+        test.testSimpleCreateAndGet();
+        QualifiedEntity ro = (QualifiedEntity) PoHibernateUtil.getCurrentSession().createCriteria(QualifiedEntity.class).uniqueResult();
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+        ro.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro.getPlayer());
+
+        List<Person> results = sc.getQuery("", false).list();
+        assertEquals(2, results.size());
+
+        // exclude the old org
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        o.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(o);
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+
+        // exclude the role
+        ro.setStatus(RoleStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+
+        // add change request to the role.
+        QualifiedEntityDTO rodto = (QualifiedEntityDTO) PoXsnapshotHelper.createSnapshot(ro);
+        EjbTestHelper.getQualifiedEntityCorrelationServiceAsRemote().updateCorrelation(rodto);
+        PoHibernateUtil.getCurrentSession().flush();
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+
+        // exclude the role's CR
+        QualifiedEntityCR rocr = (QualifiedEntityCR) PoHibernateUtil.getCurrentSession().createCriteria(QualifiedEntityCR.class).uniqueResult();
         rocr.setProcessed(true);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();

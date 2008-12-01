@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.RoleStatus;
 
@@ -104,5 +105,12 @@ public class QualifiedEntityServiceBean extends AbstractCuratableServiceBean<Qua
     public long create(QualifiedEntity prp) throws EntityValidationException {
         prp.setStatus(RoleStatus.PENDING);
         return super.create(prp);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getHotRoleCount(Person per) {
+        return super.getHotRoleCount(per.getId(), QualifiedEntity.class);
     }
 }
