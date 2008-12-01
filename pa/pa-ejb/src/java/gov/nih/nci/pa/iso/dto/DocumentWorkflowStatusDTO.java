@@ -3,6 +3,8 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+
 /**
  * @author Kalpana Guthikonda
  * @since 11/07/2008
@@ -14,6 +16,7 @@ public class DocumentWorkflowStatusDTO extends StudyDTO {
     private St commonText;
     private Cd statusCode;
     private Ii studyProtocolIi;
+    private Ts statusDateRangeLow;
     
     /**
      * @return commonText
@@ -50,5 +53,17 @@ public class DocumentWorkflowStatusDTO extends StudyDTO {
      */
     public void setStudyProtocolIi(Ii studyProtocolIi) {
         this.studyProtocolIi = studyProtocolIi;
+    }
+    /**
+     * @return the statusDateRangeLow
+     */
+    public Ts getStatusDateRangeLow() {
+        return statusDateRangeLow;
+    }
+    /**
+     * @param statusDateRangeLow the statusDateRangeLow to set
+     */
+    public void setStatusDateRangeLow(Ts statusDateRangeLow) {
+        this.statusDateRangeLow = statusDateRangeLow;
     }
 }
