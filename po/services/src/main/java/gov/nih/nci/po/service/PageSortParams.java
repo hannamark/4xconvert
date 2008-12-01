@@ -161,7 +161,7 @@ public class PageSortParams<T> {
     /**
      * @param sortCriterion the sortCriterion to set
      */
-    public void setSortCriterion(List<SortCriterion<T>> sortCriterion) {
+    public void setSortCriterion(List<? extends SortCriterion<T>> sortCriterion) {
         this.sortCriterion = sortCriterion;
     }
 

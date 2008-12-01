@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.AbstractCodeValue;
 import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
@@ -11,6 +12,8 @@ import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.lang.reflect.Constructor;
+import java.util.Iterator;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -69,5 +72,17 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         CodeValue oct = svcBean.getByCode(clz, CODE);
         assertNotNull(oct);
         assertEquals(CODE, oct.getCode());
+        
+        Cd cd = new Cd();
+        cd.setCode(CODE);
+        oct =svcBean.getByCode(clz, cd);
+        assertNotNull(oct);
+        assertEquals(CODE, oct.getCode());
+        
+        List<? extends CodeValue> list = svcBean.list(clz);
+        assertEquals(1, list.size());
+        Iterator<? extends CodeValue> iterator = list.iterator();
+        CodeValue next = iterator.next();
+        assertEquals(CODE, next.getCode());
     }
 }

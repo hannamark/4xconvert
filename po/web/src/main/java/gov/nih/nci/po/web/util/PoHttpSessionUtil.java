@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.web.util;
 
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
@@ -189,5 +190,14 @@ public class PoHttpSessionUtil {
      */
     public static String addAttribute(StrutsPersonSearchCriteria criteria) {
         return addUniqueAttribute("spsc-", criteria);
+    }
+
+    /**
+     * Adds a person role to the http session with a unique key.
+     * @param role the person role to add to the session
+     * @return the key used to add the objects
+     */
+    public static String addAttribute(ClinicalResearchStaff role) {
+        return addUniqueAttribute("crs-", role);
     }
 }

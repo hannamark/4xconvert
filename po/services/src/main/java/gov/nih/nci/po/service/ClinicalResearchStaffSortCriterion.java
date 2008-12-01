@@ -80,209 +80,72 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.roles;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OversightCommittee;
-import gov.nih.nci.po.data.bo.OversightCommitteeCR;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeSortCriterion;
-import gov.nih.nci.po.service.SearchCriteria;
-import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 
-import java.util.ArrayList;
-
-import javax.jms.JMSException;
-
-import org.displaytag.properties.SortOrderEnum;
-
-import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
-import com.opensymphony.xwork2.Preparable;
-import com.opensymphony.xwork2.validator.annotations.CustomValidator;
-import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Action to manage OversightCommittee(s).
- *
- * @author smatyas
+ * Enum of possible sort criterion for ClinicalResearchStaff.
  */
-public class OversightCommitteeAction extends
-        AbstractOrganizationRoleAction<OversightCommittee, OversightCommitteeCR, OversightCommitteeServiceLocal> 
-        implements Preparable {
+public enum ClinicalResearchStaffSortCriterion implements SortCriterion<ClinicalResearchStaff> {
 
-    private static final long serialVersionUID = 1L;
-    private OversightCommittee role = new OversightCommittee();
-    private OversightCommitteeCR cr = new OversightCommitteeCR();
 
     /**
-     * {@inheritDoc}
+     * Sort by ClinicalResearchStaff's id.
      */
-    public OversightCommittee getRole() {
-        return role;
+    ID("id"),
+    
+    /**
+     * Sort by ClinicalResearchStaff's status.
+     */
+    ROLE_STATUS("status"),
+    
+    /**
+     * Sort by ClinicalResearchStaff's scoper's name.
+     */
+    SCOPER_NAME("scoper.name"),
+    
+    /**
+     * Sort by ClinicalResearchStaff's scoper's name.
+     */
+    SCOPER_ID("scoper.id"),
+    
+    /**
+     * Sort by ClinicalResearchStaff's status date.
+     */
+    STATUS_DATE("statusDate");
+    
+    private final String orderField;
+    private final List<ClinicalResearchStaffSortCriterion> fields;
+
+    private ClinicalResearchStaffSortCriterion(String orderField) {
+        this.orderField = orderField;
+        this.fields = null;
+    }
+
+    private ClinicalResearchStaffSortCriterion(ClinicalResearchStaffSortCriterion... fields) {
+        this.orderField = null;
+        this.fields = Arrays.asList(fields);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setRole(OversightCommittee role) {
-        this.role = role;
+    public String getOrderField() {
+        return this.orderField;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OversightCommitteeCR getCr() {
-        return cr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setCr(OversightCommitteeCR cr) {
-        this.cr = cr;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OversightCommitteeCR getBaseCr() {
-        return getCr();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OversightCommittee getBaseRole() {
-        return getRole();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBaseCr(OversightCommitteeCR baseCr) {
-        setCr(baseCr);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBaseRole(OversightCommittee baseRole) {
-        setRole(baseRole);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        if (getRole() == null) {
-            setRole(new OversightCommittee());
+    public List<ClinicalResearchStaffSortCriterion> getOrderByList() {
+        if (orderField != null) {
+            return Collections.singletonList(this);
         }
-        if (getRole().getPlayer() == null) { // if not set, then set to default
-            getRole().setPlayer(getOrganization());
-        }
-    }
-
-    /**
-     *
-     * {@inheritDoc}
-     */
-    @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "oversightCommittee") })
-        }
-    )
-    @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
-    public String add() throws JMSException {
-        return super.add();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Validations(
-        customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "oversightCommittee") })
-        }
-    )
-    @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
-    public String edit() throws JMSException {
-        return super.edit();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected SearchCriteria<OversightCommittee> getDuplicateCriteria() {
-        OversightCommittee dupOfBOCrit = new OversightCommittee();
-        AnnotatedBeanSearchCriteria<OversightCommittee> duplicateOfCriteria
-            = new AnnotatedBeanSearchCriteria<OversightCommittee>(dupOfBOCrit);
-        dupOfBOCrit.setPlayer(getOrganization());
-        return duplicateOfCriteria;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void defaultConstructorInit() {
-        setResults(new PaginatedList<OversightCommittee>(0, new ArrayList<OversightCommittee>(),
-                PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, OversightCommitteeSortCriterion.ID.name(),
-                SortOrderEnum.ASCENDING));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected OversightCommitteeServiceLocal getRoleService() {
-        return PoRegistry.getInstance().getServiceLocator().getOversightCommitteeService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected SearchCriteria<OversightCommittee> getSearchCriteria() {
-        OversightCommittee boCrit = new OversightCommittee();
-        AnnotatedBeanSearchCriteria<OversightCommittee> criteria = new AnnotatedBeanSearchCriteria<OversightCommittee>(
-                boCrit);
-        Organization player = new Organization();
-        player.setId(getOrganization().getId());
-        boCrit.setPlayer(player);
-        return criteria;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Class<OversightCommitteeSortCriterion> getSortCriterion() {
-        return OversightCommitteeSortCriterion.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getAddSuccessMessageKey() {
-        return "oversightcommittee.create.success";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getEditSuccessMessageKey() {
-        return "oversightcommittee.update.success";
+        return fields;
     }
 }

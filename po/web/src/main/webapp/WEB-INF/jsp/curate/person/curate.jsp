@@ -147,7 +147,20 @@
 		        <po:contacts contactableKeyBase="person"/>
 		    </div>
 		</div>
-<!-- Insert Person Roles content here -->	
+<s:if test="%{isNotCreate}">
+        <div class="boxouter">
+        <h2>Assign Organizational Roles</h2>
+            <div class="box_white"> 
+                <c:url var="manageClinicalResearchStaff" value="/protected/roles/person/ClinicalResearchStaff/start.action">
+                    <c:param name="person" value="${person.id}"/>
+                </c:url>
+                <ul>
+                    <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (? new of ?)</li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+</s:if>
     </div>
 </div>
 

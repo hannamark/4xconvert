@@ -87,6 +87,7 @@ import gov.nih.nci.po.util.Searchable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -124,7 +125,7 @@ public abstract class AbstractPersonRole implements PersistentObject, Contactabl
     private Person player;
     private Organization scoper;
 
-    private Set<Address> postalAddresses;
+    private Set<Address> postalAddresses = new HashSet<Address>();
     private List<Email> email = new ArrayList<Email>();
     private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);

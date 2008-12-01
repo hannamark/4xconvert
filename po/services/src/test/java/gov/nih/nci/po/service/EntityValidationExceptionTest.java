@@ -31,4 +31,12 @@ public class EntityValidationExceptionTest {
         EntityValidationException e = new EntityValidationException(errors);
         assertEquals("aaa=null\nbbb=[]", e.getErrorMessages());
     }
+    
+    @Test
+    public void getErrorMessages3() {
+        HashMap<String, String[]> errors = new HashMap<String, String[]>();
+        errors.put("aaa", null);
+        EntityValidationException e = new EntityValidationException("customMessage", errors);
+        assertEquals("aaa=null", e.getErrorMessages());
+    }
 }

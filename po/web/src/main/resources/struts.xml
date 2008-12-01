@@ -293,6 +293,21 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/roles/organizational/{1}/list.jsp</result>
         </action>  
+        
+        <!-- Person -> Edit/Curate -> Assign Person Roles -->
+        <action name="roles/person/*/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/roles/person/{1}/form.jsp</result>
+            <result name="success">/WEB-INF/jsp/roles/person/{1}/manage.jsp</result>
+        </action>
+        <action name="ajax/roles/person/*/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="changeCurrentChangeRequest">/WEB-INF/jsp/roles/person/{1}/roleCrInfo.jsp</result>
+        </action>
+        <action name="ajax/roles/person/*/results/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/roles/person/{1}/list.jsp</result>
+        </action>  
        
     </package>
 </struts>

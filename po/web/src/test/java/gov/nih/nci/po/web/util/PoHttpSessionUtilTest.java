@@ -3,6 +3,7 @@ package gov.nih.nci.po.web.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
@@ -61,6 +62,17 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
     public void testAddAttribute_SPSC() {
         StrutsPersonSearchCriteria x = new StrutsPersonSearchCriteria();
         StrutsPersonSearchCriteria y = new StrutsPersonSearchCriteria();
+        String resultX = PoHttpSessionUtil.addAttribute(x);
+        String resultY = PoHttpSessionUtil.addAttribute(y);
+        assertFalse(resultX.equals(resultY));
+        assertSame(x, PoHttpSessionUtil.getSession().getAttribute(resultX));
+        assertSame(y, PoHttpSessionUtil.getSession().getAttribute(resultY));
+    }
+    
+    @Test
+    public void testAddAttribute_CRS() {
+        ClinicalResearchStaff x = new ClinicalResearchStaff();
+        ClinicalResearchStaff y = new ClinicalResearchStaff();
         String resultX = PoHttpSessionUtil.addAttribute(x);
         String resultY = PoHttpSessionUtil.addAttribute(y);
         assertFalse(resultX.equals(resultY));
