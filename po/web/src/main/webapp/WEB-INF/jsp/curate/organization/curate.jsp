@@ -161,7 +161,7 @@
                 </c:url>
 	            <ul>
 	                <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a> (${hotResearchOrganizationCount} new of ${fn:length(organization.researchOrganizations)})</li>
-	                <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${hotIdentifiedOrganizationCount} new of {fn:length(organization.identifiedOrganizations)})</li>
+	                <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${hotIdentifiedOrganizationCount} new of ${fn:length(organization.identifiedOrganizations)})</li>
 	                <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a> (${hotOversightCommitteeCount} new of ${fn:length(organization.oversightCommittees)})</li>
                     <li><a href="${manageHcf}">Manage Health Care Facility</a> (${hotHealthCareFacilityCount} new of ${fn:length(organization.healthCareFacilities)})</li>
 	            </ul>
