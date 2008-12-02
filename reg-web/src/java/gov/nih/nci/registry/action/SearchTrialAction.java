@@ -99,6 +99,14 @@ public class SearchTrialAction extends ActionSupport {
             // put an entry in the session and getsummary4ReportedResource
             StudyResourcingDTO resourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                     .getsummary4ReportedResource(studyProtocolIi);
+            // get the organzation name
+            if (resourcingDTO != null) {
+                Organization o = new CorrelationUtils().
+                    getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
+                            getOrganizationIdentifier().getExtension()), null);
+                ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
+            }
+
             // put an entry in the session and avoid conflict using
             // NIH_INSTITUTE for now
             ServletActionContext.getRequest().setAttribute(Constants.NIH_INSTITUTE, resourcingDTO);
