@@ -168,10 +168,10 @@ BubbleTips.activateTipOn("dfn");
    		<input type="hidden" name="id" /> 
    		<display:table name="${eligibilityList}" id="row" class="data" sort="list"  pagesize="5" requestURI="interventionalStudyDesigneligibilityQuery.action" export="false">
 	    <display:column titleKey="isdesign.eligibilitycriteria.inclusionIndicator" property="inclusionIndicator" sortable="true" headerClass="sortable" />
-	    <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="descriptionText" sortable="true" headerClass="sortable" />
+	    <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="textDescription" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriterianame" property="criterionName"  sortable="true" headerClass="sortable" />
 	    <display:column titleKey="isdesign.eligibilitycriteria.operator" property="operator" sortable="true" headerClass="sortable" />
-	    <display:column titleKey="isdesign.eligibilitycriteria.value" property="ageValue"  sortable="true" headerClass="sortable" />
+	    <display:column titleKey="isdesign.eligibilitycriteria.value" property="value"  sortable="true" headerClass="sortable" />
 	    <display:column titleKey="isdesign.eligibilitycriteria.unit" property="unit" sortable="true" headerClass="sortable" />
 	    <display:column title="Edit" class="action">
     		<s:url id="url" action="eligibilityCriteriaedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>

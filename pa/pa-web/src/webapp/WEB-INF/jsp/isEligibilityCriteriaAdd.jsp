@@ -26,14 +26,14 @@ if (input_box==true){
  }
 } 
 function activate(){
-	var input="webDTO.descriptionText";
+	var input="webDTO.textDescription";
   	var inputElement = document.forms[0].elements[input];
 
 	var criterionName="webDTO.criterionName";
   	var cnElement = document.forms[0].elements[criterionName];
 	var operator="webDTO.operator";
   	var opElement = document.forms[0].elements[operator];
-	var ageValue="webDTO.ageValue";
+	var ageValue="webDTO.value";
   	var avElement = document.forms[0].elements[ageValue];
 	var unit="webDTO.unit";
   	var uElement = document.forms[0].elements[unit];
@@ -91,7 +91,7 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/> </dfn></label>
 					</td>
 					<td class="value">
-						<s:textarea name="webDTO.descriptionText" rows="4" cssStyle="width:400px" onblur="activate()" />
+						<s:textarea name="webDTO.textDescription" rows="4" cssStyle="width:400px" onblur="activate()" />
 					</td>
 				</tr>  
 				<tr>
@@ -122,7 +122,7 @@ BubbleTips.activateTipOn("dfn");
                      	</label>
                     </td>
                     <td class="value">
-					 	<s:textfield name="webDTO.ageValue" maxlength="12" cssStyle="width:100px" />
+					 	<s:textfield name="webDTO.value" maxlength="12" cssStyle="width:100px" />
                       </td>
                  </tr>
                  <tr>
