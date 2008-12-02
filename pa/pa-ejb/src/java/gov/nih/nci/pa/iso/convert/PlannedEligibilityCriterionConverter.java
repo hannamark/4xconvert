@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
@@ -32,8 +33,14 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.valueOf(pec.getInclusionIndicator())));
        pecDTO.setOperator(StConverter.convertToSt(pec.getOperator()));
        pecDTO.setEligibleGenderCode(CdConverter.convertToCd(pec.getEligibleGenderCode()));
-       pecDTO.setAgeValue(StConverter.convertToSt(pec.getAgeValue()));
-       pecDTO.setUnit(CdConverter.convertToCd(pec.getUnit()));
+       Pq pq = new Pq();       
+       pq.setValue(pec.getValue()); 
+       if (pec.getUnit() != null) {
+         pq.setUnit(pec.getUnit().getCode());
+       }
+       pecDTO.setValue(pq);
+       //pecDTO.setValue(PqvConverter.convertToPqv(pec.getValue()));
+       //pecDTO.setUnit(CdConverter.convertToCd(pec.getUnit()));
        return pecDTO;
    }
 
@@ -50,8 +57,12 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pec.setOperator(StConverter.convertToString(pecDTO.getOperator()));
        pec.setEligibleGenderCode(EligibleGenderCode.getByCode(
                CdConverter.convertCdToString(pecDTO.getEligibleGenderCode())));
-       pec.setAgeValue(StConverter.convertToString(pecDTO.getAgeValue()));
-       pec.setUnit(UnitsCode.getByCode(CdConverter.convertCdToString(pecDTO.getUnit())));
+       //pec.setAgeValue(StConverter.convertToString(pecDTO.getAgeValue()));
+       //pec.setUnit(UnitsCode.getByCode(CdConverter.convertCdToString(pecDTO.getUnit())));
+       if (pecDTO.getValue() != null) {
+         pec.setValue(pecDTO.getValue().getValue());
+         pec.setUnit(UnitsCode.getByCode(pecDTO.getValue().getUnit()));
+       }
        return pec;
    }
 }

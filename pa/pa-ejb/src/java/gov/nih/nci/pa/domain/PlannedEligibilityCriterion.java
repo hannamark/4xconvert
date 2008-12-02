@@ -3,6 +3,8 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -23,7 +25,7 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     private Boolean inclusionIndicator;
     private String criterionName;
     private String operator;
-    private String ageValue;
+    private BigDecimal value;
     private UnitsCode unit;
     private EligibleGenderCode eligibleGenderCode;
     /**
@@ -95,16 +97,17 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
         this.unit = unit;
     }
     /**
-     * @return ageValue
+     * @return value
      */
-    @Column(name = "AGEVALUE")
-    public String getAgeValue() {
-        return ageValue;
+    @Column(name = "VALUE")
+    public BigDecimal getValue() {
+      return value;
     }
     /**
-     * @param ageValue ageValue
+     * @param value value
      */
-    public void setAgeValue(String ageValue) {
-        this.ageValue = ageValue;
+    public void setValue(BigDecimal value) {
+      this.value = value;
     }
+    
 }

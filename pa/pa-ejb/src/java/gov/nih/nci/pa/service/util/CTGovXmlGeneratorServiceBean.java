@@ -362,7 +362,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StringBuffer sb = new StringBuffer();
         for (PlannedEligibilityCriterionDTO paEC : paECs) {
 //            criterionName = StConverter.convertToString(paEC.getCriterionName());
-            descriptionText  = StConverter.convertToString(paEC.getDescriptionText());
+            descriptionText  = StConverter.convertToString(paEC.getTextDescription());
 //            if (criterionName != null && criterionName.equalsIgnoreCase("GENDER") 
 //                    && paEC.getEligibleGenderCode() != null) {
 //                genderCode = paEC.getEligibleGenderCode().getCode();

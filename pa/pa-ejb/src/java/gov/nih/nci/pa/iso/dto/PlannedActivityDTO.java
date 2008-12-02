@@ -18,7 +18,7 @@ public class PlannedActivityDTO extends StudyDTO {
     private Ii interventionIdentifier;
     private Bl leadProductIndicator;
     private Cd subcategoryCode;
-    private St descriptionText; 
+    private St textDescription; 
     /**
      * @return the categoryCode
      */
@@ -68,15 +68,15 @@ public class PlannedActivityDTO extends StudyDTO {
         this.subcategoryCode = subcategoryCode;
     }
     /**
-     * @return descriptionText
+     * @return textDescription
      */
-    public St getDescriptionText() {
-        return descriptionText;
+    public St getTextDescription() {
+      return textDescription;
     }
     /**
-     * @param descriptionText descriptionText
+     * @param textDescription textDescription
      */
-    public void setDescriptionText(St descriptionText) {
-        this.descriptionText = descriptionText;
-    }
+    public void setTextDescription(St textDescription) {
+      this.textDescription = textDescription;
+    }    
 }

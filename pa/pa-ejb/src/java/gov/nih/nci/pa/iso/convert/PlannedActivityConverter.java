@@ -59,7 +59,7 @@ public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
             dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
         }
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
-        dto.setDescriptionText(StConverter.convertToSt(bo.getDescriptionText()));
+        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;
     }
 
@@ -89,7 +89,7 @@ public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(ActivitySubcategoryCode.
                 getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
-        bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
+        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }
 

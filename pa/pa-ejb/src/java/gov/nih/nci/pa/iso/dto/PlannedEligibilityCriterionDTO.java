@@ -2,6 +2,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 /**
  *
@@ -16,8 +17,7 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
     private Bl inclusionIndicator;
     private St criterionName;
     private St operator;
-    private St ageValue;
-    private Cd unit;
+    private Pq value;
     private Cd eligibleGenderCode;
     /**
      * @return inclusionIndicator
@@ -68,27 +68,15 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
         this.eligibleGenderCode = eligibleGenderCode;
     }
     /**
-     * @return ageValue
+     * @return value
      */
-    public St getAgeValue() {
-        return ageValue;
+    public Pq getValue() {
+      return value;
     }
     /**
-     * @param ageValue ageValue
+     * @param value value
      */
-    public void setAgeValue(St ageValue) {
-        this.ageValue = ageValue;
-    }
-    /**
-     * @return unit
-     */
-    public Cd getUnit() {
-        return unit;
-    }
-    /**
-     * @param unit unit
-     */
-    public void setUnit(Cd unit) {
-        this.unit = unit;
-    }
+    public void setValue(Pq value) {
+      this.value = value;
+    }        
 }

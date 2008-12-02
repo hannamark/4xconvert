@@ -268,9 +268,9 @@ public class PlannedActivityServiceBean
                 bo.setOperator(delta.getOperator());
                 bo.setCategoryCode(delta.getCategoryCode());
                 bo.setEligibleGenderCode(delta.getEligibleGenderCode());
-                bo.setAgeValue(delta.getAgeValue());
+                bo.setValue(delta.getValue());
                 bo.setUnit(delta.getUnit());
-                bo.setDescriptionText(delta.getDescriptionText()); 
+                bo.setTextDescription(delta.getTextDescription()); 
                 bo.setUserLastUpdated(delta.getUserLastCreated());
             }
             bo.setDateLastUpdated(new Date());

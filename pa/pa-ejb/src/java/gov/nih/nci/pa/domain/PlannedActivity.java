@@ -40,7 +40,7 @@ public class PlannedActivity extends Activity {
     private ActivitySubcategoryCode subcategoryCode; 
     private Boolean leadProductIndicator;
     private Intervention intervention;
-    private String descriptionText;
+    private String textDescription;
  
     private Collection<Arm> arms = new ArrayList<Arm>();
     
@@ -116,16 +116,16 @@ public class PlannedActivity extends Activity {
         this.arms = arms;
     }
     /**
-     * @return the descriptionText
+     * @return textDescription
      */
-    @Column(name = "DESCRIPTION_TEXT")
-    public String getDescriptionText() {
-        return descriptionText;
+    @Column(name = "TEXT_DESCRIPTION")
+    public String getTextDescription() {
+      return textDescription;
     }
     /**
-     * @param descriptionText the descriptionText to set
+     * @param textDescription textDescription
      */
-    public void setDescriptionText(String descriptionText) {
-        this.descriptionText = descriptionText;
+    public void setTextDescription(String textDescription) {
+      this.textDescription = textDescription;
     }
 }
