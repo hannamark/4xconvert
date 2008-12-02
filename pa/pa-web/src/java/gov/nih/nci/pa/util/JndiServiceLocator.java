@@ -114,15 +114,6 @@ public class JndiServiceLocator implements ServiceLocator {
         return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
     }
 
-    /** 
-     * @return OrganizationEntityServiceRemote
-     * @throws PAException on error
-     */
-    public OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                + "/po/OrganizationEntityServiceBean/remote";
-        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
-    }
 
     /**
      * @return LookUpTableServiceRemote
@@ -170,15 +161,6 @@ public class JndiServiceLocator implements ServiceLocator {
         return (DocumentServiceRemote) JNDIUtil.lookup("pa/DocumentServiceBean/remote");
     }
 
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-            + "/po/HealthCareFacilityCorrelationServiceBean/remote";
-        return (HealthCareFacilityCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
-    }
     
     /**
      * @return SubGroupsService
@@ -187,24 +169,7 @@ public class JndiServiceLocator implements ServiceLocator {
         return (SubGroupsServiceRemote) JNDIUtil.lookup("pa/SubGroupsServiceBean/remote");
     }
     
-    /**
-     * @return PersonEntityServiceRemote
-     * @throws PAException on error
-     */
-    public PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
-        return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
-    }    
     
-    /**
-     * @return HealthCareProviderCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/po/HealthCareProviderCorrelationServiceBean/remote";
-        return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
-    } 
     
     /**
      * @return PAHealthCareProviderRemote
@@ -256,6 +221,53 @@ public class JndiServiceLocator implements ServiceLocator {
         return (ArmServiceRemote) JNDIUtil.lookup("pa/ArmServiceBean/remote");
     }
     /**
+     * @return CTGovXmlGeneratorServiceRemote
+     * @throws PAException e
+     */
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService()  
+    throws PAException { 
+        return (CTGovXmlGeneratorServiceRemote) JNDIUtil.lookup("/pa/CTGovXmlGeneratorServiceBean/remote");
+    }
+    /**
+     * @return AbstractionCompletionServiceRemote
+     * @throws PAException e
+     */
+    public AbstractionCompletionServiceRemote getAbstractionCompletionService()  
+    throws PAException { 
+        return (AbstractionCompletionServiceRemote) JNDIUtil.lookup("/pa/AbstractionCompletionServiceBean/remote");
+    }
+
+
+    /** 
+     * @return OrganizationEntityServiceRemote
+     * @throws PAException on error
+     */
+    public OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                + "/po/OrganizationEntityServiceBean/remote";
+        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+            + "/po/HealthCareFacilityCorrelationServiceBean/remote";
+        return (HealthCareFacilityCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * @return PersonEntityServiceRemote
+     * @throws PAException on error
+     */
+    public PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
+        return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }    
+
+    /**
      * @return HealthCareFacilityCorrelationServiceRemote
      * @throws PAException e
      */
@@ -265,27 +277,15 @@ public class JndiServiceLocator implements ServiceLocator {
             + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
         return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
-    /**
-     * @return CTGovXmlGeneratorServiceRemote
-     * @throws PAException e
-     */
-    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService()  
-    throws PAException { 
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-            + "/pa/CTGovXmlGeneratorServiceBean/remote";
-        return (CTGovXmlGeneratorServiceRemote) JNDIUtil.lookup(serverInfo);
-    }
-    /**
-     * @return AbstractionCompletionServiceRemote
-     * @throws PAException e
-     */
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService()  
-    throws PAException { 
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-            + "/pa/AbstractionCompletionServiceBean/remote";
-        return (AbstractionCompletionServiceRemote) JNDIUtil.lookup(serverInfo);
-    }
 
-
+    /**
+     * @return HealthCareProviderCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+                                + "/po/HealthCareProviderCorrelationServiceBean/remote";
+        return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    } 
 
 }
