@@ -16,9 +16,4 @@
         href="studyProtocolview.action" property="action"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
-    
-    <display:column titleKey="studyProtocol.generateXML"  >
-        <s:a href="#" onclick="generateReport('${row.studyProtocolId}');">Generate XML</s:a>
-    </display:column>
-
 </display:table>

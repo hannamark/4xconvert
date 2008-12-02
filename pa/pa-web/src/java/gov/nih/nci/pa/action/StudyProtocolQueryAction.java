@@ -4,18 +4,13 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
@@ -28,20 +23,10 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField",
         "PMD.SingularField" })
 @Validation
-public class StudyProtocolQueryAction extends ActionSupport implements
-        ServletResponseAware {
+public class StudyProtocolQueryAction extends ActionSupport {
     private List<StudyProtocolQueryDTO> records = null;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
-    private HttpServletResponse servletResponse;
-    private static final String DISPLAY_XML = "displayXML";
-
-    /**
-     * @return the servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
 
     /**
      * @return res
@@ -72,55 +57,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements
         }
     }
 
-    /**
-     * @return res
-     */
-    public String generateXML() {
-        try {
-            String pId = (String) ServletActionContext.getRequest()
-                    .getParameter("studyProtocolId");
-            if (pId == null) {
-                return DISPLAY_XML;
-            }
-            
-            PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                Long.valueOf(pId));
-            
-            String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
-                    .convertToIi(studyProtocolId));
-            servletResponse.setContentType("application/xml");
-            servletResponse.setContentLength(xmlData.length());
-            ServletOutputStream out = servletResponse.getOutputStream();
-            out.write(xmlData.getBytes());
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            return DISPLAY_XML;
-        }
-        return DISPLAY_XML;
-    }
-
-//    /**
-//     * @return res
-//     */
-//    public String proMsg() {
-//            String ii = (String) ServletActionContext.getRequest()
-//                    .getParameter("Ii");
-//            
-//            try {
-////                PoPaServiceBeanLookup.getOrganizationSynchronizationService().synchronizeOrganization(
-////                        IiConverter.converToPoOrganizationIi(oId));
-////              PoPaServiceBeanLookup.getOrganizationSynchronizationService().synchronizeHealthCareFacility(
-////                          IiConverter.converToPoHealthCareFacilityIi(ii));
-//              PoPaServiceBeanLookup.getOrganizationSynchronizationService().synchronizeOversightCommittee(
-//                      IiConverter.converToPoOversightCommitteeIi(ii));
-//
-//            } catch (PAException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//            return SUCCESS;
-//    }
 
     /**
      * 
@@ -183,25 +119,5 @@ public class StudyProtocolQueryAction extends ActionSupport implements
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
-    }
-
-    /**
-     * 
-     * @return res
-     */
-    public String displayReportingXML() {
-        String pId = (String) ServletActionContext.getRequest().getParameter(
-                "studyProtocolId");
-        ServletActionContext.getRequest().setAttribute(
-                "protocolIdForXmlGeneration", pId);
-        return DISPLAY_XML;
-    }
-
-    /**
-     * @param response
-     *            servletResponse
-     */
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
     }
 }

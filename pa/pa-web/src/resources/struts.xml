@@ -73,7 +73,7 @@
 			<result name="criteria">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
 			<result name="design">/WEB-INF/jsp/designDetails.jsp</result>
 		</action>		
-        <action name="ajaxStudyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
+        <action name="ajaxCTGov*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <result name="displayXML">/WEB-INF/jsp/nodecorate/displayReportingXML.jsp</result>
         </action>
 

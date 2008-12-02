@@ -49,13 +49,12 @@ public class DocumentWorkflowStatusServiceBeanTest {
   @Test
   public void create() throws Exception {
     DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
-      dto.setStudyProtocolIi(pid);
+      dto.setStudyProtocolIdentifier(pid);
       dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
       dto.setCommonText(StConverter.convertToSt("Common text"));
       DocumentWorkflowStatusDTO dto2 = null;
       dto2 = new DocumentWorkflowStatusDTO();
       dto2 = remoteEjb.create(dto);
-      assertEquals(dto.getStudyProtocolIi()
-              , pid);
+      assertEquals(dto.getStudyProtocolIdentifier() , pid);
   }
 }

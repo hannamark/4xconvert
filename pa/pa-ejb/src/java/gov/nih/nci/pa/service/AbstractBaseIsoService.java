@@ -202,6 +202,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @throws PAException exception
      */
     protected void serviceError(String errMsg) throws PAException {
+        logger.debug(errMsg);
         throw new PAException(errMsg);
     }
     
@@ -211,6 +212,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @throws PAException exception
      */
     protected void serviceError(String errMsg, Throwable t) throws PAException {
+        logger.debug(errMsg, t);
         throw new PAException(errMsg, t);
     }    
 }

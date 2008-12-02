@@ -169,12 +169,12 @@ public class TrialValidationAction extends ActionSupport {
                   if (!PAUtil.isEmpty(actionName) && actionName.equalsIgnoreCase("Accept")) {
                       documentWorkflowStatusDTO.setStatusCode(CdConverter.convertToCd(
                               DocumentWorkflowStatusCode.ACCEPTED));
-                      documentWorkflowStatusDTO.setStatusDateRangeLow(TsConverter.convertToTs(
+                      documentWorkflowStatusDTO.setStatusDateRange(TsConverter.convertToTs(
                               new Timestamp(new Date().getTime())));
                   } else {
                       documentWorkflowStatusDTO.setStatusCode(CdConverter.convertToCd(
                               DocumentWorkflowStatusCode.REJECTED));
-                      documentWorkflowStatusDTO.setStatusDateRangeLow(TsConverter.convertToTs(
+                      documentWorkflowStatusDTO.setStatusDateRange(TsConverter.convertToTs(
                               new Timestamp(new Date().getTime())));
                   } 
                   PaRegistry.getDocumentWorkflowStatusService().update(documentWorkflowStatusDTO);  

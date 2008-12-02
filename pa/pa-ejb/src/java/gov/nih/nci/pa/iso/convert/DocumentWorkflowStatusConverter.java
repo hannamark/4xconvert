@@ -28,7 +28,7 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         dwsDTO.setIdentifier(IiConverter.convertToIi(dws.getId()));
         dwsDTO.setCommonText(StConverter.convertToSt(dws.getCommonText()));
         dwsDTO.setStatusCode(CdConverter.convertToCd(dws.getStatusCode()));
-        dwsDTO.setStudyProtocolIi(IiConverter.convertToIi(dws.getStudyProtocol().getId()));
+        dwsDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dws.getStudyProtocol().getId()));
         return dwsDTO;
     }
 
@@ -42,7 +42,7 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
 
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dwsDTO.getStudyProtocolIi()));
+        spBo.setId(IiConverter.convertToLong(dwsDTO.getStudyProtocolIdentifier()));
         dws.setDateLastUpdated(new Date());
         dws.setStudyProtocol(spBo);
         if (dwsDTO.getCommonText() != null) {
