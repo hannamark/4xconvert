@@ -69,6 +69,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.YesNoCode;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -200,6 +201,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION");
                         statement.executeUpdate("delete from DOCUMENT");
+                        statement.executeUpdate("delete from STUDY_RESOURCING");
                         statement.executeUpdate("delete from STRATUM_GROUP");
                         statement.executeUpdate("delete from STUDY_DISEASE");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
@@ -509,7 +511,7 @@ public class TestSchema {
             pec.setInclusionIndicator(Boolean.TRUE);
             pec.setOperator(">");
             pec.setStudyProtocol(sp);
-            pec.setAgeValue("14");
+            pec.setValue(new BigDecimal("14"));
             pec.setUnit(UnitsCode.MONTHS);
             addUpdObject(pec);
             

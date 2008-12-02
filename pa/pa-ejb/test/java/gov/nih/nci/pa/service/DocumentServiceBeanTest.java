@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DocumentServiceBeanTest {
-    private DocumentServiceRemote remoteEjb = new DocumentServiceBean();;
+    private DocumentServiceRemote remoteEjb = new DocumentServiceBean();
     Ii pid;
 
     @Before

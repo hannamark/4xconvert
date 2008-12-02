@@ -8,9 +8,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -21,6 +21,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.Before;
@@ -121,7 +122,7 @@ public class PlannedActivityServiceTest {
             assertEquals(dto.getCriterionName().getValue()
                     , dto2.getCriterionName().getValue());
 
-         remoteEjb.delete(dto.getIdentifier());
+         remoteEjb.deletePlannedEligibilityCriterion(dto.getIdentifier());
     }
 
     @Test
@@ -131,8 +132,10 @@ public class PlannedActivityServiceTest {
         dto.setCriterionName(StConverter.convertToSt("WHC"));
         dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setOperator(StConverter.convertToSt(">"));
-        dto.setAgeValue(StConverter.convertToSt("80"));
-        dto.setUnit(CdConverter.convertToCd(UnitsCode.YEARS));
+        Pq pq = new Pq();
+        pq.setValue(new BigDecimal("80"));
+        pq.setUnit(UnitsCode.YEARS.getCode());
+        dto.setValue(pq);
         PlannedEligibilityCriterionDTO dto2 = null;
         dto2 = new PlannedEligibilityCriterionDTO();
         dto2 = remoteEjb.createPlannedEligibilityCriterion(dto);

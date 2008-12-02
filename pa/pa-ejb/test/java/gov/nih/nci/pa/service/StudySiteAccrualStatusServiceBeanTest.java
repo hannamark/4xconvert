@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -33,8 +34,22 @@ public class StudySiteAccrualStatusServiceBeanTest {
 
     List<StudySiteAccrualStatusDTO> dto =
       remoteEjb.getCurrentStudySiteAccrualStatusByStudyParticipation(statusList.get(0).getStudyParticipationIi());
-    assertEquals(statusList.size(), dto.size());      
+    assertEquals(statusList.size(), dto.size());   
+    
+    StudySiteAccrualStatusDTO dto2 = null;
+    try {
+        dto2 = new StudySiteAccrualStatusDTO();
+        remoteEjb.updateStudySiteAccrualStatus(dto2);
+    } catch(PAException e) {
+        // expected behavior
+    }
+  
+  try {
+      remoteEjb.getStudySiteAccrualStatus(null);
+  } catch(PAException e) {
+      // expected behavior
   }
+}
 
   @Test
   public void create() throws Exception {
