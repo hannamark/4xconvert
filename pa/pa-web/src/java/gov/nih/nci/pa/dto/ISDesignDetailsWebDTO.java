@@ -30,9 +30,9 @@ public class ISDesignDetailsWebDTO {
     private String criterionName;
     private String inclusionIndicator;
     private String operator;
-    private String ageValue;
+    private String value;
     private String unit;
-    private String descriptionText;
+    private String textDescription;
     
     /**
      * @return primaryPurposeCode
@@ -262,19 +262,7 @@ public class ISDesignDetailsWebDTO {
      */
     public void setOperator(String operator) {
         this.operator = operator;
-    }
-    /**
-     * @return ageValue
-     */
-    public String getAgeValue() {
-        return ageValue;
-    }
-    /**
-     * @param ageValue ageValue
-     */
-    public void setAgeValue(String ageValue) {
-        this.ageValue = ageValue;
-    }
+    }    
     /**
      * @return unit
      */
@@ -288,15 +276,28 @@ public class ISDesignDetailsWebDTO {
         this.unit = unit;
     }
     /**
-     * @return descriptionText
+     * @return value
      */
-    public String getDescriptionText() {
-        return descriptionText;
+    public String getValue() {
+      return value;
     }
     /**
-     * @param descriptionText descriptionText
+     * @param value value
      */
-    public void setDescriptionText(String descriptionText) {
-        this.descriptionText = descriptionText;
+    public void setValue(String value) {
+      this.value = value;
     }
+    /**
+     * @return textDescription
+     */
+    public String getTextDescription() {
+      return textDescription;
+    }
+    /**
+     * @param textDescription textDescription
+     */
+    public void setTextDescription(String textDescription) {
+      this.textDescription = textDescription;
+    }
+    
 }
