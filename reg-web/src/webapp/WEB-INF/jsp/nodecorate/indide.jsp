@@ -37,12 +37,20 @@
 		var number = document.getElementById('indidenumber').value;
 		number = trim(number);
 		if( number == "") {
-			alert("Invalid IND/IDE number")
+			alert("Please enter an IND/IDE number")
 			return false;
 		}
 		var grantor = document.getElementById('SubCat').value;
 		var holdertype = document.getElementById('holderType').value;
 		var programcode;
+		if ((document.getElementById('programcodenciselectedvalue').value == '') && (holdertype == 'NCI') ) {
+			alert("Please select a Division/Program Code");
+			return false;
+		}
+		if ((document.getElementById('programcodenihselectedvalue').value == '') && (holdertype == 'NIH') ) {
+			alert("Please select a NIH Institution");
+			return false;
+		}
 		if( document.getElementById('programcodenihselectedvalue').value != '' ) {
 			programcode = document.getElementById('programcodenihselectedvalue').value
 		}else {
