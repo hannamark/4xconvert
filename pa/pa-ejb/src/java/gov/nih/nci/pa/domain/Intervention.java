@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
@@ -43,6 +44,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      */
     @Column(name = "NAME")
     @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @NotNull
     public String getName() {
         return name;
     }
@@ -57,6 +59,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      */
     @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
+    @NotNull
     public InterventionTypeCode getTypeCode() {
         return typeCode;
     }

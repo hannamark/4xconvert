@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
@@ -32,6 +33,7 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
      */
     @Column(name = "NAME")
     @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @NotNull
     public String getName() {
         return name;
     }
@@ -46,6 +48,7 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
      */
     @ManyToOne
     @JoinColumn(name = "INTERVENTION_ID")
+    @NotNull
     public Intervention getIntervention() {
         return intervention;
     }

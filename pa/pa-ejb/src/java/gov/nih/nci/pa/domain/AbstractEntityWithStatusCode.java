@@ -49,6 +49,7 @@ public abstract class AbstractEntityWithStatusCode<ENUM> extends AbstractEntity 
      * @return statusDateRangeLow
      */
     @Column(name = "STATUS_DATE_RANGE_LOW")
+    @NotNull
     public Timestamp getStatusDateRangeLow() {
         return statusDateRangeLow;
     }

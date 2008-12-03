@@ -4,8 +4,10 @@ DELETE FROM organization
 ;
 DELETE FROM person
 ;
-INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001','InterventionalStudyProtocol' );
-INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type )  values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00001','ObservationalStudyProtocol' );
+INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE )  
+    values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001','InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED');
+INSERT INTO study_protocol (id, identifier,official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE )  
+    values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00001','ObservationalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED');
 
 
 

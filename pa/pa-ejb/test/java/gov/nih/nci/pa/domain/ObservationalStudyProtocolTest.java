@@ -3,10 +3,11 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
-import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
 
@@ -63,8 +64,10 @@ public class ObservationalStudyProtocolTest {
         osp.setBiospecimenDescription("BiospecimenDescription");
         osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.RETAINED);
         osp.setNumberOfGroups(4);
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        osp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        osp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        osp.setStartDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        osp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         osp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
         osp.setUserLastUpdated("Abstractor");
         

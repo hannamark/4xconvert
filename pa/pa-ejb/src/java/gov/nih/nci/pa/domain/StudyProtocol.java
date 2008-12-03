@@ -22,6 +22,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.NotNull;
 
 /**
  * An action plan and execution of a pre-clinical or clinical study including
@@ -288,6 +289,7 @@ public class StudyProtocol extends AbstractEntity {
      * @return primaryCompletionDate
      */
     @Column(name = "PRI_COMPL_DATE")
+    @NotNull
     public Timestamp getPrimaryCompletionDate() {
         return primaryCompletionDate;
     }
@@ -306,6 +308,7 @@ public class StudyProtocol extends AbstractEntity {
      */
     @Column(name = "PRI_COMPL_DATE_TYPE_CODE")
     @Enumerated(EnumType.STRING)
+    @NotNull
     public ActualAnticipatedTypeCode getPrimaryCompletionDateTypeCode() {
         return primaryCompletionDateTypeCode;
     }
@@ -323,6 +326,7 @@ public class StudyProtocol extends AbstractEntity {
      * @return startDate
      */
     @Column(name = "START_DATE")
+    @NotNull
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -341,6 +345,7 @@ public class StudyProtocol extends AbstractEntity {
      */
     @Column(name = "START_DATE_TYPE_CODE")
     @Enumerated(EnumType.STRING)
+    @NotNull
     public ActualAnticipatedTypeCode getStartDateTypeCode() {
         return startDateTypeCode;
     }

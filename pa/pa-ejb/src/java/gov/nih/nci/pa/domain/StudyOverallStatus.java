@@ -10,6 +10,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.validator.NotNull;
+
 /**
  * Describes the comprehensive state of the study.
  * 
@@ -50,6 +52,7 @@ public class StudyOverallStatus extends AbstractStudyEntity {
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
+    @NotNull
     public StudyStatusCode getStatusCode() {
         return statusCode;
     }
@@ -65,6 +68,7 @@ public class StudyOverallStatus extends AbstractStudyEntity {
      * @return statusDate
      */
     @Column(name = "STATUS_DATE")
+    @NotNull
     public Timestamp  getStatusDate() {
         return statusDate;
     }

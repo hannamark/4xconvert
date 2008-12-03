@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -94,7 +95,7 @@ public class StudyOverallStatusServiceTest {
     @Test
     public void createTest() throws Exception {
         // simulate creating new protocol using registry
-        StudyProtocol spNew = new StudyProtocol();
+        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
         spNew.setOfficialTitle("New Protocol");
         TestSchema.addUpdObject(spNew);
         
@@ -111,7 +112,7 @@ public class StudyOverallStatusServiceTest {
     
     @Test
     public void nullInDateTest() throws Exception {
-        StudyProtocol spNew = new StudyProtocol();
+        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
         spNew.setOfficialTitle("New Protocol");
         TestSchema.addUpdObject(spNew);
         
