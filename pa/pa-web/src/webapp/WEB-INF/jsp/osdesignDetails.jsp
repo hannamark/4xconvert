@@ -37,7 +37,16 @@ function handleAction(){
 function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
-	}
+}
+function maxLength(field,maxChars)
+ {
+ var input=field;
+  	var inputElement = document.forms[0].elements[input];  	
+       if(inputElement.value.length >= maxChars) {
+		  alert("more than " +maxChars + " chars");
+       }
+ }  
+
 </SCRIPT>
 <body>
 <h1><fmt:message key="osdesign.details.title"/></h1>
@@ -67,7 +76,7 @@ function tooltip() {
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="osdesign.details.study.model.other"/></dfn><span class="required">*</span></label></td>
 		<td>
-			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2"/>
+			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" onblur='return maxLength("webDTO.studyModelOtherText","200");' />
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyModelOtherText</s:param>
@@ -81,7 +90,7 @@ function tooltip() {
         <s:set name="timePerspectiveCodeValues" value="@gov.nih.nci.pa.enums.TimePerspectiveCode@getDisplayNames()" />
         <td>
         	<s:select headerKey="" headerValue="" name="webDTO.timePerspectiveCode" list="#timePerspectiveCodeValues" 
-				value="webDTO.timePerspectiveCode" cssStyle="width:106px" onchange="activate()" />
+				value="webDTO.timePerspectiveCode" cssStyle="width:126px" onchange="activate()" />
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.timePerspectiveCode</s:param>
@@ -93,7 +102,7 @@ function tooltip() {
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="osdesign.details.time.perspective.comment"/></dfn><span class="required">*</span></label></td>
 		<td>
-			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px" />
+			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px" onblur='return maxLength("webDTO.timePerspectiveOtherText","200");'/>
 			<span class="formErrorMsg"> 
 				<s:fielderror>
                		<s:param>webDTO.timePerspectiveOtherText</s:param>
@@ -155,7 +164,9 @@ function tooltip() {
 <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">			
-			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>			
+			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+			<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+			<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>			
 		</ul>	
 	</del>
 </div>
