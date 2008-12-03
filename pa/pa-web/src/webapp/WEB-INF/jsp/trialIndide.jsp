@@ -59,8 +59,8 @@ function handleDelete(studyProtocolIi){
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li><s:a href="trialIndide.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-                    <li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-                    <li><a href="participatingOrganizations.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+                    <li><a href="irb.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+                    <li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
                 </ul>   
             </del>
         </div>

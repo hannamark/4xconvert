@@ -99,10 +99,10 @@ function handleCreateGroup(){
             <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </s:elseif>
-        <li><a href="eligibilityCriteriaquery.action" class="btn"
+        <li><a href="trialInterventions.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>
-        <li><a href="trialInterventions.action" class="btn"
+        <li><a href="subGroupsquery.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="next">Next</span></span></a></li>
     </ul>
