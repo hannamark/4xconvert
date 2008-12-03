@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
@@ -113,6 +114,7 @@ import org.hibernate.annotations.Where;
 @Table(appliesTo = "IdentifiedPerson", indexes = {
         @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
                 columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
+@RoleStatusChange
 public class IdentifiedPerson extends AbstractIdentifiedPerson implements Correlation {
     private static final long serialVersionUID = 1L;
 

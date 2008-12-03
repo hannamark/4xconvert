@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The COPPA PO
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This COPPA PO Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the COPPA PO Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the COPPA PO Software; (ii) distribute and
+ * have distributed to and by third parties the COPPA PO Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,87 +80,88 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.Searchable;
 
-import java.util.HashSet;
-import java.util.Set;
+import gov.nih.nci.po.data.bo.CuratableRole;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.PlayedRole;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.bo.ScopedRole;
+import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import org.hibernate.mapping.Property;
+import org.hibernate.validator.PropertyConstraint;
+import org.hibernate.validator.Validator;
 
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
-import org.hibernate.annotations.Where;
 
 /**
- * @author Scott Miller
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.IdentifiedOrganizationDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization"
- *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ * check the player and scoper entity status.
  */
-@Entity
-@Table(appliesTo = "IdentifiedPerson", indexes = {
-        @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
-                columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
-@RoleStatusChange
-public class IdentifiedOrganization extends AbstractIdentifiedOrganization implements Correlation {
+public class RoleStatusChangeValidator
+        implements Validator<RoleStatusChange>, PropertyConstraint, Serializable {
+
     private static final long serialVersionUID = 1L;
 
-    private Set<IdentifiedOrganizationCR> changeRequests = new HashSet<IdentifiedOrganizationCR>();
-
-    private IdentifiedOrganization duplicateOf;
-
     /**
      * {@inheritDoc}
      */
-    @OneToMany(mappedBy = "target")
-    @Where(clause = "processed = 'false'")
-    public Set<IdentifiedOrganizationCR> getChangeRequests() {
-        return changeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setChangeRequests(Set<IdentifiedOrganizationCR> changeRequests) {
-        this.changeRequests = changeRequests;
+    public void initialize(RoleStatusChange params) {
+        // do nothing
     }
 
     /**
      * {@inheritDoc}
      */
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "io_duplicateof_idx")
-    @ForeignKey(name = "IO_DUPLICATE_IO_FK")
-    public IdentifiedOrganization getDuplicateOf() {
-        return duplicateOf;
+    public boolean isValid(Object value) {
+        if (!(value instanceof CuratableRole)) {
+            return false;
+        }
+        boolean scoperOk = !(value instanceof ScopedRole)
+                || isValidScoper((ScopedRole) value);
+        boolean playerOk = !(value instanceof PlayedRole)
+                || isValidPlayer((PlayedRole) value);
+        return scoperOk && playerOk;
     }
 
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(IdentifiedOrganization duplicateOf) {
-        this.duplicateOf = duplicateOf;
+    private boolean isValidScoper(ScopedRole role) {
+        if (role.getScoper() == null) {
+            return false;
+        }
+        RoleStatus roleStatus = ((CuratableRole) role).getStatus();
+        return isValid(role.getScoper().getStatusCode(), roleStatus);
+    }
+
+    private boolean isValidPlayer(PlayedRole role) {
+        if (role.getPlayer() == null) {
+            return false;
+        }
+        RoleStatus roleStatus = ((CuratableRole) role).getStatus();
+        return isValid(role.getPlayer().getStatusCode(), roleStatus);
+    }
+
+    private boolean isValid(EntityStatus entityStatus, RoleStatus roleStatus) {
+        switch (entityStatus) {
+            case INACTIVE:
+                return roleStatus == RoleStatus.SUSPENDED
+                    || roleStatus == RoleStatus.NULLIFIED;
+            case NULLIFIED:
+                return roleStatus == RoleStatus.NULLIFIED;
+            case PENDING:
+                return roleStatus == RoleStatus.PENDING
+                    || roleStatus == RoleStatus.NULLIFIED;
+            case ACTIVE:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return super.getId();
+    public void apply(Property property) {
+        // No db constraints are implied by this validator
     }
+
 }

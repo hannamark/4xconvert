@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
@@ -110,6 +111,7 @@ import org.hibernate.validator.NotNull;
  *      serial-version-uid="1L"
  */
 @Entity
+@RoleStatusChange
 @SuppressWarnings({ "PMD.UselessOverridingMethod" })
 public class QualifiedEntity extends AbstractQualifiedEntity implements Correlation {
 

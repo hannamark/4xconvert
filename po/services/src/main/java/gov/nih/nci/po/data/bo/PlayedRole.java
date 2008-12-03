@@ -82,85 +82,17 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.Searchable;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
-import org.hibernate.annotations.Where;
 
 /**
- * @author Scott Miller
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.IdentifiedOrganizationDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization"
- *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ *
+ * @param <ENTITY> the player ENTITY type.
+ * @author gax
  */
-@Entity
-@Table(appliesTo = "IdentifiedPerson", indexes = {
-        @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
-                columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
-@RoleStatusChange
-public class IdentifiedOrganization extends AbstractIdentifiedOrganization implements Correlation {
-    private static final long serialVersionUID = 1L;
-
-    private Set<IdentifiedOrganizationCR> changeRequests = new HashSet<IdentifiedOrganizationCR>();
-
-    private IdentifiedOrganization duplicateOf;
-
+public interface PlayedRole <ENTITY extends CuratableEntity<?, ?>> {
     /**
-     * {@inheritDoc}
+     *
+     * @return the player.
      */
-    @OneToMany(mappedBy = "target")
-    @Where(clause = "processed = 'false'")
-    public Set<IdentifiedOrganizationCR> getChangeRequests() {
-        return changeRequests;
-    }
+    ENTITY getPlayer();
 
-    @SuppressWarnings("unused")
-    private void setChangeRequests(Set<IdentifiedOrganizationCR> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "io_duplicateof_idx")
-    @ForeignKey(name = "IO_DUPLICATE_IO_FK")
-    public IdentifiedOrganization getDuplicateOf() {
-        return duplicateOf;
-    }
-
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(IdentifiedOrganization duplicateOf) {
-        this.duplicateOf = duplicateOf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return super.getId();
-    }
 }

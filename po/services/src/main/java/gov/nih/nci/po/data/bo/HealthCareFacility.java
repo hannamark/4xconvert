@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.UniqueHealthCareFacility;
 
@@ -110,8 +111,9 @@ import org.hibernate.annotations.Where;
  *      serial-version-uid="1L"
  */
 @Entity
-@SuppressWarnings("PMD.UselessOverridingMethod")
 @UniqueHealthCareFacility
+@RoleStatusChange
+@SuppressWarnings("PMD.UselessOverridingMethod")
 public class HealthCareFacility extends AbstractOrganizationRole implements Correlation {
 
     private static final long serialVersionUID = -5965985190603758915L;

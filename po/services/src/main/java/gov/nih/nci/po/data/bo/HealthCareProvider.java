@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 
 import java.util.HashSet;
@@ -116,6 +117,7 @@ import org.hibernate.validator.Valid;
  *      serial-version-uid="1L"
  */
 @Entity
+@RoleStatusChange
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class HealthCareProvider extends AbstractHealthCareProvider implements Correlation {
     private static final long serialVersionUID = 1L;

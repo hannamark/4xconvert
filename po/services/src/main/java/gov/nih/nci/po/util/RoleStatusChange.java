@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The COPPA PO
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This COPPA PO Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the COPPA PO Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the COPPA PO Software; (ii) distribute and
+ * have distributed to and by third parties the COPPA PO Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,87 +80,26 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.Searchable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
-import org.hibernate.annotations.Where;
+import org.hibernate.validator.ValidatorClass;
 
 /**
- * @author Scott Miller
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *      class="gov.nih.nci.services.correlation.IdentifiedOrganizationDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization"
- *      implements="gov.nih.nci.services.CorrelationDto"
- *      serial-version-uid="1L"
+ * check the player and scoper entity status.
  */
-@Entity
-@Table(appliesTo = "IdentifiedPerson", indexes = {
-        @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
-                columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
-@RoleStatusChange
-public class IdentifiedOrganization extends AbstractIdentifiedOrganization implements Correlation {
-    private static final long serialVersionUID = 1L;
-
-    private Set<IdentifiedOrganizationCR> changeRequests = new HashSet<IdentifiedOrganizationCR>();
-
-    private IdentifiedOrganization duplicateOf;
-
+@Documented
+@ValidatorClass(RoleStatusChangeValidator.class)
+@Target({ ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RoleStatusChange {
     /**
-     * {@inheritDoc}
+     * get the massage.
      */
-    @OneToMany(mappedBy = "target")
-    @Where(clause = "processed = 'false'")
-    public Set<IdentifiedOrganizationCR> getChangeRequests() {
-        return changeRequests;
-    }
-
-    @SuppressWarnings("unused")
-    private void setChangeRequests(Set<IdentifiedOrganizationCR> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "duplicate_of", nullable = true)
-    @Index(name = "io_duplicateof_idx")
-    @ForeignKey(name = "IO_DUPLICATE_IO_FK")
-    public IdentifiedOrganization getDuplicateOf() {
-        return duplicateOf;
-    }
-
-    @SuppressWarnings("unused")
-    private void setDuplicateOf(IdentifiedOrganization duplicateOf) {
-        this.duplicateOf = duplicateOf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return super.getId();
-    }
+    String message() default "Player Organization already has a Health Care Facility";
 }

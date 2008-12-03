@@ -38,14 +38,14 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
     CuratePersonSearchCriteria sc = new CuratePersonSearchCriteria();
     private PersonServiceBeanTest pst;
 
-    private long orgId;
+    private long perId;
 
     @Before
     public void setupData() throws EntityValidationException {
         pst = new PersonServiceBeanTest();
         pst.loadData();
         pst.setUpData();
-        orgId = pst.createPerson();
+        perId = pst.createPerson();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         @SuppressWarnings("unchecked")
         List<Person> results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
-        assertEquals(orgId, results.get(0).getId().longValue());
+        assertEquals(perId, results.get(0).getId().longValue());
     }
 
     @Test
@@ -108,13 +108,14 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         assertEquals(2, results.size());
 
         // exclude the old org
-        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, perId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
 
         // exclude the role
+        ro.getScoper().setStatusCode(EntityStatus.ACTIVE);// scoped needs to be active to new role state to be valid.
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
@@ -160,13 +161,14 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         assertEquals(2, results.size());
 
         // exclude the old org
-        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, perId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
 
         // exclude the role
+        ro.getScoper().setStatusCode(EntityStatus.ACTIVE);// scoped needs to be active to new role state to be valid.
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
@@ -212,13 +214,14 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         assertEquals(2, results.size());
 
         // exclude the old org
-        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, perId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
 
         // exclude the role
+        ro.getScoper().setStatusCode(EntityStatus.ACTIVE);// scoped needs to be active to new role state to be valid.
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
@@ -266,13 +269,14 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         assertEquals(2, results.size());
 
         // exclude the old org
-        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, perId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
 
         // exclude the role
+        ro.getScoper().setStatusCode(EntityStatus.ACTIVE);// scoped needs to be active to new role state to be valid.
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
@@ -319,13 +323,14 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         assertEquals(2, results.size());
 
         // exclude the old org
-        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, orgId);
+        Person o = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, perId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
 
         // exclude the role
+        ro.getScoper().setStatusCode(EntityStatus.ACTIVE);// scoped needs to be active to new role state to be valid.
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();

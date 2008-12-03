@@ -113,7 +113,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-public abstract class AbstractQualifiedEntity implements PersistentObject {
+public abstract class AbstractQualifiedEntity implements PersistentObject,
+        PlayedRole<Person>, ScopedRole {
 
     private static final long serialVersionUID = 1L;
 
