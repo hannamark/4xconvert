@@ -2,6 +2,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.convert.StudyContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -67,6 +70,35 @@ public class StudyContactServiceBean
     }
     
     /**
+     * @param dto StudyContactDTO
+     * @return StudyContactDTO
+     * @throws PAException PAException
+     */
+    public StudyContactDTO update(
+        StudyContactDTO dto) throws PAException {
+      if (PAUtil.isIiNull(dto.getIdentifier())) {
+        serviceError("Create method should be used to modify existing.  ");
+      }
+      StudyContactDTO resultDto = null;
+      Session session = null;
+      try {
+        session = HibernateUtil.getCurrentSession();
+        
+        StudyContact sc = (StudyContact) session.load(StudyContact.class,
+            Long.valueOf(dto.getIdentifier().getExtension()));         
+
+        StudyContact bo = StudyContactConverter.convertFromDtoToDomain(dto);
+        sc = bo;
+        session.merge(sc);
+        session.flush();
+        resultDto = StudyContactConverter.convertFromDomainToDTO(bo);
+      } catch (HibernateException hbe) {
+        serviceError(" Hibernate exception in updateStudyContact ", hbe);
+      }
+      return resultDto;
+    }
+    
+    /**
      * @param studyProtocolIi id of protocol
      * @return list StudyContactDTO   
      * @throws PAException on error 
@@ -110,5 +142,104 @@ public class StudyContactServiceBean
         return resultList;
     }
 
-   
+    /**
+     * Get list of StudyParticipations for a given protocol having
+     * a given functional code.
+     * @param studyProtocolIi id of protocol
+     * @param scDTO StudyContactDTO with the functional code criteria
+     * @return list StudyContactDTO
+     * @throws PAException on error
+     */
+    public List<StudyContactDTO> getByStudyProtocol(
+            Ii studyProtocolIi , StudyContactDTO scDTO) throws PAException {
+        List <StudyContactDTO> scDtoList = new ArrayList<StudyContactDTO>();
+        scDtoList.add(scDTO);
+        return getByStudyProtocol(studyProtocolIi, scDtoList);
+    }
+
+    /**
+     * Get list of StudyParticipations for a given protocol having
+     * functional codes from a list.
+     * @param studyProtocolIi id of protocol
+     * @param scDTOList List containing desired functional codes
+     * @return list StudyParticipationDTO
+     * @throws PAException on error
+     */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    public List<StudyContactDTO> getByStudyProtocol(
+            Ii studyProtocolIi , List<StudyContactDTO> scDTOList) throws PAException {
+        if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
+            serviceError("Ii is null ");
+        }
+        if ((scDTOList == null) || (scDTOList.isEmpty())) {
+            getLogger().info("Using method getByStudyProtocol(Ii).  ");
+            return getByStudyProtocol(studyProtocolIi);
+        }
+        getLogger().info("Entering getByStudyProtocol(Ii, List<DTO>).  ");
+        StringBuffer criteria = new StringBuffer();
+        Session session = null;
+        List<StudyContact> queryList = new ArrayList<StudyContact>();
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StringBuffer hql = new StringBuffer("select spart "
+                               + "from StudyContact spart "
+                               + "join spart.studyProtocol spro "
+                               + "where spro.id = :studyProtocolId ");
+            boolean first = true;
+            for (StudyContactDTO crit : scDTOList) {
+                if (first) {
+                    hql.append("and ( ");
+                    first = false;
+                } else {
+                    criteria.append("or ");
+                }
+                criteria.append("spart.roleCode = '"
+                    + StudyContactRoleCode.getByCode(crit.getRoleCode().getCode()) + "' ");
+            }
+            hql.append(criteria);
+            hql.append(") order by spart.id ");
+            getLogger().info(" query StudyContact = " + hql);
+
+            Query query = session.createQuery(hql.toString());
+            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+            queryList = query.list();
+
+        }  catch (HibernateException hbe) {
+            serviceError(" Hibernate exception while retrieving "
+                    + "StudyParticipation for pid = " + studyProtocolIi.getExtension() , hbe);
+        }
+
+        List<StudyContactDTO> resultList = new ArrayList<StudyContactDTO>();
+        for (StudyContact sc : queryList) {
+            resultList.add(StudyContactConverter.convertFromDomainToDTO(sc));
+        }
+        getLogger().info("Leaving getByStudyProtocol() for (" + criteria + ").  ");
+        getLogger().info("Returning " + resultList.size() + " object(s).  ");
+        return resultList;
+    }
+    /**
+     * @param ii Index of StudyContact object
+     * @throws PAException PAException
+     */
+    @Override
+    public void delete(Ii ii)
+            throws PAException {
+        if ((ii == null) || PAUtil.isIiNull(ii)) {
+            serviceError("Ii has null value ");
+        }
+        LOG.info("Entering delete().");
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            session.beginTransaction();
+            StudyContact bo = (StudyContact) session.get(StudyContact.class
+                    , IiConverter.convertToLong(ii));
+            session.delete(bo);
+            session.flush();
+        }  catch (HibernateException hbe) {
+            serviceError(" Hibernate exception while deleting "
+                + "StudyContact for pid = " + ii.getExtension(), hbe);
+        }
+        LOG.info("Leaving delete().");
+    } 
 }

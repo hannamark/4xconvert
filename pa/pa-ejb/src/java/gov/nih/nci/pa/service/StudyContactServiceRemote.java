@@ -35,5 +35,30 @@ public interface StudyContactServiceRemote extends StudyPaService<StudyContactDT
      * @throws PAException PAException
      */
     StudyContactDTO create(StudyContactDTO studyContactDTO) throws PAException;
-
+    
+    /**
+     * 
+     * @param studyContactDTO StudyContactDTO
+     * @return StudyContactDTO
+     * @throws PAException PAException
+     */
+    StudyContactDTO update(StudyContactDTO studyContactDTO) throws PAException;
+    
+    /**
+     * @param studyProtocolIi id of protocol
+     * @param scDTO StudyContactDTO 
+     * @return list StudyContactDTO   
+     * @throws PAException on error 
+     */
+    List<StudyContactDTO> getByStudyProtocol(
+            Ii studyProtocolIi , StudyContactDTO scDTO) throws PAException;
+    
+    /**
+     * @param studyProtocolIi id of protocol
+     * @param scDTOList List of StudyContactDTO containing criteria
+     * @return list StudyContactDTO   
+     * @throws PAException on error 
+     */
+    List<StudyContactDTO> getByStudyProtocol(
+            Ii studyProtocolIi , List<StudyContactDTO> scDTOList) throws PAException;
 }
