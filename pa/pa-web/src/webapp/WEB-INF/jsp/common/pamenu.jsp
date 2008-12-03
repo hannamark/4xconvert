@@ -55,7 +55,6 @@
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>
-                        <li><a href="disease.action" >Disease/Condition</a></li>
                         <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
     					<li class="hassubmenu">Interventional Trial Design
                             <ul id="part_sites">
@@ -74,14 +73,15 @@
                             </ul>
     					</li>
                         </s:else>
-                        <li><a href="trialInterventions.action" >Interventions</a></li>
+                        <li><a href="disease.action" >Disease/Condition</a></li>                        
+                        <li><a href="trialInterventions.action" >Intervention</a></li>
                         <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                             <li><a href="trialArms.action" >Arms</a></li>
                         </s:if>
                         <s:else>
                             <li><a href="trialArmsobservational.action" >Groups</a></li>
                         </s:else>
-                        <li><a href="subGroupsquery.action" >SubGroups</a></li>
+                        <li><a href="subGroupsquery.action" >Sub-groups</a></li>
     				</ul>
     			</li>
             </s:if>
