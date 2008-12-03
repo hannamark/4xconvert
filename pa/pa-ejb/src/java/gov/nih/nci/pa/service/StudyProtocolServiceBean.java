@@ -511,6 +511,12 @@ import org.hibernate.Session;
         if (cDate == null) {
             throw new PAException("Completion date must be set.  ");
         }
+        if (sCode == null) {
+            throw new PAException("Start date type must be set.  ");
+        }
+        if (cCode == null) {
+            throw new PAException("Completion date type must be set.  ");
+        }
         if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
             throw new PAException("Actual start dates cannot be in the future.  ");
         }

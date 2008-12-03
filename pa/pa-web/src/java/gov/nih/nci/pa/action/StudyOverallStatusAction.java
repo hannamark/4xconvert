@@ -263,6 +263,11 @@ public class StudyOverallStatusAction extends ActionSupport implements
                 addActionError("Trial start date can be 'Anticipated' only if the status is "
                             + "'Approved' or 'Withdrawn'.");
             }
+            if (StudyStatusCode.APPROVED.equals(oldCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
+                    && startDateType.equals(actualString)) {
+                addActionError("Trial Start date type should be ‘Anticipated’ and Trial Start date "
+                            + "should be future date if Trial Status is changed from ‘Approved’ to ‘Withdrawn’.  ");
+            }
             if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
                 if (completionDateType.equals(anticipatedString)) {
                     addActionError("Trial completion date can not be 'Anticipated' when the status is "
