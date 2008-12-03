@@ -403,14 +403,32 @@ import com.opensymphony.xwork2.ActionSupport;
       }
     }
   }
-
+  
   private void enforceEligibilityBusinessRules() {
     if (PAUtil.isEmpty(webDTO.getInclusionIndicator())) {
       addFieldError("webDTO.inclusionIndicator",
           getText("error.inclusionIndicator"));
     }
-  }
+    if (PAUtil.isEmpty(webDTO.getTextDescription())) {
+      if (PAUtil.isEmpty(webDTO.getCriterionName())  
+          && PAUtil.isEmpty(webDTO.getOperator())
+          && PAUtil.isEmpty(webDTO.getValue())
+          && PAUtil.isEmpty(webDTO.getUnit())) {
 
+        addFieldError("webDTO.mandatory",
+            getText("error.mandatory"));
+        return;
+      } else if (PAUtil.isEmpty(webDTO.getCriterionName())
+          || PAUtil.isEmpty(webDTO.getOperator())
+          || PAUtil.isEmpty(webDTO.getValue())
+          || PAUtil.isEmpty(webDTO.getUnit()))  {
+
+        addFieldError("webDTO.buldcriterion",
+            getText("error.buldcriterion"));
+
+      }
+    }
+  }
   /**
    * @return webDTO
    */
