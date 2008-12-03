@@ -1,5 +1,10 @@
 	<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 	<script language="JavaScript">
+	function trim(val) {
+		var ret = val.replace(/^\s+/, '');
+		ret = ret.replace(/\s+$/, '');
+		  return ret;
+		}
 	function getIndIdeRadioValue(size){
 		for(var i=0; i<size; i++) {
 			if(document.forms[0].group3[i].checked==true) 
@@ -30,6 +35,11 @@
 	function callAddIndIde(){	
 		var indIde = getIndIdeRadioValue(document.forms[0].group3.length);
 		var number = document.getElementById('indidenumber').value;
+		number = trim(number);
+		if( number == "") {
+			alert("Invalid IND/IDE number")
+			return false;
+		}
 		var grantor = document.getElementById('SubCat').value;
 		var holdertype = document.getElementById('holderType').value;
 		var programcode;
