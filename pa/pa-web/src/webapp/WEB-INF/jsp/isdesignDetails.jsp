@@ -83,6 +83,14 @@ function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
+function maxLength(field,maxChars)
+ {
+ var input=field;
+  	var inputElement = document.forms[0].elements[input];  	
+       if(inputElement.value.length >= maxChars) {
+		  alert("more than " +maxChars + " chars");
+       }
+ }  	
 </SCRIPT>
 <body>
 <h1><fmt:message key="isdesign.details.title"/></h1>
@@ -112,7 +120,7 @@ function tooltip() {
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 	 		<fmt:message key="isdesign.details.primary.purpose.other"/></dfn></label></td>
 		<td>
-			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:150px" rows="2"/>
+			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:150px" rows="2" onblur='return maxLength("webDTO.primaryPurposeOtherText","200");'/>
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeOtherText</s:param>
@@ -237,7 +245,9 @@ function tooltip() {
 <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">			
-			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>			
+			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+			<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+			<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>			
 		</ul>	
 	</del>
 </div>
