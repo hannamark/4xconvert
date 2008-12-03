@@ -8,7 +8,7 @@
         </c:url>
         <li id="email-entry-${e.index}">
             ${value}
-            | <a id="email-remove-${e.index}" href="javascript://noop/" onclick="return loadDiv('${removeAction}', 'email-list')" >Remove</a>
+            | <a id="email-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'email-list')" >Remove</a>
         </li>
     </s:iterator>
 
@@ -18,7 +18,7 @@
     <li>
         <s:textfield key="emailEntry.value" onkeypress="return submitDivOnReturn(event, 'email-add');">
             <s:param name="after">
-                <a id="email-add" class="formElementButton" href="javascript://noop/" onclick="return submitDivAsForm('${addAction}', 'email-list')">Add</a>
+                <a id="email-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return submitDivAsForm('${addAction}', 'email-list')">Add</a>
             </s:param>
         </s:textfield>
     </li>

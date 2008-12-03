@@ -8,7 +8,7 @@
         </c:url>
         <li id="phone-entry-${e.index}">
             ${value}
-            | <a id="phone-remove-${e.index}" href="javascript://noop/" onclick="return loadDiv('${removeAction}', 'phone-list')" >Remove</a>
+            | <a id="phone-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'phone-list')" >Remove</a>
         </li>
     </s:iterator>
 
@@ -18,7 +18,7 @@
     <li>
         <s:textfield key="phoneEntry.value" onkeypress="return submitDivOnReturn(event, 'phone-add');">
             <s:param name="after">
-                <a id="phone-add" class="formElementButton" href="javascript://noop/" onclick="return submitDivAsForm('${addAction}', 'phone-list')">Add</a>
+                <a id="phone-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return submitDivAsForm('${addAction}', 'phone-list')">Add</a>
             </s:param>
         </s:textfield>
     </li>

@@ -8,7 +8,7 @@
         </c:url>
         <li id="url-entry-${e.index}">          
             <s:property value="@java.net.URLDecoder@decode(value)" />
-            | <a id="url-remove-${e.index}" href="javascript://noop/" onclick="return loadDiv('${removeAction}', 'url-list')">Remove</a>
+            | <a id="url-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'url-list')">Remove</a>
             | <a href="${value}" target="_blank">Visit...</a>
         </li>
     </s:iterator>
@@ -19,7 +19,7 @@
     <li>
         <s:textfield key="urlEntry.value" onkeypress="return submitDivOnReturn(event, 'url-add');">
             <s:param name="after">
-                <a id="url-add" class="formElementButton" href="javascript://noop/" onclick="return submitDivAsForm('${addAction}', 'url-list')">Add</a>
+                <a id="url-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return submitDivAsForm('${addAction}', 'url-list')">Add</a>
             </s:param>
         </s:textfield>
     </li>

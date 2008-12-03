@@ -8,7 +8,7 @@
         </c:url>
         <li id="fax-entry-${e.index}">
             ${value}
-            | <a id="fax-remove-${e.index}" href="javascript://noop/" onclick="return loadDiv('${removeAction}', 'fax-list')" >Remove</a>
+            | <a id="fax-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'fax-list')" >Remove</a>
         </li>
     </s:iterator>
 
@@ -18,7 +18,7 @@
     <li>
         <s:textfield key="faxEntry.value" onkeypress="return submitDivOnReturn(event, 'fax-add');">
             <s:param name="after">
-                <a id="fax-add" class="formElementButton" href="javascript://noop/" onclick="return submitDivAsForm('${addAction}', 'fax-list')">Add</a>
+                <a id="fax-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return submitDivAsForm('${addAction}', 'fax-list')">Add</a>
             </s:param>
         </s:textfield>
     </li>

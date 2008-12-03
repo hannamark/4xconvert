@@ -33,7 +33,6 @@ function handleDuplicateOf() {
     <c:if test="${fn:length(role.changeRequests) > 0}">
     <s:form action="ajax/roles/person/ClinicalResearchStaff/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="person"/>
-        <s:hidden key="role.id" />
         <s:hidden key="rootKey"/>
         <s:select
            label="Current Change Request"
@@ -68,7 +67,6 @@ function handleDuplicateOf() {
 				<s:hidden key="cr"/>
 				<s:hidden key="person"/>
 				<s:hidden key="rootKey"/>
-                <s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
                 <div class="wwgrp" id="wwgrp_curateRoleForm_role_scoper_id">
                     <s:fielderror>
                         <s:param value="%{'role.scoper'}"/>
@@ -125,10 +123,7 @@ function handleDuplicateOf() {
         </div>
        <div class="boxouter">
        <h2>Address Information</h2>
-           <div class="box_white" id="curateRoleForm.role.postalAddresses.div">
-                TBD
-               <div class="clear"></div>
-           </div>
+            <%@ include file="../../../mailable/include.jsp" %>
        </div>
        
        <div class="boxouter_nobottom">
@@ -149,8 +144,7 @@ function handleDuplicateOf() {
 </div>
 </c:if>
 
-<div style="clear:left;">
-</div>    
+<div style="clear:left;"></div>    
     <div class="btnwrapper" style="margin-bottom:20px;">
     <script type="text/javascript">
         function showPopWinCallback(returnVal) {

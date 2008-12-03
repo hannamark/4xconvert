@@ -3,10 +3,12 @@ package gov.nih.nci.po.web.roles;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
 import gov.nih.nci.po.data.bo.Person;
@@ -56,7 +58,30 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
         action.prepare();
         assertSame(o, action.getRole().getPlayer());
     }
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        ClinicalResearchStaff initial = action.getRole();
+        action.prepare();
+        assertSame(initial, action.getRole());
+    }
 
+    @Test
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("a");
+        action.prepare();
+        //assertNull(action.getRole());
+        assertNotNull(action.getRole());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        ClinicalResearchStaff o = new ClinicalResearchStaff();
+        action.setRootKey("a");
+        getSession().setAttribute(action.getRootKey(), o);
+        action.prepare();
+        assertSame(o, action.getRole());
+    }
+    
     @Test
     public void testStart() {
         assertEquals(Action.SUCCESS, action.start());
@@ -71,9 +96,13 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
 
     @Test
     public void testRoleProperty() {
+        assertSame(action.getRole(), action.getBaseRole());
         assertNotNull(action.getRole());
         action.setRole(null);
         assertNull(action.getRole());
+        
+        action.setBaseRole(new ClinicalResearchStaff());
+        assertSame(action.getRole(), action.getBaseRole());
     }
 
     @Test
@@ -193,9 +222,13 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
 
     @Test
     public void testCrProperty() {
+        assertSame(action.getCr(), action.getBaseCr());
         assertNotNull(action.getCr());
         action.setCr(null);
         assertNull(action.getCr());
+        
+        action.setBaseCr(new ClinicalResearchStaffCR());
+        assertSame(action.getCr(), action.getBaseCr());
     }
 
     @Test
@@ -216,4 +249,12 @@ public class ClinicalResearchStaffActionTest extends AbstractPoTest {
             i++;
         }
     }
+    
+    @Test
+    public void testRootKeyProperty() {
+        assertNull(action.getRootKey());
+        action.setRootKey("abc");
+        assertNotNull(action.getRootKey());
+    }
+    
 }

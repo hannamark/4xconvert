@@ -8,7 +8,7 @@
         </c:url>
         <li id="tty-entry-${e.index}">
             ${value}
-            | <a id="tty-remove-${e.index}" href="javascript://noop/" onclick="return loadDiv('${removeAction}', 'tty-list')" >Remove</a>
+            | <a id="tty-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'tty-list')" >Remove</a>
         </li>
     </s:iterator>
 
@@ -18,7 +18,7 @@
     <li>
         <s:textfield key="ttyEntry.value" onkeypress="return submitDivOnReturn(event, 'tty-add');">
             <s:param name="after">
-                <a id="tty-add" class="formElementButton" href="javascript://noop/" onclick="return submitDivAsForm('${addAction}', 'tty-list')">Add</a>
+                <a id="tty-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return submitDivAsForm('${addAction}', 'tty-list')">Add</a>
             </s:param>
         </s:textfield>
     </li>

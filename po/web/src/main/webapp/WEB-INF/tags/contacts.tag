@@ -18,7 +18,14 @@
 <s:else>
 <s:set name="phoneRequiredBool" value="true"/>
 </s:else>
-
+<script type="text/javascript">
+<!--
+function clearErrorMessages() {
+	$$('span.errorMessage').invoke('remove');
+	
+}
+//-->
+</script>
 <fieldset>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.email'}"/>

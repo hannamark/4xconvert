@@ -10,6 +10,7 @@
         <pattern>/ajax/*</pattern>
         <pattern>/*/ajax/*</pattern>
         <pattern>*/contactable/*</pattern>
+        <pattern>*/mailable/*</pattern>
     </excludes>
     
     <decorator name="popup" page="popup.jsp">

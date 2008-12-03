@@ -117,7 +117,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public abstract class AbstractPersonRole implements PersistentObject, Contactable {
+public abstract class AbstractPersonRole implements PersistentObject, Contactable, Mailable {
 
     private static final long serialVersionUID = 1L;
 
