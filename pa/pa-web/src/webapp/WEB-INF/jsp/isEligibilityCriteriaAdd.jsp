@@ -84,9 +84,14 @@ BubbleTips.activateTipOn("dfn");
 					</td>
 				</tr> 
 				<tr>
-				<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/></th>
+				<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/></th>				
 				</tr>
 				<tr>
+						<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>webDTO.mandatory</s:param>
+                               </s:fielderror>                            
+                         </span>
 					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
 						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/> </dfn></label>
 					</td>
@@ -135,7 +140,12 @@ BubbleTips.activateTipOn("dfn");
     				<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
                     
                     <s:select headerKey="" headerValue="" name="webDTO.unit" list="#unitsValues" cssStyle="width:106px" /> 
-                      </td>            
+                      </td> 
+                      <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>webDTO.buldcriterion</s:param>
+                               </s:fielderror>                            
+                         </span>           
                 </tr> 
                      
         </table>
