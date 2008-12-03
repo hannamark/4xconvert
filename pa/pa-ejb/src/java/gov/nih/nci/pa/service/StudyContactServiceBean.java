@@ -2,7 +2,6 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.convert.StudyContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
