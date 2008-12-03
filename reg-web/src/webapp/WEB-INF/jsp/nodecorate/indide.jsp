@@ -56,7 +56,12 @@
 		}else {
 			programcode = document.getElementById('programcodenciselectedvalue').value;		
 		}
+		
 		var expandedaccess = getExpandedAccessRadioValue(document.forms[0].group4.length);
+		if ((expandedaccess == 'Yes') && (document.getElementById('expanded_status').value == '') ) {
+			alert("Please select a Expanded Access Type ");
+			return false;
+		}
 		var expandedaccesstype = document.getElementById('expanded_status').value;
 		var  url = '/registry/protected/ajaxSubmitTrialActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
     	var div = document.getElementById('indidediv');
