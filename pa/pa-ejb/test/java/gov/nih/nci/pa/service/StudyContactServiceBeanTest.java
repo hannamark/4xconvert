@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -32,7 +33,15 @@ public class StudyContactServiceBeanTest {
   public void get() throws Exception {
     List<StudyContactDTO> statusList =
       remoteEjb.getByStudyProtocol(pid);
-    assertEquals(1, statusList.size());    
+    assertEquals(1, statusList.size());
+    List<StudyContactDTO> spList2 = remoteEjb.getByStudyProtocol(pid, statusList.get(0));
+    assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()),
+        IiConverter.convertToLong(spList2.get(0).getIdentifier()));
+    List<StudyContactDTO> spList3 = remoteEjb.getByStudyProtocol(pid, statusList);
+    assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()), 
+        IiConverter.convertToLong(spList3.get(0).getIdentifier()));
+    
+    remoteEjb.delete(statusList.get(0).getIdentifier());
   }
 
   @Test
