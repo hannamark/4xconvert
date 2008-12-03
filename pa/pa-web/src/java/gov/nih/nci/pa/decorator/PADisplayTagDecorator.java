@@ -50,25 +50,12 @@ public class PADisplayTagDecorator extends TableDecorator {
     public String getAction() {
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-        if (dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)) {
+        if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED)) {
+            return "Validate";
+        } else  {
             return "Abstract";
-        } else {
-            return "";
         }
     }
     
-    /**
-     * 
-     * @return xml generation
-     */
-    public String getGenerateXml() {
-        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
-                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-        if (dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)) {
-            return "Generate XML";
-        } else {
-            return "";
-        }
-    }
 
 }

@@ -168,17 +168,7 @@
             <result>/WEB-INF/jsp/abstractionCompletion.jsp</result> 
         </action>
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
-		<interceptor-ref name="nci-commonsParams" />			
-		<result>/WEB-INF/jsp/trialValidationquery.jsp</result>
-		<result name="view">/WEB-INF/jsp/trialValidation.jsp</result>
-		<result name="update">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-		<result name="query">/WEB-INF/jsp/trialValidation.jsp</result>
-		<result name="error">/WEB-INF/jsp/trialValidation.jsp</result>
-		<result name="redirect_to_search" type="redirect-action">
-        <param name="actionName">studyProtocol.action</param>
-        <param name="parse">true</param>
-        <param name="validationAction">${validationAction}</param>
-        </result>
-	</action>
+            <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
+        </action>
 	</package>
 </struts>

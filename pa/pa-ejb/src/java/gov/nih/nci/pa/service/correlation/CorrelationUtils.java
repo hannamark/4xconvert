@@ -46,6 +46,85 @@ public class CorrelationUtils {
 
     /**
      * 
+     * @param poIdentifer id
+     * @param paIdentifer id
+     * @return Person
+     * @throws PAException e
+     */
+    public Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
+        Person per = null;
+        if (poIdentifer == null && paIdentifer == null) {
+            LOG.error(" Atleast one identifier must be entered");
+            throw new PAException(" Atleast one identifier must be entered");
+        }
+        if (poIdentifer != null && paIdentifer != null) {
+            LOG.error(" Only one identifier must be entered");
+            throw new PAException(" Only one identifier must be entered");
+        }
+        Session session = null;
+        List<Person> queryList = new ArrayList<Person>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select per from Person per  where 1 = 1 ");
+        if (paIdentifer != null) {
+            hql.append(" and per.id = ").append(paIdentifer);
+        }
+        if (poIdentifer != null) {
+            hql.append(" and per.identifier = '").append(poIdentifer).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+            query = session.createQuery(hql.toString());
+            queryList = query.list();
+            if (queryList.size() > 1) {
+                LOG.error(" Person  should not be more than 1 record for a Po Indetifer = " + poIdentifer);
+                throw new PAException(" Person  should not be more than 1 " + "record for a Po Indetifer = "
+                        + poIdentifer);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException(" Error while retrieving Organization for id = " + paIdentifer + " PO Identifier = "
+                    + poIdentifer, hbe);
+        } finally {
+            session.flush();
+        }
+        if (!queryList.isEmpty()) {
+            per = queryList.get(0);
+        }
+        return per;
+    }
+
+    /**
+     * @param paClinicalResearchStaffId id
+     * @return Person
+     * @throws PAException e
+     */
+    public Person getPAPersonByPAClinicalResearchStaffId(Long paClinicalResearchStaffId) throws PAException {
+        if (paClinicalResearchStaffId == null) {
+            LOG.error("Check the id value.  Null found.  ");
+            throw new PAException("Check the id value.  Null found.  ");
+        }
+        Person person = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            ClinicalResearchStaff clinicalResearchStaff = 
+                (ClinicalResearchStaff) session.get(ClinicalResearchStaff.class, paClinicalResearchStaffId);
+            if (clinicalResearchStaff == null) {
+                String errMsg = "Object not found using getPAPersonByPAClinicalResearchStaffId() for id = " 
+                    + paClinicalResearchStaffId + ".  ";
+                LOG.error(errMsg);
+                throw new PAException(errMsg);
+            }
+            person = clinicalResearchStaff.getPerson();
+        } catch (HibernateException hbe) {
+            LOG.error("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
+            throw new PAException("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
+        }
+        return person;
+    }
+
+    /**
+     * 
      * @param paIdentifer id
      * @param poIdentifer id
      * @return Organization
@@ -532,84 +611,7 @@ public class CorrelationUtils {
     
 
 
-    /**
-     * 
-     * @param poIdentifer id
-     * @param paIdentifer id
-     * @return Person
-     * @throws PAException e
-     */
-    Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer) throws PAException {
-        Person per = null;
-        if (poIdentifer == null && paIdentifer == null) {
-            LOG.error(" Atleast one identifier must be entered");
-            throw new PAException(" Atleast one identifier must be entered");
-        }
-        if (poIdentifer != null && paIdentifer != null) {
-            LOG.error(" Only one identifier must be entered");
-            throw new PAException(" Only one identifier must be entered");
-        }
-        Session session = null;
-        List<Person> queryList = new ArrayList<Person>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select per from Person per  where 1 = 1 ");
-        if (paIdentifer != null) {
-            hql.append(" and per.id = ").append(paIdentifer);
-        }
-        if (poIdentifer != null) {
-            hql.append(" and per.identifier = '").append(poIdentifer).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            query = session.createQuery(hql.toString());
-            queryList = query.list();
-            if (queryList.size() > 1) {
-                LOG.error(" Person  should not be more than 1 record for a Po Indetifer = " + poIdentifer);
-                throw new PAException(" Person  should not be more than 1 " + "record for a Po Indetifer = "
-                        + poIdentifer);
-            }
-        } catch (HibernateException hbe) {
-            throw new PAException(" Error while retrieving Organization for id = " + paIdentifer + " PO Identifier = "
-                    + poIdentifer, hbe);
-        } finally {
-            session.flush();
-        }
-        if (!queryList.isEmpty()) {
-            per = queryList.get(0);
-        }
-        return per;
-    }
 
-    /**
-     * @param paClinicalResearchStaffId id
-     * @return Person
-     * @throws PAException e
-     */
-    public Person getPAPersonByPAClinicalResearchStaffId(Long paClinicalResearchStaffId) throws PAException {
-        if (paClinicalResearchStaffId == null) {
-            LOG.error("Check the id value.  Null found.  ");
-            throw new PAException("Check the id value.  Null found.  ");
-        }
-        Person person = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            ClinicalResearchStaff clinicalResearchStaff = 
-                (ClinicalResearchStaff) session.get(ClinicalResearchStaff.class, paClinicalResearchStaffId);
-            if (clinicalResearchStaff == null) {
-                String errMsg = "Object not found using getPAPersonByPAClinicalResearchStaffId() for id = " 
-                    + paClinicalResearchStaffId + ".  ";
-                LOG.error(errMsg);
-                throw new PAException(errMsg);
-            }
-            person = clinicalResearchStaff.getPerson();
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
-            throw new PAException("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
-        }
-        return person;
-    }
 
     /**
      * 

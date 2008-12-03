@@ -17,12 +17,21 @@ public class GeneralTrialDesignWebDTO {
     private String assignedIdentifier; // used to store nci-accession number
     private String officialTitle;
     private String phaseCode;
+    private String phaseOtherText;
     private String primaryPurposeCode;
+    private String primaryPurposeOtherText;
     private String publicTitle;
     private String publicDescription;
     private String scientificDescription;
     private String keywordText;
-    
+    private String localProtocolIdentifer;
+    private String leadOrganizationIdentifer;
+    private String leadOrganizationName;
+    private String piIdentifier;
+    private String piName;
+    private String summaryFourOrgIdentifer;
+    private String summaryFourOrgName;
+    private String summaryFourFundingCategoryCode;
     /**
      * 
      * @return acronym acronym
@@ -110,6 +119,20 @@ public class GeneralTrialDesignWebDTO {
     }
     /**
      * 
+     * @return phaseOtherText
+     */
+    public String getPhaseOtherText() {
+        return phaseOtherText;
+    }
+    /**
+     * 
+     * @param phaseOtherText phaseOtherText
+     */
+    public void setPhaseOtherText(String phaseOtherText) {
+        this.phaseOtherText = phaseOtherText;
+    }
+    /**
+     * 
      * @return primaryPurposeCode
      */
     public String getPrimaryPurposeCode() {
@@ -121,6 +144,20 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setPrimaryPurposeCode(String primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
+    }
+    /**
+     * 
+     * @return primaryPurposeOtherText
+     */
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
+    /**
+     * 
+     * @param primaryPurposeOtherText primaryPurposeOtherText
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
     }
     /**
      * @return publicTitle
@@ -170,5 +207,123 @@ public class GeneralTrialDesignWebDTO {
     public void setKeywordText(String keywordText) {
         this.keywordText = keywordText;
     }
+    /**
+     * 
+     * @return localProtocolIdentifer
+     */
+    public String getLocalProtocolIdentifer() {
+        return localProtocolIdentifer;
+    }
+    /**
+     * 
+     * @param localProtocolIdentifer localProtocolIdentifer
+     */
+    public void setLocalProtocolIdentifer(String localProtocolIdentifer) {
+        this.localProtocolIdentifer = localProtocolIdentifer;
+    }
+    /**
+     * 
+     * @return leadOrganizationIdentifer
+     */
+    public String getLeadOrganizationIdentifer() {
+        return leadOrganizationIdentifer;
+    }
+    /**
+     * 
+     * @param leadOrganizationIdentifer leadOrganizationIdentifer
+     */
+    public void setLeadOrganizationIdentifer(String leadOrganizationIdentifer) {
+        this.leadOrganizationIdentifer = leadOrganizationIdentifer;
+    }
+    /**
+     * 
+     * @return leadOrganizationName
+     */
+    public String getLeadOrganizationName() {
+        return leadOrganizationName;
+    }
+    /**
+     * 
+     * @param leadOrganizationName leadOrganizationName
+     */
+    public void setLeadOrganizationName(String leadOrganizationName) {
+        this.leadOrganizationName = leadOrganizationName;
+    }
+    /**
+     * 
+     * @return piIdentifier
+     */
+    public String getPiIdentifier() {
+        return piIdentifier;
+    }
+    /**
+     * 
+     * @param piIdentifier piIdentifier
+     */
+    public void setPiIdentifier(String piIdentifier) {
+        this.piIdentifier = piIdentifier;
+    }
+    /**
+     * 
+     * @return piName
+     */
+    public String getPiName() {
+        return piName;
+    }
+    /**
+     * 
+     * @param piName piName
+     */
+    public void setPiName(String piName) {
+        this.piName = piName;
+    }
+    /**
+     * 
+     * @return summaryFourOrgIdentifer
+     */
+    public String getSummaryFourOrgIdentifer() {
+        return summaryFourOrgIdentifer;
+    }
+    /**
+     * 
+     * @param summaryFourOrgIdentifer summaryFourOrgIdentifer
+     */
+    public void setSummaryFourOrgIdentifer(String summaryFourOrgIdentifer) {
+        this.summaryFourOrgIdentifer = summaryFourOrgIdentifer;
+    }
+    /**
+     * 
+     * @return summaryFourOrgName
+     */
+    public String getSummaryFourOrgName() {
+        return summaryFourOrgName;
+    }
+    /**
+     * 
+     * @param summaryFourOrgName summaryFourOrgName
+     */
+    public void setSummaryFourOrgName(String summaryFourOrgName) {
+        this.summaryFourOrgName = summaryFourOrgName;
+    }
+    /**
+     * 
+     * @return summaryFourFundingCategoryCode
+     */
+    public String getSummaryFourFundingCategoryCode() {
+        return summaryFourFundingCategoryCode;
+    }
+    /**
+     * 
+     * @param summaryFourFundingCategoryCode summaryFourFundingCategoryCode
+     */
+    public void setSummaryFourFundingCategoryCode(
+            String summaryFourFundingCategoryCode) {
+        this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
+    }
+    
+    
+    
+    
+    
 
 }
