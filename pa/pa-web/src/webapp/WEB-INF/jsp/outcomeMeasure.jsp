@@ -20,7 +20,7 @@
     <s:if test="outcomeList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="id" />
-	<display:table name="${outcomeList}" id="row" class="data" sort="list"  pagesize="5" requestURI="trialFundingquery.action" export="false">    
+	<display:table name="${outcomeList}" id="row" class="data" sort="list"  pagesize="5" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">    
 	    <display:column titleKey="osdesign.outcome.primary" property="primaryIndicator" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="osdesign.outcome.description" property="name" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="osdesign.outcome.timeFrame" property="timeFrame"  sortable="true" headerClass="sortable" />
@@ -40,7 +40,7 @@
 				<ul class="btnrow">
 					<li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					<li><a href="interventionalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-					<li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+					<li><a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				</ul>	
 			</del>
 		</div>
