@@ -27,7 +27,7 @@ public class DiseaseConditionAction extends ActionSupport {
         try {       
             //TODO the line below needs to be removed when this page is called from menubar
             HibernateUtil.getHibernateHelper().openAndBindSession();
-            records = PaRegistry.getDiseaseService().getDiseaseCondition(P_ID);
+            records = PaRegistry.getDiseaseCondService().getDiseaseCondition(P_ID);
             return SUCCESS;
         } catch (PAException e) {           
           return ERROR;

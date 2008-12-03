@@ -1,12 +1,17 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -32,7 +37,6 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 
 
 /**
@@ -67,7 +71,7 @@ public final class PaRegistry {
      * 
      * @return diseaseCondServiceRemote DiseaseCondServiceRemote
      */
-    public static DiseaseCondServiceRemote getDiseaseService() {
+    public static DiseaseCondServiceRemote getDiseaseCondService() {
         return getInstance().getServiceLocator().getDiseaseConditionService();
     }
 
@@ -345,4 +349,31 @@ public final class PaRegistry {
         return getInstance().getServiceLocator().getDocumentWorkflowStatusService();
     }
     
+    /**
+     * @return DiseaseService
+     */
+    public static DiseaseServiceRemote getDiseaseService() {
+        return getInstance().getServiceLocator().getDiseaseService();
+    }
+    
+    /**
+     * @return DiseaseAlternameService
+     */
+    public static DiseaseAlternameServiceRemote getDiseaseAlternameService() {
+        return getInstance().getServiceLocator().getDiseaseAlternameService();
+    }
+    
+    /**
+     * @return DiseaseParentService
+     */
+    public static DiseaseParentServiceRemote getDiseaseParentService() {
+        return getInstance().getServiceLocator().getDiseaseParentService();
+    }
+    
+    /**
+     * @return StudyDiseaseService
+     */
+    public static StudyDiseaseServiceRemote getStudyDiseaseService() {
+        return getInstance().getServiceLocator().getStudyDiseaseService();
+    }
 }

@@ -9,6 +9,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class GeneralTrialDesignWebDTO {
 
     private String acronym;

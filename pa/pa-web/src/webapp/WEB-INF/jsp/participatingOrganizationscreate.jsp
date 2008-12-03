@@ -86,6 +86,13 @@
 	}	
 	
 	function loadPersDiv(persid, rolecode, func){
+         if(func!="add"){
+            input_box=confirm("Click OK to un-link the Investigator from the Study.  Cancel to Abort.");
+            if (input_box!=true){
+                return;
+            }
+         }
+         
 	     var div = document.getElementById('saveAndShowContacts');   
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
 	     var url;

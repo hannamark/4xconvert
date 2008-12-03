@@ -19,14 +19,17 @@
 <SCRIPT LANGUAGE="JavaScript">
 function handleEdit(studyResourcingId){
 	
-    document.studyOverallStatus.cbValue.value = studyResourcingId;
-    document.studyOverallStatus.action="participatingOrganizationsedit.action";
-    document.studyOverallStatus.submit(); 
+    document.partOrgs.cbValue.value = studyResourcingId;
+    document.partOrgs.action="participatingOrganizationsedit.action";
+    document.partOrgs.submit(); 
 }
 function handleDelete(studyResourcingId){
-    document.studyOverallStatus.cbValue.value = studyResourcingId;
-    document.studyOverallStatus.action="participatingOrganizationsdelete.action";
-    document.studyOverallStatus.submit(); 
+    input_box=confirm("Click OK to un-link the Participating Organization from the Study.  Cancel to Abort.");
+    if (input_box==true){
+        document.partOrgs.cbValue.value = studyResourcingId;
+        document.partOrgs.action="participatingOrganizationsdelete.action";
+        document.partOrgs.submit();
+    } 
 }
 </SCRIPT>
 
@@ -40,7 +43,7 @@ function handleDelete(studyResourcingId){
 <div class="box">
     <pa:sucessMessage/>
     <s:actionerror />
-    <s:form name="studyOverallStatus">
+    <s:form name="partOrgs">
 <h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>

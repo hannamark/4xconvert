@@ -1,13 +1,17 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -286,6 +290,33 @@ public class JndiServiceLocator implements ServiceLocator {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                                 + "/po/HealthCareProviderCorrelationServiceBean/remote";
         return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
-    } 
+    }
 
+    /**
+     * @return DiseaseAlternameService
+     */
+    public DiseaseAlternameServiceRemote getDiseaseAlternameService() {
+        return (DiseaseAlternameServiceRemote) JNDIUtil.lookup("/pa/DiseaseAlternameServiceBean/remote");
+    }
+
+    /**
+     * @return DiseaseParentService
+     */
+    public DiseaseParentServiceRemote getDiseaseParentService() {
+        return (DiseaseParentServiceRemote) JNDIUtil.lookup("/pa/DiseaseParentServiceBean/remote");
+    }
+
+    /**
+     * @return DiseaseService
+     */
+    public DiseaseServiceRemote getDiseaseService() {
+        return (DiseaseServiceRemote) JNDIUtil.lookup("/pa/DiseaseServiceBean/remote");
+    }
+
+    /**
+     * @return StudyDiseaseService
+     */
+    public StudyDiseaseServiceRemote getStudyDiseaseService() {
+        return (StudyDiseaseServiceRemote) JNDIUtil.lookup("/pa/StudyDiseaseServiceBean/remote");
+    } 
 }

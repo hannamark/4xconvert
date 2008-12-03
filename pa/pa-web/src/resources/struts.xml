@@ -167,8 +167,12 @@
 		<action name="abstractionCompletion*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <result>/WEB-INF/jsp/abstractionCompletion.jsp</result> 
         </action>
+        <action name="disease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/diseaseedit.jsp</result>              
+            <result name="list">/WEB-INF/jsp/disease.jsp</result>  
+        </action>
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
-            <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
+          <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
         </action>
 	</package>
 </struts>

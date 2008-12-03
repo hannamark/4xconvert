@@ -40,6 +40,7 @@ public class TrialValidationAction extends ActionSupport {
     public String query() {
         try {        
 
+            @SuppressWarnings("PMD.UnusedLocalVariable")
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);             
                 
@@ -66,6 +67,7 @@ public class TrialValidationAction extends ActionSupport {
     public String update() {
         try {
 
+            @SuppressWarnings("PMD.UnusedLocalVariable")
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
         } catch (Exception e) {
@@ -108,6 +110,7 @@ public class TrialValidationAction extends ActionSupport {
         }
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -120,6 +123,7 @@ public class TrialValidationAction extends ActionSupport {
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
     
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void updateStudyParticipation(Ii studyProtocolIi) throws PAException {
         StudyParticipationDTO spDto = new StudyParticipationDTO();
         spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));

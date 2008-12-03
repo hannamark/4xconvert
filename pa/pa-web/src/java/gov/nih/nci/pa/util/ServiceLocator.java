@@ -1,12 +1,17 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
 import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
@@ -32,7 +37,6 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 
 
 /**
@@ -230,6 +234,25 @@ public interface ServiceLocator {
      *  
      */
     DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService(); 
-
+    
+    /**
+     * @return StudyDiseaseService
+     */
+    StudyDiseaseServiceRemote getStudyDiseaseService();
+    
+    /**
+     * @return DiseaseService
+     */
+    DiseaseServiceRemote getDiseaseService();
+    
+    /**
+     * @return DiseaseAlternameService
+     */
+    DiseaseAlternameServiceRemote getDiseaseAlternameService();
+    
+    /**
+     * @return DiseaseParentService
+     */
+    DiseaseParentServiceRemote getDiseaseParentService();
 }
 
