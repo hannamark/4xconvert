@@ -5,6 +5,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -27,6 +28,7 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
     private Cd reviewBoardApprovalStatusCode;
     private St reviewBoardApprovalNumber;
     private Ts reviewBoardApprovalDate;
+    private Int targetAccrualNumber;
     
     /**
      * @return the healthcareFacilityIi
@@ -123,5 +125,17 @@ public class StudyParticipationDTO extends OrganizationFunctionalRoleDTO {
      */
     public void setReviewBoardApprovalDate(Ts reviewBoardApprovalDate) {
         this.reviewBoardApprovalDate = reviewBoardApprovalDate;
+    }
+    /**
+     * @return the targetAccrualNumber
+     */
+    public Int getTargetAccrualNumber() {
+        return targetAccrualNumber;
+    }
+    /**
+     * @param targetAccrualNumber the targetAccrualNumber to set
+     */
+    public void setTargetAccrualNumber(Int targetAccrualNumber) {
+        this.targetAccrualNumber = targetAccrualNumber;
     }
 }

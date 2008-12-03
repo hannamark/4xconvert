@@ -38,27 +38,21 @@
 	function facilityUpdate(){
 		var recStatus;
 		var recStatusDate;
-		try{
-		 	recStatus = document.facility.recStatus.value;		 
-		 } catch (err) {		 	
-		 	recStatus = document.getElementById('participatingOrganizationsedit_recStatus').value;
-		 }
-		try{
-		 	recStatusDate = document.facility.recStatusDate.value;
-		 } catch (err) {
-		 	recStatusDate = document.getElementById('participatingOrganizationsedit_recStatusDate').value;
-		 }
+
+        recStatus = document.facility.recStatus.value;		 
+        recStatusDate = document.facility.recStatusDate.value;
+        targetAccrualNumber = document.facility.targetAccrualNumber.value;
 		
 	     var div = document.getElementById('loadOrgDetails'); 
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
 	     var url;
-	     url = '/pa/protected/ajaxptpOrgfacilityUpdate.action?recStatus='+recStatus+'&resStatusDate='+recStatusDate;
+	     url = '/pa/protected/ajaxptpOrgfacilityUpdate.action?recStatus='+recStatus
+            +'&recStatusDate='+recStatusDate+'&targetAccrualNumber='+targetAccrualNumber;
       	 var aj = new Ajax.Updater(div, url, {
 	        asynchronous: true,
 	        method: 'get',
 	        evalScripts: false
 	     });
-	     return false;	     
 	}	
 	function lookup(){
 	    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');

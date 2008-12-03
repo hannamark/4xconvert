@@ -17,6 +17,7 @@ import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -73,6 +74,7 @@ public class StudyParticipationServiceTest {
     }
     @Test
     public void create() throws Exception {
+        int accrualNum = 63;
         StudyParticipationDTO spDto = new StudyParticipationDTO();
         spDto.setIdentifier(IiConverter.convertToIi((Long) null));
         spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
@@ -81,10 +83,12 @@ public class StudyParticipationServiceTest {
         spDto.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         spDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/15/2008")));
         spDto.setStudyProtocolIdentifier(participationIi);
+        spDto.setTargetAccrualNumber(IntConverter.convertToInt(accrualNum));
         StudyParticipationDTO result = remoteEjb.create(spDto);
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
                 , CdConverter.convertCdToString(result.getFunctionalCode()));
+        assertTrue(accrualNum == IntConverter.convertToInteger(result.getTargetAccrualNumber()));
     }
     @Test
     public void delete() throws Exception {

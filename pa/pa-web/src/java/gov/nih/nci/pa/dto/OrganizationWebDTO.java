@@ -12,12 +12,13 @@ package gov.nih.nci.pa.dto;
  *        holder, NCI.
  */
 public class OrganizationWebDTO {
-    String id;
-    String name;
-    String nciNumber;
-    String recruitmentStatus;
-    String recruitmentStatusDate;
-    String functionalRole;
+    private String id;
+    private String name;
+    private String nciNumber;
+    private String recruitmentStatus;
+    private String recruitmentStatusDate;
+    private String functionalRole;
+    private String targetAccrualNumber;
     /**
      * @return the id
      */
@@ -89,5 +90,17 @@ public class OrganizationWebDTO {
      */
     public void setFunctionalRole(String functionalRole) {
         this.functionalRole = functionalRole;
+    }
+    /**
+     * @return the targetAccrualNumber
+     */
+    public String getTargetAccrualNumber() {
+        return targetAccrualNumber;
+    }
+    /**
+     * @param targetAccrualNumber the targetAccrualNumber to set
+     */
+    public void setTargetAccrualNumber(String targetAccrualNumber) {
+        this.targetAccrualNumber = targetAccrualNumber;
     }
 }

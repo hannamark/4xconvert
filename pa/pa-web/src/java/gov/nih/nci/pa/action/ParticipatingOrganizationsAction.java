@@ -22,11 +22,11 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -36,7 +36,6 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOOrgDisplayConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -70,17 +69,12 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings("PMD")
 public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 123412653L;
-    private static final int AD_CITY_IDX = 1;
-    private static final int AD_COUNTRY_IDX = 3;
-    private static final int AD_ZIP_IDX = 2;
     private static final String ACT_FACILITY_SAVE = "facilitySave";
     private static final String ACT_EDIT = "edit";
     private static final String ACT_DELETE = "delete";
-    private StudyProtocolServiceRemote sProService;
     private StudyParticipationServiceRemote sPartService;
     private StudySiteAccrualStatusServiceRemote ssasService;
     private StudyParticipationContactServiceRemote sPartContactService;
-    private HealthCareProviderCorrelationServiceRemote pohcpService;
     private OrganizationCorrelationServiceBean oCService;
     private CorrelationUtils cUtils;
     
@@ -88,7 +82,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private List<OrganizationWebDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
     private Organization editOrg;
-    private static final int THREE = 3;
     private static final String DISPLAYJSP = "displayJsp";
     private Long cbValue;
     private String recStatus;
@@ -101,17 +94,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private String organizationName;
     private OrgSearchCriteria orgFromPO = new OrgSearchCriteria();
     private String currentAction = "create";
+    private String targetAccrualNumber;
 
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws Exception e
      */
     public void prepare() throws Exception {
-        sProService = PaRegistry.getStudyProtocolService();
         sPartService = PaRegistry.getStudyParticipationService();
         ssasService = PaRegistry.getStudySiteAccrualStatusService();
         sPartContactService = PaRegistry.getStudyParticipationContactService();
-        pohcpService = PaRegistry.getHealthCareProviderCorrelationService();
         cUtils = new CorrelationUtils();
         oCService = new OrganizationCorrelationServiceBean();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
@@ -167,6 +159,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
         sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         sp.setStudyProtocolIdentifier(spIi);
+        sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
         sp = sPartService.create(sp);
         tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
@@ -191,7 +184,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String facilityUpdate() throws Exception {
         clearErrorsAndMessages();
         String resStatus = ServletActionContext.getRequest().getParameter("recStatus");
-        String resStatusDate = ServletActionContext.getRequest().getParameter("resStatusDate");
+        String resStatusDate = ServletActionContext.getRequest().getParameter("recStatusDate");
+        String paramTargetAccrualNumber = ServletActionContext.getRequest().getParameter("targetAccrualNumber");
         if (!PAUtil.isNotNullOrNotEmpty(resStatus)) {
             addFieldError("recStatus", getText("error.participatingStatus"));
         }
@@ -247,6 +241,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
         this.setRecStatus(resStatus);
         this.setRecStatusDate(resStatusDate);
+        this.setTargetAccrualNumber(paramTargetAccrualNumber);
         return this.ACT_EDIT;
     }
 
@@ -269,6 +264,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             this.setRecStatus(statusList.get(0).getStatusCode().getCode());
             this.setRecStatusDate(TsConverter.convertToTimestamp(statusList.get(0).getStatusDate()).toString());
         }
+        this.setTargetAccrualNumber(IntConverter.convertToInteger(spDto.getTargetAccrualNumber()).toString());
         setNewParticipation(false);
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
@@ -337,6 +333,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                         ssasList.get(0).getStatusDate()).toString()));
             }
+            orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
             organizationList.add(orgWebDTO);
         }
     }
@@ -967,5 +964,19 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public void setCurrentAction(String currentAction) {
         this.currentAction = currentAction;
+    }
+
+    /**
+     * @return the targetAccrualNumber
+     */
+    public String getTargetAccrualNumber() {
+        return targetAccrualNumber;
+    }
+
+    /**
+     * @param targetAccrualNumber the targetAccrualNumber to set
+     */
+    public void setTargetAccrualNumber(String targetAccrualNumber) {
+        this.targetAccrualNumber = targetAccrualNumber;
     }
 }

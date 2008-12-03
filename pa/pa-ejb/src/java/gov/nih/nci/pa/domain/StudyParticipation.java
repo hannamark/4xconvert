@@ -35,6 +35,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
     private String localStudyProtocolIdentifier;
     private String reviewBoardApprovalNumber;
     private ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode; 
+    private Integer targetAccrualNumber;
     private Timestamp reviewBoardApprovalDate;
     private HealthCareFacility healthCareFacility;
     private ResearchOrganization researchOrganization;
@@ -114,6 +115,19 @@ public class StudyParticipation extends OrganizationFunctionalRole {
     public void setReviewBoardApprovalStatusCode(
             ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode) {
         this.reviewBoardApprovalStatusCode = reviewBoardApprovalStatusCode;
+    }
+    /**
+     * @return the targetAccrualNumber
+     */
+    @Column(name = "TARGET_ACCRUAL_NUMBER")
+    public Integer getTargetAccrualNumber() {
+        return targetAccrualNumber;
+    }
+    /**
+     * @param targetAccrualNumber the targetAccrualNumber to set
+     */
+    public void setTargetAccrualNumber(Integer targetAccrualNumber) {
+        this.targetAccrualNumber = targetAccrualNumber;
     }
     /**
      * 

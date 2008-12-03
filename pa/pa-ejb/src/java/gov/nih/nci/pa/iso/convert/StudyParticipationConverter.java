@@ -14,6 +14,7 @@ import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -53,6 +54,7 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         dto.setReviewBoardApprovalDate(TsConverter.convertToTs(bo.getReviewBoardApprovalDate()));
         dto.setReviewBoardApprovalNumber(StConverter.convertToSt(bo.getReviewBoardApprovalNumber()));
         dto.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(bo.getReviewBoardApprovalStatusCode()));
+        dto.setTargetAccrualNumber(IntConverter.convertToInt(bo.getTargetAccrualNumber()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
@@ -102,6 +104,7 @@ public class StudyParticipationConverter extends AbstractConverter<StudyParticip
         bo.setStudyProtocol(spBo);
         bo.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
         bo.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
+        bo.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
         
         if (dto.getReviewBoardApprovalStatusCode() != null) {
             bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(

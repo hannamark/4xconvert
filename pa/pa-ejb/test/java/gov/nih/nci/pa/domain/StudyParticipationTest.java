@@ -2,6 +2,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -27,13 +28,8 @@ public class StudyParticipationTest  {
         TestSchema.reset();
                
     }
-    
-    @Test
-    public void createStudyParticipation1() {
-        assertEquals("testme", "testme");
-    }
 
-    //@Test
+    @Test
     public void createStudyParticipation() {
         Session session = TestSchema.getSession();
 
@@ -62,7 +58,7 @@ public class StudyParticipationTest  {
                     saved.getLocalStudyProtocolIdentifier());        
     }
     
-    //@Test
+    @Test
     public void getOrganizationAssociatedWithProtcol() {
         Session session = TestSchema.getSession();
         Organization o  = OrganizationTest.createOrganizationObj();
@@ -90,7 +86,7 @@ public class StudyParticipationTest  {
         assertEquals("Functional Code does not match " , create.getFunctionalCode() , saved.getFunctionalCode());
         assertEquals("Local Study Protocol Identifier does not match " , create.getLocalStudyProtocolIdentifier() , 
                     saved.getLocalStudyProtocolIdentifier());        
-
+        assertEquals("TargetAccrualNumbers do not match ", create.getTargetAccrualNumber(), saved.getTargetAccrualNumber());
         Organization o2  = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o2);
         assertNotNull(o2.getId());
@@ -136,6 +132,8 @@ public class StudyParticipationTest  {
         create.setUserLastUpdated("abstractor");
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
+        create.setStatusCode(StatusCode.ACTIVE);
+        create.setStatusDateRangeLow(now);
         create.setStudyProtocol(sp);
         create.setHealthCareFacility(hcp);
         return create;
