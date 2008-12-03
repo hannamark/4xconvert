@@ -166,7 +166,7 @@ BubbleTips.activateTipOn("dfn");
         <s:if test="eligibilityList != null">    
 		<input type="hidden" name="page" />
    		<input type="hidden" name="id" /> 
-   		<display:table name="${eligibilityList}" id="row" class="data" sort="list"  pagesize="5" requestURI="interventionalStudyDesigneligibilityQuery.action" export="false">
+   		<display:table name="${eligibilityList}" id="row" class="data" sort="list"  pagesize="5" requestURI="eligibilityCriteriaquery.action" export="false">
 	    <display:column titleKey="isdesign.eligibilitycriteria.inclusionIndicator" property="inclusionIndicator" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="textDescription" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriterianame" property="criterionName"  sortable="true" headerClass="sortable" />
@@ -188,8 +188,8 @@ BubbleTips.activateTipOn("dfn");
                 <ul class="btnrow">
                     <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
                     <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriteria</span></span></s:a></li>
-					<li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-					<li><a href="#" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
+					<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+					<li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
                 </ul>   
             </del>
         </div> 
