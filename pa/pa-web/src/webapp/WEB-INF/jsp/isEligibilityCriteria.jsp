@@ -24,6 +24,14 @@ function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
+function maxLength(field,maxChars)
+ {
+ var input=field;
+  	var inputElement = document.forms[0].elements[input];  	
+       if(inputElement.value.length >= maxChars) {
+		  alert("more than " +maxChars + " chars");
+       }
+ } 
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
@@ -40,7 +48,7 @@ BubbleTips.activateTipOn("dfn");
                     <td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                         <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/> </dfn><span class="required">*</span></label>
                      </td> <td class="value">               
-                        <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" />
+                        <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" onblur='return maxLength("studyPopulationDescription","800");' />
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>studyPopulationDescription</s:param>
