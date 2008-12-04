@@ -265,6 +265,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			<isset property="database.csm.sample"/>
 			<then>
 				<echo message="Found database.csm.sample=${database.csm.sample}."/>
+                        <echo message="Looking for: ${db-install.dir}/${database.type}/${database.csm.sample}"/>
 					<run-sql-script database.url="${database.url}"
 						database.user="${database.user}" 
 						database.password="${database.password}" 
