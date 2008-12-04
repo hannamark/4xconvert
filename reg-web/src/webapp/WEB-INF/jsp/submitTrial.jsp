@@ -169,11 +169,12 @@ function toggledisplay2 (it) {
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="submit.trial.page.header"/></h1>
+    <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <input type="hidden" name="page" />
-        <p>Add Trial into NCI Clinical Trials Reporting Portal  by submitting this form. Please note: asterisks (<span class="required">*</span>) indicate required fields. </p>
+        <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form"> 
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
@@ -341,14 +342,14 @@ function toggledisplay2 (it) {
           </tr>
 		  <!--  summary4 information -->
           <tr>
-                <th colspan="2">Summary 4 Information</th>
+                <th colspan="2">Summary 4 Information(For trials at NCI-designated cancer centers)</th>
           </tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
           <tr>
 					<td scope="row" class="label">
-						<label for="org">Summary 4 Funding Category :</label> 
+						<label for="org">Summary 4 Funding Sponsor Type:</label> 
 					</td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
@@ -366,7 +367,7 @@ function toggledisplay2 (it) {
           <tr>
                
 					<td scope="row" class="label">
-						<label for="sponsor"> Summary 4 Funding Sponsor : </label> 
+						<label for="sponsor"> Summary 4 Funding Sponsor: </label> 
 					</td>
 					<td class="value">
 						<div id="loadSummary4FundingSponsorField">
@@ -384,6 +385,14 @@ function toggledisplay2 (it) {
          
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+               <fmt:message key="submit.trial.grantInstructionalText"/>
+            </td>
+          </tr>
+          <tr>
+              <td colspan="2" class="space">&nbsp;</td>
           </tr>
           
           <tr>
@@ -549,10 +558,18 @@ function toggledisplay2 (it) {
           
  
         <tr>
-              <th colspan="2">IND/IDE Information</th>
+              <th colspan="2">FDA IND/IDE Information for applicable trials</th>
         </tr>     
          <tr>
                 <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+               <fmt:message key="submit.trial.indInstructionalText"/>
+            </td>
+          </tr>
+          <tr>
+              <td colspan="2" class="space">&nbsp;</td>
           </tr>
 			
 				<tr><td colspan="2" class="space">
@@ -644,17 +661,21 @@ function toggledisplay2 (it) {
                  <s:file name="otherDocument" cssStyle="width:270px"/>                 
                </td>         
          </tr> 
-
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">         
-                    <li><li>            
+                        <li>
+                        <li>            
                             <s:a href="#" cssClass="btn" onclick="submitProtocol()"><span class="btn_img"><span class="save">Submit Trial</span></span></s:a>  
                         </li>
                 </ul>   
             </del>
-        </div>  
+        </div>
+        <p class="info">
+            Please verify all elements on the screen and confirm submission by hitting &#39;Submit Trial&#39; button. Please note,
+            that you will not be able to modify submission <br>after confirming it when using NCI Clinical Trials Reporting Program.
+        </p>
       <input type="hidden" name="uuidhidden"/>  
    </s:form>
 
