@@ -220,6 +220,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             return "error_edit";
         }
 
+        StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
+        if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) != new Integer(getTargetAccrualNumber())) {
+            spDto.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
+            sPartService.update(spDto);
+        }
+        
         List<StudySiteAccrualStatusDTO> currentStatus = ssasService
                 .getCurrentStudySiteAccrualStatusByStudyParticipation(IiConverter.convertToIi(tab
                         .getStudyParticipationId()));
@@ -264,7 +270,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             this.setRecStatus(statusList.get(0).getStatusCode().getCode());
             this.setRecStatusDate(TsConverter.convertToTimestamp(statusList.get(0).getStatusDate()).toString());
         }
-        this.setTargetAccrualNumber(IntConverter.convertToInteger(spDto.getTargetAccrualNumber()).toString());
+        if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) ==  null) {
+            setTargetAccrualNumber(null);
+        } else {
+            setTargetAccrualNumber(IntConverter.convertToInteger(spDto.getTargetAccrualNumber()).toString());
+        }
         setNewParticipation(false);
         ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
         tab.setStudyParticipationId(cbValue);
@@ -333,7 +343,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                         ssasList.get(0).getStatusDate()).toString()));
             }
-            orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
+            if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) == null) {
+                orgWebDTO.setTargetAccrualNumber(null);
+            } else {
+                orgWebDTO.setTargetAccrualNumber(IntConverter.convertToInteger(sp.getTargetAccrualNumber()).toString());
+            }
             organizationList.add(orgWebDTO);
         }
     }
@@ -977,6 +991,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * @param targetAccrualNumber the targetAccrualNumber to set
      */
     public void setTargetAccrualNumber(String targetAccrualNumber) {
-        this.targetAccrualNumber = targetAccrualNumber;
+        Integer tInt;
+        try {
+            tInt = Integer.parseInt(targetAccrualNumber);
+            this.targetAccrualNumber = tInt.toString();
+        } catch (NumberFormatException e) {
+            this.targetAccrualNumber  = null;
+        }
     }
 }
