@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="osdesign.outcome.title"/></title>
+    <title><fmt:message key="osdesign.outcome.subtitle"/></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -29,6 +29,14 @@ function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
+function maxLength(field,maxChars)
+ {
+ var input=field;
+  	var inputElement = document.forms[0].elements[input];  	
+       if(inputElement.value.length >= maxChars) {
+		  alert("more than " +maxChars + " chars");
+       }
+ } 
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
@@ -38,7 +46,7 @@ BubbleTips.activateTipOn("dfn");
    <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form><s:actionerror/>    
-    <h2><fmt:message key="osdesign.outcome.title"/></h2>
+    <h2><fmt:message key="osdesign.outcome.subtitle"/></h2>
     <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="id" value="${id}" />
     <table class="form">
@@ -62,7 +70,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.name" rows="4" cssStyle="width:400px" />
+                        <s:textarea name="webDTO.name" rows="4" cssStyle="width:400px" onblur='return maxLength("webDTO.name","254");' />
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.name</s:param>
@@ -77,7 +85,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
     				<td class="value">
-							<s:textarea name="webDTO.timeFrame" rows="4" cssStyle="width:400px" />
+							<s:textarea name="webDTO.timeFrame" rows="4" cssStyle="width:400px" onblur='return maxLength("webDTO.timeFrame","254");' />
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.timeFrame</s:param>
