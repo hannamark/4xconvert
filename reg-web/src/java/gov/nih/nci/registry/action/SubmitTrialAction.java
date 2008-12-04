@@ -9,7 +9,6 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -38,6 +37,7 @@ import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
+import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
@@ -320,7 +320,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
             // overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
             overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
-            overallStatusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(overallStatusWebDTO
+            overallStatusDTO.setStatusCode(CdConverter.convertToCd(TrialStatusCode.getByCode(overallStatusWebDTO
                     .getStatusCode())));
             overallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(overallStatusWebDTO
                     .getStatusDate())));
@@ -666,55 +666,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             
         }
-        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())) {
-            Timestamp statusDate = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
-            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-            if (currentTimeStamp.before(statusDate)) {
-                addFieldError("overallStatusWebDTO.statusDate", 
-                        getText("error.submit.invalidStatusDate"));                
-            }
-        }
-        
-        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
-                  && PAUtil.isNotEmpty(protocolWebDTO.getStartDateType())) {
-            if (StudyStatusCode.APPROVED.getDisplayName().equals(overallStatusWebDTO.getStatusCode()) 
-                    || StudyStatusCode.WITHDRAWN.getDisplayName().equals(overallStatusWebDTO.getStatusCode())) {
-                
-                if (protocolWebDTO.getStartDateType().equals("Anticipated")) {
-                    addFieldError("protocolWebDTO.startDateType", getText("error.submit.startDateType"));
-                }                
-            }            
-        }
-        
-        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
-                && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())) {
-          if (StudyStatusCode.COMPLETE.getDisplayName().equals(overallStatusWebDTO.getStatusCode()) 
-                  || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getDisplayName().
-                          equals(overallStatusWebDTO.getStatusCode())) {
-              if (protocolWebDTO.getCompletionDateType().equals("Anticipated")) {
-                  addFieldError("protocolWebDTO.completionDateType", getText("error.submit.completionDateType"));
-              }
-              if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate()) 
-                          && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())) {
-                  Timestamp statusTimestamp = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
-                  Timestamp completionTimestamp = PAUtil.dateStringToTimestamp(protocolWebDTO.getCompletionDate());
-                  if (!statusTimestamp.equals(completionTimestamp)) {
-                      addFieldError("protocolWebDTO.completionDate", getText("error.submit.completionDateValue"));
 
-                  }                  
-              }
-              
-          } else {
-              
-              if (PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())
-                      && !protocolWebDTO.getCompletionDateType().equals("Anticipated")) {
-                  addFieldError("protocolWebDTO.completionDateType", getText("error.submit.completionDateTypeValue"));
-                  
-              }
-              
-          }
-          
-        }
 
         // LeadOrgNotSelected;check the session;
         selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoLeadOrg");
@@ -737,12 +689,163 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
             }
         }
+        // validate trial status and dates
+        validateTrialDates();
 
-//        selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
-//                "PoSummary4Sponsor");
-//        if (selectedSummary4Sponsor == null) {
-//            addFieldError("summary4FundingSponsor", getText("error.submit.summary4FundingSponsor"));
-//        }
+    }
+    
+    /**
+     * validate the submit trial dates.
+     */
+    private void validateTrialDates() {
+        // Constraint/Rule: 18 Current Trial Status Date must be current or past.
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())) {
+            Timestamp statusDate = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
+            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+            if (currentTimeStamp.before(statusDate)) {
+                addFieldError("overallStatusWebDTO.statusDate", 
+                        getText("error.submit.invalidStatusDate"));                
+            }
+        }        
+        // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
+        // Current Trial Status Date and have ‘actual’ type.
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
+                && PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())
+                        && PAUtil.isNotEmpty(protocolWebDTO.getStartDate())
+                         && PAUtil.isNotEmpty(protocolWebDTO.getStartDateType())) {
+          if (TrialStatusCode.ACTIVE.getCode().equals(
+                          overallStatusWebDTO.getStatusCode())) {
+              Timestamp statusDate = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
+              Timestamp trialStartDate = PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate());
+              if (!statusDate.equals(trialStartDate) 
+                              || !protocolWebDTO.getStartDateType().equals(
+                                  ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                  addFieldError("protocolWebDTO.startDate", getText("error.submit.invalidStartDate"));
+              }                
+          }            
+        }        
+        // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
+        //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
+                         && PAUtil.isNotEmpty(protocolWebDTO.getStartDateType())) {
+          if (TrialStatusCode.APPROVED.getCode().equals(
+                          overallStatusWebDTO.getStatusCode())) {
+              if (!protocolWebDTO.getStartDateType().equals(
+                              ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
+                  addFieldError("protocolWebDTO.startDateType", 
+                          getText("error.submit.invalidStartDateTypeApproved"));
+              }                
+          } else {
+              if (!protocolWebDTO.getStartDateType().equals(
+                       ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                          addFieldError("protocolWebDTO.startDateType", 
+                                  getText("error.submit.invalidStartDateTypeOther"));
+              }              
+          }
+        }        
+        // Constraint/Rule: 23 If Current Trial Status is ‘Completed’, Primary Completion Date must be the 
+        // same as Current Trial Status Date and have ‘actual’ type.
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
+                && PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())
+                        && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())
+                         && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())) {
+          if (TrialStatusCode.COMPLETE.getCode().equals(
+                          overallStatusWebDTO.getStatusCode())) {
+              Timestamp statusDate = PAUtil.dateStringToTimestamp(overallStatusWebDTO.getStatusDate());
+              Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(protocolWebDTO.getCompletionDate());
+              if (!statusDate.equals(trialCompletionDate) 
+                      ||  !protocolWebDTO.getCompletionDateType().equals(
+                          ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                              addFieldError("protocolWebDTO.completionDate", 
+                                  getText("error.submit.invalidCompletionDate"));
+              }                
+          }            
+        }        
+        // Constraint/Rule: 24 If Current Trial Status is ‘Completed’ or ‘Administratively Completed’, 
+        // Primary Completion Date must have ‘actual’ type. Primary Completion Date must have ‘anticipated’ type 
+        // for any other Current Trial Status value besides ‘Completed’ or ‘Administratively Completed’. 
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())
+                && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())) {
+          if (TrialStatusCode.COMPLETE.getCode().equals(overallStatusWebDTO.getStatusCode()) 
+                  || TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().
+                          equals(overallStatusWebDTO.getStatusCode())) {
+              if (!protocolWebDTO.getCompletionDateType().equals(
+                          ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                              addFieldError("protocolWebDTO.completionDateType", 
+                                     getText("error.submit.invalidCompletionDateType"));
+              }
+             
+          } else {
+              
+              if (PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())
+                      && !protocolWebDTO.getCompletionDateType().equals(
+                              ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
+                                  addFieldError("protocolWebDTO.completionDateType", 
+                                          getText("error.submit.invalidCompletionDateTypeOther"));                  
+              }
+              
+          }          
+        }        
+        // Constraint/Rule:25 Trial Start Date must be same/smaller than Primary Completion Date. 
+        if (PAUtil.isNotEmpty(protocolWebDTO.getStartDate())
+                        && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())) {
+            Timestamp trialStartDate = PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate());
+            Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(protocolWebDTO.getCompletionDate());
+            if (trialCompletionDate.before(trialStartDate)) {
+                addFieldError("protocolWebDTO.startDate", 
+                        getText("error.submit.invalidTrialDates"));                
+            }
+        }        
+        // Constraint/Rule: 19 Trial Start Date must be current/past if ‘actual’ trial start date type 
+        // is selected and must be future if ‘anticipated’ trial start date type is selected.
+        if (PAUtil.isNotEmpty(protocolWebDTO.getStartDate())
+                         && PAUtil.isNotEmpty(protocolWebDTO.getStartDateType())) {
+            if (protocolWebDTO.getStartDateType().equals(
+                    ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                Timestamp trialStartDate = PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate());
+                Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+                if (currentTimeStamp.before(trialStartDate)) {
+                    addFieldError("protocolWebDTO.startDate", 
+                            getText("error.submit.invalidActualStartDate"));                
+                }
+                
+            } else if (protocolWebDTO.getStartDateType().equals(
+                        ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
+                            Timestamp trialStartDate = PAUtil.dateStringToTimestamp(
+                                    protocolWebDTO.getStartDate());
+                            Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+                            if (currentTimeStamp.after(trialStartDate)) {
+                                addFieldError("protocolWebDTO.startDate", 
+                                        getText("error.submit.invalidAnticipatedStartDate"));                
+                            }
+            }          
+        }        
+        // Constraint/Rule: 20 Primary Completion Date must be current/past if ‘actual’ 
+        // primary completion date type is selected and must be future if ‘anticipated’ 
+        // trial primary completion date type is selected.
+        if (PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())
+                         && PAUtil.isNotEmpty(protocolWebDTO.getCompletionDateType())) {
+            if (protocolWebDTO.getCompletionDateType().equals(
+                    ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                        Timestamp completionDate = PAUtil.dateStringToTimestamp(
+                                protocolWebDTO.getCompletionDate());
+                        Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+                        if (currentTimeStamp.before(completionDate)) {
+                            addFieldError("protocolWebDTO.completionDate", 
+                                    getText("error.submit.invalidActualCompletionDate"));                
+                        }
+                
+            } else if (protocolWebDTO.getCompletionDateType().equals(
+                    ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
+                        Timestamp completionDate = PAUtil.dateStringToTimestamp(
+                                protocolWebDTO.getCompletionDate());
+                        Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+                        if (currentTimeStamp.after(completionDate)) {
+                            addFieldError("protocolWebDTO.completionDate", 
+                                    getText("error.submit.invalidAnticipatedCompletionDate"));                
+                        }
+            }          
+        }        
     }
     
     private  boolean isValidEmailAddress(String emailAddress)  {
