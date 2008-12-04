@@ -271,7 +271,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						sql.delimiter="/" 
 						sql.delimitertype="row"
 						sql.file="${db-install.dir}/${database.type}/${database.csm.sample}"
-						onerror="${onerror}"/>
+						onerror="continue"/>
 			</then>
 			<else>
 				<echo message="No database.csm.sample property set."/>
