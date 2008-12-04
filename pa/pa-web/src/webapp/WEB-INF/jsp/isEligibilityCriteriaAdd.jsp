@@ -57,6 +57,14 @@ function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
+function maxLength(field,maxChars)
+ {
+ var input=field;
+  	var inputElement = document.forms[0].elements[input];  	
+       if(inputElement.value.length >= maxChars) {
+		  alert("more than " +maxChars + " chars");
+       }
+ } 
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
@@ -96,7 +104,7 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/> </dfn></label>
 					</td>
 					<td class="value">
-						<s:textarea name="webDTO.textDescription" rows="4" cssStyle="width:400px" onblur="activate()" />
+						<s:textarea name="webDTO.textDescription" rows="4" cssStyle="width:400px" onblur='activate();return maxLength("webDTO.textDescription","400");' />
 					</td>
 				</tr>  
 				<tr>
