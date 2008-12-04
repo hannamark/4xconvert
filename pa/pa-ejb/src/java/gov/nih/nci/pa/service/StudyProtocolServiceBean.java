@@ -218,8 +218,8 @@ import org.hibernate.Session;
               throw new PAException(" Single Blinding Schema code must have 1 Blinded code ");
             }
             if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
-                    && totBlindCodes < 1) {
-                throw new PAException(" Double Blinding Schema Code cannot have less than 1 Blinded codes ");
+                    && totBlindCodes < 2) {
+                throw new PAException(" Double Blinding Schema Code cannot have less than 2 Blinded codes ");
             }
 
         }
