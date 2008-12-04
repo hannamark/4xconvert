@@ -124,6 +124,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String contactPhone = null;
     private String trialPurpose = null;
     private String summary4FundingCategory = null;
+    private String poLeadPiFullName;
 
     /**
      * 
@@ -523,6 +524,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             selectedLeadPrincipalInvestigator = RegistryServiceLocator.getPoPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             ServletActionContext.getRequest().getSession().setAttribute("PoLeadPI", selectedLeadPrincipalInvestigator);
+            poLeadPiFullName = (String) selectedLeadPrincipalInvestigator.getName().getPart().get(0).getValue() + ", " 
+                + selectedLeadPrincipalInvestigator.getName().getPart().get(1).getValue();
+            
         } catch (Exception e) {
             return "display_lead_prinicipal_inv";
         }
@@ -1123,6 +1127,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         return overallStatusWebDTO;
     }
 
+
     /**
      * @param overallStatusWebDTO the overallStatusWebDTO to set
      */
@@ -1564,6 +1569,20 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     public String getTrialAction() {
         return trialAction;
+    }
+
+    /**
+     * @return the poLeadPiFullName
+     */
+    public String getPoLeadPiFullName() {
+        return poLeadPiFullName;
+    }
+
+    /**
+     * @param poLeadPiFullName the poLeadPiFullName to set
+     */
+    public void setPoLeadPiFullName(String poLeadPiFullName) {
+        this.poLeadPiFullName = poLeadPiFullName;
     }
 
 }
