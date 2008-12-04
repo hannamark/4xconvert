@@ -384,7 +384,7 @@ import com.opensymphony.xwork2.ActionSupport;
     }
     if (PAUtil.isNotEmpty(this.maximumValue)) {
       try {
-        Integer.valueOf(maximumValue);
+        Long.parseLong(maximumValue);
       } catch (NumberFormatException e) {
         addFieldError("maximumValue", getText("error.numeric"));
       }
@@ -397,7 +397,7 @@ import com.opensymphony.xwork2.ActionSupport;
     }
     if (PAUtil.isNotEmpty(this.minimumValue)) {
       try {
-        Integer.valueOf(minimumValue);
+        Long.parseLong(minimumValue);
       } catch (NumberFormatException e) {
         addFieldError("minimumValue", getText("error.numeric"));
       }
