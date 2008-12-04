@@ -139,7 +139,7 @@ function handleMyAction(){
      </div>
     	<div class="line"></div>
     	 <c:if test="${records != null}">						
-			<h2>Search Results</h2>
+			<h2>Submitted Clinical Trials Search Results</h2>
 			   <c:set var="topic" scope="request" value="search_results"/>   
 				<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp">
 					<jsp:param name="listName" value="records" />        
