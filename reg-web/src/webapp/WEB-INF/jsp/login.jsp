@@ -20,7 +20,7 @@
         </div>
      </c:when>
      <c:otherwise>
-           <p style="margin:0; padding:0">Please log in to search, view and submit clinical trial details. </p>
+           <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details. </p>
      </c:otherwise>
  </c:choose>
 <form action="j_security_check" method="post" id="loginForm">   
