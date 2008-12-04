@@ -85,12 +85,21 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.validator.Length;
 
 /**
@@ -103,6 +112,8 @@ public class ResearchOrganizationType extends AbstractCodeValue {
 
     private static final long serialVersionUID = 1L;
     private String description;
+    private SortedSet<FundingMechanism> fundingMechanisms = new TreeSet<FundingMechanism>();
+
 
     /**
      * For unit tests only.
@@ -139,5 +150,29 @@ public class ResearchOrganizationType extends AbstractCodeValue {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * @return the funding mechanisms
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "rot_fundingmechs",
+            joinColumns = { @JoinColumn(name = "rot_id") },
+            inverseJoinColumns = @JoinColumn(name = "fundingmech_id")
+    )
+    @ForeignKey(name = "ORGCNCT_TYPE_ORGCNCT_FK", inverseName = "ORGCNCT_TYPE_TYPE_FK")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)  // Unit tests write, so cannot use read-only
+    @Sort(type = SortType.NATURAL)
+    public SortedSet<FundingMechanism> getFundingMechanisms() {
+        return fundingMechanisms;
+    }
+
+    /**
+     * @param fundingMechanisms the set of mechanisms
+     */
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private void setFundingMechanisms(SortedSet<FundingMechanism> fundingMechanisms) {
+        this.fundingMechanisms = fundingMechanisms;
     }
 }

@@ -20,6 +20,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />
         <mapping class="gov.nih.nci.po.data.bo.Country" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
+        <mapping class="gov.nih.nci.po.data.bo.FundingMechanism"/>
         <mapping class="gov.nih.nci.po.data.bo.HealthCareProvider"/>
         <mapping class="gov.nih.nci.po.data.bo.HealthCareProviderCR" />
         <mapping class="gov.nih.nci.po.data.bo.HealthCareFacility"/>

@@ -382,6 +382,8 @@
                                 <srcFile>src/main/sql/countries.sql</srcFile>
                                 <srcFile>src/main/sql/oversightcommitteetypes.sql</srcFile>
                                 <srcFile>src/main/sql/researchorganizationtypes.sql</srcFile>
+                                <srcFile>src/main/sql/fundingmechanisms.sql</srcFile>
+                                <srcFile>src/main/sql/rot_fundingmech_mapping.sql</srcFile>
                                 <srcFile>src/main/sql/organizationalcontacttypes.sql</srcFile>
                                 <srcFile>src/main/sql/qualifiedentitytypes.sql</srcFile>
                                 <srcFile>src/main/sql/identifiedentitytypes.sql</srcFile>

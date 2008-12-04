@@ -5,10 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.AbstractCodeValue;
 import gov.nih.nci.po.data.bo.CodeValue;
+import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.QualifiedEntityType;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.lang.reflect.Constructor;
@@ -26,7 +28,8 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             OversightCommitteeType.class,
             OrganizationalContactType.class,
             ResearchOrganizationType.class,
-            QualifiedEntityType.class };
+            QualifiedEntityType.class,
+            FundingMechanism.class};
 
     private static final String CODE = "TT";
     private static final String DESC = "Test Type";
@@ -45,7 +48,11 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(0, n);
         Constructor<? extends CodeValue> constructor = null;
         CodeValue newInstance = null;
-        if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class)) {
+        if (clz.equals(FundingMechanism.class)) {
+            constructor = clz.getConstructor(String.class, String.class, String.class, FundingMechanismStatus.class);
+            newInstance = constructor.newInstance(CODE, DESC, "cat", FundingMechanismStatus.ACTIVE);
+            
+        } else if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class)) {
             constructor = clz.getConstructor(String.class, String.class);
             newInstance = constructor.newInstance(CODE, DESC);
         }else {
