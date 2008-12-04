@@ -29,7 +29,7 @@ function handleAction(){
                   <p>To reset your password, please begin by entering your login name and new password. </p>
             </c:when>
             <c:otherwise>
-                  <p>To register for NCI Clinical Trials Reporting Portal, please begin by creating your login information. </p>
+                  <p>Create account to register trials with NCI Clinical Trials Reporting Program. </p>
             </c:otherwise>
         </c:choose>
         <table class="form"> 
