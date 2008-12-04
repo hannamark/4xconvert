@@ -147,8 +147,7 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public String input() throws Exception {
+    public String input() {
         String result = super.input();
         initializeCollections(getRole());
         getRole().getPostalAddresses().size();

@@ -85,6 +85,7 @@ package gov.nih.nci.po.web.roles;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
@@ -116,6 +117,8 @@ public class ResearchOrganizationAction
     private static final long serialVersionUID = 1L;
     private ResearchOrganization role = new ResearchOrganization();
     private ResearchOrganizationCR cr = new ResearchOrganizationCR();
+    private ResearchOrganizationType researchOrganizationType = new ResearchOrganizationType();
+
 
     /**
      * {@inheritDoc}
@@ -189,6 +192,13 @@ public class ResearchOrganizationAction
 
         if (getRole().getPlayer() == null) { //if not set, then set to default
             getRole().setPlayer(getOrganization());
+        }
+        
+        if (getResearchOrganizationType().getId() != null) {
+            setResearchOrganizationType(PoRegistry.getInstance().getServiceLocator().getGenericService()
+                    .getPersistentObject(ResearchOrganizationType.class, getResearchOrganizationType().getId()));
+        } else {
+            setResearchOrganizationType(getRole().getTypeCode());
         }
     }
 
@@ -286,5 +296,28 @@ public class ResearchOrganizationAction
     @Override
     protected String getEditSuccessMessageKey() {
         return "researchorganization.update.success";
+    }
+    
+
+    /**
+     * @return ResearchOrganizationType.code
+     */
+    public ResearchOrganizationType getResearchOrganizationType() {
+        return researchOrganizationType;
+    }
+
+    /**
+     * @param researchOrganizationType used to specified ResearchOrganizationType.code for
+     *            changeResearchOrganizationType()
+     */
+    public void setResearchOrganizationType(ResearchOrganizationType researchOrganizationType) {
+        this.researchOrganizationType = researchOrganizationType;
+    }
+    
+    /**
+     * @return 'changeResearchOrganizationType' result
+     */
+    public String changeResearchOrganizationType() {
+        return "changeResearchOrganizationType";
     }
 }

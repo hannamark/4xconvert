@@ -10,6 +10,7 @@ import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
@@ -48,8 +49,10 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
     public void testPrepareNoOrgId() throws Exception {
         action.setRole(null);
         action.prepare();
+        assertSame(action.getRole().getTypeCode(), action.getResearchOrganizationType());
         assertSame(action.getOrganization(), action.getRole().getPlayer());
 
+        action.setResearchOrganizationType(new ResearchOrganizationType());
         // calling again exercises the path where the object already has the player set
         Organization o = action.getOrganization();
         action.setOrganization(null);

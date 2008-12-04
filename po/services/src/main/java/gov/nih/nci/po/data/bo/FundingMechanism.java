@@ -16,11 +16,12 @@ import org.hibernate.validator.NotNull;
 
 /**
  * Lookup class for types of Funding Mechanism.
+ * @author smatyas
  */
 @Entity
 @org.hibernate.annotations.Entity(mutable = false)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
-public class FundingMechanism extends AbstractCodeValue {
+public class FundingMechanism extends AbstractCodeValue implements Comparable<FundingMechanism> {
 
     private static final long serialVersionUID = 1L;
     private String description;
@@ -113,5 +114,13 @@ public class FundingMechanism extends AbstractCodeValue {
          * Active codes.
          */
         ACTIVE;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(FundingMechanism o) {
+        return this.getCode().compareTo(o.getCode());
     }
 }

@@ -304,6 +304,12 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/roles/organizational/{1}/list.jsp</result>
         </action>  
+
+        <!-- ResearchOrganization -> Support changing Funding Mechanism -->
+        <action name="ajax/roles/organizational/ResearchOrganization/funding/*" class="gov.nih.nci.po.web.roles.ResearchOrganizationAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="changeResearchOrganizationType">/WEB-INF/jsp/roles/organizational/ResearchOrganization/selectFundingMechanism.jsp</result>
+        </action>
         
         <!-- Person -> Edit/Curate -> Assign Person Roles -->
         <action name="roles/person/*/*" class="gov.nih.nci.po.web.roles.{1}Action" method="{2}">

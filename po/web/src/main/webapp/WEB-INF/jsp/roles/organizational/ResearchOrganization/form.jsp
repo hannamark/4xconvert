@@ -66,6 +66,15 @@ function handleDuplicateOf() {
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
 				<s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
+				<script type="text/javascript"><!--
+				/*
+				 Toggles the display of a stateOrProvince textfield or a select-box. 
+				*/
+				function curateRoleForm_displayFundingMechanism(ResearchOrganizationType_id) {
+					var url =  '' + contextPath + '/protected/ajax/roles/organizational/ResearchOrganization/funding/changeResearchOrganizationType.action?researchOrganizationType.id=' + ResearchOrganizationType_id;
+				    loadDiv(url, 'curateRoleForm_displayFundingMechanism', true);
+				}
+				--></script>
 				<s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
 				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
 				<s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
@@ -77,15 +86,11 @@ function handleDuplicateOf() {
 				   listValue="description"
 				   value="role.typeCode.id" 
 				   headerKey="" headerValue="--Select a Type--" 
-				   required="true" cssClass="required" /> 
-				<s:set name="researchOrgFundings" value="#{'U10':'U10', 'U01':'U01', 'P01':'P01', 'N01':'N01', 'P30':'P30'}" />
-				<s:select
-				   label="%{getText('researchOrganization.fundingMechanism')}"
-				   name="role.fundingMechanism"
-				   list="#researchOrgFundings"
-				   value="role.fundingMechanism" 
-				   headerKey="" headerValue="--Select a Funding Mechanism--" 
-				   required="true" cssClass="required" /> 
+				   required="true" cssClass="required" 
+				   onchange="return curateRoleForm_displayFundingMechanism(this.value);"/> 
+				<div id="curateRoleForm_displayFundingMechanism">
+				    <%@ include file="selectFundingMechanism.jsp" %>
+				</div>
 				<s:select id="curateRoleForm.role.status"
 				   label="%{getText('researchOrganization.status')}"
 				   name="role.status"

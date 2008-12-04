@@ -141,8 +141,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException", UNCHECKED })
-    public String input() throws Exception {
+    @SuppressWarnings(UNCHECKED)
+    public String input() {
         if (getBaseRole().getId() != null) {
             setBaseRole(getRoleService().getById(getBaseRole().getId()));
         }
