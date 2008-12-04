@@ -261,6 +261,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                     sql.delimiter="/"
                     sql.delimitertype="row"
                     />
+			<if>
+			<isset property="database.csm.sample"/>
+			<then>
+					<run-sql-script database.url="${database.url}"
+						database.user="${database.user}" 
+						database.password="${database.password}" 
+						sql.delimiter="/" 
+						sql.delimitertype="row"
+						sql.file="${db-install.dir}/${database.type}/${database.csm.sample}"
+						onerror="${onerror}"/>
+			</then>
+			</if>
             </case>
         </switch>
 	</target>
