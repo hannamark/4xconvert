@@ -264,6 +264,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			<if>
 			<isset property="database.csm.sample"/>
 			<then>
+				<echo message="Found database.csm.sample=${database.csm.sample}."/>
 					<run-sql-script database.url="${database.url}"
 						database.user="${database.user}" 
 						database.password="${database.password}" 
@@ -272,6 +273,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						sql.file="${db-install.dir}/${database.type}/${database.csm.sample}"
 						onerror="${onerror}"/>
 			</then>
+			<else>
+				<echo message="No database.csm.sample property set."/>
+			</else>
 			</if>
             </case>
         </switch>
