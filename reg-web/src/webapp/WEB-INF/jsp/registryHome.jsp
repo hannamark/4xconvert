@@ -31,16 +31,23 @@
 
                     <!--ADD CONTENT HERE-->
 
-                    <h1>Welcome to NCI Clinical Trials Reporting Portal</h1>
+                    <h1>Welcome to NCI&#39;s Clinical Trials Reporting Program</h1>
 
                     <p class="intro">
-                        <strong>NCI Clinical Trials Reporting Portal </strong> is a registry system for NCI clinical trials that gives you the tools to:
+                        This Portal enables you to  register a trial with NCI&#39;s Clinical Trials Reporting Program. You can
                     </p>
                     <ul>
-                        <li><a href="/registry/protected/searchTrial.action"><strong>Search for NCI clinical trials</strong></a> submitted by members of the <a href="https://cabig.nci.nih.gov" class="external" target="new">caBIG&trade; community.</a> You can view detailed trial information such as the title, NCI and Lead Organization Trial Identifier, phase, status, principal investigators, and more.</li>
-                        <li><a href="/registry/protected/submitTrial.action"><strong>Submit your NCI clinical trials</strong></a> and join our community of contributing scientists.</li>
-                        <li><a href="/registry/protected/searchTrial.action" class="selected"><strong>Login</strong></a> /<a href="/registry/registerUser.action" class="selected"><strong> Register</strong></a> to enter protocol details into the system.</li>
-                    </ul>
+                        <li><a href="/registry/registerUser.action"><strong>Create an account</strong></a> to register your clinical trials </li>
+                        <li><a href="/registry/protected/searchTrial.action"><strong>Login</strong></a> to your account and</li> 
+                        	<menu> 
+                        		<li>Register clinical trials</li>
+                        		<li>Search registered trials by Title, Phase, Trial Identifiers, Organization, and Principal Investigators</li>
+                                </menu>                                               
+                    </ul>                    
+		    <p class="padme10">
+			    Want to learn more about the Reporting Program? Visit the <a href="http://ctrp.nci.nih.gov" class="external" target="new1">NCI Clinical Trials Reporting Program Web site</a>
+			    <br>You can also call the Help Desk at 301-451-4384 or email us at ncicb@pop.nci.nih.gov if you have questions or need assistance
+                    </p>
 
                     <!--/ADD CONTENT HERE-->
 
