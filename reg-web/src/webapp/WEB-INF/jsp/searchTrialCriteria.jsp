@@ -136,6 +136,11 @@ function handleMyAction(){
                </ul>
             </del>
          </div>
+        <p class="info">
+            Search My Trials: Search the trials I have submitted.
+            <br>
+            Search All Trials: Search all trials I have submitted as well as those registered by others.
+        </p>
        </s:form>
      </div>
     	<div class="line"></div>
