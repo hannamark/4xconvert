@@ -90,7 +90,7 @@ public class Person extends AbstractEntity {
     /**
      * @return the identifier
      */
-    @Column(name = "identifier")
+    @Column(name = "assigned_identifier")
     @NotNull
     public String getIdentifier() {
         return identifier;

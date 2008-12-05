@@ -49,6 +49,7 @@ public  class AbstractEntity implements Serializable, Auditable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)       
+    @Column(name = "IDENTIFIER")
     public Long getId() {
         return this.id;
     }

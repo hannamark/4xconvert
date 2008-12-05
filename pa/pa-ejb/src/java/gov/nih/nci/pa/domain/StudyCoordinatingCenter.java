@@ -34,7 +34,7 @@ public class StudyCoordinatingCenter  extends AbstractEntity {
      * @return StudyProtocol
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID", nullable = false)
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", nullable = false)
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }
@@ -51,7 +51,7 @@ public class StudyCoordinatingCenter  extends AbstractEntity {
      * @return Organization
      */
     @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_ID", nullable = false)
+    @JoinColumn(name = "ORGANIZATION_IDENTIFIER", nullable = false)
     public Organization getOrganization() {
         return organization;
     }

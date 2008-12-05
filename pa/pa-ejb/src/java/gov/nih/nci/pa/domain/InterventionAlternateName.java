@@ -47,7 +47,7 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
      * @return the intervention
      */
     @ManyToOne
-    @JoinColumn(name = "INTERVENTION_ID")
+    @JoinColumn(name = "INTERVENTION_IDENTIFIER")
     @NotNull
     public Intervention getIntervention() {
         return intervention;

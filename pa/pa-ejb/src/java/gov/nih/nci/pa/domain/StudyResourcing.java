@@ -1,4 +1,7 @@
 package gov.nih.nci.pa.domain;
+import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,10 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
-
-
-import gov.nih.nci.pa.enums.MonitorCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 
 /**
@@ -78,7 +77,7 @@ public class StudyResourcing extends AbstractEntity {
      * 
      * @return organizationIdentifier
      */
-    @Column(name = "ORGANIZATION_ID")
+    @Column(name = "ORGANIZATION_IDENTIFIER")
     public String getOrganizationIdentifier() {
         return organizationIdentifier;
     }
@@ -93,7 +92,7 @@ public class StudyResourcing extends AbstractEntity {
      * 
      * @return resourceProviderIdentifier
      */
-    @Column(name = "RESOURCE_PROVIDER_ID")
+    @Column(name = "RESOURCE_PROVIDER_IDENTIFIER")
     public String getResourceProviderIdentifier() {
         return resourceProviderIdentifier;
     }
@@ -212,7 +211,7 @@ public class StudyResourcing extends AbstractEntity {
      * @return protocol
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
     public StudyProtocol getStudyProtocol() {
        return studyProtocol;

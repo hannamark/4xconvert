@@ -89,7 +89,7 @@ public class PlannedActivity extends Activity {
      * @return the intervention
      */
     @ManyToOne
-    @JoinColumn(name = "INTERVENTION_ID")
+    @JoinColumn(name = "INTERVENTION_IDENTIFIER")
     public Intervention getIntervention() {
         return intervention;
     }

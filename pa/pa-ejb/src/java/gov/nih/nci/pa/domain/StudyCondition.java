@@ -41,6 +41,7 @@ public class StudyCondition extends AbstractEntity {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)    
+    @Column(name = "IDENTIFIER")
     public Long getId() {
         return id;
     }
@@ -74,7 +75,7 @@ public class StudyCondition extends AbstractEntity {
      * @return studyProtocol 
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID", nullable = false)
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", nullable = false)
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }
@@ -90,7 +91,7 @@ public class StudyCondition extends AbstractEntity {
      * @return condition
      */
     @ManyToOne
-    @JoinColumn(name = "CONDITIONS_ID", nullable = false)
+    @JoinColumn(name = "CONDITIONS_IDENTIFIER", nullable = false)
     public Condition getCondition() {
         return condition;
     }

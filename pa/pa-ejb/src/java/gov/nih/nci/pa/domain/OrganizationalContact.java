@@ -28,7 +28,7 @@ public class OrganizationalContact extends StructuralRole {
     /**
      * @return the identifier
      */
-    @Column(name = "identifier")
+    @Column(name = "assigned_identifier")
     @NotNull
     public String getIdentifier() {
         return identifier;
@@ -46,7 +46,7 @@ public class OrganizationalContact extends StructuralRole {
      */
 
     @ManyToOne
-    @JoinColumn(name = "PERSON_ID", updatable = false)
+    @JoinColumn(name = "PERSON_IDENTIFIER", updatable = false)
     @NotNull
     public Person getPerson() {
         return person;
@@ -64,7 +64,7 @@ public class OrganizationalContact extends StructuralRole {
      * @return person person
      */
     @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_ID", updatable = false)
+    @JoinColumn(name = "ORGANIZATION_IDENTIFIER", updatable = false)
     @NotNull
     public Organization getOrganization() {
         return organization;

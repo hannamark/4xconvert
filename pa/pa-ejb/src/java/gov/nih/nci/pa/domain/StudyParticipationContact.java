@@ -134,7 +134,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      * @return the country
      */
     @ManyToOne
-    @JoinColumn(name = "COUNTRY_ID", updatable = false)
+    @JoinColumn(name = "COUNTRY_IDENTIFIER", updatable = false)
     public Country getCountry() {
         return country;
     }
@@ -178,7 +178,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      * @return organizationalContact OrganizationalContact
      */
     @ManyToOne
-    @JoinColumn(name = "ORGANIZATIONAL_CONTACT_ID")
+    @JoinColumn(name = "ORGANIZATIONAL_CONTACT_IDENTIFIER")
     public OrganizationalContact getOrganizationalContact() {
         return organizationalContact;
     }
@@ -193,7 +193,7 @@ public class StudyParticipationContact extends PersonFunctionalRole {
      * @return the studyParticipation
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PARTICIPATION_ID")
+    @JoinColumn(name = "STUDY_PARTICIPATION_IDENTIFIER")
     @NotNull
     public StudyParticipation getStudyParticipation() {
         return studyParticipation;

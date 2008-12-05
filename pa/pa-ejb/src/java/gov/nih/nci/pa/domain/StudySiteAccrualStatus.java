@@ -70,7 +70,7 @@ public class StudySiteAccrualStatus extends AbstractEntity {
      * @return the studyParticipation
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PARTICIPATION_ID", updatable = false)
+    @JoinColumn(name = "STUDY_PARTICIPATION_IDENTIFIER", updatable = false)
     @NotNull
     public StudyParticipation getStudyParticipation() {
         return studyParticipation;

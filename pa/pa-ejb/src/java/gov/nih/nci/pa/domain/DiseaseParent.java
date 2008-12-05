@@ -29,7 +29,7 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
      * @return the disease
      */
     @ManyToOne
-    @JoinColumn(name = "DISEASE_ID", updatable = false)
+    @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
     public Disease getDisease() {
         return disease;
@@ -44,7 +44,7 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
      * @return the parentDisease
      */
     @ManyToOne
-    @JoinColumn(name = "PARENT_DISEASE_ID", updatable = false)
+    @JoinColumn(name = "PARENT_DISEASE_IDENTIFIER", updatable = false)
     @NotNull
     public Disease getParentDisease() {
         return parentDisease;

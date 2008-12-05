@@ -50,7 +50,7 @@ public class StudyCoordinatingCenterRole extends AbstractEntity {
      * @return studyCoordinatingCenter
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_COORDINATING_CENTER_ID", nullable = false)
+    @JoinColumn(name = "STUDY_COORDINATING_CENTER_IDENTIFIER", nullable = false)
     public StudyCoordinatingCenter getStudyCoordinatingCenter() {
         return studyCoordinatingCenter;
     }

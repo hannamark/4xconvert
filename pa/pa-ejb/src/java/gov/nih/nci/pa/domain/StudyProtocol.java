@@ -189,7 +189,7 @@ public class StudyProtocol extends AbstractEntity {
      * 
      * @return identifier
      */
-    @Column(name = "IDENTIFIER")
+    @Column(name = "ASSIGNED_IDENTIFIER")
     public String getIdentifier() {
         return identifier;
     }

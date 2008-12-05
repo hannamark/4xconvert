@@ -60,7 +60,7 @@ public class Organization extends AbstractEntity {
      * 
      * @return identifier 
      */
-    @Column(name = "Identifier")
+    @Column(name = "ASSIGNED_IDENTIFIER")
     public String getIdentifier() {
         return identifier;
     }

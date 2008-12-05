@@ -80,8 +80,8 @@ public class Arm extends AbstractStudyEntity {
             targetEntity = PlannedActivity.class)
     @JoinTable(
         name = "ARM_INTERVENTION",
-        joinColumns = @JoinColumn(name = "ARM_ID"),
-        inverseJoinColumns = @JoinColumn(name = "PLANNED_ACTIVITY_ID"))
+        joinColumns = @JoinColumn(name = "ARM_IDENTIFIER"),
+        inverseJoinColumns = @JoinColumn(name = "PLANNED_ACTIVITY_IDENTIFIER"))
     public Collection<PlannedActivity> getInterventions() {
         return interventions;
     }

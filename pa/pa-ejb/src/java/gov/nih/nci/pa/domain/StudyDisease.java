@@ -26,7 +26,7 @@ public class StudyDisease extends AbstractStudyEntity {
      * @return the disease
      */
     @ManyToOne
-    @JoinColumn(name = "DISEASE_ID", updatable = false)
+    @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
     public Disease getDisease() {
         return disease;

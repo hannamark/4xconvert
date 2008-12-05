@@ -85,7 +85,7 @@ public class DocumentWorkflowStatus extends AbstractEntity {
      * @return studyProtocol
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_ID", updatable = false)
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
     public StudyProtocol getStudyProtocol() {
        return studyProtocol;

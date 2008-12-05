@@ -47,7 +47,7 @@ public class RegulatoryAuthority extends AbstractEntity {
      * @return the countryId
      */
     @ManyToOne
-    @JoinColumn(name = "COUNTRY_ID", nullable = false)
+    @JoinColumn(name = "COUNTRY_IDENTIFIER", nullable = false)
     public Country getCountry() {
             return country;
     }

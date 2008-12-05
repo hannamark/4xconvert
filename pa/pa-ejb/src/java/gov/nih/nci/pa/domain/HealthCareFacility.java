@@ -39,7 +39,7 @@ public class HealthCareFacility  extends StructuralRole {
      * @return organization
      */
     @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_ID", updatable = false)
+    @JoinColumn(name = "ORGANIZATION_IDENTIFIER", updatable = false)
     @NotNull    
     public Organization getOrganization() {
         return organization;
@@ -54,7 +54,7 @@ public class HealthCareFacility  extends StructuralRole {
     /**
      * @return the identifier
      */
-    @Column(name = "IDENTIFIER")
+    @Column(name = "ASSIGNED_IDENTIFIER")
     @NotNull
     public String getIdentifier() {
         return identifier;

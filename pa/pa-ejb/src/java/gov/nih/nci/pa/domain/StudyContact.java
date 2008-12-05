@@ -154,7 +154,7 @@ public class StudyContact extends PersonFunctionalRole {
      * @return country
      */
     @ManyToOne
-    @JoinColumn(name = "COUNTRY_ID", updatable = false)
+    @JoinColumn(name = "COUNTRY_IDENTIFIER", updatable = false)
     public Country getCountry() {
         return country;
     }

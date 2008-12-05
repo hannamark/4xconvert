@@ -37,7 +37,7 @@ public class ResearchOrganization extends StructuralRole {
      * @return organization
      */
     @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_ID",  nullable = false, updatable = false)
+    @JoinColumn(name = "ORGANIZATION_IDENTIFIER",  nullable = false, updatable = false)
     public Organization getOrganization() {
         return organization;
     }
@@ -51,7 +51,7 @@ public class ResearchOrganization extends StructuralRole {
     /**
      * @return the identifier
      */
-    @Column(name = "IDENTIFIER")
+    @Column(name = "ASSIGNED_IDENTIFIER")
     public String getIdentifier() {
         return identifier;
     }

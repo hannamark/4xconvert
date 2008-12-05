@@ -134,7 +134,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      * @return healthCareFacility
      */
     @ManyToOne(optional = true)
-    @JoinColumn(name = "HEALTHCARE_FACILITY_ID", nullable = true, updatable = false)
+    @JoinColumn(name = "HEALTHCARE_FACILITY_IDENTIFIER", nullable = true, updatable = false)
     public HealthCareFacility getHealthCareFacility() {
         return healthCareFacility;
     }
@@ -150,7 +150,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      * @return researchOrganization
      */
     @ManyToOne(optional = true)
-    @JoinColumn(name = "RESEARCH_ORGANIZATION_ID", nullable = true, updatable = false)
+    @JoinColumn(name = "RESEARCH_ORGANIZATION_IDENTIFIER", nullable = true, updatable = false)
     public ResearchOrganization getResearchOrganization() {
         return researchOrganization;
     }
@@ -165,7 +165,7 @@ public class StudyParticipation extends OrganizationFunctionalRole {
      * @return the oversightCommittee
      */
     @ManyToOne(optional = true)
-    @JoinColumn(name = "OVERSIGHT_COMMITTEE_ID", nullable = true)
+    @JoinColumn(name = "OVERSIGHT_COMMITTEE_IDENTIFIER", nullable = true)
     public OversightCommittee getOversightCommittee() {
         return oversightCommittee;
     }
