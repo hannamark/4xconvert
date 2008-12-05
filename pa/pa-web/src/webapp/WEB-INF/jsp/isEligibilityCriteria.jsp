@@ -195,7 +195,9 @@ function maxLength(field,maxChars)
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                    <s:if test="list != null">
                     <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriteria</span></span></s:a></li>
+                    </s:if>
 					<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
                 </ul>   
