@@ -139,7 +139,7 @@ function enableGrantAddButton(){
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
 	var serialNumber;
 	if (isNaN(document.getElementById('serialNumber').value)){
-		alert("Please enter a Serial Number")
+		alert("Serial Number must be numeric")
 		return false;
 	}
 	serialNumber = document.getElementById('serialNumber').value;
@@ -348,7 +348,7 @@ function toggledisplay2 (it) {
           </tr>
 		  <!--  summary4 information -->
           <tr>
-                <th colspan="2">Summary 4 Information(For trials at NCI-designated cancer centers)</th>
+                <th colspan="2">Summary 4 Information (for trials at NCI-designated cancer centers)</th>
           </tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
