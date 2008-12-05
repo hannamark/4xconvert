@@ -92,8 +92,20 @@ public class StudyParticipationContactConverter {
      */
     public static StudyParticipationContact convertFromDtoToDomain(
             StudyParticipationContactDTO dto) throws PAException {
+        return convertFromDtoToDomain(dto , new StudyParticipationContact());
+    }
+
+
+    /**
+     * Create a new domain object from a given dto.
+     * @param dto StudyParticipationContactDTO
+     * @param bo StudyParticipationContact
+     * @return StudyProtocol StudyProtocol
+     * @throws PAException PAException
+     */
+    public static StudyParticipationContact convertFromDtoToDomain(
+            StudyParticipationContactDTO dto , StudyParticipationContact bo) throws PAException {
         
-        StudyParticipationContact bo = new StudyParticipationContact();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setPrimaryIndicator(BlConverter.covertToBoolean(dto.getPrimaryIndicator()));
         bo.setRoleCode(StudyParticipationContactRoleCode.getByCode(dto.getRoleCode().getCode()));

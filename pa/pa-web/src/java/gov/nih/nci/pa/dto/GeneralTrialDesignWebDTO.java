@@ -36,8 +36,8 @@ public class GeneralTrialDesignWebDTO {
     private String sponsorName;
     private String sponsorIdentifier;
     private String responsibleParty;
-    private String responsibleName;
-    private String responsibleIdentifier;
+    private String responsiblePersonName;
+    private String responsiblePersonIdentifier;
     private String contactPhone;
     private String contactEmail;
     
@@ -373,31 +373,31 @@ public class GeneralTrialDesignWebDTO {
     }
     /**
      * 
-     * @return responsibleName
+     * @return responsiblePersonName
      */
-    public String getResponsibleName() {
-        return responsibleName;
+    public String getResponsiblePersonName() {
+        return responsiblePersonName;
     }
     /**
      * 
-     * @param responsibleName responsibleName
+     * @param responsiblePersonName responsibleName
      */
-    public void setResponsibleName(String responsibleName) {
-        this.responsibleName = responsibleName;
+    public void setResponsiblePersonName(String responsiblePersonName) {
+        this.responsiblePersonName = responsiblePersonName;
     }
     /**
      * 
-     * @return  responsibleIdentifier
+     * @return  responsiblePersonIdentifier
      */
-    public String getResponsibleIdentifier() {
-        return responsibleIdentifier;
+    public String getResponsiblePersonIdentifier() {
+        return responsiblePersonIdentifier;
     }
     /**
      * 
-     * @param responsibleIdentifier responsibleIdentifier
+     * @param responsiblePersonIdentifier responsiblePersonIdentifier
      */
-    public void setResponsibleIdentifier(String responsibleIdentifier) {
-        this.responsibleIdentifier = responsibleIdentifier;
+    public void setResponsiblePersonIdentifier(String responsiblePersonIdentifier) {
+        this.responsiblePersonIdentifier = responsiblePersonIdentifier;
     }
     /**
      * 

@@ -180,5 +180,8 @@
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
         </action>
+        <action name="ajaxTrialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
+          <result name="display_lead_org">/WEB-INF/jsp/nodecorate/leadOrg.jsp</result>
+        </action>        
 	</package>
 </struts>

@@ -7,7 +7,23 @@
 <head>
     <title><fmt:message key="trialValidation.page.title"/></title>   
     <s:head/>
+    <!-- po integration -->
+    <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
+    <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+    <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+    <!-- /po integration -->    
     <script type="text/javascript"> 
+    var orgid;
+    var persid;
+    function setorgid(orgIdentifier){
+        orgid = orgIdentifier;
+    }
+    function setpersid(persIdentifier){
+        persid = persIdentifier;
+    }
         function tooltip() {
             BubbleTips.activateTipOn("acronym");
             BubbleTips.activateTipOn("dfn"); 
@@ -17,6 +33,60 @@
         document.forms[0].submit(); 
     }
     
+    function lookup4loadleadorg(){
+        showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
+    }
+function lookup4loadleadpers(){
+    showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
+}
+function lookup4sponsor(){
+    showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
+} 
+function lookup4loadresponsibleparty(){ 
+    showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+}
+function lookup4loadSummary4Sponsor(){
+    showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+}    
+function loadLeadPersDiv() {
+    var url = '/registry/protected/ajaxSubmitTrialActiondisplayLeadPrincipalInvestigator.action?persId='+persid;
+    var div = document.getElementById('loadPersField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    callAjax(url, div);    
+}
+function loadSponsorDiv() {
+    var url = '/registry/protected/ajaxSubmitTrialActiondisplaySelectedSponsor.action?orgId='+orgid;
+    var div = document.getElementById('loadSponsorField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
+    callAjax(url, div);                 
+    document.getElementById('lookupbtn4RP').disabled = "";
+}
+function loadSummary4SponsorDiv() {
+    var url = '/registry/protected/ajaxSubmitTrialActiondisplaySummary4FundingSponsor.action?orgId='+orgid;
+    var div = document.getElementById('loadSummary4FundingSponsorField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
+    callAjax(url, div);
+}
+function createOrgContactDiv() {    
+    var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
+    var div = document.getElementById('loadResponsibleContactField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
+    callAjax(url, div);
+    document.getElementById('lookupbtn4RP').disabled = "";
+}
+    function loadLeadOrgDiv() { 
+    var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
+    var div = document.getElementById('loadOrgField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    callAjax(url, div);   
+     
+    }
+    function loadDiv(orgid){
+    }
+    function callAjax(url, div){
+    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
+    return false;
+}
     </script>
     
 </head>
@@ -28,7 +98,7 @@
    <pa:failureMessage/>
     <s:form >
     <s:actionerror/> 
-     <h2>Trial Details</h2>
+     <h2>Trial Details1</h2>
     <table class="form">
     <tr>
         <td scope="row" class="label">
@@ -148,47 +218,47 @@
             </div>      
         </td>
     </tr>   
-                <tr>
-                <td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
-                <td>
-                <input type="radio" name="gtdDTO.responsibleParty" value="pi"  onclick="manageRespPartyLookUp();"> PI 
-                <input type="radio" name="gtdDTO.responsibleParty" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
-                </td>
-                </tr>               
-                <tr id="rpcid" style="display:none">
-                <td scope="row" class="label">
-                    <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
-                </td>               
-                <td class="value">
-                    <div id="loadResponsibleContactField">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
-                    </div>                                    
-                </td>
-                </tr>
-          <tr>
-                <td scope="row" class="label">
-                   Email Address:<span class="required">*</span>
-                </td>
-                <td class="value">
-                    <s:textfield name="gtdDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>contactEmail</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>
-                </tr>
-                <tr>
-                <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
-                <td class="value">
-                    <s:textfield name="gtdDTO.contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>contactPhone</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>           
-          </tr>             
+    <tr>
+        <td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
+        <td>
+            <input type="radio" name="gtdDTO.responsibleParty" value="pi"  onclick="manageRespPartyLookUp();"> PI 
+            <input type="radio" name="gtdDTO.responsibleParty" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
+        </td>
+        </tr>               
+        <tr id="rpcid" >
+            <td scope="row" class="label">
+                <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
+            </td>               
+            <td class="value">
+                <div id="loadResponsibleContactField">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/sponsorPerson.jsp" %>
+                </div>                                    
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" class="label">
+               Email Address:<span class="required">*</span>
+            </td>
+            <td class="value">
+                <s:textfield name="gtdDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>contactEmail</s:param>
+                   </s:fielderror>                            
+                 </span>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
+            <td class="value">
+                <s:textfield name="gtdDTO.contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>contactPhone</s:param>
+                   </s:fielderror>                            
+                 </span>
+            </td>           
+        </tr>             
     
     <tr>
         <th colspan="2"> Summary 4 Information</th>

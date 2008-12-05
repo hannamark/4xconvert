@@ -78,7 +78,18 @@ public class StudyContactConverter {
      */
     public static StudyContact convertFromDtoToDomain(
             StudyContactDTO dto) throws PAException {
-        StudyContact bo = new StudyContact();
+        return convertFromDtoToDomain(dto , new StudyContact());
+    }
+    
+    /**
+     * Create a new domain object from a given DTO.
+     * @param dto StudyContactDTO
+     * @param bo StudyContact
+     * @return StudyContact StudyContact
+     * @throws PAException PAException
+     */
+    public static StudyContact convertFromDtoToDomain(
+            StudyContactDTO dto , StudyContact bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIi()));
         HealthCareProvider hfBo = null;
@@ -105,4 +116,5 @@ public class StudyContactConverter {
         }        
         return bo;
     }
+    
 }

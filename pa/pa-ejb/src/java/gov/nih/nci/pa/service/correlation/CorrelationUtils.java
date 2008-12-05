@@ -11,6 +11,7 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -119,6 +120,36 @@ public class CorrelationUtils {
         } catch (HibernateException hbe) {
             LOG.error("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
             throw new PAException("Hibernate exception in getPAPersonByPAClinicalResearchStaffId().  ", hbe);
+        }
+        return person;
+    }
+
+    /**
+     * @param paOrganizationalContactId id
+     * @return Person
+     * @throws PAException e
+     */
+    public Person getPAPersonByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException {
+        if (paOrganizationalContactId == null) {
+            LOG.error("Check the id value.  Null found.  ");
+            throw new PAException("Check the id value.  Null found.  ");
+        }
+        Person person = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            OrganizationalContact organizationalContact = 
+                (OrganizationalContact) session.get(OrganizationalContact.class, paOrganizationalContactId);
+            if (organizationalContact == null) {
+                String errMsg = "Object not found using getPAPersonByPAOrganizationalContactId() for id = " 
+                    + paOrganizationalContactId + ".  ";
+                LOG.error(errMsg);
+                throw new PAException(errMsg);
+            }
+            person = organizationalContact.getPerson();
+        } catch (HibernateException hbe) {
+            LOG.error("Hibernate exception in getPAPersonByPAOrganizationalContactId().  ", hbe);
+            throw new PAException("Hibernate exception in getPAPersonByPAOrganizationalContact().  ", hbe);
         }
         return person;
     }

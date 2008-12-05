@@ -1,4 +1,9 @@
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<s:textfield name="gtdDTO.responsibleName" size="30"  readonly="true"/>
-<input type="button" value="Look Up" onclick="lookupPerson();"/>
-<s:hidden name="gtdDTO.responsibleIdentifier" />
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+
+<s:textfield label="Responsible Party Name" name="(responsiblePartyContact.getName().getPart()).get(1).getValue()" size="30"  readonly="true" cssStyle="width:200px"/>
+<input type="button" id="lookupbtn4RP" value="Look Up" onclick="lookup4loadresponsibleparty();" disabled="disabled"/>
+<span class="formErrorMsg"> 
+     <s:fielderror>
+     <s:param>ResponsiblePartyNotSelected</s:param>
+    </s:fielderror>                            
+</span>

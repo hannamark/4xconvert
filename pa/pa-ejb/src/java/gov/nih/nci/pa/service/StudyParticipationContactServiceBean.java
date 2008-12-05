@@ -12,7 +12,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -59,6 +61,7 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService<
             session = HibernateUtil.getCurrentSession();
             session.beginTransaction();
             StudyParticipationContact bo = StudyParticipationContactConverter.convertFromDtoToDomain(dto);
+            bo.setDateLastCreated(new Timestamp((new Date()).getTime()));
             session.saveOrUpdate(bo);
             session.flush();
             resultDto = StudyParticipationContactConverter.convertFromDomainToDTO(bo);
@@ -105,7 +108,23 @@ public class StudyParticipationContactServiceBean extends AbstractBasePaService<
         if (dto == null) {
             this.serviceError("dto should not be null.");
         }
-        return super.update(dto);
+        Session session = null;
+        StudyParticipationContactDTO resultDto = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            StudyParticipationContact sc = (StudyParticipationContact) session.load(StudyParticipationContact.class,
+                Long.valueOf(dto.getIdentifier().getExtension()));         
+            sc = StudyParticipationContactConverter.convertFromDtoToDomain(dto , sc);
+            sc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+            session.update(sc);
+            session.flush();
+            resultDto = StudyParticipationContactConverter.convertFromDomainToDTO(sc);
+          } catch (HibernateException hbe) {
+            serviceError(" Hibernate exception in updateStudyContact ", hbe);
+          }
+          
+       return resultDto;   
+        
     }
 
     /**

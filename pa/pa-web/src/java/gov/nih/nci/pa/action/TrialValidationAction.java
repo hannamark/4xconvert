@@ -19,6 +19,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -29,6 +30,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
 
@@ -44,6 +46,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class TrialValidationAction extends ActionSupport {
 
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+    private OrganizationDTO selectedLeadOrg = null;
     
     /**  
      * @return res
@@ -153,6 +156,13 @@ public class TrialValidationAction extends ActionSupport {
                 gtdDTO.setResponsibleParty("sponsor");
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
+                CorrelationUtils cUtils = new CorrelationUtils();
+                Person p = cUtils.getPAPersonByPAOrganizationalContactId((
+                        Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
+                gtdDTO.setResponsiblePersonIdentifier(p.getIdentifier());
+                gtdDTO.setResponsiblePersonName(p.getFirstName());
+                
+                
             }
         }
         copy(dset);
@@ -264,7 +274,8 @@ public class TrialValidationAction extends ActionSupport {
     }
     private void createSponorContact(Ii studyProtocolIi) throws  PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
-        if (gtdDTO.getResponsibleParty().equals("pi")) {
+        
+        if (gtdDTO.getResponsibleParty() == null || gtdDTO.getResponsibleParty().equals("pi")) {
             parb.createPIAsResponsiblePartyRelations(
                     gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
@@ -289,6 +300,43 @@ public class TrialValidationAction extends ActionSupport {
     public void setGtdDTO(GeneralTrialDesignWebDTO gtdDTO) {
         this.gtdDTO = gtdDTO;
     }
+    
+    /**
+     * 
+     * @return result
+     */
+    // public String displayOrg() {
+    public String displayLeadOrganization() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (orgId.equals("undefined")) {
+            return "display_org";
+        }
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        try {
+            selectedLeadOrg = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            gtdDTO.setLeadOrganizationName(selectedLeadOrg.getName().getPart().get(0).getValue());
+            gtdDTO.setLeadOrganizationIdentifier(selectedLeadOrg.getIdentifier().getExtension());            
+        } catch (Exception e) {
+            return "display_lead_org";
+        }
+        return "display_lead_org";
+    }
 
+    /**
+     * 
+     * @return selectedLeadOrg
+     */
+    public OrganizationDTO getSelectedLeadOrg() {
+        return selectedLeadOrg;
+    }
+
+    /**
+     * 
+     * @param selectedLeadOrg selectedLeadOrg
+     */
+    public void setSelectedLeadOrg(OrganizationDTO selectedLeadOrg) {
+        this.selectedLeadOrg = selectedLeadOrg;
+    }
     
 }

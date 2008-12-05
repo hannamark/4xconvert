@@ -9,10 +9,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -27,6 +31,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class StudyContactServiceBean
         extends AbstractStudyPaService<StudyContactDTO>  
         implements StudyContactServiceRemote {
@@ -57,8 +62,8 @@ public class StudyContactServiceBean
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             StudyContact bo = StudyContactConverter.convertFromDtoToDomain(dto);
+            bo.setDateLastCreated(new Timestamp((new Date()).getTime()));
             session.saveOrUpdate(bo);
             session.flush();
             resultDto = StudyContactConverter.convertFromDomainToDTO(bo);
@@ -83,13 +88,14 @@ public class StudyContactServiceBean
       try {
         session = HibernateUtil.getCurrentSession();
         
+        
         StudyContact sc = (StudyContact) session.load(StudyContact.class,
             Long.valueOf(dto.getIdentifier().getExtension()));         
-
-        StudyContact bo = StudyContactConverter.convertFromDtoToDomain(dto);
+        sc = StudyContactConverter.convertFromDtoToDomain(dto , sc);
+        sc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
         session.update(sc);
         session.flush();
-        resultDto = StudyContactConverter.convertFromDomainToDTO(bo);
+        resultDto = StudyContactConverter.convertFromDomainToDTO(sc);
       } catch (HibernateException hbe) {
         serviceError(" Hibernate exception in updateStudyContact ", hbe);
       }
@@ -229,7 +235,6 @@ public class StudyContactServiceBean
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            session.beginTransaction();
             StudyContact bo = (StudyContact) session.get(StudyContact.class
                     , IiConverter.convertToLong(ii));
             session.delete(bo);
