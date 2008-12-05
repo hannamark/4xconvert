@@ -112,6 +112,7 @@ public class DocumentServiceBean implements DocumentServiceRemote {
         Session session = null;
         Document doc = DocumentConverter.convertFromDTOToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        doc.setDateLastCreated(now);
         doc.setDateLastUpdated(now);
         if (ejbContext != null) {
             doc.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
