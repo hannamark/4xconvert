@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
-<c:if test="${fn:length(ideInd) > 0}">
-<display:table class="data" sort="list"  uid="row"  name="ideInd" requestURI="submitTrialdisplayIndIde.action">
+<c:if test="${sessionScope.indIdeList  != null}">
+<display:table class="data" sort="list"  uid="row"  name="${sessionScope.indIdeList}" requestURI="submitTrialdisplayIndIde.action">
 	<display:column title="IndIde Type" property="indIde"  headerClass="sortable"/>
 	<display:column title="Number" property="number"  headerClass="sortable"/>
 	<display:column title="Grantor" property="grantor"  headerClass="sortable"/>
