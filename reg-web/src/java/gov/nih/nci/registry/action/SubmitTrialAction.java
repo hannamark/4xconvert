@@ -112,7 +112,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private OrganizationDTO selectedSummary4Sponsor = null;
     // Collection for holding the grant information
     private ArrayList<GrantHolder> grants = new ArrayList<GrantHolder>();
-    private String trialType = null;
+    private String trialType = "Interventional";
     private File participatingSites = null;
     private String participatingSitesFileName = null;
     private File informedConsentDocument = null;
@@ -653,8 +653,20 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(protocolDocFileName)) {
             addFieldError("trialDocumentWebDTO.protocolDocFileName", getText("error.submit.protocolDocument"));
         }
+        if (PAUtil.isNotEmpty(protocolDocFileName)) {
+            if (!protocolDoc.exists()) {
+                addFieldError("trialDocumentWebDTO.protocolDocFileName", 
+                        getText("error.submit.invalidProtocolDocument"));
+            }
+        }
         if (PAUtil.isEmpty(irbApprovalFileName)) {
             addFieldError("trialDocumentWebDTO.irbApprovalFileName", getText("error.submit.irbApproval"));
+        }
+        if (PAUtil.isNotEmpty(irbApprovalFileName)) {
+            if (!irbApproval.exists()) {
+                addFieldError("trialDocumentWebDTO.irbApprovalFileName", 
+                        getText("error.submit.invalidIrbApproval"));
+            }
         }
         if (PAUtil.isEmpty(contactEmail)) {
             addFieldError("contactEmail", getText("error.submit.contactEmail"));
