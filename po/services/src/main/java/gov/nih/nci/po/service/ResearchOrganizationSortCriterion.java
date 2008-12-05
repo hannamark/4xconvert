@@ -32,9 +32,9 @@ public enum ResearchOrganizationSortCriterion implements SortCriterion<ResearchO
     TYPE_CODE("typeCode.code"),
     
     /**
-     * Sort by Research Organization's funding mechanism.
+     * Sort by Research Organization's funding mechanism code.
      */
-    FUNDING("fundingMechanism"),
+    FUNDING("fundingMechanism.code"),
     
     /**
      * Sort by Research Organization's status date.

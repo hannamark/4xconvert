@@ -15,17 +15,7 @@
    </c:if>
 </s:else>
 
-<script type="text/javascript">
-function handleDuplicateOf() {
-    $('duplicateOfDiv')[$('curateRoleForm.role.status').value == 'NULLIFIED' ? 'show' : 'hide'](); 
-            
-    if ($('curateRoleForm.role.status').value != 'NULLIFIED') {
-        $('curateRoleForm.role.duplicateOf').value = '';
-        $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = '';
-    }
-    return true;
-}
-</script>
+<%@include file="../../roleStatusOnChange_handleDuplicateOf.jsp" %>
 </head> 
 <body>
 

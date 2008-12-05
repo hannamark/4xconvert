@@ -6,7 +6,7 @@
         <div class="boxouter">
             <h2><s:text name="identifiedOrganization"/> Information</h2>
             <div class="box_white">
-            <po:copyButton id="copy_curateCrForm_role_typeCode" 
+            <po:copyButton id="copy_curateCrForm_role_scoper" 
                 onclick="copyValueToTextField('${cr.scoper.id}', 'curateRoleForm.role.scoper.id'); showPopWinCallback('${cr.scoper.id}');" 
                 bodyStyle="float:left;" buttonStyle="float:right;">
 	            <po:field labelKey="identifiedOrganization.scoper.id">

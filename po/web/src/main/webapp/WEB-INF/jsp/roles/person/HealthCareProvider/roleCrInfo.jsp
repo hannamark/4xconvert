@@ -6,10 +6,10 @@
         <div class="boxouter">
             <h2><s:text name="healthCareProvider"/> Information</h2>
             <div class="box_white">
-            <po:copyButton id="copy_curateCrForm_role_typeCode" 
+            <po:copyButton id="copy_curateCrForm_role_scoper" 
                 onclick="copyValueToTextField('${cr.scoper.id}', 'curateRoleForm.role.scoper.id'); showPopWinCallback('${cr.scoper.id}');" 
                 bodyStyle="float:left;" buttonStyle="float:right;">
-	            <po:field labelKey="identifiedOrganization.scoper.id">
+	            <po:field labelKey="healthCareProvider.scoper.id">
 	                ${cr.scoper.id}
 	            </po:field>
             </po:copyButton>
@@ -18,11 +18,19 @@
              id="copy_curateCrForm_role_status"
              onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield label="%{getText('identifiedOrganization.status')}" name="cr.status" required="true" cssClass="required"/>
+                <s:textfield label="%{getText('healthCareProvider.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
             
+            <po:copyButton
+             id="copy_curateCrForm_role_certificateLicenseText"
+             onclick="copyValueToTextField('${cr.certificateLicenseText}', 'curateRoleForm.role.certificateLicenseText');" 
+                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+	            <s:textfield label="%{getText('healthCareProvider.certificateLicenseText')}" name="healthCareProvider.certificateLicenseText" maxlength="255" size="50"/>
+            </po:copyButton>
             <div class="clear"></div>
             </div>
         </div>
+        <%@ include file="../crInfoMailable.jsp" %> 
+        <%@ include file="../../../curate/crInfoContactable.jsp" %>        
     </div>    
 </s:form>

@@ -50,7 +50,7 @@ public class SortCriterionTest {
         verifySortCriterion("typeCode.code", ResearchOrganizationSortCriterion.TYPE_CODE);
         verifySortCriterion("typeCode.description", ResearchOrganizationSortCriterion.TYPE_DESC);
         verifySortCriterion("statusDate", ResearchOrganizationSortCriterion.STATUS_DATE);
-        verifySortCriterion("fundingMechanism", ResearchOrganizationSortCriterion.FUNDING);
+        verifySortCriterion("fundingMechanism.code", ResearchOrganizationSortCriterion.FUNDING);
     }
     
     @Test

@@ -11,7 +11,7 @@
         <display:column titleKey="researchOrganization.typeCode" sortable="true" sortProperty="TYPE_DESC">
             ${row.typeCode.description} (${row.typeCode.code})
         </display:column>
-        <display:column titleKey="researchOrganization.fundingMechanism" property="fundingMechanism" sortable="true" sortProperty="FUNDING"/>
+        <display:column titleKey="researchOrganization.fundingMechanism" property="fundingMechanism.code" sortable="true" sortProperty="FUNDING"/>
         <display:column titleKey="researchOrganization.status" sortable="true" sortProperty="ROLE_STATUS">
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">

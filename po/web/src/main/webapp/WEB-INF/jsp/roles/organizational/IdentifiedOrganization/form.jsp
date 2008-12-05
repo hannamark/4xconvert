@@ -15,17 +15,7 @@
    </c:if>
 </s:else>
 
-<script type="text/javascript">
-function handleDuplicateOf() {
-    $('duplicateOfDiv')[$('curateRoleForm.role.status').value == 'NULLIFIED' ? 'show' : 'hide'](); 
-            
-    if ($('curateRoleForm.role.status').value != 'NULLIFIED') {
-        $('curateRoleForm.role.duplicateOf').value = '';
-        $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = '';
-    }
-    return true;
-}
-</script>
+<%@include file="../../roleStatusOnChange_handleDuplicateOf.jsp" %>
 </head> 
 <body>
 
@@ -68,30 +58,7 @@ function handleDuplicateOf() {
 				<s:hidden key="organization"/>
                 <s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
-                <div class="wwgrp" id="wwgrp_curateRoleForm_role_scoper_id">
-                    <s:fielderror>
-                        <s:param value="%{'role.scoper'}"/>
-                    </s:fielderror>
-                    <div style="float:right;">
-                        <c:url value="/protected/selector/organization/start.action" var="findScoperUrl">
-                            <c:param name="source" value="${organization.id}"/>
-                        </c:url>
-                        <po:buttonRow>
-                        <po:button id="select_scoper" href="javascript://noop/" onclick="showPopWin('${findScoperUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Scoper"/>
-                        </po:buttonRow>
-                    </div>
-                    <div class="wwlbl" id="wwlbl_curateRoleForm_role_scoper_id">
-                        <label class="label" for="curateOrgForm_organization_duplicateOf_id">   
-                        <span class="required">*</span>     
-                        <s:text name="identifiedOrganization.scoper.id"/>:
-                        </label>
-                    </div>
-                    <br/>
-                    <div class="wwctrl" id="wwctrl_curateRoleForm_role_scoper_id">
-                       ${role.scoper.id} 
-                    </div>
-                </div>
-                <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
+                <po:scoper key="identifiedOrganization.scoper.id"/>
 				<s:select id="curateRoleForm.role.status"
 				   label="%{getText('identifiedOrganization.status')}"
 				   name="role.status"
@@ -137,12 +104,6 @@ function handleDuplicateOf() {
 <div style="clear:left;">
 </div>    
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <script type="text/javascript">
-        function showPopWinCallback(returnVal) {
-            $('curateRoleForm.role.scoper.id').value = returnVal;
-            $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = $('curateRoleForm.role.scoper.id').value;
-        }
-    </script>    
     <%@include file="../confirmThenSubmit.jsp" %>    
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>

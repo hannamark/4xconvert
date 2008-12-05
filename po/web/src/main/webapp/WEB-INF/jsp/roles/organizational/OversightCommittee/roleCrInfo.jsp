@@ -10,10 +10,10 @@
                 id="copy_curateCrForm_role_typeCode" 
                 onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');" 
                 bodyStyle="float:left;" buttonStyle="float:right;">
-                <s:textfield label="%{getText('oversightCommittee.typeCode')}" name="cr.typeCode" required="true" cssClass="required" />
+                <s:textfield label="%{getText('oversightCommittee.typeCode')}" name="cr.typeCode" />
             </po:copyButton>
             <po:copyButton
-             id="copy_curateCrForm_role_fundingMechanism"
+             id="copy_curateCrForm_role_status"
              onclick="selectValueInSelectField('${cr.status}', 'curateRoleForm.role.status');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('oversightCommittee.status')}" name="cr.status" required="true" cssClass="required"/>
