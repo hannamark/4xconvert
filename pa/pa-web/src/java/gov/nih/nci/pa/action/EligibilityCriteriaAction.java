@@ -52,10 +52,11 @@ import com.opensymphony.xwork2.ActionSupport;
   private String maximumValueId = null;
   private String minimumValueId = null;
   private List<ISDesignDetailsWebDTO> eligibilityList = null;
+  private List<ISDesignDetailsWebDTO> list = null;
   private static final int RECORDSVALUE = 3;
   private String studyPopulationDescription;
   private String samplingMethodCode;
-
+ 
   /**
    * @return res
    */
@@ -68,7 +69,7 @@ import com.opensymphony.xwork2.ActionSupport;
       List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
       .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
       if (!(pecList.isEmpty())) {
-        List<ISDesignDetailsWebDTO> list = new ArrayList<ISDesignDetailsWebDTO>();
+        list = new ArrayList<ISDesignDetailsWebDTO>();
         for (PlannedEligibilityCriterionDTO dto : pecList) {
           list.add(setEligibilityDetailsDTO(dto));
         }
@@ -654,5 +655,20 @@ import com.opensymphony.xwork2.ActionSupport;
   public void setSamplingMethodCode(String samplingMethodCode) {
     this.samplingMethodCode = samplingMethodCode;
   }
+  
+  /**
+   * @return list
+   */
+  public List<ISDesignDetailsWebDTO> getList() {
+    return list;
+  }
+
+  /**
+   * @param list list
+   */
+  public void setList(List<ISDesignDetailsWebDTO> list) {
+    this.list = list;
+  }
+
 
 }
