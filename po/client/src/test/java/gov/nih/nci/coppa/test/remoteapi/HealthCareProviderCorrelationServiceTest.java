@@ -82,6 +82,12 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import java.net.URI;
+import java.util.HashSet;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
@@ -99,7 +105,12 @@ public class HealthCareProviderCorrelationServiceTest
         HealthCareProviderDTO dto = new HealthCareProviderDTO();
         dto.setScoperIdentifier(getOrgId());
         dto.setPlayerIdentifier(getPersonId());
-
+        dto.setTelecomAddress(new DSet<Tel>());
+        dto.getTelecomAddress().setItem(new HashSet<Tel>());
+        
+        TelPhone ph1 = new TelPhone();
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        dto.getTelecomAddress().getItem().add(ph1);
         return dto;
     }
 
