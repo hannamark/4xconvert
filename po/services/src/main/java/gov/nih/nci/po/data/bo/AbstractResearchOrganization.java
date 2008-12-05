@@ -107,26 +107,26 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
 
     private static final long serialVersionUID = 1L;
 
-    private String fundingMechanism;
+    private FundingMechanism fundingMechanism;
     private ResearchOrganizationType typeCode;
 
 
     /**
      * @return the fundingMechanism
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fundingMech")
-    public String getFundingMechanism() {
+    public FundingMechanism getFundingMechanism() {
         return fundingMechanism;
     }
 
     /**
      * @param fundingMechanism funding mechanism
      */
-    public void setFundingMechanism(String fundingMechanism) {
+    public void setFundingMechanism(FundingMechanism fundingMechanism) {
         this.fundingMechanism = fundingMechanism;
     }
 

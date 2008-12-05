@@ -89,10 +89,11 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
@@ -113,7 +114,8 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         fillInExampleOrgRoleFields(oc);
         ResearchOrganizationType oct = new ResearchOrganizationType("CCR", "Cancer Center");
         oc.setTypeCode(oct);
-        oc.setFundingMechanism("foo");
+        FundingMechanism fm = new FundingMechanism("B09","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
+        oc.setFundingMechanism(fm);
         return oc;
     }
 
@@ -137,7 +139,9 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
         type.setCode("CCR");
         dto.setTypeCode(type);
 
-        dto.setFundingMechanism(StringConverter.convertToSt("foo"));
+        Cd fm = new Cd();
+        fm.setCode("B09");
+        dto.setFundingMechanism(fm);
         return dto;
     }
 
@@ -148,7 +152,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
     protected void verifyTestClassDTOFields(AbstractOrganizationRole ro) {
         ResearchOrganization bo = (ResearchOrganization) ro;
         assertEquals("CCR", bo.getTypeCode().getCode());
-        assertEquals("foo", bo.getFundingMechanism());
+        assertEquals("B09", bo.getFundingMechanism().getCode());
     }
 
     /**
@@ -157,7 +161,7 @@ public class ResearchOrganizationDTOTest extends AbstractOrganizationRoleDTOTest
     @Override
     protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto) {
         assertEquals("CCR", ((ResearchOrganizationDTO) dto).getTypeCode().getCode());
-        assertEquals("foo", ((ResearchOrganizationDTO) dto).getFundingMechanism().getValue());
+        assertEquals("B09", ((ResearchOrganizationDTO) dto).getFundingMechanism().getCode());
 
         // check id
         Ii expectedIi = new Ii();

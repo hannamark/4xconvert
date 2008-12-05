@@ -1,6 +1,8 @@
 
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +18,7 @@ import org.hibernate.annotations.Index;
  * @author gax
  */
 @Entity
+@VaildResearchOrganizationTypeWithFundingMechanism
 public class ResearchOrganizationCR extends AbstractResearchOrganization
         implements CorrelationChangeRequest<ResearchOrganization> {
 

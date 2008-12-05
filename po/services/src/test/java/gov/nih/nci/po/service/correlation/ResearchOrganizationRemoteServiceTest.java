@@ -91,13 +91,14 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -129,10 +130,12 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         dto.setPlayerIdentifier(ii);
 
         Cd type = new Cd();
-        type.setCode("CCR");
+        type.setCode(getResearchOrgType().getCode());
         dto.setTypeCode(type);
 
-        dto.setFundingMechanism(StringConverter.convertToSt("foo"));
+        Cd fm = new Cd();
+        fm.setCode(getFundingMechanism().getCode());
+        dto.setFundingMechanism(fm);
 
         return dto;
     }
@@ -142,18 +145,26 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
         assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
-        assertEquals(expected.getFundingMechanism().getValue(), actual.getFundingMechanism().getValue());
+        assertEquals(expected.getFundingMechanism().getCode(), actual.getFundingMechanism().getCode());
     }
 
     @Override
     protected void alter(ResearchOrganizationDTO dto) {
+        FundingMechanism fundingMechanismAlt = new FundingMechanism("B10","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);;
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(fundingMechanismAlt);
         ResearchOrganizationType other = new ResearchOrganizationType("Foo", "Foo type");
+        other.getFundingMechanisms().add(fundingMechanismAlt);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         PoHibernateUtil.getCurrentSession().flush();
+        
 
         Cd type = new Cd();
         type.setCode("Foo");
         dto.setTypeCode(type);
+        
+        Cd fm = new Cd();
+        fm.setCode("B10");
+        dto.setFundingMechanism(fm);
     }
 
     @Override
@@ -161,6 +172,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         super.verifyAlterations(cr);
 
         assertEquals("Foo", cr.getTypeCode().getCode());
+        assertEquals("B10", cr.getFundingMechanism().getCode());
     }
 
 
@@ -186,14 +198,19 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setPlayerIdentifier(ii);
+        
+        FundingMechanism otherFM = new FundingMechanism("BXX","???","Block Grants",FundingMechanismStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(otherFM);
+        Cd fm = new Cd();
+        fm.setCode(otherFM.getCode());
+        correlation2.setFundingMechanism(fm);
 
         ResearchOrganizationType other = new ResearchOrganizationType("AT", "Another Type");
+        other.getFundingMechanisms().add(otherFM);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         Cd type = new Cd();
         type.setCode(other.getCode());
         correlation2.setTypeCode(type);
-
-        correlation2.getFundingMechanism().setValue(correlation2.getFundingMechanism().getValue() + "2");
 
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
@@ -245,17 +262,11 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         assertEquals(1, results.size());
         assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
 
-        // test by fundintMethod
+        // test by FundingMechanism id
         searchCriteria.setPlayerIdentifier(null);
-        searchCriteria.setFundingMechanism(correlation1.getFundingMechanism());
-        searchCriteria.getFundingMechanism().setValue(searchCriteria.getFundingMechanism().getValue().toUpperCase());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(2, results.size());
-
-        searchCriteria.setFundingMechanism(correlation2.getFundingMechanism());
+        searchCriteria.setFundingMechanism(fm);
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
 
         // test by Type id
         searchCriteria.setFundingMechanism(null);

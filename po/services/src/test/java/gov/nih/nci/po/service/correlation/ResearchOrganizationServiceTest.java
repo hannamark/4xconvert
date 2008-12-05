@@ -83,9 +83,11 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.junit.Before;
@@ -96,10 +98,14 @@ import org.junit.Before;
 public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServiceTest<ResearchOrganization> {
 
     private ResearchOrganizationType sampleType = null;
+    private FundingMechanism fm = null;
 
     @Before
     public void setupType() throws Exception {
+        fm = new FundingMechanism("BXX","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(fm);
         sampleType = new ResearchOrganizationType("ST", "sampleType");
+        sampleType.getFundingMechanisms().add(fm);
         PoHibernateUtil.getCurrentSession().save(sampleType);
     }
 
@@ -108,7 +114,7 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
         ResearchOrganization oc = new ResearchOrganization();
         oc.setPlayer(basicOrganization);
         oc.setTypeCode(sampleType);
-        oc.setFundingMechanism("foo");
+        oc.setFundingMechanism(fm);
 
         return oc;
     }
@@ -118,7 +124,7 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
         assertEquals(RoleStatus.PENDING, actual.getStatus());
-        assertEquals("foo", actual.getFundingMechanism());
+        assertEquals(expected.getFundingMechanism().getCode(), actual.getFundingMechanism().getCode());
     }
 
 
