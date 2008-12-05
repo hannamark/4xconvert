@@ -191,13 +191,13 @@
      </table>
      <c:if test="${requestScope.studyIndIde != null}">
      	<div class="box">     								
-     			<h3>IND/IDE Information</h3>  
+     			<h3>FDA IND/IDE Information for applicable trials</h3>  
      			<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>     		
 		</div>
 		</c:if>
 		<c:if test="${requestScope.trialFundingList != null}">			
         	<div class="box">
-    			<h3>NIH Grant Information</h3>  
+    			<h3>NIH Grant Information (for NIH funded Trials)</h3>  
     			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>
 			</div>
 		</c:if>
