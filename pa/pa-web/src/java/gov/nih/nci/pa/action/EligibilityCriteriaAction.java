@@ -34,7 +34,7 @@ import com.opensymphony.xwork2.ActionSupport;
  *        holder, NCI.
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
-  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
+  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" })
   public class EligibilityCriteriaAction extends ActionSupport {
 
   private static final String ELIGIBILITY = "eligibility";
