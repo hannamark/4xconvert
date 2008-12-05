@@ -23,25 +23,25 @@ import javax.persistence.Table;
 @Table(name = "NIH_INSTITUTE")
 public class NIHinstitute {
 
-    private Long id;
+    private Long identifier;
     private String nihInstituteCode;
     
     /**
-     * set id.
-     * @param id id
+     * set identifier.
+     * @param identifier identifier
      */
-     public void setId(Long id) {
-        this.id = id;
+     public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
     }
 
     /**
-     * Get the id of the object.
-     * @return the id
+     * Get the identifier of the object.
+     * @return the identifier
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)       
-    public Long getId() {
-        return this.id;
+    public Long getIdentifier() {
+        return this.identifier;
     }
 
     /**

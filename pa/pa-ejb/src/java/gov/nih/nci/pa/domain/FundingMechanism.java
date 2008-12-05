@@ -22,28 +22,27 @@ import javax.persistence.Table;
 @Table(name = "FUNDING_MECHANISM")
 public class FundingMechanism {
 
-    private Long id;
+    private Long identifier;
     private String fundingMechanismCode;
     
     /**
-     * set id.
-     * @param id id
-     */
-     public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * Get the id of the object.
-     * @return the id
+     * Get the identifier of the object.
+     * @return the identifier
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)       
-    public Long getId() {
-        return this.id;
+    @GeneratedValue(strategy = GenerationType.AUTO)      
+    public Long getIdentifier() {
+      return this.identifier;
     }
     
-
+    /**
+     * set identifier.
+     * @param identifier identifier
+     */
+    public void setIdentifier(Long identifier) {
+      this.identifier = identifier;
+    }
+    
     /**
      * 
      * @return fundingMechanismCode
