@@ -119,9 +119,9 @@ public class IdentifiedPersonRemoteServiceTest
 
     @Before
     public void initData() {
-        type1 = new IdentifiedPersonType("foo");
+        type1 = new IdentifiedPersonType("foo", "desc");
         PoHibernateUtil.getCurrentSession().save(type1);
-        type2 = new IdentifiedPersonType("bar");
+        type2 = new IdentifiedPersonType("bar", "desc");
         PoHibernateUtil.getCurrentSession().save(type2);
     }
 

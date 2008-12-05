@@ -95,7 +95,7 @@ function handleDuplicateOf() {
                 </div>
                 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
                 <s:select 
-                   label="Identified Organization Type"
+                   label="%{getText('identifiedOrganization.typeCode')}"
                    name="role.typeCode"
                    list="#identifiedOrgTypes"
                    listKey="id"

@@ -88,6 +88,7 @@ function handleDuplicateOf() {
 				   headerKey="" headerValue="--Select a Type--" 
 				   required="true" cssClass="required" 
 				   onchange="return curateRoleForm_displayFundingMechanism(this.value);"/> 
+			    <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
 				<div id="curateRoleForm_displayFundingMechanism">
 				    <%@ include file="selectFundingMechanism.jsp" %>
 				</div>

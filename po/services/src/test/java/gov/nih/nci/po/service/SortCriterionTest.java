@@ -74,6 +74,17 @@ public class SortCriterionTest {
     }
     
     @Test
+    public void IdentifiedPersonSortCriterion_getOrderField() {
+        verifySortCriterion("id", IdentifiedPersonSortCriterion.ID);
+        verifySortCriterion("status", IdentifiedPersonSortCriterion.ROLE_STATUS);
+        verifySortCriterion("typeCode.code", IdentifiedPersonSortCriterion.TYPE_CODE);
+        verifySortCriterion("typeCode.description", IdentifiedPersonSortCriterion.TYPE_DESC);
+        verifySortCriterion("statusDate", IdentifiedPersonSortCriterion.STATUS_DATE);
+        verifySortCriterion("scoper.id", IdentifiedPersonSortCriterion.SCOPER_ID);
+        verifySortCriterion("scoper.name", IdentifiedPersonSortCriterion.SCOPER_NAME);
+    }
+    
+    @Test
     public void PersonSortCriterion_getOrderField() {
         verifySortCriterion("firstName", PersonSortCriterion.PERSON_FIRSTNAME);
         assertEquals(null, PersonSortCriterion.PERSON_FULLNAME.getOrderField());

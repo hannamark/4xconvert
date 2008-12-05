@@ -167,7 +167,7 @@
                     <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (? new of ?)</li>
                     <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (? new of ?)</li>
                     <li><a href="${manageOrganizationalContact}"><s:text name="organizationalContact.manage.title"/></a> (? new of ?)</li>
-                    <li><a href="${urlNotYetImplemented}"><s:text name="identifiedPerson.manage.title"/></a> (? new of ?)</li>
+                    <li><a href="${manageIdentifiedPerson}"><s:text name="identifiedPerson.manage.title"/></a> (? new of ?)</li>
                 </ul>
                 <div class="clear"></div>
             </div>

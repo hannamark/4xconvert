@@ -80,7 +80,7 @@ function handleDuplicateOf() {
                         </po:buttonRow>
                     </div>
                     <div class="wwlbl" id="wwlbl_curateRoleForm_role_scoper_id">
-                        <label class="label" for="curateOrgForm_organization_duplicateOf_id">   
+                        <label class="label" for="curateRoleForm_role_scoper_id">   
                         <span class="required">*</span>     
                         <s:text name="organizationalContact.scoper.id"/>:
                         </label>

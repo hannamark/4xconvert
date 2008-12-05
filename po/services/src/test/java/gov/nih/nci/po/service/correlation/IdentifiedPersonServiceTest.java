@@ -103,7 +103,7 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
 
     @Before
     public void initData() {
-        type = new IdentifiedPersonType("foo");
+        type = new IdentifiedPersonType("foo", "desc");
         PoHibernateUtil.getCurrentSession().save(type);
     }
 

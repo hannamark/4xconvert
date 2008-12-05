@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class IdentifiedPersonDTOTest extends AbstractHibernateTestCase {
     private static final RoleStatus STATUS = RoleStatus.ACTIVE;
-    private static final IdentifiedPersonType TYPE = new IdentifiedPersonType("SSN");
+    private static final IdentifiedPersonType TYPE = new IdentifiedPersonType("SSN", "desc");
     private static final long ID = 1L;
 
     private Ii getPlayerIi(Long id) {

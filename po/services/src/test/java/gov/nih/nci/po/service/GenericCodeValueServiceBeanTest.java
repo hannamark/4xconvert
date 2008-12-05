@@ -6,6 +6,8 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.AbstractCodeValue;
 import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.FundingMechanism;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
+import gov.nih.nci.po.data.bo.IdentifiedPersonType;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.QualifiedEntityType;
@@ -29,7 +31,9 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             OrganizationalContactType.class,
             ResearchOrganizationType.class,
             QualifiedEntityType.class,
-            FundingMechanism.class};
+            FundingMechanism.class, 
+            IdentifiedPersonType.class, 
+            IdentifiedOrganizationType.class};
 
     private static final String CODE = "TT";
     private static final String DESC = "Test Type";
@@ -52,7 +56,8 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             constructor = clz.getConstructor(String.class, String.class, String.class, FundingMechanismStatus.class);
             newInstance = constructor.newInstance(CODE, DESC, "cat", FundingMechanismStatus.ACTIVE);
             
-        } else if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class)) {
+        } else if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class) 
+                || clz.equals(IdentifiedPersonType.class) || clz.equals(IdentifiedOrganizationType.class)) {
             constructor = clz.getConstructor(String.class, String.class);
             newInstance = constructor.newInstance(CODE, DESC);
         }else {
