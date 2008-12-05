@@ -351,8 +351,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     }
 
     private void createIndIdeIndicators(Ii studyProtocolIi) throws PAException {
-        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "INDIDE_LIST");
+        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.INDIDE_LIST);
         if (sessionList == null) {
             return;
         }
@@ -913,13 +913,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     }
 
     private void resetValuesFromSession() {
-        ArrayList<IndIdeHolder> sessionList1 = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "INDIDE_LIST");
+        ArrayList<IndIdeHolder> sessionList1 = (ArrayList) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.INDIDE_LIST);
         if (sessionList1 != null && sessionList1.size() > 0) {
             for (int i = 0; i < sessionList1.size(); i++) {
                 ideInd.add(sessionList1.get(i));
             }
         }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, ideInd);
         ArrayList<GrantHolder> sessionList2 = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
                 "GRANT_LIST");
         if (sessionList2 != null && sessionList2.size() > 0) {
@@ -956,18 +957,18 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         indIdeHolder.setProgramCode(programCode.equals("") ? "-" : programCode);
         indIdeHolder.setIndIde(indIde.equals("") ? "-" : indIde);
         indIdeHolder.setRowId(UUID.randomUUID().toString());
-        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "INDIDE_LIST");
+        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.INDIDE_LIST);
         if (sessionList != null) {
             for (int i = 0; i < sessionList.size(); i++) {
                 ideInd.add(sessionList.get(i));
             }
             ideInd.add(indIdeHolder);
             sessionList.add(indIdeHolder);
-            ServletActionContext.getRequest().getSession().setAttribute("INDIDE_LIST", sessionList);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, sessionList);
         } else {
             ideInd.add(indIdeHolder);
-            ServletActionContext.getRequest().getSession().setAttribute("INDIDE_LIST", ideInd);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, ideInd);
         }
         // ideIndList.setList(ideInd);
         return SUCCESS;
@@ -979,8 +980,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     public String deleteIndIde() {
         String rowid = ServletActionContext.getRequest().getParameter("uuid");
-        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "INDIDE_LIST");
+        ArrayList<IndIdeHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.INDIDE_LIST);
         IndIdeHolder holder;
         for (int i = 0; i < sessionList.size(); i++) {
             holder = (IndIdeHolder) sessionList.get(i);
@@ -992,6 +993,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         for (int i = 0; i < sessionList.size(); i++) {
             ideInd.add(sessionList.get(i));
         }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, ideInd);
         // ideIndList.setList(ideInd);
         return "display_ideind";
     }
