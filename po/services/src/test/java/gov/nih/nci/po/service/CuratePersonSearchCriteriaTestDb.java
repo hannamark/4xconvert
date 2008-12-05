@@ -1,13 +1,17 @@
 package gov.nih.nci.po.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.QualifiedEntityCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -16,17 +20,13 @@ import gov.nih.nci.po.service.correlation.HealthCareProviderServiceTest;
 import gov.nih.nci.po.service.correlation.IdentifiedPersonServiceTest;
 import gov.nih.nci.po.service.correlation.OrganizationalContactServiceTest;
 import gov.nih.nci.po.service.correlation.QualifiedEntityServiceTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.QualifiedEntityDTO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.List;
@@ -258,7 +258,6 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         IdentifiedPersonServiceTest test = new IdentifiedPersonServiceTest();
         test.setDefaultCountry(pst.getDefaultCountry());
         test.setUpData();
-        test.initData();
         test.testSimpleCreateAndGet();
         IdentifiedPerson ro = (IdentifiedPerson) PoHibernateUtil.getCurrentSession().createCriteria(IdentifiedPerson.class).uniqueResult();
         assertEquals(RoleStatus.PENDING, ro.getStatus());

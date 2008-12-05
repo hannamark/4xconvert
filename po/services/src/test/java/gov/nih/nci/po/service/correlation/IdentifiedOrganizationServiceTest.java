@@ -88,24 +88,11 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
-import gov.nih.nci.po.util.PoHibernateUtil;
-
-import org.junit.Before;
 /**
  * @author Scott Miller
  *
  */
 public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedOrganization> {
-
-
-    IdentifiedOrganizationType type;
-
-    @Before
-    public void initData() {
-        type = new IdentifiedOrganizationType("foo", "foo description");
-        PoHibernateUtil.getCurrentSession().save(type);
-    }
 
 
     /**
@@ -128,8 +115,6 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
 
         io.setAssignedIdentifier(ii);
 
-        io.setTypeCode(type);
-
         return io;
     }
 
@@ -147,7 +132,5 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
         assertEquals(IdentifierScope.BUSN, actual.getAssignedIdentifier().getScope());
         assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
         assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
-
-        assertEquals(type.getCode(), actual.getTypeCode().getCode());
     }
 }

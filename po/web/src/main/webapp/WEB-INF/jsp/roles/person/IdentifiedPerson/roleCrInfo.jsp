@@ -13,13 +13,6 @@
 	                ${cr.scoper.id}
 	            </po:field>
             </po:copyButton>
-             
-            <po:copyButton 
-                id="copy_curateCrForm_role_typeCode" 
-                onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');" 
-                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield label="%{getText('identifiedPerson.typeCode')}" name="cr.typeCode.description" required="true" cssClass="required" />
-            </po:copyButton>
 
             <po:copyButton
              id="copy_curateCrForm_role_status"

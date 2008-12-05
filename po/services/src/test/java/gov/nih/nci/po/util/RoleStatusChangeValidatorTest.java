@@ -5,7 +5,7 @@
 
 package gov.nih.nci.po.util;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -13,17 +13,17 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
-import org.hibernate.mapping.Property;
-import org.junit.After;
+
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  *
@@ -35,8 +35,9 @@ public class RoleStatusChangeValidatorTest {
 
         @BeforeClass
     public static void setUpClass() throws Exception {
-        for(EntityStatus es: EntityStatus.values())
+        for(EntityStatus es: EntityStatus.values()) {
             values.put(es, new Hashtable<RoleStatus, Boolean>());
+        }
         values.get(EntityStatus.PENDING).put(RoleStatus.PENDING, true);
         values.get(EntityStatus.PENDING).put(RoleStatus.ACTIVE, false);
         values.get(EntityStatus.PENDING).put(RoleStatus.SUSPENDED, false);
@@ -80,6 +81,7 @@ public class RoleStatusChangeValidatorTest {
         final Organization entity = new Organization();
         entity.setStatusCode(es);
         class Played extends Base implements PlayedRole {
+            private static final long serialVersionUID = 1L;
             public CuratableEntity getPlayer() {
                 return entity;
             }
@@ -95,6 +97,8 @@ public class RoleStatusChangeValidatorTest {
         final Organization entity = new Organization();
         entity.setStatusCode(es);
         class Scoped extends Base implements ScopedRole {
+            private static final long serialVersionUID = 1L;
+
             public Organization getScoper() {
                 return entity;
             }
@@ -107,6 +111,8 @@ public class RoleStatusChangeValidatorTest {
     }
 
     private static abstract class Base implements CuratableRole {
+
+        private static final long serialVersionUID = 1L;
 
         public RoleStatus getPriorStatus() {
             throw new UnsupportedOperationException("Not supported yet.");

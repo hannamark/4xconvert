@@ -97,7 +97,6 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         IdentifiedOrganizationServiceTest test = new IdentifiedOrganizationServiceTest();
         test.setDefaultCountry(ost.getDefaultCountry());
         test.setUpData();
-        test.initData();
 
         test.testSimpleCreateAndGet();
         IdentifiedOrganization ro = (IdentifiedOrganization) PoHibernateUtil.getCurrentSession().createCriteria(IdentifiedOrganization.class).uniqueResult();

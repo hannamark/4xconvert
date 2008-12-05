@@ -114,7 +114,6 @@ public class ResearchOrganizationType extends AbstractCodeValue {
     private String description;
     private SortedSet<FundingMechanism> fundingMechanisms = new TreeSet<FundingMechanism>();
 
-
     /**
      * For unit tests only.
      * @param code TODO
@@ -133,7 +132,7 @@ public class ResearchOrganizationType extends AbstractCodeValue {
         // for hibernate only - do nothing
         super();
     }
-    
+
     /**
      * @return the description
      */
@@ -144,7 +143,7 @@ public class ResearchOrganizationType extends AbstractCodeValue {
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * @param description the description
      */
@@ -172,7 +171,7 @@ public class ResearchOrganizationType extends AbstractCodeValue {
      * @param fundingMechanisms the set of mechanisms
      */
     @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private void setFundingMechanisms(SortedSet<FundingMechanism> fundingMechanisms) {
+    public void setFundingMechanisms(SortedSet<FundingMechanism> fundingMechanisms) {
         this.fundingMechanisms = fundingMechanisms;
     }
 }

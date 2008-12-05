@@ -93,7 +93,6 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
-import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -105,24 +104,12 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 
 import java.util.List;
 
-import org.junit.Before;
-
 /**
  * @author Scott Miller
  *
  */
 public class IdentifiedOrganizationRemoteServiceTest
     extends AbstractStructrualRoleRemoteServiceTest<IdentifiedOrganizationDTO, IdentifiedOrganizationCR> {
-
-    IdentifiedOrganizationType type1, type2;
-
-    @Before
-    public void initData() {
-        type1 = new IdentifiedOrganizationType("foo", "foo description");
-        PoHibernateUtil.getCurrentSession().save(type1);
-        type2 = new IdentifiedOrganizationType("bar", "bar description");
-        PoHibernateUtil.getCurrentSession().save(type2);
-    }
 
     /**
      * {@inheritDoc}
@@ -170,10 +157,6 @@ public class IdentifiedOrganizationRemoteServiceTest
         ii.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
         dto.setAssignedId(ii);
 
-        Cd typeCd = new Cd();
-        typeCd.setCode(type1.getCode());
-        dto.setTypeCode(typeCd);
-
         return dto;
     }
 
@@ -185,7 +168,6 @@ public class IdentifiedOrganizationRemoteServiceTest
         assertEquals(expected.getPlayerIdentifier().getExtension(), actual.getPlayerIdentifier().getExtension());
         assertEquals(expected.getScoperIdentifier().getExtension(), actual.getScoperIdentifier().getExtension());
         assertEquals("pending", actual.getStatus().getCode());
-        assertEquals(type1.getCode(), actual.getTypeCode().getCode());
 
         // really probe the assignedId, since that's different than other StructuralRoles
         Ii ii1 = expected.getAssignedId();
@@ -205,7 +187,6 @@ public class IdentifiedOrganizationRemoteServiceTest
     protected void verifyAlterations(IdentifiedOrganizationCR cr) {
         super.verifyAlterations(cr);
         assertEquals("9999", cr.getAssignedIdentifier().getExtension());
-        assertEquals(type2.getCode(), cr.getTypeCode().getCode());
     }
 
     /**
@@ -214,9 +195,6 @@ public class IdentifiedOrganizationRemoteServiceTest
     @Override
     protected void alter(IdentifiedOrganizationDTO dto) throws Exception {
         dto.getAssignedId().setExtension("9999");
-        Cd t = new Cd();
-        t.setCode(type2.getCode());
-        dto.setTypeCode(t);
     }
 
     @Override
@@ -250,7 +228,6 @@ public class IdentifiedOrganizationRemoteServiceTest
         ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
         ii.setRoot(IdConverter.ORG_ROOT);
         correlation2.setScoperIdentifier(ii);
-        correlation2.getTypeCode().setCode(type2.getCode());
         correlation2.getAssignedId().setExtension(correlation2.getAssignedId().getExtension() + "2");
         Ii correlation2Id = getCorrelationService().createCorrelation(correlation2);
 
@@ -336,10 +313,6 @@ public class IdentifiedOrganizationRemoteServiceTest
         // test by type1
         searchCriteria.setAssignedId(null);
         searchCriteria.setScoperIdentifier(null);
-        searchCriteria.setTypeCode(correlation1.getTypeCode());
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation1Id.getExtension());
 
         testNullifiedRoleNotFoundInSearch(correlation1Id, searchCriteria, IdentifiedOrganization.class);
     }

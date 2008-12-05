@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
@@ -128,10 +127,6 @@ public class IdentifiedOrganizationCorrelationServiceTest
         ii.setRoot("bar");
         dto.setAssignedId(ii);
 
-        Cd type = new Cd();
-        type.setCode("Member");
-        dto.setTypeCode(type);
-
         return dto;
     }
 
@@ -143,6 +138,5 @@ public class IdentifiedOrganizationCorrelationServiceTest
         Assert.assertEquals(getOrgId().getExtension(), dto.getScoperIdentifier().getExtension());
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
         Assert.assertEquals("myExtension", dto.getAssignedId().getExtension());
-        Assert.assertEquals("Member", dto.getTypeCode().getCode());
     }
 }

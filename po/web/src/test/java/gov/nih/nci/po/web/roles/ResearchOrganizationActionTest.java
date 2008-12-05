@@ -46,6 +46,7 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testPrepareNoOrgId() throws Exception {
         action.setRole(null);
         action.prepare();

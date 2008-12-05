@@ -24,15 +24,15 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
     private static final String ADDRESS = "address";
 
     private static final long serialVersionUID = 1L;
-    
+
     private Mailable mailable;
     private String rootKey;
     private Address address = new Address();
     private Integer index = -1;
-    
+
     /**
      * {@inheritDoc}
-     * @throws Exception 
+     * @throws Exception
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
@@ -42,8 +42,7 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
         mailable = (Mailable) getSession().getAttribute(getRootKey());
         if (isValidIndex()) {
             int tmpIdx = 0;
-            for (Iterator<Address> itr = getMailable().getPostalAddresses().iterator(); itr.hasNext();) {
-                Address tmp = itr.next();
+            for (Address tmp : getMailable().getPostalAddresses()) {
                 if (doesIndexMatch(tmpIdx)) {
                     setAddress(tmp);
                     break;
@@ -53,11 +52,11 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
         }
         initializeAddressCountry();
     }
-    
+
     private HttpSession getSession() {
         return PoHttpSessionUtil.getSession();
     }
-    
+
     /**
      * @return addresses result
      */
@@ -70,13 +69,14 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
     private boolean isValidIndex() {
         return getIndex() != null && getIndex() > -1;
     }
-    
+
+    @SuppressWarnings("deprecation")
     private void initializeAddressCountry() {
         if (getAddress().getCountry() == null) { //if address country is null, set to blank country
             getAddress().setCountry(new Country());
         }
     }
-    
+
     /**
      * @return addresses result
      */
@@ -85,7 +85,7 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
                     parameters = { @ValidationParameter(name = "resourceKeyBase", value = ADDRESS) })
             }
     )
-    
+
     public String add() {
         getMailable().getPostalAddresses().add(getAddress());
         setAddress(new Address());
@@ -93,11 +93,11 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
         ActionHelper.saveMessage(getAddAddressSuccessMessage());
         return INPUT;
     }
-    
+
     private String getAddAddressSuccessMessage() {
         return "clinicalresearchstaff.postaladdress.create.success";
     }
-    
+
     /**
      * @return addresses result
      */
@@ -110,7 +110,7 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
         ActionHelper.saveMessage(getEditAddressSuccessMessage());
         return INPUT;
     }
-    
+
     private String getEditAddressSuccessMessage() {
         return "clinicalresearchstaff.postaladdress.update.success";
     }
@@ -134,16 +134,16 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
     private boolean doesIndexMatch(int tmpIdx) {
         return getIndex() != null && tmpIdx == getIndex();
     }
-    
+
     /**
-     * @return instance of Mailable 
+     * @return instance of Mailable
      */
     public Mailable getMailable() {
         return mailable;
     }
-    
+
     /**
-     * 
+     *
      * @return the session key of the root object (instanceof Mailable)
      */
     public String getRootKey() {
@@ -151,20 +151,20 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
-    
+
     /**
      * @return addresses result
      */
     public String addresses() {
         return SUCCESS;
     }
-    
+
     /**
      * @return address to add/edit
      */
@@ -191,5 +191,5 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
      */
     public void setIndex(Integer addressIndex) {
         this.index = addressIndex;
-    }    
+    }
 }

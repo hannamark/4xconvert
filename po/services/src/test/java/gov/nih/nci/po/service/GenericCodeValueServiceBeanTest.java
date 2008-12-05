@@ -6,8 +6,6 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.AbstractCodeValue;
 import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.FundingMechanism;
-import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
-import gov.nih.nci.po.data.bo.IdentifiedPersonType;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.QualifiedEntityType;
@@ -31,9 +29,7 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             OrganizationalContactType.class,
             ResearchOrganizationType.class,
             QualifiedEntityType.class,
-            FundingMechanism.class, 
-            IdentifiedPersonType.class, 
-            IdentifiedOrganizationType.class};
+            FundingMechanism.class};
 
     private static final String CODE = "TT";
     private static final String DESC = "Test Type";
@@ -55,9 +51,8 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         if (clz.equals(FundingMechanism.class)) {
             constructor = clz.getConstructor(String.class, String.class, String.class, FundingMechanismStatus.class);
             newInstance = constructor.newInstance(CODE, DESC, "cat", FundingMechanismStatus.ACTIVE);
-            
-        } else if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class) 
-                || clz.equals(IdentifiedPersonType.class) || clz.equals(IdentifiedOrganizationType.class)) {
+
+        } else if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class)) {
             constructor = clz.getConstructor(String.class, String.class);
             newInstance = constructor.newInstance(CODE, DESC);
         }else {
@@ -84,13 +79,13 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         CodeValue oct = svcBean.getByCode(clz, CODE);
         assertNotNull(oct);
         assertEquals(CODE, oct.getCode());
-        
+
         Cd cd = new Cd();
         cd.setCode(CODE);
         oct =svcBean.getByCode(clz, cd);
         assertNotNull(oct);
         assertEquals(CODE, oct.getCode());
-        
+
         List<? extends CodeValue> list = svcBean.list(clz);
         assertEquals(1, list.size());
         Iterator<? extends CodeValue> iterator = list.iterator();

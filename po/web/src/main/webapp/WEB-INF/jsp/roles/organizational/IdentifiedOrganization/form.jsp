@@ -68,8 +68,6 @@ function handleDuplicateOf() {
 				<s:hidden key="organization"/>
                 <s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
-                <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.IdentifiedOrganizationType@class"/>
-                <s:set name="identifiedOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
                 <div class="wwgrp" id="wwgrp_curateRoleForm_role_scoper_id">
                     <s:fielderror>
                         <s:param value="%{'role.scoper'}"/>
@@ -94,15 +92,6 @@ function handleDuplicateOf() {
                     </div>
                 </div>
                 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
-                <s:select 
-                   label="%{getText('identifiedOrganization.typeCode')}"
-                   name="role.typeCode"
-                   list="#identifiedOrgTypes"
-                   listKey="id"
-                   listValue="description"
-                   value="role.typeCode.id" 
-                   headerKey="" headerValue="--Select a Type--" 
-                   required="true" cssClass="required" /> 
 				<s:select id="curateRoleForm.role.status"
 				   label="%{getText('identifiedOrganization.status')}"
 				   name="role.status"
@@ -118,9 +107,9 @@ function handleDuplicateOf() {
                 <c:if test="${fn:length(availableDuplicateOfs) > 0}">
 				   <po:field labelKey="identifiedOrganization.duplicateOf">
 						<select id="curateRoleForm.role.duplicateOf" name="role.duplicateOf">
-						<option value="">--Select a Duplicate Of Entry (ID - TYPE - STATUS - DATE)--</option>
+						<option value="">--Select a Duplicate Of Entry (ID - STATUS - DATE)--</option>
 						<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
-						   <option value="${dupEntry.id}">${dupEntry.id} - ${dupEntry.typeCode.description} -  ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
+						   <option value="${dupEntry.id}">${dupEntry.id} -  ${dupEntry.status} - <fmt:formatDate value="${dupEntry.statusDate}" pattern="yyyy-MM-dd"/></option>
 						</c:forEach>
 						</select>
 				   </po:field>

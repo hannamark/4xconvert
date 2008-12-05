@@ -8,9 +8,6 @@
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="identifiedPerson.id" property="id" sortable="true" sortProperty="ID"/>
-        <display:column titleKey="identifiedPerson.typeCode" sortable="true" sortProperty="TYPE_DESC">
-            ${row.typeCode.description} (${row.typeCode.code})
-        </display:column>
         <display:column titleKey="identifiedPerson.scoper.id" property="scoper.id" sortable="true" sortProperty="SCOPER_ID" maxLength="10"/>
         <display:column titleKey="identifiedPerson.scoper.name" property="scoper.name" sortable="true" sortProperty="SCOPER_NAME" maxLength="30"/>
         <display:column titleKey="identifiedPerson.assignedIdentifier.root">

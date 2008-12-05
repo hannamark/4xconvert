@@ -7,14 +7,12 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.data.bo.IdentifiedOrganizationType;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
-import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -25,7 +23,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Test;
 
 public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
-    private static final IdentifiedOrganizationType TYPE = new IdentifiedOrganizationType("Member", "Member Descritption");
     private static final RoleStatus STATUS = RoleStatus.ACTIVE;
     private static final long ID = 1L;
 
@@ -71,7 +68,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
 
         assertEquals(STATUS.name().toLowerCase(), dto.getStatus().getCode());
-        assertEquals(TYPE.getCode(), dto.getTypeCode().getCode());
         // check id
         Ii expectedIi1 = buildIdentifier(ID);
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi1, (dto).getIdentifier()));
@@ -87,7 +83,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         long scoperId = orgTest.createOrganization();
         long playerId = orgTest.createOrganization();
         PoDto dto = getExampleTestClassDTO(scoperId, playerId);
-        PoHibernateUtil.getCurrentSession().save(TYPE);
         IdentifiedOrganization bo = (IdentifiedOrganization) PoXsnapshotHelper.createModel(dto);
 
         assertEquals(ID, bo.getId().longValue());
@@ -112,7 +107,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         bo.getScoper().setId(scoperId);
 
         IdentifiedOrganizationDTO dto = (IdentifiedOrganizationDTO) PoXsnapshotHelper.createSnapshot(bo);
-        PoHibernateUtil.getCurrentSession().save(bo.getTypeCode());
         IdentifiedOrganization newBO = (IdentifiedOrganization) PoXsnapshotHelper.createModel(dto);
         IdentifiedOrganizationDTO newDto = (IdentifiedOrganizationDTO) PoXsnapshotHelper.createSnapshot(newBO);
 
@@ -120,7 +114,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         assertTrue(EqualsBuilder.reflectionEquals(dto.getPlayerIdentifier(), newDto.getPlayerIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getScoperIdentifier(), newDto.getScoperIdentifier()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getStatus(), newDto.getStatus()));
-        assertTrue(EqualsBuilder.reflectionEquals(dto.getTypeCode(), newDto.getTypeCode()));
         assertTrue(EqualsBuilder.reflectionEquals(dto.getAssignedId(), newDto.getAssignedId()));
     }
 
@@ -135,7 +128,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         bo.getPlayer().setId(2L);
         bo.setScoper(new Organization());
         bo.getScoper().setId(3L);
-        bo.setTypeCode(TYPE);
         bo.setAssignedIdentifier(buildAssignedId());
         return bo;
     }
@@ -151,10 +143,6 @@ public class IdentifiedOrganizationDTOTest extends AbstractHibernateTestCase {
         Cd status = new Cd();
         status.setCode(STATUS.name().toLowerCase());
         dto.setStatus(status);
-
-        Cd type = new Cd();
-        type.setCode(TYPE.getCode());
-        dto.setTypeCode(type);
 
         dto.setIdentifier(buildIdentifier(ID));
         dto.setAssignedId(buildAssignedId());

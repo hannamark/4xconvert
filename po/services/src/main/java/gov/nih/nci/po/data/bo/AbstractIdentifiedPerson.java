@@ -107,7 +107,6 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
 
     private static final long serialVersionUID = 1L;
 
-    private IdentifiedPersonType typeCode;
     /**
      * {@inheritDoc}
      * @xsnapshot.property match="iso"
@@ -147,27 +146,5 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     public void setPlayer(Person player) {
         super.setPlayer(player);
-    }
-
-    /**
-     * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
-     */
-    @ManyToOne
-    @ForeignKey(name = "identifiedperson_type_fkey")
-    @NotNull
-    @Searchable
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "typeCode")
-    public IdentifiedPersonType getTypeCode() {
-        return typeCode;
-    }
-
-    /**
-     * @param type identified entity type for person.
-     */
-    public void setTypeCode(IdentifiedPersonType type) {
-        this.typeCode = type;
     }
 }

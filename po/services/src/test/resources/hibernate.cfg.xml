@@ -28,10 +28,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.HealthCareFacilityCR" />
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedOrganization" />
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedOrganizationCR" />
-        <mapping class="gov.nih.nci.po.data.bo.IdentifiedOrganizationType" />
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedPerson" />
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedPersonCR" />
-        <mapping class="gov.nih.nci.po.data.bo.IdentifiedPersonType" />
         <mapping class="gov.nih.nci.po.data.bo.Organization" />
         <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
         <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactType" />         

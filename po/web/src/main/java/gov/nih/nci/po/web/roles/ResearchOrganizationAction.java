@@ -110,13 +110,14 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author smatyas
  */
 public class ResearchOrganizationAction
-    extends AbstractOrganizationRoleAction<ResearchOrganization, ResearchOrganizationCR, 
+    extends AbstractOrganizationRoleAction<ResearchOrganization, ResearchOrganizationCR,
         ResearchOrganizationServiceLocal>
     implements Preparable {
 
     private static final long serialVersionUID = 1L;
     private ResearchOrganization role = new ResearchOrganization();
     private ResearchOrganizationCR cr = new ResearchOrganizationCR();
+    @SuppressWarnings("deprecation")
     private ResearchOrganizationType researchOrganizationType = new ResearchOrganizationType();
 
 
@@ -193,7 +194,7 @@ public class ResearchOrganizationAction
         if (getRole().getPlayer() == null) { //if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
-        
+
         if (getResearchOrganizationType().getId() != null) {
             setResearchOrganizationType(PoRegistry.getInstance().getServiceLocator().getGenericService()
                     .getPersistentObject(ResearchOrganizationType.class, getResearchOrganizationType().getId()));
@@ -297,7 +298,7 @@ public class ResearchOrganizationAction
     protected String getEditSuccessMessageKey() {
         return "researchorganization.update.success";
     }
-    
+
 
     /**
      * @return ResearchOrganizationType.code
@@ -313,7 +314,7 @@ public class ResearchOrganizationAction
     public void setResearchOrganizationType(ResearchOrganizationType researchOrganizationType) {
         this.researchOrganizationType = researchOrganizationType;
     }
-    
+
     /**
      * @return 'changeResearchOrganizationType' result
      */
