@@ -226,7 +226,8 @@ function toggledisplay2 (it) {
                     <label for="trialType"> <fmt:message key="submit.trial.type"/><span class="required">*</span></label> 
                 </td>
                 <td>
-				    <s:radio name="trialType" list="#{'Interventional':'Interventional', 'Observational':'Observational'}"  />
+				    <input type="radio" name="trialType" value="Interventional" checked="checked"> Interventional
+				    <input type="radio" name="trialType" value="Observational" disabled> Observational
 				     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialType</s:param>
