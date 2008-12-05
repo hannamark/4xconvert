@@ -12,14 +12,14 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 function handleEdit(rowId){
-    document.diseaseForm.selectedDiseaseIdentifier.value = rowId;
+    document.diseaseForm.selectedStudyDiseaseIdentifier.value = rowId;
     document.diseaseForm.action="diseaseedit.action";
     document.diseaseForm.submit(); 
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the disease from the study.  Cancel to abort.");
     if (input_box==true){
-        document.diseaseForm.selectedDiseaseIdentifier.value = rowId;
+        document.diseaseForm.selectedStudyDiseaseIdentifier.value = rowId;
         document.diseaseForm.action="diseasedelete.action";
         document.diseaseForm.submit();
     }
@@ -39,7 +39,7 @@ function handleCreate(){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     
     <s:form name="diseaseForm">
-        <s:hidden name="selectedDiseaseIdentifier"/> 
+        <s:hidden name="selectedStudyDiseaseIdentifier"/> 
     <h2>
         <fmt:message key="disease.details.title"/>
     </h2>
@@ -61,13 +61,13 @@ function handleCreate(){
                 <display:column property="lead" sortable="true"
                     titleKey="disease.lead" headerClass="sortable" />
                 <display:column titleKey="disease.edit" class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                    <s:a href="#" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
                 </display:column>
                 <display:column titleKey="disease.delete" class="action">
-                    <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
+                    <s:a href="#" onclick="handleDelete(%{#attr.row.studyDiseaseIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
                             alt="Delete" width="16" height="16" />
                     </s:a>

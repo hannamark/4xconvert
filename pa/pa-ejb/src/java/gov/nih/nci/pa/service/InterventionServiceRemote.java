@@ -20,12 +20,10 @@ import javax.ejb.Remote;
 @Remote
 public interface InterventionServiceRemote 
         extends BasePaService<InterventionDTO> {
-    
     /**
      * @param searchCriteria search string
-     * @return all interventions of given type with names or alternate names matching search string
+     * @return all interventions with names or alternate names matching search string
      * @throws PAException exception
      */
     List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException;
-
 }

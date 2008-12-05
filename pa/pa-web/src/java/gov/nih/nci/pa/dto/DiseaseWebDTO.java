@@ -8,12 +8,38 @@ package gov.nih.nci.pa.dto;
  *        holder, NCI.
  */
 public class DiseaseWebDTO {
+    private String studyDiseaseIdentifier;
+    private String identifier;
     private String preferredName;
     private String code;
     private String conceptId;
     private String menuDisplayName;
     private String parentPreferredName;
     private String lead;
+    /**
+     * @return the studyDiseaseIdentifier
+     */
+    public String getStudyDiseaseIdentifier() {
+        return studyDiseaseIdentifier;
+    }
+    /**
+     * @param studyDiseaseIdentifier the studyDiseaseIdentifier to set
+     */
+    public void setStudyDiseaseIdentifier(String studyDiseaseIdentifier) {
+        this.studyDiseaseIdentifier = studyDiseaseIdentifier;
+    }
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
     /**
      * @return the preferredName
      */

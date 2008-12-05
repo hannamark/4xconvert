@@ -2,6 +2,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 
+import java.util.List;
+
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +15,10 @@ import javax.ejb.Remote;
 */
 @Remote
 public interface DiseaseServiceRemote extends BasePaService<DiseaseDTO> {
-
+    /**
+     * @param searchCriteria search string
+     * @return all diseases with preferred names or alternate names matching search string
+     * @throws PAException exception
+     */
+    List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException;
 }

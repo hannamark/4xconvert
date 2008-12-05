@@ -11,8 +11,11 @@ import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DiseaseTest;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,5 +84,28 @@ public class DiseaseServiceTest {
             return;
         }
         fail();
+    }
+    @Test
+    public void searchTest() throws Exception {
+        DiseaseDTO searchCriteria = new DiseaseDTO();
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe"));
+        List<DiseaseDTO> r = bean.search(searchCriteria);
+        assertEquals(1, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("xToe"));
+        r = bean.search(searchCriteria);
+        assertEquals(0, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Piggy"));
+        r = bean.search(searchCriteria);
+        assertEquals(1, r.size());
+
+        searchCriteria.setPreferredName(null);
+        try {
+            r = bean.search(searchCriteria);
+            fail("Service should throw PAException when searching w/o name.  ");
+        } catch(PAException e) {
+            // expected behavior
+        }
     }
 }

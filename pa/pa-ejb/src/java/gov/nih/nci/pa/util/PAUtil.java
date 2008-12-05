@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 
@@ -79,6 +80,19 @@ public class PAUtil {
             if (cd.getCode().trim().length() == 0) {
                 isNull = true;
             }
+        }
+        return isNull;
+    }
+
+    /**
+     * checks if Cd is null.
+     * @param bl Bl
+     * @return boolean
+     */
+    public static boolean isBlNull(Bl bl) {
+        boolean isNull = false;
+        if (bl == null || bl.getValue() == null) {
+            return true;
         }
         return isNull;
     }

@@ -32,7 +32,7 @@ public class InterventionServiceBean
 
     /**
      * @param searchCriteria search string
-     * @return all interventions of given type with names or alternate names matching search string
+     * @return all interventions with names or alternate names matching search string
      * @throws PAException exception
      */
     public List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException {
@@ -67,16 +67,10 @@ public class InterventionServiceBean
             serviceError("Hibernate exception in search.().  ", hbe);
         }
         ArrayList<InterventionDTO> resultList = new ArrayList<InterventionDTO>();
-        Long lastId = null;
         for (Intervention bo : queryList) {
-            if (lastId != bo.getId()) {
-              resultList.add(convertFromDomainToDto(bo));
-              lastId = bo.getId();
-            }
+            resultList.add(convertFromDomainToDto(bo));
         }
         getLogger().info("Leaving search(), returning " + resultList.size() + " object(s).");
         return resultList;
     }
-
-
 }

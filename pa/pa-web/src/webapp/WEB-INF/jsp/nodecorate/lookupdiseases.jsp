@@ -5,42 +5,40 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
 <SCRIPT language="JavaScript">
-    function submitform(intid)
+    function submitform(disid)
     {
-        top.window.loadDiv(intid);
+        top.window.loadDiv(disid);
         window.top.hidePopWin(true); 
     }
     
-    function callParentSubmit(intid)
+    function callParentSubmit(disid)
     {   
-        top.window.loadDiv(intid);
+        top.window.loadDiv(disid);
         window.top.hidePopWin(true); 
     }
     function loadDiv() {        
         var jsName = document.getElementById("searchName").value;
-        var url = '/pa/protected/popupIntdisplayList.action?searchName='+jsName;
-        var div = document.getElementById('getInterventions');
+        var url = '/pa/protected/popupDisdisplayList.action?searchName='+jsName;
+        var div = document.getElementById('getDiseases');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
             asynchronous: true,
             method: 'get',
             evalScripts: false
         });
-        return false;
     }
 </SCRIPT>
 
 </head> 
 <body>
 <div class="box">
-<s:form id="interventions" name="interventions" >
-<h2>Search Interventions</h2>
-<s:label name="interventionErrorMessage"/>
+<s:form id="diseases" name="diseases" >
+<h2>Search Diseases</h2>
+<s:label name="diseaseErrorMessage"/>
 <table  class="form">  
-    <s:hidden id="interventionType" name="interventionType"/>
     <tr>    
         <td scope="row" class="label">
-            <label for="searchName">Intervention Name: </label>
+            <label for="searchName">Disease Name: </label>
         </td>
         <td>
             <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
@@ -57,8 +55,8 @@
           </del>
     </div>
     <div class="line"></div>
-    <div id="getInterventions" align="center">   
-        <jsp:include page="/WEB-INF/jsp/nodecorate/lookupinterventionsdisplayList.jsp"/>
+    <div id="getDiseases" align="center">   
+        <jsp:include page="/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp"/>
     </div>
 </s:form>
 </div>

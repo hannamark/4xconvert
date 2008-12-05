@@ -45,6 +45,9 @@
             <result>/WEB-INF/jsp/collaborators.jsp</result>
          </action> 
 
+        <action name="ajaxptpDisease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>  
+        </action>
         <action name="ajaxptpIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>  
         </action>
@@ -109,6 +112,9 @@
  			<result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
  		</action>		
 
+        <action name="popupDis*" class="gov.nih.nci.pa.action.PopUpDisAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
+        </action>
         <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>
         </action>
