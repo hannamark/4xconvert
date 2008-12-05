@@ -27,7 +27,7 @@
                 <c:param name="role" value="${row.id}"/>
             </c:url>
             <po:buttonRow>
-                <po:button href="${editUrl}" style="edit" text="Edit" id="edit_research_org_id_${row.id}"/>
+                <po:button href="${editUrl}" style="edit" text="Edit" id="edit_oversightCommittee_id_${row.id}"/>
             </po:buttonRow>
         </display:column>
     </display:table>

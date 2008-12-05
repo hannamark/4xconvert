@@ -35,6 +35,15 @@ public class SortCriterionTest {
     }
     
     @Test
+    public void OrganizationalContactSortCriterion_getOrderField() {
+        verifySortCriterion("id", OrganizationalContactSortCriterion.ID);
+        verifySortCriterion("status", OrganizationalContactSortCriterion.ROLE_STATUS);
+        verifySortCriterion("statusDate", OrganizationalContactSortCriterion.STATUS_DATE);
+        verifySortCriterion("scoper.id", OrganizationalContactSortCriterion.SCOPER_ID);
+        verifySortCriterion("scoper.name", OrganizationalContactSortCriterion.SCOPER_NAME);
+    }
+    
+    @Test
     public void ResearchOrganizationSortCriterion_getOrderField() {
         verifySortCriterion("id", ResearchOrganizationSortCriterion.ID);
         verifySortCriterion("status", ResearchOrganizationSortCriterion.ROLE_STATUS);

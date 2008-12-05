@@ -163,10 +163,10 @@
                 <c:url var="manageIdentifiedPerson" value="/protected/roles/person/IdentifiedPerson/start.action">
                     <c:param name="person" value="${person.id}"/>
                 </c:url>
-                <ul>
+                <ul> 
                     <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (? new of ?)</li>
                     <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (? new of ?)</li>
-                    <li><a href="${urlNotYetImplemented}"><s:text name="organizationalContact.manage.title"/></a> (? new of ?)</li>
+                    <li><a href="${manageOrganizationalContact}"><s:text name="organizationalContact.manage.title"/></a> (? new of ?)</li>
                     <li><a href="${urlNotYetImplemented}"><s:text name="identifiedPerson.manage.title"/></a> (? new of ?)</li>
                 </ul>
                 <div class="clear"></div>

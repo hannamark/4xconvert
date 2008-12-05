@@ -100,6 +100,7 @@ import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.service.MockPersonService;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactServiceStub;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
 import gov.nih.nci.po.service.PersonServiceLocal;
@@ -124,6 +125,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final ResearchOrganizationServiceLocal roService = new ResearchOrganizationServiceStub();
     private final IdentifiedOrganizationServiceLocal ioService = new IdentifiedOrganizationServiceStub();
     private final ClinicalResearchStaffServiceLocal crsService = new ClinicalResearchStaffServiceStub();
+    private final OrganizationalContactServiceLocal orgConService = new OrganizationalContactServiceStub();
 
     /**
      * {@inheritDoc}
@@ -206,7 +208,7 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
-        return null;
+        return orgConService;
     }
 
     /**

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 
@@ -269,6 +270,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @ForeignKey(name = "ORGCNCT_PHONE_FK", inverseName = "PHONE_ORGCNCT_FK")
     @Valid
     @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_START)
+    @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
