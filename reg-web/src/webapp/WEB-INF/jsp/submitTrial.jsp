@@ -137,7 +137,12 @@ function deleteGrantRow(rowid){
 function enableGrantAddButton(){	
 	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;	
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
-	var serialNumber = document.getElementById('serialNumber').value;
+	var serialNumber;
+	if (isNaN(document.getElementById('serialNumber').value)){
+		alert("Please enter a Serial Number")
+		return false;
+	}
+	serialNumber = document.getElementById('serialNumber').value;
 	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
 	//alert("fundingMechanismCode "+fundingMechanismCode+"+"+nihInstitutionCode+"+"+serialNumber+"+"+nciDivisionProgramCode);
 	if(fundingMechanismCode != '' && nihInstitutionCode != '' && serialNumber != '' && nciDivisionProgramCode != '') {
