@@ -39,6 +39,14 @@ public enum StudyParticipationFunctionalCode implements CodedEnum<String> {
      * Collaborators.
      */
     COLLABORATORS("Collaborators", false),
+    /**
+     * Sponsor.
+     */
+    SPONSOR("Sponsor", false),
+    /**
+     * Responsible Party - Sponsor.
+     */
+    RESPONSIBLE_PARTY_SPONSOR("Responsible Party - Sponsor", false),
 
     /**
      * Fundtion Source.

@@ -157,8 +157,8 @@ public class PAOrganizationServiceBean implements
             StringBuffer hql = new StringBuffer();
             hql.append(
                       " Select distinct o from Organization o  " 
-                    + " join o.healthCareFacilities as hcfs " 
-                    + " join hcfs.studyParticipations as sps " 
+                    + " join o.researchOrganizations as ros " 
+                    + " join ros.studyParticipations as sps " 
                     + " join sps.studyProtocol as sp " 
                     + "  where sps.functionalCode = '"  
                     +   StudyParticipationFunctionalCode.LEAD_ORAGANIZATION  + "'");

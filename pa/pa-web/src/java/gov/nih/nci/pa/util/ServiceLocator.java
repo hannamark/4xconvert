@@ -11,6 +11,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
@@ -254,5 +255,10 @@ public interface ServiceLocator {
      * @return DiseaseParentService
      */
     DiseaseParentServiceRemote getDiseaseParentService();
+
+    /**
+     * @return StudyContactService
+     */
+    StudyContactServiceRemote getStudyContactService();
 }
 

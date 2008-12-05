@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.action;
       
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -7,16 +9,24 @@ import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -30,6 +40,7 @@ import com.opensymphony.xwork2.ActionSupport;
 * @author Hong Gao
 *
 */
+@SuppressWarnings("PMD")
 public class TrialValidationAction extends ActionSupport {
 
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
@@ -54,6 +65,8 @@ public class TrialValidationAction extends ActionSupport {
             copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null));
             copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null));
             copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
+            copyResponsibleParty(studyProtocolIi);
+            copySponsor(studyProtocolIi);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } 
@@ -66,10 +79,20 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String update() {
         try {
-
-            @SuppressWarnings("PMD.UnusedLocalVariable")
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+            updateStudyProtocol(studyProtocolIi);
+            updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
+                        StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) , 
+                        gtdDTO.getLeadOrganizationIdentifier() , gtdDTO.getLocalProtocolIdentifier());
+            updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
+                        StudyParticipationFunctionalCode.SPONSOR) , 
+                        gtdDTO.getSponsorIdentifier() , null);
+            updateStudyContact(studyProtocolIi);
+            removeSponsorContact(studyProtocolIi);
+            createSponorContact(studyProtocolIi);
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -86,10 +109,10 @@ public class TrialValidationAction extends ActionSupport {
     }
     
     private void copy(StudyProtocolQueryDTO spqDTO) {
-        gtdDTO.setLocalProtocolIdentifer(spqDTO.getLocalStudyProtocolIdentifier());
+        gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
     }
     private void copyLO(Organization o) {
-        gtdDTO.setLeadOrganizationIdentifer(o.getIdentifier());
+        gtdDTO.setLeadOrganizationIdentifier(o.getIdentifier());
         gtdDTO.setLeadOrganizationName(o.getName());
     }
     private void copyPI(Person p) {
@@ -103,14 +126,64 @@ public class TrialValidationAction extends ActionSupport {
         CorrelationUtils cUtils = new CorrelationUtils();
         Organization o = cUtils.getPAOrganizationByIndetifers(
                         Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
-        gtdDTO.setSummaryFourOrgIdentifer(o.getIdentifier());
+        gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
         gtdDTO.setSummaryFourOrgName(o.getName());
         if (srDTO.getTypeCode() != null) {
             gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
         }
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private void copyResponsibleParty(Ii studyProtocolIi) throws PAException {
+        StudyContactDTO scDto = new StudyContactDTO();
+        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
+        List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
+        DSet dset = null;
+        if (scDtos != null && scDtos.size() > 0) {
+            gtdDTO.setResponsibleParty("pi");
+            scDto = scDtos.get(0);
+            dset = scDto.getTelecomAddresses();
+        } else {
+            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+            spart.setRoleCode(CdConverter.convertToCd(
+                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
+                .getByStudyProtocol(studyProtocolIi, spart);
+            gtdDTO.setResponsibleParty("sponsor");
+            if (spDtos != null && spDtos.size() > 0) {
+                gtdDTO.setResponsibleParty("sponsor");
+                spart = spDtos.get(0);
+                dset = spart.getTelecomAddresses();
+            }
+        }
+        copy(dset);
+    }
+    private void copy(DSet dset) {
+        if (dset == null) {
+            return;
+        }
+        List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
+        List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
+        if (phones != null && phones.size() > 0) {
+            gtdDTO.setContactPhone(phones.get(0));
+        }
+        if (emails != null && emails.size() > 0) {
+            gtdDTO.setContactEmail(emails.get(0));
+        }        
+    }
+    private void copySponsor(Ii studyProtocolIi) throws PAException {
+        StudyParticipationDTO spart = new StudyParticipationDTO();
+        spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
+        List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+                        .getByStudyProtocol(studyProtocolIi, spart);
+        if (spDtos != null && spDtos.size() > 0) {
+            spart = spDtos.get(0);
+            Organization o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
+                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+            gtdDTO.setSponsorName(o.getName());
+            gtdDTO.setSponsorIdentifier(o.getIdentifier());
+        }
+        
+    }
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -123,23 +196,83 @@ public class TrialValidationAction extends ActionSupport {
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
     
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private void updateStudyParticipation(Ii studyProtocolIi) throws PAException {
+    private void updateStudyParticipation(Ii studyProtocolIi , Cd cd , String roId , String lpIdentifier) 
+    throws PAException {
         StudyParticipationDTO spDto = new StudyParticipationDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION));
+        spDto.setFunctionalCode(cd);
         List<StudyParticipationDTO> srDtos = PaRegistry.getStudyParticipationService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         if (srDtos == null || srDtos.isEmpty() || srDtos.size() > 1) {
-            throw new PAException(" Lead Organization is either null , or more than one lead is found for a "  
+            throw new PAException(" StudyParticipation is either null , or more than one lead is found for a "  
                     + " given Study Protocol id = " +  studyProtocolIi.getExtension());
         }
         spDto = srDtos.get(0);
         OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
-        Long ro = ocb.createResearchOrganizationCorrelations(gtdDTO.getLeadOrganizationIdentifer());
-        spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getLeadOrganizationIdentifer()));
-        spDto.setResearchOrganizationIi(IiConverter.convertToIi(ro));
+        spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
+        spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
         PaRegistry.getStudyParticipationService().update(spDto);
         
+    }
+    
+    private void updateStudyContact(Ii studyProtocolIi) throws PAException {
+        StudyContactDTO spDto = new StudyContactDTO();
+        spDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
+        List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService()
+            .getByStudyProtocol(studyProtocolIi, spDto);
+        if (srDtos == null || srDtos.isEmpty() || srDtos.size() > 1) {
+            throw new PAException(" PI is either null , or more than one lead is found for a "  
+                    + " given Study Protocol id = " +  studyProtocolIi.getExtension());
+        }
+        StudyContactDTO scDto = srDtos.get(0);
+        
+        StudyProtocolQueryDTO spqDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession().
+                getAttribute(Constants.TRIAL_SUMMARY);        
+        
+        ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
+        
+        Long crs = crbb.createClinicalResearchStaffCorrelations(
+                                    gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier());
+        scDto.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
+        if (spqDto.getStudyProtocolType().equalsIgnoreCase("InterventionalStudyProtocol")) {
+            Long hcp = null;
+            HealthCareProviderCorrelationBean hcpb = new HealthCareProviderCorrelationBean();
+            hcp = hcpb.createHealthCareProviderCorrelationBeans(
+                    gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier());
+            scDto.setHealthCareProviderIi(IiConverter.convertToIi(hcp));
+        }
+        PaRegistry.getStudyContactService().update(scDto);
+    }
+    
+    private void removeSponsorContact(Ii studyProtocolIi) throws PAException {
+        StudyContactDTO scDto = new StudyContactDTO();
+        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
+        List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
+        if (scDtos != null && scDtos.size() > 0) {
+            scDto = scDtos.get(0);
+            PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
+        } else {
+            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+            spart.setRoleCode(CdConverter.convertToCd(
+                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
+                .getByStudyProtocol(studyProtocolIi, spart);
+            if (spDtos != null && spDtos.size() > 0) {
+                PaRegistry.getStudyParticipationContactService().delete(spDtos.get(0).getIdentifier());
+            }
+        }
+        
+    }
+    private void createSponorContact(Ii studyProtocolIi) throws  PAException {
+        PARelationServiceBean parb = new PARelationServiceBean();
+        if (gtdDTO.getResponsibleParty().equals("pi")) {
+            parb.createPIAsResponsiblePartyRelations(
+                    gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
+        } else if (gtdDTO.getResponsibleParty().equals("sponsor")) { 
+            parb.createPIAsResponsiblePartyRelations(
+                    gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
+        }
     }
     /**
      * 

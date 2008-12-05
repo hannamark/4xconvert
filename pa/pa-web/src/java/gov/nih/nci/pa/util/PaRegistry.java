@@ -11,6 +11,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
@@ -227,13 +228,6 @@ public final class PaRegistry {
         return getInstance().getServiceLocator().getPoHealthCareProverService();
     }
 
-//    /**
-//     * @return ResearchOrganizationCorrelationServiceRemote
-//     */
-//    public static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
-//        return getInstance().getServiceLocator().getPoResearchOrganizationService();
-//    }
-
     /**
      * 
      * @return SubGroupsServiceRemote
@@ -376,4 +370,12 @@ public final class PaRegistry {
     public static StudyDiseaseServiceRemote getStudyDiseaseService() {
         return getInstance().getServiceLocator().getStudyDiseaseService();
     }
+
+    /**
+     * @return StudyContactService
+     */
+    public static StudyContactServiceRemote getStudyContactService() {
+        return getInstance().getServiceLocator().getStudyContactService();
+    }
 }
+

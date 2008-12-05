@@ -25,8 +25,9 @@ public enum StudyParticipationContactRoleCode implements CodedEnum<String> {
     /** Responsible party contact . */
     STUDY_RESPONSIBLE_PARTY_CONTACT("Study Responsible Party Contact"),
     /**Submitter. */
-    SUBMITTER("Submitter");
-    
+    SUBMITTER("Submitter"),
+    /**Responsible party - Sponsor contact. */
+    RESPONSIBLE_PARTY_SPONSOR_CONTACT("Responsible party - Sponsor contact");    
     private String code;
     /**
      *

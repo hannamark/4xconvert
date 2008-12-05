@@ -73,7 +73,7 @@ public class DSetConverter {
         if (dSet == null || dSet.getItem() == null) {
             return retList;
         }
-        if (type.equals("PHONE")) {
+        if (type.equalsIgnoreCase("PHONE")) {
             for (Tel t : dSet.getItem()) {
                 if (t.getNullFlavor() != null) {
                     continue;
@@ -83,7 +83,7 @@ public class DSetConverter {
                 }
             }
         }
-        if (type.equals("EMAIL")) {
+        if (type.equalsIgnoreCase("EMAIL")) {
             for (Tel t : dSet.getItem()) {
                 if (t.getNullFlavor() != null) {
                     continue;

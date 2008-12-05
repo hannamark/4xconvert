@@ -87,8 +87,7 @@ public class StudyContactServiceBean
             Long.valueOf(dto.getIdentifier().getExtension()));         
 
         StudyContact bo = StudyContactConverter.convertFromDtoToDomain(dto);
-        sc = bo;
-        session.merge(sc);
+        session.update(sc);
         session.flush();
         resultDto = StudyContactConverter.convertFromDomainToDTO(bo);
       } catch (HibernateException hbe) {

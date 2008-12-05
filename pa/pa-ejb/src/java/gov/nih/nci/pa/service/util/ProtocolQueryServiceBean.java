@@ -280,8 +280,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sc.clinicalResearchStaff as hcp "
                             + "left outer join hcp.person as per "
                             + "left outer join sp.studyParticipations as sps  "
-                            + "left outer join sps.healthCareFacility as hcf "
-                            + "left outer join hcf.organization as org ");
+                            + "left outer join sps.researchOrganization as ro "
+                            + "left outer join ro.organization as org ");
 
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
         } catch (Exception e) {

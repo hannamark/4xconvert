@@ -131,7 +131,7 @@ public class StudyParticipationServiceBean
      * @return list StudyParticipationDTO
      * @throws PAException on error
      */
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" , "" })
     public List<StudyParticipationDTO> getByStudyProtocol(
             Ii studyProtocolIi , List<StudyParticipationDTO> spDTOList) throws PAException {
         if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {

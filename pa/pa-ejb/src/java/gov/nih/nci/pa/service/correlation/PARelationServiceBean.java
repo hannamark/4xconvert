@@ -57,19 +57,47 @@ public class PARelationServiceBean {
             throw new PAException("No Study Protocol found for = " + studyProtocolId);
         }
         OrganizationCorrelationServiceBean oc = new OrganizationCorrelationServiceBean();
-        Long hcfId = oc.createHealthCareFacilityCorrelations(orgPoIdentifier);
+        Long roId = oc.createResearchOrganizationCorrelations(orgPoIdentifier);
         StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
         studyPartDTO.setFunctionalCode(CdConverter
                 .convertStringToCd(StudyParticipationFunctionalCode.LEAD_ORAGANIZATION.getCode()));
         studyPartDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localSpIdentifier));
-        studyPartDTO.setHealthcareFacilityIi(IiConverter.convertToIi(hcfId));
+        studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
         studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
-        // System.out.println(" study part id = "+
-        // studyPartDTO.getIdentifier().getExtension());
     }
 
+    /**
+     * 
+     * @param orgPoIdentifier org id
+     * @param studyProtocolId protocol
+     * @throws PAException e
+     */
+    public void createSponsorRelations(String orgPoIdentifier, Long studyProtocolId)
+            throws PAException {
+        if (orgPoIdentifier == null) {
+            throw new PAException("Organization Identifer is null");
+        }
+        if (studyProtocolId == null) {
+            throw new PAException("Study Protocol Identifer is null");
+        }
+        StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
+                IiConverter.convertToIi(studyProtocolId));
+        if (spDTO == null) {
+            throw new PAException("No Study Protocol found for = " + studyProtocolId);
+        }
+        OrganizationCorrelationServiceBean oc = new OrganizationCorrelationServiceBean();
+        Long roId = oc.createResearchOrganizationCorrelations(orgPoIdentifier);
+        StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
+        studyPartDTO.setFunctionalCode(CdConverter
+                .convertStringToCd(StudyParticipationFunctionalCode.SPONSOR.getCode()));
+        studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+        studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        studyPartDTO.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
+        studyPartDTO = PoPaServiceBeanLookup.getStudyParticipationService().create(studyPartDTO);
+    }
+    
     /**
      * 
      * @param orgPoIdentifier org id
@@ -142,7 +170,7 @@ public class PARelationServiceBean {
         Long crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
         StudyContactDTO scDTO = new StudyContactDTO();
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
-        scDTO.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRIMARY_CONTACT));
+        scDTO.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         scDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
         scDTO.setStudyProtocolIi(spDTO.getIdentifier());
         // set DSET
@@ -190,8 +218,8 @@ public class PARelationServiceBean {
         }
         // create study participation
         StudyParticipationDTO studyPartDTO = new StudyParticipationDTO();
-        studyPartDTO.setFunctionalCode(CdConverter.convertStringToCd(StudyParticipationFunctionalCode.FUNDING_SOURCE
-                .getCode()));
+        studyPartDTO.setFunctionalCode(CdConverter.convertStringToCd(
+                StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode()));
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));
@@ -211,7 +239,8 @@ public class PARelationServiceBean {
         spcDTO.setTelecomAddresses(list);
         //
         spcDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));
-        spcDTO.setRoleCode(CdConverter.convertToCd(StudyParticipationContactRoleCode.STUDY_RESPONSIBLE_PARTY_CONTACT));
+        spcDTO.setRoleCode(CdConverter.convertToCd(
+                StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
         spcDTO.setStudyParticipationIi(studyPartDTO.getIdentifier());
         spcDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         spcDTO.setStatusCode(CdConverter.convertStringToCd(StatusCode.PENDING.getCode()));

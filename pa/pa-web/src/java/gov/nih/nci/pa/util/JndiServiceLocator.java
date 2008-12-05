@@ -11,6 +11,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
@@ -241,6 +242,40 @@ public class JndiServiceLocator implements ServiceLocator {
         return (AbstractionCompletionServiceRemote) JNDIUtil.lookup("/pa/AbstractionCompletionServiceBean/remote");
     }
 
+    /**
+     * @return DiseaseAlternameService
+     */
+    public DiseaseAlternameServiceRemote getDiseaseAlternameService() {
+        return (DiseaseAlternameServiceRemote) JNDIUtil.lookup("/pa/DiseaseAlternameServiceBean/remote");
+    }
+
+    /**
+     * @return DiseaseParentService
+     */
+    public DiseaseParentServiceRemote getDiseaseParentService() {
+        return (DiseaseParentServiceRemote) JNDIUtil.lookup("/pa/DiseaseParentServiceBean/remote");
+    }
+
+    /**
+     * @return DiseaseService
+     */
+    public DiseaseServiceRemote getDiseaseService() {
+        return (DiseaseServiceRemote) JNDIUtil.lookup("/pa/DiseaseServiceBean/remote");
+    }
+
+    /**
+     * @return StudyDiseaseService
+     */
+    public StudyDiseaseServiceRemote getStudyDiseaseService() {
+        return (StudyDiseaseServiceRemote) JNDIUtil.lookup("/pa/StudyDiseaseServiceBean/remote");
+    } 
+
+    /**
+     * @return StudyContactService
+     */
+    public StudyContactServiceRemote getStudyContactService() {
+        return (StudyContactServiceRemote) JNDIUtil.lookup("/pa/StudyContactServiceBean/remote");
+    } 
 
     /** 
      * @return OrganizationEntityServiceRemote
@@ -292,31 +327,4 @@ public class JndiServiceLocator implements ServiceLocator {
         return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
-    /**
-     * @return DiseaseAlternameService
-     */
-    public DiseaseAlternameServiceRemote getDiseaseAlternameService() {
-        return (DiseaseAlternameServiceRemote) JNDIUtil.lookup("/pa/DiseaseAlternameServiceBean/remote");
-    }
-
-    /**
-     * @return DiseaseParentService
-     */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-        return (DiseaseParentServiceRemote) JNDIUtil.lookup("/pa/DiseaseParentServiceBean/remote");
-    }
-
-    /**
-     * @return DiseaseService
-     */
-    public DiseaseServiceRemote getDiseaseService() {
-        return (DiseaseServiceRemote) JNDIUtil.lookup("/pa/DiseaseServiceBean/remote");
-    }
-
-    /**
-     * @return StudyDiseaseService
-     */
-    public StudyDiseaseServiceRemote getStudyDiseaseService() {
-        return (StudyDiseaseServiceRemote) JNDIUtil.lookup("/pa/StudyDiseaseServiceBean/remote");
-    } 
 }

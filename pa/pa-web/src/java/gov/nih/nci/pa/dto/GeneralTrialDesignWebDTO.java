@@ -25,14 +25,22 @@ public class GeneralTrialDesignWebDTO {
     private String publicDescription;
     private String scientificDescription;
     private String keywordText;
-    private String localProtocolIdentifer;
-    private String leadOrganizationIdentifer;
+    private String localProtocolIdentifier;
+    private String leadOrganizationIdentifier;
     private String leadOrganizationName;
     private String piIdentifier;
     private String piName;
-    private String summaryFourOrgIdentifer;
+    private String summaryFourOrgIdentifier;
     private String summaryFourOrgName;
     private String summaryFourFundingCategoryCode;
+    private String sponsorName;
+    private String sponsorIdentifier;
+    private String responsibleParty;
+    private String responsibleName;
+    private String responsibleIdentifier;
+    private String contactPhone;
+    private String contactEmail;
+    
     /**
      * 
      * @return acronym acronym
@@ -210,31 +218,31 @@ public class GeneralTrialDesignWebDTO {
     }
     /**
      * 
-     * @return localProtocolIdentifer
+     * @return localProtocolIdentifier
      */
-    public String getLocalProtocolIdentifer() {
-        return localProtocolIdentifer;
+    public String getLocalProtocolIdentifier() {
+        return localProtocolIdentifier;
     }
     /**
      * 
-     * @param localProtocolIdentifer localProtocolIdentifer
+     * @param localProtocolIdentifier localProtocolIdentifier
      */
-    public void setLocalProtocolIdentifer(String localProtocolIdentifer) {
-        this.localProtocolIdentifer = localProtocolIdentifer;
+    public void setLocalProtocolIdentifier(String localProtocolIdentifier) {
+        this.localProtocolIdentifier = localProtocolIdentifier;
     }
     /**
      * 
-     * @return leadOrganizationIdentifer
+     * @return leadOrganizationIdentifier
      */
-    public String getLeadOrganizationIdentifer() {
-        return leadOrganizationIdentifer;
+    public String getLeadOrganizationIdentifier() {
+        return leadOrganizationIdentifier;
     }
     /**
      * 
-     * @param leadOrganizationIdentifer leadOrganizationIdentifer
+     * @param leadOrganizationIdentifier leadOrganizationIdentifier
      */
-    public void setLeadOrganizationIdentifer(String leadOrganizationIdentifer) {
-        this.leadOrganizationIdentifer = leadOrganizationIdentifer;
+    public void setLeadOrganizationIdentifier(String leadOrganizationIdentifier) {
+        this.leadOrganizationIdentifier = leadOrganizationIdentifier;
     }
     /**
      * 
@@ -280,17 +288,17 @@ public class GeneralTrialDesignWebDTO {
     }
     /**
      * 
-     * @return summaryFourOrgIdentifer
+     * @return summaryFourOrgIdentifier
      */
-    public String getSummaryFourOrgIdentifer() {
-        return summaryFourOrgIdentifer;
+    public String getSummaryFourOrgIdentifier() {
+        return summaryFourOrgIdentifier;
     }
     /**
      * 
-     * @param summaryFourOrgIdentifer summaryFourOrgIdentifer
+     * @param summaryFourOrgIdentifier summaryFourOrgIdentifier
      */
-    public void setSummaryFourOrgIdentifer(String summaryFourOrgIdentifer) {
-        this.summaryFourOrgIdentifer = summaryFourOrgIdentifer;
+    public void setSummaryFourOrgIdentifier(String summaryFourOrgIdentifier) {
+        this.summaryFourOrgIdentifier = summaryFourOrgIdentifier;
     }
     /**
      * 
@@ -321,10 +329,103 @@ public class GeneralTrialDesignWebDTO {
             String summaryFourFundingCategoryCode) {
         this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
     }
+    /**
+     * 
+     * @return sponsorName
+     */
+    public String getSponsorName() {
+        return sponsorName;
+    }
+    /**
+     * 
+     * @param sponsorName sponsorName
+     */
+    public void setSponsorName(String sponsorName) {
+        this.sponsorName = sponsorName;
+    }
+    /**
+     * 
+     * @return sponsorIdentifier
+     */
+    public String getSponsorIdentifier() {
+        return sponsorIdentifier;
+    }
+    /**
+     * 
+     * @param sponsorIdentifier sponsorIdentifier
+     */
+    public void setSponsorIdentifier(String sponsorIdentifier) {
+        this.sponsorIdentifier = sponsorIdentifier;
+    }
+    /**
+     * 
+     * @return responsibleParty
+     */
+    public String getResponsibleParty() {
+        return responsibleParty;
+    }
+    /**
+     * 
+     * @param responsibleParty responsibleParty
+     */
+    public void setResponsibleParty(String responsibleParty) {
+        this.responsibleParty = responsibleParty;
+    }
+    /**
+     * 
+     * @return responsibleName
+     */
+    public String getResponsibleName() {
+        return responsibleName;
+    }
+    /**
+     * 
+     * @param responsibleName responsibleName
+     */
+    public void setResponsibleName(String responsibleName) {
+        this.responsibleName = responsibleName;
+    }
+    /**
+     * 
+     * @return  responsibleIdentifier
+     */
+    public String getResponsibleIdentifier() {
+        return responsibleIdentifier;
+    }
+    /**
+     * 
+     * @param responsibleIdentifier responsibleIdentifier
+     */
+    public void setResponsibleIdentifier(String responsibleIdentifier) {
+        this.responsibleIdentifier = responsibleIdentifier;
+    }
+    /**
+     * 
+     * @return contactPhone
+     */
+    public String getContactPhone() {
+        return contactPhone;
+    }
+    /**
+     * 
+     * @param contactPhone contactPhone
+     */
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+    /**
+     * 
+     * @return contactEmail
+     */
+    public String getContactEmail() {
+        return contactEmail;
+    }
+    /**
+     * 
+     * @param contactEmail contactEmail
+     */
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
     
-    
-    
-    
-    
-
 }
