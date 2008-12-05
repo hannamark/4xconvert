@@ -118,7 +118,6 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */
     @Searchable(matchMode = Searchable.MATCH_MODE_START)
-    @NotNull
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fundingMech")
     public String getFundingMechanism() {
         return fundingMechanism;

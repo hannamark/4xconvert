@@ -80,56 +80,72 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.roles;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
-import gov.nih.nci.po.data.bo.Mailable;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * @author smatyas
- * 
- * @param <ROLE>
- * @param <ROLECR>
- * @param <ROLESERVICE>
+ * Enum of possible sort criterion for HealthCareProvider.
  */
-public abstract class 
-    AbstractPersonRoleAction<ROLE extends Correlation, 
-        ROLECR extends CorrelationChangeRequest<ROLE>, 
-        ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
-    extends AbstractRoleAction<ROLE, ROLECR, ROLESERVICE> {
+public enum HealthCareProviderSortCriterion implements SortCriterion<HealthCareProvider> {
 
-    private static final long serialVersionUID = 1L;
-
-    private Person person = new Person();
 
     /**
-     * Default Constructor (force subclasses to initialize).
+     * Sort by HealthCareProvider's id.
      */
-    public AbstractPersonRoleAction() {
-        super();
-    }
-
-    /**
-     * @return organization player
-     */
-    public Person getPerson() {
-        return person;
-    }
-
-    /**
-     * @param person player
-     */
-    public void setPerson(Person person) {
-        this.person = person;
-    }
+    ID("id"),
     
     /**
-     * @param mailable initialize Mailable
+     * Sort by HealthCareProvider's status.
      */
-    protected void initialize(Mailable mailable) {
-        mailable.getPostalAddresses().size();
+    ROLE_STATUS("status"),
+    
+    /**
+     * Sort by HealthCareProvider's scoper's name.
+     */
+    SCOPER_NAME("scoper.name"),
+    
+    /**
+     * Sort by HealthCareProvider's scoper's name.
+     */
+    SCOPER_ID("scoper.id"),
+    
+    /**
+     * Sort by HealthCareProvider's status date.
+     */
+    STATUS_DATE("statusDate");
+    
+    private final String orderField;
+    private final List<HealthCareProviderSortCriterion> fields;
+
+    private HealthCareProviderSortCriterion(String orderField) {
+        this.orderField = orderField;
+        this.fields = null;
+    }
+
+    private HealthCareProviderSortCriterion(HealthCareProviderSortCriterion... fields) {
+        this.orderField = null;
+        this.fields = Arrays.asList(fields);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getOrderField() {
+        return this.orderField;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<HealthCareProviderSortCriterion> getOrderByList() {
+        if (orderField != null) {
+            return Collections.singletonList(this);
+        }
+        return fields;
     }
 }

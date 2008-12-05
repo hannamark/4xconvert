@@ -154,8 +154,20 @@
                 <c:url var="manageClinicalResearchStaff" value="/protected/roles/person/ClinicalResearchStaff/start.action">
                     <c:param name="person" value="${person.id}"/>
                 </c:url>
+                <c:url var="manageHealthCareProvider" value="/protected/roles/person/HealthCareProvider/start.action">
+                    <c:param name="person" value="${person.id}"/>
+                </c:url>
+                <c:url var="manageOrganizationalContact" value="/protected/roles/person/OrganizationalContact/start.action">
+                    <c:param name="person" value="${person.id}"/>
+                </c:url>
+                <c:url var="manageIdentifiedPerson" value="/protected/roles/person/IdentifiedPerson/start.action">
+                    <c:param name="person" value="${person.id}"/>
+                </c:url>
                 <ul>
                     <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (? new of ?)</li>
+                    <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (? new of ?)</li>
+                    <li><a href="${urlNotYetImplemented}"><s:text name="organizationalContact.manage.title"/></a> (? new of ?)</li>
+                    <li><a href="${urlNotYetImplemented}"><s:text name="identifiedPerson.manage.title"/></a> (? new of ?)</li>
                 </ul>
                 <div class="clear"></div>
             </div>

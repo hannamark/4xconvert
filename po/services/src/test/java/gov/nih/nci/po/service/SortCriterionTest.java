@@ -26,6 +26,15 @@ public class SortCriterionTest {
     }
     
     @Test
+    public void HealthCareProviderSortCriterion_getOrderField() {
+        verifySortCriterion("id", HealthCareProviderSortCriterion.ID);
+        verifySortCriterion("status", HealthCareProviderSortCriterion.ROLE_STATUS);
+        verifySortCriterion("statusDate", HealthCareProviderSortCriterion.STATUS_DATE);
+        verifySortCriterion("scoper.id", HealthCareProviderSortCriterion.SCOPER_ID);
+        verifySortCriterion("scoper.name", HealthCareProviderSortCriterion.SCOPER_NAME);
+    }
+    
+    @Test
     public void ResearchOrganizationSortCriterion_getOrderField() {
         verifySortCriterion("id", ResearchOrganizationSortCriterion.ID);
         verifySortCriterion("status", ResearchOrganizationSortCriterion.ROLE_STATUS);

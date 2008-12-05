@@ -4,14 +4,14 @@
 <s:set name="isCreate" value="role.id == null" /> 
 <s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
-    <title>Create Identified Organization</title>
+    <title>Create <s:text name="identifiedOrganization"/></title>
 </s:if>
 <s:else>
    <c:if test="${fn:length(role.changeRequests) > 0}">
-      <title>Identified Organization Details - Comparison</title>
+      <title><s:text name="identifiedOrganization"/> Details - Comparison</title>
    </c:if>
    <c:if test="${fn:length(role.changeRequests) == 0}">
-      <title>Identified Organization Details</title>
+      <title><s:text name="identifiedOrganization"/> Details</title>
    </c:if>
 </s:else>
 
@@ -49,17 +49,17 @@ function handleDuplicateOf() {
 
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
-    <h2>Identified Organization Information</h2>
+    <h2><s:text name="identifiedOrganization"/> Information</h2>
         <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
 				<s:set name="formAction"
 					value="'roles/organizational/IdentifiedOrganization/add.action'" />
-				<h2>Identified Organization Role Information</h2>
+				<h2><s:text name="identifiedOrganization"/> Role Information</h2>
 			</s:if> <s:else>
 				<s:set name="formAction"
 					value="'roles/organizational/IdentifiedOrganization/edit.action'" />
-				<h2>Identified Organization Role Information</h2>
+				<h2><s:text name="identifiedOrganization"/> Role Information</h2>
 			</s:else>
 		    <div class="box_white">
 				<s:actionerror/> 

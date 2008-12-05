@@ -146,7 +146,7 @@ public class HealthCareProviderRemoteServiceTest
     public void testValidate() throws Exception {
         HealthCareProviderDTO pr = new HealthCareProviderDTO();
         Map<String, String[]> errors = getCorrelationService().validate(pr);
-        assertEquals(4, errors.keySet().size());
+        assertEquals(5, errors.keySet().size());
     }
 
     @Override

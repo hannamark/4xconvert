@@ -4,14 +4,14 @@
 <s:set name="isCreate" value="role.id == null" /> 
 <s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
-    <title>Create <s:text name="clinicalResearchStaff"/></title>
+    <title>Create <s:text name="healthCareProvider"/></title>
 </s:if>
 <s:else>
    <c:if test="${fn:length(role.changeRequests) > 0}">
-      <title><s:text name="clinicalResearchStaff"/> Details - Comparison</title>
+      <title><s:text name="healthCareProvider"/> Details - Comparison</title>
    </c:if>
    <c:if test="${fn:length(role.changeRequests) == 0}">
-      <title><s:text name="clinicalResearchStaff"/> Details</title>
+      <title><s:text name="healthCareProvider"/> Details</title>
    </c:if>
 </s:else>
 
@@ -31,7 +31,7 @@ function handleDuplicateOf() {
 
 <s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
-    <s:form action="ajax/roles/person/ClinicalResearchStaff/changeCurrentChangeRequest.action" id="changeCrForm">
+    <s:form action="ajax/roles/person/HealthCareProvider/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="person"/>
         <s:hidden key="rootKey"/>
         <s:select
@@ -49,17 +49,17 @@ function handleDuplicateOf() {
 
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
-    <h2><s:text name="clinicalResearchStaff"/> Information</h2>
+    <h2><s:text name="healthCareProvider"/> Information</h2>
         <%@ include file="../personInfo.jsp" %>
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
 				<s:set name="formAction"
-					value="'roles/person/ClinicalResearchStaff/add.action'" />
-				<h2><s:text name="clinicalResearchStaff"/> Role Information</h2>
+					value="'roles/person/HealthCareProvider/add.action'" />
+				<h2><s:text name="healthCareProvider"/> Role Information</h2>
 			</s:if> <s:else>
 				<s:set name="formAction"
-					value="'roles/person/ClinicalResearchStaff/edit.action'" />
-				<h2><s:text name="clinicalResearchStaff"/> Role Information</h2>
+					value="'roles/person/HealthCareProvider/edit.action'" />
+				<h2><s:text name="healthCareProvider"/> Role Information</h2>
 			</s:else>
 		    <div class="box_white">
 				<s:actionerror/> 
@@ -82,7 +82,7 @@ function handleDuplicateOf() {
                     <div class="wwlbl" id="wwlbl_curateRoleForm_role_scoper_id">
                         <label class="label" for="curateOrgForm_organization_duplicateOf_id">   
                         <span class="required">*</span>     
-                        <s:text name="clinicalResearchStaff.scoper.id"/>:
+                        <s:text name="healthCareProvider.scoper.id"/>:
                         </label>
                     </div>
                     <br/>
@@ -93,7 +93,7 @@ function handleDuplicateOf() {
                 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
                 
 				<s:select id="curateRoleForm.role.status"
-				   label="%{getText('clinicalResearchStaff.status')}"
+				   label="%{getText('healthCareProvider.status')}"
 				   name="role.status"
 				   list="availableStatus"
 				   listKey="name()"
@@ -105,7 +105,7 @@ function handleDuplicateOf() {
 				   />
                 <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
                 <c:if test="${fn:length(availableDuplicateOfs) > 0}">
-				   <po:field labelKey="clinicalResearchStaff.duplicateOf">
+				   <po:field labelKey="healthCareProvider.duplicateOf">
 						<select id="curateRoleForm.role.duplicateOf" name="role.duplicateOf">
 						<option value="">--Select a Duplicate Of Entry (ID - SCOPER - STATUS - DATE)--</option>
 						<c:forEach var="dupEntry" items="${availableDuplicateOfs}"> 
@@ -115,7 +115,9 @@ function handleDuplicateOf() {
 				   </po:field>
                 </c:if>
                 </div>	
-              
+                
+                <s:textfield label="%{getText('healthCareProvider.certificateLicenseText')}" name="healthCareProvider.certificateLicenseText" maxlength="255" size="50"/>
+                
                 <input id="enableEnterSubmit" type="submit"/>			    
 			    </s:form>
 			    
@@ -155,10 +157,10 @@ function handleDuplicateOf() {
     <%@include file="../../organizational/confirmThenSubmit.jsp" %>    
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>
-       <c:url var="managePage" value="/protected/roles/person/ClinicalResearchStaff/start.action">
+       <c:url var="managePage" value="/protected/roles/person/HealthCareProvider/start.action">
            <c:param name="person" value="${person.id}"/>
        </c:url>
-       <s:set name="managePageTitle" value="%{'Return to ' + getText('clinicalResearchStaff.manage.title')}"/>
+       <s:set name="managePageTitle" value="%{'Return to ' + getText('healthCareProvider.manage.title')}"/>
        <po:button id="return_to_button" href="${managePage}" onclick="" style="continue" text="${managePageTitle}"/>
     </po:buttonRow>
     </div>

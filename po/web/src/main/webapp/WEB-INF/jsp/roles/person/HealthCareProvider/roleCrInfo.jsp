@@ -4,7 +4,7 @@
     <h2>Change Request Information</h2>
         <%@ include file="../personInfo.jsp" %>    
         <div class="boxouter">
-            <h2><s:text name="clinicalResearchStaff"/> Information</h2>
+            <h2><s:text name="healthCareProvider"/> Information</h2>
             <div class="box_white">
             <po:copyButton id="copy_curateCrForm_role_typeCode" 
                 onclick="copyValueToTextField('${cr.scoper.id}', 'curateRoleForm.role.scoper.id'); showPopWinCallback('${cr.scoper.id}');" 

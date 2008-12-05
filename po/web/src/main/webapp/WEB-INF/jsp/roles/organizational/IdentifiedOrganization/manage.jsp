@@ -8,10 +8,10 @@
 <po:successMessages/>
 
     <div class="boxouter">
-    <h2>Identified Organization Information</h2>
+    <h2><s:text name="identifiedOrganization"/> Information</h2>
         <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
-		<h2>Identified Organizational Roles</h2>
+		<h2><s:text name="identifiedOrganization"/> Roles</h2>
 		    <div id="roles">
 		    <%@include file="list.jsp"%> 
 		    </div> 

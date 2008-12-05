@@ -4,14 +4,14 @@
 <s:set name="isCreate" value="role.id == null" /> 
 <s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
-    <title>Create Oversight Committee</title>
+    <title>Create <s:text name="oversightCommittee"/></title>
 </s:if>
 <s:else>
    <c:if test="${fn:length(role.changeRequests) > 0}">
-      <title>Oversight Committee Details - Comparison</title>
+      <title><s:text name="oversightCommittee"/> Details - Comparison</title>
    </c:if>
    <c:if test="${fn:length(role.changeRequests) == 0}">
-      <title>Oversight Committee Details</title>
+      <title><s:text name="oversightCommittee"/> Details</title>
    </c:if>
 </s:else>
 
@@ -49,7 +49,7 @@ function handleDuplicateOf() {
 
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
-    <h2>Oversight Committee Information</h2>
+    <h2><s:text name="oversightCommittee"/> Information</h2>
         <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
@@ -59,7 +59,7 @@ function handleDuplicateOf() {
 				<s:set name="formAction"
 					value="'roles/organizational/OversightCommittee/edit.action'" />
 			</s:else>
-			<h2>Oversight Committee Role Information</h2>
+			<h2><s:text name="oversightCommittee"/> Role Information</h2>
 		    <div class="box_white">
 				<s:actionerror/> 
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">

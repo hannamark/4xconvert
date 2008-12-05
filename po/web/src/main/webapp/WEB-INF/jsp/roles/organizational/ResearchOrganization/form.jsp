@@ -4,14 +4,14 @@
 <s:set name="isCreate" value="role.id == null" /> 
 <s:set name="isNotCreate" value="role.id != null" /> 
 <s:if test="%{isCreate}">
-    <title>Create Research Organization</title>
+    <title>Create <s:text name="researchOrganization"/></title>
 </s:if>
 <s:else>
    <c:if test="${fn:length(role.changeRequests) > 0}">
-      <title>Research Organization Details - Comparison</title>
+      <title><s:text name="researchOrganization"/> Details - Comparison</title>
    </c:if>
    <c:if test="${fn:length(role.changeRequests) == 0}">
-      <title>Research Organization Details</title>
+      <title><s:text name="researchOrganization"/> Details</title>
    </c:if>
 </s:else>
 
@@ -49,7 +49,7 @@ function handleDuplicateOf() {
 
 <div id="page" style="margin-top:10px;">
     <div class="boxouter_nobottom">
-    <h2>Research Organization Information</h2>
+    <h2><s:text name="researchOrganization"/> Information</h2>
         <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
 			<s:if test="%{isCreate}">
@@ -59,7 +59,7 @@ function handleDuplicateOf() {
 				<s:set name="formAction"
 					value="'roles/organizational/ResearchOrganization/edit.action'" />
 			</s:else>
-			<h2>Research Organization Role Information</h2>
+			<h2><s:text name="researchOrganization"/> Role Information</h2>
 		    <div class="box_white">
 				<s:actionerror/> 
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">

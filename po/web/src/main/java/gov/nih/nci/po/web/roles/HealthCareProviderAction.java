@@ -82,13 +82,14 @@
  */
 package gov.nih.nci.po.web.roles;
 
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffSortCriterion;
+import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.HealthCareProviderSortCriterion;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
@@ -109,13 +110,13 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * @author smatyas
  */
-public class ClinicalResearchStaffAction extends
-        AbstractPersonRoleAction<ClinicalResearchStaff, ClinicalResearchStaffCR, ClinicalResearchStaffServiceLocal>
+public class HealthCareProviderAction extends
+        AbstractPersonRoleAction<HealthCareProvider, HealthCareProviderCR, HealthCareProviderServiceLocal>
         implements Preparable {
 
     private static final long serialVersionUID = 1L;
-    private ClinicalResearchStaff role = new ClinicalResearchStaff();
-    private ClinicalResearchStaffCR cr = new ClinicalResearchStaffCR();
+    private HealthCareProvider role = new HealthCareProvider();
+    private HealthCareProviderCR cr = new HealthCareProviderCR();
     private String rootKey;
 
     /**
@@ -125,10 +126,10 @@ public class ClinicalResearchStaffAction extends
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         if (getRootKey() != null) {
-            role = (ClinicalResearchStaff) getSession().getAttribute(getRootKey());
+            role = (HealthCareProvider) getSession().getAttribute(getRootKey());
         }
         if (getRole() == null) {
-            setRole(new ClinicalResearchStaff());
+            setRole(new HealthCareProvider());
         }
         if (getRole().getPlayer() == null) { // if not set, then set to default
             getRole().setPlayer(getPerson());
@@ -136,10 +137,6 @@ public class ClinicalResearchStaffAction extends
         if (getRole().getScoper() == null) { // if not set, then set to default
             getRole().setScoper(new Organization());
         }
-    }
-
-    private HttpSession getSession() {
-        return PoHttpSessionUtil.getSession();
     }
 
     /**
@@ -154,13 +151,17 @@ public class ClinicalResearchStaffAction extends
         return result;
     }
     
+    private HttpSession getSession() {
+        return PoHttpSessionUtil.getSession();
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     protected void defaultConstructorInit() {
-        setResults(new PaginatedList<ClinicalResearchStaff>(0,
-                new ArrayList<ClinicalResearchStaff>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
+        setResults(new PaginatedList<HealthCareProvider>(0,
+                new ArrayList<HealthCareProvider>(), PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
                 ClinicalResearchStaffSortCriterion.ID.name(), SortOrderEnum.ASCENDING));
     }
 
@@ -192,14 +193,14 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    public ClinicalResearchStaffCR getBaseCr() {
+    public HealthCareProviderCR getBaseCr() {
         return getCr();
     }
 
     /**
      * @return cr
      */
-    public ClinicalResearchStaffCR getCr() {
+    public HealthCareProviderCR getCr() {
         return cr;
     }
 
@@ -207,28 +208,28 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    public ClinicalResearchStaff getBaseRole() {
+    public HealthCareProvider getBaseRole() {
         return getRole();
     }
 
     /**
      * @return role
      */
-    public ClinicalResearchStaff getRole() {
+    public HealthCareProvider getRole() {
         return role;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setCr(ClinicalResearchStaffCR cr) {
+    public void setCr(HealthCareProviderCR cr) {
         this.cr = cr;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setRole(ClinicalResearchStaff role) {
+    public void setRole(HealthCareProvider role) {
         this.role = role;
     }
 
@@ -236,10 +237,10 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    protected SearchCriteria<ClinicalResearchStaff> getDuplicateCriteria() {
-        ClinicalResearchStaff dupOfBOCrit = new ClinicalResearchStaff();
-        AnnotatedBeanSearchCriteria<ClinicalResearchStaff> duplicateOfCriteria 
-        = new AnnotatedBeanSearchCriteria<ClinicalResearchStaff>(
+    protected SearchCriteria<HealthCareProvider> getDuplicateCriteria() {
+        HealthCareProvider dupOfBOCrit = new HealthCareProvider();
+        AnnotatedBeanSearchCriteria<HealthCareProvider> duplicateOfCriteria 
+        = new AnnotatedBeanSearchCriteria<HealthCareProvider>(
                 dupOfBOCrit);
         dupOfBOCrit.setPlayer(getPerson());
         return duplicateOfCriteria;
@@ -257,18 +258,18 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    protected ClinicalResearchStaffServiceLocal getRoleService() {
-        return PoRegistry.getInstance().getServiceLocator().getClinicalResearchStaffService();
+    protected HealthCareProviderServiceLocal getRoleService() {
+        return PoRegistry.getInstance().getServiceLocator().getHealthCareProviderService();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected SearchCriteria<ClinicalResearchStaff> getSearchCriteria() {
-        ClinicalResearchStaff boCrit = new ClinicalResearchStaff();
-        AnnotatedBeanSearchCriteria<ClinicalResearchStaff> criteria 
-            = new AnnotatedBeanSearchCriteria<ClinicalResearchStaff>(boCrit);
+    protected SearchCriteria<HealthCareProvider> getSearchCriteria() {
+        HealthCareProvider boCrit = new HealthCareProvider();
+        AnnotatedBeanSearchCriteria<HealthCareProvider> criteria 
+            = new AnnotatedBeanSearchCriteria<HealthCareProvider>(boCrit);
         Person player = new Person();
         player.setId(getPerson().getId());
         boCrit.setPlayer(player);
@@ -279,15 +280,15 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    protected Class<ClinicalResearchStaffSortCriterion> getSortCriterion() {
-        return ClinicalResearchStaffSortCriterion.class;
+    protected Class<HealthCareProviderSortCriterion> getSortCriterion() {
+        return HealthCareProviderSortCriterion.class;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setBaseCr(ClinicalResearchStaffCR obj) {
+    public void setBaseCr(HealthCareProviderCR obj) {
         setCr(obj);
     }
 
@@ -295,7 +296,7 @@ public class ClinicalResearchStaffAction extends
      * {@inheritDoc}
      */
     @Override
-    public void setBaseRole(ClinicalResearchStaff obj) {
+    public void setBaseRole(HealthCareProvider obj) {
         setRole(obj);
     }
     
@@ -304,7 +305,7 @@ public class ClinicalResearchStaffAction extends
      */
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "clinicalResearchStaff") })
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "healthCareProvider") })
         }
     )
     @Override
@@ -318,7 +319,7 @@ public class ClinicalResearchStaffAction extends
      */
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "clinicalResearchStaff") })
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "healthCareProvider") })
         }
     )
     @Override

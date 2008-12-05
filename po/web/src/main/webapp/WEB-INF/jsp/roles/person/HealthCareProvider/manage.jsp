@@ -1,17 +1,17 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-<title><s:text name="clinicalResearchStaff.manage.title"/></title>
+<title><s:text name="healthCareProvider.manage.title"/></title>
 </head> 
 <body>
 
 <po:successMessages/>
 
     <div class="boxouter">
-    <h2><s:text name="clinicalResearchStaff"/> Information</h2>
+    <h2><s:text name="healthCareProvider"/> Information</h2>
         <%@ include file="../personInfo.jsp" %>
 		<div class="boxouter">
-		<h2><s:text name="clinicalResearchStaff"/> Roles</h2>
+		<h2><s:text name="healthCareProvider"/> Roles</h2>
 		    <div id="roles">
 		    <%@include file="list.jsp"%> 
 		    </div> 
@@ -19,7 +19,7 @@
     </div> 
     <div class="btnwrapper" style="margin-bottom:20px;">
         <po:buttonRow>
-            <c:url var="addUrl" value="/protected/roles/person/ClinicalResearchStaff/input.action">
+            <c:url var="addUrl" value="/protected/roles/person/HealthCareProvider/input.action">
                 <c:param name="person" value="${person.id}"/>
             </c:url>
             <po:button id="add_button" href="${addUrl}" style="add" text="Add"/>

@@ -1,7 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<s:fielderror>
-<s:param value="role.fundingMechanism"/>
-</s:fielderror>
 <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
 <s:if test="researchOrganizationType.id != null || researchOrganizationType.fundingMechanisms.size() > 0">
 <s:select

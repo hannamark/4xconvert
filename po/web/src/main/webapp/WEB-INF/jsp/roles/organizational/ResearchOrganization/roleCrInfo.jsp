@@ -4,7 +4,7 @@
     <h2>Change Request Information</h2>
         <%@ include file="../orgInfo.jsp" %>    
         <div class="boxouter">
-            <h2>Research Organization Information</h2>
+            <h2><s:text name="researchOrganization"/> Information</h2>
             <div class="box_white">
             <po:copyButton 
                 id="copy_curateCrForm_role_typeCode" 

@@ -8,10 +8,10 @@
 <po:successMessages/>
 
     <div class="boxouter">
-    <h2>Oversight Committee Information</h2>
+    <h2><s:text name="oversightCommittee"/> Information</h2>
         <%@ include file="../orgInfo.jsp" %>
 		<div class="boxouter">
-		<h2>Oversight Committee Roles</h2>
+		<h2><s:text name="oversightCommittee"/> Roles</h2>
 		    <div id="roles">
 		    <%@include file="list.jsp"%> 
 		    </div> 

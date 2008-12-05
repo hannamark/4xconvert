@@ -82,14 +82,7 @@
  */
 package gov.nih.nci.po.web.roles;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
+import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -97,6 +90,14 @@ import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.service.SortCriterion;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.jms.JMSException;
 
@@ -330,5 +331,16 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
                 }
             }
         }
+    }
+
+    /**
+     * @param contactable initialize Contactable
+     */
+    protected void initializeCollections(Contactable contactable) {
+        contactable.getEmail().size();
+        contactable.getFax().size();
+        contactable.getPhone().size();
+        contactable.getTty().size();
+        contactable.getUrl().size();
     }
 }
