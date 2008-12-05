@@ -125,6 +125,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String trialPurpose = null;
     private String summary4FundingCategory = null;
     private String poLeadPiFullName;
+    private String resPartyContactFullName;
+    
 
     /**
      * 
@@ -1098,6 +1100,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             responsiblePartyContact = RegistryServiceLocator.getPoPersonEntityService().getPerson(personIi);
             ServletActionContext.getRequest().getSession()
                     .setAttribute("PoResponsibleContact", responsiblePartyContact);
+            resPartyContactFullName = (String) responsiblePartyContact.getName().getPart().get(0).getValue() + ", " 
+            + responsiblePartyContact.getName().getPart().get(1).getValue();
+            
         } catch (NullifiedEntityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1597,6 +1602,20 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     public void setPoLeadPiFullName(String poLeadPiFullName) {
         this.poLeadPiFullName = poLeadPiFullName;
+    }
+
+    /**
+     * @return the resPartyContactFullName
+     */
+    public String getResPartyContactFullName() {
+        return resPartyContactFullName;
+    }
+
+    /**
+     * @param resPartyContactFullName the resPartyContactFullName to set
+     */
+    public void setResPartyContactFullName(String resPartyContactFullName) {
+        this.resPartyContactFullName = resPartyContactFullName;
     }
 
 }
