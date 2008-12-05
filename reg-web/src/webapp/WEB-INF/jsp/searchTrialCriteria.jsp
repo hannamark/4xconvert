@@ -91,6 +91,7 @@ function handleMyAction(){
 				</td>
 				<td scope="row" class="label">
 					<label for="identifier"> <fmt:message key="search.trial.identifier"/></label>
+					<br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
 				</td>
 				<td>
 					<s:textfield name="criteria.identifier"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -131,8 +132,8 @@ function handleMyAction(){
                 <li>           
                 <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>       
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
-                </li>
-               </ul>   
+                </li>                
+               </ul>
             </del>
          </div>
        </s:form>
