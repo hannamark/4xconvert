@@ -99,7 +99,7 @@ function submitProtocol (){
     document.forms[0].page.value = "Submit";
     document.forms[0].action=action;
     document.forms[0].submit();
-	showPopWin('${submitProtocol}', 600, 200, '', 'Submit protocol');
+	showPopWin('${submitProtocol}', 600, 200, '', 'Register Trial');
 }
 function callAjax(url, div){
     var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
