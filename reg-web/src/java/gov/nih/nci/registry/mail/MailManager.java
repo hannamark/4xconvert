@@ -75,6 +75,18 @@ public class MailManager {
             String localProtocolIdentifier)  {
     
         try {
+            // TODO hard coding the submission notification e-mail content is a short-term fix for
+            // problem with new line characters stripped out of the build.properties during build
+            // have to find a permanent fix.
+            String para1 = "You have successfully submitted the following protocol to the NCI "
+                    + "Clinical Trials Reporting Office (CTRO):\nLead Organization Trial Identifier";
+            String para2 = "This protocol has been assigned a unique NCI number for tracking which you "
+                    + "may need to reference in future correspondence with the CTRO:\nNCI Trial Identifier";
+            String para3 = "Shortly we will send you a Trial Summary Report which will contain key elements "
+                    + "that we have abstracted from the protocol.\nWe request that you review these elements for "
+                    + "accuracy and reply with your assessment. If you have questions, you may call the NCI " 
+                    + "CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov.\n " 
+                    + "Thank you for your submission.";
             String[] params = {mailTo , };
             
             MessageFormat formatterSubject = new MessageFormat(
@@ -83,11 +95,11 @@ public class MailManager {
             logger.info("emailSubject is: " + emailSubject);
 
             MessageFormat formatterBody = new MessageFormat(
-                    regProperties.getProperty("submission.mail.body.para1") 
+                    para1
                     + " " + localProtocolIdentifier + "\n \n" 
-                    + regProperties.getProperty("submission.mail.body.para2") 
+                    + para2
                     + "  " + nciIdentifier + "\n \n" 
-                    +  regProperties.getProperty("submission.mail.body.para3"));
+                    +  para3);
             String emailBody =  formatterBody.format(params);
 
             logger.info("emailBody is: " + emailBody);
