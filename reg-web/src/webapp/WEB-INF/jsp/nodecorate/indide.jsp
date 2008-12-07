@@ -201,8 +201,8 @@
 				<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="programcodenciselectedvalue" list="#phaseCodeValuesNCI" onmouseover="enableTooltip('nci');" onblur="enableAddButton();" cssStyle="width:300px"/></div>
 				</td>
 				<td>
-					<input type="radio" name="group4" id="group4" value="Yes" onclick="document.getElementById('expanded_status').disabled=false;document.getElementById('addbtn').disabled=true;" onblur="enableAddButton();" /> Yes<br />
-					<input type="radio" name="group4" id="group4" value="No" checked="checked" onclick="document.getElementById('expanded_status').value='';document.getElementById('expanded_status').disabled=true;" onblur="enableAddButton();"/> No
+					<input type="radio" name="group4" id="group4" value="true" onclick="document.getElementById('expanded_status').disabled=false;document.getElementById('addbtn').disabled=true;" onblur="enableAddButton();" /> Yes<br />
+					<input type="radio" name="group4" id="group4" value="false" checked="checked" onclick="document.getElementById('expanded_status').value='';document.getElementById('expanded_status').disabled=true;" onblur="enableAddButton();"/> No
 				</td>
 				<td>
 					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true" onblur="enableAddButton();"
