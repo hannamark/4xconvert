@@ -5,8 +5,10 @@ import org.displaytag.decorator.TableDecorator;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.struts2.ServletActionContext;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 
 /**
  * tag decorator registry.
@@ -58,6 +60,21 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
             return documentWorkflowStatusCode;
         } else {
             return null;
+        }
+    }
+    
+    /**
+     * 
+     * @return IND/IDE Expanded Access Indicator
+     */
+    public String getExpandedAccessIndicator() {
+
+        Bl indicator = ((StudyIndldeDTO) this.getCurrentRowObject())
+                                    .getExpandedAccessIndicator();
+        if (indicator != null && (indicator.getValue()).booleanValue()) {
+            return "Yes";
+        } else {
+            return "No";
         }
     }
 }
