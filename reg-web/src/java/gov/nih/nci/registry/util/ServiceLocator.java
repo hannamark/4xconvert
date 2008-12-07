@@ -1,6 +1,5 @@
 package gov.nih.nci.registry.util;
 
-import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -39,12 +38,6 @@ public interface ServiceLocator {
      * @return ProtocolOrganizationServiceRemote
      */
     PAOrganizationServiceRemote getPAOrganizationService();
-
-    /**
-     * 
-     * @return DiseaseCondServiceRemote
-     */
-    DiseaseCondServiceRemote getDiseaseConditionService();
 
     /**
      * 
