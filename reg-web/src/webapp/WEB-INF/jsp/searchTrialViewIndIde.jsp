@@ -7,7 +7,7 @@
 	<display:column titleKey="search.trial.view.holderTypeCode" property="holderTypeCode.code"   sortable="true" headerClass="sortable"/>
 	<display:column titleKey="search.trial.view.nciDivProgHolderCode" property="nihInstHolderCode.code"   sortable="true" headerClass="sortable"/>
 	
-	<display:column titleKey="search.trial.view.expandedAccessIndicator" property="expandedAccessIndicator.value"   sortable="true" headerClass="sortable"/>
+	<display:column titleKey="search.trial.view.expandedAccessIndicator" property="expandedAccessIndicator"   sortable="true" headerClass="sortable"/>
 	<display:column titleKey="search.trial.view.expandedAccessStatusCode" property="expandedAccessStatusCode.code"   sortable="true" headerClass="sortable"/>
 </display:table>
 
