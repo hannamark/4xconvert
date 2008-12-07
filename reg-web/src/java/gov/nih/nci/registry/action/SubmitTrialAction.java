@@ -122,7 +122,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String respparty = null;
     private String contactEmail = null;
     private String contactPhone = null;
-    private String trialPurpose = null;
     private String summary4FundingCategory = null;
     private String poLeadPiFullName;
     private String resPartyContactFullName;
@@ -167,11 +166,13 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 List<StudyProtocolQueryDTO> records = RegistryServiceLocator.
                                     getProtocolQueryService().getStudyProtocolByCriteria(criteria);
                 if (records != null && records.size() > 0) {
-                    addActionError("Duplicate Trial Submission: A trial exists in the system "
-                                        + " for the Lead Organization selected and entered Trial Identifier");
+                    addActionError("Duplicate Trial Submission: A trial exists in the system with the same "
+                            + "Lead Organization Trial Identifier for the selected Lead Organization");
+
                     ServletActionContext.getRequest().setAttribute(
-                                    "failureMessage" , "Duplicate Trial Submission: A trial exists in the system "
-                                      + " for the Lead Organization selected and entered Trial Identifier");
+                              "failureMessage" , "Duplicate Trial Submission: A trial exists in the system " 
+                              + "with the same  Lead Organization Trial Identifier for the " 
+                              + "selected Lead Organization");
                     return ERROR;
                 }
             }            
@@ -305,6 +306,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             protocolDTO = new InterventionalStudyProtocolDTO();
         }
         protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(protocolWebDTO.getTrialPhase())));
+        protocolDTO.setPhaseOtherText(StConverter.convertToSt(protocolWebDTO.getOtherPhaseText()));
         protocolDTO.setOfficialTitle(StConverter.convertToSt(protocolWebDTO.getTrialTitle()));
         protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
         protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(protocolWebDTO
@@ -313,7 +315,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 .getStartDateType())));
         protocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
                 .getByCode(protocolWebDTO.getCompletionDateType())));
-        protocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(trialPurpose)));
+        protocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(
+                PrimaryPurposeCode.getByCode(protocolWebDTO.getTrialPurpose())));
+        protocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(protocolWebDTO.getOtherPurposeText()));
         return protocolDTO;
     }
 
@@ -634,8 +638,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(trialType)) {
             addFieldError("trialType", getText("error.submit.trialType"));
         }
-        if (PAUtil.isEmpty(trialPurpose)) {
-            addFieldError("trialPurpose", getText("error.submit.trialPurpose"));
+        if (PAUtil.isEmpty(protocolWebDTO.getTrialPurpose())) {
+            addFieldError("protocolWebDTO.trialPurpose", getText("error.submit.trialPurpose"));
         }
         if (PAUtil.isEmpty(overallStatusWebDTO.getStatusDate())) {
             addFieldError("overallStatusWebDTO.statusDate", getText("error.submit.statusDate"));
@@ -707,6 +711,23 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibelParty"));
             }
         }
+        if (PAUtil.isNotEmpty(protocolWebDTO.getTrialPhase())) {
+            if (PhaseCode.OTHER.getCode().equals(protocolWebDTO.getTrialPhase())
+                && PAUtil.isEmpty(protocolWebDTO.getOtherPhaseText())) {
+                addFieldError("protocolWebDTO.otherPhaseText", 
+                        getText("error.submit.otherPhaseText"));
+            }
+            
+        }
+        if (PAUtil.isNotEmpty(protocolWebDTO.getTrialPhase())) {
+            if (PrimaryPurposeCode.OTHER.getCode().equals(protocolWebDTO.getTrialPurpose())
+                && PAUtil.isEmpty(protocolWebDTO.getOtherPurposeText())) {
+                addFieldError("protocolWebDTO.otherPurposeText", 
+                        getText("error.submit.otherPurposeText"));
+            }
+            
+        }
+
         // validate trial status and dates
         validateTrialDates();
 
@@ -1518,20 +1539,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     public void setContactPhone(String contactPhone) {
         this.contactPhone = contactPhone;
-    }
-
-    /**
-     * @return the trialPurpose
-     */
-    public String getTrialPurpose() {
-        return trialPurpose;
-    }
-
-    /**
-     * @param trialPurpose the trialPurpose to set
-     */
-    public void setTrialPurpose(String trialPurpose) {
-        this.trialPurpose = trialPurpose;
     }
 
     /**
