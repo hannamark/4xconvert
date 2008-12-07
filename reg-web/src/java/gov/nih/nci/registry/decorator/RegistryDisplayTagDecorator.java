@@ -6,6 +6,7 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.struts2.ServletActionContext;
 
 import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -16,6 +17,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
  * @author Bala Nair
  * 
  */
+@SuppressWarnings("PMD")
 public class RegistryDisplayTagDecorator extends TableDecorator {
       
 
@@ -76,5 +78,29 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         } else {
             return "No";
         }
+    }
+    
+    /**
+     * 
+     * @return NIH Institute/NCI Div Program code
+     */
+    public String getInstProgramCode() {
+
+        String instProgramCode = null;
+        Cd holderTypeCode = ((StudyIndldeDTO) this.getCurrentRowObject()).
+                                       getHolderTypeCode();
+       
+        if (holderTypeCode != null && holderTypeCode.getCode().equals("NIH")) {
+            Cd nihInstCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNihInstHolderCode();
+            if (nihInstCode != null) {
+                instProgramCode = nihInstCode.getCode();
+            }
+        } else if (holderTypeCode != null && holderTypeCode.getCode().equals("NCI")) {
+            Cd nciPrgCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNciDivProgHolderCode();
+            if (nciPrgCode != null) {
+                instProgramCode = nciPrgCode.getCode();
+            }
+        } 
+        return instProgramCode;
     }
 }
