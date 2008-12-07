@@ -67,6 +67,28 @@
                 </td>
           </tr>
           <tr>     
+                <td scope="row" class="label">
+                    <label for="Trial Phase">
+                        <fmt:message key="view.trial.phase"/>                
+                        </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.trialSummary.phaseCode.code }"/> 
+                </td>
+          </tr>
+          <c:if test="${requestScope.trialSummary.phaseOtherText.value != null}">
+	          <tr>     
+	                <td scope="row" class="label">
+	                    <label for="Other Phase Text">
+	                        <fmt:message key="view.trial.otherPhaseText"/>                
+	                        </label>
+	                </td>
+	                <td class="value">
+	                    <c:out value="${requestScope.trialSummary.phaseOtherText.value }"/> 
+	                </td>
+	          </tr>
+          </c:if> 
+          <tr>     
           		<td scope="row" class="label">
           			<label for="Primary Purpose">
           				<fmt:message key="view.trial.primaryPurpose"/>                
@@ -74,19 +96,21 @@
           		</td>
           		<td class="value">
           			<c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
-          			<c:out value="${requestScope.trialSummary.primaryPurposeOtherText.value }"/>
           		</td>
           </tr>
-          <tr>     
-            	<td scope="row" class="label">
-                	<label for="Trial Phase">
-                    	<fmt:message key="view.trial.phase"/>                
-                    	</label>
-                </td>
-                <td class="value">
-                 	<c:out value="${requestScope.trialSummary.phaseCode.code }"/> 
-                </td>
-          </tr> 
+          <c:if test="${requestScope.trialSummary.primaryPurposeOtherText.value != null}">
+	          <tr>     
+	                <td scope="row" class="label">
+	                    <label for="Other Purpose Text">
+	                        <fmt:message key="view.trial.otherPurposeText"/>                
+	                    </label>
+	                </td>
+	                <td class="value">
+	                    <c:out value="${requestScope.trialSummary.primaryPurposeOtherText.value }"/>
+	                </td>
+	          </tr>
+          </c:if>
+
          
           <tr>
           	<td colspan="2" class="space">&nbsp;</td>
