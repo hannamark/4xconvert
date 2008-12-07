@@ -85,8 +85,8 @@ public class MailManager {
             String para3 = "Shortly we will send you a Trial Summary Report which will contain key elements "
                     + "that we have abstracted from the protocol.\nWe request that you review these elements for "
                     + "accuracy and reply with your assessment. If you have questions, you may call the NCI " 
-                    + "CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov.\n " 
-                    + "Thank you for your submission.";
+                    + "CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov." 
+                    + "\nThank you for your submission.";
             String[] params = {mailTo , };
             
             MessageFormat formatterSubject = new MessageFormat(
