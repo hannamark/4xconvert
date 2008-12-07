@@ -17,11 +17,14 @@ public class InterventionalStudyProtocolWebDTO {
 
     private String trialTitle;
     private String trialPhase;
+    private String trialPurpose;
     private String nciAccessionNumber;
     private String startDate;
     private String completionDate;
     private String startDateType;
     private String completionDateType;
+    private String otherPhaseText;
+    private String otherPurposeText;
 
     /**
      * @param iso
@@ -76,7 +79,19 @@ public class InterventionalStudyProtocolWebDTO {
     public void setTrialPhase(String trialPhase) {
         this.trialPhase = trialPhase;
     }
-    
+
+    /**
+     * @return the trialPurpose
+     */
+    public String getTrialPurpose() {
+        return trialPurpose;
+    }
+    /**
+     * @param trialPurpose the trialPurpose to set
+     */
+    public void setTrialPurpose(String trialPurpose) {
+        this.trialPurpose = trialPurpose;
+    }
     /**
      * @return result
      */
@@ -144,6 +159,30 @@ public class InterventionalStudyProtocolWebDTO {
      */
     public void setCompletionDateType(String completionDateType) {
         this.completionDateType = completionDateType;
+    }
+    /**
+     * @return the otherPhaseText
+     */
+    public String getOtherPhaseText() {
+        return otherPhaseText;
+    }
+    /**
+     * @param otherPhaseText the otherPhaseText to set
+     */
+    public void setOtherPhaseText(String otherPhaseText) {
+        this.otherPhaseText = otherPhaseText;
+    }
+    /**
+     * @return the otherPurposeText
+     */
+    public String getOtherPurposeText() {
+        return otherPurposeText;
+    }
+    /**
+     * @param otherPurposeText the otherPurposeText to set
+     */
+    public void setOtherPurposeText(String otherPurposeText) {
+        this.otherPurposeText = otherPurposeText;
     }
 
 
