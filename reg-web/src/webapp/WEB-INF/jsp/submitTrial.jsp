@@ -227,6 +227,20 @@ function toggledisplay2 (it) {
                 </td>
           </tr>
           <tr>
+                <td scope="row" class="label">
+                    <label for="otherPhasetext"> <fmt:message key="submit.trial.otherPhaseText"/></label>
+                    <br><span class="info">(Required if Phase equals &#39;Other&#39;)</span>
+                </td>
+                <td>
+                    <s:textfield name="protocolWebDTO.otherPhaseText"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>protocolWebDTO.otherPhaseText</s:param>
+                       </s:fielderror>                            
+                     </span>
+                </td>                
+          </tr>
+          <tr>
                 <td  scope="row" class="label">
                     <label for="trialType"> <fmt:message key="submit.trial.type"/><span class="required">*</span></label> 
                 </td>
@@ -246,15 +260,29 @@ function toggledisplay2 (it) {
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="--Select--" name="trialPurpose" list="#typeCodeValues"  value="trialPurpose" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="protocolWebDTO.trialPurpose" list="#typeCodeValues"  value="protocolWebDTO.trialPurpose" cssStyle="width:206px" />
                      <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>trialPurpose</s:param>
+                        <s:param>protocolWebDTO.trialPurpose</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>
+          </tr>
+          <tr>
+                <td scope="row" class="label">
+                    <label for="otherPurposetext"> <fmt:message key="submit.trial.otherPurposeText"/></label>
+                    <br><span class="info">(Required if Purpose equals &#39;Other&#39;)</span>
+                </td>
+                <td>
+                    <s:textfield name="protocolWebDTO.otherPurposeText"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>protocolWebDTO.otherPurposeText</s:param>
+                       </s:fielderror>                            
+                     </span>
+                </td>                
           </tr>          
-                    <tr>
+          <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr> 
           
