@@ -113,6 +113,13 @@ public class TrialValidationAction extends ActionSupport {
             createSponorContact(studyProtocolIi);
             ServletActionContext.getRequest().setAttribute(
                     Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
+            StudyProtocolQueryDTO  studyProtocolQueryDTO = 
+                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                        Long.valueOf(studyProtocolIi.getExtension()));
+            // put an entry in the session and store StudyProtocolQueryDTO 
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());

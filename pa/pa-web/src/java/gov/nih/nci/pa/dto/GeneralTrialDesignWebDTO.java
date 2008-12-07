@@ -40,9 +40,6 @@ public class GeneralTrialDesignWebDTO {
     private String responsiblePersonIdentifier;
     private String contactPhone;
     private String contactEmail;
-    // new fields
-//    private String leadPersonIdentifier;
-//    private String leadPersonName;
     
     /**
      * 
@@ -430,29 +427,5 @@ public class GeneralTrialDesignWebDTO {
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
     }
-    /**
-     * @return the leadPersonIdentifier
-     */
-//    public String getLeadPersonIdentifier() {
-//        return leadPersonIdentifier;
-//    }
-//    /**
-//     * @param leadPersonIdentifier the leadPersonIdentifier to set
-//     */
-//    public void setLeadPersonIdentifier(String leadPersonIdentifier) {
-//        this.leadPersonIdentifier = leadPersonIdentifier;
-//    }
-//    /**
-//     * @return the leadPersonName
-//     */
-//    public String getLeadPersonName() {
-//        return leadPersonName;
-//    }
-//    /**
-//     * @param leadPersonName the leadPersonName to set
-//     */
-//    public void setLeadPersonName(String leadPersonName) {
-//        this.leadPersonName = leadPersonName;
-//    }
     
 }
