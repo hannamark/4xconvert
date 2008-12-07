@@ -5,17 +5,19 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="trialValidation.page.title"/></title>   
-    <s:head/>
-    <!-- po integration -->
-    <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
-    <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-    <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
-    <!-- /po integration -->    
-    <script type="text/javascript"> 
+ <title><fmt:message key="trialValidation.page.title"/></title>   
+ <s:head/>
+ <!-- po integration -->
+ <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
+ <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+ <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+ <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+ <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+ <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+ <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
+ <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
+ <!-- /po integration -->    
+ <script type="text/javascript"> 
     var orgid;
     var persid;
     function setorgid(orgIdentifier){
@@ -24,70 +26,69 @@
     function setpersid(persIdentifier){
         persid = persIdentifier;
     }
-        function tooltip() {
-            BubbleTips.activateTipOn("acronym");
-            BubbleTips.activateTipOn("dfn"); 
-        }
+    function tooltip() {
+        BubbleTips.activateTipOn("acronym");
+        BubbleTips.activateTipOn("dfn"); 
+    }
     function handleAction(){
         document.forms[0].action="trialValidationupdate.action";
         document.forms[0].submit(); 
-    }
-    
+    }    
     function lookup4loadleadorg(){
         showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
     }
-function lookup4loadleadpers(){
-    showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
-}
-function lookup4sponsor(){
-    showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
-} 
-function lookup4loadresponsibleparty(){ 
-    showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
-}
-function lookup4loadSummary4Sponsor(){
-    showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-}    
-function loadLeadPersDiv() {
-    var url = '/registry/protected/ajaxSubmitTrialActiondisplayLeadPrincipalInvestigator.action?persId='+persid;
-    var div = document.getElementById('loadPersField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-    callAjax(url, div);    
-}
-function loadSponsorDiv() {
-    var url = '/registry/protected/ajaxSubmitTrialActiondisplaySelectedSponsor.action?orgId='+orgid;
-    var div = document.getElementById('loadSponsorField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
-    callAjax(url, div);                 
-    document.getElementById('lookupbtn4RP').disabled = "";
-}
-function loadSummary4SponsorDiv() {
-    var url = '/registry/protected/ajaxSubmitTrialActiondisplaySummary4FundingSponsor.action?orgId='+orgid;
-    var div = document.getElementById('loadSummary4FundingSponsorField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
-    callAjax(url, div);
-}
-function createOrgContactDiv() {    
-    var url = '/registry/protected/ajaxSubmitTrialActioncreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
-    var div = document.getElementById('loadResponsibleContactField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
-    callAjax(url, div);
-    document.getElementById('lookupbtn4RP').disabled = "";
-}
-    function loadLeadOrgDiv() { 
-    var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
-    var div = document.getElementById('loadOrgField');   
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-    callAjax(url, div);   
-     
-    }
+	function lookup4loadleadpers(){
+	    showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
+	}
+	function lookup4sponsor(){
+	    showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
+	} 
+	function lookup4loadresponsibleparty(){
+	    showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+	}
+	function lookup4loadSummary4Sponsor(){
+	    showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+	}   
+	function loadLeadOrgDiv() { 
+		var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
+		var div = document.getElementById('loadOrgField');   
+		div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+		callAjax(url, div); 
+	}
+	function loadLeadPersDiv() {	
+	    var url = 'ajaxTrialValidationdisplayLeadPrincipalInvestigator.action?persId='+persid;
+	    var div = document.getElementById('loadPersField');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+	    callAjax(url, div);    
+	}
+	function loadSponsorDiv() {		
+	    var url = 'ajaxTrialValidationdisplaySelectedSponsor.action?orgId='+orgid;
+	    var div = document.getElementById('loadSponsorField');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
+	    callAjax(url, div);
+	}
+	function loadSummary4SponsorDiv() {
+	    var url = 'ajaxTrialValidationdisplaySummary4FundingSponsor.action?orgId='+orgid;
+	    var div = document.getElementById('loadSummary4FundingSponsorField');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
+	    callAjax(url, div);
+	}
+	function createOrgContactDiv() {    
+	    var url = 'ajaxTrialValidationcreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
+	    var div = document.getElementById('loadResponsibleContactField');   
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
+	    callAjax(url, div);
+	   
+	}
     function loadDiv(orgid){
     }
+    function loadPersDiv(persid, func) {
+    }
     function callAjax(url, div){
-    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
-    return false;
-}
-    </script>
+	    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
+	    return false;
+	}
+</script>
     
 </head>
 <body onload="setFocusToFirstControl();">
@@ -199,8 +200,8 @@ function createOrgContactDiv() {
            </label>
          </td>
         <td class="value">
-            <div id="loadOrgField">
-            <%@ include file="/WEB-INF/jsp/nodecorate/leadPI.jsp" %>
+            <div id="loadPersField">
+           <%@ include file="/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp" %>
             </div>      
         </td>
     </tr>
@@ -214,7 +215,7 @@ function createOrgContactDiv() {
         </td>
         <td class="value">
             <div id="loadSponsorField">
-            <%@ include file="/WEB-INF/jsp/nodecorate/sponsor.jsp" %>
+           <%@ include file="/WEB-INF/jsp/nodecorate/displaySponsor.jsp" %>
             </div>      
         </td>
     </tr>   
@@ -231,7 +232,7 @@ function createOrgContactDiv() {
             </td>               
             <td class="value">
                 <div id="loadResponsibleContactField">
-                    <%@ include file="/WEB-INF/jsp/nodecorate/sponsorPerson.jsp" %>
+                    <%@ include file="/WEB-INF/jsp/nodecorate/responsibleContact.jsp" %>
                 </div>                                    
             </td>
         </tr>
@@ -282,8 +283,8 @@ function createOrgContactDiv() {
             <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> Summary 4 Funding Source:</dfn></label>
         </td>
         <td class="value">
-            <div id="loadOrgField">
-            <%@ include file="/WEB-INF/jsp/nodecorate/summFour.jsp" %>
+            <div id="loadSummary4FundingSponsorField">
+           <%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
             </div>      
         </td>
         

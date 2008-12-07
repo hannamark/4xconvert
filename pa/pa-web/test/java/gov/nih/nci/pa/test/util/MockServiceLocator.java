@@ -40,6 +40,7 @@ import gov.nih.nci.service.MockStudyProtocolService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -310,6 +311,12 @@ public class MockServiceLocator implements ServiceLocator {
      * @return StudyContact
      */
     public StudyContactServiceRemote getStudyContactService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
+            throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

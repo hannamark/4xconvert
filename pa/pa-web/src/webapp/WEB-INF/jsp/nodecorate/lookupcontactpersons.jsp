@@ -6,14 +6,14 @@
 <SCRIPT language="JavaScript">
 	function submitform(persid)
 	{		
-		
+		top.window.setpersid(persid);
 		top.window.loadPersDiv(persid, func);
 		window.top.hidePopWin(true); 
 	}
 	 
 	function callCreateContactPerson(persid)
 	{
-	   
+	   top.window.setpersid(persid);
 		top.window.loadContactPersDiv(persid);
 		window.top.hidePopWin(true); 
 	}

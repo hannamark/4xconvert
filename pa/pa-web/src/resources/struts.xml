@@ -182,6 +182,12 @@
         </action>
         <action name="ajaxTrialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <result name="display_lead_org">/WEB-INF/jsp/nodecorate/leadOrg.jsp</result>
+		  <result name="display_lead_prinicipal_inv">/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp</result>
+		  <result name="display_selected_sponsor">/WEB-INF/jsp/nodecorate/displaySelectedSponsor.jsp</result>
+		  <result name="display_responsible_paty">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result> 
+		  <result name="display_summary4funding_sponsor">/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp</result>
+		  <result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+		  <result name="display_responsible_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>  
         </action>        
 	</package>
 </struts>

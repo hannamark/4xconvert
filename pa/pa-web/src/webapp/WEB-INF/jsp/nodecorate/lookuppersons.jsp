@@ -6,12 +6,15 @@
 <SCRIPT language="JavaScript">
 	function submitform(persid)
 	{	
+	
+		top.window.setpersid(persid);
 		top.window.loadPersDiv(persid, func);
 		window.top.hidePopWin(true); 
 	}
 	 
 	function callCreatePerson(persid, rolecode)
 	{		
+		top.window.setpersid(persid);
 		top.window.loadPersDiv(persid, rolecode, 'add');
 		window.top.hidePopWin(true); 
 	}

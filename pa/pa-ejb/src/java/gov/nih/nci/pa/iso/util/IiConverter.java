@@ -234,6 +234,17 @@ public class IiConverter {
     }
 
     /**
+     * converts to Po Org Ii Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToIdentifiedEntityIi(String id) {
+        Ii ii = convertToIi(id);
+        //ii.setIdentifierName(CTEP_IDENTIFIED_NAME);
+        ii.setRoot("Cancer Therapy Evaluation Program");
+        return ii;
+    }
+    /**
      * converts to Po Org contact  Ii Ii.
      * @param id id
      * @return Ii

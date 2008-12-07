@@ -41,6 +41,31 @@ public class EnPnConverter {
     }
     
     /**
+     * 
+     * @param poPerson as arg
+     * @return Person as pa object
+     */
+    public static gov.nih.nci.pa.dto.PersonDTO convertToPaPersonDTO(PersonDTO poPerson) {
+        gov.nih.nci.pa.dto.PersonDTO personDTO = new gov.nih.nci.pa.dto.PersonDTO();
+        personDTO.setId(Long.valueOf(poPerson.getIdentifier().getExtension()));
+        List<Enxp> list = poPerson.getName().getPart();
+        Iterator ite = list.iterator();
+        while (ite.hasNext()) {
+           Enxp part = (Enxp) ite.next();          
+           if (EntityNamePartType.FAM == part.getType()) {
+               personDTO.setLastName(part.getValue());
+           } else if (EntityNamePartType.GIV == part.getType()) {
+               if (personDTO.getFirstName() == null) {
+                   personDTO.setFirstName(part.getValue());
+               } else {
+                   personDTO.setMiddleName(part.getValue());
+               }
+           } 
+        }
+        return personDTO;
+    }    
+    
+    /**
      * converts the given enpn to the data members on the given person.
      * 
      * @param value the source iso person name.

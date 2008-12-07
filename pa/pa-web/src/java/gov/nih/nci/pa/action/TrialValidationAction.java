@@ -2,6 +2,8 @@ package gov.nih.nci.pa.action;
       
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -17,9 +19,11 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -30,8 +34,15 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.SearchPersonResultDisplay;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -47,6 +58,12 @@ public class TrialValidationAction extends ActionSupport {
 
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     private OrganizationDTO selectedLeadOrg = null;
+    private PersonDTO selectedLeadPrincipalInvestigator = null;
+    private OrganizationDTO selectedSponsor = null;
+    private PersonDTO responsiblePartyContact = null;
+    // Summary 4 Sponsor
+    private OrganizationDTO selectedSummary4Sponsor = null;   
+    private List<SearchPersonResultDisplay> persons = new ArrayList<SearchPersonResultDisplay>();
     
     /**  
      * @return res
@@ -304,8 +321,7 @@ public class TrialValidationAction extends ActionSupport {
     /**
      * 
      * @return result
-     */
-    // public String displayOrg() {
+     */   
     public String displayLeadOrganization() {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
@@ -322,7 +338,181 @@ public class TrialValidationAction extends ActionSupport {
         }
         return "display_lead_org";
     }
+    
+    /**
+     * 
+     * @return result
+     */   
+    public String displayLeadPrincipalInvestigator() {
+        String persId = ServletActionContext.getRequest().getParameter("persId");
+        if (persId.equals("undefined")) {
+            return "display_lead_prinicipal_inv";
+        }
+        try {
+            selectedLeadPrincipalInvestigator = PaRegistry.getPoPersonEntityService().getPerson(
+                    EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+            gtdDTO.setLeadPersonIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
+            gov.nih.nci.pa.dto.PersonDTO personDTO = 
+                                            EnPnConverter.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
+            gtdDTO.setLeadPersonName(personDTO.getLastName() + "," + personDTO.getFirstName());
+        } catch (Exception e) {
+            return "display_lead_prinicipal_inv";
+        }
+        return "display_lead_prinicipal_inv";
+    }    
+    
+    /**
+     * 
+     * @return result
+     */   
+    public String displaySelectedSponsor() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (orgId.equals("undefined")) {
+            return "display_selected_sponsor";
+        }
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        try {
+            selectedSponsor = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            gtdDTO.setSponsorIdentifier(selectedSponsor.getIdentifier().getExtension());
+            gtdDTO.setSponsorName(selectedSponsor.getName().getPart().get(0).getValue());
+        } catch (Exception e) {
+            return "display_selected_sponsor";
+        }
+        return "display_selected_sponsor";
+    }    
+    /**
+     * 
+     * @return result
+     */   
+    public String displaySummary4FundingSponsor() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (orgId.equals("undefined")) {
+            return "display_summary4funding_sponsor";
+        }
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        try {
+            selectedSummary4Sponsor = PaRegistry.getPoOrganizationEntityService().search(criteria).get(0);
+            gtdDTO.setSummaryFourOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
+            gtdDTO.setSummaryFourOrgIdentifier(selectedSummary4Sponsor.getIdentifier().getExtension());
+        } catch (Exception e) {
+            return "display_summary4funding_sponsor";
+        }
+        return "display_summary4funding_sponsor";
+    }    
 
+  
+    /**
+     * 
+     * @return res
+     */
+    public String getOrganizationContacts() {
+        String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
+        OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
+        /**
+         * IMPORTANT
+         * orgContactIdentifier MUST BE SET FROM THE DTO SINCE IT IS ALREADY THERE SINCE RESULTS WILL BE SCOPED 
+         * BY THIS ORGCONTACTIDENTIFIER
+         */  
+        contactDTO.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
+        contactDTO.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
+        contactDTO.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
+        try {
+            List<OrganizationalContactDTO> list = PaRegistry.getPoOrganizationalContactCorrelationService()
+                    .search(contactDTO);
+            for (OrganizationalContactDTO organizationalContactDTO : list) {
+                try {
+                    PersonDTO resultDTO = PaRegistry.getPoPersonEntityService().getPerson(
+                            organizationalContactDTO.getPlayerIdentifier());
+                    persons.add(convertToPaPerson(resultDTO));
+                } catch (NullifiedEntityException e) {
+                    addActionError(e.getMessage());
+                    ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+                    LOG.error("Exception occured while getting organization contact : " + e);
+                    return "display_org_contacts";
+                }
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            LOG.error("Exception occured while getting organization contact : " + e);
+            return "display_org_contacts";
+        }
+        return "display_org_contacts";
+    }  
+    
+    private SearchPersonResultDisplay convertToPaPerson(PersonDTO poPerson) {
+        SearchPersonResultDisplay prs = new SearchPersonResultDisplay();
+        List<Enxp> list = poPerson.getName().getPart();
+        Iterator ite = list.iterator();
+        while (ite.hasNext()) {
+           Enxp part = (Enxp) ite.next();          
+           if (EntityNamePartType.FAM == part.getType()) {
+               prs.setLastName(part.getValue());
+           } else if (EntityNamePartType.GIV == part.getType()) {
+               if (prs.getFirstName() == null) {
+                   prs.setFirstName(part.getValue());
+               } else {
+                   prs.setMiddleName(part.getValue());
+               }
+           }
+        }
+        prs.setId(Long.valueOf(poPerson.getIdentifier().getExtension().toString()));
+        return prs;
+    }    
+    
+    /**
+     * 
+     * @return res
+     */
+    public String createOrganizationContacts() {
+        boolean contactExists = false;
+        try {
+            String orgId = ServletActionContext.getRequest().getParameter("orgId");
+            String persId = ServletActionContext.getRequest().getParameter("persId");
+            OrganizationalContactDTO dto = new OrganizationalContactDTO();
+            dto.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
+            dto.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
+            dto.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
+            // Use these two values and check if the contact already exists, if
+            // they do then this means that the user selected from the list and
+            // did not create a new user
+            List<OrganizationalContactDTO> list = PaRegistry.getPoOrganizationalContactCorrelationService()
+                    .search(dto);
+            //             
+            for (OrganizationalContactDTO contactDTO : list) {
+                String persIdfromOrgContact = contactDTO.getPlayerIdentifier().getExtension();
+                if (persIdfromOrgContact.equals(persId)) {
+                    contactExists = true;
+                }
+            }
+            if (!contactExists) {
+                dto.setPlayerIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
+                dto.getPlayerIdentifier().setRoot("UID.for.nci.entity.person");
+                dto.getPlayerIdentifier().setIdentifierName("NCI person entity identifier");
+                dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                PaRegistry.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
+            }
+            Ii personIi = gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId);
+            personIi.setRoot("UID.for.nci.entity.organization");
+            responsiblePartyContact = PaRegistry.getPoPersonEntityService().getPerson(personIi);
+            gtdDTO.setResponsiblePersonIdentifier(responsiblePartyContact.getIdentifier().getExtension());
+            gov.nih.nci.pa.dto.PersonDTO personDTO = 
+                                            EnPnConverter.convertToPaPersonDTO(responsiblePartyContact);
+            gtdDTO.setResponsibleParty(personDTO.getLastName() + "," + personDTO.getFirstName());
+           // ServletActionContext.getRequest().getSession()
+            //        .setAttribute("PoResponsibleContact", responsiblePartyContact);
+        } catch (NullifiedEntityException e) {
+            // TODO Auto-generated catch block NAVEEN HANDLE EXCEPTIONS!!
+            e.printStackTrace();
+        } catch (EntityValidationException e) {
+            // TODO Auto-generated catch block NAVEEN HANDLE EXCEPTIONS!!
+        } catch (PAException e) {
+            //NAVEEN HANDLE EXCEPTIONS!!
+        }
+        return "display_responsible_contact";
+    }    
     /**
      * 
      * @return selectedLeadOrg
@@ -337,6 +527,20 @@ public class TrialValidationAction extends ActionSupport {
      */
     public void setSelectedLeadOrg(OrganizationDTO selectedLeadOrg) {
         this.selectedLeadOrg = selectedLeadOrg;
+    }
+
+    /**
+     * @return the persons
+     */
+    public List<SearchPersonResultDisplay> getPersons() {
+        return persons;
+    }
+
+    /**
+     * @param persons the persons to set
+     */
+    public void setPersons(List<SearchPersonResultDisplay> persons) {
+        this.persons = persons;
     }
     
 }
