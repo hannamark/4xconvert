@@ -2,7 +2,6 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
-import gov.nih.nci.pa.service.DiseaseCondServiceRemote;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
@@ -67,14 +66,6 @@ public final class PaRegistry {
      */
     public static PaRegistry getInstance() {
         return PA_REGISTRY;
-    }
-
-    /**
-     * 
-     * @return diseaseCondServiceRemote DiseaseCondServiceRemote
-     */
-    public static DiseaseCondServiceRemote getDiseaseCondService() {
-        return getInstance().getServiceLocator().getDiseaseConditionService();
     }
 
     /**

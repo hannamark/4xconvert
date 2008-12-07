@@ -2,8 +2,8 @@
 
 <table class="form">
     <s:hidden name="currentAction"/>
-    <s:hidden name="disease.identifier"/>
-    <s:hidden name="selectedStudyDiseaseIdentifier"/>
+    <s:hidden name="disease.diseaseIdentifier"/>
+    <s:hidden name="disease.studyDiseaseIdentifier"/>
     <tr>
         <td class="label"><s:label>Name:</s:label><span
             class="required">*</span></td>

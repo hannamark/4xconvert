@@ -7,19 +7,28 @@
 <head>
 <title><fmt:message key="arms.main.title" /></title>
 <s:head />
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
-</head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+function handleView(diseaseId){
+    var url = '/pa/protected/popupDiseaseDetails.action?diseaseId='+diseaseId;
+    showPopWin(url, 1050, 400, '', 'Disease');
+}
 function handleEdit(rowId){
-    document.diseaseForm.selectedStudyDiseaseIdentifier.value = rowId;
+    document.diseaseForm.selectedRowIdentifier.value = rowId;
     document.diseaseForm.action="diseaseedit.action";
     document.diseaseForm.submit(); 
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the disease from the study.  Cancel to abort.");
     if (input_box==true){
-        document.diseaseForm.selectedStudyDiseaseIdentifier.value = rowId;
+        document.diseaseForm.selectedRowIdentifier.value = rowId;
         document.diseaseForm.action="diseasedelete.action";
         document.diseaseForm.submit();
     }
@@ -29,9 +38,9 @@ function handleCreate(){
     document.diseaseForm.submit(); 
 }
 </SCRIPT>
-
+</head>
 <body onload="setFocusToFirstControl();">
-<h1><fmt:message key="disease.main.title" /></h1>
+<h1><fmt:message key="disease.main.title"/></h1>
 
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
@@ -39,7 +48,7 @@ function handleCreate(){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     
     <s:form name="diseaseForm">
-        <s:hidden name="selectedStudyDiseaseIdentifier"/> 
+        <s:hidden name="selectedRowIdentifier"/> 
     <h2>
         <fmt:message key="disease.details.title"/>
     </h2>
@@ -49,7 +58,13 @@ function handleCreate(){
             <td colspan="2">
             <display:table name="diseaseList" id="row" class="data" sort="list" pagesize="10">
                 <display:column property="preferredName" sortable="true"
-                    titleKey="disease.preferredName" headerClass="sortable"  />
+                    titleKey="disease.preferredName" headerClass="sortable"/>
+                <display:column titleKey="disease.view" headerClass="centered" class="action">
+                    <s:a href="#" onclick="handleView(%{#attr.row.diseaseIdentifier})">
+                        <img src="<%=request.getContextPath()%>/images/ico_search.gif"
+                            alt="View" width="16" height="16" />
+                    </s:a>
+                </display:column>
                 <display:column property="code" sortable="true"
                     titleKey="disease.code" headerClass="sortable" />
                 <display:column property="conceptId" sortable="true"
@@ -60,13 +75,13 @@ function handleCreate(){
                     titleKey="disease.parentPreferredName" headerClass="sortable" />
                 <display:column property="lead" sortable="true"
                     titleKey="disease.lead" headerClass="sortable" />
-                <display:column titleKey="disease.edit" class="action">
+                <display:column titleKey="disease.edit" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
                 </display:column>
-                <display:column titleKey="disease.delete" class="action">
+                <display:column titleKey="disease.delete" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleDelete(%{#attr.row.studyDiseaseIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
                             alt="Delete" width="16" height="16" />

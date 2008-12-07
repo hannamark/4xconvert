@@ -16,7 +16,6 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <c:url value="/protected/popupDis.action" var="lookupUrl" />
 
-
 <script type="text/javascript">
     function diseaseAdd(){
         document.diseaseForm.action="diseaseadd.action";
@@ -43,8 +42,6 @@
          });
     }   
 </script>
-
-
 </head>
 <body onload="setFocusToFirstControl();">
 <h1><fmt:message key="disease.main.title" /></h1>

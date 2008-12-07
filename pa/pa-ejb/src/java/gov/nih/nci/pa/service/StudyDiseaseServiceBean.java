@@ -24,7 +24,8 @@ public class StudyDiseaseServiceBean
         extends AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter>
         implements StudyDiseaseServiceRemote {
 
-    private void enforceOnlyOneLead(StudyDiseaseDTO dto) throws PAException {
+    private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
+        // only one lead disease per study
         if (!PAUtil.isBlNull(dto.getLeadDiseaseIndicator()) 
                 && BlConverter.covertToBoolean(dto.getLeadDiseaseIndicator())) {
             List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
@@ -33,11 +34,21 @@ public class StudyDiseaseServiceBean
                         IiConverter.convertToLong(sd.getIdentifier()))
                     && (!PAUtil.isBlNull(sd.getLeadDiseaseIndicator()) 
                     && BlConverter.covertToBoolean(sd.getLeadDiseaseIndicator()))) {
-                        sd.setLeadDiseaseIndicator(BlConverter.convertToBl(false));
-                        update(sd);
+                        throw new PAException("Only one disease may be marked as lead for a given study.  ");
                     }
             }
         }
+        // no duplicate diseases in a study
+        if (PAUtil.isIiNull(dto.getIdentifier())) {
+            long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
+            List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (StudyDiseaseDTO sd : sdList) {
+                if (newDiseaseId == IiConverter.convertToLong(sd.getDiseaseIdentifier())) {
+                    throw new PAException("Redundancy error:  this trial already includes the selected disease.  ");
+                }
+            }
+        }
+        return dto;
     }
 
     /**
@@ -47,9 +58,8 @@ public class StudyDiseaseServiceBean
      */
     @Override
     public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
-        StudyDiseaseDTO resultDto = super.create(dto);
-        enforceOnlyOneLead(resultDto);
-        return resultDto;
+        StudyDiseaseDTO createDto = businessRules(dto);
+        return super.create(createDto);
     }
 
     /**
@@ -59,8 +69,7 @@ public class StudyDiseaseServiceBean
      */
     @Override
     public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
-        StudyDiseaseDTO resultDto =  super.update(dto);
-        enforceOnlyOneLead(resultDto);
-        return resultDto;
+        StudyDiseaseDTO updateDto =  businessRules(dto);
+        return super.update(updateDto);
     }
 }

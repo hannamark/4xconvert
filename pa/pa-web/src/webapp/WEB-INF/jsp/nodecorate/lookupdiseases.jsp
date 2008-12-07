@@ -34,7 +34,6 @@
 <div class="box">
 <s:form id="diseases" name="diseases" >
 <h2>Search Diseases</h2>
-<s:label name="diseaseErrorMessage"/>
 <table  class="form">  
     <tr>    
         <td scope="row" class="label">

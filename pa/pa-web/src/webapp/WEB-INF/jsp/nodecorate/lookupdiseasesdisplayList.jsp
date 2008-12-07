@@ -10,7 +10,7 @@
     <display:column title="Parent Name" property="parentPreferredName"  headerClass="sortable"/> 
     <display:column title="Select" class="action" sortable="false">
         <s:if test="${(row.menuDisplayName!=null)&&(row.menuDisplayName!='')}">
-            <s:a href="#" cssClass="btn" onclick="submitform('${row.identifier}')">
+            <s:a href="#" cssClass="btn" onclick="submitform('${row.diseaseIdentifier}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </s:a>
         </s:if><s:else>

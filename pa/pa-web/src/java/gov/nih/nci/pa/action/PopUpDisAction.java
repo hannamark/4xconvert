@@ -17,7 +17,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
 * @author Hugh Reinhart
-* @since 10/31/2008
+* @since 11/31/2008
 * copyright NCI 2008.  All rights reserved.
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
@@ -41,7 +41,7 @@ public class PopUpDisAction extends ActionSupport {
             List<DiseaseDTO> diseaseList = PaRegistry.getDiseaseService().search(criteria);
             for (DiseaseDTO disease : diseaseList) {
                 DiseaseWebDTO newRec = new DiseaseWebDTO();
-                newRec.setIdentifier(IiConverter.convertToString(disease.getIdentifier()));
+                newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
                 newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
                 newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
                 newRec.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));

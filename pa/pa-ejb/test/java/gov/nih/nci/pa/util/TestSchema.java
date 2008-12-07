@@ -3,7 +3,6 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
-import gov.nih.nci.pa.domain.Condition;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
@@ -33,7 +32,6 @@ import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
-import gov.nih.nci.pa.domain.StudyCondition;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
@@ -67,7 +65,6 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
-import gov.nih.nci.pa.enums.YesNoCode;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -86,7 +83,6 @@ import org.hibernate.cfg.Configuration;
  * @author Hugh
  *
  */
-@SuppressWarnings("PMD")
 public class TestSchema {
         /** . **/
         public static ArrayList<Long> studyProtocolIds;
@@ -107,8 +103,6 @@ public class TestSchema {
 
             addAnnotatedClass(StudyProtocol.class).
             addAnnotatedClass(InterventionalStudyProtocol.class).
-            addAnnotatedClass(StudyCondition.class).
-            addAnnotatedClass(Condition.class).
             addAnnotatedClass(Organization.class).
             addAnnotatedClass(StudyCoordinatingCenter.class).
             addAnnotatedClass(StudyCoordinatingCenterRole.class).
@@ -195,8 +189,6 @@ public class TestSchema {
                         statement.executeUpdate("delete from STUDY_INDLDE");
                         statement.executeUpdate("delete from STUDY_RECRUITMENT_STATUS");
                         statement.executeUpdate("delete from STUDY_OVERALL_STATUS");
-                        statement.executeUpdate("delete from STUDY_CONDITIONS");
-                        statement.executeUpdate("delete from CONDITIONS");
                         statement.executeUpdate("delete from STUDY_SITE_ACCRUAL_STATUS");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION_CONTACT");
                         statement.executeUpdate("delete from STUDY_PARTICIPATION");
@@ -298,23 +290,6 @@ public class TestSchema {
             sos.setStatusDate(PAUtil.dateStringToTimestamp("8/15/2008"));
             sos.setStudyProtocol(sp);
             addUpdObject(sos);
-            
-            //
-            Condition co = new Condition();
-            // co.setId(5L);
-            co.setCode("1AV55FGSY44");
-            co.setName("BAD-DISEASE");
-            co.setParentCode("ParentCode");          
-            addUpdObject(co);
-            co.setId(co.getId());
-            //
-            StudyCondition con = new StudyCondition();
-            con.setStudyProtocol(sp);
-            con.setLeadIndicator(YesNoCode.YES);
-            con.setCondition(co);
-            con.setStudyProtocol(sp);
-            addUpdObject(con);
-            con.setId(con.getId());
             
             Organization org = OrganizationTest.createOrganizationObj();
             addUpdObject(org);

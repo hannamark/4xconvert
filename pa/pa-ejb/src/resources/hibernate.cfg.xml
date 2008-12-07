@@ -29,8 +29,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyCoordinatingCenterRole" />
         <mapping class="gov.nih.nci.pa.domain.RegulatoryAuthority" />
         <mapping class="gov.nih.nci.pa.domain.StudyRegulatoryAuthority" />
-        <mapping class="gov.nih.nci.pa.domain.StudyCondition" />
-        <mapping class="gov.nih.nci.pa.domain.Condition" />
         <mapping class="gov.nih.nci.pa.domain.Person" />
         <mapping class="gov.nih.nci.pa.domain.HealthCareProvider" />
         <mapping class="gov.nih.nci.pa.domain.ClinicalResearchStaff" />

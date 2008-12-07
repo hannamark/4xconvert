@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.dto;
 
+
 /**
  * Web DTO class for displaying list of diseases associated with SP.
  * @author Hugh Reinhart
@@ -9,12 +10,13 @@ package gov.nih.nci.pa.dto;
  */
 public class DiseaseWebDTO {
     private String studyDiseaseIdentifier;
-    private String identifier;
+    private String diseaseIdentifier;
     private String preferredName;
     private String code;
     private String conceptId;
     private String menuDisplayName;
     private String parentPreferredName;
+    private String alternames;
     private String lead;
     /**
      * @return the studyDiseaseIdentifier
@@ -29,16 +31,16 @@ public class DiseaseWebDTO {
         this.studyDiseaseIdentifier = studyDiseaseIdentifier;
     }
     /**
-     * @return the identifier
+     * @return the diseaseIdentifier
      */
-    public String getIdentifier() {
-        return identifier;
+    public String getDiseaseIdentifier() {
+        return diseaseIdentifier;
     }
     /**
-     * @param identifier the identifier to set
+     * @param diseaseIdentifier the diseaseIdentifier to set
      */
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setDiseaseIdentifier(String diseaseIdentifier) {
+        this.diseaseIdentifier = diseaseIdentifier;
     }
     /**
      * @return the preferredName
@@ -99,6 +101,18 @@ public class DiseaseWebDTO {
      */
     public void setParentPreferredName(String parentPreferredName) {
         this.parentPreferredName = parentPreferredName;
+    }
+    /**
+     * @return the alternames
+     */
+    public String getAlternames() {
+        return alternames;
+    }
+    /**
+     * @param alternames the alternames to set
+     */
+    public void setAlternames(String alternames) {
+        this.alternames = alternames;
     }
     /**
      * @return the lead
