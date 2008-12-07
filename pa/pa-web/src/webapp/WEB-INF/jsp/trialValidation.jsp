@@ -222,8 +222,8 @@
     <tr>
         <td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
         <td>
-            <input type="radio" name="gtdDTO.responsibleParty" value="pi"  onclick="manageRespPartyLookUp();"> PI 
-            <input type="radio" name="gtdDTO.responsibleParty" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
+            <input type="radio" name="gtdDTO.responsiblePartyType" value="pi"  onclick="manageRespPartyLookUp();"> PI 
+            <input type="radio" name="gtdDTO.responsiblePartyType" value="sponsor" onclick="manageRespPartyLookUp();"> Sponsor
         </td>
         </tr>               
         <tr id="rpcid" >

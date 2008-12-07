@@ -35,14 +35,14 @@ public class GeneralTrialDesignWebDTO {
     private String summaryFourFundingCategoryCode;
     private String sponsorName;
     private String sponsorIdentifier;
-    private String responsibleParty;
+    private String responsiblePartyType;
     private String responsiblePersonName;
     private String responsiblePersonIdentifier;
     private String contactPhone;
     private String contactEmail;
     // new fields
-    private String leadPersonIdentifier;
-    private String leadPersonName;
+//    private String leadPersonIdentifier;
+//    private String leadPersonName;
     
     /**
      * 
@@ -362,17 +362,17 @@ public class GeneralTrialDesignWebDTO {
     }
     /**
      * 
-     * @return responsibleParty
+     * @return responsiblePartyType
      */
-    public String getResponsibleParty() {
-        return responsibleParty;
+    public String getResponsiblePartyType() {
+        return responsiblePartyType;
     }
     /**
      * 
-     * @param responsibleParty responsibleParty
+     * @param responsiblePartyType responsiblePartyType
      */
-    public void setResponsibleParty(String responsibleParty) {
-        this.responsibleParty = responsibleParty;
+    public void setResponsiblePartyType(String responsiblePartyType) {
+        this.responsiblePartyType = responsiblePartyType;
     }
     /**
      * 
@@ -433,26 +433,26 @@ public class GeneralTrialDesignWebDTO {
     /**
      * @return the leadPersonIdentifier
      */
-    public String getLeadPersonIdentifier() {
-        return leadPersonIdentifier;
-    }
-    /**
-     * @param leadPersonIdentifier the leadPersonIdentifier to set
-     */
-    public void setLeadPersonIdentifier(String leadPersonIdentifier) {
-        this.leadPersonIdentifier = leadPersonIdentifier;
-    }
-    /**
-     * @return the leadPersonName
-     */
-    public String getLeadPersonName() {
-        return leadPersonName;
-    }
-    /**
-     * @param leadPersonName the leadPersonName to set
-     */
-    public void setLeadPersonName(String leadPersonName) {
-        this.leadPersonName = leadPersonName;
-    }
+//    public String getLeadPersonIdentifier() {
+//        return leadPersonIdentifier;
+//    }
+//    /**
+//     * @param leadPersonIdentifier the leadPersonIdentifier to set
+//     */
+//    public void setLeadPersonIdentifier(String leadPersonIdentifier) {
+//        this.leadPersonIdentifier = leadPersonIdentifier;
+//    }
+//    /**
+//     * @return the leadPersonName
+//     */
+//    public String getLeadPersonName() {
+//        return leadPersonName;
+//    }
+//    /**
+//     * @param leadPersonName the leadPersonName to set
+//     */
+//    public void setLeadPersonName(String leadPersonName) {
+//        this.leadPersonName = leadPersonName;
+//    }
     
 }

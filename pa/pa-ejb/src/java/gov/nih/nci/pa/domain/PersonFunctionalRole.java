@@ -24,7 +24,7 @@ public abstract class PersonFunctionalRole extends FunctionalRole {
      * @return crs ClinicalResearchStaff
      */
     @ManyToOne 
-    @JoinColumn(name = "CLINICAL_RESEARCH_STAFF_IDENTIFIER", updatable = false)
+    @JoinColumn(name = "CLINICAL_RESEARCH_STAFF_IDENTIFIER")
     public ClinicalResearchStaff getClinicalResearchStaff() {
         return clinicalResearchStaff;
     }
@@ -41,7 +41,7 @@ public abstract class PersonFunctionalRole extends FunctionalRole {
      * @return healthCareProvider healthCareProvider
      */
     @ManyToOne
-    @JoinColumn(name = "HEALTHCARE_PROVIDER_IDENTIFIER", updatable = false)
+    @JoinColumn(name = "HEALTHCARE_PROVIDER_IDENTIFIER")
     public HealthCareProvider getHealthCareProvider() {
         return healthCareProvider;
     }
