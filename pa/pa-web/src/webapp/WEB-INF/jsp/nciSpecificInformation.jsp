@@ -38,6 +38,12 @@
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
+	// do not remove these two callback methods!
+function setpersid(persid){
+}
+function setorgid(orgid){
+}
+	
 </SCRIPT>
 </head>
 <body onload="setFocusToFirstControl();">
