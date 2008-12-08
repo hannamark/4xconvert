@@ -8,7 +8,7 @@ package gov.nih.nci.pa.dto;
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-
+@SuppressWarnings("PMD")
 public class PersonDTO {
     
     private Long id;
@@ -23,8 +23,11 @@ public class PersonDTO {
     private String state;
     private String zip;
     private String country;
+    private String phone;
     private String email;
-    
+    private String tty;
+    private String fax;
+    private String url;
     /**
      * 
      * @return id
@@ -183,6 +186,54 @@ public class PersonDTO {
      */
     public void setEmail(String email) {
         this.email = email;
+    }
+    /**
+     * @return the tty
+     */
+    public String getTty() {
+        return tty;
+    }
+    /**
+     * @param tty the tty to set
+     */
+    public void setTty(String tty) {
+        this.tty = tty;
+    }
+    /**
+     * @return the fax
+     */
+    public String getFax() {
+        return fax;
+    }
+    /**
+     * @param fax the fax to set
+     */
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
+    /**
+     * @param url the url to set
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    /**
+     * @return the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
     
     
