@@ -243,6 +243,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             selectedSponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession()
                     .getAttribute("PoSponsor");
             if (selectedSponsor != null) {
+                new PARelationServiceBean().createSponsorRelations(selectedSponsor.getIdentifier().getExtension(), 
+                        IiConverter.convertToLong(studyProtocolIi));
                 if (respparty.equals("pi")) {
                     new PARelationServiceBean().createPIAsResponsiblePartyRelations(selectedSponsor.getIdentifier()
                             .getExtension(), selectedLeadPrincipalInvestigator.getIdentifier().getExtension(),
