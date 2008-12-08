@@ -40,12 +40,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String identifierType;
     private String organizationType;
     private String userLastCreated;
-    private String clientName;
     private Boolean excludeRejectProtocol;
-    
-    
-    
-    
+    // for Registry trial search
+    private Boolean myTrialsOnly; 
     
     
     /**
@@ -226,18 +223,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setUserLastCreated(String userLastCreated) {
         this.userLastCreated = userLastCreated;
     }
-    /**
-     * @return the clientName
-     */
-    public String getClientName() {
-        return clientName;
-    }
-    /**
-     * @param clientName the clientName to set
-     */
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
-    }
+
     /**
      * 
      * @return excludeRejectProtocol excludeRejectProtocol
@@ -251,6 +237,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setExcludeRejectProtocol(Boolean excludeRejectProtocol) {
         this.excludeRejectProtocol = excludeRejectProtocol;
+    }
+    /**
+     * @return the myTrialsOnly
+     */
+    public Boolean getMyTrialsOnly() {
+        return myTrialsOnly;
+    }
+    /**
+     * @param myTrialsOnly the myTrialsOnly to set
+     */
+    public void setMyTrialsOnly(Boolean myTrialsOnly) {
+        this.myTrialsOnly = myTrialsOnly;
     }
     
     
