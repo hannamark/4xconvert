@@ -158,3 +158,11 @@ function selectValuesInMultiSelectField(values, multiSelectBoxId, firefoxEvent, 
 		fireEvent($(multiSelectBoxId), firefoxEvent, ieEvent);
 	}
 }
+
+var IdValue = Class.create();
+IdValue.prototype = {
+  initialize: function(id, value) {
+    this.id  = id;
+    this.value = value;
+  },
+};

@@ -193,8 +193,8 @@
 <div class="btnwrapper" style="margin-bottom:20px;">
 	<script type="text/javascript">
 		function showPopWinCallback(returnVal) {
-			$('curatePersonForm.person.duplicateOf.id').value = returnVal;
-			$('wwctrl_curatePersonForm_person_duplicateOf_id').innerHTML = $('curatePersonForm.person.duplicateOf.id').value;
+			$('curatePersonForm.person.duplicateOf.id').value = returnVal.id;
+			$('wwctrl_curatePersonForm_person_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
 		}
 	</script>
     <script type="text/javascript">

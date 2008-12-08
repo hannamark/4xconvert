@@ -27,7 +27,7 @@
         </display:column>
         <display:column titleKey="th.action" class="action">
             <po:buttonRow>
-                <po:button id="mark_as_dup_${row.id}"href="javascript://nop/" onclick="markAsDuplicate('${row.id}');" style="reject" text="Select" />
+                <po:button id="mark_as_dup_${row.id}"href="javascript://nop/" onclick="markAsDuplicate(new IdValue('${row.id}', '${row.name}'));" style="reject" text="Select" />
             </po:buttonRow>
         </display:column>
     </display:table>

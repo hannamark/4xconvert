@@ -30,8 +30,8 @@
 <script type="text/javascript">
 <!--
     function showPopWinCallback(returnVal) {
-	    $('curateRoleForm.role.scoper.id').value = returnVal;
-	    $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = $('curateRoleForm.role.scoper.id').value;
+	    $('curateRoleForm.role.scoper.id').value = returnVal.id;
+	    $('wwctrl_curateRoleForm_role_scoper_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
     }
 //-->
 </script>
