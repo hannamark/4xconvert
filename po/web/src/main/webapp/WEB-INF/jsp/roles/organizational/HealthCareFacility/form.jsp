@@ -33,10 +33,10 @@
                 <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm">
                 <s:if test="%{isCreate}">
-                    The organization is not currently a health care facility.  Please select a status for the role and click 'Save' to add this role.
+                    This Organization does not have a role of Health Care Facility assigned to it. Please select a Status and click 'Save' button to assign the new role.
                 </s:if>
                 <s:else>
-                    The organization is currently a health care facility.  You can modify the status of this role using the form below.
+                    This Organization is currently a Health Care Facility.  You can modify the Status of this role using the form below.
                 </s:else>
 
 				<s:hidden key="organization"/>
