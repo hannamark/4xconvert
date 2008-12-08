@@ -696,6 +696,10 @@ function toggledisplay2 (it) {
                </td>         
          </tr> 
         </table>
+        <p align="center" class="info">
+           Please verify ALL the trial information you provided on this screen before clicking the &#34;Submit Trial&#34; button below.  
+           <br>Once you submit the trial you will not be able to modify the information.
+        </p>
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">         
@@ -706,10 +710,6 @@ function toggledisplay2 (it) {
                 </ul>   
             </del>
         </div>
-        <p class="info">
-            Please verify all elements on the screen and confirm submission by hitting &#39;Submit Trial&#39; button. Please note,
-            that you will not be able to modify submission <br>after confirming it when using NCI Clinical Trials Reporting Program.
-        </p>
       <input type="hidden" name="uuidhidden"/>  
    </s:form>
 
