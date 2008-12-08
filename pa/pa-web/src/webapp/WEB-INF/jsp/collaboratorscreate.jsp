@@ -32,26 +32,25 @@ function facilityUpdate(){
      document.facility.action="collaboratorsfacilityUpdate.action";
      document.facility.submit();     
 }
+// do not remove these two callback methods!
+function setpersid(persid){}
+function setorgid(orgid){}
+function lookup(){
+    showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
+}   
+function loadDiv(orgid){
+     var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
+     var div = document.getElementById('loadOrgDetails');   
+     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+     var aj = new Ajax.Updater(div, url, {
+        asynchronous: true,
+        method: 'get',
+        evalScripts: false
+     });
+     return false;
+}   
 </script>
-
 </head>
-<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-    function lookup(){
-        showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
-    }   
-    function loadDiv(orgid){
-         var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
-         var div = document.getElementById('loadOrgDetails');   
-         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-         var aj = new Ajax.Updater(div, url, {
-            asynchronous: true,
-            method: 'get',
-            evalScripts: false
-         });
-         return false;
-    }   
-</SCRIPT>
-
 <body>
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.title" /></h1>

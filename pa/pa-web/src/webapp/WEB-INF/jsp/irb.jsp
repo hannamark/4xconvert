@@ -5,21 +5,15 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="arms.main.title" /></title>
+<title><fmt:message key="irb.main.title" /></title>
 <s:head />
 <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet"
-    type="text/css" media="all" />
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet"
-    type="text/css" media="all" />
-<script type="text/javascript"
-    src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
-<script type="text/javascript"
-    src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript"
-    src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript"
-    src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <c:url value="/protected/popuplookuporgs.action" var="lookupUrl" />
 <script type="text/javascript">
 function irbSave(){
@@ -84,6 +78,9 @@ function changeName(){
     document.irbForm.action='irbfromPO.action?orgId='+orgid;
     document.irbForm.submit();
 }
+// do not remove these two callback methods!
+function setpersid(persid){}
+function setorgid(orgid){}
 function lookup(){
     if(document.getElementById('name').disabled!=true){
         showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
@@ -104,76 +101,80 @@ function loadDiv(orgid){
 <div class="box">
     <pa:sucessMessage />
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if> 
-    
-    <s:form name="irbForm">
-        <s:hidden name="selectedArmIdentifier"/>
-        <s:hidden name="boardChanged"/> 
-        <s:hidden name="candidateBoardList"/> 
     <h2>
         <fmt:message key="irb.details.title" />
     </h2>
-    <table class="form">
+    
+    <s:form name="irbForm">
+     <table class="form"><tr>
+        <s:hidden name="selectedArmIdentifier"/>
+        <s:hidden name="boardChanged"/> 
+        <s:hidden name="newOrgId"/>
+        <s:hidden name="newOrgName"/> 
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td class="label">Board Approval Status:<s:label cssClass="required" value="*"/></td>
             <s:set name="approvalStatusValues"
                 value="@gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode@getDisplayNames()" />
-            <td class="value"><s:select headerKey="" headerValue="--Select--" 
+            <td class="value" colspan="2"><s:select headerKey="" headerValue="--Select--" 
                 name="approvalStatus" list="#approvalStatusValues" 
                 onchange="statusChange()" onfocus="statusChange()"/></td>
         </tr>
         <tr>
             <td class="label">Site Related Approval:</td>
-            <td class="value"><s:radio name="siteRelated" list="siteRelatedList" disabled="true"
+            <td class="value" colspan="2"><s:radio name="siteRelated" list="siteRelatedList" disabled="true"
                 onchange="statusChange()" onfocus="statusChange()"/></td>
         </tr>
         <tr>
             <td class="label">Board Approval Number:</td>
-            <td class="value"><s:textfield name="approvalNumber" maxlength="30" size="30" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield name="approvalNumber" maxlength="30" size="30" cssStyle="width:200px;float:left"/></td>
         </tr>
         <tr>
              <td class="label">Board Name:</td>
-             <td class="value"><s:select headerKey="" headerValue="--Select--" 
-                id="name" name="ct.name" list="candidateBoardList" onchange="changeName()"/></td>
-             <td class="value">                     
-               <ul style="margin-top:-6px;">           
-                  <li style="padding-left:0"><a href="#" class="btn" onclick="lookup();"/>
-                      <span class="btn_img"><span class="search">Look Up</span></span>
-                  </a></li>
-               </ul>
+             <td class="value" style="width: 0">
+                <s:select cssStyle="width: 300px" headerKey="" headerValue="--Select--" 
+                          id="name" name="ct.name" list="candidateBoardList" onchange="changeName()"/>
+                <span class="info">Click <strong>Look Up</strong> to choose an organization.</span>
+             </td>
+             <td class="value">
+                <ul style="margin-top:-6px;">
+                    <li style="padding-left:0">
+                        <a href="#" class="btn" onclick="lookup();"><span class="btn_img"><span class="search">Look Up</span></span></a>
+                    </li>
+                </ul>
              </td>
         </tr>
         <tr>
             <td class="label">Board Contact Mailing Address:</td>
-            <td class="value"><s:textfield id="address" name="ct.address" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="address" name="ct.address" readonly="true" cssStyle="width:280px;float:left"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact City:</td>
-            <td class="value"><s:textfield id="city" name="ct.city" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="city" name="ct.city" readonly="true" cssStyle="width:140px;float:left"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact State/Province:</td>
-            <td class="value"><s:textfield id="state" name="ct.state" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="state" name="ct.state" readonly="true" cssStyle="width:100px;float:left"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact Zip/Postal Code:</td>
-            <td class="value"><s:textfield id="zip" name="ct.zip" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="zip" name="ct.zip" readonly="true" cssStyle="width:100px;float:left"/></td>
         </tr>
          <tr>
             <td class="label">Board Contact Country:</td>
-            <td class="value"><s:textfield id="country" name="ct.country" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="country" name="ct.country" readonly="true" cssStyle="width:100px;float:left"/></td>
         </tr>
         <tr>
             <td class="label">Board Contact Phone:</td>
-            <td class="value"><s:textfield id="phone" name="ct.phone" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="phone" name="ct.phone" readonly="true" cssStyle="width:100px;float:left"/></td>
         </tr>
         <tr>
             <td class="label">Board Contact Email Address:</td>
-            <td class="value"><s:textfield id="email" name="ct.email" readonly="true" cssStyle="width:280px;float:left"/></td>
+            <td class="value" colspan="2"><s:textfield id="email" name="ct.email" readonly="true" cssStyle="width:140px;float:left"/></td>
         </tr>
         <tr>
             <td class="label">Board Affiliation:</td>
-             <td class="value"><s:select headerKey="" headerValue="--Select--" name="contactAffiliation" 
+            <td class="value" colspan="2"><s:select  cssStyle="width: 300px" headerKey="" headerValue="--Select--" name="contactAffiliation" 
                     list="candidateAffiliationList"/></td>
         </tr>
     </table>

@@ -72,6 +72,8 @@ public class IrbAction extends ActionSupport implements Preparable {
     
     private String contactAffiliation;
     private String boardChanged;
+    private String newOrgId;
+    private String newOrgName;
 
     /**
      * @throws Exception exception
@@ -85,7 +87,6 @@ public class IrbAction extends ActionSupport implements Preparable {
             .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
         setSiteRelatedList();
-        setCandidateBoardList();
         setCandidateAffiliationList();
     }
 
@@ -157,6 +158,7 @@ public class IrbAction extends ActionSupport implements Preparable {
     public String save() throws Exception {
         businessRules();
         if (hasActionErrors()) {
+            setCandidateBoardList();
             return SUCCESS;
         }
         try {
@@ -168,6 +170,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
+            setCandidateBoardList();
             return SUCCESS;
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -269,6 +272,9 @@ public class IrbAction extends ActionSupport implements Preparable {
                 candidateBoardList.put(org.getIdentifier(), org.getName());
             }
         }
+        if (!PAUtil.isEmpty(newOrgId)) {
+            candidateBoardList.put(newOrgId, newOrgName);
+        }
     }
 
     private void setCandidateAffiliationList() throws Exception {
@@ -288,6 +294,7 @@ public class IrbAction extends ActionSupport implements Preparable {
     }
 
     private void loadForm() throws Exception {
+        setCandidateBoardList();
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
         Boolean b = BlConverter.covertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
         if (b == null || !b) {
@@ -333,9 +340,11 @@ public class IrbAction extends ActionSupport implements Preparable {
             throw new PAException("Error getting organization data from PO for id = " + poOrgId
                     + ".  Check that PO service is running and databases are synchronized.  ");
         }
-        getCandidateBoardList().put(poOrgId, EnOnConverter.convertEnOnToString(poOrg.getName()));
+        newOrgId = poOrgId;
+        newOrgName = EnOnConverter.convertEnOnToString(poOrg.getName());
+        setCandidateBoardList();
         ct = new ContactWebDTO();
-        ct.setName(poOrgId);
+        ct.setName(newOrgId);
         
         List<Adxp> adxpList = poOrg.getPostalAddress().getPart();
         for (Adxp adxp : adxpList) {
@@ -477,6 +486,34 @@ public class IrbAction extends ActionSupport implements Preparable {
      */
     public void setCt(ContactWebDTO ct) {
         this.ct = ct;
+    }
+
+    /**
+     * @return the newOrgId
+     */
+    public String getNewOrgId() {
+        return newOrgId;
+    }
+
+    /**
+     * @param newOrgId the newOrgId to set
+     */
+    public void setNewOrgId(String newOrgId) {
+        this.newOrgId = newOrgId;
+    }
+
+    /**
+     * @return the newOrgName
+     */
+    public String getNewOrgName() {
+        return newOrgName;
+    }
+
+    /**
+     * @param newOrgName the newOrgName to set
+     */
+    public void setNewOrgName(String newOrgName) {
+        this.newOrgName = newOrgName;
     }
 
 }
