@@ -154,6 +154,7 @@ public class SearchTrialAction extends ActionSupport {
             records = new ArrayList<StudyProtocolQueryDTO>();
             records = RegistryServiceLocator.getProtocolQueryService().
                               getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
+
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -180,7 +181,7 @@ public class SearchTrialAction extends ActionSupport {
             }
         }
         queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
-        queryCriteria.setClientName(criteria.getClientName());
+        queryCriteria.setMyTrialsOnly(new Boolean(criteria.getMyTrialsOnly()));
         queryCriteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
         // exclude rejected protocols during search
         queryCriteria.setExcludeRejectProtocol(new Boolean(true));        
