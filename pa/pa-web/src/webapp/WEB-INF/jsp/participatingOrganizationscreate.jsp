@@ -80,6 +80,7 @@
 	}	
 	
 	function loadPersDiv(persid, rolecode, func){
+		 
          if(func!="add"){
             input_box=confirm("Click OK to un-link the Investigator from the Study.  Cancel to Abort.");
             if (input_box!=true){
@@ -174,6 +175,9 @@
 	        evalScripts: false
 	     });
 	    return false;
+	}
+	
+	function setpersid(){
 	}
 
 </script>      
