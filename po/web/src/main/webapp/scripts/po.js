@@ -164,5 +164,5 @@ IdValue.prototype = {
   initialize: function(id, value) {
     this.id  = id;
     this.value = value;
-  },
+  }
 };
