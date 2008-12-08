@@ -1,20 +1,25 @@
 package gov.nih.nci.pa.iso.util;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 
  * @author Harsha
  */
 public class EnPnConverter {
+    private static final int EMAIL_IDX = 7; 
 
     /**
      * 
@@ -61,6 +66,16 @@ public class EnPnConverter {
                    personDTO.setMiddleName(part.getValue());
                }
            } 
+        }
+        //TelEmail
+        DSet<Tel> telList = poPerson.getTelecomAddress();
+        Set<Tel> set = telList.getItem();
+        Iterator iter = set.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next(); 
+            if (obj instanceof TelEmail) {
+                personDTO.setEmail(((TelEmail) obj).getValue().toString().substring(EMAIL_IDX));
+            }
         }
         return personDTO;
     }    
