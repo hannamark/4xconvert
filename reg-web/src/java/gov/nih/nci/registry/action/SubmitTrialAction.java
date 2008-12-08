@@ -275,6 +275,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
             ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
+            ServletActionContext.getRequest().getSession().removeAttribute("Sponsorselected");
             ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
             ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
         } catch (Exception e) {
@@ -1096,6 +1097,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         try {
             String orgId = ServletActionContext.getRequest().getParameter("orgId");
             String persId = ServletActionContext.getRequest().getParameter("persId");
+            OrganizationDTO sponsorselected = (OrganizationDTO) ServletActionContext.getRequest().getSession()
+            .getAttribute("PoSponsor");
+            if (sponsorselected != null) {
+                ServletActionContext.getRequest().getSession().setAttribute("Sponsorselected", sponsorselected);
+            }
+            
             OrganizationalContactDTO dto = new OrganizationalContactDTO();
 //            dto.setOrganizationIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
 //            dto.getOrganizationIdentifier().setRoot("UID.for.nci.entity.organization");
