@@ -23,6 +23,7 @@ public class PersonDTO {
     private String state;
     private String zip;
     private String country;
+    private String email;
     
     /**
      * 
@@ -170,6 +171,18 @@ public class PersonDTO {
      */
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
     }
     
     
