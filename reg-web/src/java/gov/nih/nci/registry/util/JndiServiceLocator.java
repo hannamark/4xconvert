@@ -20,6 +20,8 @@ import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -192,4 +194,24 @@ public class JndiServiceLocator implements ServiceLocator {
                 + "/po/OrganizationEntityServiceBean/remote";
         return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
+    
+    /**
+     * @throws PAException e
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */    
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+        + "/po/IdentifiedOrganizationCorrelationServiceBean/remote";
+        return (IdentifiedOrganizationCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);        
+    }
+
+    /**
+     * @throws PAException e
+     * @return IdentifiedPersonCorrelationServiceRemote
+     */    
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+        + "/po/IdentifiedPersonCorrelationServiceBean/remote";
+        return (IdentifiedPersonCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);        
+    }     
 }

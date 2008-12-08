@@ -17,6 +17,8 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -138,4 +140,15 @@ public interface ServiceLocator {
      * @throws PAException on error
      */
     OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService() throws PAException;
+    /**
+     * @throws PAException e
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */    
+    IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() throws PAException; 
+    
+    /**
+     * @throws PAException e
+     * @return IdentifiedPersonCorrelationServiceRemote
+     */    
+    IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException;     
 }

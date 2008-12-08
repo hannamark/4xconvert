@@ -16,11 +16,11 @@
               	<s:select  
                 name="orgSearchCriteria.orgCountry" 
                 list="countryList"  
-                listKey="alpha3" listValue="name" headerKey="" headerValue="--Select--" cssStyle="width:206px" />
+                listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
         </td>		
 	</tr>
 	<tr>  
- 		 <td scope="row" class="label">
+ 		<td scope="row" class="label">
             <label for="city"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
@@ -31,6 +31,17 @@
         </td>
  		<td>
  			<s:textfield name="orgSearchCriteria.orgZip" maxlength="75" size="20"/>
+		</td>
+	</tr>
+	<tr><td colspan="4"> <hr></td> </tr>
+	<tr>  
+ 		<td scope="row" class="label">
+            <label for="city">CTEP Identifier :</label>
+            
+        </td>
+ 		<td> 			
+ 			<s:textfield name="orgSearchCriteria.ctepId"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			
 		</td>
 	</tr>
 	</table>

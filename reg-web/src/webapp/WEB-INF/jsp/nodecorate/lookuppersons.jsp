@@ -18,8 +18,10 @@
 	}
 	function loadDiv() {
 		var firstName = document.forms[0].firstName.value;
-		var lastName = document.forms[0].lastName.value;      
-		var url = '/registry/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName;
+		var lastName = document.forms[0].lastName.value;
+		var email = document.forms[0].email.value;
+		var ctepid = document.forms[0].ctepId.value;   
+		var url = '/registry/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName+'&email='+email+'&ctepId='+ctepid;
 	    var div = document.getElementById('getPersons');   	   
 	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
 		ajaxCall(div, url);
@@ -51,7 +53,13 @@
 		var st = document.getElementById("poOrganizations_personDTO_state").value;
 		var zip = document.getElementById("poOrganizations_personDTO_zip").value;
 		var ct = document.getElementById("poOrganizations_personDTO_country").value;
-		var url = '/registry/protected/popupcreatePerson.action?firstName='+fname+'&lastName='+lname+'&preFix='+prefx+'&midName='+mname+'&streetAddr='+stadd+'&city='+city+'&state='+st+'&zip='+zip+'&country='+ct;
+		var email = document.getElementById("poOrganizations_personDTO_email").value;
+		var phone = document.getElementById("poOrganizations_personDTO_phone").value;
+		var url = document.getElementById("poOrganizations_personDTO_url").value;
+		var tty = document.getElementById("poOrganizations_personDTO_tty").value;
+		var fax = document.getElementById("poOrganizations_personDTO_fax").value;
+		var suffix = document.getElementById("poOrganizations_personDTO_suffix").value;
+		var url = '/registry/protected/popupcreatePerson.action?firstName='+fname+'&lastName='+lname+'&preFix='+prefx+'&midName='+mname+'&streetAddr='+stadd+'&city='+city+'&state='+st+'&zip='+zip+'&country='+ct+'&email='+email+'&phone='+phone+'&tty='+tty+'&fax='+fax+'&url='+url+'&suffix='+suffix;
 		var div = document.getElementById('getPersons');   	   
 		div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
 		ajaxCall(div, url);    

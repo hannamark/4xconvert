@@ -2,30 +2,33 @@
 <h2>Add Organization</h2>
 <table  class="form">  
    <tr> 	
- 		<td scope="row" class="label"><label for="createOrgName"> Organization Name :</label></td><td><s:textfield name="createOrg.name"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
- 		<td scope="row" class="label"><label for="createOrgAbr"> Organization Abbreviation :</label></td><td><s:textfield name="createOrg.abr"  maxlength="200" size="100"  cssStyle="width:200px" /></td> 		
- 		 		
-   </tr>
-   <tr>
- 		<td scope="row" class="label"><label for="createOrgStAddr">Street Address :</label></td><td><s:textfield name="createOrg.streetAddress"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
-   		<td scope="row" class="label"><label for="createOrgDlAddr">Delivery Address :</label></td><td><s:textfield name="createOrg.deliveryAddress"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="createOrgName"> Organization Name :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgName;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="createOrgStAddr">Street Address :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgStreetAddress"  maxlength="200" size="100"  cssStyle="width:200px" /></td>		
    </tr>
    <tr>        
- 		<td scope="row" class="label"><label for="createOrgCity">City :</label></td><td><s:textfield name="createOrg.city"  maxlength="200" size="100"  cssStyle="width:200px" /></td>        
- 		<td scope="row" class="label"><label for="createOrgState">State :</label></td><td><s:textfield name="createOrg.state"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="createOrgCity">City :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgCity;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>        
+ 		<td scope="row" class="label"><label for="createOrgState">State :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgState"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
    </tr>
    <tr>     
- 		<td scope="row" class="label"><label for="createOrgZip">Zip :</label></td><td><s:textfield name="createOrg.Zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
- 		<td scope="row" class="label"><label for="createOrgCountry">Country :</label></td><td>
+ 		<td scope="row" class="label"><label for="createOrgZip">Zip :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgZip;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="createOrgCountry">Country :</label><span class="required">*</span></td><td>
            	<s:select
-             name="createOrg.orgCountry" 
+             name="createOrg.orgCountry;" 
              list="countryList"  
              listKey="alpha3" listValue="name" headerKey="aaa" headerValue="--Select--" cssStyle="width:206px" />
         </td>		
 	</tr>
-	<tr><td scope="row" class="label"><label for="createOrgPhoneNumber">Phone Number :</label></td><td><s:textfield name="createOrg.phoneNumber"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
-		<td scope="row" class="label"><label for="createOrgEmailAddress">Email :</label></td><td><s:textfield name="createOrg.email"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+	<tr>
+		<td scope="row" class="label"><label for="createOrgEmailAddress">Email :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgEmail;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+		<td scope="row" class="label"><label for="createOrgPhoneNumber">Phone Number :</label></td><td><s:textfield name="createOrg.orgPhone"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
 	</tr>
+	<tr>
+		<td scope="row" class="label"><label for="createOrgurl">URL :</label></td><td><s:textfield name="createOrg.orgURL;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+		<td scope="row" class="label"><label for="createOrgTTY">TTY :</label></td><td><s:textfield name="createOrg.orgTTY;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+	</tr>
+	<tr>
+		<td scope="row" class="label"><label for="createOrgFax">Fax Number :</label></td><td><s:textfield name="createOrg.orgFax;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+	</tr>		
 </table>
  <div class="actionsrow">
  <del class="btnwrapper">

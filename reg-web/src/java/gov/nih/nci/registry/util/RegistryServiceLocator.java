@@ -17,6 +17,8 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -217,4 +219,22 @@ public final class RegistryServiceLocator {
     public static PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
         return getInstance().getServiceLocator().getPoPersonEntityService();
     }    
+    /**
+     * @throws PAException e
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */    
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() 
+        throws PAException {
+        return getInstance().getServiceLocator().getIdentifiedOrganizationEntityService();
+    }
+    
+    /**
+     * @throws PAException e
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */    
+    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() 
+        throws PAException {    
+        return getInstance().getServiceLocator().getIdentifiedPersonEntityService();
+    }
+         
 }

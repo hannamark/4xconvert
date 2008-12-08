@@ -10,6 +10,13 @@ public class OrgSearchCriteria {
     private String orgCountry;
     private String orgCity;
     private String orgZip;
+    private String orgEmail;
+    private String orgTTY;
+    private String orgFax;
+    private String orgPhone;
+    private String orgURL;
+    private String orgState;
+    private String orgStreetAddress;    
     /**
      * @return the orgName
      */
@@ -69,6 +76,90 @@ public class OrgSearchCriteria {
      */
     public void setOrgZip(String orgZip) {
         this.orgZip = orgZip;
+    }
+    /**
+     * @return the orgEmail
+     */
+    public String getOrgEmail() {
+        return orgEmail;
+    }
+    /**
+     * @param orgEmail the orgEmail to set
+     */
+    public void setOrgEmail(String orgEmail) {
+        this.orgEmail = orgEmail;
+    }
+    /**
+     * @return the orgTTY
+     */
+    public String getOrgTTY() {
+        return orgTTY;
+    }
+    /**
+     * @param orgTTY the orgTTY to set
+     */
+    public void setOrgTTY(String orgTTY) {
+        this.orgTTY = orgTTY;
+    }
+    /**
+     * @return the orgFax
+     */
+    public String getOrgFax() {
+        return orgFax;
+    }
+    /**
+     * @param orgFax the orgFax to set
+     */
+    public void setOrgFax(String orgFax) {
+        this.orgFax = orgFax;
+    }
+    /**
+     * @return the orgPhone
+     */
+    public String getOrgPhone() {
+        return orgPhone;
+    }
+    /**
+     * @param orgPhone the orgPhone to set
+     */
+    public void setOrgPhone(String orgPhone) {
+        this.orgPhone = orgPhone;
+    }
+    /**
+     * @return the orgURL
+     */
+    public String getOrgURL() {
+        return orgURL;
+    }
+    /**
+     * @param orgURL the orgURL to set
+     */
+    public void setOrgURL(String orgURL) {
+        this.orgURL = orgURL;
+    }
+    /**
+     * @return the orgState
+     */
+    public String getOrgState() {
+        return orgState;
+    }
+    /**
+     * @param orgState the orgState to set
+     */
+    public void setOrgState(String orgState) {
+        this.orgState = orgState;
+    }
+    /**
+     * @return the orgStreetAddress
+     */
+    public String getOrgStreetAddress() {
+        return orgStreetAddress;
+    }
+    /**
+     * @param orgStreetAddress the orgStreetAddress to set
+     */
+    public void setOrgStreetAddress(String orgStreetAddress) {
+        this.orgStreetAddress = orgStreetAddress;
     }
     
     

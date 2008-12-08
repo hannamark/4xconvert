@@ -3,20 +3,38 @@
 <table  class="form">  
    	<tr> 	
  		<td scope="row" class="label">
-            <label for="name">First Name:</label>
+            <label for="name">First Name :</label>
         </td>
  		<td>
  			<s:textfield name="firstName"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
-	</tr>
+	</tr>	
 	<tr>  
   		<td scope="row" class="label">
-            <label for="nciorgname"> Last Name:</label>
+            <label for="nciorgname"> Last Name :</label>
         </td>
  		<td> 			
  			<s:textfield name="lastName"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
 	</tr>
+	<tr>  
+  		<td scope="row" class="label">
+            <label for="nciorgname"> Email :</label>
+        </td>
+ 		<td> 			
+ 			<s:textfield name="email"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 		</td>
+	</tr>
+	<tr><td colspan="2"> <hr></td> </tr>
+		<tr>  
+  		<td scope="row" class="label">
+            <label for="nciorgname"> CTEP Identifier :</label>
+        </td>
+ 		<td> 			
+ 			<s:textfield name="ctepId"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 		</td>
+	</tr>
+	
 	</table>
 	<div class="actionsrow">
          <del class="btnwrapper">
