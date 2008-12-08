@@ -72,6 +72,8 @@ public class Constants {
     public static final String SUCCESS_MESSAGE = "successMessage";
     /** IndIde List . */
     public static final String INDIDE_LIST = "indIdeList";
+    /** Grant List . */
+    public static final String GRANT_LIST = "grantList";
     
     
 }
