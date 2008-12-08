@@ -26,7 +26,7 @@ function handleAction(){
 }
 
 function handleMyAction(){
-	document.forms[0].clientName.value="MyTrials";
+	document.forms[0].myTrialsOnly.value="true";
     document.forms[0].action="searchTrialquery.action";
     document.forms[0].submit(); 
 }
@@ -42,7 +42,7 @@ function handleMyAction(){
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">
     <s:form>
-    <input type="hidden" name="criteria.clientName" id="clientName" value="SearchTrial"/>
+    <input type="hidden" name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
         <table class="form">
         
         	<tr>
@@ -136,7 +136,7 @@ function handleMyAction(){
                </ul>
             </del>
          </div>
-        <p class="info">
+        <p align="center" class="info">
             Search My Trials: Search the trials I have submitted.
             <br>
             Search All Trials: Search all trials I have submitted as well as those registered by others.
