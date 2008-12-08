@@ -51,7 +51,8 @@
 			</s:else>
 			<h2><s:text name="researchOrganization"/> Role Information</h2>
 		    <div class="box_white">
-				<s:actionerror/> 
+				<s:actionerror/>
+                <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>

@@ -52,7 +52,8 @@
 				<h2><s:text name="identifiedPerson"/> Role Information</h2>
 			</s:else>
 		    <div class="box_white">
-				<s:actionerror/> 
+				<s:actionerror/>
+                <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="person"/>

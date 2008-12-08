@@ -29,7 +29,8 @@
 			</s:else>
 				<h2>Health Care Facility Role Information</h2>
 		    <div class="box_white">
-				<s:actionerror/> 
+				<s:actionerror />
+                <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm">
                 <s:if test="%{isCreate}">
                     The organization is not currently a health care facility.  Please select a status for the role and click 'Save' to add this role.

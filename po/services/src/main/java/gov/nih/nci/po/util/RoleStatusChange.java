@@ -99,7 +99,7 @@ import org.hibernate.validator.ValidatorClass;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RoleStatusChange {
     /**
-     * get the massage.
+     * get the message.
      */
-    String message() default "Player Organization already has a Health Care Facility";
+    String message() default "Role status not compatible with associated entity's status.";
 }
