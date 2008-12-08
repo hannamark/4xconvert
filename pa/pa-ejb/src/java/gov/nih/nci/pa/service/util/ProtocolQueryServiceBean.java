@@ -362,10 +362,47 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
                         getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
             } else {
-                // add the subquery to pick the latest record
-                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                + "                where dws.studyProtocol = dws1.studyProtocol )"
-                                + " or dws.id is null ) ");
+                // added for Registry Trial Search
+                if (studyProtocolQueryCriteria.getMyTrialsOnly() != null 
+                        && PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
+
+                    if (studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
+                            where.append(" and sp.userLastCreated = '").append(
+                                    studyProtocolQueryCriteria.getUserLastCreated() + "'");
+                            where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
+                            // add the subquery to pick the latest record
+                            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                            + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                            + " or dws.id is null ) ");
+                        
+                    } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {                        
+
+                            where.append(" and ((sp.userLastCreated = '").append(
+                                    studyProtocolQueryCriteria.getUserLastCreated() + "'");
+                            where.append(" and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
+                            // add the subquery to pick the latest record
+                            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                            + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                            + " or dws.id is null )) ");
+                            
+                            where.append(" or (sp.userLastCreated <> '").append(
+                                    studyProtocolQueryCriteria.getUserLastCreated() + "'");
+                            where.append(" and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "'," 
+                                    + "'" + DocumentWorkflowStatusCode.SUBMITTED + "')");
+                            // add the subquery to pick the latest record
+                            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                            + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                            + " or dws.id is null ))) ");
+
+                    }
+                    
+                } else {
+                    // add the subquery to pick the latest record
+                    where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                    + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                    + " or dws.id is null ) ");
+                }
+                
            }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
                 where
@@ -381,20 +418,15 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
                 where.append(" and per.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId());
            }
-           if  (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
-               where.append(" and sp.userLastCreated = '").append(
-                       studyProtocolQueryCriteria.getUserLastCreated() + "'");
-           }
-           if (studyProtocolQueryCriteria.getExcludeRejectProtocol() != null 
-                   && studyProtocolQueryCriteria.getExcludeRejectProtocol()) {
-               where.append(" and dws.statusCode  <>   '" + DocumentWorkflowStatusCode.REJECTED + "'");
-           }
+
            
            where.append(" and sps.functionalCode ='"
                    + StudyParticipationFunctionalCode.LEAD_ORAGANIZATION + "'");
 
            where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+           
+
            
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
