@@ -308,7 +308,10 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             protocolDTO = new InterventionalStudyProtocolDTO();
         }
         protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(protocolWebDTO.getTrialPhase())));
-        protocolDTO.setPhaseOtherText(StConverter.convertToSt(protocolWebDTO.getOtherPhaseText()));
+        if (PAUtil.isNotEmpty(protocolWebDTO.getOtherPhaseText())) {
+            protocolDTO.setPhaseOtherText(
+                    StConverter.convertToSt(protocolWebDTO.getOtherPhaseText()));
+        }
         protocolDTO.setOfficialTitle(StConverter.convertToSt(protocolWebDTO.getTrialTitle()));
         protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(protocolWebDTO.getStartDate())));
         protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(protocolWebDTO
@@ -319,7 +322,10 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 .getByCode(protocolWebDTO.getCompletionDateType())));
         protocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(
                 PrimaryPurposeCode.getByCode(protocolWebDTO.getTrialPurpose())));
-        protocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(protocolWebDTO.getOtherPurposeText()));
+        if (PAUtil.isNotEmpty(protocolWebDTO.getOtherPurposeText())) {
+            protocolDTO.setPrimaryPurposeOtherText(
+                    StConverter.convertToSt(protocolWebDTO.getOtherPurposeText()));
+        }
         return protocolDTO;
     }
 
