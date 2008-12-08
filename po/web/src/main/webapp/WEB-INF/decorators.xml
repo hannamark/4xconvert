@@ -11,6 +11,7 @@
         <pattern>/*/ajax/*</pattern>
         <pattern>*/contactable/*</pattern>
         <pattern>*/mailable/*</pattern>
+        <pattern>/login/login.action*</pattern>
     </excludes>
     
     <decorator name="popup" page="popup.jsp">
