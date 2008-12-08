@@ -270,8 +270,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     // trial
                     // identifier
                     );
-            ServletActionContext.getRequest().getSession().removeAttribute("INDIDE_LIST");
-            ServletActionContext.getRequest().getSession().removeAttribute("GRANT_LIST");
+            ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
+            ServletActionContext.getRequest().getSession().removeAttribute("grantList");
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
             ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
             ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
@@ -397,7 +397,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private void createStudyResources(Ii studyProtocolIi) {
         try {
             ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
-                    .getAttribute("GRANT_LIST");
+                    .getAttribute(Constants.GRANT_LIST);
             if (sessionList == null) {
                 return;
             }
@@ -953,12 +953,13 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, ideInd);
         ArrayList<GrantHolder> sessionList2 = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "GRANT_LIST");
+                Constants.GRANT_LIST);
         if (sessionList2 != null && sessionList2.size() > 0) {
             for (int i = 0; i < sessionList2.size(); i++) {
                 grants.add(sessionList2.get(i));
             }
         }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, grants);
     }
 
     /**
@@ -1046,17 +1047,17 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         grantHolder.setNciDivisionProgramCode(nciDivisionProgramCode);
         grantHolder.setRowId(UUID.randomUUID().toString());
         ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "GRANT_LIST");
+                Constants.GRANT_LIST);
         if (sessionList != null) {
             for (int i = 0; i < sessionList.size(); i++) {
                 grants.add(sessionList.get(i));
             }
             grants.add(grantHolder);
             sessionList.add(grantHolder);
-            ServletActionContext.getRequest().getSession().setAttribute("GRANT_LIST", sessionList);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, sessionList);
         } else {
             grants.add(grantHolder);
-            ServletActionContext.getRequest().getSession().setAttribute("GRANT_LIST", grants);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, grants);
         }
         // ideIndList.setList(ideInd);
         return SUCCESS;
@@ -1081,6 +1082,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         for (int i = 0; i < sessionList.size(); i++) {
             grants.add(sessionList.get(i));
         }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, grants);
         // ideIndList.setList(ideInd);
         return "display_grants";
     }
