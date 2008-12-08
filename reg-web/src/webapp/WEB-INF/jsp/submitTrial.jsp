@@ -232,7 +232,7 @@ function toggledisplay2 (it) {
                     <br><span class="info">(Required if Phase equals &#39;Other&#39;)</span>
                 </td>
                 <td>
-                    <s:textfield name="protocolWebDTO.otherPhaseText"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textarea name="protocolWebDTO.otherPhaseText"  cols="50" rows="2" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.otherPhaseText</s:param>
@@ -274,7 +274,7 @@ function toggledisplay2 (it) {
                     <br><span class="info">(Required if Purpose equals &#39;Other&#39;)</span>
                 </td>
                 <td>
-                    <s:textfield name="protocolWebDTO.otherPurposeText"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textarea name="protocolWebDTO.otherPurposeText"  cols="50" rows="2" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>protocolWebDTO.otherPurposeText</s:param>
