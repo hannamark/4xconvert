@@ -9,14 +9,14 @@
 	        ${cr.id} 
 	        </po:field>
             
-	        <po:copyButton id="copy_curateOrgForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateOrgForm.organization.statusCode');"
+	        <po:copyButton id="copy_curateEntityForm_organization_statusCode" onclick="selectValueInSelectField('${cr.statusCode}', 'curateEntityForm.organization.statusCode');"
 	            bodyStyle="float:left;" buttonStyle="float:right;">
 	            <po:field labelKey="organization.statusCode">
 		            ${cr.statusCode}
 	            </po:field>
 	        </po:copyButton>
             
-            <po:copyButton id="copy_curateOrgForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateOrgForm_organization_name');" 
+            <po:copyButton id="copy_curateEntityForm_organization_name" onclick="copyValueToTextField('${cr.name}', 'curateEntityForm_organization_name');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield name="cr.name" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
             </po:copyButton>
@@ -29,16 +29,16 @@
         <div class="box_white">
             <script type="text/javascript">
             function copyPostalAddressField() {
-            	selectValueInSelectField('${cr.postalAddress.country.id}', 'curateOrgForm.organization.postalAddress.country');
-            	copyValueToTextField('${cr.postalAddress.streetAddressLine}', 'curateOrgForm_organization_postalAddress_streetAddressLine');
-            	copyValueToTextField('${cr.postalAddress.deliveryAddressLine}', 'curateOrgForm_organization_postalAddress_deliveryAddressLine');
-            	copyValueToTextField('${cr.postalAddress.cityOrMunicipality}', 'curateOrgForm_organization_postalAddress_cityOrMunicipality');
-            	copyValueToTextField('${cr.postalAddress.postalCode}', 'curateOrgForm_organization_postalAddress_postalCode');
-            	copyValueToTextField('${cr.postalAddress.stateOrProvince}', 'curateOrgForm.organization.postalAddress.stateOrProvince');
-            	selectValueInSelectField('${cr.postalAddress.stateOrProvince}', 'curateOrgForm.organization.postalAddress._selectStateOrProvince');
+            	selectValueInSelectField('${cr.postalAddress.country.id}', 'curateEntityForm.organization.postalAddress.country');
+            	copyValueToTextField('${cr.postalAddress.streetAddressLine}', 'curateEntityForm_organization_postalAddress_streetAddressLine');
+            	copyValueToTextField('${cr.postalAddress.deliveryAddressLine}', 'curateEntityForm_organization_postalAddress_deliveryAddressLine');
+            	copyValueToTextField('${cr.postalAddress.cityOrMunicipality}', 'curateEntityForm_organization_postalAddress_cityOrMunicipality');
+            	copyValueToTextField('${cr.postalAddress.postalCode}', 'curateEntityForm_organization_postalAddress_postalCode');
+            	copyValueToTextField('${cr.postalAddress.stateOrProvince}', 'curateEntityForm.organization.postalAddress.stateOrProvince');
+            	selectValueInSelectField('${cr.postalAddress.stateOrProvince}', 'curateEntityForm.organization.postalAddress._selectStateOrProvince');
             }
             </script>
-            <po:copyButton id="copy_curateOrgForm_organization_postalAddress" onclick="copyPostalAddressField();" bodyStyle="clear:left;float:left;" buttonStyle="float:right;">
+            <po:copyButton id="copy_curateEntityForm_organization_postalAddress" onclick="copyPostalAddressField();" bodyStyle="clear:left;float:left;" buttonStyle="float:right;">
 	            <po:addressForm formNameBase="curateOrgCrForm" addressKeyBase="cr.postalAddress" address="${cr.postalAddress}" required="false"/>
             </po:copyButton>
             <div class="clear"></div>

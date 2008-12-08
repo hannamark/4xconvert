@@ -14,17 +14,7 @@
 	       <title><s:text name="person.details.title"/></title>
 	    </c:if>
     </s:else>
-    <script type="text/javascript">
-    function handleDuplicateOf() {
-    	$('duplicateOfDiv')[$('curatePersonForm.person.statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
-            	
-    	if ($('curatePersonForm.person.statusCode').value != 'NULLIFIED') {
-    		$('curatePersonForm.person.duplicateOf.id').value = '';
-    		$('wwctrl_curatePersonForm_person_duplicateOf_id').innerHTML = '';
-    	}
-    	return true;
-    }
-    </script>
+    <%@include file="../confirmThenSubmit.jsp" %>    
 </head>
 <body>
 
@@ -41,7 +31,7 @@
 	       name="cr"
 	       list="selectChangeRequests"
 	       value="cr.id"
-	       onchange="document.getElementById('curatePersonForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
+	       onchange="document.getElementById('curateEntityForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
 	       />
 	</s:form>
 	</c:if> 
@@ -59,7 +49,7 @@
 	<s:else>
 	   <s:set name="formAction" value="'person/curate/curate.action'"/>
 	</s:else>
-	<s:form action="%{formAction}" id="curatePersonForm" onsubmit="return confirmThenSubmit(document.forms.curatePersonForm);">
+	<s:form action="%{formAction}" id="curateEntityForm" onsubmit="return confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm);">
 	    <input id="enableEnterSubmit" type="submit"/>
 		<s:hidden key="rootKey"/>
 	    <s:hidden key="cr.id"/>
@@ -78,7 +68,7 @@
 	               value="person.statusCode" 
 	               headerKey="" headerValue="--Select a Status--" 
 	               required="true" cssClass="required" 
-	               id="curatePersonForm.person.statusCode"/>		        
+	               id="curateEntityForm.person.statusCode"/>		        
 	        </s:if>
 	        <s:else>
 		        <po:inputRow>
@@ -96,9 +86,26 @@
 			       headerKey="" headerValue="--Select a Status--" 
 			       onchange="handleDuplicateOf();"
 			       required="true" cssClass="required" 
-			       id="curatePersonForm.person.statusCode"/>         
+			       id="curateEntityForm.person.statusCode"/>         
         	    <div id="duplicateOfDiv" <s:if test="person.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
-	                <div class="wwgrp" id="wwgrp_curatePersonForm_person_duplicateOf_id">
+				    <script type="text/javascript">
+					    function handleDuplicateOf() {
+					        $('duplicateOfDiv')[$('curateEntityForm.person.statusCode').value == 'NULLIFIED' ? 'show' : 'hide'](); 
+					                
+					        if ($('curateEntityForm.person.statusCode').value != 'NULLIFIED') {
+					            $('curateEntityForm.person.duplicateOf.id').value = '';
+					            $('wwctrl_curateEntityForm_person_duplicateOf_id').innerHTML = '';
+					        }
+					        return true;
+					    }
+				    </script>
+				    <script type="text/javascript">
+				        function showPopWinCallback(returnVal) {
+				            $('curateEntityForm.person.duplicateOf.id').value = returnVal.id;
+				            $('wwctrl_curateEntityForm_person_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
+				        }
+				    </script>        	    
+	                <div class="wwgrp" id="wwgrp_curateEntityForm_person_duplicateOf_id">
 	                    <div style="float:right;">
 	                        <c:url value="/protected/selector/person/start.action" var="duplicatesUrl">
 	                            <c:param name="source.id" value="${person.id}"/>
@@ -108,18 +115,18 @@
 	                        </po:buttonRow>
                         </div>
                         
-	                    <div class="wwlbl" id="wwlbl_curatePersonForm_person_duplicateOf_id">
-		                    <label class="label" for="curatePersonForm_person_duplicateOf_id">        
+	                    <div class="wwlbl" id="wwlbl_curateEntityForm_person_duplicateOf_id">
+		                    <label class="label" for="curateEntityForm_person_duplicateOf_id">        
 		                    <s:text name="person.duplicateOf.id"/>:
 		                    </label>
 	                    </div>
 	                    <br/>
-	                    <div class="wwctrl" id="wwctrl_curatePersonForm_person_duplicateOf_id">
+	                    <div class="wwctrl" id="wwctrl_curateEntityForm_person_duplicateOf_id">
 	                       ${person.duplicateOf.id} 
 	                    </div>
 	                    
 	                </div>
-				    <s:hidden key="person.duplicateOf" id="curatePersonForm.person.duplicateOf.id"/>
+				    <s:hidden key="person.duplicateOf" id="curateEntityForm.person.duplicateOf.id"/>
 			    </div>
 	        </s:else>
 				<s:textfield key="person.prefix" size="10"/>
@@ -134,7 +141,7 @@
 		<div class="boxouter">
 		<h2>Address Information</h2>
 		    <div class="box_white">
-		        <po:addressForm formNameBase="curatePersonForm" addressKeyBase="person.postalAddress" address="${person.postalAddress}" required="true"/>
+		        <po:addressForm formNameBase="curateEntityForm" addressKeyBase="person.postalAddress" address="${person.postalAddress}" required="true"/>
 		        <div class="clear"></div>
 		    </div>
 		</div>
@@ -185,36 +192,11 @@
 </div>
 </c:if>
 
-<div style="clear:left;">
-</div>
-
-
+<div style="clear:left;"></div>
 
 <div class="btnwrapper" style="margin-bottom:20px;">
-	<script type="text/javascript">
-		function showPopWinCallback(returnVal) {
-			$('curatePersonForm.person.duplicateOf.id').value = returnVal.id;
-			$('wwctrl_curatePersonForm_person_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
-		}
-	</script>
-    <script type="text/javascript">
-       function confirmThenSubmit(formId) {
-           if ($('curatePersonForm.person.statusCode').value == 'NULLIFIED') {
-               var r = confirm('<s:text name="curation.nullified.confirmation"/>');
-               if (r == true) {
-                   $(formId).submit();
-                   return true;
-               } else {
-                   return false;
-               }
-           } else {
-               $(formId).submit();
-               return true;
-           }
-       } 
-    </script>	
     <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit(document.forms.curatePersonForm);" style="save" text="Save"/>
+        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm);" style="save" text="Save"/>
     </po:buttonRow>
 </div>
 

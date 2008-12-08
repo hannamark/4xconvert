@@ -2,13 +2,7 @@
 <html>
 <head>
     <title><fmt:message key="organization.search.title"/></title>
-    <script type="text/javascript">
-        var returnVal;
-	    function markAsDuplicate(id) {
-    		 returnVal = id;
-             window.top.hidePopWin(true);
-	    }
-	</script>
+    <%@include file="../selectAndClose.jsp" %>
 </head>
 <body> 
 <div id="findDuplicates">

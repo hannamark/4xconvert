@@ -8,28 +8,28 @@ public class CreatePersonTest extends AbstractPoWebTest {
         loginAsCurator();
 
         openCreatePerson();
-        assertEquals("PENDING", selenium.getSelectedValue("curatePersonForm.person.statusCode"));
-        assertEquals("PENDING", selenium.getSelectedLabel("curatePersonForm.person.statusCode"));
+        assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
+        assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
         clickAndWaitSaveButton();
-        assertEquals("PENDING", selenium.getSelectedValue("curatePersonForm.person.statusCode"));
-        assertEquals("PENDING", selenium.getSelectedLabel("curatePersonForm.person.statusCode"));
+        assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
+        assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
         verifyDefaultFieldErrorsMessages();
         
-        selenium.select("curatePersonForm.person.statusCode", "label=--Select a Status--");
+        selenium.select("curateEntityForm.person.statusCode", "label=--Select a Status--");
         clickAndWaitSaveButton();
-        assertEquals("", selenium.getSelectedValue("curatePersonForm.person.statusCode"));
-        assertEquals("--Select a Status--", selenium.getSelectedLabel("curatePersonForm.person.statusCode"));
-        assertEquals("Status must be set", selenium.getText("//div[@id='wwerr_curatePersonForm.person.statusCode']/div"));
+        assertEquals("", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
+        assertEquals("--Select a Status--", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
+        assertEquals("Status must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.person.statusCode']/div"));
         verifyDefaultFieldErrorsMessages();
     }
 
     private void verifyDefaultFieldErrorsMessages() {
-        assertEquals("First Name must be set", selenium.getText("//div[@id='wwerr_curatePersonForm_person_firstName']/div"));
-        assertEquals("Last Name must be set", selenium.getText("//div[@id='wwerr_curatePersonForm_person_lastName']/div"));
-        assertEquals("Street Address must be set", selenium.getText("//div[@id='wwerr_curatePersonForm_person_postalAddress_streetAddressLine']/div"));
-        assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curatePersonForm_person_postalAddress_cityOrMunicipality']/div"));
-        assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curatePersonForm_person_postalAddress_postalCode']/div"));
-        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curatePersonForm.person.postalAddress.country']/div"));
+        assertEquals("First Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_firstName']/div"));
+        assertEquals("Last Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_lastName']/div"));
+        assertEquals("Street Address must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_streetAddressLine']/div"));
+        assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_cityOrMunicipality']/div"));
+        assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_postalCode']/div"));
+        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.person.postalAddress.country']/div"));
         assertTrue(selenium.isTextPresent("At least one Email Address must be set"));
     }
 }

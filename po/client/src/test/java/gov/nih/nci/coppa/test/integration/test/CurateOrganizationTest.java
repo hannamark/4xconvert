@@ -55,7 +55,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         // click on item to curate
         clickAndWaitButton("org_id_" + id.getExtension());
-        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
         verifyPostalAddress();
 
@@ -97,7 +97,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         // click on item to curate
         clickAndWaitButton("org_id_" + id.getExtension());
-        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
         verifyPostalAddress();
 
@@ -137,7 +137,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         Ii dupId = createNewOrgThenCurateAsActive();
         Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
 
-        selenium.select("curateOrgForm.organization.statusCode", "label=NULLIFIED");
+        selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         /* wait for in-browser js to execute via select's onchange event */
         Thread.sleep(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
@@ -187,7 +187,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
-        assertEquals(name, selenium.getValue("curateOrgForm_organization_name"));
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
         verifyPostalAddress();
 
@@ -229,21 +229,21 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private void saveAsActive(Ii id) {
-        selenium.select("curateOrgForm.organization.statusCode", "label=ACTIVE");
+        selenium.select("curateEntityForm.organization.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void saveAsInactive(Ii id) {
-        selenium.select("curateOrgForm.organization.statusCode", "label=INACTIVE");
+        selenium.select("curateEntityForm.organization.statusCode", "label=INACTIVE");
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
 
     private void saveAsNullified(Ii id) {
-        selenium.select("curateOrgForm.organization.statusCode", "label=NULLIFIED");
+        selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
@@ -251,11 +251,11 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private void verifyPostalAddress() {
-        assertEquals("123 abc ave.", selenium.getValue("curateOrgForm_organization_postalAddress_streetAddressLine"));
-        assertEquals("", selenium.getValue("curateOrgForm_organization_postalAddress_deliveryAddressLine"));
-        assertEquals("mycity", selenium.getValue("curateOrgForm_organization_postalAddress_cityOrMunicipality"));
-        assertEquals("", selenium.getValue("curateOrgForm.organization.postalAddress.stateOrProvince"));
-        assertEquals("12345", selenium.getValue("curateOrgForm_organization_postalAddress_postalCode"));
+        assertEquals("123 abc ave.", selenium.getValue("curateEntityForm_organization_postalAddress_streetAddressLine"));
+        assertEquals("", selenium.getValue("curateEntityForm_organization_postalAddress_deliveryAddressLine"));
+        assertEquals("mycity", selenium.getValue("curateEntityForm_organization_postalAddress_cityOrMunicipality"));
+        assertEquals("", selenium.getValue("curateEntityForm.organization.postalAddress.stateOrProvince"));
+        assertEquals("12345", selenium.getValue("curateEntityForm_organization_postalAddress_postalCode"));
     }
 
     private void verifyEmail() {
