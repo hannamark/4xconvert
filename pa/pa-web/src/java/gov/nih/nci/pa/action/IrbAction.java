@@ -48,7 +48,8 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.CyclomaticComplexity"
+        , "PMD.NPathComplexity", "PMD.TooManyFields" })
 public class IrbAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1230909090L;
 
