@@ -29,7 +29,7 @@
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
                 </ul>
 			</s:if>
-			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
+			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Accepted'}">
     			<li><div>Administrative Data</div>
     				<ul>
                         <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
@@ -84,12 +84,13 @@
                         <li><a href="subGroupsquery.action" >Sub-groups</a></li>
     				</ul>
     			</li>
-            </s:if>
 			<li><div>Completion</div>
 				<ul>
 					<li><a href="abstractionCompletionquery.action" >Abstraction Completion</a></li>
 				</ul>
 			</li>	
+            </s:if>
+
 		</ul>					
 	</li>
 </c:if>

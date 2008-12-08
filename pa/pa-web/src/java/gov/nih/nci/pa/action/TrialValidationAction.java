@@ -9,11 +9,14 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -26,6 +29,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -33,6 +37,7 @@ import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.SearchPersonResultDisplay;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -41,7 +46,9 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,12 +57,13 @@ import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.ActionSupport;
       
 /**
-* @author Hong Gao
+* @author Naveen AMiruddin
 *
 */
 @SuppressWarnings("PMD")
 public class TrialValidationAction extends ActionSupport {
 
+    private static final String EDIT = "edit";    
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     private OrganizationDTO selectedLeadOrg = null;
     private PersonDTO selectedLeadPrincipalInvestigator = null;
@@ -90,7 +98,7 @@ public class TrialValidationAction extends ActionSupport {
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } 
-        return "edit";
+        return EDIT;
     }
 
     /**
@@ -98,6 +106,53 @@ public class TrialValidationAction extends ActionSupport {
      * @return String
      */
     public String update() {
+        save();    
+        return EDIT;
+    }
+    /**
+     * 
+     * @return String
+     */
+    public String accept() {
+        save();    
+        createDocumentWfStatus(DocumentWorkflowStatusCode.ACCEPTED);
+        return EDIT;
+    }
+    
+    /**
+     * 
+     * @return String
+     */
+    public String reject() {
+        save();    
+        createDocumentWfStatus(DocumentWorkflowStatusCode.REJECTED);
+        return EDIT;
+    }
+    private void createDocumentWfStatus(DocumentWorkflowStatusCode dws) {
+        try {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+            getAttribute(Constants.STUDY_PROTOCOL_II);
+            
+            DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
+            dwsDto.setStatusCode(CdConverter.convertToCd(dws));
+            dwsDto.setStatusDateRange(TsConverter.convertToTs(
+                              new Timestamp(new Date().getTime())));
+            dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
+            PaRegistry.getDocumentWorkflowStatusService().create(dwsDto);
+
+            StudyProtocolQueryDTO  studyProtocolQueryDTO = 
+                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                        Long.valueOf(studyProtocolIi.getExtension()));
+            // put an entry in the session and store StudyProtocolQueryDTO 
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        
+    }
+    private void save() {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -111,6 +166,17 @@ public class TrialValidationAction extends ActionSupport {
             updateStudyContact(studyProtocolIi);
             removeSponsorContact(studyProtocolIi);
             createSponorContact(studyProtocolIi);
+
+            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
+                    studyProtocolIi);
+            if (summary4ResoureDTO == null) {
+                PaRegistry.getStudyResourcingService().
+                    createStudyResourcing(createSummaryFour(new StudyResourcingDTO() , studyProtocolIi));   
+            } else {
+                PaRegistry.getStudyResourcingService().updateStudyResourcing(
+                        createSummaryFour(summary4ResoureDTO , studyProtocolIi));
+            }
+
             ServletActionContext.getRequest().setAttribute(
                     Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
             StudyProtocolQueryDTO  studyProtocolQueryDTO = 
@@ -119,12 +185,66 @@ public class TrialValidationAction extends ActionSupport {
             // put an entry in the session and store StudyProtocolQueryDTO 
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+
             
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
-        return "edit";
+        
+    }
+    private StudyResourcingDTO createSummaryFour(StudyResourcingDTO summary4ResoureDTO , Ii studyProtocolIi) 
+    throws PAException {
+        
+        String poIdentifer = gtdDTO.getSummaryFourOrgIdentifier();
+        CorrelationUtils cUtils = new CorrelationUtils();
+        Long orgId = null;
+        if (PAUtil.isNotEmpty(poIdentifer)) {
+            Organization org = cUtils.getPAOrganizationByIndetifers(null, poIdentifer);
+            if (org == null) {
+                OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
+                OrganizationDTO oDto;
+                try {
+                    oDto = PaRegistry.getPoOrganizationEntityService().getOrganization(
+                            IiConverter.converToPoOrganizationIi(poIdentifer));
+                } catch (NullifiedEntityException e) {
+                    throw new PAException(e);
+                } 
+                orgId = ocsb.createPAOrganizationUsingPO(oDto).getId();
+            } else {
+                // get the org from the database
+                orgId = org.getId();
+            }
+            
+        }
+        
+        summary4ResoureDTO.setStudyProtocolIi(studyProtocolIi);
+        summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourFundingCategoryCode())) {
+            summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
+                    .getByCode(gtdDTO.getSummaryFourFundingCategoryCode())));
+        } else {
+            summary4ResoureDTO.setTypeCode(null);
+        }
+        summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
+        return summary4ResoureDTO; 
+    }
+
+    private void copySummaryFour(StudyResourcingDTO srDTO) throws  PAException {
+        if (srDTO == null) {
+            return;
+        }
+        if (srDTO.getTypeCode() != null) {
+            gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+        }
+
+        if (srDTO.getOrganizationIdentifier() != null) {   
+            CorrelationUtils cUtils = new CorrelationUtils();
+            Organization o = cUtils.getPAOrganizationByIndetifers(
+                            Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
+            gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
+            gtdDTO.setSummaryFourOrgName(o.getName());
+        }
     }
     
     private void copy(StudyProtocolDTO spDTO) {        
@@ -145,19 +265,6 @@ public class TrialValidationAction extends ActionSupport {
     private void copyPI(Person p) {
         gtdDTO.setPiIdentifier(p.getIdentifier());
         gtdDTO.setPiName(p.getFullName());
-    }
-    private void copySummaryFour(StudyResourcingDTO srDTO) throws  PAException {
-        if (srDTO == null) {
-            return;
-        }
-        CorrelationUtils cUtils = new CorrelationUtils();
-        Organization o = cUtils.getPAOrganizationByIndetifers(
-                        Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
-        gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
-        gtdDTO.setSummaryFourOrgName(o.getName());
-        if (srDTO.getTypeCode() != null) {
-            gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
-        }
     }
 
     private void copyResponsibleParty(Ii studyProtocolIi) throws PAException {

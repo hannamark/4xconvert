@@ -7,6 +7,7 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.util.Date;
 /**
@@ -29,6 +30,7 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         dwsDTO.setCommonText(StConverter.convertToSt(dws.getCommonText()));
         dwsDTO.setStatusCode(CdConverter.convertToCd(dws.getStatusCode()));
         dwsDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dws.getStudyProtocol().getId()));
+        dwsDTO.setStatusDateRange(TsConverter.convertToTs(dws.getStatusDateRangeLow()));
         return dwsDTO;
     }
 
@@ -50,6 +52,9 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         }
         if (dwsDTO.getStatusCode() != null) {
             dws.setStatusCode(DocumentWorkflowStatusCode.getByCode(dwsDTO.getStatusCode().getCode()));
+        }
+        if (dwsDTO.getStatusDateRange() != null) {
+            dws.setStatusDateRangeLow(TsConverter.convertToTimestamp(dwsDTO.getStatusDateRange()));
         }
         return dws;
     }

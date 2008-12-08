@@ -20,6 +20,19 @@
  <script type="text/javascript"> 
     var orgid;
     var persid;
+    function handleAction(){
+        document.forms[0].action="trialValidationupdate.action";
+        document.forms[0].submit(); 
+    }    
+    function handleActionAccept(){
+        document.forms[0].action="trialValidationaccept.action";
+        document.forms[0].submit(); 
+    }    
+    function handleActionReject(){
+        document.forms[0].action="trialValidationreject.action";
+        document.forms[0].submit(); 
+    }    
+
     function setorgid(orgIdentifier){
         orgid = orgIdentifier;
     }
@@ -30,10 +43,6 @@
         BubbleTips.activateTipOn("acronym");
         BubbleTips.activateTipOn("dfn"); 
     }
-    function handleAction(){
-        document.forms[0].action="trialValidationupdate.action";
-        document.forms[0].submit(); 
-    }    
     function lookup4loadleadorg(){
         showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
     }
@@ -99,7 +108,7 @@
    <pa:failureMessage/>
     <s:form >
     <s:actionerror/> 
-     <h2>Trial Details1</h2>
+     <h2>Trial Details</h2>
     <table class="form">
     <tr>
         <td scope="row" class="label">
@@ -296,6 +305,8 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                    <li><a href="#" class="btn" onclick="handleActionAccept();"><span class="btn_img"><span class="save">Accept</span></span></a></li>
+                    <li><a href="#" class="btn" onclick="handleActionReject();"><span class="btn_img"><span class="save">Reject</span></span></a></li>
                 </ul>   
             </del>
 

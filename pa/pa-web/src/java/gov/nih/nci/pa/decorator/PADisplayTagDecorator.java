@@ -52,6 +52,8 @@ public class PADisplayTagDecorator extends TableDecorator {
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
         if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED)) {
             return "Validate";
+        } else if (dwfs.equals(DocumentWorkflowStatusCode.REJECTED)) {
+            return "";
         } else  {
             return "Abstract";
         }
