@@ -128,3 +128,33 @@ function selectValueInSelectField(value, selectBoxId, firefoxEvent, ieEvent) {
     	alert('' + value + ' not found!');
     }
 }
+
+function selectValuesInMultiSelectField(values, multiSelectBoxId, firefoxEvent, ieEvent) {
+	var found = false;
+	var value;
+	var isFireEvent = false;
+	for (var j = 0; j <= values.length -1; j = j + 1) {
+		value = values[j];
+	    for ( var i = 0; i <= $(multiSelectBoxId).length - 1; i = i + 1) {
+	    	var option = $(multiSelectBoxId).options[i];
+			var selectBoxValue = option.value;
+			if (selectBoxValue == value) {
+				if (!option.selected) {
+					isFireEvent = true;
+				}
+				option.selected = true;
+				found = true;
+				break;
+			}
+		}
+	}
+	if (isFireEvent) {
+		if (firefoxEvent == null) {
+			firefoxEvent = 'change';
+		}
+		if (ieEvent == null) {
+			ieEvent = 'onchange';
+		}
+		fireEvent($(multiSelectBoxId), firefoxEvent, ieEvent);
+	}
+}
