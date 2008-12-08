@@ -144,7 +144,8 @@ public class RoleStatusChangeValidator
         switch (entityStatus) {
             case INACTIVE:
                 return roleStatus == RoleStatus.SUSPENDED
-                    || roleStatus == RoleStatus.NULLIFIED;
+                    || roleStatus == RoleStatus.NULLIFIED
+                    || roleStatus == RoleStatus.PENDING;
             case NULLIFIED:
                 return roleStatus == RoleStatus.NULLIFIED;
             case PENDING:

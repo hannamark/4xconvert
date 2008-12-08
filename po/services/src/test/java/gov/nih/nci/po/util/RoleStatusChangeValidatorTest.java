@@ -53,7 +53,7 @@ public class RoleStatusChangeValidatorTest {
         values.get(EntityStatus.NULLIFIED).put(RoleStatus.SUSPENDED, false);
         values.get(EntityStatus.NULLIFIED).put(RoleStatus.NULLIFIED, true);
 
-        values.get(EntityStatus.INACTIVE).put(RoleStatus.PENDING, false);
+        values.get(EntityStatus.INACTIVE).put(RoleStatus.PENDING, true);
         values.get(EntityStatus.INACTIVE).put(RoleStatus.ACTIVE, false);
         values.get(EntityStatus.INACTIVE).put(RoleStatus.SUSPENDED, true);
         values.get(EntityStatus.INACTIVE).put(RoleStatus.NULLIFIED, true);
