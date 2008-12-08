@@ -18,6 +18,7 @@ import java.util.Set;
  * 
  * @author Harsha
  */
+@SuppressWarnings("PMD")
 public class EnPnConverter {
     private static final int EMAIL_IDX = 7; 
 
