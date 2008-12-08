@@ -7,13 +7,14 @@
 <SCRIPT language="JavaScript">
 	function submitform(orgid)
 	{
-		
+		top.window.setorgid(orgid);
 		top.window.loadDiv(orgid);
 		window.top.hidePopWin(true); 
 	}
 	
 	function callParentSubmit(orgid)
 	{	
+		top.window.setorgid(orgid);
 		top.window.loadDiv(orgid);
 		window.top.hidePopWin(true); 
 	}

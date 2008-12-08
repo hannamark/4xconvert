@@ -21,6 +21,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -447,9 +448,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     personContactWebDTO.setSelectedPersId(Long.valueOf(persId));
                 }
                 if (selectedPersTO != null && selectedPersTO.getName() != null) {
-                    personContactWebDTO.setFirstName((selectedPersTO.getName().getPart()).get(1).getValue());
-                    personContactWebDTO.setLastName((selectedPersTO.getName().getPart()).get(0).getValue());
-                    personContactWebDTO.setMiddleName((selectedPersTO.getName().getPart()).get(2).getValue());
+                    gov.nih.nci.pa.dto.PersonDTO personDTO = EnPnConverter.convertToPaPersonDTO(selectedPersTO);
+                    personContactWebDTO.setFirstName(personDTO.getFirstName());
+                    personContactWebDTO.setLastName(personDTO.getLastName());
+                    personContactWebDTO.setMiddleName(personDTO.getMiddleName());
                 }
                 return "error_prim_contacts";
             }
@@ -767,9 +769,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(contactPersId)));
             personContactWebDTO.setSelectedPersId(Long.valueOf(selectedPersTO.getIdentifier().getExtension()));
-            personContactWebDTO.setFirstName((selectedPersTO.getName().getPart()).get(1).getValue());
-            personContactWebDTO.setLastName((selectedPersTO.getName().getPart()).get(0).getValue());
-            personContactWebDTO.setMiddleName((selectedPersTO.getName().getPart()).get(2).getValue());
+            gov.nih.nci.pa.dto.PersonDTO personDTO =  EnPnConverter.convertToPaPersonDTO(selectedPersTO);
+            personContactWebDTO.setFirstName(personDTO.getFirstName());
+            personContactWebDTO.setLastName(personDTO.getLastName());
+            personContactWebDTO.setMiddleName(personDTO.getMiddleName());
         }
         String email = (String) ServletActionContext.getRequest().getSession().getAttribute("emailEntered");
         String telephone = (String) ServletActionContext.getRequest().getSession().getAttribute("telephoneEntered");

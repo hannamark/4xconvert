@@ -176,8 +176,10 @@
 	     });
 	    return false;
 	}
-	
-	function setpersid(){
+	// do not remove these two callback methods!
+	function setpersid(persid){
+	}
+	function setorgid(orgid){
 	}
 
 </script>      
