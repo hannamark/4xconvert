@@ -17,7 +17,7 @@ public class SearchProtocolCriteria {
     private String phaseCode;
     private String primaryPurposeCode;
     private String organizationType;
-    private String clientName;
+    private String myTrialsOnly;
     
     /**
      * @return the identifierType
@@ -105,16 +105,16 @@ public class SearchProtocolCriteria {
         this.organizationType = organizationType;
     }
     /**
-     * @return the clientName
+     * @return the myTrialsOnly
      */
-    public String getClientName() {
-        return clientName;
+    public String getMyTrialsOnly() {
+        return myTrialsOnly;
     }
     /**
-     * @param clientName the clientName to set
+     * @param myTrialsOnly the myTrialsOnly to set
      */
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
+    public void setMyTrialsOnly(String myTrialsOnly) {
+        this.myTrialsOnly = myTrialsOnly;
     }
 
 
