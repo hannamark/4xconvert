@@ -184,7 +184,6 @@
                     <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (${hotHealthCareProviderCount} new of ${fn:length(person.healthCareProviders)})</li>
                     <li><a href="${manageOrganizationalContact}"><s:text name="organizationalContact.manage.title"/></a> (${hotOrganizationalContactCount} new of ${fn:length(person.organizationalContacts)})</li>
                     <li><a href="${manageIdentifiedPerson}"><s:text name="identifiedPerson.manage.title"/></a> (${hotIdentifiedPersonCount} new of ${fn:length(person.identifiedPersons)})</li>
-                    <li>Qualified Entities (${hotQualifiedEntityCount} new of ${fn:length(person.qualifiedEntities)})</li>
                 </ul>
                 <div class="clear"></div>
             </div>
