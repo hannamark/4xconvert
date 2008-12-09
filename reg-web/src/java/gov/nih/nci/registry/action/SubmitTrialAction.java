@@ -220,8 +220,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                         otherDocument);  
             }
             // ----------- Begin calling the PO related
-            selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute(
-                    "PoSummary4Sponsor");
+            selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute("PoSummary4Sponsor");
             if (selectedSummary4Sponsor != null) {
                 new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getIdentifier()
                         .getExtension(), SummaryFourFundingCategoryCode.getByCode(summary4FundingCategory), IiConverter
@@ -746,6 +746,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (selectedLeadPrincipalInvestigator == null) {
             addFieldError("LeadPINotSelected", getText("error.submit.leadPrincipalInvestigator"));
         }
+        selectedSummary4Sponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute("PoSummary4Sponsor");
+        
         selectedSponsor = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoSponsor");
         if (selectedSponsor == null) {
             addFieldError("SponsorNotSelected", getText("error.submit.sponsor"));
