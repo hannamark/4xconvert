@@ -36,7 +36,7 @@
                     This Organization does not have a role of Health Care Facility assigned to it. Please select a Status and click 'Save' button to assign the new role.
                 </s:if>
                 <s:else>
-                    This Organization is currently a Health Care Facility.  You can modify the Status of this role using the form below.
+                    This Organization is currently a Health Care Facility.  To change the Role, please select a new Status and click the 'SAVE' button.
                 </s:else>
 
 				<s:hidden key="organization"/>
