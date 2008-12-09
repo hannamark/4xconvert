@@ -29,6 +29,7 @@ public class PaEarPropertyReader {
     private static String lookUpServer = "po.server.name";
     private static String lookUpPort = "po.port.number";
     private static String csmSubmitterGroup = "csm.submitter.group";
+    private static String allowedUploadFileTypes = "allowed.uploadfile.types";
  
     
     static {
@@ -93,6 +94,18 @@ public class PaEarPropertyReader {
         }
         return submitterGroupName;
     }
+    
+    /**
+    *
+    * @return a comma separated String of allowed upload file types
+    */
+     public static String getAllowedUploadFileTypes() {
+         String allowedFileTypes = props.getProperty(allowedUploadFileTypes);
+         if (allowedFileTypes == null) {
+             LOG.error("'allowedUploadFileTypes' does not have value in paear.properties ");
+         }
+         return allowedFileTypes;
+     }
 
    
    /**
