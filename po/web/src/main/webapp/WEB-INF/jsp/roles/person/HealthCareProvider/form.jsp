@@ -54,7 +54,7 @@
 		    <div class="box_white">
 				<s:actionerror/>
                 <s:fielderror />
-				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
+				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="person"/>
 				<s:hidden key="rootKey"/>
@@ -118,9 +118,9 @@
 
 <div style="clear:left;"></div>    
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <%@include file="../../organizational/confirmThenSubmit.jsp" %>    
+    <%@include file="../../../curate/confirmThenSubmit.jsp" %>    
     <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
        <c:url var="managePage" value="/protected/roles/person/HealthCareProvider/start.action">
            <c:param name="person" value="${person.id}"/>
        </c:url>

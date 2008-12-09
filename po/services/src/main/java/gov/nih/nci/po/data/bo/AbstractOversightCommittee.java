@@ -90,6 +90,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.validator.NotNull;
 
 /**
  * Oversight committee role class.
@@ -126,6 +127,7 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
     @ForeignKey(name = "oversight_comm_type_fkey")
     @Searchable
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
+    @NotNull
     public OversightCommitteeType getTypeCode() {
         return typeCode;
     }

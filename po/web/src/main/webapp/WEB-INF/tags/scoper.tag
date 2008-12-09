@@ -9,7 +9,6 @@
     </s:fielderror>
     <div style="float:right;">
         <c:url value="/protected/selector/organization/start.action" var="findScoperUrl">
-            <c:param name="source" value="${organization.id}"/>
         </c:url>
         <po:buttonRow>
         <po:button id="select_scoper" href="javascript://noop/" onclick="showPopWin('${findScoperUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Scoper"/>
@@ -23,7 +22,7 @@
     </div>
     <br/>
     <div class="wwctrl" id="wwctrl_curateRoleForm_role_scoper_id">
-       ${role.scoper.id} 
+       ${role.scoper.name} (${role.scoper.id})
     </div>
 </div>
 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>

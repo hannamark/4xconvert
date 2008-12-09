@@ -82,8 +82,10 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
+
 import org.junit.Assert;
 
 public class OversightCommitteeCorrelationServiceTest
@@ -97,6 +99,9 @@ public class OversightCommitteeCorrelationServiceTest
     protected OversightCommitteeDTO makeCorrelation() throws Exception {
         OversightCommitteeDTO dto = new OversightCommitteeDTO();
         dto.setPlayerIdentifier(getOrgId());
+        Cd typeCode = new Cd();
+        typeCode.setCode("Ethics Committee");
+        dto.setTypeCode(typeCode);
         return dto;
     }
 
@@ -108,6 +113,6 @@ public class OversightCommitteeCorrelationServiceTest
     @Override
     protected void verifyCreated(OversightCommitteeDTO dto) throws Exception {
         Assert.assertEquals(getOrgId().getExtension(), dto.getPlayerIdentifier().getExtension());
-
+        Assert.assertEquals("Ethics Committee", dto.getTypeCode().getCode());
     }
 }

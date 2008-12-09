@@ -10,7 +10,7 @@
                 onclick="copyValueToTextField('${cr.scoper.id}', 'curateRoleForm.role.scoper.id'); showPopWinCallback('${cr.scoper.id}');" 
                 bodyStyle="float:left;" buttonStyle="float:right;">
 	            <po:field labelKey="organizationalContact.scoper.id">
-	                ${cr.scoper.id}
+	                ${cr.scoper.name} (${cr.scoper.id})
 	            </po:field>
             </po:copyButton>
              

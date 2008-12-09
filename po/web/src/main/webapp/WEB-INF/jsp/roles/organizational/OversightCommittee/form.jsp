@@ -53,7 +53,7 @@
 		    <div class="box_white">
 				<s:actionerror/>
                 <s:fielderror />
-				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm');">
+				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
 				<s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
@@ -68,6 +68,7 @@
 				   listValue="code"
 				   value="role.typeCode.id" 
 				   headerKey="" headerValue="--Select a Type--" 
+				   required="true" cssClass="required"
 				   /> 
 				<s:select id="curateRoleForm.role.status"
 				   label="%{getText('oversightCommittee.status')}"
@@ -110,9 +111,9 @@
 <div style="clear:left;">
 </div>    
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <%@include file="../confirmThenSubmit.jsp" %>
+    <%@include file="../../../curate/confirmThenSubmit.jsp" %>
     <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm');" style="save" text="Save"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
        <c:url var="managePage" value="/protected/roles/organizational/OversightCommittee/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>
