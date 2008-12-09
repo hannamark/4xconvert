@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -671,7 +672,11 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isNotEmpty(protocolDocFileName)) {
             if (!protocolDoc.exists()) {
                 addFieldError("trialDocumentWebDTO.protocolDocFileName", 
-                        getText("error.submit.invalidProtocolDocument"));
+                        getText("error.submit.invalidDocument"));
+            }
+            if (!isValidFileType(protocolDocFileName)) {
+                addFieldError("trialDocumentWebDTO.protocolDocFileName", 
+                        getText("error.submit.invalidFileType"));                
             }
         }
         if (PAUtil.isEmpty(irbApprovalFileName)) {
@@ -680,7 +685,41 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isNotEmpty(irbApprovalFileName)) {
             if (!irbApproval.exists()) {
                 addFieldError("trialDocumentWebDTO.irbApprovalFileName", 
-                        getText("error.submit.invalidIrbApproval"));
+                        getText("error.submit.invalidDocument"));
+            }
+            if (!isValidFileType(irbApprovalFileName)) {
+                addFieldError("trialDocumentWebDTO.irbApprovalFileName", 
+                        getText("error.submit.invalidFileType"));                
+            }
+        }        
+        if (PAUtil.isNotEmpty(participatingSitesFileName)) {
+            if (!participatingSites.exists()) {
+                addFieldError("trialDocumentWebDTO.participatingSitesFileName", 
+                        getText("error.submit.invalidDocument"));
+            }
+            if (!isValidFileType(participatingSitesFileName)) {
+                addFieldError("trialDocumentWebDTO.participatingSitesFileName", 
+                        getText("error.submit.invalidFileType"));                
+            }
+        }        
+        if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
+            if (!informedConsentDocument.exists()) {
+                addFieldError("trialDocumentWebDTO.informedConsentDocumentFileName", 
+                        getText("error.submit.invalidDocument"));
+            }
+            if (!isValidFileType(informedConsentDocumentFileName)) {
+                addFieldError("trialDocumentWebDTO.informedConsentDocumentFileName", 
+                        getText("error.submit.invalidFileType"));                
+            }
+        }        
+        if (PAUtil.isNotEmpty(otherDocumentFileName)) {
+            if (!otherDocument.exists()) {
+                addFieldError("trialDocumentWebDTO.otherDocumentFileName", 
+                        getText("error.submit.invalidDocument"));
+            }
+            if (!isValidFileType(otherDocumentFileName)) {
+                addFieldError("trialDocumentWebDTO.otherDocumentFileName", 
+                        getText("error.submit.invalidFileType"));                
             }
         }
         if (PAUtil.isEmpty(contactEmail)) {
@@ -693,12 +732,10 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isNotEmpty(contactEmail)) {
             if (!isValidEmailAddress(contactEmail)) {
                 addFieldError("contactEmail",
-                        getText("error.submit.invalidContactEmailAddress"));                
+                        getText("error.submit.invalidContactEmailAddress"));               
             }
             
         }
-
-
         // LeadOrgNotSelected;check the session;
         selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoLeadOrg");
         if (selectedLeadOrg == null) {
@@ -725,8 +762,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 && PAUtil.isEmpty(protocolWebDTO.getOtherPhaseText())) {
                 addFieldError("protocolWebDTO.otherPhaseText", 
                         getText("error.submit.otherPhaseText"));
-            }
-            
+            }            
         }
         if (PAUtil.isNotEmpty(protocolWebDTO.getTrialPhase())) {
             if (PrimaryPurposeCode.OTHER.getCode().equals(protocolWebDTO.getTrialPurpose())
@@ -736,9 +772,32 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             
         }
-
         // validate trial status and dates
         validateTrialDates();
+
+    }
+    
+    /**
+     * check if the uploaded file type is valid.
+     * @param fileName
+     * @return
+     */
+    private boolean isValidFileType(String fileName) {
+        boolean isValidFileType = false;
+        String allowedUploadFileTypes =  PaEarPropertyReader.getAllowedUploadFileTypes();
+        if (allowedUploadFileTypes != null) {
+            int pos =  fileName.lastIndexOf(".");
+            String uploadedFileType = fileName.substring(pos + 1, fileName.length());
+            StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");        
+            while (st.hasMoreTokens()) {
+                String allowedFileType = st.nextToken();
+                if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
+                    isValidFileType = true;
+                    break;
+                }
+            }
+        }        
+        return isValidFileType;
 
     }
     
