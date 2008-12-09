@@ -20,7 +20,7 @@ public class VaildResearchOrganizationTypeWithFundingMechanismValidatorTest {
 
         ResearchOrganization ro = new ResearchOrganization();
         ro.setTypeCode(rot);
-        assertFalse(validator.isValid(ro));
+        assertTrue(validator.isValid(ro));
     }
 
     @Test
@@ -34,25 +34,25 @@ public class VaildResearchOrganizationTypeWithFundingMechanismValidatorTest {
         ro.setFundingMechanism(fm);
         assertTrue(validator.isValid(ro));
     }
-    
+
     @Test
     public void ResearchOrgTypeWithNoFundingMechanismsWithFundingMechanismGiven() {
         FundingMechanism fm = new FundingMechanism("BXX", "BXX desc", "Category", FundingMechanismStatus.ACTIVE);
         ResearchOrganizationType rot = new ResearchOrganizationType("AA", "AA Desc");
-        
+
         ResearchOrganization ro = new ResearchOrganization();
         ro.setTypeCode(rot);
         ro.setFundingMechanism(fm);
         assertFalse(validator.isValid(ro));
     }
-    
+
     @Test
     public void ResearchOrgTypeWithFundingMechanismsWithFundingMechanismGivenButFundingMechanismIsNotRelatedToResearchOrgType() {
         FundingMechanism fm = new FundingMechanism("BXX", "BXX desc", "Category", FundingMechanismStatus.ACTIVE);
         FundingMechanism fm2 = new FundingMechanism("BYY", "BYY desc", "Category", FundingMechanismStatus.ACTIVE);
         ResearchOrganizationType rot = new ResearchOrganizationType("AA", "AA Desc");
         rot.getFundingMechanisms().add(fm2);
-        
+
         ResearchOrganization ro = new ResearchOrganization();
         ro.setTypeCode(rot);
         ro.setFundingMechanism(fm);

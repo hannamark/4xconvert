@@ -97,6 +97,7 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.external.CtepImportService;
 
 /**
  * @author Scott Miller
@@ -197,5 +198,12 @@ public class TestServiceLocator implements ServiceLocator {
 
     public GenericCodeValueServiceLocal getGenericCodeValueService() {
         return EjbTestHelper.getGenericCodeValueServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CtepImportService getCtepImportService() {
+        return EjbTestHelper.getCtepImportService();
     }
 }

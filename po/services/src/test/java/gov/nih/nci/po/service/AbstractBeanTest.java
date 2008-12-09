@@ -22,7 +22,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     private OversightCommitteeType oversightCommitee;
     private ResearchOrganizationType researchOrgType;
     private FundingMechanism fundingMechanism;
-   
+
 
     private QualifiedEntityType qualifiedEntityType;
     private User user;
@@ -76,6 +76,25 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     public void loadData() {
         defaultCountry = CountryTestUtil.save(new Country("United States", "840", "US", "USA"));
 
+        researchOrgType = new ResearchOrganizationType("ITN", "Institution");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("DCY", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("CLC", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("CGP", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("CSM", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("?  ", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("NWK", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("RSB", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("COR", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+
         oversightCommitee = new OversightCommitteeType("Ethics Committee");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
         fundingMechanism = new FundingMechanism("B09","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
@@ -83,6 +102,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         researchOrgType = new ResearchOrganizationType("CCR", "Cancer Center");
         researchOrgType.getFundingMechanisms().add(fundingMechanism);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+
         qualifiedEntityType = new QualifiedEntityType("MD", "Medical Doctor");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(qualifiedEntityType);
 

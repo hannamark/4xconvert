@@ -98,7 +98,6 @@ public class RoleStatusChangeValidatorTest {
         entity.setStatusCode(es);
         class Scoped extends Base implements ScopedRole {
             private static final long serialVersionUID = 1L;
-
             public Organization getScoper() {
                 return entity;
             }
@@ -111,7 +110,6 @@ public class RoleStatusChangeValidatorTest {
     }
 
     private static abstract class Base implements CuratableRole {
-
         private static final long serialVersionUID = 1L;
 
         public RoleStatus getPriorStatus() {

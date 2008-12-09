@@ -80,78 +80,70 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.external;
 
-import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.coppa.services.OrganizationService;
+import gov.nih.nci.coppa.services.PersonService;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
- * Class that stores organizational contact information.
+ * @author Scott Miller
  *
- * @author smatyas
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
- *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
- *                           serial-version-uid="1L"
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
+public class CtepEntityImporter {
 
-    private static final long serialVersionUID = 1L;
-
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    private Boolean primaryIndicator;
+    private OrganizationService ctepOrgService;
+    private PersonService ctepPersonService;
 
     /**
-     * @return true if primary otherwise, false
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
+     * Constructor.
+     * @param ctepContext the context providing access to the ctep services.
      */
-    public Boolean isPrimaryIndicator() {
-        return primaryIndicator;
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    public CtepEntityImporter(InitialContext ctepContext) {
+        initCtepServices(ctepContext);
     }
 
     /**
-     * @return true if primary otherwise, false
+     * @param ctepContext the context
      */
-    @Transient
-    @Searchable
-    public Boolean getPrimaryIndicator() {
-        return isPrimaryIndicator();
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+    protected void initCtepServices(InitialContext ctepContext) {
+        try {
+            setCtepOrgService((OrganizationService) ctepContext.lookup("OrganizationService"));
+            setCtepPersonService((PersonService) ctepContext.lookup("PersonService"));
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * @param primary true if is primary otherwise, false
+     * @return the ctepPersonService
      */
-    public void setPrimaryIndicator(Boolean primary) {
-        this.primaryIndicator = primary;
+    protected PersonService getCtepPersonService() {
+        return this.ctepPersonService;
     }
 
     /**
-     * Get org contact type codes.
-     *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
-     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
-     *
-     * @return a person's set of race code(s)
+     * @param ctepOrgService the ctepOrgService to set
      */
-    @Transient
-    public Set<OrganizationalContactType> getTypes() {
-        return types;
+    protected void setCtepOrgService(OrganizationService ctepOrgService) {
+        this.ctepOrgService = ctepOrgService;
     }
 
     /**
-     * @param types org type codes
+     * @return the ctepOrgService
      */
-    public void setTypes(Set<OrganizationalContactType> types) {
-        this.types = types;
+    protected OrganizationService getCtepOrgService() {
+        return this.ctepOrgService;
+    }
+
+    /**
+     * @param ctepPersonService the ctepPersonService to set
+     */
+    protected void setCtepPersonService(PersonService ctepPersonService) {
+        this.ctepPersonService = ctepPersonService;
     }
 }

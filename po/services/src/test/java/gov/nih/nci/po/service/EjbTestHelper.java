@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.po.service.external.CtepImportServiceBean;
 import gov.nih.nci.po.util.EjbInterceptorHandler;
 import gov.nih.nci.po.util.RemoteBeanHandler;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
@@ -409,6 +411,11 @@ public class EjbTestHelper {
 
     public static GenericCodeValueServiceLocal getGenericCodeValueServiceBean() {
         GenericCodeValueServiceBean bean = new GenericCodeValueServiceBean();
+        return bean;
+    }
+
+    public static CtepImportService getCtepImportService() {
+        CtepImportServiceBean bean = new CtepImportServiceBean();
         return bean;
     }
 

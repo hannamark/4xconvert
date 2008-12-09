@@ -172,11 +172,19 @@ public class AdConverter {
                             sdelimitor = "";
                             continue;
                         case CNT:
-                            a.setCountry(PoRegistry.getCountryService().getCountryByAlpha3(part.getCode()));
+                            String code = part.getCode().trim();
+                            if (code.length() == 2) {
+                                a.setCountry(PoRegistry.getCountryService().getCountryByAlpha2(code));
+                            } else {
+                                a.setCountry(PoRegistry.getCountryService().getCountryByAlpha3(code));
+                            }
                             sdelimitor = "";
                             continue;
                         case STA:
                             stateProvince = part;
+                            if (StringUtils.isNotEmpty(stateProvince.getCode())) {
+                                stateProvince.setCode(stateProvince.getCode().trim());
+                            }
                             a.setStateOrProvince(stateProvince.getValue());
                             sdelimitor = "";
                             continue;

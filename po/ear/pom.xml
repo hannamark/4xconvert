@@ -113,6 +113,17 @@
                             <artifactId>xsnapshot</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
+                        <jarModule>
+                            <groupId>gov.nih.nci.coppa</groupId>
+                            <artifactId>ctep-services</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <artifactId>oc4jclient</artifactId>
+                            <groupId>oracle.oc4j</groupId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        
                         <ejbModule>
                             <groupId>${pom.parent.groupId}</groupId>
                             <artifactId>po-services</artifactId>

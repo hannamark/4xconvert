@@ -96,6 +96,7 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.external.CtepImportService;
 
 /**
  * @author Scott Miller
@@ -201,4 +202,10 @@ public class JndiServiceLocator implements ServiceLocator {
         return (GenericCodeValueServiceLocal) JNDIUtil.lookup("po/GenericCodeValueServiceBean/local");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public CtepImportService getCtepImportService() {
+        return (CtepImportService) JNDIUtil.lookup("po/CtepImportServiceBean/local");
+    }
 }

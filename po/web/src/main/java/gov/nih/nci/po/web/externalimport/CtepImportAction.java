@@ -80,78 +80,125 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.web.externalimport;
 
-import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.util.PoRegistry;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.jms.JMSException;
+
+import org.apache.log4j.Logger;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+
 
 /**
- * Class that stores organizational contact information.
+ * @author Scott Miller
  *
- * @author smatyas
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
- *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
- *                           serial-version-uid="1L"
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
-
+public class CtepImportAction extends ActionSupport {
+    private static final Logger LOG = Logger.getLogger(CtepImportAction.class);
     private static final long serialVersionUID = 1L;
-
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    private Boolean primaryIndicator;
+    private File file;
 
     /**
-     * @return true if primary otherwise, false
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
+     * Action to go to the page allowing file upload.
+     * @return SUCCESS
      */
-    public Boolean isPrimaryIndicator() {
-        return primaryIndicator;
+    @SkipValidation
+    public String start() {
+        return INPUT;
     }
 
     /**
-     * @return true if primary otherwise, false
+     * Method to handle upload of org ids.
+     * @return SUCCESS
+     * @throws IOException on error processing file.
+     * @throws JMSException on error saving.
      */
-    @Transient
-    @Searchable
-    public Boolean getPrimaryIndicator() {
-        return isPrimaryIndicator();
+    public String uploadOrganizations() throws IOException, JMSException {
+        BufferedReader reader = getFileReader();
+        String line = reader.readLine();
+        int count = 0;
+        try {
+            while (line != null) {
+                PoRegistry.getInstance().getServiceLocator().
+                    getCtepImportService().importCtepOrganization(generateIi(line));
+                count++;
+                line = reader.readLine();
+            }
+            ActionHelper.saveMessage(count + " organizations successfully imported.");
+        } catch (RuntimeException e) {
+            LOG.error("Error importing organization with id:  " +  line, e);
+            ActionHelper.saveMessage("The first " + count + " organizations were successfully imported.");
+            ActionHelper.saveMessage("An error occurred processing the following line: "  + line);
+        }
+
+
+        return SUCCESS;
+    }
+
+    private BufferedReader getFileReader() throws FileNotFoundException {
+        FileReader fileReader = new FileReader(getFile());
+        return new BufferedReader(fileReader);
     }
 
     /**
-     * @param primary true if is primary otherwise, false
+     * Method to handle upload of person ids.
+     * @return SUCCESS
+     * @throws IOException on error processing file.
+     * @throws JMSException on error saving.
      */
-    public void setPrimaryIndicator(Boolean primary) {
-        this.primaryIndicator = primary;
+    public String uploadPeople() throws IOException, JMSException {
+        BufferedReader reader = getFileReader();
+        String line = reader.readLine();
+        int count = 0;
+        try {
+            while (line != null) {
+                PoRegistry.getInstance().getServiceLocator().
+                    getCtepImportService().importCtepPerson(generateIi(line));
+                count++;
+                line = reader.readLine();
+            }
+            ActionHelper.saveMessage(count + " people successfully imported.");
+        } catch (RuntimeException e) {
+            LOG.error("Error importing organization with id:  " +  line, e);
+            ActionHelper.saveMessage("The first " + count + " people were successfully imported.");
+            ActionHelper.saveMessage("An error occurred processing the following line: "  + line);
+        }
+
+        return SUCCESS;
+    }
+
+    private Ii generateIi(String id) {
+        Ii ii = new Ii();
+        ii.setExtension(id);
+        ii.setRoot(CtepOrganizationImporter.CTEP_ROOT);
+        return ii;
     }
 
     /**
-     * Get org contact type codes.
-     *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
-     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
-     *
-     * @return a person's set of race code(s)
+     * @return the file
      */
-    @Transient
-    public Set<OrganizationalContactType> getTypes() {
-        return types;
+    @RequiredFieldValidator(key = "import.file.required", message = "Please select the file to import.")
+    public File getFile() {
+        return this.file;
     }
 
     /**
-     * @param types org type codes
+     * @param file the file to set
      */
-    public void setTypes(Set<OrganizationalContactType> types) {
-        this.types = types;
+    public void setFile(File file) {
+        this.file = file;
     }
 }

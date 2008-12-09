@@ -80,78 +80,85 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service.external;
 
-import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.coppa.iso.Ii;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Hashtable;
+import java.util.Properties;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 /**
- * Class that stores organizational contact information.
+ * @author Scott Miller
  *
- * @author smatyas
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
- *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
- *                           serial-version-uid="1L"
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
-
-    private static final long serialVersionUID = 1L;
-
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    private Boolean primaryIndicator;
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
+public class CtepImportServiceBean implements CtepImportService {
+    private CtepOrganizationImporter orgImporter;
+    private CtepPersonImporter personImporter;
 
     /**
-     * @return true if primary otherwise, false
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
+     * Constructor.
      */
-    public Boolean isPrimaryIndicator() {
-        return primaryIndicator;
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    public CtepImportServiceBean() {
+        initImporters();
     }
 
     /**
-     * @return true if primary otherwise, false
+     * Init the org and person importers.
      */
-    @Transient
-    @Searchable
-    public Boolean getPrimaryIndicator() {
-        return isPrimaryIndicator();
+    @SuppressWarnings("PMD.ReplaceHashtableWithMap")
+    protected void initImporters() {
+        try {
+            Properties props = new Properties();
+            props.load(getClass().getClassLoader().getResourceAsStream("ctep-services.properties"));
+            Hashtable<Object, Object> env = new Hashtable<Object, Object>();
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
+            env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
+            env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
+            env.put(Context.PROVIDER_URL, props.get("ctep.url"));
+            InitialContext ctepContext = new InitialContext(env);
+            setOrgImporter(new CtepOrganizationImporter(ctepContext));
+            setPersonImporter(new CtepPersonImporter(ctepContext, orgImporter));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * @param primary true if is primary otherwise, false
+     * @param orgImporter the orgImporter to set
      */
-    public void setPrimaryIndicator(Boolean primary) {
-        this.primaryIndicator = primary;
+    public void setOrgImporter(CtepOrganizationImporter orgImporter) {
+        this.orgImporter = orgImporter;
     }
 
     /**
-     * Get org contact type codes.
-     *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
-     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
-     *
-     * @return a person's set of race code(s)
+     * @param personImporter the personImporter to set
      */
-    @Transient
-    public Set<OrganizationalContactType> getTypes() {
-        return types;
+    public void setPersonImporter(CtepPersonImporter personImporter) {
+        this.personImporter = personImporter;
     }
 
     /**
-     * @param types org type codes
+     * {@inheritDoc}
      */
-    public void setTypes(Set<OrganizationalContactType> types) {
-        this.types = types;
+    public void importCtepOrganization(Ii orgId) throws JMSException {
+        orgImporter.importOrganization(orgId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void importCtepPerson(Ii personId) throws JMSException {
+        personImporter.importPerson(personId);
     }
 }

@@ -8,7 +8,7 @@ import org.hibernate.validator.Validator;
 
 /**
  * Validates a Curatable instance.
- * 
+ *
  * @author smatyas
  */
 public class VaildResearchOrganizationTypeWithFundingMechanismValidator implements
@@ -32,13 +32,12 @@ public class VaildResearchOrganizationTypeWithFundingMechanismValidator implemen
 
     private boolean isValid(AbstractResearchOrganization aro) {
         return (
-            (aro.getTypeCode() == null && aro.getFundingMechanism() == null) 
+            (aro.getFundingMechanism() == null)
                 ||
-            (aro.getTypeCode() != null 
-                && !aro.getTypeCode().getFundingMechanisms().isEmpty() 
-                && (aro.getFundingMechanism() != null 
-                        && aro.getTypeCode().getFundingMechanisms().contains(aro.getFundingMechanism()))
-                        ) 
+            (aro.getTypeCode() != null
+                && !aro.getTypeCode().getFundingMechanisms().isEmpty()
+                && aro.getTypeCode().getFundingMechanisms().contains(aro.getFundingMechanism())
+            )
         );
     }
 }

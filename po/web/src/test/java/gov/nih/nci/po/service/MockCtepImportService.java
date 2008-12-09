@@ -80,78 +80,50 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.external.CtepImportService;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.jms.JMSException;
 
 /**
- * Class that stores organizational contact information.
+ * @author Scott Miller
  *
- * @author smatyas
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
- *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
- *                           serial-version-uid="1L"
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
+public class MockCtepImportService implements CtepImportService {
 
-    private static final long serialVersionUID = 1L;
-
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    private Boolean primaryIndicator;
+    private final List<String> importedOrgIds = new ArrayList<String>();
+    private final List<String> importedPersonIds = new ArrayList<String>();
 
     /**
-     * @return true if primary otherwise, false
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
+     * {@inheritDoc}
      */
-    public Boolean isPrimaryIndicator() {
-        return primaryIndicator;
+    public void importCtepOrganization(Ii orgId) throws JMSException {
+        importedOrgIds.add(orgId.getExtension());
     }
 
     /**
-     * @return true if primary otherwise, false
+     * {@inheritDoc}
      */
-    @Transient
-    @Searchable
-    public Boolean getPrimaryIndicator() {
-        return isPrimaryIndicator();
+    public void importCtepPerson(Ii personId) throws JMSException {
+        importedPersonIds.add(personId.getExtension());
     }
 
     /**
-     * @param primary true if is primary otherwise, false
+     * @return the importedOrgIds
      */
-    public void setPrimaryIndicator(Boolean primary) {
-        this.primaryIndicator = primary;
+    public List<String> getImportedOrgIds() {
+        return this.importedOrgIds;
     }
 
     /**
-     * Get org contact type codes.
-     *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
-     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
-     *
-     * @return a person's set of race code(s)
+     * @return the importedPersonIds
      */
-    @Transient
-    public Set<OrganizationalContactType> getTypes() {
-        return types;
-    }
-
-    /**
-     * @param types org type codes
-     */
-    public void setTypes(Set<OrganizationalContactType> types) {
-        this.types = types;
+    public List<String> getImportedPersonIds() {
+        return this.importedPersonIds;
     }
 }

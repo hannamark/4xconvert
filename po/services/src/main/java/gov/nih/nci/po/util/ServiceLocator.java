@@ -96,6 +96,7 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.external.CtepImportService;
 
 /**
  * @author Scott Miller
@@ -172,5 +173,10 @@ public interface ServiceLocator {
      * @return the service.
      */
     GenericCodeValueServiceLocal getGenericCodeValueService();
+
+    /**
+     * @return the ctep import service
+     */
+    CtepImportService getCtepImportService();
 
 }

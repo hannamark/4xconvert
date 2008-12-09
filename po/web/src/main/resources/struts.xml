@@ -317,6 +317,16 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/roles/person/{1}/list.jsp</result>
         </action>  
+        
+        <action name="import/ctep/org/*" class="gov.nih.nci.po.web.externalimport.CtepImportAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/import/ctep/importOrgs.jsp</result>
+            <result name="success">/WEB-INF/jsp/import/ctep/importOrgs.jsp</result>
+        </action>
+        
+        <action name="import/ctep/person/*" class="gov.nih.nci.po.web.externalimport.CtepImportAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/import/ctep/importPeople.jsp</result>
+            <result name="success">/WEB-INF/jsp/import/ctep/importPeople.jsp</result>
+        </action>
 
     </package>
 </struts>

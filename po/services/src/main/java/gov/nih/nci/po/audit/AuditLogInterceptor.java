@@ -83,7 +83,6 @@
 
 package gov.nih.nci.po.audit;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.io.Serializable;
@@ -105,7 +104,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
@@ -125,6 +123,7 @@ import org.hibernate.type.CollectionType;
 import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
@@ -211,11 +210,11 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         Auditable auditableOwner = (Auditable) owner;
         String role = pc.getRole();
-        
+
         Serializable oldSerial = pc.getStoredSnapshot();
         String oldValStr = getValueStringHelper(oldSerial);
         Object newV = pc.getValue();
-        String newValStr = getValueStringHelper(newV); 
+        String newValStr = getValueStringHelper(newV);
 
         int idx = role.lastIndexOf('.');
         String className = role.substring(0, idx);
@@ -457,9 +456,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         try {
             Method getter = auditableObj.getClass().getMethod("get" + StringUtils.capitalize(property));
             if (getter.getAnnotation(JoinTable.class) != null) {
-                if (LOG.isEnabledFor(Priority.DEBUG)) {
-                    LOG.debug("Found annotated getter: " + oldSet + ", " + newSet);
-                }
                 return !CollectionUtils.isEqualCollection((oldSet == null) ? Collections.emptySet() : oldSet,
                                                           (newSet == null) ? Collections.emptySet() : newSet);
             }
@@ -520,15 +516,15 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             }
             if (a instanceof PersistentObject) {
                 a = ((PersistentObject) a).getId();
-            } 
+            }
             sb.append(sep).append(String.valueOf(a));
             sep = ", ";
         }
         return StringUtils.abbreviate(sb.toString(), MAX_VALUE_LENGTH);
     }
-    
+
     /**
-     * Produces a string formatted as follows "(k1=String.valueOf(k), v1=String.valueOf(v)) , 
+     * Produces a string formatted as follows "(k1=String.valueOf(k), v1=String.valueOf(v)) ,
      * (k1=String.valueOf(k), v1=String.valueOf(v)), ...".
      * @param map
      * @return a value string of the provided map

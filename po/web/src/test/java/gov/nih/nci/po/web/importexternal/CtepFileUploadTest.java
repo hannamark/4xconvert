@@ -80,78 +80,67 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.web.importexternal;
 
-import gov.nih.nci.po.util.Searchable;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.service.MockCtepImportService;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.externalimport.CtepImportAction;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.File;
+import java.net.URL;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.Action;
 
 /**
- * Class that stores organizational contact information.
+ * @author Scott Miller
  *
- * @author smatyas
- *
- * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
- *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
- *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
- *                           serial-version-uid="1L"
  */
-@MappedSuperclass
-public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
+public class CtepFileUploadTest extends AbstractPoTest {
 
-    private static final long serialVersionUID = 1L;
-
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    private Boolean primaryIndicator;
+    private static final String ORG_FILE_NAME = "testOrgIds.txt";
+    private static final String PERSON_FILE_NAME = "testPersonIds.txt";
 
     /**
-     * @return true if primary otherwise, false
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
+     * test the upload action org file uploact.
      */
-    public Boolean isPrimaryIndicator() {
-        return primaryIndicator;
+    @Test
+    public void testUploadOrgs() throws Exception {
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadOrganizations());
+
+        MockCtepImportService service = (MockCtepImportService) PoRegistry.getInstance().
+            getServiceLocator().getCtepImportService();
+        assertEquals(18, service.getImportedOrgIds().size());
     }
 
     /**
-     * @return true if primary otherwise, false
+     * test the upload action org file uploact.
      */
-    @Transient
-    @Searchable
-    public Boolean getPrimaryIndicator() {
-        return isPrimaryIndicator();
+    @Test
+    public void testUploadPeople() throws Exception {
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(PERSON_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadPeople());
+
+        MockCtepImportService service = (MockCtepImportService) PoRegistry.getInstance().
+            getServiceLocator().getCtepImportService();
+        assertEquals(18, service.getImportedPersonIds().size());
     }
 
-    /**
-     * @param primary true if is primary otherwise, false
-     */
-    public void setPrimaryIndicator(Boolean primary) {
-        this.primaryIndicator = primary;
-    }
-
-    /**
-     * Get org contact type codes.
-     *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
-     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
-     *
-     * @return a person's set of race code(s)
-     */
-    @Transient
-    public Set<OrganizationalContactType> getTypes() {
-        return types;
-    }
-
-    /**
-     * @param types org type codes
-     */
-    public void setTypes(Set<OrganizationalContactType> types) {
-        this.types = types;
+    @Test
+    public void testStart() {
+        CtepImportAction action = new CtepImportAction();
+        assertEquals(Action.INPUT, action.start());
     }
 }
