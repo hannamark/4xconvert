@@ -675,7 +675,12 @@ function toggledisplay2 (it) {
               <label for="particpating sites"><fmt:message key="submit.trial.participatingSites"/></label>
              </td>
              <td class="value">
-                 <s:file name="participatingSites" cssStyle="width:270px"/>                 
+                 <s:file name="participatingSites" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.participatingSitesFileName</s:param>
+                   </s:fielderror>                            
+                 </span>                 
                </td>         
          </tr>         
          
@@ -684,7 +689,12 @@ function toggledisplay2 (it) {
               <label for="informedConsent"><fmt:message key="submit.trial.informedConsent"/></label>
              </td>
              <td class="value">
-                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>            
+                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.informedConsentDocumentFileName</s:param>
+                   </s:fielderror>                            
+                 </span>             
                </td>         
          </tr>         
          <tr>
@@ -692,7 +702,12 @@ function toggledisplay2 (it) {
               <label for="otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
              </td>
              <td class="value">
-                 <s:file name="otherDocument" cssStyle="width:270px"/>                 
+                 <s:file name="otherDocument" cssStyle="width:270px"/>
+                 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDocumentWebDTO.otherDocumentFileName</s:param>
+                   </s:fielderror>                            
+                 </span>                 
                </td>         
          </tr> 
         </table>
