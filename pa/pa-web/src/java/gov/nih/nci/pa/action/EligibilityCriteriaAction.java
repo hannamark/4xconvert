@@ -39,6 +39,8 @@ import com.opensymphony.xwork2.ActionSupport;
 
   private static final String ELIGIBILITY = "eligibility";
   private static final String ELIGIBILITYADD = "eligibilityAdd";
+  private static final int MAXIMUM_CHAR_POPULATION = 800;
+  private static final int MAXIMUM_CHAR_DESCRIPTION = 400;
   private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
   private Long id = null;
   private String page;
@@ -364,6 +366,11 @@ import com.opensymphony.xwork2.ActionSupport;
         addFieldError("studyPopulationDescription",
             getText("error.trialPopulationDescription"));
       }
+      if (PAUtil.isNotEmpty(studyPopulationDescription)
+          && studyPopulationDescription.length() > MAXIMUM_CHAR_POPULATION) {
+        addFieldError("studyPopulationDescription",
+            getText("error.spType.population.maximumChar"));        
+      }
       if (PAUtil.isEmpty(samplingMethodCode)) {
         addFieldError("samplingMethodCode", getText("error.samplingMethod"));
       }
@@ -409,6 +416,11 @@ import com.opensymphony.xwork2.ActionSupport;
     if (PAUtil.isEmpty(webDTO.getInclusionIndicator())) {
       addFieldError("webDTO.inclusionIndicator",
           getText("error.inclusionIndicator"));
+    }
+    if (PAUtil.isNotEmpty(webDTO.getTextDescription())
+        && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
+      addFieldError("webDTO.TextDescription",
+          getText("error.spType.description.maximumChar"));        
     }
     if (PAUtil.isEmpty(webDTO.getTextDescription())) {
       if (PAUtil.isEmpty(webDTO.getCriterionName())  

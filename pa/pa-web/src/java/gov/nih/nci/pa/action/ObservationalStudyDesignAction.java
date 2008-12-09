@@ -29,6 +29,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ObservationalStudyDesignAction extends ActionSupport {
 
     private OSDesignDetailsWebDTO webDTO =  new OSDesignDetailsWebDTO();
+    private static final int MAXIMUM_CHAR = 200;
     /**  
      * @return res
      */
@@ -93,6 +94,12 @@ public class ObservationalStudyDesignAction extends ActionSupport {
             addFieldError("webDTO.studyModelOtherText",
                     getText("error.studyModelOtherText"));
         }
+        
+        if (PAUtil.isNotEmpty(webDTO.getStudyModelOtherText())
+            && webDTO.getStudyModelOtherText().length() > MAXIMUM_CHAR) {
+          addFieldError("webDTO.studyModelOtherText",
+              getText("error.spType.other.maximumChar"));        
+        }
 
         if (PAUtil.isEmpty(webDTO.getTimePerspectiveCode())) {
             addFieldError("webDTO.timePerspectiveCode",
@@ -103,6 +110,13 @@ public class ObservationalStudyDesignAction extends ActionSupport {
             addFieldError("webDTO.timePerspectiveOtherText",
                     getText("error.timePerspectiveOtherText"));
         }
+        
+        if (PAUtil.isNotEmpty(webDTO.getTimePerspectiveOtherText())
+            && webDTO.getTimePerspectiveOtherText().length() > MAXIMUM_CHAR) {
+          addFieldError("webDTO.timePerspectiveOtherText",
+              getText("error.spType.other.maximumChar"));        
+        }
+        
         if (PAUtil.isEmpty(webDTO.getBiospecimenRetentionCode())) {
             addFieldError("webDTO.biospecimenRetentionCode",
                     getText("error.biospecimenRetentionCode"));

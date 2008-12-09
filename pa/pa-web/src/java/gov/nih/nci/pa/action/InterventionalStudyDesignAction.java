@@ -42,6 +42,8 @@ public class InterventionalStudyDesignAction extends ActionSupport {
 
     private static final String OUTCOME = "outcome";
     private static final String OUTCOMEADD = "outcomeAdd";
+    private static final int MAXIMUM_CHAR = 200;
+    private static final int MAXIMUM_CHAR_OUTCOME = 254; 
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private String subject;
     private String investigator;
@@ -130,9 +132,15 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     getText("error.primary"));
         }
         if (webDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other") 
-                && PAUtil.isEmpty(webDTO.getPrimaryPurposeOtherText())) {
+                && PAUtil.isEmpty(webDTO.getPrimaryPurposeOtherText())) {          
             addFieldError("webDTO.primaryPurposeOtherText",
                     getText("error.comment"));
+        }
+        
+        if (PAUtil.isNotEmpty(webDTO.getPrimaryPurposeOtherText())
+            && webDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
+          addFieldError("webDTO.primaryPurposeOtherText",
+              getText("error.spType.other.maximumChar"));        
         }
 
         if (PAUtil.isEmpty(webDTO.getPhaseCode())) {
@@ -357,10 +365,20 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             addFieldError("webDTO.name",
                     getText("error.outcome.description"));
         }
+        if (PAUtil.isNotEmpty(webDTO.getName())
+            && webDTO.getName().length() > MAXIMUM_CHAR_OUTCOME) {
+          addFieldError("webDTO.name",
+              getText("error.outcome.maximumChar"));        
+        }
         if (PAUtil.isEmpty(webDTO.getTimeFrame())) {
             addFieldError("webDTO.timeFrame",
                     getText("error.outcome.timeFrame"));
         } 
+        if (PAUtil.isNotEmpty(webDTO.getTimeFrame())
+            && webDTO.getTimeFrame().length() > MAXIMUM_CHAR_OUTCOME) {
+          addFieldError("webDTO.timeFrame",
+              getText("error.outcome.maximumChar"));        
+        }
         if (PAUtil.isEmpty(webDTO.getSafetyIndicator())) {
             addFieldError("webDTO.safetyIndicator",
                     getText("error.outcome.safety"));
