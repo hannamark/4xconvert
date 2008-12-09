@@ -21,6 +21,19 @@
 
 <s:if test="%{isNotCreate}">
     <c:if test="${fn:length(role.changeRequests) > 0}">
+    <div>
+    <p class="directions">
+    <s:text name="curation.instructions.role.changerequests">
+        <s:param value="getText('organizationalContact')"/>
+        <s:param>${fn:length(role.changeRequests)}</s:param>
+    </s:text>
+    </p>
+    </div>
+    </c:if> 
+</s:if>
+
+<s:if test="%{isNotCreate}">
+    <c:if test="${fn:length(role.changeRequests) > 0}">
     <s:form action="ajax/roles/person/OrganizationalContact/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="person"/>
         <s:hidden key="rootKey"/>

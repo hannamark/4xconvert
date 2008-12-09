@@ -4,7 +4,7 @@
     <s:set name="isCreate" value="person.id == null"/>
     <s:set name="isNotCreate" value="person.id != null"/>
     <s:if test="%{isCreate}">
-        <title>Create Person</title>
+        <title>Create <s:text name="person"/></title>
     </s:if>
     <s:else>
 	    <c:if test="${fn:length(person.changeRequests) > 0}">
@@ -18,9 +18,18 @@
 </head>
 <body>
 
-
-<%-- page conditional variable --%>
-<c:url value="/notYetImplemented.jsp" var="urlNotYetImplemented"/>
+<s:if test="%{isNotCreate}">
+    <c:if test="${fn:length(person.changeRequests) > 0}">
+    <div>
+    <p class="directions">
+    <s:text name="curation.instructions.entity.changerequests">
+        <s:param value="getText('person')"/>
+        <s:param>${fn:length(person.changeRequests)}</s:param>
+    </s:text>
+    </p>
+    </div>
+    </c:if> 
+</s:if>
 
 <s:if test="%{isNotCreate}">
 	<c:if test="${fn:length(person.changeRequests) > 0}">
@@ -41,7 +50,7 @@
 
 <div id="page" style="margin-top:10px;">
 	<div class="boxouter_nobottom">
-	<h2>Person Information</h2>
+	<h2><s:text name="person"/> Information</h2>
 	
 	<s:if test="%{isCreate}">
 	   <s:set name="formAction" value="'create/person/create.action'"/>
