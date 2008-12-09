@@ -140,6 +140,7 @@
               overwrite="true">
             <filterset>
                 <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}" />
+                <filter token="allowed.uploadfile.types" value="${allowed.uploadfile.types}" />
                 <filter token="mail.smtp.host" value="${mail.smtp.host}"/>
                 <filter token="mail.from.address" value="${mail.from.address}"/>
                 <filter token="register.mail.subject" value="${register.mail.subject}"/>
