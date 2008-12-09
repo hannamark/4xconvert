@@ -73,7 +73,7 @@ public class SearchTrialAction extends ActionSupport {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_OVERALL_STATUS);
             List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
-                    .getByStudyProtocol(studyProtocolIi);
+                    .getCurrentByStudyProtocol(studyProtocolIi);
             // List <StudyOverallStatusWebDTO> overallStatusList;
             if (!(overallStatusISOList.isEmpty())) {
                 // put an entry in the session and store TrialFunding
@@ -265,7 +265,7 @@ public class SearchTrialAction extends ActionSupport {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_OVERALL_STATUS);
             List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
-                    .getByStudyProtocol(studyProtocolIi);
+                    .getCurrentByStudyProtocol(studyProtocolIi);
             // List <StudyOverallStatusWebDTO> overallStatusList;
             if (!(overallStatusISOList.isEmpty())) {
                 // put an entry in the session and store TrialFunding
