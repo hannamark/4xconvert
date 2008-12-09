@@ -12,6 +12,8 @@ po.port.number=1099
 po.username=ejbclient
 po.pass=pass
 doc.upload.filepath.loc=D://doc
+# Allowed file types for trial documents, use a comma seperator for more file types
+allowed.uploadfile.types=doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb
 
 # Messaging properties
 
