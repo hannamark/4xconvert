@@ -38,15 +38,6 @@ function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 }
-function maxLength(field,maxChars)
- {
- var input=field;
-  	var inputElement = document.forms[0].elements[input];  	
-       if(inputElement.value.length >= maxChars) {
-		  alert("more than " +maxChars + " chars");
-       }
- }  
-
 </SCRIPT>
 <body>
 <h1><fmt:message key="osdesign.details.title"/></h1>
@@ -74,9 +65,9 @@ function maxLength(field,maxChars)
     </tr>
     <tr id="studyModelOtherText">
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="osdesign.details.study.model.other"/></dfn><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.study.model.other"/>(Max 200 chars)</dfn><span class="required">*</span></label></td>
 		<td>
-			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" onblur='return maxLength("webDTO.studyModelOtherText","200");' />
+			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" />
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyModelOtherText</s:param>
@@ -100,9 +91,9 @@ function maxLength(field,maxChars)
     </tr>
     <tr id="timePerspectiveOtherText">
 		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="osdesign.details.time.perspective.comment"/></dfn><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.time.perspective.comment"/>(Max 200 chars)</dfn><span class="required">*</span></label></td>
 		<td>
-			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px" onblur='return maxLength("webDTO.timePerspectiveOtherText","200");'/>
+			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px" />
 			<span class="formErrorMsg"> 
 				<s:fielderror>
                		<s:param>webDTO.timePerspectiveOtherText</s:param>

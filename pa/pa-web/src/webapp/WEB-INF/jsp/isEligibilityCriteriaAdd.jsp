@@ -57,14 +57,6 @@ function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
-function maxLength(field,maxChars)
- {
- var input=field;
-  	var inputElement = document.forms[0].elements[input];  	
-       if(inputElement.value.length >= maxChars) {
-		  alert("more than " +maxChars + " chars");
-       }
- } 
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
@@ -101,10 +93,15 @@ function maxLength(field,maxChars)
                                </s:fielderror>                            
                          </span>
 					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/> </dfn></label>
+						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/>(Max 400 chars)</dfn></label>
 					</td>
 					<td class="value">
-						<s:textarea name="webDTO.textDescription" rows="4" cssStyle="width:400px" onblur='activate();return maxLength("webDTO.textDescription","400");' />
+						<s:textarea name="webDTO.textDescription" rows="4" cssStyle="width:400px" onblur='activate();' />
+						<span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>webDTO.TextDescription</s:param>
+                               </s:fielderror>                            
+                         </span>
 					</td>
 				</tr>  
 				<tr>
