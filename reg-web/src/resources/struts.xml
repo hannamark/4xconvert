@@ -59,6 +59,18 @@
              <param name="trialAction">${trialAction}</param>
         </result>
         </action> 
+        <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
+		<interceptor-ref name="fileUpload">
+			<param name="maximumSize" >512000</param>
+			<param name="allowedTypes">application/x-zip-compressed,application/vnd.ms-excel</param>
+			
+		</interceptor-ref>
+		<interceptor-ref name="nci-commonsParams" />
+		<result>/WEB-INF/jsp/processBatch.jsp</result>
+		<result name="error">/WEB-INF/jsp/processBatch.jsp</result>
+		<result name="success">/WEB-INF/jsp/processBatch.jsp</result>
+        </action>
+        
 	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
 		<result name="display_lead_org">/WEB-INF/jsp/nodecorate/displayLeadOrganization.jsp</result> 
 		<result name="display_lead_prinicipal_inv">/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp</result>
@@ -81,6 +93,7 @@
 		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
 		<result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
 		<result name="display_org_created_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
-	</action>        
+	</action>     
+	    
     </package>
 </struts>
