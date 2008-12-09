@@ -107,7 +107,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(T curatable) throws JMSException {
         final Session s = PoHibernateUtil.getCurrentSession();
-        Curatable object = curatable;
+        T object = curatable;
         if (object.getId() != null) {
             object = loadAndMerge(object, s);
             handleExistingObjectCuration(s, object);
@@ -144,11 +144,16 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         }
     }
 
+    /**
+     * @param object the stale object.
+     * @param s the session to load from
+     * @return the merged object.
+     */
     @SuppressWarnings("PMD.CompareObjectsWithEquals")
-    private Curatable loadAndMerge(Curatable object, Session s) {
-        Curatable o = (Curatable) s.load(getTypeArgument(), object.getId());
+    protected T loadAndMerge(T object, Session s) {
+        T o = (T) s.load(getTypeArgument(), object.getId());
         if (object != o) {
-            o = (Curatable) s.merge(object);
+            o = (T) s.merge(object);
         } else {
             o = object;
         }

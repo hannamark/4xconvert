@@ -103,7 +103,7 @@ public class RoleStatusChangeValidatorTest {
             }
             public RoleStatus getStatus() {
                 return rs;
-            }
+            }            
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
         assertEquals(values.get(es).get(rs).booleanValue(), v.isValid(new Scoped()));
@@ -135,7 +135,9 @@ public class RoleStatusChangeValidatorTest {
         public Long getId() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-
+        
+        public void setStatus(RoleStatus status) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
-
 }

@@ -97,6 +97,11 @@ public interface CuratableRole<BO extends Correlation, CR extends CorrelationCha
      * @return the role's status
      */
     RoleStatus getStatus();
+
+    /**
+     * @param status the role's status
+     */
+    void setStatus(RoleStatus status);
     
     /**
      * @return the role's prior status

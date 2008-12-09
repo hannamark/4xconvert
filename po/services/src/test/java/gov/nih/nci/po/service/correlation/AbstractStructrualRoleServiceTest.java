@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import gov.nih.nci.po.data.bo.RoleStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -113,6 +114,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.bo.CuratableEntity;
+import gov.nih.nci.po.data.bo.PlayedRole;
+import gov.nih.nci.po.data.bo.ScopedRole;
 
 /**
  * Skeleton for testing structural role services.
@@ -245,11 +249,9 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     public void testGetByIds() throws Exception {
         AbstractBaseServiceBean<T> service = getService();
 
-        T sr1 = getSampleStructuralRole();
-        service.create(sr1);
+        T sr1 = createSample();
 
-        T sr2 = getSampleStructuralRole();
-        service.create(sr2);
+        T sr2 = createSample();
 
         Long[] ids = {sr1.getId(), sr2.getId()};
         List<T> srs = service.getByIds(ids);
@@ -270,5 +272,51 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     @Test(expected = IllegalArgumentException.class)
     public void testGetByTooManyIds () {
         getService().getByIds(new Long[501]);
+    }
+
+    protected T createSample() throws Exception {
+        AbstractBaseServiceBean<T> service = getService();
+        T r = getSampleStructuralRole();
+        service.create(r);
+        return r;
+    }
+
+    @Test
+    public void cascadePlayerStatusChange() throws Exception {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+        if (PlayedRole.class.isAssignableFrom(myType)) {
+            CuratableRole r = (CuratableRole) createSample();
+            assertEquals(RoleStatus.PENDING, r.getStatus());
+            CuratableEntity entity = ((PlayedRole)r).getPlayer();
+            assertEquals(EntityStatus.PENDING, entity.getStatusCode());
+            entity.setStatusCode(EntityStatus.NULLIFIED);
+            if (entity instanceof Organization){
+                locator.getOrganizationService().curate((Organization)entity);
+            } else {
+                locator.getPersonService().curate((Person)entity);
+            }
+            assertEquals(RoleStatus.NULLIFIED, r.getStatus());
+        }
+    }
+
+    @Test
+    public void cascadeScoperStatusChange() throws Exception {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+        if (ScopedRole.class.isAssignableFrom(myType)) {
+            CuratableRole r = (CuratableRole) createSample();
+            basicOrganization.setStatusCode(EntityStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(basicOrganization);
+            basicPerson.setStatusCode(EntityStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(basicPerson);
+            r.setStatus(RoleStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(r);
+            PoHibernateUtil.getCurrentSession().flush();
+
+            basicOrganization.setStatusCode(EntityStatus.INACTIVE);
+            locator.getOrganizationService().curate(basicOrganization);
+            assertEquals(RoleStatus.SUSPENDED, r.getStatus());
+        }
     }
 }

@@ -128,7 +128,6 @@ public class OrganizationalContactServiceTest extends AbstractStructrualRoleServ
             PoHibernateUtil.getCurrentSession().save(obj);
         }
         PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
     }
 
     @Override

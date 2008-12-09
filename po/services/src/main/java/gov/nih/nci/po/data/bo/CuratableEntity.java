@@ -98,6 +98,11 @@ public interface CuratableEntity<BO extends PersistentObject, CR extends ChangeR
      * @return the status
      */
     EntityStatus getStatusCode();
+
+    /**
+     * @param status the status
+     */
+    void setStatusCode(EntityStatus status);
     
     /**
      * @return the prior status

@@ -82,12 +82,21 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
 
+import gov.nih.nci.po.data.bo.QualifiedEntity;
+import java.util.HashSet;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import org.hibernate.Session;
 
 /**
  *
@@ -95,8 +104,8 @@ import javax.ejb.TransactionAttributeType;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends AbstractCuratableServiceBean<Person> implements PersonServiceLocal {
-
+public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person> implements PersonServiceLocal {
+    
     /**
      * {@inheritDoc}
      */
@@ -106,4 +115,19 @@ public class PersonServiceBean extends AbstractCuratableServiceBean<Person> impl
         p.setStatusCode(EntityStatus.PENDING);
         return super.create(p);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected Set<CuratableRole> getAssociatedRoles(Person p, Session s) {
+        Set<CuratableRole> l = new HashSet<CuratableRole>();
+        l.addAll(getAssociatedRoles(p.getId(), ClinicalResearchStaff.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), HealthCareProvider.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), IdentifiedPerson.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), OrganizationalContact.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), QualifiedEntity.class, PLAYER_ID, s));
+        return l;
+    }
+
+
 }
