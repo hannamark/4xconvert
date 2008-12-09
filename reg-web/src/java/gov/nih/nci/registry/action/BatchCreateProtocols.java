@@ -1,0 +1,788 @@
+package gov.nih.nci.registry.action;
+
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.util.PAUtil;
+
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.MonitorCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.registry.dto.OrganizationBatchDTO;
+import gov.nih.nci.registry.dto.PersonBatchDTO;
+import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.po.service.EntityValidationException;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+/**
+ * @author Vrushali
+ * 
+ */
+@SuppressWarnings("PMD")
+public class BatchCreateProtocols {
+    private static Logger log = Logger.getLogger(BatchCreateProtocols.class);
+    private static final int MAXF = 1024;
+    /**
+     * 
+     * @param dtoList list
+     * @param folderPath path
+     * @throws PAException ex
+     */
+    public void createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath)
+            throws PAException {
+        log.info("Entering into createProtocols...having size of dtolist"
+                + dtoList.size());
+        if (dtoList == null || dtoList.size() < 1) {
+            throw new PAException("DTO list is Empty");
+        }
+        Iterator iterator = dtoList.iterator();
+        while (iterator.hasNext()) {
+            StudyProtocolBatchDTO batchDto = (StudyProtocolBatchDTO) iterator
+                    .next();
+            // check if the record qualifies to be added
+            if (batchDto != null) { // && batchDto.isValidRecord()) {
+                buildProtocol(batchDto, folderPath);
+            }
+        }
+        log.info("leaving into createProtocols...");
+    }
+
+    /**
+     * 
+     * @param dto dto
+     * @param folderPath path
+     * @throws PAException ex
+     */
+    private void buildProtocol(StudyProtocolBatchDTO dto , String folderPath) throws PAException {
+
+        Ii studyProtocolIi = null;
+        // before creating the protocol check for duplicate
+        // using the Lead Org Trial Identifier and Lead Org Identifier
+/*        Organization paOrg = new Organization();
+
+        paOrg.setIdentifier(dto.getLeadOrgNCIIdentifier());
+        paOrg = RegistryServiceLocator.getPAOrganizationService()
+                .getOrganizationByIndetifers(paOrg);
+
+        if (paOrg != null && paOrg.getId() != null) {
+            StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+            criteria.setLeadOrganizationTrialIdentifier(dto
+                    .getLeadOrgNCIIdentifier());
+            criteria.setLeadOrganizationId(paOrg.getId());
+
+            List<StudyProtocolQueryDTO> records = RegistryServiceLocator
+                    .getProtocolQueryService().getStudyProtocolByCriteria(
+                            criteria);
+            if (records != null && records.size() > 0) {
+                throw new PAException(
+                        "Duplicate Trial Submission: A trial exists in the system "
+                                + " for the Lead Organization selected and entered Trial Identifier");
+            }
+        }
+
+*/        log.info("TrialType() " + dto.getTrialType());
+        if (dto.getTrialType().equals("Observational")) {
+            studyProtocolIi = RegistryServiceLocator
+                    .getStudyProtocolService()
+                    .createObservationalStudyProtocol(
+                            (ObservationalStudyProtocolDTO) createProtocolDTO(dto));
+        } else {
+            studyProtocolIi = RegistryServiceLocator
+                    .getStudyProtocolService()
+                    .createInterventionalStudyProtocol(
+                            (InterventionalStudyProtocolDTO) createProtocolDTO(dto));
+        }
+        log.info("Trial is registered with ID: "
+                + IiConverter.convertToString(studyProtocolIi));
+        // create study overall status
+        createStudyStatus(studyProtocolIi, dto);
+        // create IND/IDE information *One- times*
+        // createIndIdeIndicators(studyProtocolIi);
+        // create the Study Grants One- times*
+        createStudyResources(studyProtocolIi, dto);
+        if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), 
+                      dto.getProtcolDocumentFileName(), folderPath);
+        }
+        if (PAUtil.isNotEmpty(dto.getIrbApprovalDocumentFileName())) {
+            uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(),
+                     dto.getIrbApprovalDocumentFileName(), folderPath);
+        }
+        
+        if (PAUtil.isNotEmpty(dto.getInformedConsentDocumentFileName())) {
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
+                    dto.getInformedConsentDocumentFileName(), folderPath);
+        }
+        
+        if (PAUtil.isNotEmpty(dto.getParticipatinSiteDocumentFileName())) {
+            uploadDocument(studyProtocolIi,
+                    DocumentTypeCode.Participating_sites.getCode(),
+                    dto.getParticipatinSiteDocumentFileName(), folderPath);
+        }
+        
+        if (PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
+            uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
+                     dto.getOtherTrialRelDocumentFileName(), folderPath);  
+        }
+        // create/Lookup the org
+        log.error("buildProtocol " + dto.getLeadOrgEmail());
+        OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
+        Ii orgIdIi = lookUpOrgs(orgDto);
+        if (null != orgIdIi) {
+            new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
+                    .getExtension(),
+                    IiConverter.convertToLong(studyProtocolIi), dto
+                            .getLocalProtocolIdentifier());
+        }
+        //look up Person
+        PersonBatchDTO piDto = buildLeadPIDto(dto);
+        Ii leadPrincipalInvestigator = lookUpPersons(piDto);
+        if (leadPrincipalInvestigator != null) {
+            new PARelationServiceBean().createPrincipalInvestigatorRelations(orgIdIi.getExtension(), 
+                    leadPrincipalInvestigator.getExtension(), IiConverter
+            .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(dto.getTrialType()));
+        }
+        //look up sponser
+        OrganizationBatchDTO sponsorOrgDto = buildSponsorOrgDto(dto);
+        Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
+        if (sponsorIdIi != null) {
+            new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
+                    IiConverter.convertToLong(studyProtocolIi));
+            if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
+                log.error("sponsorIdIi.getExtension() " + sponsorIdIi.getExtension());
+                log.error("leadPrincipalInvestigator.getExtension() " + leadPrincipalInvestigator.getExtension());
+                log.error("dto.getPiEmail() " + dto.getPiEmail());
+                log.error("dto.getPiPhone() " + dto.getPiPhone());
+                new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
+                        leadPrincipalInvestigator.getExtension(),
+                        IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
+            } else {
+                //look up new Person or create if needed.
+                PersonBatchDTO sponsorPersonDto = buildSponsorContact(dto);
+                Ii responsiblePartyContact = lookUpPersons(sponsorPersonDto);
+                new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
+                        responsiblePartyContact.getExtension(), IiConverter
+                        .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), dto.getSponsorContactPhone());
+            }    
+        }
+        
+    }
+
+   
+
+    private StudyProtocolDTO createProtocolDTO(StudyProtocolBatchDTO batchDto) {
+        StudyProtocolDTO protocolDTO = null;
+        if (batchDto.getTrialType().equals("Observational")) {
+            protocolDTO = new ObservationalStudyProtocolDTO();
+        } else {
+            protocolDTO = new InterventionalStudyProtocolDTO();
+        }
+        protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode
+                .getByCode(batchDto.getPhase())));
+        protocolDTO.setOfficialTitle(StConverter.convertToSt(batchDto
+                .getTitle()));
+        log.info("createProtocolDTO " + batchDto.getStudyStartDate());
+        protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp(batchDto.getStudyStartDate())));
+        protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp(batchDto.getPrimaryCompletionDate())));
+        protocolDTO.setStartDateTypeCode(CdConverter
+                .convertToCd(ActualAnticipatedTypeCode.getByCode(batchDto
+                        .getStudyStartDateType())));
+        protocolDTO.setPrimaryCompletionDateTypeCode(CdConverter
+                .convertToCd(ActualAnticipatedTypeCode.getByCode(batchDto
+                        .getPrimaryCompletionDateType())));
+        protocolDTO.setPrimaryPurposeCode(CdConverter
+                .convertToCd(PrimaryPurposeCode.getByCode(batchDto
+                        .getPrimaryPurpose())));
+        return protocolDTO;
+    }
+
+    private void createStudyStatus(Ii studyProtocolIi,
+            StudyProtocolBatchDTO batchDto) {
+        // create study overall status
+        try {
+            StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
+            // overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
+            overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
+            overallStatusDTO.setStatusCode(CdConverter
+                    .convertToCd(StudyStatusCode.getByCode(batchDto
+                            .getCurrentTrialStatus())));
+            overallStatusDTO.setStatusDate(TsConverter
+                    .convertToTs(PAUtil.dateStringToTimestamp(batchDto
+                            .getCurrentTrialStatusDate())));
+            RegistryServiceLocator.getStudyOverallStatusService().create(
+                    overallStatusDTO);
+        } catch (PAException pae) {
+            log.error("Exception occured while creating study overall status: "
+                    + pae);
+        }
+    }
+
+    /**
+     * 
+     * @param studyProtocolIi
+     *            studyProtocolIi
+     * @param batchDto
+     *            batchDto
+     */
+    private void createStudyResources(Ii studyProtocolIi,
+            StudyProtocolBatchDTO batchDto) {
+        try {
+            StudyResourcingDTO studyResoureDTO = null;
+            studyResoureDTO = new StudyResourcingDTO();
+            studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
+            studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter
+                    .convertToBl(Boolean.FALSE));
+            studyResoureDTO.setFundingMechanismCode(CdConverter
+                    .convertStringToCd(batchDto.getNihGrantFundingMechanism()));
+            studyResoureDTO.setNciDivisionProgramCode(CdConverter
+                    .convertToCd(MonitorCode.getByCode(batchDto
+                            .getNihGrantNCIDivisionCode())));
+            studyResoureDTO.setNihInstitutionCode(CdConverter
+                    .convertStringToCd(batchDto.getNihGrantInstituteCode()));
+            studyResoureDTO.setSerialNumber(IntConverter.convertToInt(batchDto
+                    .getNihGrantSrNumber()));
+            RegistryServiceLocator.getStudyResourcingService()
+                    .createStudyResourcing(studyResoureDTO);
+        } catch (PAException pae) {
+            log.error("Exception occured while creating study participation: "
+                    + pae);
+        }
+    }
+
+    /**
+     * This method is first look up the Org. If org Found then return the id
+     * else it will create the new org assumpion- even if the lookup return
+     * multiple org we are taking the first one
+     * 
+     * @param batchDto
+     *            batchDto
+     * @return Str
+     * @throws PAException
+     *             PAException
+     */
+    private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException {
+        Ii orgId = null;
+        try {
+            String orgName = batchDto.getName();
+            String countryName = batchDto.getCountry();
+            String cityName = batchDto.getCity();
+            String zipCode = batchDto.getZip();
+            if (orgName.equals("") && countryName.equals("")
+                    && cityName.equals("") && zipCode.equals("")) {
+                String message = "Please enter at least one search criteria";
+                log.error(" lookUpOrgs" + message);
+                throw new PAException(message);
+            }
+            if (countryName.equals("")) {
+                String message = "Please select a country";
+                log.error(" lookUpOrgs" + message);
+                throw new PAException(message);
+            }
+            OrganizationDTO criteria = new OrganizationDTO();
+            if (batchDto.getOrgCTEPId() != null && batchDto.getOrgCTEPId().length() > 0) {
+                IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
+                identifiedOrganizationDTO.setAssignedId(
+                        IiConverter.converToIdentifiedEntityIi(batchDto.getOrgCTEPId()));
+                List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
+                        .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
+                if (null == identifiedOrgs || identifiedOrgs.size() == 0) {
+                    log.error("No Organization Found");
+                    throw new PAException("No Organization Found");
+                } else {
+                criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+                }
+            } else {
+                criteria.setName(EnOnConverter.convertToEnOn(orgName));
+                criteria.setPostalAddress(AddressConverterUtil.create(null, null,
+                    cityName, null, zipCode, countryName));
+            }
+            List<OrganizationDTO> poOrgDtos = RegistryServiceLocator
+                    .getPoOrganizationEntityService().search(criteria);
+            if (null == poOrgDtos || poOrgDtos.size() == 0) {
+                // create a new org and then return the new Org
+                log.error(" lookUpOrgs Serch return no org so creating new");
+                createOrganization(batchDto);
+            } else {
+                // return the Id of the org
+                orgId = poOrgDtos.get(0).getIdentifier();
+                log.error(" lookUpOrgs Serch returned orgId" + orgId.getExtension().toString());
+
+            }
+        } catch (Exception e) {
+            log.error("lookUpOrgs exception" + e.getMessage());
+            throw new PAException(e.getMessage());
+        }
+        return orgId;
+    }
+
+    /**
+     * his method is first look up the Person. If person Found then return the id
+     * else it will create the new Person Assumpion- even if the lookup return
+     * multiple Person we are taking the first one
+     * @param batchDto
+     *            batchDto
+     * @return str
+     * @throws PAException
+     *             ex
+     */
+    public Ii createOrganization(OrganizationBatchDTO batchDto)
+            throws PAException {
+        OrganizationDTO orgDto = new OrganizationDTO();
+        Ii orgId = null;
+        String orgName = batchDto.getName();
+        if (orgName != null && !PAUtil.isNotEmpty(orgName)) {
+            throw new PAException("Organization is a required field");
+        }
+        
+        String orgStAddress = batchDto.getStreetAddress();
+        if (orgStAddress != null && !PAUtil.isNotEmpty(orgStAddress)) {
+              log.error("Street address is a required field");
+              throw new PAException("Street address is a required field"); 
+        }
+        String cityName = batchDto.getCity();
+        if (cityName != null && !PAUtil.isNotEmpty(cityName)) {
+              log.error("createOrganization throwing exception" + "City is a required field");
+              throw new PAException("City is a required field");
+        } 
+        String stateName = batchDto.getState();
+        if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
+              log.error("createOrganization throwing exception" + "State is a required field");
+              throw new PAException("State is a required field");
+        }
+        String zipCode = batchDto.getZip();
+        if (zipCode != null && !PAUtil.isNotEmpty(zipCode)) {
+            log.error("createOrganization throwing exception" + "Zip is a required field");
+            throw new PAException("Zip is a required field");
+        }
+        String countryName = batchDto.getCountry();
+        if (countryName != null && countryName.equals("aaa")) {
+            log.error("createOrganization throwing exception" + "Country is a required field");
+            throw new PAException("Country is a required field");
+        }
+        String email = batchDto.getEmail();
+        if (email != null &&  !PAUtil.isNotEmpty(email)) { 
+              log.error("Email is a required field");
+              throw new PAException("Email is a required field"); 
+        } else if (!PAUtil.isValidEmail(email)) {
+              log.error("Email address is invalid");
+              throw new PAException("Email address is invalid"); 
+        }
+        String phoneNumer = batchDto.getPhone();
+        String faxNumber = batchDto.getFax();
+        String ttyNumber = batchDto.getTty();
+        String url = batchDto.getUrl();
+        
+        orgDto.setName(EnOnConverter.convertToEnOn(orgName));
+        orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress,
+                null, cityName, stateName, zipCode, countryName));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        try {
+            if (phoneNumer != null && phoneNumer.length() > 0) {
+                Tel t = new Tel();
+                t.setValue(new URI("tel", phoneNumer, null));
+                telco.getItem().add(t);
+            }
+            if (faxNumber != null && faxNumber.length() > 0) {
+                Tel fax = new Tel();
+                fax.setValue(new URI("x-text-fax", faxNumber, null));
+                telco.getItem().add(fax);
+            }
+            if (ttyNumber != null && ttyNumber.length() > 0) {
+                Tel tty = new Tel();
+                tty.setValue(new URI("x-text-tel", ttyNumber, null));
+                telco.getItem().add(tty);
+            }
+            if (url != null && url.length() > 0) {
+                TelUrl telurl = new TelUrl();
+                telurl.setValue(new URI(url));
+                telco.getItem().add(telurl);
+            }
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + email));
+            telco.getItem().add(telemail);
+            orgDto.setTelecomAddress(telco);
+            Ii id = RegistryServiceLocator.getPoOrganizationEntityService()
+                    .createOrganization(orgDto);
+            List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
+            callConvert.add(RegistryServiceLocator
+                    .getPoOrganizationEntityService().getOrganization(id));
+            orgId = callConvert.get(0).getIdentifier();
+        } catch (NullifiedEntityException e1) {
+            log.error("createOrganization exception1 " + e1.getMessage());
+            throw new PAException(e1.getMessage());
+        } catch (EntityValidationException e3) {
+            log.error("createOrganization exception3 " + e3.getMessage());
+            throw new PAException(e3.getMessage());
+        } catch (PAException e4) {
+            log.error("createOrganization exception4 " + e4.getMessage());
+            throw new PAException(e4.getMessage());
+        } catch (URISyntaxException e5) {
+            log.error("createOrganization exception5 " + e5.getMessage());
+            throw new PAException(e5.getMessage());
+        }
+        return orgId;
+    }
+    /**
+     * 
+     * @param batchDto dto
+     * @return Ii personId
+     * @throws PAException ex
+     */
+    public Ii lookUpPersons(PersonBatchDTO batchDto) throws PAException {
+        Ii personId = null;
+        try {
+            String firstName = batchDto.getFirstName();
+            String lastName = batchDto.getLastName();
+            String email = batchDto.getEmail();
+            String ctep = batchDto.getPersonCTEPId();
+            if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
+                    && (email.equals("")) && ctep != null && !(ctep.length() > 0)) {
+                String message = "Please enter at least one search criteria";
+                    log.error(message);
+                    throw new PAException(message);
+            }
+            gov.nih.nci.services.person.PersonDTO p = new gov.nih.nci.services.person.PersonDTO();
+            //
+            if (email != null && email.length() > 0) {
+                DSet<Tel> list = new DSet<Tel>();
+                list.setItem(new HashSet<Tel>());
+                TelEmail telemail = new TelEmail();
+                telemail.setValue(new URI("mailto:" + email));
+                list.getItem().add(telemail);
+                p.setTelecomAddress(list);
+            }
+            //
+            List<gov.nih.nci.services.person.PersonDTO> poPersonList = 
+                                                        new ArrayList<gov.nih.nci.services.person.PersonDTO>();
+            if (ctep != null && ctep.length() > 0) {
+                IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
+                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedEntityIi(ctep));
+                List<IdentifiedPersonDTO> retResultList = 
+                                  RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
+                if (null == retResultList || retResultList.size() == 0) {
+                   log.error("No Person Found...");
+                   throw new PAException("No Person Found...");
+                } else {
+                    p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
+                }
+            
+            } else {
+                p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
+            }
+            poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
+            if (null == poPersonList ||  poPersonList.size() ==  0) {
+                log.error("No Person found so creating new Person");
+                createPerson(batchDto);
+            }  else {
+                personId = poPersonList.get(0).getIdentifier();             
+                log.error("Person found ");
+            }
+        } catch (URISyntaxException e) {
+            log.error("lookUpPersons exception " + e.getMessage());
+            throw new PAException("lookUpPersons exception " + e.getMessage());
+        }
+        return personId;
+    }
+    /**
+     * 
+     * @param  batchDto dto
+     * @return Ii personId
+     * @throws PAException ex 
+     */
+    public Ii createPerson(PersonBatchDTO batchDto) throws PAException  {
+        
+        Ii personId = null; 
+        String firstName = batchDto.getFirstName();
+        if (firstName != null && !PAUtil.isNotEmpty(firstName)) {
+           log.error("First Name is a required field");
+        throw new PAException("First Name is a required field");
+        }
+        String lastName = batchDto.getLastName();
+        if (lastName != null && !PAUtil.isNotEmpty(lastName)) {
+            log.error("Last Name is a required field");
+        throw new PAException("Last Name is a required field");
+        }
+        String email = batchDto.getEmail();
+        if (email != null && !PAUtil.isNotEmpty(email)) {
+            log.error("Email is a required field");
+         throw new PAException("Email is a required field");
+        } else if (!PAUtil.isValidEmail(email)) {
+            log.error("Email address is invalid");
+        throw new PAException("Email address is invalid");
+        }
+        String streetAddr = batchDto.getStreetAddress();
+        if (streetAddr != null && !PAUtil.isNotEmpty(streetAddr)) {
+            log.error("Street address is a required field");
+        throw new PAException("Street address is a required field");
+        }
+        String city = batchDto.getCity();
+        if (city != null && !PAUtil.isNotEmpty(city)) {
+            log.error("City is a required field");
+        throw new PAException("City is a required field");
+        }
+        String zip = batchDto.getZip();
+        if (zip != null && !PAUtil.isNotEmpty(zip)) {
+            log.error("Zip is a required field");
+        throw new PAException("Zip is a required field");
+        }
+        String country = batchDto.getCountry();
+        if (zip != null && country.equals("aaa")) {
+            log.error("Country is a required field");
+        throw new PAException("Country is a required field");
+        }
+    
+        String midName = batchDto.getMiddleName();
+        String state =  batchDto.getState();
+        String phone = batchDto.getPhone();
+        String tty = batchDto.getTty();
+        String fax = batchDto.getFax();
+        String url = batchDto.getUrl();
+        //
+        gov.nih.nci.services.person.PersonDTO dto = new gov.nih.nci.services.person.PersonDTO();
+        dto.setName(new EnPn());
+        Enxp part = new Enxp(EntityNamePartType.GIV);
+        part.setValue(firstName);
+        dto.getName().getPart().add(part);
+        // if middel name exists stick it in here!
+        if (midName != null && PAUtil.isNotEmpty(midName)) {
+            Enxp partMid = new Enxp(EntityNamePartType.FAM);
+            partMid.setValue(midName);
+            dto.getName().getPart().add(partMid);
+        }
+        Enxp partFam = new Enxp(EntityNamePartType.FAM);
+        partFam.setValue(lastName);
+        dto.getName().getPart().add(partFam);
+      
+        dto.getName().getPart().add(part);
+        DSet<Tel> list = new DSet<Tel>();
+        list.setItem(new HashSet<Tel>());
+        try {
+            if (phone != null && phone.length() > 0) {
+                Tel t = new Tel();
+                t.setValue(new URI("tel", phone, null));
+                list.getItem().add(t);
+            }
+            if (fax != null && fax.length() > 0) {
+                Tel faxTel = new Tel();
+                faxTel.setValue(new URI("x-text-fax", fax, null));
+                list.getItem().add(faxTel);
+            }
+            if (tty != null && tty.length() > 0) {
+                Tel ttyTel = new Tel();
+                ttyTel.setValue(new URI("x-text-tel", tty, null));
+                list.getItem().add(ttyTel);
+            }
+            if (url != null && url.length() > 0) {
+                TelUrl telurl = new TelUrl();
+                telurl.setValue(new URI(url));
+                list.getItem().add(telurl);
+            }
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + email));
+            list.getItem().add(telemail);
+            dto.setTelecomAddress(list);
+            dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
+            personId = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);
+          
+        } catch (EntityValidationException e) {
+            log.error("PERS_CREATE_RESPONSE " + e.getMessage());
+            throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
+        } catch (PAException e) {
+            log.error("PERS_CREATE_RESPONSE " + e.getMessage());
+            throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
+        } catch (URISyntaxException e) {
+            log.error("PERS_CREATE_RESPONSE " + e.getMessage());
+            throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
+        }
+        return personId;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return orgDto
+     */
+    private OrganizationBatchDTO buildLeadOrgDto(StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO orgDto = new OrganizationBatchDTO();
+        orgDto.setName(dto.getLeadOrgName());
+        orgDto.setOrgCTEPId(dto.getLeadOrgCTEPOrgNo());
+        orgDto.setStreetAddress(dto.getLeadOrgStreetAddress());
+        orgDto.setCity(dto.getLeadOrgCity());
+        orgDto.setState(dto.getLeadOrgState());
+        orgDto.setZip(dto.getLeadOrgZip());
+        orgDto.setCountry(dto.getLeadOrgCountry());
+        orgDto.setEmail(dto.getLeadOrgEmail());
+        log.error("Lead Org Email" + dto.getLeadOrgEmail());
+        orgDto.setPhone(dto.getLeadOrgPhone());
+        orgDto.setTty(dto.getLeadOrgTTY());
+        orgDto.setFax(dto.getLeadOrgFax());
+        orgDto.setUrl(dto.getLeadOrgUrl());
+        orgDto.setType(dto.getLeadOrgType());
+        return orgDto;
+    }
+    /**
+     * 
+     * @param dto
+     * @return
+     */
+        private PersonBatchDTO buildLeadPIDto(StudyProtocolBatchDTO dto) {
+        PersonBatchDTO personDto = new PersonBatchDTO();
+        personDto.setFirstName(dto.getPiFirstName());
+        personDto.setMiddleName(dto.getPiMiddleName());
+        personDto.setLastName(dto.getPiLastName());
+        personDto.setPersonCTEPId(dto.getPiPersonCTEPPersonNo());
+        personDto.setStreetAddress(dto.getPiStreetAddress());
+        personDto.setCity(dto.getPiCity());
+        personDto.setState(dto.getPiState());
+        personDto.setZip(dto.getPiZip());
+        personDto.setCountry(dto.getPiCountry());
+        personDto.setEmail(dto.getPiEmail());
+        personDto.setPhone(dto.getPiPhone());
+        personDto.setTty(dto.getPiTTY());
+        personDto.setFax(dto.getPiFax());
+        personDto.setUrl(dto.getPiUrl());
+        return personDto;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return SponsorDto
+     */
+    private OrganizationBatchDTO buildSponsorOrgDto(StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO sponsorDto = new OrganizationBatchDTO();
+        sponsorDto.setName(dto.getSponsorOrgName());
+        sponsorDto.setOrgCTEPId(dto.getSponsorCTEPOrgNumber());
+        sponsorDto.setStreetAddress(dto.getSponsorStreetAddress());
+        sponsorDto.setCity(dto.getSponsorCity());
+        sponsorDto.setState(dto.getSponsorState());
+        sponsorDto.setZip(dto.getSponsorZip());
+        sponsorDto.setCountry(dto.getSponsorCountry());
+        sponsorDto.setEmail(dto.getSponsorEmail());
+        sponsorDto.setPhone(dto.getSponsorPhone());
+        sponsorDto.setTty(dto.getSponsorTTY());
+        sponsorDto.setFax(dto.getSponsorFax());
+        sponsorDto.setUrl(dto.getSponsorURL());
+        return sponsorDto;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return dto
+     */
+    private PersonBatchDTO buildSponsorContact(StudyProtocolBatchDTO dto) {
+        PersonBatchDTO  sponsorContact = new PersonBatchDTO();
+        sponsorContact.setFirstName(dto.getSponsorContactFName());
+        sponsorContact.setMiddleName(dto.getSponsorContactMName());
+        sponsorContact.setLastName(dto.getSponsorContactLName());
+        sponsorContact.setPersonCTEPId(dto.getSponsorContactCTEPPerNo());
+        sponsorContact.setStreetAddress(dto.getSponsorContactStreetAddress());
+        sponsorContact.setCity(dto.getSponsorContactCity());
+        sponsorContact.setState(dto.getSponsorContactState());
+        sponsorContact.setZip(dto.getSponsorContactZip());
+        sponsorContact.setCountry(dto.getSponsorContactCountry());
+        sponsorContact.setEmail(dto.getSponsorContactEmail());
+        sponsorContact.setPhone(dto.getSponsorContactPhone());
+        sponsorContact.setTty(dto.getSponsorContactTTY());
+        sponsorContact.setFax(dto.getSponsorContactFax());
+        sponsorContact.setUrl(dto.getSponsorContactUrl());
+        return sponsorContact;
+    }
+    /**
+     * 
+     * @param studyProtocolIi
+     * @param docTypeCode
+     * @param fileName
+     * @param folderPath
+     */
+    private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, String folderPath) {
+        try {
+            DocumentDTO docDTO = new DocumentDTO();
+            docDTO.setStudyProtocolIi(studyProtocolIi);
+            docDTO.setTypeCode(CdConverter.convertStringToCd(docTypeCode));
+            docDTO.setFileName(StConverter.convertToSt(fileName));
+            // docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
+            docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(folderPath + fileName))));
+            RegistryServiceLocator.getDocumentService().create(docDTO);
+        } catch (PAException pae) {
+            // pae.printStackTrace();
+            log.error("Exception occured while uploading a '" + fileName + "' Exception is" + pae);
+        } catch (IOException ioe) {
+            // ioe.printStackTrace();
+            log.error("Exception occured reading '" + fileName + "' Exception is" + ioe);
+        }
+    }
+    /** Read an input stream in its entirety into a byte array. */
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+        int bufSize = MAXF * MAXF;
+        byte[] content;
+        List<byte[]> parts = new LinkedList();
+        InputStream in = new BufferedInputStream(inputStream);
+        byte[] readBuffer = new byte[bufSize];
+        byte[] part = null;
+        int bytesRead = 0;
+        // read everyting into a list of byte arrays
+        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
+            part = new byte[bytesRead];
+            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
+            parts.add(part);
+        }
+        // calculate the total size
+        int totalSize = 0;
+        for (byte[] partBuffer : parts) {
+            totalSize += partBuffer.length;
+        }
+        // allocate the array
+        content = new byte[totalSize];
+        int offset = 0;
+        for (byte[] partBuffer : parts) {
+            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
+            offset += partBuffer.length;
+        }
+        return content;
+    }
+}
