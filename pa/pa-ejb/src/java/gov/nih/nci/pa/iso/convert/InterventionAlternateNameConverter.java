@@ -12,7 +12,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author Hugh Reinhart
@@ -33,9 +32,7 @@ public class InterventionAlternateNameConverter
     public InterventionAlternateNameDTO convertFromDomainToDto(InterventionAlternateName bo) throws PAException {
         InterventionAlternateNameDTO dto = new InterventionAlternateNameDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        if (bo.getIntervention() != null) {
-            dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
-        }
+        dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
         dto.setName(StConverter.convertToSt(bo.getName()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
@@ -50,11 +47,9 @@ public class InterventionAlternateNameConverter
      */
     @Override
     public InterventionAlternateName convertFromDtoToDomain(InterventionAlternateNameDTO dto) throws PAException {
-        Intervention iBo = null;
-        if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
-            iBo = new Intervention();
-            iBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
-        }
+        Intervention iBo = new Intervention();
+        iBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+
         InterventionAlternateName bo = new InterventionAlternateName();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(iBo);

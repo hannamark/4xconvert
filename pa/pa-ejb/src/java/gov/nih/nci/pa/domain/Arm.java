@@ -17,6 +17,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
+
 /**
  * @author Hugh Reinhart
  * @since 11/05/2008
@@ -28,6 +31,11 @@ import javax.persistence.Table;
 @Table(name = "ARM")
 public class Arm extends AbstractStudyEntity {
     private static final long serialVersionUID = 1237144890L;
+    
+    /** Maximum length for name (label) attrubute. */
+    public static final int NAME_LENGTH = 62;
+    /** Maximum length for discriptionText attrubute. */
+    public static final int DESCRIPTION_TEXT_LENGTH = 1000;
 
     private String name;
     private String descriptionText;
@@ -37,6 +45,8 @@ public class Arm extends AbstractStudyEntity {
      * @return the name
      */
     @Column(name = "NAME")
+    @NotNull
+    @Length(max = NAME_LENGTH)
     public String getName() {
         return name;
     }
@@ -50,6 +60,8 @@ public class Arm extends AbstractStudyEntity {
      * @return the descriptionText
      */
     @Column(name = "DESCRIPTION_TEXT")
+    @NotNull
+    @Length(max = DESCRIPTION_TEXT_LENGTH)
     public String getDescriptionText() {
         return descriptionText;
     }

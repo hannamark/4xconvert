@@ -67,7 +67,7 @@ function handleCreateGroup(){
                     titleKey="arms.description"
                     headerClass="sortable" />
                 <display:column property="interventions" titleKey="arms.interventions"/>
-                <display:column titleKey="arms.edit" class="action">
+                <display:column titleKey="arms.edit" headerClass="centered" class="action">
                     <s:if test="%{currentAction == 'listArm'}">
                     <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
@@ -81,7 +81,7 @@ function handleCreateGroup(){
                     </s:a>
                     </s:elseif>
                 </display:column>
-                <display:column titleKey="arms.delete" class="action">
+                <display:column titleKey="arms.delete" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
                             alt="Delete" width="16" height="16" />

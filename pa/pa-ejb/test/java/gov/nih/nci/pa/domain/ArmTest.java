@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.PropertyValueException;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,5 +96,16 @@ public class ArmTest {
         armList = sp.getArms();
         assertEquals(armCount - 1, armList.size());
     }
-
+    @Test
+    public void armDesriptionRequiredTest() {
+        Arm a = (Arm) sess.get(Arm.class, TestSchema.armIds.get(0));
+        a.setDescriptionText(null);
+        sess.merge(a);
+        try {
+            sess.flush();
+            fail("Should have failed for null descriptionText.  ");
+        } catch (PropertyValueException e) {
+            // expected bahavior
+        }
+    }
 }

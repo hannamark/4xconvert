@@ -46,6 +46,7 @@ public class DiseaseParentServiceBean
                        + "from DiseaseParent dp "
                        + "join dp." + assoc + " dis "
                        + "where dis.id = :diseaseId "
+                       + "  and dis.statusCode = 'ACTIVE' "
                        + "order by dp.id ";
             getLogger().info("query DiseaseParent = " + hql + ".  ");
 

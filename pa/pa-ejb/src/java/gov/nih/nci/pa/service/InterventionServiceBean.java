@@ -52,8 +52,9 @@ public class InterventionServiceBean
             String hql = "select distinct int "
                        + "from Intervention int "
                        + "left join int.interventionAlternateNames ian "
-                       + "where (upper(int.name) like upper(:name) "
-                       + "     or upper(ian.name) like upper(:name)) " 
+                       + "where (int.statusCode = 'ACTIVE')"
+                       + "  and ((upper(int.name) like upper(:name)) "
+                       + "       or ((upper(ian.name) like upper(:name)) and (ian.statusCode = 'ACTIVE'))) " 
                        + "order by int.name ";
             getLogger().info("query Intervention = " + hql);
 

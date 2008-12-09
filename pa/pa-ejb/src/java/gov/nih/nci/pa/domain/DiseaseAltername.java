@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -29,6 +30,7 @@ public class DiseaseAltername extends AbstractEntityWithStatusCode<ActiveInactiv
      * @return the alternateName
      */
     @Column(name = "ALTERNATE_NAME")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
     public String getAlternateName() {
         return alternateName;
     }

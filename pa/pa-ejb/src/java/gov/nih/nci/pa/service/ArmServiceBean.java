@@ -4,6 +4,7 @@ import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.iso.convert.ArmConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import javax.ejb.Stateless;
 
@@ -22,10 +23,11 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
         if (dto == null) {
             return;
         }
-        if ((dto.getName() == null) 
-            || (StConverter.convertToString(dto.getName()) == null)
-            || (StConverter.convertToString(dto.getName()).trim().length() < 1)) {
-            serviceError("The arm label (name) must be set.  ");
+        if (PAUtil.isEmpty(StConverter.convertToString(dto.getName()))) {
+            serviceError("The arm/group label (name) must be set.  ");
+        }
+        if (PAUtil.isEmpty(StConverter.convertToString(dto.getDescriptionText()))) {
+            serviceError("The arm/group description must be set.  ");
         }
     }
 

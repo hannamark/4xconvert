@@ -88,7 +88,7 @@
                     </tr>
                 </s:if>
                 <tr>
-                    <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
+                    <td class="label"><s:label for="armDescription">Arm Description:</s:label><span class="required">*</span></td>
                     <td class="value">
                         <s:textarea name="armDescription" rows="3" cssStyle="width:280px;float:left"/>
                     </td>
@@ -97,7 +97,7 @@
         </td>
         <td>
             <display:table name="intList" id="row" class="data">
-                <display:column titleKey="arms.intervention.assignment" style="text-align: center">
+                <display:column titleKey="arms.intervention.assignment" headerClass="centered" style="text-align: center">
                     <s:a href="#" onclick="interventionCheckboxClick(%{#attr.row.identifier})">
                         <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" 
                                 value="%{#attr.row.armAssignment}"/>

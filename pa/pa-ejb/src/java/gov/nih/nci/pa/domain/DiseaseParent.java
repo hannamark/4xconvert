@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -59,6 +60,7 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
      * @return the parentDiseaseCode
      */
     @Column(name = "PARENT_DISEASE_CODE")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
     public String getParentDiseaseCode() {
         return parentDiseaseCode;
     }

@@ -47,9 +47,10 @@ public class DiseaseServiceBean
             // step 1: form the hql
             String hql = "select distinct dis "
                        + "from Disease dis "
-                       + "left join dis.diseaseAlternames alter "
-                       + "where (upper(dis.preferredName) like upper(:name) "
-                       + "     or upper(alter.alternateName) like upper(:name)) " 
+                       + "left join dis.diseaseAlternames alt "
+                       + "where (dis.statusCode = 'ACTIVE') "
+                       + "  and ((upper(dis.preferredName) like upper(:name)) "
+                       + "       or ((upper(alt.alternateName) like upper(:name)) and (dis.statusCode = 'ACTIVE'))) " 
                        + "order by dis.preferredName ";
             getLogger().info("query Disease = " + hql);
 

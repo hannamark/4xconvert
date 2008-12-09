@@ -9,7 +9,9 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DiseaseTest;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -107,5 +109,18 @@ public class DiseaseServiceTest {
         } catch(PAException e) {
             // expected behavior
         }
+    }
+    @Test 
+    public void searchDoesNotReturnInactiveTest() throws Exception {
+        DiseaseDTO searchCriteria = new DiseaseDTO();
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe"));
+        List<DiseaseDTO> r = bean.search(searchCriteria);
+        assertEquals(1, r.size());
+        
+        r.get(0).setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.INACTIVE));
+        bean.update(r.get(0));
+        
+        r = bean.search(searchCriteria);
+        assertEquals(0, r.size());
     }
 }

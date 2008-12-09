@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.Length;
 
 /**
  * @author Hugh Reinhart
@@ -39,6 +40,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the diseaseCode
      */
     @Column(name = "DISEASE_CODE")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
     public String getDiseaseCode() {
         return diseaseCode;
     }
@@ -52,6 +54,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the ntTermIdentifier
      */
     @Column(name = "NT_TERM_IDENTIFIER")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
     public String getNtTermIdentifier() {
         return ntTermIdentifier;
     }
@@ -65,6 +68,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the preferredName
      */
     @Column(name = "PREFERRED_NAME")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
     public String getPreferredName() {
         return preferredName;
     }
@@ -78,6 +82,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      * @return the menuDisplayName
      */
     @Column(name = "MENU_DISPLAY_NAME")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
     public String getMenuDisplayName() {
         return menuDisplayName;
     }

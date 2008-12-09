@@ -1,9 +1,13 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -21,6 +25,7 @@ import org.junit.Test;
  */
 public class InterventionServiceTest {
     private InterventionServiceRemote remoteEjb = new InterventionServiceBean();
+    private InterventionAlternateNameServiceRemote ianService = new InterventionAlternateNameServiceBean();
     private Ii ii;
     
     @Before
@@ -58,5 +63,34 @@ public class InterventionServiceTest {
         } catch(PAException e) {
             // expected behavior
         }
+    }
+    @Test
+    public void noInactiveInterventionAlternateNameRecordsReturnedBySearchTest() throws Exception {
+        InterventionDTO searchCriteria = new InterventionDTO();
+        searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
+        List<InterventionDTO> r = remoteEjb.search(searchCriteria);
+        int size = r.size();
+        assertTrue(size > 0);
+        Ii interventionIi = r.get(0).getIdentifier();
+        List<InterventionAlternateNameDTO> ianList = ianService.getByIntervention(interventionIi);
+        for (InterventionAlternateNameDTO ian : ianList) {
+            ian.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.INACTIVE));
+            ianService.update(ian);
+        }
+        
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(size - 1, r.size());
+    }
+    @Test
+    public void noInactiveInterventionRecordsReturnedBySearchTest() throws Exception {
+        InterventionDTO searchCriteria = new InterventionDTO();
+        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE"));
+        List<InterventionDTO> r = remoteEjb.search(searchCriteria);
+        int size = r.size();
+        assertTrue(size > 0);
+        r.get(0).setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.INACTIVE));
+        remoteEjb.update(r.get(0));
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(size - 1, r.size());
     }
 }

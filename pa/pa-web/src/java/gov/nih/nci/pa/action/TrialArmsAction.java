@@ -2,10 +2,12 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialArmsWebDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -49,7 +51,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final String ACT_LIST_GROUP = "listGroup";
     private static final String ACT_EDIT_NEW_GROUP = "editNewGroup";
     private static final String ACT_EDIT_GROUP = "editGroup";
-    private static final int MAX_DESCRIPTION_LENGTH = 1000;
         
     private ArmServiceRemote armService;
     private PlannedActivityServiceRemote plaService;
@@ -218,8 +219,9 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     
     private void businessRules() throws Exception {
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
-           && (this.getArmType().length() == 0)) {
-            this.addActionError("Arm type must be set");
+                && (!PAUtil.isEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode()) 
+                && (getAssociatedIds().size() > 0))) {
+            addActionError("Arms of type " + armType + " cannot have associated interventions.  ");
         }
     }
 
@@ -379,7 +381,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param armName the armName to set
      */
     public void setArmName(String armName) {
-        this.armName = armName;
+        this.armName = PAUtil.stringSetter(armName, Arm.NAME_LENGTH);
     }
 
     /**
@@ -393,12 +395,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param armType the armType to set
      */
     public void setArmType(String armType) {
-        if (armType == null) {
-            this.armType = null;
-        } else {
-            this.armType = (armType.length() > MAX_DESCRIPTION_LENGTH) 
-                    ? armType.substring(0, MAX_DESCRIPTION_LENGTH) : armType;
-        }
+        this.armType = armType;
     }
 
     /**
@@ -412,7 +409,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param armDescription the armDescription to set
      */
     public void setArmDescription(String armDescription) {
-        this.armDescription = armDescription;
+        this.armDescription = PAUtil.stringSetter(armDescription, Arm.DESCRIPTION_TEXT_LENGTH);
     }
 
     /**
@@ -440,6 +437,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param selectedArmIdentifier the selectedArmIdentifier to set
      */
     public void setSelectedArmIdentifier(String selectedArmIdentifier) {
-        this.selectedArmIdentifier = selectedArmIdentifier;
+        this.selectedArmIdentifier = PAUtil.stringSetter(selectedArmIdentifier);
     }
 }

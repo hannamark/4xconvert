@@ -445,6 +445,7 @@ public class TestSchema {
             arm.setStudyProtocol(sp);
             arm.setName("ARM 01");
             arm.setTypeCode(ArmTypeCode.EXPERIMENTAL);
+            arm.setDescriptionText("arm description");
             arm.setUserLastCreated("old user");
             arm.setUserLastUpdated("old user");
             arm.getInterventions().add(pa);

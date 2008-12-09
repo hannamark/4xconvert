@@ -3,6 +3,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.AbstractEntity;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -228,7 +229,29 @@ public class PAUtil {
      */
     public static boolean isNotEmpty(String aString) { 
         return !isEmpty(aString); 
-    } 
+    }
+
+    /**
+     * Method designed for string setters to concatenate rather then cause exceptions.
+     * @param value a string
+     * @param maxLength the maximum length allowed for the string
+     * @return null if empty, otherwise a string no longer than maxlegth
+     */
+    public static String stringSetter(String value, int maxLength) {
+        if (isEmpty(value)) {
+            return null;
+        }
+        return (value.length() > maxLength) ? value.substring(0, maxLength) : value;
+    }
+
+    /**
+     * Method designed for string setters to concatenate rather then cause exceptions.
+     * @param value a string
+     * @return null if empty, otherwise a string no longer than the default
+     */
+    public static String stringSetter(String value) {
+        return stringSetter(value, AbstractEntity.LONG_TEXT_LENGTH);
+    }
 
     /**
      * Util method to validate email addresses.
