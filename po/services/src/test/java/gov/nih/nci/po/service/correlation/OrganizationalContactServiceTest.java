@@ -135,7 +135,6 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         OrganizationalContact oc = new OrganizationalContact();
         createAndGetOrganization();
         fillinPersonRoleFields(oc);
-        oc.setPrimaryIndicator(Boolean.TRUE);
         oc.getTypes().addAll(getTypes());
         return oc;
     }
@@ -143,7 +142,6 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
     @Override
     void verifyStructuralRole(OrganizationalContact expected, OrganizationalContact actual) {
         verifyPersonRole(expected, actual);
-        assertEquals(expected.getPrimaryIndicator(), actual.getPrimaryIndicator());
         
         List<String> expectedValues = OrganizationalContactDTOTest.getCodeValues(expected.getTypes());
         List<String> actualValues = OrganizationalContactDTOTest.getCodeValues(actual.getTypes());
@@ -179,32 +177,24 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         //
 
         // id
-        doSearch(oc, oc.getId(), null, null, null, null, null, null, null, null, null, 1);
-        doSearch(oc, -1L, null, null, null, null, null, null, null, null, null, 0);
-
-        // primaryIndicator
-        doSearch(oc, null, null, null, oc.getPrimaryIndicator(), null, null, null, null, null, null, 1);
-        doSearch(oc, null, null, null, !oc.getPrimaryIndicator(), null, null, null, null, null, null, 0);
-
-        // id with primaryIndicator
-        doSearch(oc, oc.getId(), null, null, oc.getPrimaryIndicator(), null, null, null, null, null, null, 1);
-        doSearch(oc, oc.getId(), null, null, !oc.getPrimaryIndicator(), null, null, null, null, null, null, 0);
+        doSearch(oc, oc.getId(), null, null, null, null, null, null, null, null, 1);
+        doSearch(oc, -1L, null, null, null, null, null, null, null, null, 0);
 
         // person + org
-        doSearch(oc, null, oc.getScoper().getId(), null, null, null, null, null, null, null, null, 1);
-        doSearch(oc, null, null, oc.getPlayer().getId(), null, null, null, null, null, null, null, 1);
-        doSearch(oc, null, -1L, null, null, null, null, null, null, null, null, 0);
-        doSearch(oc, null, null, -1L, null, null, null, null, null, null, null, 0);
+        doSearch(oc, null, oc.getScoper().getId(), null, null, null, null, null, null, null, 1);
+        doSearch(oc, null, null, oc.getPlayer().getId(), null, null, null, null, null, null, 1);
+        doSearch(oc, null, -1L, null, null, null, null, null, null, null, 0);
+        doSearch(oc, null, null, -1L, null, null, null, null, null, null, 0);
         doSearch(oc, null, oc.getScoper().getId(), oc.getPlayer().getId(), null, null, null, null, null, null,
-                null, 1);
+                1);
         doSearch(oc, null, oc.getScoper().getId(), oc.getPlayer().getId() + 1, null, null, null, null, null,
-                null, null, 0);
+                null, 0);
 
         // status fields
-        doSearch(oc, null, null, null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
-        doSearch(oc, null, null, null, null, RoleStatus.ACTIVE, null, null, null, null, null, 0);
-        doSearch(oc, null, oc.getScoper().getId(), null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
-        doSearch(oc, null, -1L, null, null, RoleStatus.PENDING, null, null, null, null, null, 0);
+        doSearch(oc, null, null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
+        doSearch(oc, null, null, null, RoleStatus.ACTIVE, null, null, null, null, null, 0);
+        doSearch(oc, null, oc.getScoper().getId(), null, RoleStatus.PENDING, null, null, null, null, null, 1);
+        doSearch(oc, null, -1L, null, RoleStatus.PENDING, null, null, null, null, null, 0);
 
         //
         // List fields
@@ -213,78 +203,78 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         // email
         List<Email> emails = new ArrayList<Email>();
         emails.add(new Email(oc.getEmail().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, emails, null, null, null, null, 1);
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 1);
 
         emails.get(0).setValue(emails.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, null, emails, null, null, null, null, 0);
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 0);
 
         emails.get(0).setValue(emails.get(0).getValue().substring(0, 3));
-        doSearch(oc, null, null, null, null, null, emails, null, null, null, null, 0);
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 0);
 
         emails.add(new Email("idontexist"));
-        doSearch(oc, null, null, null, null, null, emails, null, null, null, null, 0);
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 0);
 
         emails.add(new Email(oc.getEmail().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, emails, null, null, null, null, 1);
+        doSearch(oc, null, null, null, null, emails, null, null, null, null, 1);
 
         // phone
         List<PhoneNumber> phones = new ArrayList<PhoneNumber>();
         phones.add(new PhoneNumber(oc.getPhone().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, phones, null, null, null, 1);
+        doSearch(oc, null, null, null, null, null, phones, null, null, null, 1);
 
         phones.get(0).setValue(phones.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, null, null, phones, null, null, null, 0);
+        doSearch(oc, null, null, null, null, null, phones, null, null, null, 0);
 
         phones.add(new PhoneNumber(oc.getPhone().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, phones, null, null, null, 1);
+        doSearch(oc, null, null, null, null, null, phones, null, null, null, 1);
 
         // fax
         List<PhoneNumber> faxes = new ArrayList<PhoneNumber>();
         faxes.add(new PhoneNumber(oc.getFax().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, null, faxes, null, null, 1);
+        doSearch(oc, null, null, null, null, null, null, faxes, null, null, 1);
 
         faxes.get(0).setValue(faxes.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, null, null, null, faxes, null, null, 0);
+        doSearch(oc, null, null, null, null, null, null, faxes, null, null, 0);
 
         faxes.add(new PhoneNumber(oc.getFax().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, null, faxes, null, null, 1);
+        doSearch(oc, null, null, null, null, null, null, faxes, null, null, 1);
 
         // tty
         List<PhoneNumber> ttys = new ArrayList<PhoneNumber>();
         ttys.add(new PhoneNumber(oc.getTty().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, null, null, ttys, null, 1);
+        doSearch(oc, null, null, null, null, null, null, null, ttys, null, 1);
 
         ttys.get(0).setValue(ttys.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, null, null, null, null, ttys, null, 0);
+        doSearch(oc, null, null, null, null, null, null, null, ttys, null, 0);
 
         ttys.add(new PhoneNumber(oc.getTty().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, null, null, ttys, null, 1);
+        doSearch(oc, null, null, null, null, null, null, null, ttys, null, 1);
 
         // url
         List<URL> urls = new ArrayList<URL>();
         urls.add(new URL(oc.getUrl().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, null, null, null, urls, 1);
+        doSearch(oc, null, null, null, null, null, null, null, null, urls, 1);
 
         urls.get(0).setValue(urls.get(0).getValue().substring(1));
-        doSearch(oc, null, null, null, null, null, null, null, null, null, urls, 0);
+        doSearch(oc, null, null, null, null, null, null, null, null, urls, 0);
 
         urls.add(new URL(oc.getUrl().get(0).getValue()));
-        doSearch(oc, null, null, null, null, null, null, null, null, null, urls, 1);
+        doSearch(oc, null, null, null, null, null, null, null, null, urls, 1);
 
         // combo url + tty to prove that combos of lists work too
-        doSearch(oc, null, null, null, null, null, null, null, null, ttys, urls, 1);
-        doSearch(oc, oc.getId(), null, null, null, null, null, null, null, ttys, urls, 1);
+        doSearch(oc, null, null, null, null, null, null, null, ttys, urls, 1);
+        doSearch(oc, oc.getId(), null, null, null, null, null, null, ttys, urls, 1);
         urls.remove(1);
-        doSearch(oc, null, null, null, null, null, null, null, null, ttys, urls, 0);
+        doSearch(oc, null, null, null, null, null, null, null, ttys, urls, 0);
 
         // Fields Remaining to test:
         // - address (tricky!)
         // - types (Set<enum>)
     }
 
-    private void doSearch(OrganizationalContact hcp, Long id, Long orgId, Long personId, Boolean primaryIndicator,
-            RoleStatus status, List<Email> email, List<PhoneNumber> phones, List<PhoneNumber> faxes, List<PhoneNumber> ttys,
-            List<URL> urls, int numExpected) {
+    private void doSearch(OrganizationalContact hcp, Long id, Long orgId, Long personId, RoleStatus status,
+            List<Email> email, List<PhoneNumber> phones, List<PhoneNumber> faxes, List<PhoneNumber> ttys, List<URL> urls,
+            int numExpected) {
         OrganizationalContactServiceLocal svc = (OrganizationalContactServiceLocal) getService();
         OrganizationalContact example = new OrganizationalContact();
         example.setId(id);
@@ -292,7 +282,6 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         example.getPlayer().setId(personId);
         example.setScoper(new Organization());
         example.getScoper().setId(orgId);
-        example.setPrimaryIndicator(primaryIndicator);
         example.setStatus(status);
         example.setEmail(email);
         example.setPhone(phones);

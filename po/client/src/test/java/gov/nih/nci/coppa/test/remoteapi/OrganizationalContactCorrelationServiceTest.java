@@ -105,7 +105,6 @@ public class OrganizationalContactCorrelationServiceTest
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
         dto.setScoperIdentifier(getOrgId());
         dto.setPlayerIdentifier(getPersonId());
-        dto.setPrimaryIndicator(RemoteApiUtils.convertToBl(Boolean.TRUE));
         dto.setTelecomAddress(new DSet<Tel>());
         dto.getTelecomAddress().setItem(new HashSet<Tel>());
         

@@ -50,7 +50,6 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     protected AbstractPersonRole getExampleTestClass() {
         OrganizationalContact hcp = new OrganizationalContact();
         fillInExamplePersonRoleFields(hcp);
-        hcp.setPrimaryIndicator(Boolean.TRUE);
         Set<OrganizationalContactType> types = getTypes();
         hcp.setTypes(types);
 
@@ -71,9 +70,6 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         ii.setIdentifierName(IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         dto.setIdentifier(ii);
 
-        Bl primary = new Bl();
-        primary.setValue(Boolean.TRUE);
-        dto.setPrimaryIndicator(primary);
         dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
         return dto;
     }
@@ -81,7 +77,6 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     @Override
     protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
         OrganizationalContact organizationalContact = (OrganizationalContact) pr;
-        assertEquals(Boolean.TRUE, organizationalContact.getPrimaryIndicator());
 
         assertEquals(getTypes().size(), organizationalContact.getTypes().size());
         List<String> expectedValues = getCodeValues(getTypes());
@@ -124,7 +119,6 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, organizationalContactDTO.getIdentifier()));
 
         //verify OrganizationalContact
-        assertEquals(Boolean.TRUE, organizationalContactDTO.getPrimaryIndicator().getValue());
         List<String> expectedValues = getCodeValues(getTypes());
         List<String> actualValues = getCodeValues(organizationalContactDTO.getTypeCode());
         assertEquals(expectedValues.size(), actualValues.size());

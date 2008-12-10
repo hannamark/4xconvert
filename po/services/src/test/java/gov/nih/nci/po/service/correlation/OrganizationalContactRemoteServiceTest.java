@@ -85,14 +85,11 @@ package gov.nih.nci.po.service.correlation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
-import gov.nih.nci.po.data.convert.BooleanConverter;
 import gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -149,10 +146,6 @@ public class OrganizationalContactRemoteServiceTest extends
         createAndSetOrganization();
         fillInPersonRoleDate(dto);
         
-        Bl primary = new Bl();
-        primary.setValue(Boolean.TRUE);
-        dto.setPrimaryIndicator(primary);
-        
         dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
         return dto;
     }
@@ -163,7 +156,6 @@ public class OrganizationalContactRemoteServiceTest extends
     @SuppressWarnings("unchecked")
     @Override
     void verifyDto(OrganizationalContactDTO e, OrganizationalContactDTO a) {
-        assertEquals(e.getPrimaryIndicator().getValue(), a.getPrimaryIndicator().getValue());
 
         List<String> expectedValues = OrganizationalContactDTOTest.getCodeValues(e.getTypeCode());
         List<String> actualValues = OrganizationalContactDTOTest.getCodeValues(a.getTypeCode());
@@ -189,13 +181,11 @@ public class OrganizationalContactRemoteServiceTest extends
 
     @Override
     protected void alter(OrganizationalContactDTO dto) {
-        dto.setPrimaryIndicator(BooleanConverter.convertToBl(Boolean.FALSE));
     }
 
     @Override
     protected void verifyAlterations(OrganizationalContactCR cr) {
         super.verifyAlterations(cr);
-        assertEquals(Boolean.FALSE, cr.getPrimaryIndicator());
     }
 
     /**
@@ -211,8 +201,6 @@ public class OrganizationalContactRemoteServiceTest extends
      */
     @Override
     protected void modifySubClassSpecificFieldsForCorrelation2(OrganizationalContactDTO correlation2) {
-        correlation2.getPrimaryIndicator().setValue(null);
-        correlation2.getPrimaryIndicator().setNullFlavor(NullFlavor.NI);
         correlation2.getTypeCode().getItem().clear();
     }
 
@@ -223,27 +211,14 @@ public class OrganizationalContactRemoteServiceTest extends
     @SuppressWarnings("unchecked")
     protected void testSearchOnSubClassSpecificFields(OrganizationalContactDTO correlation1, Ii id2,
             OrganizationalContactDTO searchCriteria) throws NullifiedRoleException {
-        // search by primary indicator
-        searchCriteria.getTelecomAddress().getItem().clear();
-        searchCriteria.setPrimaryIndicator(new Bl());
-        searchCriteria.getPrimaryIndicator().setValue(Boolean.TRUE);
-        List<OrganizationalContactDTO> results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-
-        searchCriteria.getPrimaryIndicator().setValue(Boolean.FALSE);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
-
         // search by typeCode
-        searchCriteria.getPrimaryIndicator().setValue(null);
-        searchCriteria.getPrimaryIndicator().setNullFlavor(NullFlavor.NI);
         searchCriteria.setTypeCode(new DSet<Cd>());
         searchCriteria.getTypeCode().setItem(new HashSet());
         Cd typeCode = new Cd();
         searchCriteria.getTypeCode().getItem().add(typeCode);
 
         typeCode.setCode("For drug shipment");
-        results = getCorrelationService().search(searchCriteria);
+        List<OrganizationalContactDTO> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
 
         typeCode.setCode("For safety issues");
@@ -258,12 +233,5 @@ public class OrganizationalContactRemoteServiceTest extends
         } catch (IllegalArgumentException e) {
             // expected
         }
-
-        // search by typeCode and primaryIndicator
-        searchCriteria.setPrimaryIndicator(new Bl());
-        searchCriteria.getPrimaryIndicator().setValue(Boolean.FALSE);
-        typeCode.setCode("For safety issues");
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(0, results.size());
     }
 }

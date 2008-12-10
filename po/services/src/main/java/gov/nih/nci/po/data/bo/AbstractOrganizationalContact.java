@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.Searchable;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -106,33 +104,6 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
     private static final long serialVersionUID = 1L;
 
     private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-    private Boolean primaryIndicator;
-
-    /**
-     * @return true if primary otherwise, false
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Bl" name="primaryIndicator"
-     *                     snapshot-transformer="gov.nih.nci.po.data.convert.BooleanConverter"
-     *                     model-transformer="gov.nih.nci.po.data.convert.BlConverter"
-     */
-    public Boolean isPrimaryIndicator() {
-        return primaryIndicator;
-    }
-
-    /**
-     * @return true if primary otherwise, false
-     */
-    @Transient
-    @Searchable
-    public Boolean getPrimaryIndicator() {
-        return isPrimaryIndicator();
-    }
-
-    /**
-     * @param primary true if is primary otherwise, false
-     */
-    public void setPrimaryIndicator(Boolean primary) {
-        this.primaryIndicator = primary;
-    }
 
     /**
      * Get org contact type codes.

@@ -96,15 +96,6 @@
 				   </po:field>
                 </c:if>
                 </div>	
-                <s:set name="primaryIndicatorValues" value="#{'true':'TRUE', 'false':'FALSE'}" />
-                <s:select 
-                   id="curateRoleForm.role.primaryIndicator"
-                   label="%{getText('organizationalContact.primaryIndicator')}"
-                   name="role.primaryIndicator"
-                   list="primaryIndicatorValues"
-                   value="role.primaryIndicator" 
-                   headerKey="" headerValue="--Is Primary Indicator?--" 
-                   />
                    
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                 <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OrganizationalContactType@class"/>

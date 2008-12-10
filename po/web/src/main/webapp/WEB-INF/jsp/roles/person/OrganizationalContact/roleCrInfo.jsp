@@ -20,18 +20,12 @@
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('organizationalContact.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
-            <po:copyButton
-             id="copy_curateCrForm_role_primaryIndicator"
-             onclick="selectValueInSelectField('${cr.primaryIndicator}', 'curateRoleForm.role.primaryIndicator');" 
-                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield label="%{getText('organizationalContact.primaryIndicator')}" name="cr.primaryIndicator" required="true" cssClass="required"/>
-            </po:copyButton>
-	            <script type="text/javascript">
+            <script type="text/javascript">
 	            var crRoleTypesArray = new Array();
 	            <c:forEach var="crRoleType" items="${cr.types}" varStatus="crRoleTypeStatus">
 	                crRoleTypesArray[${crRoleTypeStatus.index}] = '${crRoleType.id}';
 	            </c:forEach>
-	            </script>
+            </script>
             <po:copyButton
              id="copy_curateCrForm_role_types"
              onclick="selectValuesInMultiSelectField(crRoleTypesArray, 'curateRoleForm.role.types');" 
