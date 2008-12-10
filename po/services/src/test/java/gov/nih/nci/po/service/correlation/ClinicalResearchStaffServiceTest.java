@@ -82,23 +82,26 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
+
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 /**
  * @author Scott Miller
  *
  */
-public class ClinicalResearchStaffServiceTest extends AbstractStructrualRoleServiceTest<ClinicalResearchStaff> {
+public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceTest<ClinicalResearchStaff> {
 
     /**
      * {@inheritDoc}
+     * @throws EntityValidationException 
      */
     @Override
-    ClinicalResearchStaff getSampleStructuralRole() {
+    ClinicalResearchStaff getSampleStructuralRole() throws EntityValidationException {
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        createAndGetOrganization();
         fillinPersonRoleFields(crs);
         return crs;
     }
@@ -118,5 +121,18 @@ public class ClinicalResearchStaffServiceTest extends AbstractStructrualRoleServ
         s.create(hcf);
         int c = s.getHotRoleCount(hcf.getPlayer());
         assertEquals(1, c);
+    }
+    
+
+    @Test(expected = EntityValidationException.class)
+    public void testUniqueConstraint() throws Exception {
+        ClinicalResearchStaff obj = getSampleStructuralRole();
+        ClinicalResearchStaff obj2 = getSampleStructuralRole();
+        //ensure player is same
+        obj.setPlayer(obj2.getPlayer());
+        //ensure scoper is same
+        obj2.setScoper(obj.getScoper());
+        getService().create(obj);        
+        getService().create(obj2);
     }
 }

@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.po.util.UniquePlayerScoper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -118,6 +119,7 @@ import org.hibernate.validator.Valid;
 @Entity
 @RoleStatusChange
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
+@UniquePlayerScoper(friendlyName = "Organizational Contact")
 public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation {
 
     private static final long serialVersionUID = 1L;

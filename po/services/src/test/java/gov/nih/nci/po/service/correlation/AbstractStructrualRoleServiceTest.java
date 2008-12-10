@@ -97,6 +97,7 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -162,12 +163,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
 
     @Before
     public void setUpData() throws Exception {
-        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
-        orgTest.setDefaultCountry(getDefaultCountry());
-        orgTest.setUser(getUser());
-        orgTest.setUpData();
-        long orgId = orgTest.createOrganization();
-        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
+        createAndGetOrganization();
 
         // create person
         PersonServiceBeanTest personTest = new PersonServiceBeanTest();
@@ -179,7 +175,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
         PoHibernateUtil.getCurrentSession().flush();
     }
 
-    abstract T getSampleStructuralRole();
+    abstract T getSampleStructuralRole() throws Exception;
 
     abstract void verifyStructuralRole(T expected, T actual);
 
@@ -318,5 +314,16 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
             locator.getOrganizationService().curate(basicOrganization);
             assertEquals(RoleStatus.SUSPENDED, r.getStatus());
         }
+    }
+    
+    protected void createAndGetOrganization() throws EntityValidationException {
+        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
+        orgTest.setDefaultCountry(getDefaultCountry());
+        orgTest.setUser(getUser());
+        orgTest.setUpData();
+        long orgId;
+        orgId = orgTest.createOrganizationNoSessionFlushAndClear();
+        PoHibernateUtil.getCurrentSession().flush();
+        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
     }
 }

@@ -120,6 +120,7 @@ public class HealthCareProviderRemoteServiceTest
     @Override
     protected HealthCareProviderDTO getSampleDto() throws Exception {
         HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        createAndSetOrganization();
         fillInPersonRoleDate(pr);
         St st = new St();
         st.setValue("testCertLicense");

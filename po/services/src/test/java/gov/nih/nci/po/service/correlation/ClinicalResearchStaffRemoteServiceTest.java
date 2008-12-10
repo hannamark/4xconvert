@@ -84,15 +84,21 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -125,6 +131,7 @@ public class ClinicalResearchStaffRemoteServiceTest
     @Override
     protected ClinicalResearchStaffDTO getSampleDto() throws Exception {
         ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
+        createAndSetOrganization();
         fillInPersonRoleDate(dto);
         return dto;
     }

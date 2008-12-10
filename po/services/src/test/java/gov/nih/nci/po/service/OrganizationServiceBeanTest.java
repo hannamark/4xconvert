@@ -204,6 +204,17 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
 
     public long createOrganization(String oName, String cityOrMunicipality, String abbrvName, String desc)
             throws EntityValidationException {
+        long orgId = createOrganizationNoSessionFlushAndClear(oName, cityOrMunicipality, abbrvName, desc);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        return orgId;
+    }
+    
+    public long createOrganizationNoSessionFlushAndClear() throws EntityValidationException {
+        return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
+    }
+    
+    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName, String desc) throws EntityValidationException {
         Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345",
                 getDefaultCountry());
         Organization org = new Organization();
@@ -213,8 +224,6 @@ public class OrganizationServiceBeanTest extends AbstractBeanTest {
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
         long orgId = orgServiceBean.create(org);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
         return orgId;
     }
 

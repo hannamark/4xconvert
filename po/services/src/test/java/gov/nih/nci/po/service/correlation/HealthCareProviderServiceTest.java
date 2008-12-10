@@ -107,11 +107,12 @@ import org.junit.Test;
 /**
  * @author Scott Miller
  */
-public class HealthCareProviderServiceTest extends AbstractStructrualRoleServiceTest<HealthCareProvider> {
+public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest<HealthCareProvider> {
 
     @Override
-    HealthCareProvider getSampleStructuralRole()  {
+    HealthCareProvider getSampleStructuralRole() throws EntityValidationException  {
         HealthCareProvider hcp = new HealthCareProvider();
+        createAndGetOrganization();
         fillinPersonRoleFields(hcp);
         hcp.setCertificateLicenseText("test cert");
         return hcp;
@@ -177,7 +178,7 @@ public class HealthCareProviderServiceTest extends AbstractStructrualRoleService
         // status fields
         doSearch(hcp, null, null, null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
         doSearch(hcp, null, null, null, null, RoleStatus.ACTIVE, null, null, null, null, null, 0);
-        doSearch(hcp, null, hcp.getId(), null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
+        doSearch(hcp, null, hcp.getScoper().getId(), null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
         doSearch(hcp, null, -1L, null, null, RoleStatus.PENDING, null, null, null, null, null, 0);
 
         //

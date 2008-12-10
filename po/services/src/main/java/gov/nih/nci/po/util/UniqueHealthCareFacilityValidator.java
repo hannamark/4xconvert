@@ -121,18 +121,22 @@ public class UniqueHealthCareFacilityValidator
         }
         
         HealthCareFacility hcf = (HealthCareFacility) value;
-        Connection conn = PoHibernateUtil.getCurrentSession().connection();
-        Session s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-        Criteria c = s.createCriteria(HealthCareFacility.class);
-        LogicalExpression and = Restrictions.and(
-                Restrictions.eq("player", hcf.getPlayer()),
-                Restrictions.ne("status", RoleStatus.NULLIFIED));
-        c.add(and);
-        HealthCareFacility other = (HealthCareFacility) c.uniqueResult();
-        boolean valid = other == null || other.getId().equals(hcf.getId());
-        s.close();
-        
-        return valid;
+        Session s = null;
+        try {
+            Connection conn = PoHibernateUtil.getCurrentSession().connection();
+            s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+            Criteria c = s.createCriteria(HealthCareFacility.class);
+            LogicalExpression and = Restrictions.and(
+                    Restrictions.eq("player", hcf.getPlayer()),
+                    Restrictions.ne("status", RoleStatus.NULLIFIED));
+            c.add(and);
+            HealthCareFacility other = (HealthCareFacility) c.uniqueResult();
+            return (other == null || other.getId().equals(hcf.getId()));
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+        }
     }
 
     /**

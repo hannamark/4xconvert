@@ -146,11 +146,13 @@ public class OrganizationalContactRemoteServiceTest extends
     @Override
     protected OrganizationalContactDTO getSampleDto() throws Exception {
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
+        createAndSetOrganization();
         fillInPersonRoleDate(dto);
+        
         Bl primary = new Bl();
         primary.setValue(Boolean.TRUE);
         dto.setPrimaryIndicator(primary);
-
+        
         dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
         return dto;
     }

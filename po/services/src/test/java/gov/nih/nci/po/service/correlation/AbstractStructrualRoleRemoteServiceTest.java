@@ -83,16 +83,8 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
-import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -100,10 +92,9 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.CdConverter;
-import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.RoleStatusConverter;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -113,9 +104,6 @@ import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.lang.reflect.ParameterizedType;
-import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -142,12 +130,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
 
     @Before
     public void setUpData() throws Exception {
-        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
-        orgTest.setDefaultCountry(getDefaultCountry());
-        orgTest.setUser(getUser());
-        orgTest.setUpData();
-        long orgId = orgTest.createOrganization();
-        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
+        createAndSetOrganization();
 
         // create person
         PersonServiceBeanTest personTest = new PersonServiceBeanTest();
@@ -157,6 +140,16 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         basicPerson.setStatusCode(EntityStatus.PENDING);
         PoHibernateUtil.getCurrentSession().save(basicPerson);
         PoHibernateUtil.getCurrentSession().flush();
+    }
+
+    protected void createAndSetOrganization() throws EntityValidationException {
+        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
+        orgTest.setDefaultCountry(getDefaultCountry());
+        orgTest.setUser(getUser());
+        orgTest.setUpData();
+        long orgId = orgTest.createOrganizationNoSessionFlushAndClear();
+        PoHibernateUtil.getCurrentSession().flush();
+        basicOrganization = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
     }
 
     abstract protected T getSampleDto() throws Exception;
@@ -201,55 +194,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     @Test
     public abstract void testSearch() throws Exception;
 
-    @SuppressWarnings("unchecked")
-    protected void fillInPersonRoleDate(AbstractPersonRoleDTO pr) throws Exception {
-        Ii ii = new Ii();
-        ii.setExtension("" + basicPerson.getId());
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.PERSON_ROOT);
-        pr.setPlayerIdentifier(ii);
 
-        ii = new Ii();
-        ii.setExtension("" + basicOrganization.getId());
-        ii.setDisplayable(true);
-        ii.setScope(IdentifierScope.OBJ);
-        ii.setReliability(IdentifierReliability.ISS);
-        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
-        ii.setRoot(IdConverter.ORG_ROOT);
-        pr.setScoperIdentifier(ii);
-
-        DSet<Tel> tels = new DSet<Tel>();
-        tels.setItem(new HashSet<Tel>());
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:me@test.com"));
-        tels.getItem().add(email);
-
-        TelPhone phone = new TelPhone();
-        phone.setValue(new URI("tel:111-222-3333"));
-        tels.getItem().add(phone);
-
-        phone = new TelPhone();
-        phone.setValue(new URI("x-text-fax:222-222-3333"));
-        tels.getItem().add(phone);
-
-        phone = new TelPhone();
-        phone.setValue(new URI("x-text-tel:333-222-3333"));
-        tels.getItem().add(phone);
-
-        TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.google.com"));
-        tels.getItem().add(url);
-
-        pr.setTelecomAddress(tels);
-
-        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-                "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3());
-        pr.setPostalAddress(new DSet<Ad>());
-        pr.getPostalAddress().setItem(Collections.singleton(ad));
-    }
 
     protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
         assertEquals(e.getScoperIdentifier().getExtension(), a.getScoperIdentifier().getExtension());

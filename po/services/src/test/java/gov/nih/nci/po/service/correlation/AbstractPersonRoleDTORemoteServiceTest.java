@@ -88,8 +88,13 @@ import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.Email;
@@ -97,7 +102,9 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.OneCriterionRequiredException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
@@ -114,7 +121,57 @@ import java.util.List;
  */
 public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractPersonRoleDTO,
     CR extends CorrelationChangeRequest<?>> extends  AbstractStructrualRoleRemoteServiceTest<T, CR> {
+    
+    @SuppressWarnings("unchecked")
+    protected void fillInPersonRoleDate(AbstractPersonRoleDTO pr) throws Exception {
+        Ii ii = new Ii();
+        ii.setExtension("" + basicPerson.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.PERSON_ROOT);
+        pr.setPlayerIdentifier(ii);
 
+        ii = new Ii();
+        ii.setExtension("" + basicOrganization.getId());
+        ii.setDisplayable(true);
+        ii.setScope(IdentifierScope.OBJ);
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        ii.setRoot(IdConverter.ORG_ROOT);
+        pr.setScoperIdentifier(ii);
+
+        DSet<Tel> tels = new DSet<Tel>();
+        tels.setItem(new HashSet<Tel>());
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:me@test.com"));
+        tels.getItem().add(email);
+
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI("tel:111-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-fax:222-222-3333"));
+        tels.getItem().add(phone);
+
+        phone = new TelPhone();
+        phone.setValue(new URI("x-text-tel:333-222-3333"));
+        tels.getItem().add(phone);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://www.google.com"));
+        tels.getItem().add(url);
+
+        pr.setTelecomAddress(tels);
+
+        Ad ad = AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+                "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3());
+        pr.setPostalAddress(new DSet<Ad>());
+        pr.getPostalAddress().setItem(Collections.singleton(ad));
+    }
+    
     @SuppressWarnings("unchecked")
     protected void setUpCorrelation2Address(AbstractPersonRoleDTO correlation1, AbstractPersonRoleDTO correlation2) {
         Ad ad = (Ad) correlation1.getPostalAddress().getItem().iterator().next();

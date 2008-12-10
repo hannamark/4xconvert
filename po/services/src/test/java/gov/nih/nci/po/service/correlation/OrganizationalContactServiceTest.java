@@ -112,7 +112,7 @@ import org.junit.Test;
 /**
  * @author smatyas
  */
-public class OrganizationalContactServiceTest extends AbstractStructrualRoleServiceTest<OrganizationalContact> {
+public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceTest<OrganizationalContact> {
 
     private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
     
@@ -131,8 +131,9 @@ public class OrganizationalContactServiceTest extends AbstractStructrualRoleServ
     }
 
     @Override
-    OrganizationalContact getSampleStructuralRole() {
+    OrganizationalContact getSampleStructuralRole() throws EntityValidationException {
         OrganizationalContact oc = new OrganizationalContact();
+        createAndGetOrganization();
         fillinPersonRoleFields(oc);
         oc.setPrimaryIndicator(Boolean.TRUE);
         oc.getTypes().addAll(getTypes());
@@ -202,7 +203,7 @@ public class OrganizationalContactServiceTest extends AbstractStructrualRoleServ
         // status fields
         doSearch(oc, null, null, null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
         doSearch(oc, null, null, null, null, RoleStatus.ACTIVE, null, null, null, null, null, 0);
-        doSearch(oc, null, oc.getId(), null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
+        doSearch(oc, null, oc.getScoper().getId(), null, null, RoleStatus.PENDING, null, null, null, null, null, 1);
         doSearch(oc, null, -1L, null, null, RoleStatus.PENDING, null, null, null, null, null, 0);
 
         //
