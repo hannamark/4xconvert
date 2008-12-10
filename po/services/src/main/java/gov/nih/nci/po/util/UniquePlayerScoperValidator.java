@@ -41,6 +41,7 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public boolean isValid(Object value) {
         if (!(value instanceof AbstractPersonRole)) {
             return false;
@@ -50,7 +51,12 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             AbstractPersonRole apr = (AbstractPersonRole) value;
-            Criteria c = s.createCriteria(apr.getClass());
+            Criteria c = null;
+            try {
+                c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(apr.getClass()));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             LogicalExpression scoperPlayerComposite = Restrictions.and(Restrictions.eq("player", apr.getPlayer()),
                     Restrictions.eq("scoper", apr.getScoper()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), scoperPlayerComposite));

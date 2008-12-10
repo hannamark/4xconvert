@@ -130,44 +130,6 @@ public class IdConverterRegistryTest {
         }
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void unEnhanceCBLIBClass() throws ClassNotFoundException {
-        Object enhanced = enhance(Organization.class);
-        Class<? extends PersistentObject> unEnhanceCBLIBClass = IdConverterRegistry
-                .unEnhanceCBLIBClass((Class<? extends PersistentObject>) enhanced.getClass());
-
-        assertEquals(Organization.class.getName(), unEnhanceCBLIBClass.getName());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void unEnhanceClass() throws ClassNotFoundException {
-        Object enhanced = new Organization();
-        Class<? extends PersistentObject> unEnhanceCBLIBClass = IdConverterRegistry
-                .unEnhanceCBLIBClass((Class<? extends PersistentObject>) enhanced.getClass());
-
-        assertEquals(Organization.class.getName(), unEnhanceCBLIBClass.getName());
-    }
-
-    private Object enhance(Class<?> class1) {
-        Object create = Enhancer.create(class1, new Class[] {}, new MethodInterceptor() {
-
-            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-                Object retValFromSuper = null;
-                try {
-                    if (!Modifier.isAbstract(method.getModifiers())) {
-                        retValFromSuper = proxy.invokeSuper(obj, args);
-                    }
-                } finally {
-
-                }
-                return retValFromSuper;
-            }
-        });
-        return create;
-    }
-
     private static final String PACKAGENAME = "gov.nih.nci.po.data.convert";
     private static final Class THIS_CLZ = IdConverterRegistryTest.class;
 

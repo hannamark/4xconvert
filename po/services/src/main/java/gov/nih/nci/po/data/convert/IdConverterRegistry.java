@@ -104,12 +104,11 @@ import gov.nih.nci.po.data.convert.IdConverter.OversightCommitteeIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.QualifiedEntityIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
+import gov.nih.nci.po.util.CGLIBUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import net.sf.cglib.proxy.Enhancer;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
@@ -145,7 +144,7 @@ public class IdConverterRegistry {
     public static IdConverter find(Class<? extends PersistentObject> clz) {
         Class<? extends PersistentObject> tmp = clz;
         try {
-            tmp = unEnhanceCBLIBClass(clz);
+            tmp = CGLIBUtils.unEnhanceCBLIBClass(clz);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
@@ -154,17 +153,6 @@ public class IdConverterRegistry {
             throw new IllegalArgumentException(tmp.getName() + " is unsupported.");
         }
         return idConverter;
-    }
-
-    @SuppressWarnings("unchecked")
-    static Class<? extends PersistentObject> unEnhanceCBLIBClass(Class<? extends PersistentObject> clz)
-            throws ClassNotFoundException {
-        if (Enhancer.isEnhanced(clz)) {
-            int indexOf = clz.getName().indexOf("$$EnhancerByCGLIB$$");
-            String baseClassName = clz.getName().substring(0, indexOf);
-            return (Class<? extends PersistentObject>) Class.forName(baseClassName);
-        }
-        return clz;
     }
 
     static Map<Class<? extends PersistentObject>, IdConverter> getRegistry() {
