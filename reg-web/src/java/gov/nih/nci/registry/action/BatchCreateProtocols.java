@@ -508,21 +508,19 @@ public class BatchCreateProtocols {
                 if (null == retResultList || retResultList.size() == 0) {
                    log.error("No Person Found...");
                    throw new PAException("No Person Found...");
-                } else {
-                    p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
                 }
-            
             } else {
                 p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
             }
             poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
             if (null == poPersonList ||  poPersonList.size() ==  0) {
                 log.error("No Person found so creating new Person");
-                createPerson(batchDto);
+                personId = createPerson(batchDto);
             }  else {
                 personId = poPersonList.get(0).getIdentifier();             
                 log.error("Person found ");
             }
+            
         } catch (URISyntaxException e) {
             log.error("lookUpPersons exception " + e.getMessage());
             throw new PAException("lookUpPersons exception " + e.getMessage());
@@ -577,7 +575,7 @@ public class BatchCreateProtocols {
         throw new PAException("Country is a required field");
         }
     
-        String midName = batchDto.getMiddleName();
+        //String midName = batchDto.getMiddleName();
         String state =  batchDto.getState();
         String phone = batchDto.getPhone();
         String tty = batchDto.getTty();
@@ -590,11 +588,11 @@ public class BatchCreateProtocols {
         part.setValue(firstName);
         dto.getName().getPart().add(part);
         // if middel name exists stick it in here!
-        if (midName != null && PAUtil.isNotEmpty(midName)) {
+        /*if (midName != null && PAUtil.isNotEmpty(midName)) {
             Enxp partMid = new Enxp(EntityNamePartType.FAM);
             partMid.setValue(midName);
             dto.getName().getPart().add(partMid);
-        }
+        }*/
         Enxp partFam = new Enxp(EntityNamePartType.FAM);
         partFam.setValue(lastName);
         dto.getName().getPart().add(partFam);
@@ -629,7 +627,6 @@ public class BatchCreateProtocols {
             dto.setTelecomAddress(list);
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             personId = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);
-          
         } catch (EntityValidationException e) {
             log.error("PERS_CREATE_RESPONSE " + e.getMessage());
             throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
@@ -640,6 +637,7 @@ public class BatchCreateProtocols {
             log.error("PERS_CREATE_RESPONSE " + e.getMessage());
             throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
         }
+        log.error("created person Id" + personId);
         return personId;
     }
     /**
