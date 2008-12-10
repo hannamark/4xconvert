@@ -133,6 +133,9 @@ public class ExcelReader {
             break;
         case HSSFCell.CELL_TYPE_STRING:
             result = cell.getRichStringCellValue().getString();
+            if (null != result) {
+                result =  result.trim();
+            }
             log.info("result CELL_TYPE_STRING:-" + result);
             break;
         default:
