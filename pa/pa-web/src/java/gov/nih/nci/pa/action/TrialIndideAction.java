@@ -58,7 +58,7 @@ public class TrialIndideAction extends ActionSupport {
               }
             } else {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
-                        getText("error.studyIndlde.noRecords"));
+                        getText("No IND/IDE records exist on the trial"));
             }
             return QUERY_RESULT;    
 
