@@ -3,9 +3,10 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.util.BatchConstants;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +15,9 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -192,12 +195,13 @@ public class BatchUploadAction extends ActionSupport implements
         String uploadedLoc;
         try {
             uploadedLoc = uploadFile();
+            String unzipLoc = unZipDoc(uploadedLoc + File.separator + docZipFileName);
             //helper to unzip the zip files
-            BatchHelper helper = new BatchHelper();
-            String unzipLoc = helper.unZipDoc(uploadedLoc + File.separator + docZipFileName);
-           // start reading the xls file and create the required DTO
-            List<StudyProtocolBatchDTO> dtoList = helper.processExcel(uploadedLoc + File.separator + trialDataFileName);
-            new BatchCreateProtocols().createProtocols(dtoList, unzipLoc + File.separator);
+            Thread batchProcessor = new Thread(
+                    new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc));
+            batchProcessor.start();
+            
+            
         } catch (PAException e) {
             // TODO Auto-generated catch block
             LOG.error("error in Batch" + e.getMessage());
@@ -207,7 +211,7 @@ public class BatchUploadAction extends ActionSupport implements
         }
         ServletActionContext.getRequest().setAttribute(
                 "failureMessage", "Success....");
-        return SUCCESS;
+        return "batch_confirm";
     }
 
     private String uploadFile() throws PAException {
@@ -215,13 +219,13 @@ public class BatchUploadAction extends ActionSupport implements
         
             String folderPath = PaEarPropertyReader.getDocUploadPath();
             StringBuffer sbFolderPath = new StringBuffer(folderPath);
-            LOG.info("folderPath..." + folderPath);
+            LOG.error("folderPath..." + folderPath);
             DateFormat df = new SimpleDateFormat("MMddyyyyHHmmss");
             df.setLenient(false);
             Date today = new Date();
             sbFolderPath.append(File.separator).append(orgName).append(
                     df.format(today));
-            LOG.info("sbFolderPath...1" + sbFolderPath);
+            LOG.error("sbFolderPath...1" + sbFolderPath);
             File f = new File(sbFolderPath.toString());
             if (!f.exists()) {
                 // create a new directory
@@ -282,5 +286,60 @@ public class BatchUploadAction extends ActionSupport implements
          }
 
     }
-    
+     /**
+      * 
+      * @param zipname name
+      * @return str
+      * @throws PAException ex
+      */
+
+      public String unZipDoc(String zipname) throws PAException {
+          String folderLocation = null;
+          try {
+              ZipFile zipFile = new ZipFile(zipname);
+              Enumeration enumeration = zipFile.entries();
+              String unzipFolderName = zipFile.getName().substring(0,
+                      zipname.indexOf(".zip"));
+              folderLocation = unzipFolderName;
+              File f = new File(unzipFolderName);
+              if (!f.exists()) {
+                  LOG.debug("BatchHelper:unZipDoc not exists.. so creating new");
+                  // create a new directory
+                  boolean md = f.mkdir();
+                  if (md) {
+                      while (enumeration.hasMoreElements()) {
+                          ZipEntry zipEntry = (ZipEntry) enumeration
+                                  .nextElement();
+                          LOG.debug("Unzipping: " + zipEntry.getName());
+
+                          BufferedInputStream bis = new BufferedInputStream(
+                                  zipFile.getInputStream(zipEntry));
+
+                          int size;
+                          byte[] buffer = new byte[BatchConstants.READ_SIZE];
+                          FileOutputStream fos = new FileOutputStream(
+                                  unzipFolderName + File.separator
+                                          + zipEntry.getName());
+                          BufferedOutputStream bos = new BufferedOutputStream(
+                                  fos, buffer.length);
+
+                          while ((size = bis.read(buffer, 0, buffer.length)) != -1) {
+                              bos.write(buffer, 0, size);
+                          }
+
+                          bos.flush();
+                          bos.close();
+                          fos.close();
+
+                          bis.close();
+                      }
+                  }
+              }
+          } catch (IOException e) {
+              LOG.error("BatchHelper:unZipDoc-" + e);
+              throw new PAException("Unable to Unzip the document");
+          }
+          return folderLocation;
+      }
+
 }
