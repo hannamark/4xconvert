@@ -32,7 +32,7 @@
         <xsnapshot.version>1.1-beta4</xsnapshot.version>
         <ctep.username>coppaUser</ctep.username>
         <ctep.password>coppa1</ctep.password>
-        <ctep.url>ormi://69.46.254.108:12402/CES</ctep.url>
+        <ctep.url>ormi://156.40.130.87:12401/CES</ctep.url>
     </properties>
     
     <dependencies>

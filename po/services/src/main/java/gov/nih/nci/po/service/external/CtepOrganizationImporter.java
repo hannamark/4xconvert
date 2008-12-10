@@ -154,9 +154,19 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         ctepIi.setExtension(CTEP_EXTENSION);
         ctepIi.setRoot(CTEP_ROOT);
 
-        IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepIi);
+        return importOrgNoUpdate(ctepIi);
+    }
+
+    /**
+     * Imports the given org but will not update an existing entry.
+     * @param ctepOrgId the org id.
+     * @return the org
+     * @throws JMSException on error
+     */
+    public Organization importOrgNoUpdate(Ii ctepOrgId) throws JMSException {
+        IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
         if (identifiedOrg == null) {
-            return importOrganization(ctepIi);
+            return importOrganization(ctepOrgId);
         } else {
             return identifiedOrg.getPlayer();
         }
@@ -297,6 +307,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // we are currently importing ctep, therefore this org is its own scoper.
             scoper = defaultScoper;
         } else {
+            // we are not currently importing ctep, so we need to get the org object that represents ctep.
             scoper = getCtepOrganization();
         }
         return scoper;

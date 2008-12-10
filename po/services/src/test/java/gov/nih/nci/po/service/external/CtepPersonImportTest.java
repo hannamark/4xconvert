@@ -84,7 +84,8 @@ package gov.nih.nci.po.service.external;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AbstractBeanTest;
@@ -111,7 +112,7 @@ public class CtepPersonImportTest extends AbstractBeanTest {
     public void testExampleData() throws Exception {
 
         Logger.getLogger(this.getClass()).debug("*************** Testing HCP's **************\n\n");
-        String[] ids = {"22", "48", "75", "101", "134", "500", "811", "932", "49205", "194145"};
+        String[] ids = {"22", "48", "75", "101", "134", "500", "811", "932", "49205"};
         for (String id : ids) {
             Ii identifier = new Ii();
             identifier.setExtension(id);
@@ -120,7 +121,7 @@ public class CtepPersonImportTest extends AbstractBeanTest {
         }
 
         Logger.getLogger(this.getClass()).debug("*************** Testing CRS's **************\n\n");
-        ids = new String[] {"685", "55128", "75918", "79001", "79700", "85733", "146124", "194173"};
+        ids = new String[] {"55128", "75918", "79001", "79700", "85733", "146124"};
         for (String id : ids) {
             Ii identifier = new Ii();
             identifier.setExtension(id);
@@ -128,12 +129,10 @@ public class CtepPersonImportTest extends AbstractBeanTest {
             Logger.getLogger(this.getClass()).debug("\n\n\n");
         }
 
-        assertEquals(1, getCountOfClass(Organization.class).longValue());
-        assertEquals(1, getCountOfClass(HealthCareFacility.class).longValue());
-        assertEquals(18, getCountOfClass(Person.class).longValue());
-        // uncomment when roles are supported
-        //assertEquals(10, getCountOfClass(HealthCareProvider.class).longValue());
-        //assertEquals(6, getCountOfClass(ClinicalResearchStaff.class).longValue());
+        assertEquals(15, getCountOfClass(Organization.class).longValue());
+        assertEquals(15, getCountOfClass(Person.class).longValue());
+        assertEquals(9, getCountOfClass(HealthCareProvider.class).longValue());
+        assertEquals(6, getCountOfClass(ClinicalResearchStaff.class).longValue());
     }
 
     private Long getCountOfClass(Class c) {

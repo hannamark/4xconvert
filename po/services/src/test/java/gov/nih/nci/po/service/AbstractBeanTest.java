@@ -76,8 +76,6 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     public void loadData() {
         defaultCountry = CountryTestUtil.save(new Country("United States", "840", "US", "USA"));
 
-        researchOrgType = new ResearchOrganizationType("ITN", "Institution");
-        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
         researchOrgType = new ResearchOrganizationType("DCY", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
         researchOrgType = new ResearchOrganizationType("CLC", "Cancer Center");
@@ -86,13 +84,13 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
         researchOrgType = new ResearchOrganizationType("CSM", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
-        researchOrgType = new ResearchOrganizationType("?  ", "Cancer Center");
-        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
         researchOrgType = new ResearchOrganizationType("NWK", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
         researchOrgType = new ResearchOrganizationType("RSB", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
-        researchOrgType = new ResearchOrganizationType("COR", "Cancer Center");
+        researchOrgType = new ResearchOrganizationType("COP", "Cancer Center");
+        PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
+        researchOrgType = new ResearchOrganizationType("NCP", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
 
         oversightCommitee = new OversightCommitteeType("Ethics Committee");

@@ -132,6 +132,7 @@ public class CtepImportAction extends ActionSupport {
         int count = 0;
         try {
             while (line != null) {
+                line = line.trim();
                 PoRegistry.getInstance().getServiceLocator().
                     getCtepImportService().importCtepOrganization(generateIi(line));
                 count++;

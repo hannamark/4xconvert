@@ -85,15 +85,20 @@ package gov.nih.nci.po.service.external;
 import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.SearchCriteria;
@@ -115,6 +120,7 @@ import org.apache.log4j.Logger;
  * @author Scott Miller
  *
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class CtepPersonImporter extends CtepEntityImporter {
     private static final Logger LOG = Logger.getLogger(CtepPersonImporter.class);
     private static final String LOG_SEP = " : ";
@@ -123,10 +129,10 @@ public class CtepPersonImporter extends CtepEntityImporter {
     private final PersonServiceLocal personService = PoRegistry.getPersonService();
     private final IdentifiedPersonServiceLocal identifiedPersonService = PoRegistry.getInstance().
         getServiceLocator().getIdentifiedPersonService();
-    //private final HealthCareFacilityServiceLocal hcfService = PoRegistry.getInstance().
-      //  getServiceLocator().getHealthCareFacilityService();
-   // private final ResearchOrganizationServiceLocal roService = PoRegistry.getInstance().
-     //   getServiceLocator().getResearchOrganizationService();
+    private final HealthCareProviderServiceLocal hcpService = PoRegistry.getInstance().
+        getServiceLocator().getHealthCareProviderService();
+    private final ClinicalResearchStaffServiceLocal crsService = PoRegistry.getInstance().
+        getServiceLocator().getClinicalResearchStaffService();
 
     /**
      * Constructor.
@@ -218,30 +224,36 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // create the local entity record
         this.personService.curate(ctepPerson);
 
-        // create the identified entity record
-        IdentifiedPerson identifiedPerson = new IdentifiedPerson();
-        identifiedPerson.setPlayer(ctepPerson);
-        identifiedPerson.setScoper(getCtepOrganization());
-        identifiedPerson.setAssignedIdentifier(assignedId);
-        identifiedPerson.setStatus(RoleStatus.ACTIVE);
-        this.identifiedPersonService.curate(identifiedPerson);
+        // create the identified entity record for the db id in ctep
+        createIdentifiedPerson(ctepPerson, assignedId);
 
         // create identified person record for any other person identifiers provied in ctep services
 
 
         // create records for all health care provider records
         List<HealthCareProviderDTO> hcps = getHcpFromCtep(assignedId);
-        if (LOG.isDebugEnabled()) {
-            printHcpDataToDebugLog(hcps);
+        printHcpDataToDebugLog(hcps);
+        for (HealthCareProviderDTO hcp : hcps) {
+            createHcp(hcp, ctepPerson);
         }
 
         // create records for all clinical research staff records.
         List<ClinicalResearchStaffDTO> crss = getCrsFromCtep(assignedId);
-        if (LOG.isDebugEnabled()) {
-            printCrsDataToDebugLog(crss);
+        printCrsDataToDebugLog(crss);
+        for (ClinicalResearchStaffDTO crs : crss) {
+            createCrs(crs, ctepPerson);
         }
 
         return ctepPerson;
+    }
+
+    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException {
+        IdentifiedPerson identifiedPerson = new IdentifiedPerson();
+        identifiedPerson.setPlayer(ctepPerson);
+        identifiedPerson.setScoper(getCtepOrganization());
+        identifiedPerson.setAssignedIdentifier(assignedId);
+        identifiedPerson.setStatus(RoleStatus.ACTIVE);
+        this.identifiedPersonService.curate(identifiedPerson);
     }
 
     private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson) {
@@ -260,6 +272,28 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
+    private void createHcp(HealthCareProviderDTO hcpDto, Person ctepPerson) throws JMSException {
+        // store ii's we will need
+        hcpDto.getIdentifier();
+        Ii scoperIi = hcpDto.getScoperIdentifier();
+
+        // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
+        hcpDto.setIdentifier(null);
+        hcpDto.setPlayerIdentifier(null);
+        hcpDto.setScoperIdentifier(null);
+
+        // convert to local db model
+        HealthCareProvider hcp = (HealthCareProvider) PoXsnapshotHelper.createModel(hcpDto);
+
+        // set fields that we need to
+        hcp.setScoper(this.orgImporter.importOrgNoUpdate(scoperIi));
+        hcp.setPlayer(ctepPerson);
+        hcp.setStatus(RoleStatus.ACTIVE);
+
+        // store role
+        this.hcpService.curate(hcp);
+    }
+
     private List<ClinicalResearchStaffDTO> getCrsFromCtep(Ii personIi) {
         try {
             return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
@@ -268,64 +302,88 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
+    private void createCrs(ClinicalResearchStaffDTO crsDto, Person ctepPerson) throws JMSException {
+        Ii scoperIi = crsDto.getScoperIdentifier();
+        crsDto.getIdentifier();
+
+        // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
+        crsDto.setIdentifier(null);
+        crsDto.setScoperIdentifier(null);
+        crsDto.setPlayerIdentifier(null);
+
+        // convert to local db model
+        ClinicalResearchStaff crs = (ClinicalResearchStaff) PoXsnapshotHelper.createModel(crsDto);
+
+        // set fields that we need to
+        crs.setScoper(this.orgImporter.importOrgNoUpdate(scoperIi));
+        crs.setStatus(RoleStatus.ACTIVE);
+        crs.setPlayer(ctepPerson);
+
+        // store role
+        this.crsService.curate(crs);
+    }
+
+    @SuppressWarnings("unchecked")
     private void printHcpDataToDebugLog(List<HealthCareProviderDTO> hcps) {
-        if (hcps.isEmpty()) {
-            LOG.debug("This person is not a HCP.");
-        } else {
-            for (HealthCareProviderDTO hcp : hcps) {
-                LOG.debug("  ** HCP Data ** \n");
-                LOG.debug("\t hcp.id.extension: " + hcp.getIdentifier().getExtension());
-                LOG.debug("\t hcp.id.root: " + hcp.getIdentifier().getRoot());
-                LOG.debug("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
-                LOG.debug("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
-                LOG.debug("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
-                LOG.debug("\t hcp.scoper.root: " + hcp.getScoperIdentifier().getRoot());
-                LOG.debug("\t hcp.certLicText: " + hcp.getCertificateLicenseText());
-                LOG.debug("\t hcp.status: " + hcp.getStatus().getCode());
-                LOG.debug("HCP addresses:");
-                for (Object adObj : hcp.getPostalAddress().getItem()) {
-                    Ad ad = (Ad) adObj;
-                    LOG.debug("\t Address\n");
-                    for (Adxp axp : ad.getPart()) {
-                        LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
-                    }
-                }
-                LOG.debug("HCP Telecom Addresses:");
-                for (Tel obj : hcp.getTelecomAddress().getItem()) {
-                    LOG.debug("\t" + obj.getValue());
+        if (LOG.isDebugEnabled()) {
+            if (hcps.isEmpty()) {
+                LOG.debug("This person is not a HCP.");
+            } else {
+                for (HealthCareProviderDTO hcp : hcps) {
+                    LOG.debug("  ** HCP Data ** \n");
+                    LOG.debug("\t hcp.id.extension: " + hcp.getIdentifier().getExtension());
+                    LOG.debug("\t hcp.id.root: " + hcp.getIdentifier().getRoot());
+                    LOG.debug("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
+                    LOG.debug("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
+                    LOG.debug("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
+                    LOG.debug("\t hcp.scoper.root: " + hcp.getScoperIdentifier().getRoot());
+                    LOG.debug("\t hcp.certLicText: " + hcp.getCertificateLicenseText());
+                    LOG.debug("\t hcp.status: " + hcp.getStatus().getCode());
+                    LOG.debug("HCP addresses:");
+                    printAddresses(hcp.getPostalAddress());
+                    LOG.debug("HCP Telecom Addresses:");
+                    printTels(hcp.getTelecomAddress());
                 }
             }
         }
-
     }
 
+    @SuppressWarnings("unchecked")
     private void printCrsDataToDebugLog(List<ClinicalResearchStaffDTO> crss) {
-        if (crss.isEmpty()) {
-            LOG.debug("This person is not a CRS.");
-        } else {
-            for (ClinicalResearchStaffDTO crs : crss) {
-                LOG.debug("  ** HCP Data ** \n");
-                LOG.debug("\t crs.id.extension: " + crs.getIdentifier().getExtension());
-                LOG.debug("\t crs.id.root: " + crs.getIdentifier().getRoot());
-                LOG.debug("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
-                LOG.debug("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
-                LOG.debug("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());
-                LOG.debug("\t crs.scoper.root: " + crs.getScoperIdentifier().getRoot());
-                LOG.debug("\t crs.status: " + crs.getStatus().getCode());
-                LOG.debug("crs addresses:");
-                for (Object adObj : crs.getPostalAddress().getItem()) {
-                    Ad ad = (Ad) adObj;
-                    LOG.debug("\t Address\n");
-                    for (Adxp axp : ad.getPart()) {
-                        LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
-                    }
-                }
-                LOG.debug("crs Telecom Addresses:");
-                for (Tel obj : crs.getTelecomAddress().getItem()) {
-                    LOG.debug("\t" + obj.getValue());
+        if (LOG.isDebugEnabled()) {
+            if (crss.isEmpty()) {
+                LOG.debug("This person is not a CRS.");
+            } else {
+                for (ClinicalResearchStaffDTO crs : crss) {
+                    LOG.debug("  ** CRS Data ** \n");
+                    LOG.debug("\t crs.id.extension: " + crs.getIdentifier().getExtension());
+                    LOG.debug("\t crs.id.root: " + crs.getIdentifier().getRoot());
+                    LOG.debug("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
+                    LOG.debug("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
+                    LOG.debug("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());
+                    LOG.debug("\t crs.scoper.root: " + crs.getScoperIdentifier().getRoot());
+                    LOG.debug("\t crs.status: " + crs.getStatus().getCode());
+                    LOG.debug("crs addresses:");
+                    printAddresses(crs.getPostalAddress());
+                    LOG.debug("crs Telecom Addresses:");
+                    printTels(crs.getTelecomAddress());
                 }
             }
         }
     }
 
+    private void printAddresses(DSet<Ad> ads) {
+        for (Ad ad : ads.getItem()) {
+            LOG.debug("\t Address\n");
+            for (Adxp axp : ad.getPart()) {
+                LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
+            }
+        }
+    }
+
+    private void printTels(DSet<Tel> tels) {
+        for (Tel obj : tels.getItem()) {
+            LOG.debug("\t" + obj.getValue());
+        }
+    }
 }

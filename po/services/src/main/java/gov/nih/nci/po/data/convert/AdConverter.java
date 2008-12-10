@@ -172,7 +172,7 @@ public class AdConverter {
                             sdelimitor = "";
                             continue;
                         case CNT:
-                            String code = part.getCode().trim();
+                            String code = StringUtils.trimToNull(part.getCode());
                             if (code.length() == 2) {
                                 a.setCountry(PoRegistry.getCountryService().getCountryByAlpha2(code));
                             } else {
@@ -182,9 +182,9 @@ public class AdConverter {
                             continue;
                         case STA:
                             stateProvince = part;
-                            if (StringUtils.isNotEmpty(stateProvince.getCode())) {
-                                stateProvince.setCode(stateProvince.getCode().trim());
-                            }
+                                if (StringUtils.isNotEmpty(stateProvince.getCode())) {
+                                    stateProvince.setCode(stateProvince.getCode().trim());
+                                }
                             a.setStateOrProvince(stateProvince.getValue());
                             sdelimitor = "";
                             continue;

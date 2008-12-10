@@ -130,8 +130,8 @@ public class CtepOrgImportTest extends AbstractBeanTest {
         }
 
         assertEquals(19, getCountOfClass(Organization.class).longValue());
-        assertEquals(10, getCountOfClass(HealthCareFacility.class).longValue());
-        assertEquals(9, getCountOfClass(ResearchOrganization.class).longValue());
+        assertEquals(9, getCountOfClass(HealthCareFacility.class).longValue());
+        assertEquals(10, getCountOfClass(ResearchOrganization.class).longValue());
     }
 
     private Long getCountOfClass(Class c) {
