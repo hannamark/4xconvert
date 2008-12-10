@@ -21,6 +21,7 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -43,6 +44,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -140,7 +142,7 @@ public class BatchCreateProtocols {
         // create study overall status
         createStudyStatus(studyProtocolIi, dto);
         // create IND/IDE information *One- times*
-        // createIndIdeIndicators(studyProtocolIi);
+         createIndIdeIndicators(studyProtocolIi, dto);
         // create the Study Grants One- times*
         createStudyResources(studyProtocolIi, dto);
         if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
@@ -167,6 +169,16 @@ public class BatchCreateProtocols {
             uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
                      dto.getOtherTrialRelDocumentFileName(), folderPath);  
         }
+        //Summary 4 Info
+        OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(dto);
+        Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
+        if (selectedSummary4Sponsor != null) {
+            log.error("dto.getSumm4FundingCat()" + dto.getSumm4FundingCat());
+            new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getExtension(), 
+                    SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
+                    .convertToLong(studyProtocolIi));
+        }
+
         // create/Lookup the org
         log.error("buildProtocol " + dto.getLeadOrgEmail());
         OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
@@ -210,9 +222,6 @@ public class BatchCreateProtocols {
         }
         
     }
-
-   
-
     private StudyProtocolDTO createProtocolDTO(StudyProtocolBatchDTO batchDto) {
         StudyProtocolDTO protocolDTO = null;
         if (batchDto.getTrialType().equals("Observational")) {
@@ -782,5 +791,44 @@ public class BatchCreateProtocols {
             offset += partBuffer.length;
         }
         return content;
+    }
+    private void createIndIdeIndicators(Ii studyProtocolIi, StudyProtocolBatchDTO dto) throws PAException {
+        
+        StudyIndldeDTO indldeDTO = null;
+            indldeDTO = new StudyIndldeDTO();
+            indldeDTO.setStudyProtocolIi(studyProtocolIi);
+            // indldeDTO.setStatusDateRange(statusDateRange)sDateRange(statusDateRange)
+            indldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(dto.getIndType()));
+            indldeDTO.setIndldeNumber(StConverter.convertToSt(dto.getIndNumber()));
+            indldeDTO.setGrantorCode(CdConverter.convertStringToCd(dto.getIndGrantor()));
+            indldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(dto.getIndHolderType()));
+            if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
+                log.error(dto.getIndNIHInstitution() + "dto.getIndNIHInstitution() code");
+                indldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(dto.getIndNIHInstitution()));
+            }
+            if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
+                indldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(dto.getIndNCIDivision()));
+            }
+            indldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
+                    dto.getIndHasExpandedAccess())));
+            indldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getIndExpandedAccessStatus()));
+            RegistryServiceLocator.getStudyIndldeService().create(indldeDTO);
+     
+    }
+    private OrganizationBatchDTO buildSummary4Sponsor(StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO summ4Sponsor = new OrganizationBatchDTO();
+        summ4Sponsor.setName(dto.getSumm4OrgName());
+        summ4Sponsor.setOrgCTEPId(dto.getSumm4OrgCTEPOrgNo());
+        summ4Sponsor.setStreetAddress(dto.getSumm4OrgStreetAddress());
+        summ4Sponsor.setCity(dto.getSumm4City());
+        summ4Sponsor.setState(dto.getSumm4State());
+        summ4Sponsor.setZip(dto.getSumm4Zip());
+        summ4Sponsor.setCountry(dto.getSumm4Country());
+        summ4Sponsor.setEmail(dto.getSumm4Country());
+        summ4Sponsor.setPhone(dto.getSumm4Phone());
+        summ4Sponsor.setTty(dto.getSumm4TTY());
+        summ4Sponsor.setFax(dto.getSumm4Fax());
+        summ4Sponsor.setUrl(dto.getSumm4Url());
+        return summ4Sponsor;
     }
 }
