@@ -278,7 +278,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     }
 
     @Test
-    public void cascadePlayerStatusChange() throws Exception {
+    public void cascadePlayerStatusChange_Nullified() throws Exception {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (PlayedRole.class.isAssignableFrom(myType)) {
@@ -297,10 +297,53 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
     }
 
     @Test
-    public void cascadeScoperStatusChange() throws Exception {
+    public void cascadePlayerStatusChange_Inactive() throws Exception {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+        if (PlayedRole.class.isAssignableFrom(myType)) {
+            // make everything ACTIVE
+            CuratableRole r = (CuratableRole) createSample();
+            CuratableEntity player = ((PlayedRole)r).getPlayer();
+            player.setStatusCode(EntityStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(player);
+            basicOrganization.setStatusCode(EntityStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(basicOrganization);
+            basicPerson.setStatusCode(EntityStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(basicPerson);
+            r.setStatus(RoleStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().update(r);
+            PoHibernateUtil.getCurrentSession().flush();
+            
+            CuratableEntity entity = ((PlayedRole)r).getPlayer();
+            entity.setStatusCode(EntityStatus.INACTIVE);
+            if (entity instanceof Organization){
+                locator.getOrganizationService().curate((Organization)entity);
+            } else {
+                locator.getPersonService().curate((Person)entity);
+            }
+            assertEquals(RoleStatus.SUSPENDED, r.getStatus());
+        }
+    }
+
+    @Test
+    public void cascadeScoperStatusChange_Nullified() throws Exception {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
         if (ScopedRole.class.isAssignableFrom(myType)) {
+            CuratableRole r = (CuratableRole) createSample();
+            assertEquals(RoleStatus.PENDING, r.getStatus());
+            basicOrganization.setStatusCode(EntityStatus.NULLIFIED);
+            locator.getOrganizationService().curate(basicOrganization);
+            assertEquals(RoleStatus.NULLIFIED, r.getStatus());
+        }
+    }
+    
+    @Test
+    public void cascadeScoperStatusChange_Inactive() throws Exception {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<?> myType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+        if (ScopedRole.class.isAssignableFrom(myType)) {
+            // make everything ACTIVE
             CuratableRole r = (CuratableRole) createSample();
             basicOrganization.setStatusCode(EntityStatus.ACTIVE);
             PoHibernateUtil.getCurrentSession().update(basicOrganization);
