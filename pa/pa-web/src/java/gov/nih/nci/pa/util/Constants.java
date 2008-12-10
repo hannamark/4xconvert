@@ -59,4 +59,7 @@ public class Constants {
     
     /** Study primary contact .*/
     public static final String STUDY_PRIMARY_CONTACT = "Study Primary Contact";
+    
+    /** work flow status used for menu. **/
+    public static final String DOC_WFS_MENU = "docWFSMenu";
 }

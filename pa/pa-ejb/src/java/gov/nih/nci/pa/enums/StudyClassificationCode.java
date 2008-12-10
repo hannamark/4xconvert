@@ -21,6 +21,8 @@ public enum StudyClassificationCode implements CodedEnum<String> {
     SAFETY_OR_EFFICACY("Safety/Efficacy"),
     /** Bio-availability. */
     BIO_AVAILABILITY("Bio-availability"),
+    /** Bio-equivalence. */
+    BIO_EQUIVALENCE("Bio-equivalence"),
     /** Pharmacokinetics. */
     PHARMACOKINETICS("Pharmacokinetics"),
     /** Pharmacodynamics. */

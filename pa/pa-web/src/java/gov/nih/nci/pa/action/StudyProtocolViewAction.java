@@ -1,11 +1,13 @@
 package gov.nih.nci.pa.action;
 
-import org.apache.struts2.ServletActionContext;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -50,11 +52,25 @@ public class StudyProtocolViewAction extends ActionSupport {
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(studyProtocolId));
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
             return SUCCESS;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }        
+    }
+    
+    private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
+        String action = "";
+        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.REJECTED.getCode();
+        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
+        } else {
+            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
+        }
+        return action;
     }
 
 

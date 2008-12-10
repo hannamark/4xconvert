@@ -15,6 +15,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum DesignConfigurationCode implements CodedEnum<String> {
     
+    /** Single Group. */
+    SINGLE_GROUP("Single Group"),
     /** Parallel Group Design. */
     PARALLEL_GROUP_DESIGN("Parallel Group Design"),
     /** Crossover Design. */
