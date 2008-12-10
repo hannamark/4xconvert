@@ -17,11 +17,14 @@ function handleAction(studyProtocolIi){
     document.forms[0].action="trialIndideedit.action";
     document.forms[0].submit();  
 }
-function handleDelete(studyProtocolIi){
+function handleDelete(studyProtocolIi){ 
+	input_box=confirm("Click OK to remove the IND/IDE from the Study.  Cancel to Abort.");
+	if (input_box==true){
     document.forms[0].cbValue.value = studyProtocolIi;
     document.forms[0].page.value = "Delete";
     document.forms[0].action="trialIndidedelete.action";
-    document.forms[0].submit(); 
+    document.forms[0].submit();
+	}
 }
 
 </SCRIPT>
