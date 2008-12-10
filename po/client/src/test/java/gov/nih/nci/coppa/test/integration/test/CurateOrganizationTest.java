@@ -237,7 +237,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
     private void saveAsInactive(Ii id) {
         selenium.select("curateEntityForm.organization.statusCode", "label=INACTIVE");
+        selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
+        selenium.getConfirmation();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
@@ -246,6 +248,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
+        selenium.getConfirmation();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }

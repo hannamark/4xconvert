@@ -118,7 +118,7 @@
 <div style="clear:left;">
 </div>    
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <%@include file="../../../curate/confirmThenSubmit.jsp" %>    
+    <%@include file="../../confirmThenSubmit.jsp" %>    
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
        <c:url var="managePage" value="/protected/roles/person/IdentifiedPerson/start.action">
