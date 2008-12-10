@@ -68,7 +68,7 @@
 		<interceptor-ref name="nci-commonsParams" />
 		<result>/WEB-INF/jsp/processBatch.jsp</result>
 		<result name="error">/WEB-INF/jsp/processBatch.jsp</result>
-		<result name="success">/WEB-INF/jsp/processBatch.jsp</result>
+		<result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
         </action>
         
 	<action name="ajaxSubmitTrialAction*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}"> 
