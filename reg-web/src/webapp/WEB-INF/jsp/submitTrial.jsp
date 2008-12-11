@@ -118,9 +118,14 @@ function manageRespPartyLookUp(){
 	}
 }
 function addGrant(){
+	var serialNumber = document.getElementById('serialNumber').value;
+	var b = serialNumber.length;
+	if (b < 5){
+		alert("Serial Number must be at least 5 digits");
+		return false;
+	}
 	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
-	var serialNumber = document.getElementById('serialNumber').value;
 	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
 	var  url = '/registry/protected/ajaxSubmitTrialActionaddGrant.action?fundingMechanismCode='+fundingMechanismCode+'&nihInstitutionCode='+nihInstitutionCode+'&serialNumber='+serialNumber+'&nciDivisionProgramCode='+nciDivisionProgramCode;	
    	var div = document.getElementById('grantdiv');   
@@ -139,7 +144,7 @@ function enableGrantAddButton(){
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
 	var serialNumber;
 	if (isNaN(document.getElementById('serialNumber').value)){
-		alert("Serial Number must be numeric")
+		alert("Serial Number must be numeric");
 		return false;
 	}
 	serialNumber = document.getElementById('serialNumber').value;
@@ -381,34 +386,33 @@ function toggledisplay2 (it) {
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
-          <tr>
-					<td scope="row" class="label">
-						<label for="org">Summary 4 Funding Sponsor Type:</label> 
-					</td>
-			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                      <td class="value">
-                        <s:select headerKey="" headerValue="--Select--" 
+          <tr>	
+          		<td scope="row" class="label">
+					<label for="org">Summary 4 Funding Sponsor Type:</label> 
+				</td>
+			         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
+                <td class="value">
+                     <s:select headerKey="" headerValue="--Select--" 
                             name="summary4FundingCategory" 
                             list="#summaryFourFundingCategoryCodeValues"
                             cssStyle="width:206px" />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>summary4FundingCategory</s:param>
-                               </s:fielderror>                            
-                             </span>
-                      </td>
-          </tr>          
-          <tr>
-               
-					<td scope="row" class="label">
+                     <span class="formErrorMsg"> 
+                           <s:fielderror>
+                           <s:param>summary4FundingCategory</s:param>
+                           </s:fielderror>                            
+                      </span>
+                </td>
+           </tr>          
+           <tr>
+               	<td scope="row" class="label">
 						<label for="sponsor"> Summary 4 Funding Sponsor: </label> 
-					</td>
-					<td class="value">
+				</td>
+				<td class="value">
 						<div id="loadSummary4FundingSponsorField">
-						<%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
+							<%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
 						</div>		
-					</td>
-		</tr>  
+				</td>
+			</tr>  
                          			                    
           
           <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
