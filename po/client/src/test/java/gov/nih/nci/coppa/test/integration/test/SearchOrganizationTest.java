@@ -20,7 +20,6 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
         openSearchOrganization();
         verifySearchForm();
         searchByName();
-        searchByContactInformation();
         searchByAddress();	
         searchByPoId();
         noRowsReturnedTest();
@@ -61,15 +60,6 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		verify();
     }
 
-	private void searchByContactInformation() {
-		selenium.type("searchOrganizationForm_criteria_emailEntry_value", "emailAddress@aool.com");
-		selenium.type("searchOrganizationForm_criteria_urlEntry_value", "http://sample.url.org");
-		selenium.type("searchOrganizationForm_criteria_phoneEntry_value", "899-090-0987");
-		selenium.type("searchOrganizationForm_criteria_faxEntry_value", "123-fax-0908");
-		clickAndWaitButton("submitSearchOrganizationForm");
-		verify();
-	}
-
 	private void searchByName() {
 		selenium.type("searchOrganizationForm_criteria_organization_name", orgName);
 		clickAndWaitButton("submitSearchOrganizationForm");
@@ -108,10 +98,6 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		assertTrue("State field is missing",selenium.isElementPresent("searchOrganizationForm.criteria.organization.postalAddress.stateOrProvince"));
 		assertTrue("Postal code field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_postalCode"));
 		assertTrue("Country field is missing",selenium.isElementPresent("searchOrganizationForm.criteria.organization.postalAddress.country"));
-		assertTrue("Email field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_emailEntry_value"));
-		assertTrue("URL field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_urlEntry_value"));
-		assertTrue("Phone field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_phoneEntry_value"));
-		assertTrue("Fax field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_faxEntry_value"));
 	}
     
     private void addOrganization(){

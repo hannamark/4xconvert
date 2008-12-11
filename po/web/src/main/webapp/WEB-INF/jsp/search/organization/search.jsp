@@ -43,20 +43,6 @@
 			    </div>
 			</div>
         </div>
-		<div class="boxouter" style="float:left;margin-right: 10px;">
-		    <h2>Contact Information</h2>
-		    <div class="box_white">
-		        <div class="clear"></div>
-		        <po:inputRow>
-		        <po:inputRowElement><s:textfield label="%{getText('emailEntry.value')}" name="criteria.emailEntry.value" size="20"/></po:inputRowElement>
-		        <po:inputRowElement><s:textfield label="%{getText('urlEntry.value')}" name="criteria.urlEntry.value" size="20"/></po:inputRowElement>
-		        </po:inputRow>
-		        <po:inputRow>
-		        <po:inputRowElement><s:textfield label="%{getText('phoneEntry.value')}" name="criteria.phoneEntry.value" size="20"/></po:inputRowElement>
-		        <po:inputRowElement><s:textfield label="%{getText('faxEntry.value')}" name="criteria.faxEntry.value" size="20"/></po:inputRowElement>
-		        </po:inputRow>
-		    </div>
-		</div>
          <div class="clearfloat"></div>
         </div>
         <input id="enableEnterSubmit" type="submit"/>

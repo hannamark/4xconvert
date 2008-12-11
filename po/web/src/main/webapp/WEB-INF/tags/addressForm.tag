@@ -40,6 +40,25 @@ function ${formNameBase}_displayStateProvince() {
              label="%{getText(#attr.addressKeyBase + '.deliveryAddressLine')}" />
 <po:inputRow>
     <po:inputRowElement>
+        <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}" 
+            required="%{#attr.required}" cssClass="%{cssClass}" size="18"
+            label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
+    </po:inputRowElement>
+    <po:inputRowElement>
+        <s:select 
+            name="%{#attr.addressKeyBase + '.country'}" 
+            label="%{getText(#attr.addressKeyBase + '.country')}"
+            list="#countryService.countries" listKey="id" listValue="name" 
+            cssClass="%{cssClass}" required="%{#attr.required}"
+            headerKey="" headerValue="--Select a Country--"
+            value="#attr.address.country.id" 
+            onchange="%{#attr.formNameBase}_displayStateProvince();" 
+            id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
+        </s:select>
+    </po:inputRowElement>
+</po:inputRow>             
+<po:inputRow>
+    <po:inputRowElement>
         <s:textfield name="%{#attr.addressKeyBase + '.cityOrMunicipality'}" 
             required="%{#attr.required}" cssClass="%{cssClass}" size="31" 
             label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
@@ -69,27 +88,10 @@ function ${formNameBase}_displayStateProvince() {
 			    list="#countryUSA.states" listKey="code" listValue="name" cssClass="%{cssClass}" 
 			    headerKey="" headerValue="--Select a State--"
 			    value="#attr.address.stateOrProvince" 
-			    onchange="$('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.stateOrProvince'}').value = $('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '._selectStateOrProvince'}').value;" 
+			    onchange="$('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.stateOrProvince'}').value = $('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '._selectStateOrProvince'}').value;"
+			    required="%{#attr.required}" cssClass="%{cssClass}" 
 			    />
 	    </div>
     </po:inputRowElement>
 </po:inputRow>
-<po:inputRow>
-    <po:inputRowElement>
-        <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}" 
-            required="%{#attr.required}" cssClass="%{cssClass}" size="18"
-            label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
-    </po:inputRowElement>
-    <po:inputRowElement>
-        <s:select 
-            name="%{#attr.addressKeyBase + '.country'}" 
-            label="%{getText(#attr.addressKeyBase + '.country')}"
-            list="#countryService.countries" listKey="id" listValue="name" 
-            cssClass="%{cssClass}" required="%{#attr.required}"
-            headerKey="" headerValue="--Select a Country--"
-            value="#attr.address.country.id" 
-            onchange="%{#attr.formNameBase}_displayStateProvince();" 
-            id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
-        </s:select>
-    </po:inputRowElement>
-</po:inputRow>
+
