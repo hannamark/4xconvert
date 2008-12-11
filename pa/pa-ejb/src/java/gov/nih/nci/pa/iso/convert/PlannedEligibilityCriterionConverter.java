@@ -4,7 +4,6 @@ import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
-import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -36,7 +35,7 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        Pq pq = new Pq();       
        pq.setValue(pec.getValue()); 
        if (pec.getUnit() != null) {
-         pq.setUnit(pec.getUnit().getCode());
+         pq.setUnit(pec.getUnit());
        }
        pecDTO.setValue(pq);
        //pecDTO.setValue(PqvConverter.convertToPqv(pec.getValue()));
@@ -61,7 +60,7 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        //pec.setUnit(UnitsCode.getByCode(CdConverter.convertCdToString(pecDTO.getUnit())));
        if (pecDTO.getValue() != null) {
          pec.setValue(pecDTO.getValue().getValue());
-         pec.setUnit(UnitsCode.getByCode(pecDTO.getValue().getUnit()));
+         pec.setUnit(pecDTO.getValue().getUnit());
        }
        return pec;
    }

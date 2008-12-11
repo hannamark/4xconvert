@@ -142,10 +142,8 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                    </td>
                     <td class="value">
-    				<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
-                    
-                    <s:select headerKey="" headerValue="" name="webDTO.unit" list="#unitsValues" cssStyle="width:106px" /> 
-                      </td> 
+                    <s:textfield name="webDTO.unit" maxlength="12" cssStyle="width:100px" />
+    				</td> 
                       <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.buldcriterion</s:param>

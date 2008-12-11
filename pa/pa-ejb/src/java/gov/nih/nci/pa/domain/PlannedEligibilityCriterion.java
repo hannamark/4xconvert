@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.EligibleGenderCode;
-import gov.nih.nci.pa.enums.UnitsCode;
 
 import java.math.BigDecimal;
 
@@ -26,7 +25,8 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     private String criterionName;
     private String operator;
     private BigDecimal value;
-    private UnitsCode unit;
+    //private UnitsCode unit;
+    private String unit;
     private EligibleGenderCode eligibleGenderCode;
     /**
      * @return inclusionIndicator
@@ -84,18 +84,18 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     
     /**
      * @return unit
-     */
+     *//*
     @Column(name = "UNIT")
     @Enumerated(EnumType.STRING)
     public UnitsCode getUnit() {
         return unit;
     }
-    /**
+    *//**
      * @param unit unit
-     */
+     *//*
     public void setUnit(UnitsCode unit) {
         this.unit = unit;
-    }
+    }*/
     /**
      * @return value
      */
@@ -108,6 +108,19 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
      */
     public void setValue(BigDecimal value) {
       this.value = value;
+    }
+    /**
+     * @return unit
+     */
+    @Column(name = "UNIT")
+    public String getUnit() {
+      return unit;
+    }
+    /**
+     * @param unit unit
+     */
+    public void setUnit(String unit) {
+      this.unit = unit;
     }
     
 }
