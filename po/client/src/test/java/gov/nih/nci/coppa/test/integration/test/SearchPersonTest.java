@@ -69,7 +69,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
 	}
 
 	private void searchByName() {
-		selenium.type("searchPersonForm_criteria_person_prefix", "Mr");
+		selenium.type("searchPersonForm_criteria_person_prefix", "Dr");
 		selenium.type("searchPersonForm_criteria_person_firstName", firstName);
 		selenium.type("searchPersonForm_criteria_person_middleName", "L");
 		selenium.type("searchPersonForm_criteria_person_lastName", lastName);
@@ -123,7 +123,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
     
     private void addPerson(){
     	selenium.select("curateEntityForm.person.statusCode", "label=PENDING");
-		selenium.type("curateEntityForm_person_prefix", "Mr");
+		selenium.type("curateEntityForm_person_prefix", "Dr");
 		selenium.type("curateEntityForm_person_firstName", firstName);
 		selenium.type("curateEntityForm_person_middleName", "L");
 		selenium.type("curateEntityForm_person_lastName", lastName);
@@ -143,9 +143,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
 		selenium.type("faxEntry_value", "703-909-1234");
 		selenium.click("fax-add");
 		clickAndWaitSaveButton();
-		selenium.goBack();
-		pause(2000);
-	//	assertTrue("Person was successfully created!", selenium.isTextPresent("Person was successfully created"));
+		assertTrue("Person was successfully created!", selenium.isTextPresent("Person was successfully created"));
 	}
     
 	private void clear() {

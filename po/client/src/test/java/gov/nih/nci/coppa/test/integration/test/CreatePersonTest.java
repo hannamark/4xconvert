@@ -31,7 +31,7 @@ public class CreatePersonTest extends AbstractPoWebTest {
 
     private void addPerson(){
     	selenium.select("curateEntityForm.person.statusCode", "label=PENDING");
-		selenium.type("curateEntityForm_person_prefix", "Mr");
+		selenium.type("curateEntityForm_person_prefix", "Dr");
 		selenium.type("curateEntityForm_person_firstName", "Jakson");
 		selenium.type("curateEntityForm_person_middleName", "L");
 		selenium.type("curateEntityForm_person_lastName", lastName);
