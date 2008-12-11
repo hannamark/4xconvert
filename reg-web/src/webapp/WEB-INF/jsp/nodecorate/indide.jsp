@@ -41,7 +41,16 @@
 			return false;
 		}
 		var grantor = document.getElementById('SubCat').value;
+		if( grantor == "") {
+			alert("Please select a Grantor")
+			return false;
+		}
+		
 		var holdertype = document.getElementById('holderType').value;
+		if( holdertype == "") {
+			alert("Please select an IND Holder Type")
+			return false;
+		}
 		var programcode;
 		if ((document.getElementById('programcodenciselectedvalue').value == '') && (holdertype == 'NCI') ) {
 			alert("Please select a Division/Program Code");
@@ -58,7 +67,7 @@
 		}
 		
 		var expandedaccess = getExpandedAccessRadioValue(document.forms[0].group4.length);
-		if ((expandedaccess == 'Yes') && (document.getElementById('expanded_status').value == '') ) {
+		if ((expandedaccess == 'true') && (document.getElementById('expanded_status').value == '') ) {
 			alert("Please select a Expanded Access Type ");
 			return false;
 		}
