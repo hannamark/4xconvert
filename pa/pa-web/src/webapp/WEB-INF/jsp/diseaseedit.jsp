@@ -88,12 +88,14 @@
 
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-        <li><a href="#" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="back">Back</span></span></a></li>
-        <li><a href="#" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="next">Next</span></span></a></li>
+        <li>
+            <a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img">
+                <span class="back">Back</span></span></a>
+        </li>
+        <li>
+            <a href="trialInterventions.action" class="btn" onclick="this.blur();">
+                <span class="btn_img"><span class="next">Next</span></span></a>
+        </li>
     </ul>
     </del></div>
 </div>

@@ -8,7 +8,7 @@
     <display:column title="NCI Thesaurus Concept ID" property="conceptId"  headerClass="sortable"/> 
     <display:column title="Menu Display Name" property="menuDisplayName"  headerClass="sortable"/> 
     <display:column title="Parent Name" property="parentPreferredName"  headerClass="sortable"/> 
-    <display:column title="Select" class="action" sortable="false">
+    <display:column title="Select" headerClass="centered" class="action" sortable="false">
         <s:if test="${(row.menuDisplayName!=null)&&(row.menuDisplayName!='')}">
             <s:a href="#" cssClass="btn" onclick="submitform('${row.diseaseIdentifier}')">
                 <span class="btn_img"><span class="add">Select</span></span>

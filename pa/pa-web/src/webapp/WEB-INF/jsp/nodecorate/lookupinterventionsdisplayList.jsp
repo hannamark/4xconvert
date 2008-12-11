@@ -7,7 +7,7 @@
     <display:column title="Preferred Name" property="name"  headerClass="sortable"/>
     <display:column title="Other Names" property="otherNames"  headerClass="sortable"/> 
     <display:column title="Description" property="description"  headerClass="sortable"/> 
-    <display:column title="Action" class="action" sortable="false">
+    <display:column title="Action" headerClass="centered" class="action" sortable="false">
         <s:a href="#" cssClass="btn" onclick="submitform('${row.identifier}')">
             <span class="btn_img"><span class="add">Select</span></span>
         </s:a>  

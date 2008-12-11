@@ -56,14 +56,14 @@ function handleCreate(){
 					titleKey="participatingOrganizations.functionalRole"
 					class="sortable" />
 				<display:column titleKey="participatingOrganizations.edit"
-					class="action">
+					headerClass="centered" class="action">
 					<s:a href="#" onclick="handleEdit(%{#attr.row.id})">
 						<img src="<%=request.getContextPath()%>/images/ico_edit.gif"
 							alt="Edit" width="16" height="16" />
 					</s:a>
 				</display:column>
 				<display:column titleKey="participatingOrganizations.unlink"
-					class="action">
+					headerClass="centered" class="action">
 					<s:a href="#" onclick="handleDelete(%{#attr.row.id})">
 						<img src="<%=request.getContextPath()%>/images/ico_cancel.gif"
 							alt="Un-link" width="16" height="16" />
