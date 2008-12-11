@@ -207,6 +207,7 @@ public class BatchConstants {
     public static final int INFORMED_CONSENT_DOC_FILE_NAME = 96;
     /** */
     public static final int OTHER_TRIAL_DOC_FILE_NAME = 97;
-    
+    /** */
+    public static final int COUNTRY_SIZE = 3;
     
 }
