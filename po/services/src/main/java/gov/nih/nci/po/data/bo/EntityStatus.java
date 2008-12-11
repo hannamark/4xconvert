@@ -82,18 +82,20 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
- * For curation, the various statuses a Curatable element can be in.  This enum captures the notion
- * of allowed transitions via the canTransitionTo and getAllowedTransitions methods.  Each status
- * can 'transition' to itself, <em>and</em> as follows (Current state: list of allowed states):
- *
+ * For curation, the various statuses a Curatable element can be in. This enum captures the notion of allowed
+ * transitions via the canTransitionTo and getAllowedTransitions methods. Each status can 'transition' to itself,
+ * <em>and</em> as follows (Current state: list of allowed states):
+ * 
  * <ul>
  * <li>NEW: CURATED, REJECTED
  * <li>REJECTED: CURATED
@@ -158,9 +160,8 @@ public enum EntityStatus {
     }
 
     /**
-     * Helper method that indicates whether a transition to the new entity status
-     * is allowed.
-     *
+     * Helper method that indicates whether a transition to the new entity status is allowed.
+     * 
      * @param newStatus transition to status
      * @return whether the transition is allowed
      */
@@ -169,9 +170,17 @@ public enum EntityStatus {
     }
 
     /**
-     * @return the permitted curation statuses from this entity state.  set cannot be modified.
+     * @return the permitted curation status from this entity status. set cannot be modified.
      */
     public Set<EntityStatus> getAllowedTransitions() {
         return TRANSITIONS.get(this);
+    }
+
+    /**
+     * @return the permitted curation status to search by. set cannot be modified.
+     */
+    public static SortedSet<EntityStatus> getAllowedSearchable() {
+        return Collections.unmodifiableSortedSet(new TreeSet<EntityStatus>(Arrays.asList(new EntityStatus[] {
+                EntityStatus.PENDING, EntityStatus.ACTIVE, EntityStatus.INACTIVE })));
     }
 }

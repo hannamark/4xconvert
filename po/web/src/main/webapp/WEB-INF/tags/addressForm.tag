@@ -85,7 +85,7 @@ function ${formNameBase}_displayStateProvince() {
 			    id="%{#attr.formNameBase + '.' +  #attr.addressKeyBase + '._selectStateOrProvince'}"
 	            name="%{#attr.addressKeyBase + '._selectStateOrProvince'}" 
 	            label="%{getText(#attr.addressKeyBase + '.stateOrProvince')}"
-			    list="#countryUSA.states" listKey="code" listValue="name" cssClass="%{cssClass}" 
+			    list="#countryUSA.states" listKey="code" listValue="name" 
 			    headerKey="" headerValue="--Select a State--"
 			    value="#attr.address.stateOrProvince" 
 			    onchange="$('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.stateOrProvince'}').value = $('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '._selectStateOrProvince'}').value;"

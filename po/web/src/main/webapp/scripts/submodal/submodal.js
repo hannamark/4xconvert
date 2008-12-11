@@ -138,7 +138,7 @@ function showPopWin(url, width, height, returnFunc, showCloseBox) {
 
 function calculateMaxPopupWidth() {
 	var fullWidth = getViewportWidth();
-	var width = ((fullWidth / 2) > 520) ? width = (fullWidth / 2): width = 520; 
+	var width = ((fullWidth / 1.5) > 520) ? width = (fullWidth / 1.5): width = 520; 
 	return width;
 }
 
