@@ -66,7 +66,6 @@
 			</s:else>
 		    <div class="box_white">
 				<s:actionerror/>
-                <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="person"/>

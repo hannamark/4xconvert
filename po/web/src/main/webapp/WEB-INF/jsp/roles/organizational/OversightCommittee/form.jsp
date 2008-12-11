@@ -65,7 +65,6 @@
 			<h2><s:text name="oversightCommittee"/> Role Information</h2>
 		    <div class="box_white">
 				<s:actionerror/>
-                <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>

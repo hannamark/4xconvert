@@ -57,7 +57,7 @@ public class CreatePersonTest extends AbstractPoWebTest {
     private void verifyDefaultFieldErrorsMessages() {
         assertEquals("First Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_firstName']/div"));
         assertEquals("Last Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_lastName']/div"));
-        assertEquals("Street Address must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_streetAddressLine']/div"));
+        assertEquals("Address Line 1 must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_streetAddressLine']/div"));
         assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_cityOrMunicipality']/div"));
         assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_postalCode']/div"));
         assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.person.postalAddress.country']/div"));

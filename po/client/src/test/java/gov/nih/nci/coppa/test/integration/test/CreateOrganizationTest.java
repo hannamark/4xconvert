@@ -25,7 +25,7 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
 
     private void verifyDefaultFieldErrorMessages() {
         assertEquals("Organization Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_name']/div"));
-        assertEquals("Street Address must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_streetAddressLine']/div"));
+        assertEquals("Address Line 1 must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_streetAddressLine']/div"));
         assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_cityOrMunicipality']/div"));
         assertEquals("Organization Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_name']/div"));
         assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_postalCode']/div"));
