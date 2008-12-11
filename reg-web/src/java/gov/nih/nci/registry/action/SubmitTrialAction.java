@@ -145,39 +145,47 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         StudyProtocolDTO protocolDTO;
         try {
             clearErrorsAndMessages();
-            // validate the form elements
             validateForm();
             if (hasFieldErrors()) {
                 resetValuesFromSession();
                 return ERROR;
             }
             Ii studyProtocolIi = null;
-            // before creating the protocol check for duplicate
-            // using the Lead Org Trial Identifier and Lead Org Identifier
+            //check for duplicate using the Lead Org Trial Identifier and Lead Org Identifier
             Organization paOrg = new Organization();
             paOrg.setIdentifier(IiConverter.convertToString(selectedLeadOrg.getIdentifier()));
             paOrg = RegistryServiceLocator.getPAOrganizationService().getOrganizationByIndetifers(paOrg);
-            
             if (paOrg != null && paOrg.getId() != null) {            
                 StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
                 criteria.setLeadOrganizationTrialIdentifier(
                                     participationWebDTO.getLocalProtocolIdentifier());
                 criteria.setLeadOrganizationId(paOrg.getId());
-                
                 List<StudyProtocolQueryDTO> records = RegistryServiceLocator.
                                     getProtocolQueryService().getStudyProtocolByCriteria(criteria);
                 if (records != null && records.size() > 0) {
                     addActionError("Duplicate Trial Submission: A trial exists in the system with the same "
                             + "Lead Organization Trial Identifier for the selected Lead Organization");
-
                     ServletActionContext.getRequest().setAttribute(
                               "failureMessage" , "Duplicate Trial Submission: A trial exists in the system " 
                               + "with the same  Lead Organization Trial Identifier for the " 
                               + "selected Lead Organization");
+                    ArrayList<IndIdeHolder> sessionList1 = (ArrayList) ServletActionContext.getRequest().getSession()
+                        .getAttribute(Constants.INDIDE_LIST);
+                    if (sessionList1 != null && sessionList1.size() > 0) {
+                        for (int i = 0; i < sessionList1.size(); i++) {
+                            ideInd.add(sessionList1.get(i));
+                        }
+                    }
+                    ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession()
+                        .getAttribute(Constants.GRANT_LIST);
+                    if (sessionList != null) {
+                        for (int i = 0; i < sessionList.size(); i++) {
+                            grants.add(sessionList.get(i));
+                        }
+                    }
                     return ERROR;
                 }
             }            
-            
             if (trialType.equals("Observational")) {
                 studyProtocolIi = RegistryServiceLocator.getStudyProtocolService().createObservationalStudyProtocol(
                         (ObservationalStudyProtocolDTO) createProtocolDTO(trialType));
@@ -203,18 +211,15 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(), irbApprovalFileName,
                         irbApproval);
             }
-            
             if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
                 uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
                         informedConsentDocumentFileName, informedConsentDocument);
             }
-            
             if (PAUtil.isNotEmpty(participatingSitesFileName)) {
                 uploadDocument(studyProtocolIi,
                         DocumentTypeCode.Participating_sites.getCode(),
                         participatingSitesFileName, participatingSites);
             }
-            
             if (PAUtil.isNotEmpty(otherDocumentFileName)) {
                 uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), otherDocumentFileName,
                         otherDocument);  
@@ -262,14 +267,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             // after creating the study protocol, query the protocol for viewing
             protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             final MailManager mailManager = new MailManager();
-            mailManager.sendNotificationMail(ServletActionContext.getRequest().getRemoteUser(), // remote
-                    // user
-                    protocolDTO.getAssignedIdentifier().getExtension(), // generated
-                    // identifier
-                    participationWebDTO.getLocalProtocolIdentifier() // lead
-                    // org
-                    // trial
-                    // identifier
+            mailManager.sendNotificationMail(ServletActionContext.getRequest().getRemoteUser(), // remote user
+                    protocolDTO.getAssignedIdentifier().getExtension(), // generatedidentifier
+                    participationWebDTO.getLocalProtocolIdentifier() // lead org trial identifier
                     );
             ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
             ServletActionContext.getRequest().getSession().removeAttribute("grantList");
