@@ -1,15 +1,21 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 public class CreatePersonTest extends AbstractPoWebTest {
+	
+	private String lastName="lastName"+Long.toString(System.currentTimeMillis());
+	
+	public void testPerson(){
+        loginAsCurator();
+		openCreatePerson();
+		verifyDefaultValidationErrors();
+		addPerson();
+	}
     /**
      * Verifies PO-618, PO-619 via UI
      */
-    public void testVerifyDefaultValidationErrors() throws Exception {
-        loginAsCurator();
+    private void verifyDefaultValidationErrors(){
 
-        openCreatePerson();
-        assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
-        assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
+
         clickAndWaitSaveButton();
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
@@ -23,6 +29,31 @@ public class CreatePersonTest extends AbstractPoWebTest {
         verifyDefaultFieldErrorsMessages();
     }
 
+    private void addPerson(){
+    	selenium.select("curateEntityForm.person.statusCode", "label=PENDING");
+		selenium.type("curateEntityForm_person_prefix", "Mr");
+		selenium.type("curateEntityForm_person_firstName", "Jakson");
+		selenium.type("curateEntityForm_person_middleName", "L");
+		selenium.type("curateEntityForm_person_lastName", lastName);
+		selenium.type("curateEntityForm_person_suffix", "III");
+		selenium.type("curateEntityForm_person_postalAddress_streetAddressLine", "123 Main Street");
+		selenium.type("curateEntityForm_person_postalAddress_deliveryAddressLine", "40 5th Street");
+		selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", "Ashburn");
+		selenium.type("curateEntityForm.person.postalAddress.stateOrProvince", "va");
+		selenium.type("curateEntityForm_person_postalAddress_postalCode", "20147");
+		selenium.select("curateEntityForm.person.postalAddress.country", "label=United States");
+		selenium.type("emailEntry_value", "sample@emial.com");
+		selenium.click("email-add");
+		selenium.type("phoneEntry_value", "703-111-2345");
+		selenium.click("phone-add");
+		selenium.type("urlEntry_value", "http://www.createperson.com");
+		selenium.click("url-add");
+		selenium.type("faxEntry_value", "703-111-1234");
+		selenium.click("fax-add");
+		clickAndWaitSaveButton();
+		assertTrue("Success message is missing", selenium.isTextPresent("Person was successfully created"));
+	}
+    
     private void verifyDefaultFieldErrorsMessages() {
         assertEquals("First Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_firstName']/div"));
         assertEquals("Last Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_lastName']/div"));
