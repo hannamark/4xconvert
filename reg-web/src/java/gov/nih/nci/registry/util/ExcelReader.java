@@ -277,7 +277,11 @@ public class ExcelReader {
         case BatchConstants.IND_HOLDER_TYPE: batchDto.setIndHolderType(cellValue); break;
         case BatchConstants.IND_NIH_INSTITUTION: batchDto.setIndNIHInstitution(cellValue); break;
         case BatchConstants.IND_NCI_DIV_CODE: batchDto.setIndNCIDivision(cellValue); break;
-        case BatchConstants.IND_HAS_EXPANDED_ACCESS: batchDto.setIndHasExpandedAccess(cellValue); break;
+        case BatchConstants.IND_HAS_EXPANDED_ACCESS: if (cellValue.equalsIgnoreCase("Yes")) {
+                batchDto.setIndHasExpandedAccess("True"); break;
+             } else {
+                 batchDto.setIndHasExpandedAccess("cellValue"); break;
+             }            
         case BatchConstants.IND_EXPANED_ACCESS_STATUS: batchDto.setIndExpandedAccessStatus(cellValue); break;
         case BatchConstants.PROTOCOL_DOC_FILE_NAME: batchDto.setProtcolDocumentFileName(cellValue);
         case BatchConstants.IRB_APPROVAL_DOC_FILE_NAME: batchDto.setIrbApprovalDocumentFileName(cellValue); break;
