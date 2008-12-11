@@ -10,10 +10,45 @@
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
+function trim(val) {
+	var ret = val.replace(/^\s+/, '');
+	ret = ret.replace(/\s+$/, '');
+	  return ret;
+	}
 
 function handleAction(){
  var page;
-page=document.forms[0].page.value;
+ page=document.forms[0].page.value;
+
+var number = document.getElementById('indidenumber').value;
+number = trim(number);
+if( number == "") {
+	alert("Please enter an IND/IDE number")
+	return false;
+}
+var grantor = document.getElementById('SubCat').value;
+if( grantor == "") {
+	alert("Please select a Grantor")
+	return false;
+}
+var holdertype = document.getElementById('holderType').value;
+if( holdertype == "") {
+	alert("Please select an IND Holder Type")
+	return false;
+}
+if ((document.getElementById('programcodenciselectedvalue').value == '') && (holdertype == 'NCI') ) {
+	alert("Please select a Division/Program Code");
+	return false;
+}
+if ((document.getElementById('programcodenihselectedvalue').value == '') && (holdertype == 'NIH') ) {
+	alert("Please select a NIH Institute");
+	return false;
+}
+var expandedaccess = getExpandedAccessRadioValue(document.forms[0].group4.length);
+if ((expandedaccess == 'true') && (document.getElementById('expandedStatus').value == '') ) {
+	alert("Please select an Expanded Access Status ");
+	return false;
+}
 if (page == "Edit"){
  document.forms[0].action="trialIndideupdate.action";
  document.forms[0].submit(); 
