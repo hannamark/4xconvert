@@ -102,8 +102,8 @@
 							<fmt:message key="trialIndide.indldeType"/>
 						</td>
 						<td style="white-space:nowrap;">							
-							<input type="radio" name="holder.group3" value="IND" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IND<br/>
-							<input type="radio" name="holder.group3" value="IDE" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IDE
+							<input type="radio" id="group3" name="holder.group3" value="IND" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IND<br/>
+							<input type="radio" id="group3" name="holder.group3" value="IDE" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IDE
 						</td>
 					</tr>
 					<tr>
