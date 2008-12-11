@@ -136,16 +136,35 @@ function showPopWin(url, width, height, returnFunc, showCloseBox) {
 	window.setTimeout("setPopTitle();", 600);
 }
 
+function calculateMaxPopupWidth() {
+	var fullWidth = getViewportWidth();
+	var width = ((fullWidth / 2) > 520) ? width = (fullWidth / 2): width = 520; 
+	return width;
+}
+
+function calculateMaxPopupHeight() {
+	var fullHeight = getViewportHeight();
+	var height = ((fullHeight / 1.25) > 337.5) ? height = (fullHeight / 1.25): height = 337.5;
+	return height;
+}
+
 //
 var gi = 0;
 function centerPopWin(width, height) {
 	if (gPopupIsShown == true) {
 		if (width == null || isNaN(width)) {
-			width = gPopupContainer.offsetWidth;
+			width = calculateMaxPopupWidth();
 		}
 		if (height == null) {
-			height = gPopupContainer.offsetHeight;
+			height = calculateMaxPopupHeight();
 		}
+		
+		var titleBarHeight = parseInt(document.getElementById("popupTitleBar").offsetHeight, 10);
+		gPopupContainer.style.width = width + "px";
+		gPopupContainer.style.height = (height+titleBarHeight) + "px";
+
+		gPopFrame.style.width = width + "px";
+		gPopFrame.style.height = (height) + "px";
 		
 		//var theBody = document.documentElement;
 		var theBody = document.getElementsByTagName("BODY")[0];
@@ -156,9 +175,6 @@ function centerPopWin(width, height) {
 		setMaskSize();
 		
 		//window.status = gPopupMask.style.top + " " + gPopupMask.style.left + " " + gi++;
-		
-		var titleBarHeight = parseInt(document.getElementById("popupTitleBar").offsetHeight, 10);
-		
 		var fullHeight = getViewportHeight();
 		var fullWidth = getViewportWidth();
 		

@@ -166,3 +166,7 @@ IdValue.prototype = {
     this.value = value;
   }
 };
+
+function showPopup(url, callbackFunc) {
+	showPopWin(url, calculateMaxPopupWidth(), calculateMaxPopupHeight(), callbackFunc);
+}

@@ -120,7 +120,7 @@
 	                            <c:param name="source.id" value="${organization.id}"/>
 	                        </c:url>
 	                        <po:buttonRow>
-	                        <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopWin('${duplicatesUrl}', 800, 800, showPopWinCallback);" style="search" text="Select Duplicate"/>
+	                        <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopup('${duplicatesUrl}', showPopWinCallback);" style="search" text="Select Duplicate"/>
 	                        </po:buttonRow>
                         </div>
                         

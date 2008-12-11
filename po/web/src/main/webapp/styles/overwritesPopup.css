@@ -1,11 +1,11 @@
 .po_wrapper {
-    max-width: 650px;
     padding-right: 0px;
     padding-bottom: 0px;
     margin: 0px;
     background: none;
     padding-right: 0px;
     padding-bottom: 0px;
+    min-width: 200px;
 }
 
 .po_inner {
@@ -13,7 +13,8 @@
 }
 
 #main {
-    min-width: 600px;
+    min-width: 400px;
+    min-heigth: 200px;
 }
 
 .po_wrapper H1 {

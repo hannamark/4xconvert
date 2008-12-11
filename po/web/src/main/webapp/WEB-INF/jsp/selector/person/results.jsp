@@ -18,14 +18,12 @@
         <display:column titleKey="person.firstName" property="firstName" sortable="true" sortProperty="PERSON_FIRSTNAME" maxLength="30"/>
         <display:column titleKey="person.lastName" property="lastName" sortable="true" sortProperty="PERSON_LASTNAME" maxLength="30"/>
         <display:column titleKey="person.statusCode" sortable="true" sortProperty="PERSON_STATUS" >
-            ${row.statusCode}
-        </display:column>
-        <display:column title="Change Request(s)" >
             <c:choose>
-            <c:when test="${fn:length(row.changeRequests) > 0}"> 
-               <div class="difference_found">${fn:length(row.changeRequests)}</div>
+            <c:when test="${fn:length(row.changeRequests) > 0}">
+               ${row.statusCode} <br/>
+                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
             </c:when>
-            <c:otherwise>NONE</c:otherwise>
+            <c:otherwise>${row.statusCode}</c:otherwise>
             </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">

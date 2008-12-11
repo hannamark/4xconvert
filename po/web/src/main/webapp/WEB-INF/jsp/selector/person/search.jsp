@@ -5,7 +5,9 @@
     <%@include file="../selectAndClose.jsp" %>
 </head>
 <body> 
+<c:set var="isResults" value="${fn:length(results.list) > 0}" />
 <div id="findDuplicates">
+    <div id="findDuplicatesForm" <c:if test="${isResults}">style="display:none;"</c:if>>
 	<div class="po_wrapper">
 	    <div class="po_inner">
 	        <h1><fmt:message key="person.search.title"/></h1>
@@ -18,7 +20,11 @@
 				        <div class="boxouter">
 				        <h2>Basic Identifying Information</h2>
 				            <div class="box_white">
+				                <po:inputRow>
+				                <po:inputRowElement>
 		                        <s:textfield label="%{getText('person.id')}" name="criteria.person.id" size="10"/>
+				                </po:inputRowElement>
+				                <po:inputRowElement>
 		                        <s:set name="statusValues" value="@gov.nih.nci.po.data.bo.EntityStatus@values()" />
 		                        <s:select
 		                           label="%{getText('person.statusCode')}"
@@ -29,6 +35,8 @@
 		                           value="criteria.person.statusCode" 
 		                           headerKey="" headerValue="--Select a Status--" 
 		                           />				            
+				                </po:inputRowElement>
+				                </po:inputRow>
 				                 <s:textfield label="%{getText('person.prefix')}" name="criteria.person.prefix" size="10"/>
 				                 <s:textfield label="%{getText('person.firstName')}" name="criteria.person.firstName" size="50"/>
 				                 <s:textfield label="%{getText('person.middleName')}" name="criteria.person.middleName" size="50"/>
@@ -37,7 +45,8 @@
 				                <div class="clear"></div>
 				            </div>
 				        </div>
-				        
+				        <%-- 
+				        --%>
 				        <div class="boxouter">
 				        <h2>Address Information</h2>
 				            <div class="box_white">
@@ -66,6 +75,8 @@
 					        style="search" text="Search" 
 					        id="submitDuplicatePersonForm"/>
 					</div>                
+	                <%--
+	                 --%>
 	            </div>
 	        </div>
 	    </div>
@@ -74,19 +85,45 @@
 	<br>
 	<br>
 	</div>
-	
-	<div class="po_wrapper">
-	    <div class="po_inner">
-	        <div class="box_white">
-				<div class="boxouter">
-				<h2><fmt:message key="person.search.results"/></h2>
-					<div id="duplicateSearchResults">     
-		            <%@ include file="results.jsp" %>
-		            </div>
-	            </div>
-	        </div>
-	    </div>
-	</div>
+    </div>
+    <script type="text/javascript">
+    <!--
+        function backToSearchForm() {
+          $('duplicateSearchResultDetails').hide(); 
+          $('findDuplicatesResults').hide();
+          $('findDuplicatesForm').show();
+          $('findDuplicates').show(); 
+        }
+    //-->
+    </script>
+    <div id="findDuplicatesResults" <c:if test="${!isResults}">style="display:none;"</c:if>>
+        <div class="po_wrapper">
+            <div class="po_inner">
+                <div class="box_white">
+                    <div id="showDuplicatesFormTop">
+                        <div class="btnwrapper">
+                            <po:buttonRow>
+                                <po:button href="javascript://nop/" onclick="backToSearchForm();" style="" text="Back to Search Form" />
+                            </po:buttonRow>
+                        </div>  
+                    </div>
+                    <div class="boxouter">
+                    <h2><fmt:message key="organization.search.results"/></h2>
+                        <div id="duplicateSearchResults">     
+                        <%@ include file="results.jsp" %>
+                        </div>
+                    </div>
+                    <div id="showDuplicatesFormBottom">
+                        <div class="btnwrapper">
+                            <po:buttonRow>
+                                <po:button href="javascript://nop/" onclick="backToSearchForm();" style="" text="Back to Search Form" />
+                            </po:buttonRow>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>        
 </div>
 
 <div class="po_wrapper">
