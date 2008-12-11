@@ -488,7 +488,7 @@ public class TestSchema {
             pec.setOperator(">");
             pec.setStudyProtocol(sp);
             pec.setValue(new BigDecimal("14"));
-            pec.setUnit(UnitsCode.MONTHS);
+            pec.setUnit(UnitsCode.MONTHS.getCode());
             addUpdObject(pec);
             
             Disease dis01 = DiseaseTest.createDiseaseObj("Toe Cancer");

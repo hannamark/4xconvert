@@ -59,7 +59,7 @@ public class StudyResourcingServiceBeanTest {
         assertNotNull(sr.getId());
         
         StudyResourcingDTO srDTO1 = new StudyResourcingDTO();
-        srDTO1.setSerialNumber(IntConverter.convertToInt("123"));
+        srDTO1.setSerialNumber(IntConverter.convertToInt("12345"));
         srDTO1.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
         
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
@@ -82,7 +82,7 @@ public class StudyResourcingServiceBeanTest {
         assertNotNull(sr.getId());
         
         StudyResourcingDTO srDTO1 = new StudyResourcingDTO();
-        srDTO1.setSerialNumber(IntConverter.convertToInt("123"));
+        srDTO1.setSerialNumber(IntConverter.convertToInt("12345"));
         srDTO1.setStudyProtocolIi(IiConverter.convertToIi(sp.getId()));
         
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);

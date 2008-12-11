@@ -33,6 +33,8 @@ function tooltip() {
  <h1><fmt:message key="trialFunding.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
+   <pa:sucessMessage/>
+   <pa:failureMessage/>
     <s:form>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <input type="hidden" name="page" value="${page}" />

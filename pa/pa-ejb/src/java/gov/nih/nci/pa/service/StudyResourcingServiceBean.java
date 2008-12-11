@@ -36,7 +36,8 @@ import org.hibernate.Session;
  * copyright holder, NCI.
  */
 @Stateless
-@SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals",
+  "PMD.CyclomaticComplexity" })
 public class StudyResourcingServiceBean implements StudyResourcingServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(StudyResourcingServiceBean.class);
@@ -113,7 +114,8 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-
+        final int serialNumMin = 5;
+        final int serialNumMax = 6;
         if (studyResourcingDTO == null) {
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
@@ -123,6 +125,14 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
         StudyResourcing studyResourcing = null;
         StudyResourcingDTO studyResourcingRetDTO = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
+        
+        if (studyResourcingDTO.getSerialNumber() != null 
+            && studyResourcingDTO.getSerialNumber().getValue() != null) {
+          String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
+          if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
+            throw new PAException("Serial number can be numeric with 5 or 6 digits");
+          }
+        }
         try {
             session = HibernateUtil.getCurrentSession();
 
@@ -175,12 +185,21 @@ public class StudyResourcingServiceBean implements StudyResourcingServiceRemote 
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
+        final int serialNumMin = 5;
+        final int serialNumMax = 6;
         if (studyResourcingDTO == null) {
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
         }
         LOG.debug("Entering createStudyResourcing ");
         Session session = null;
+        
+        if (studyResourcingDTO.getSerialNumber() != null) {
+          String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
+          if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
+            throw new PAException("Serial number can be numeric with 5 or 6 digits");
+          }
+        }
         StudyResourcing studyResourcing = StudyResourcingConverter.convertFromDTOToDomain(studyResourcingDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         studyResourcing.setDateLastCreated(now);
