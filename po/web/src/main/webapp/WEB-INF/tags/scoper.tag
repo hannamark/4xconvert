@@ -3,17 +3,12 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
+<po:inputRow>
+<po:inputRowElement>
 <div class="wwgrp" id="wwgrp_curateRoleForm_role_scoper_id">
     <s:fielderror>
         <s:param value="%{'role.scoper'}"/>
     </s:fielderror>
-    <div style="float:right;">
-        <c:url value="/protected/selector/organization/start.action" var="findScoperUrl">
-        </c:url>
-        <po:buttonRow>
-        <po:button id="select_scoper" href="javascript://noop/" onclick="showPopup('${findScoperUrl}', showPopWinCallback);" style="search" text="Select Scoper"/>
-        </po:buttonRow>
-    </div>
     <div class="wwlbl" id="wwlbl_curateRoleForm_role_scoper_id">
         <label class="label" for="curateRoleForm_role_scoper_id">   
         <span class="required">*</span>     
@@ -27,6 +22,15 @@
        </s:if>
     </div>
 </div>
+</po:inputRowElement>
+<po:inputRowElement>
+    <c:url value="/protected/selector/organization/start.action" var="findScoperUrl">
+    </c:url>
+    <po:buttonRow>
+    <po:button id="select_scoper" href="javascript://noop/" onclick="showPopup('${findScoperUrl}', showPopWinCallback);" style="search" text="Select Affiliated Organization"/>
+    </po:buttonRow>
+</po:inputRowElement>
+</po:inputRow>
 <s:hidden key="role.scoper" id="curateRoleForm.role.scoper.id" required="true" cssClass="required"/>
 <script type="text/javascript">
 <!--

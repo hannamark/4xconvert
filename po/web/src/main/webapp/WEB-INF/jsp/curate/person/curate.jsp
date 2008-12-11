@@ -113,29 +113,31 @@
 				            $('curateEntityForm.person.duplicateOf.id').value = returnVal.id;
 				            $('wwctrl_curateEntityForm_person_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
 				        }
-				    </script>        	    
-	                <div class="wwgrp" id="wwgrp_curateEntityForm_person_duplicateOf_id">
-	                    <div style="float:right;">
-	                        <c:url value="/protected/selector/person/start.action" var="duplicatesUrl">
-	                            <c:param name="source.id" value="${person.id}"/>
-	                        </c:url>
-	                        <po:buttonRow>
-	                        <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopup('${duplicatesUrl}', showPopWinCallback);" style="search" text="Select Duplicate"/>
-	                        </po:buttonRow>
-                        </div>
-                        
-	                    <div class="wwlbl" id="wwlbl_curateEntityForm_person_duplicateOf_id">
-		                    <label class="label" for="curateEntityForm_person_duplicateOf_id">        
-		                    <s:text name="person.duplicateOf.id"/>:
-		                    </label>
-	                    </div>
-	                    <br/>
-	                    <div class="wwctrl" id="wwctrl_curateEntityForm_person_duplicateOf_id">
-	                       ${person.duplicateOf.id} 
-	                    </div>
-	                    
-	                </div>
-				    <s:hidden key="person.duplicateOf" id="curateEntityForm.person.duplicateOf.id"/>
+				    </script>     
+				    <po:inputRow>
+				    <po:inputRowElement>
+		                <div class="wwgrp" id="wwgrp_curateEntityForm_person_duplicateOf_id">
+		                    <div class="wwlbl" id="wwlbl_curateEntityForm_person_duplicateOf_id">
+			                    <label class="label" for="curateEntityForm_person_duplicateOf_id">        
+			                    <s:text name="person.duplicateOf.id"/>:
+			                    </label>
+		                    </div>
+		                    <br/>
+		                    <div class="wwctrl" id="wwctrl_curateEntityForm_person_duplicateOf_id">
+		                       ${person.duplicateOf.id} 
+		                    </div>
+		                </div>
+					    <s:hidden key="person.duplicateOf" id="curateEntityForm.person.duplicateOf.id"/>
+				    </po:inputRowElement>
+				    <po:inputRowElement>
+                        <c:url value="/protected/selector/person/start.action" var="duplicatesUrl">
+                            <c:param name="source.id" value="${person.id}"/>
+                        </c:url>
+                        <po:buttonRow>
+                        <po:button id="select_duplicate" href="javascript://noop/" onclick="showPopup('${duplicatesUrl}', showPopWinCallback);" style="search" text="Select Duplicate"/>
+                        </po:buttonRow>
+				    </po:inputRowElement>
+				    </po:inputRow>   	    
 			    </div>
 	        </s:else>
 				<s:textfield key="person.prefix" size="10"/>
