@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -154,7 +155,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
       try {
         TransformerFactory tFactory = TransformerFactory.newInstance();
         InputStream xslFile = AbstractionCompletionAction.class.getClassLoader()
-                            .getResourceAsStream("/CDR617094_ct.gov.xsl");
+                            .getResourceAsStream("/tsr.xsl");
 
         if (xml != null) {
           out = new PrintWriter(xmlOutput);
@@ -200,22 +201,24 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(spDTO.getUserLastCreated()));
         message.setSentDate(new java.util.Date());
         message.setSubject(PaRegistry.getLookUpTableService().getPropertyValue("tsr.subject"));
-        
+        RegistryUser userbean = PoPaServiceBeanLookup.getRegistryUserService().getUser(spDTO.getUserLastCreated());
         // body
         Multipart multipart = new MimeMultipart();
 
         Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        DateFormat format2 = new SimpleDateFormat("yyyy-dd-MM");
 
         // message
         BodyPart msgPart = new MimeBodyPart();
         String body = PaRegistry.getLookUpTableService().getPropertyValue("tsr.body");
         String mailBody1 = body.replace("${CurrentDate}", format.format(date));
-        String mailBody2 = mailBody1.replace("${SubmitterName}", spDTO.getUserLastCreated().toString());
+        String mailBody2 = mailBody1.replace("${SubmitterName}", userbean.getLastName() 
+                                   + " " + userbean.getFirstName());
         String mailBody3 = mailBody2.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
         String mailBody4 = mailBody3.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
-        String mailBody5 = mailBody4.replace("${receiptDate}", spDTO.getDateLastCreated().toString());
+        String mailBody5 = mailBody4.replace("${receiptDate}", format2.format(spDTO.getDateLastCreated()));
         String mailBody6 = mailBody5.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
         String mailBody7 = mailBody6.replace("${fileName}", "TSR_" 
                                            + spDTO.getNciIdentifier().toString() + ".html");

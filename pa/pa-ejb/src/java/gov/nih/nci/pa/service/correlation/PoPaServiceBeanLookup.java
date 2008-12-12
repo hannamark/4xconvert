@@ -17,6 +17,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -297,4 +298,13 @@ public class PoPaServiceBeanLookup  {
         
     }
 
+    /**
+     * @return RegistryUserServiceRemote
+     * @throws PAException on error
+     */
+    public static RegistryUserServiceRemote getRegistryUserService() throws PAException  {
+        return (RegistryUserServiceRemote) 
+        JNDIUtil.lookup("/pa/RegistryUserServiceBean/remote");
+        
+    }
 }
