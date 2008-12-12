@@ -50,7 +50,7 @@ function handleAction(){
               </label>
              </td>
              <td class="value">
-                 <s:file name="trialData" value="true" accept="application/vnd.ms-excel" cssStyle="width:270px"/>
+                 <s:file name="trialData" value="true"  cssStyle="width:270px"/>
                  <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>trialDataFileName</s:param>
@@ -66,7 +66,7 @@ function handleAction(){
               </label>
              </td>
              <td class="value">
-                 <s:file name="docZip" accept="application/x-zip-compressed" cssStyle="width:270px"/>
+                 <s:file name="docZip" cssStyle="width:270px"/>
                  <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>docZipFileName</s:param>
