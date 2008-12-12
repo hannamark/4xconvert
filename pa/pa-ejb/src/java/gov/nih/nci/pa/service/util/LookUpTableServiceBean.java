@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
+import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 
@@ -106,5 +107,29 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         return countries;
     }
     
+    /**
+     * @param name name
+     * @return value  value
+     * @throws PAException PAException
+     */
+    public String getPropertyValue(String name) throws PAException {    
+        LOG.info("Entering getPropertyValue");
+        Session session = null;
+        String value = "";
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = session.createQuery("select p from PAProperties p where p.name = '" 
+                + name + "'");
+            PAProperties bean = (PAProperties) query.list().get(0);
+            value = bean.getValue();
+        }  catch (HibernateException hbe) {
+            LOG.error(" Unable to load value from PAProperties" , hbe);
+            throw new PAException(" Unable to load from PAProperties", hbe);
+        } finally {
+            session.flush();
+        } 
+        LOG.info("Leaving getPropertyValue");
+        return value;
+    }
 
 }

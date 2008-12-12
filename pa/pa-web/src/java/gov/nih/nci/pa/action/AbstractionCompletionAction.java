@@ -10,15 +10,43 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -74,7 +102,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             getAttribute(Constants.STUDY_PROTOCOL_II);
             
             DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
-            dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
+            dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_NOT_VERIFIED));
             dwsDto.setStatusDateRange(TsConverter.convertToTs(
                               new Timestamp(new Date().getTime())));
             dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
@@ -118,9 +146,120 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         } catch (Exception e) {
             return DISPLAY_XML;
         }
-        return DISPLAY_XML;
+        return NONE;
     }
     
+    private File createAttachment(File xml, File xmlOutput) {
+      PrintWriter out = null;
+      try {
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        InputStream xslFile = AbstractionCompletionAction.class.getClassLoader()
+                            .getResourceAsStream("/CDR617094_ct.gov.xsl");
+
+        if (xml != null) {
+          out = new PrintWriter(xmlOutput);
+          Transformer trans = tFactory.newTransformer(new StreamSource(xslFile));
+          trans.transform(new StreamSource(xml), new StreamResult(out));
+          out.close();
+        }
+      } catch (TransformerException te) {
+        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, te.getLocalizedMessage());
+      } catch (FileNotFoundException fe) {
+        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, fe.getLocalizedMessage());
+      }
+      return xmlOutput;
+    }
+
+   
+    
+    /**
+     * 
+     * @return String
+     */
+    @SuppressWarnings({ "PMD.StringInstantiation", "PMD.ExcessiveMethodLength", "PMD.SimpleDateFormatNeedsLocale" })
+    public String sendEmail() {
+      LOG.info("Entering sendEmail");
+      try {
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+        .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+                
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+        getAttribute(Constants.STUDY_PROTOCOL_II);
+
+        Properties props = System.getProperties();
+        
+        // Set up mail server
+        props.put("mail.smtp.host", PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
+
+        // Get session
+        Session session = Session.getDefaultInstance(props, null);
+
+        // Define Message
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(PaRegistry.getLookUpTableService().getPropertyValue("fromaddress")));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(spDTO.getUserLastCreated()));
+        message.setSentDate(new java.util.Date());
+        message.setSubject(PaRegistry.getLookUpTableService().getPropertyValue("tsr.subject"));
+        
+        // body
+        Multipart multipart = new MimeMultipart();
+
+        Calendar calendar = new GregorianCalendar();
+        Date date = calendar.getTime();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+
+        // message
+        BodyPart msgPart = new MimeBodyPart();
+        String body = PaRegistry.getLookUpTableService().getPropertyValue("tsr.body");
+        String mailBody1 = body.replace("${CurrentDate}", format.format(date));
+        String mailBody2 = mailBody1.replace("${SubmitterName}", spDTO.getUserLastCreated().toString());
+        String mailBody3 = mailBody2.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
+        String mailBody4 = mailBody3.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
+        String mailBody5 = mailBody4.replace("${receiptDate}", spDTO.getDateLastCreated().toString());
+        String mailBody6 = mailBody5.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
+        String mailBody7 = mailBody6.replace("${fileName}", "TSR_" 
+                                           + spDTO.getNciIdentifier().toString() + ".html");
+        String mailBody8 = mailBody7.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
+        msgPart.setText(mailBody8);
+        multipart.addBodyPart(msgPart);
+
+        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+            IiConverter.convertToLong(studyProtocolIi));
+        String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(studyProtocolIi);
+        String inputFile = new String(PaEarPropertyReader.getDocUploadPath() + "//" 
+            + spDTO.getNciIdentifier().toString() + ".xml");
+        OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
+        oos.write(xmlData);
+        oos.close();
+
+        String outputFile = new String(PaEarPropertyReader.getDocUploadPath() + "//TSR_" 
+            + spDTO.getNciIdentifier().toString() + ".html");
+        
+        File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
+        File[] attachments = {new File(inputFile), htmlFile};
+
+        // attachments        
+        for (File attachment : attachments) {
+          MimeBodyPart attPart = new MimeBodyPart();
+          attPart.setDataHandler(new DataHandler(new FileDataSource(attachment)));
+          attPart.setFileName(attachment.getName());
+          multipart.addBodyPart(attPart);
+        }
+        message.setContent(multipart);       
+
+        // Send Message
+        Transport.send(message);
+
+        new File(inputFile).delete();
+        new File(outputFile).delete();
+        
+      } catch (Exception e) {
+        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+      }
+      LOG.info("Leaving sendEmail");
+      return SUCCESS;
+    }
+            
     /**
      * 
      * @return res
@@ -203,6 +342,6 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      */
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
-    }
+    }    
 }    
     

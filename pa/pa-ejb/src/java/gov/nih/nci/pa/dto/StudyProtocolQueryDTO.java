@@ -41,7 +41,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String generateXml;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
-    private String userLastCreated;    
+    private String userLastCreated; 
+    private Date dateLastCreated;
     
     
     
@@ -320,9 +321,18 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setUserLastCreated(String userLastCreated) {
         this.userLastCreated = userLastCreated;
     }
-    
-    
-    
-    
-    
+    /**
+     * @return dateLastCreated
+     */
+    public Date getDateLastCreated() {
+      return dateLastCreated;
+    }
+    /**
+     * @param dateLastCreated dateLastCreated
+     */
+    public void setDateLastCreated(Date dateLastCreated) {
+      this.dateLastCreated = dateLastCreated;
+    }
+     
+       
 }

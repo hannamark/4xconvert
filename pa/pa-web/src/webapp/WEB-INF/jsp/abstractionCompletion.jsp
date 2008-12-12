@@ -39,9 +39,7 @@ function generateReport(pid) {
     </s:elseif>
     
     </h2>
-    <display:table name="${abstractionList}" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="true">
-    	<display:setProperty name="export.excel.filename" value="AbstractionCompletion.xls"/>
-    	<display:column title="errorCode" property="errorCode" sortable="true" headerClass="sortable" />
+    <display:table name="${abstractionList}" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
     	<display:column title="errorDescription" property="errorDescription" sortable="true" headerClass="sortable" />
 	    <display:column title="errorType" property="errorType"  sortable="true" headerClass="sortable" />
 	    <display:column title="comment" property="comment" sortable="true" headerClass="sortable" />	
@@ -54,10 +52,12 @@ function generateReport(pid) {
                 </s:if> 
                 <s:elseif test="${abstractionError==false}">
                     <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">Complete Abstraction</span></span></s:a></li>
-                    <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">Generate XML</span></span></s:a></li>
+                    <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>
                                 
                 </s:elseif>
-                     
+                <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code != 'Accepted'}">
+                <li><s:a href="abstractionCompletionsendEmail.action" cssClass="btn"><span class="btn_img"><span class="save">Send Email</span></span></s:a></li>		    
+				</s:if>     
             </ul>   
         </del>
     </div> 

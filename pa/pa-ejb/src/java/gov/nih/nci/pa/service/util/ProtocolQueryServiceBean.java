@@ -185,6 +185,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             .setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                     studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated());
+                    studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
                 }
                 if (studyOverallStatus != null) {
                     studyProtocolDto.setStudyStatusCode(studyOverallStatus
