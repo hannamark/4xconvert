@@ -89,6 +89,16 @@
 	          </tr>
           </c:if> 
           <tr>     
+                <td scope="row" class="label">
+                    <label for="Trial Type">
+                        <fmt:message key="view.trial.type"/>                
+                    </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.trialType }"/>
+                </td>
+          </tr>
+          <tr>     
           		<td scope="row" class="label">
           			<label for="Primary Purpose">
           				<fmt:message key="view.trial.primaryPurpose"/>                
@@ -137,10 +147,70 @@
          	 <td class="value">
          		<c:out value="${requestScope.studyProtocolIi.piFullName }"/>
          		</td>
-       </tr> 
+       </tr>
        <tr>
-     		<td colspan="2" class="space">&nbsp;</td>
-       </tr>           
+            <td colspan="2" class="space">&nbsp;</td>
+       </tr> 
+       <c:if test="${requestScope.sponsor != null}">          
+	       <tr>
+	            <th colspan="2"><fmt:message key="view.trial.sponsorResParty"/></th>
+	          </tr>
+	          <tr>     
+	            <td scope="row" class="label">
+	            <label for="Sponsor">
+	                <fmt:message key="view.trial.sponsor"/>                
+	            </label>
+	            </td>
+	             <td class="value">
+	                <c:out value="${requestScope.sponsor }"/>
+	             </td>
+	       </tr> 
+	       <tr>     
+	            <td scope="row" class="label">
+	            <label for="Responsible Party">
+	                <fmt:message key="view.trial.respParty"/>                
+	            </label>
+	            </td>
+	             <td class="value">
+	                <c:out value="${requestScope.respParty}"/>
+	             </td>
+	       </tr> 
+	       <c:if test="${requestScope.respPartyContact != null}">  
+		       <tr>     
+		            <td scope="row" class="label">
+		            <label for="Responsible Party Contact">
+		                <fmt:message key="view.trial.respPartyContact"/>                
+		            </label>
+		            </td>
+		             <td class="value">
+		                <c:out value="${requestScope.respPartyContact}"/>
+		             </td>
+		       </tr>
+	       </c:if>
+	       <tr>
+                <td scope="row" class="label">
+	            <label for="Email Address">
+	                <fmt:message key="view.trial.respPartyEmailAddr"/>                
+	            </label>
+	            </td>
+	             <td class="value">
+	                <c:out value="${requestScope.respPartyEmailAddr}"/>
+	             </td>
+	       </tr> 
+	              <tr>     
+	            <td scope="row" class="label">
+	            <label for="Phone">
+	                <fmt:message key="view.trial.respPartyPhone"/>                
+	            </label>
+	            </td>
+	             <td class="value">
+	                <c:out value="${requestScope.respPartyPhone}"/>
+	             </td>
+	       </tr>  
+	       <tr>
+	     		<td colspan="2" class="space">&nbsp;</td>
+	       </tr>
+       </c:if>           
        <tr>
      		<th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
        </tr>
