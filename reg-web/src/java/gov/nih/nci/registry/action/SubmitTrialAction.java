@@ -1173,7 +1173,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     public String deleteGrant() {
         String rowid = ServletActionContext.getRequest().getParameter("uuid");
         ArrayList<GrantHolder> sessionList = (ArrayList) ServletActionContext.getRequest().getSession().getAttribute(
-                "GRANT_LIST");
+                Constants.GRANT_LIST);
         GrantHolder holder;
         for (int i = 0; i < sessionList.size(); i++) {
             holder = (GrantHolder) sessionList.get(i);
