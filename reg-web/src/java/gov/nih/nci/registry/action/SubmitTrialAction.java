@@ -53,6 +53,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -666,6 +668,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         if (PAUtil.isEmpty(protocolWebDTO.getCompletionDateType())) {
             addFieldError("protocolWebDTO.completionDateType", getText("error.submit.dateType"));
         }
+
         if (PAUtil.isEmpty(protocolDocFileName)) {
             addFieldError("trialDocumentWebDTO.protocolDocFileName", getText("error.submit.protocolDocument"));
         }
@@ -733,8 +736,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             if (!isValidEmailAddress(contactEmail)) {
                 addFieldError("contactEmail",
                         getText("error.submit.invalidContactEmailAddress"));               
-            }
-            
+            }            
         }
         // LeadOrgNotSelected;check the session;
         selectedLeadOrg = (OrganizationDTO) ServletActionContext.getRequest().getSession().getAttribute("PoLeadOrg");
@@ -772,12 +774,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 && PAUtil.isEmpty(protocolWebDTO.getOtherPurposeText())) {
                 addFieldError("protocolWebDTO.otherPurposeText", 
                         getText("error.submit.otherPurposeText"));
-            }
-            
+            }            
         }
+     // validate the date formats
+        validateDateFormat();
         // validate trial status and dates
         validateTrialDates();
-
     }
     
     /**
@@ -958,6 +960,28 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }        
     }
     
+    /**
+     * validate the date format.
+     */
+    private void validateDateFormat() {
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())
+                && !isValidDate(overallStatusWebDTO.getStatusDate())) {
+                    addFieldError("overallStatusWebDTO.statusDate", 
+                            getText("error.submit.invalidDate"));
+        }
+        if (PAUtil.isNotEmpty(protocolWebDTO.getStartDate())
+                && !isValidDate(protocolWebDTO.getStartDate())) {
+                    addFieldError("protocolWebDTO.startDate", 
+                            getText("error.submit.invalidDate"));
+        }
+        if (PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())
+                && !isValidDate(protocolWebDTO.getCompletionDate())) {
+                    addFieldError("protocolWebDTO.completionDate", 
+                            getText("error.submit.invalidDate"));
+        }
+        
+    }
+    
     private  boolean isValidEmailAddress(String emailAddress)  {
         boolean isvalidEmailAddr = false;
         Pattern email = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
@@ -968,6 +992,22 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         } 
         return isvalidEmailAddr;
     }
+    
+    private boolean isValidDate(String inDate) { 
+        //set the format to use as a constructor argument   
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");        
+        if (inDate.trim().length() != dateFormat.toPattern().length())  {    
+            return false;
+        }
+        dateFormat.setLenient(false);       
+        try {      
+            //parse the date    
+            dateFormat.parse(inDate.trim());   
+        } catch (ParseException pe) {    
+            return false;    
+        }    
+        return true;  
+   }
 
     /**
      * @return result
