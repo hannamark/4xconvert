@@ -365,7 +365,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             return;
         }
         appendElement(root , createElement("is_ind_study" , YES, doc));
-        Element idInfo = doc.createElement("id_info");
+        Element idInfo = doc.createElement("ind_info");
         appendElement(idInfo , createElement("ind_grantor" , ideDTO.getGrantorCode(), doc));
         appendElement(idInfo , createElement("ind_number" , ideDTO.getIndldeNumber(), doc));
         appendElement(idInfo , createElement("has_expanded_access" , 
