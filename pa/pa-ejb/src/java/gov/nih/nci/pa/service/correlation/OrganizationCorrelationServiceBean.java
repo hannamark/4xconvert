@@ -9,7 +9,6 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -40,6 +39,7 @@ public class OrganizationCorrelationServiceBean {
     
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
     private static final String CANCER_CENTER_CODE = "CCR";
+    private static final String FUNDING_MECHANISM_CODE = "P30";
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     
     /**
@@ -151,7 +151,7 @@ public class OrganizationCorrelationServiceBean {
         Cd cd = new Cd();
         cd.setCode(CANCER_CENTER_CODE);
         roDTO.setTypeCode(cd);
-        roDTO.setFundingMechanism(StConverter.convertToSt("foo"));
+        roDTO.setFundingMechanism(CdConverter.convertStringToCd(FUNDING_MECHANISM_CODE));
         roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
         if (roDTOs != null && roDTOs.size() > 1) {
             throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
@@ -332,10 +332,4 @@ public class OrganizationCorrelationServiceBean {
     public Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException {
         return new CorrelationUtils().createPAOrganization(poOrg);
     }
-
-
-    
-
-    
-    
 }

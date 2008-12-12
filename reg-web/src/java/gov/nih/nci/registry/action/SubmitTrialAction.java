@@ -1232,7 +1232,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 dto.setPlayerIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
                 dto.getPlayerIdentifier().setRoot("UID.for.nci.entity.person");
                 dto.getPlayerIdentifier().setIdentifierName("NCI person entity identifier");
-                dto.setPrimaryIndicator(RemoteApiUtil.convertToBl(Boolean.TRUE));
+                // commented out for PO-0.6, HSR
+                // dto.setPrimaryIndicator(RemoteApiUtil.convertToBl(Boolean.TRUE));
                 RegistryServiceLocator.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
             }
             Ii personIi = gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId);

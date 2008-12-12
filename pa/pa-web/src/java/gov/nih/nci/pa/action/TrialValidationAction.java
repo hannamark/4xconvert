@@ -605,7 +605,8 @@ public class TrialValidationAction extends ActionSupport {
                 dto.setPlayerIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
                 dto.getPlayerIdentifier().setRoot("UID.for.nci.entity.person");
                 dto.getPlayerIdentifier().setIdentifierName("NCI person entity identifier");
-                dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                // commented out for PO-0.6, HSR
+                // dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
                 PaRegistry.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
             }
             Ii personIi = gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId);
