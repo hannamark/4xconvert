@@ -8,45 +8,109 @@
     <title><fmt:message key="studyProtocol.general.title"/></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-	<c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
-	<c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+    <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
+    <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 
-    <script type="text/javascript"> 
+     <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+     <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
+     <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
+
+<!-- /po integration -->    
+ <script type="text/javascript"> 
+    var orgid;
+    var persid;
+    function handleAction(){
+        document.forms[0].action="generalTrialDesignupdate.action";
+        document.forms[0].submit(); 
+    }    
+    function handleActionAccept(){
+        document.forms[0].action="trialValidationaccept.action";
+        document.forms[0].submit(); 
+    }    
+    function handleActionReject(){
+        document.forms[0].action="trialValidationreject.action";
+        document.forms[0].submit(); 
+    }    
+
+    function setorgid(orgIdentifier){
+        orgid = orgIdentifier;
+    }
+    function setpersid(persIdentifier){
+        persid = persIdentifier;
+    }
     function tooltip() {
         BubbleTips.activateTipOn("acronym");
         BubbleTips.activateTipOn("dfn"); 
     }
-    function handleAction(){
-        document.forms[0].action="generalTrialDesignupdate.action";
-        document.forms[0].submit(); 
+    function lookup4loadleadorg(){
+        showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
+    }
+    function lookupCentralContact(){
+        showPopWin('${lookupPersUrl}', 1050, 400, loadCentralContactDiv, 'Select Central Contact');
+    }
+    function lookup4loadleadpers(){
+        showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
+    }
+    function lookup4sponsor(){
+        showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
+    } 
+    function lookup4loadresponsibleparty(){
+        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+    }
+    function lookup4loadSummary4Sponsor(){
+        showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+    }   
+    function loadLeadOrgDiv() { 
+        var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
+        var div = document.getElementById('loadOrgField');   
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+        callAjax(url, div); 
+    }
+    function loadLeadPersDiv() {    
+        var url = 'ajaxTrialValidationdisplayLeadPrincipalInvestigator.action?persId='+persid;
+        var div = document.getElementById('loadPersField');   
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+        callAjax(url, div);    
+    }
+    function loadSponsorDiv() {     
+        var url = 'ajaxTrialValidationdisplaySelectedSponsor.action?orgId='+orgid;
+        var div = document.getElementById('loadSponsorField');   
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
+        callAjax(url, div);
+    }
+    function loadSummary4SponsorDiv() {
+        var url = 'ajaxTrialValidationdisplaySummary4FundingSponsor.action?orgId='+orgid;
+        var div = document.getElementById('loadSummary4FundingSponsorField');   
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
+        callAjax(url, div);
+    }
+    function loadCentralContactDiv() {
+        var url = 'ajaxTrialValidationdisplayCentralContact.action?persId='+persid;
+        var div = document.getElementById('loadCentralContactDiv');   
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+        callAjax(url, div);    
     }
 
-    function lookup(){
-        showPopWin('${lookupUrl}', 1050, 400, '', 'Organization');
-    }   
-    function lookupPerson(){
-        showPopWin('${lookupPersonsUrl}', 1050, 400, '', 'Persons');
-    }   
-    
-    function loadDiv(orgid) {
-        var url = '/pa/protected/ajaxorgdisplayOrg.action?orgId='+orgid;
-        var div = document.getElementById('loadOrgField');   
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-        var aj = new Ajax.Updater(div, url, {
-            asynchronous: true,
-            method: 'get',
-            evalScripts: false
-        });
+    function createOrgContactDiv() {    
+        var url = 'ajaxTrialValidationcreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
+        var div = document.getElementById('loadResponsibleContactField');   
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
+        callAjax(url, div);
+       
+    }
+    function loadDiv(orgid){
+    }
+    function loadPersDiv(persid, func) {
+    }
+    function callAjax(url, div){
+        var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
         return false;
     }
-
-    </SCRIPT>
+</script>
 	
 </head>
 
@@ -61,133 +125,153 @@
   <div class="box">
   <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form ><s:actionerror/> 
-	 <h2><fmt:message key="studyProtocol.information"/></h2>
+    <s:form >
+    <s:actionerror/> 
     <table class="form">
+    <h2>General Trial Details</h2>    
+
     <tr>
     	<td scope="row" class="label">
            <label for="nciIdentifier">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.nciIdentifier"/>
-                 </dfn><span class="required">*</span>
            </label>
          </td>
          <td class="value">
-    		<s:textfield name="gtdDTO.assignedIdentifier" cssStyle="width:106px" readonly="true"/> 
+    		<c:out value="${sessionScope.trialSummary.nciIdentifier}"/>
     	</td>
+    </tr>
+    <tr>
+        <td scope="row" class="label">
+           <label for="nciIdentifier">
+                    NCT Number
+           </label>
+         </td>
+         <td class="value">
+            <s:textfield name="gtdDTO.nctIdentifier" maxlength="30" cssStyle="width:106px" /> 
+        </td>
+    </tr>
+
+    <tr>
+        <td scope="row" class="label">
+           <label for="nciIdentifier">
+                    Lead Organization Trial Identifier <span class="required">*</span>
+           </label>
+         </td>
+         <td class="value">
+            <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" /> 
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2"> Title</th>
+    </tr>
+
+    <tr>
+        <td scope="row" class="label">
+           <label for="acronym">
+                    <fmt:message key="studyProtocol.acronym"/>
+           </label>
+         </td>
+         <td class="value">
+        <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="12"/> 
+        </td>
     </tr>
     <tr>
     	<td scope="row" class="label">
            <label for=briefTitle>
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.briefTitle"/>
-                 </dfn><span class="required">*</span>
+                 <span class="required">*</span>
            </label>
          </td>
          <td class="value">
-    		<s:textarea name="gtdDTO.publicTitle" cssStyle="width:306px" rows="5"/> 
-    	</td>
-    </tr>
-    <tr>
-    	<td scope="row" class="label">
-           <label for="acronym">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="studyProtocol.acronym"/>
-                 </dfn>
-           </label>
-         </td>
-         <td class="value">
-    	<s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="12"/> 
+    		<s:textarea name="gtdDTO.publicTitle" cssStyle="width:606px" rows="4"/> 
     	</td>
     </tr>
     <tr>
        <td scope="row" class="label">
           <label for="officialTitle">
-              <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                    <fmt:message key="studyProtocol.officialTitle"/>
-              </dfn><span class="required">*</span>
+              <span class="required">*</span>
           </label>
        </td>
        <td class="value">
-            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:306px" rows="5"/> 
+            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/> 
        </td>
     </tr>
     <tr>
     	<th colspan="2"> <fmt:message key="studyProtocol.trialDescription"/></th>
     </tr>
     
-	<tr>
-		<td class="space" colspan="2">
-		&nbsp;
-		</td>
-	</tr>
      <tr>
     	<td scope="row" class="label">
            <label for=briefSummary>
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.briefSummary"/>
-                 </dfn><span class="required">*</span>
            </label>
          </td>
          <td class="value">
-    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:306px" rows="6"/> 
+    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:606px" rows="4"/> 
     	</td>
     </tr>
     <tr>
     	<td scope="row" class="label">
            <label for=detailedDescription>
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.detailedDescription"/>
-                 </dfn>
            </label>
          </td>
          <td class="value">
-   			 <s:textarea name="gtdDTO.scientificDescription" cssStyle="width:306px" rows="7" /> 
+   			 <s:textarea name="gtdDTO.scientificDescription" cssStyle="width:606px" rows="4"/> 
    		</td>
     </tr>
     <tr>
     	<td scope="row" class="label">
-           <label for=keywordText>
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="studyProtocol.keywordText"/>
-                 </dfn>
+           <label for=keywordText><fmt:message key="studyProtocol.keywordText"/>
            </label>
          </td>
          <td class="value">
-   			 <s:textarea name="gtdDTO.keywordText" cssStyle="width:306px" rows="7" /> 
+   			 <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"/> 
    		</td>
     </tr>
+    <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
     <tr>
-        <th colspan="2"> Lead Organization/Principal Investigator</th>
-    </tr>
+        <th colspan="2"> Central Contact</th>
+    </tr>    
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="studyProtocol.nciIdentifier"/>
-                 </dfn><span class="required">*</span>
+                    Central Contact
+                 <span class="required">*</span>
            </label>
          </td>
         <td class="value">
-            <div id="loadOrgField">
-            <%@ include file="/WEB-INF/jsp/nodecorate/orgField.jsp" %>
+            <div id="loadCentralContactDiv">
+            <%@ include file="/WEB-INF/jsp/nodecorate/centralContact.jsp" %>
             </div>      
         </td>
     </tr>
-
-      <tr>
-                <td scope="row" class="label">
-                    <label for="org">Pi<span class="required">*</span></label> 
-                </td>
-                <td class="value">
-                    <div id="loadPersField">
-                    <%@ include file="/WEB-INF/jsp/nodecorate/displayPerson.jsp" %>
-                    </div>      
-                </td>
-                
-            </tr>
-      <tr>          
-
+        <tr>
+            <td scope="row" class="label">
+               Email Address:<span class="required">*</span>
+            </td>
+            <td class="value">
+                <s:textfield name="gtdDTO.centralContactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>contactEmail</s:param>
+                   </s:fielderror>                            
+                 </span>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
+            <td class="value">
+                <s:textfield name="gtdDTO.centralContactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>contactPhone</s:param>
+                   </s:fielderror>                            
+                 </span>
+            </td>           
+        </tr>             
+    
     </table>  
          <div class="actionsrow">
             <del class="btnwrapper">

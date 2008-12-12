@@ -34,6 +34,8 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
     SCIENTIFIC_LEADERSHIP("Scientific Leadership"),
     /**Contact. */
     STUDY_PRIMARY_CONTACT("Study Primary Contact"),
+    /**Central Contact. */
+    CENTRAL_CONTACT("Central Contact"),
     /**Submitter. */
     SUBMITTER("Submitter"),
     /**Responsible Party - Study Principal Investigator. */

@@ -238,7 +238,8 @@ public class TrialValidationAction extends ActionSupport {
             gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
         }
 
-        if (srDTO.getOrganizationIdentifier() != null) {   
+        if (srDTO.getOrganizationIdentifier() != null 
+                    && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {   
             CorrelationUtils cUtils = new CorrelationUtils();
             Organization o = cUtils.getPAOrganizationByIndetifers(
                             Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
@@ -516,6 +517,27 @@ public class TrialValidationAction extends ActionSupport {
         return "display_summary4funding_sponsor";
     }    
 
+    /**
+     * 
+     * @return result
+     */   
+    public String displayCentralContact() {
+        PersonDTO centralContact = null;
+        String persId = ServletActionContext.getRequest().getParameter("persId");
+        try {
+            centralContact = PaRegistry.getPoPersonEntityService().getPerson(
+                    EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+            gov.nih.nci.pa.dto.PersonDTO personDTO = 
+                EnPnConverter.convertToPaPersonDTO(centralContact);
+
+            gtdDTO.setCentralContactIdentifier(centralContact.getIdentifier().getExtension());
+            gtdDTO.setCentralContactName(personDTO.getLastName() + "," + personDTO.getFirstName());
+        } catch (Exception e) {
+            return "central_contact";
+        }
+        return "central_contact";
+    }    
+    
   
     /**
      * 

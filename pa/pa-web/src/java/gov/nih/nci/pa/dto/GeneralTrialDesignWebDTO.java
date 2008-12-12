@@ -40,6 +40,11 @@ public class GeneralTrialDesignWebDTO {
     private String responsiblePersonIdentifier;
     private String contactPhone;
     private String contactEmail;
+    private String centralContactPhone;
+    private String centralContactEmail;
+    private String centralContactName;
+    private String centralContactIdentifier;
+    
     
     /**
      * 
@@ -427,5 +432,63 @@ public class GeneralTrialDesignWebDTO {
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
     }
+    /**
+     * 
+     * @return centralContactPhone
+     */
+    public String getCentralContactPhone() {
+        return centralContactPhone;
+    }
+    /**
+     * 
+     * @param centralContactPhone centralContactPhone
+     */
+    public void setCentralContactPhone(String centralContactPhone) {
+        this.centralContactPhone = centralContactPhone;
+    }
+    /**
+     * 
+     * @return centralContactEmail
+     */
+    public String getCentralContactEmail() {
+        return centralContactEmail;
+    }
+    /**
+     * 
+     * @param centralContactEmail centralContactEmail
+     */
+    public void setCentralContactEmail(String centralContactEmail) {
+        this.centralContactEmail = centralContactEmail;
+    }
+    /**
+     * 
+     * @return centralContactName
+     */
+    public String getCentralContactName() {
+        return centralContactName;
+    }
+    /**
+     * 
+     * @param centralContactName centralContactName
+     */
+    public void setCentralContactName(String centralContactName) {
+        this.centralContactName = centralContactName;
+    }
+    /**
+     * 
+     * @return centralContactIdentifier
+     */
+    public String getCentralContactIdentifier() {
+        return centralContactIdentifier;
+    }
+    /**
+     * 
+     * @param centralContactIdentifier centralContactIdentifier
+     */
+    public void setCentralContactIdentifier(String centralContactIdentifier) {
+        this.centralContactIdentifier = centralContactIdentifier;
+    }
+    
+    
     
 }

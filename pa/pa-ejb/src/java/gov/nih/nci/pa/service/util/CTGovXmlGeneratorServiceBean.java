@@ -342,7 +342,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         List<StudyParticipationDTO> sParts = PoPaServiceBeanLookup.
             getStudyParticipationService().getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
         for (StudyParticipationDTO spart : sParts) {
-            appendElement(idInfo , createElement("secondary_Id" , spart.getLocalStudyProtocolIdentifier() , doc));
+            appendElement(idInfo , createElement("secondary_id" , spart.getLocalStudyProtocolIdentifier() , doc));
             break;
         }
         if (idInfo.hasChildNodes()) {

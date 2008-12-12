@@ -104,7 +104,11 @@ public class StudyContactConverter {
             crs.setId(IiConverter.convertToLong(dto.getClinicalResearchStaffIi()));
             bo.setClinicalResearchStaff(crs);
         }
-        bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
+        if (dto.getStatusCode() == null) {
+            bo.setStatusCode(StatusCode.PENDING);
+        } else {
+            bo.setStatusCode(StatusCode.getByCode(dto.getStatusCode().getCode()));
+        }
         bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setStudyProtocol(spBo);
         List retList = null;

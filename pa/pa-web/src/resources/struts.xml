@@ -190,7 +190,8 @@
 		  <result name="display_responsible_paty">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result> 
 		  <result name="display_summary4funding_sponsor">/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp</result>
 		  <result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
-		  <result name="display_responsible_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>  
+		  <result name="display_responsible_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
+		  <result name="central_contact">/WEB-INF/jsp/nodecorate/centralContact.jsp</result>  
         </action>        
 	</package>
 </struts>
