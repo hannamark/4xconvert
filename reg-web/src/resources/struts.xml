@@ -62,8 +62,6 @@
         <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
 		<interceptor-ref name="fileUpload">
 			<param name="maximumSize" >512000</param>
-			<param name="allowedTypes">application/x-zip-compressed,application/vnd.ms-excel</param>
-			
 		</interceptor-ref>
 		<interceptor-ref name="nci-commonsParams" />
 		<result>/WEB-INF/jsp/processBatch.jsp</result>
