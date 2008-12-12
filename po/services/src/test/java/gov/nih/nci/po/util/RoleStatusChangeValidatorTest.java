@@ -74,6 +74,8 @@ public class RoleStatusChangeValidatorTest {
                 testPlayer(es, rs);
                 testScoper(es, rs);
             }
+            testPlayer(es, null);
+            testScoper(es, null);
         }
     }
 
@@ -90,7 +92,8 @@ public class RoleStatusChangeValidatorTest {
             }
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
-        assertEquals(values.get(es).get(rs).booleanValue(), v.isValid(new Played()));
+        boolean expected = (rs == null) ? true : values.get(es).get(rs).booleanValue();
+        assertEquals(expected, v.isValid(new Played()));
     }
 
     private void testScoper(EntityStatus es, final RoleStatus rs) {
@@ -106,7 +109,38 @@ public class RoleStatusChangeValidatorTest {
             }            
         }
         RoleStatusChangeValidator v = new RoleStatusChangeValidator();
-        assertEquals(values.get(es).get(rs).booleanValue(), v.isValid(new Scoped()));
+        boolean expected = (rs == null) ? true : values.get(es).get(rs).booleanValue();
+        assertEquals(expected, v.isValid(new Scoped()));
+    }
+    
+    @Test
+    public void testPlayerNull() {
+        class Played extends Base implements PlayedRole {
+            private static final long serialVersionUID = 1L;
+            public CuratableEntity getPlayer() {
+                return null;
+            }
+            public RoleStatus getStatus() {
+                return null;
+            }
+        }
+        RoleStatusChangeValidator v = new RoleStatusChangeValidator();
+        assertEquals(true, v.isValid(new Played()));
+    }
+    
+    @Test
+    public void testScoperNull() {
+        class Scoped extends Base implements ScopedRole {
+            private static final long serialVersionUID = 1L;
+            public Organization getScoper() {
+                return null;
+            }
+            public RoleStatus getStatus() {
+                return null;
+            }
+        }
+        RoleStatusChangeValidator v = new RoleStatusChangeValidator();
+        assertEquals(true, v.isValid(new Scoped()));
     }
 
     private static abstract class Base implements CuratableRole {

@@ -149,7 +149,7 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractStructrualRoleR
     @Test
     public void testValidate() throws Exception {
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
-        assertEquals(3, getCorrelationService().validate(dto).keySet().size());
+        assertEquals(2, getCorrelationService().validate(dto).keySet().size());
     }
 
     @Override

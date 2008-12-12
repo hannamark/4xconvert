@@ -126,7 +126,7 @@ public class RoleStatusChangeValidator
 
     private boolean isValidScoper(ScopedRole role) {
         if (role.getScoper() == null) {
-            return false;
+            return true;
         }
         RoleStatus roleStatus = ((CuratableRole) role).getStatus();
         return isValid(role.getScoper().getStatusCode(), roleStatus);
@@ -134,13 +134,16 @@ public class RoleStatusChangeValidator
 
     private boolean isValidPlayer(PlayedRole role) {
         if (role.getPlayer() == null) {
-            return false;
+            return true;
         }
         RoleStatus roleStatus = ((CuratableRole) role).getStatus();
         return isValid(role.getPlayer().getStatusCode(), roleStatus);
     }
 
     private boolean isValid(EntityStatus entityStatus, RoleStatus roleStatus) {
+        if (roleStatus == null) {
+            return true;
+        }
         switch (entityStatus) {
             case INACTIVE:
                 return roleStatus == RoleStatus.SUSPENDED
