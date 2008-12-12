@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -150,5 +151,12 @@ public interface ServiceLocator {
      * @throws PAException e
      * @return IdentifiedPersonCorrelationServiceRemote
      */    
-    IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException;     
+    IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException;
+    
+    /**
+     * @throws PAException e
+     * @return StudyParticipationContactServiceRemote
+     */    
+    StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException;
+
 }

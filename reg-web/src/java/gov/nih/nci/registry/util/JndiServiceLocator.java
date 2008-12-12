@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -213,5 +214,15 @@ public class JndiServiceLocator implements ServiceLocator {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
         + "/po/IdentifiedPersonCorrelationServiceBean/remote";
         return (IdentifiedPersonCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);        
-    }     
+    }
+    
+    /**
+     * @throws PAException e
+     * @return StudyParticipationContactServiceRemote
+     */    
+    public StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException {
+        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
+        + "/pa/StudyParticipationContactServiceBean/remote";
+        return (StudyParticipationContactServiceRemote) JNDIUtil.lookupPo(serverInfo);        
+    } 
 }

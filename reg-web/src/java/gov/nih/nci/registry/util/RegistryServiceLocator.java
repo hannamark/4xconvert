@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -235,6 +236,15 @@ public final class RegistryServiceLocator {
     public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() 
         throws PAException {    
         return getInstance().getServiceLocator().getIdentifiedPersonEntityService();
+    }
+    
+    /**
+     * @throws PAException e
+     * @return StudyParticipationContactServiceRemote
+     */    
+    public static StudyParticipationContactServiceRemote getStudyParticipationContactService() 
+        throws PAException {    
+        return getInstance().getServiceLocator().getStudyParticipationContactService();
     }
          
 }
