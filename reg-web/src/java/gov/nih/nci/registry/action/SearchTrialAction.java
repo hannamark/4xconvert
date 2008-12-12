@@ -1,16 +1,25 @@
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.IdentifierTypeCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
+import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -91,6 +100,8 @@ public class SearchTrialAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
                         studyParticipationISOList.get(0));
             }
+            // retrieve responsible party info
+            getReponsibleParty(studyProtocolIi, false);
             StudyProtocolQueryDTO queryDTO = RegistryServiceLocator.getProtocolQueryService()
                     .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
             // put an entry in the session and avoid conflict using
@@ -255,6 +266,16 @@ public class SearchTrialAction extends ActionSupport {
             // put an entry in the session and store
             // InterventionalStudyProtocolDTO
             ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
+            if (protocolDTO != null) {
+                String trialType = null;
+              String studyProtocolType = protocolDTO.getStudyProtocolType().getValue();
+              if (studyProtocolType.equals("InterventionalStudyProtocol")) {
+                  trialType = "Interventional";
+              } else if (studyProtocolType.equals("ObservationalStudyProtocol")) {
+                  trialType = "Observational";
+              }
+              ServletActionContext.getRequest().setAttribute(Constants.TRIAL_TYPE, trialType);
+            }
             // query the study grants
             List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService()
                     .getstudyResourceByStudyProtocol(studyProtocolIi);
@@ -289,11 +310,14 @@ public class SearchTrialAction extends ActionSupport {
             // STUDY_PROTOCOL_II for now
             ServletActionContext.getRequest().setAttribute(Constants.STUDY_PROTOCOL_II, queryDTO);
             
+            // retrieve responsible party info
+            getReponsibleParty(studyProtocolIi, maskFields);
+            
             // put an entry in the session and getsummary4ReportedResource
             StudyResourcingDTO resourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                     .getsummary4ReportedResource(studyProtocolIi);
             
-            // get the organzation name
+            // get the organization name
             if (resourcingDTO != null) {
                 Organization o = new CorrelationUtils().
                     getPAOrganizationByIndetifers(Long.valueOf(resourcingDTO.
@@ -392,5 +416,90 @@ public class SearchTrialAction extends ActionSupport {
                    getText("error.search.organization"));
        }
 
+    }
+    
+    private void getReponsibleParty(
+                Ii studyProtocolIi, boolean maskFields) throws PAException {
+        
+        try {
+            // retrieve responsible party info
+            StudyContactDTO scDto = new StudyContactDTO();
+            String respParty = "";
+            String phone = "";
+            String emailAddr = "";
+            scDto.setRoleCode(CdConverter.convertToCd(
+                    StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
+            List<StudyContactDTO> scDtos = RegistryServiceLocator.getStudyContactService().
+                                                getByStudyProtocol(studyProtocolIi, scDto);
+            DSet dset = null;
+            CorrelationUtils cUtils = new CorrelationUtils();
+            Person respPartyContact = null;
+            if (scDtos != null && scDtos.size() > 0) {
+                scDto = scDtos.get(0);
+                dset = scDto.getTelecomAddresses();
+                respPartyContact = cUtils.getPAPersonByPAClinicalResearchStaffId(
+                        Long.valueOf(scDto.getClinicalResearchStaffIi().getExtension()));
+                if (respPartyContact != null) {
+                    respParty = "PI";
+
+                }
+            } else {
+                StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+                spart.setRoleCode(CdConverter.convertToCd(
+                        StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+                List<StudyParticipationContactDTO> spDtos = RegistryServiceLocator.getStudyParticipationContactService()
+                    .getByStudyProtocol(studyProtocolIi, spart);
+                if (spDtos != null && spDtos.size() > 0) {
+                    spart = spDtos.get(0);
+                    dset = spart.getTelecomAddresses();
+                    respPartyContact = cUtils.getPAPersonByPAOrganizationalContactId((
+                            Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
+                }
+                if (respPartyContact != null) {
+                    respParty = "Sponsor";
+                }
+            }
+            if (dset != null) {
+                List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
+                List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
+                if (phones != null && phones.size() > 0) {
+                    phone = phones.get(0);
+                }
+                if (emails != null && emails.size() > 0) {
+                    emailAddr = emails.get(0);
+                }    
+            }            
+            
+            Organization sponsor = null;
+            StudyParticipationDTO spart = new StudyParticipationDTO();
+            spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
+            List<StudyParticipationDTO> spDtos = RegistryServiceLocator.getStudyParticipationService()
+                            .getByStudyProtocol(studyProtocolIi, spart);
+            if (spDtos != null && spDtos.size() > 0) {
+                spart = spDtos.get(0);
+                sponsor = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
+                            Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+            }
+            if (sponsor != null && respPartyContact != null && !maskFields) {
+                ServletActionContext.getRequest().setAttribute(
+                                Constants.RESP_PARTY, respParty);
+                if (respParty.equals("Sponsor")) {
+                    ServletActionContext.getRequest().setAttribute(
+                                Constants.RESP_PARTY_CONTACT, respPartyContact.getFullName());
+                }                
+                ServletActionContext.getRequest().setAttribute(
+                                Constants.SPONSOR, sponsor.getName());
+                ServletActionContext.getRequest().setAttribute(
+                                Constants.RESP_PARTY_PHONE, phone); 
+                ServletActionContext.getRequest().setAttribute(
+                                Constants.RESP_PARTY_EMAIL, emailAddr); 
+            }
+            
+        } catch (NumberFormatException e) {
+            throw new PAException(e.getMessage());
+        } catch (PAException e) {
+            throw e;
+        }
+        
     }
 }
