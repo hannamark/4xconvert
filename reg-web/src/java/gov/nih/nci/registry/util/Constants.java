@@ -74,6 +74,18 @@ public class Constants {
     public static final String INDIDE_LIST = "indIdeList";
     /** Grant List . */
     public static final String GRANT_LIST = "grantList";
+    /** Trial Type . */
+    public static final String TRIAL_TYPE = "trialType";    
+    /** Responsible Party . */
+    public static final String RESP_PARTY = "respParty";
+    /** Sponsor . */
+    public static final String SPONSOR = "sponsor";
+    /** Responsible Party Contact . */
+    public static final String RESP_PARTY_CONTACT = "respPartyContact";
+    /** Responsible Party Phone . */
+    public static final String RESP_PARTY_PHONE = "respPartyPhone";
+    /** Responsible Email Address . */
+    public static final String RESP_PARTY_EMAIL = "respPartyEmailAddr";
     
     
 }
