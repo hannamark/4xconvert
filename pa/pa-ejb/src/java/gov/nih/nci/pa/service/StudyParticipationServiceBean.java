@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyParticipation;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StatusCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyParticipationConverter;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
@@ -89,6 +90,7 @@ public class StudyParticipationServiceBean
     @Override
     public StudyParticipationDTO create(StudyParticipationDTO dto) throws PAException {
         StudyParticipationDTO createDto = businessRules(dto);
+        createDto.setStatusCode(CdConverter.convertToCd(StatusCode.PENDING));
         StudyParticipationDTO resultDto = super.create(createDto);
         enforceOnlyOneOversightCommittee(resultDto);
         return resultDto;

@@ -29,6 +29,7 @@ import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -74,7 +75,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             copyResponsibleParty(studyProtocolIi);
             copySponsor(studyProtocolIi);
             copyCentralContact(studyProtocolIi);
-            getCtGocIdentifier();
+            copyNctNummber(studyProtocolIi);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } 
@@ -108,15 +109,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
             removeSponsorContact(studyProtocolIi);
             createSponorContact(studyProtocolIi);
             createOrUpdateCentralContact(studyProtocolIi);
-            ServletActionContext.getRequest().setAttribute(
-                    Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
+            updateNctNumber(studyProtocolIi);
             StudyProtocolQueryDTO  studyProtocolQueryDTO = 
                 PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                         Long.valueOf(studyProtocolIi.getExtension()));
             // put an entry in the session and store StudyProtocolQueryDTO 
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
             
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
@@ -207,6 +208,14 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
         
     }
+    
+    private void copyNctNummber(Ii studyProtocolIi) throws PAException {
+        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi, 
+                    StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
+        if (spDto != null) {
+            gtdDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
+        }
+    }
 
     private void copyCentralContact(Ii studyProtocolIi) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO(); 
@@ -232,6 +241,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
    }
 
+    
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -246,9 +256,55 @@ public class GeneralTrialDesignAction extends ActionSupport {
         spDTO.setScientificDescription(StConverter.convertToSt(gtdDTO.getScientificDescription()));
         spDTO.setKeywordText(StConverter.convertToSt(gtdDTO.getKeywordText()));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+    }
+
+    private void updateNctNumber(Ii studyProtocolIi) throws PAException {
+        
+        String poOrgid = getCtGocIdentifier();
+        OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+        StudyParticipationDTO spDto = getStudyParticipation(studyProtocolIi , 
+                StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER);
+
+        if (PAUtil.isNotEmpty(gtdDTO.getNctIdentifier())) {
+            if (spDto == null) {
+                long roId = osb.createResearchOrganizationCorrelations(poOrgid);
+                spDto = new StudyParticipationDTO();
+                spDto.setStudyProtocolIdentifier(studyProtocolIi);
+                spDto.setResearchOrganizationIi(IiConverter.convertToIi(poOrgid));
+                spDto.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.IDENTIFIER_ASSIGNER));
+                spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
+                spDto.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+                PaRegistry.getStudyParticipationService().create(spDto);
+            } else {
+                spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
+                PaRegistry.getStudyParticipationService().update(spDto);
+            }
+        } else if (spDto != null) {
+            // delete the record
+            PaRegistry.getStudyParticipationService().delete(spDto.getIdentifier());
+        }
+    }
+    private StudyParticipationDTO getStudyParticipation(Ii studyProtocolIi , StudyParticipationFunctionalCode spCode) 
+    throws PAException {
+        if (studyProtocolIi == null) {
+            throw new PAException(" StudyProtocol Ii is null");
+        }
+        StudyParticipationDTO spDto = new StudyParticipationDTO();
+        Cd cd = CdConverter.convertToCd(spCode);
+        spDto.setFunctionalCode(cd);
+        
+        List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+            .getByStudyProtocol(studyProtocolIi, spDto);
+        if (spDtos != null && spDtos.size() == 1) {
+            return spDtos.get(0);
+        } else if (spDtos != null && spDtos.size() > 1) {
+            throw new PAException(" Found more than 1 record for a protocol id = " 
+                    + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
+            
+        }
+        return null;
         
     }
-    
     private void updateStudyParticipation(Ii studyProtocolIi , Cd cd , String roId , String lpIdentifier) 
     throws PAException {
         StudyParticipationDTO spDto = new StudyParticipationDTO();
@@ -364,8 +420,8 @@ public class GeneralTrialDesignAction extends ActionSupport {
         List<OrganizationDTO> poOrgs = PaRegistry.getPoOrganizationEntityService().search(poOrgDto);
         String identifier = null;
         if (poOrgs == null || poOrgs.isEmpty()) {
-            poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov", null, "ct.gov", "ct.gov", "ct.gov",
-                    "ct.gov"));
+            poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",
+                    "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             Tel t = new Tel();

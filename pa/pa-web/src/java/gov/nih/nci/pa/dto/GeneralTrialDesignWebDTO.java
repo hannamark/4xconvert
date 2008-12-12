@@ -44,6 +44,7 @@ public class GeneralTrialDesignWebDTO {
     private String centralContactEmail;
     private String centralContactName;
     private String centralContactIdentifier;
+    private String nctIdentifier;
     
     
     /**
@@ -487,6 +488,20 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setCentralContactIdentifier(String centralContactIdentifier) {
         this.centralContactIdentifier = centralContactIdentifier;
+    }
+    /**
+     * 
+     * @return nctIdentifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+    /**
+     * 
+     * @param nctIdentifier nctIdentifier
+     */
+    public void setNctIdentifier(String nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
     }
     
     
