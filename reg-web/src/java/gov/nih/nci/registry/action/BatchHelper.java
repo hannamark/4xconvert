@@ -96,7 +96,7 @@ public class BatchHelper { //implements Runnable {
             mailManager.sendMail(userName, null, mailBody.toString(), subject);
            
         } catch (Exception e) {
-            log.error("Exception while processing batch");
+            log.error("Exception while processing batch" + e.getMessage());
         }        
         
     }
