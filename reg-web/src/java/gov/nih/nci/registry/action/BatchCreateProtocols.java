@@ -53,6 +53,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -67,13 +68,15 @@ import org.apache.log4j.Logger;
 public class BatchCreateProtocols {
     private static Logger log = Logger.getLogger(BatchCreateProtocols.class);
     private static final int MAXF = 1024;
+    private HashMap<String, String> map = null;
     /**
      * 
      * @param dtoList list
-     * @param folderPath path
+     * @param folderPath path 
+     * @return math
      * @throws PAException ex
      */
-    public void createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath)
+    public HashMap createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath)
             throws PAException {
         log.info("Entering into createProtocols...having size of dtolist"
                 + dtoList.size());
@@ -81,26 +84,45 @@ public class BatchCreateProtocols {
             throw new PAException("DTO list is Empty");
         }
         Iterator iterator = dtoList.iterator();
+        map = new HashMap<String, String>();
+        String result = "";
+        TrialBatchDataValidator validator = null;
         while (iterator.hasNext()) {
             StudyProtocolBatchDTO batchDto = (StudyProtocolBatchDTO) iterator
                     .next();
             // check if the record qualifies to be added
+            //validate the record
+            
             if (batchDto != null) { // && batchDto.isValidRecord()) {
-                buildProtocol(batchDto, folderPath);
+                result = "";
+                validator = new TrialBatchDataValidator();
+                result = validator.validateForm(batchDto);
+                if (null == result || result.length() < 1) {
+                    result = buildProtocol(batchDto, folderPath);    
+                } else {
+                    result = "Trial submission failed for Lead Organization Trial Identifier " 
+                    + batchDto.getLocalProtocolIdentifier() +  result;
+                }
+                log.error("putting values in map local protocol Id as " 
+                        + batchDto.getLocalProtocolIdentifier() + "and response as " + result);
+                map.put(batchDto.getLocalProtocolIdentifier() , result);
             }
         }
         log.info("leaving into createProtocols...");
+        return map;
     }
 
     /**
      * 
      * @param dto dto
      * @param folderPath path
+     * @return protocol Id
      * @throws PAException ex
      */
-    private void buildProtocol(StudyProtocolBatchDTO dto , String folderPath) throws PAException {
+    private String buildProtocol(StudyProtocolBatchDTO dto , String folderPath)  {
 
         Ii studyProtocolIi = null;
+        String protocolAssignedId  = null;
         // before creating the protocol check for duplicate
         // using the Lead Org Trial Identifier and Lead Org Identifier
 /*        Organization paOrg = new Organization();
@@ -125,7 +147,8 @@ public class BatchCreateProtocols {
             }
         }
 
-*/        log.info("TrialType() " + dto.getTrialType());
+*/      try {  
+        log.info("TrialType() " + dto.getTrialType());
         if (dto.getTrialType().equals("Observational")) {
             studyProtocolIi = RegistryServiceLocator
                     .getStudyProtocolService()
@@ -218,9 +241,23 @@ public class BatchCreateProtocols {
                 new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
                         responsiblePartyContact.getExtension(), IiConverter
                         .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), dto.getSponsorContactPhone());
-            }    
+            }
+            
         }
-        
+        log.error("sponsor relation done...");
+        //get the protocol
+         protocolAssignedId = 
+             RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
+             getAssignedIdentifier().getExtension().toString();
+         protocolAssignedId = "The Trial with Lead Organization Trial Identifier " + dto.getLocalProtocolIdentifier()
+             + " has been successfully registered and assigned the NCI Identifier " + protocolAssignedId;
+        } catch (PAException ex) {
+            log.error("buildprotocol exception-" + ex.getMessage());
+            protocolAssignedId =  "Trial submission failed for Lead Organization Trial Identifier " 
+            + dto.getLocalProtocolIdentifier() + ex.getMessage();
+        }
+        log.error("response " + protocolAssignedId);
+        return protocolAssignedId;
     }
     private StudyProtocolDTO createProtocolDTO(StudyProtocolBatchDTO batchDto) {
         StudyProtocolDTO protocolDTO = null;
@@ -803,7 +840,6 @@ public class BatchCreateProtocols {
             indldeDTO.setGrantorCode(CdConverter.convertStringToCd(dto.getIndGrantor()));
             indldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(dto.getIndHolderType()));
             if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
-                log.error(dto.getIndNIHInstitution() + "dto.getIndNIHInstitution() code");
                 indldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(dto.getIndNIHInstitution()));
             }
             if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
