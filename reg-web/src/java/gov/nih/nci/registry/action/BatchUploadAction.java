@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -197,10 +198,11 @@ public class BatchUploadAction extends ActionSupport implements
             uploadedLoc = uploadFile();
             String unzipLoc = unZipDoc(uploadedLoc + File.separator + docZipFileName);
             //helper to unzip the zip files
-            Thread batchProcessor = new Thread(
+            /*Thread batchProcessor = new Thread(
                     new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc));
-            batchProcessor.start();
-            
+            batchProcessor.start();*/
+            new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc,
+                    ServletActionContext.getRequest().getRemoteUser()).run();
             
         } catch (PAException e) {
             // TODO Auto-generated catch block
@@ -280,9 +282,28 @@ public class BatchUploadAction extends ActionSupport implements
          if (PAUtil.isEmpty(trialDataFileName)) {
              addFieldError("trialDataFileName", getText("error.batch.trialDataFileName"));
          }
-
+         if (PAUtil.isNotEmpty(trialDataFileName)) {
+             if (!trialData.exists()) {
+                 addFieldError("trialDataFileName", 
+                         getText("error.batch.invalidDocument"));
+             }
+             if (!isValidFileType(trialDataFileName, "xls")) {
+                 addFieldError("trialDataFileName", 
+                         getText("error.batch.trialDataFileName.invalidFileType"));                
+             }
+         }
          if (PAUtil.isEmpty(docZipFileName)) {
              addFieldError("docZipFileName", getText("error.batch.docZipFileName"));
+         }
+         if (PAUtil.isNotEmpty(docZipFileName)) {
+             if (!docZip.exists()) {
+                 addFieldError("docZipFileName", 
+                         getText("error.batch.invalidDocument"));
+             }
+             if (!isValidFileType(docZipFileName, "zip")) {
+                 addFieldError("docZipFileName", 
+                         getText("error.batch.docZipFileName.invalidFileType"));                
+             }
          }
 
     }
@@ -340,6 +361,28 @@ public class BatchUploadAction extends ActionSupport implements
               throw new PAException("Unable to Unzip the document");
           }
           return folderLocation;
+      }
+      /**
+       * check if the uploaded file type is valid.
+       * @param fileName
+       * @return
+       */
+      private boolean isValidFileType(String fileName, String allowedUploadFileTypes) {
+          boolean isValidFileType = false;
+          if (allowedUploadFileTypes != null) {
+              int pos =  fileName.lastIndexOf(".");
+              String uploadedFileType = fileName.substring(pos + 1, fileName.length());
+              StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");        
+              while (st.hasMoreTokens()) {
+                  String allowedFileType = st.nextToken();
+                  if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
+                      isValidFileType = true;
+                      break;
+                  }
+              }
+          }        
+          return isValidFileType;
+
       }
 
 }
