@@ -38,6 +38,7 @@ import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -73,10 +74,11 @@ public class BatchCreateProtocols {
      * 
      * @param dtoList list
      * @param folderPath path 
-     * @return math
+     * @param userName name
+     * @return map
      * @throws PAException ex
      */
-    public HashMap createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath)
+    public HashMap createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath, String userName)
             throws PAException {
         log.error("Entering into createProtocols...having size of dtolist"
                 + dtoList.size());
@@ -98,7 +100,7 @@ public class BatchCreateProtocols {
                 validator = new TrialBatchDataValidator();
                 result = validator.validateForm(batchDto);
                 if (null == result || result.length() < 1) {
-                    result = buildProtocol(batchDto, folderPath);    
+                    result = buildProtocol(batchDto, folderPath , userName);    
                 } else {
                     result = "Trial submission failed for Lead Organization Trial Identifier " 
                     + batchDto.getLocalProtocolIdentifier() +  " " + result;
@@ -116,10 +118,11 @@ public class BatchCreateProtocols {
      * 
      * @param dto dto
      * @param folderPath path
+     * @param userName name
      * @return protocol Id
      * @throws PAException ex
      */
-    private String buildProtocol(StudyProtocolBatchDTO dto , String folderPath)  {
+    private String buildProtocol(StudyProtocolBatchDTO dto , String folderPath , String userName)  {
 
         Ii studyProtocolIi = null;
         String protocolAssignedId  = null;
@@ -154,12 +157,12 @@ public class BatchCreateProtocols {
             studyProtocolIi = RegistryServiceLocator
                     .getStudyProtocolService()
                     .createObservationalStudyProtocol(
-                            (ObservationalStudyProtocolDTO) createProtocolDTO(dto));
+                            (ObservationalStudyProtocolDTO) createProtocolDTO(dto, userName));
         } else {
             studyProtocolIi = RegistryServiceLocator
                     .getStudyProtocolService()
                     .createInterventionalStudyProtocol(
-                            (InterventionalStudyProtocolDTO) createProtocolDTO(dto));
+                            (InterventionalStudyProtocolDTO) createProtocolDTO(dto, userName));
         }
         log.error("Trial is registered with ID: "
                 + IiConverter.convertToString(studyProtocolIi));
@@ -196,23 +199,27 @@ public class BatchCreateProtocols {
         log.error("Before Summ4Funding lookup");
         //Summary 4 Info
         OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(dto);
-        Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
-        if (selectedSummary4Sponsor != null) {
-            new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getExtension(), 
-                    SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
-                    .convertToLong(studyProtocolIi));
+        if (!orgDTOIsEmpty(summ4Sponsor)) {
+            //look up for org only when dto is not empty
+            Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
+            if (selectedSummary4Sponsor != null) {
+                    new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getExtension(), 
+                            SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
+                            .convertToLong(studyProtocolIi));
+            }
+        } else {
+            log.error("Summary 4 Info is Empty ...");
         }
-
         // create/Lookup the org
         log.error("buildProtocol -Create or lookup the org ");
         OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
         Ii orgIdIi = lookUpOrgs(orgDto);
         if (null != orgIdIi) {
-            new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
-                    .getExtension(),
-                    IiConverter.convertToLong(studyProtocolIi), dto
-                            .getLocalProtocolIdentifier());
-        }
+                new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
+                        .getExtension(),
+                        IiConverter.convertToLong(studyProtocolIi), dto
+                                .getLocalProtocolIdentifier());
+            }
         log.error("buildProtocol -Create or lookup the Person");
         //look up Person
         PersonBatchDTO piDto = buildLeadPIDto(dto);
@@ -262,7 +269,7 @@ public class BatchCreateProtocols {
         log.error("response " + protocolAssignedId);
         return protocolAssignedId;
     }
-    private StudyProtocolDTO createProtocolDTO(StudyProtocolBatchDTO batchDto) {
+    private StudyProtocolDTO createProtocolDTO(StudyProtocolBatchDTO batchDto, String userName) {
         StudyProtocolDTO protocolDTO = null;
         if (batchDto.getTrialType().equals("Observational")) {
             protocolDTO = new ObservationalStudyProtocolDTO();
@@ -271,6 +278,10 @@ public class BatchCreateProtocols {
         }
         protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode
                 .getByCode(batchDto.getPhase())));
+        if (PAUtil.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
+            protocolDTO.setPhaseOtherText(
+                    StConverter.convertToSt(batchDto.getPhaseOtherValueSp()));
+        }
         protocolDTO.setOfficialTitle(StConverter.convertToSt(batchDto
                 .getTitle()));
         protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil
@@ -286,6 +297,12 @@ public class BatchCreateProtocols {
         protocolDTO.setPrimaryPurposeCode(CdConverter
                 .convertToCd(PrimaryPurposeCode.getByCode(batchDto
                         .getPrimaryPurpose())));
+        if (PAUtil.isNotEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
+            protocolDTO.setPrimaryPurposeOtherText(
+                    StConverter.convertToSt(batchDto.getPrimaryPurposeOtherValueSp()));
+        }
+        log.error("Setting User Name as " + userName);
+        protocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         return protocolDTO;
     }
 
@@ -347,59 +364,58 @@ public class BatchCreateProtocols {
      *             PAException
      */
     private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException {
-        log.error("Entering Create Org ...");
+        log.error("Entering lookup Org ...");
         Ii orgId = null;
         try {
-            String orgName = batchDto.getName();
-            String countryName = batchDto.getCountry();
-            String cityName = batchDto.getCity();
-            String zipCode = batchDto.getZip();
-            if (orgName.equals("") && countryName.equals("")
-                    && cityName.equals("") && zipCode.equals("")) {
-                String message = "Please enter at least one search criteria";
-                log.error(" lookUpOrgs" + message);
-                throw new PAException(message);
-            }
-            if (countryName.equals("")) {
-                String message = "Please select a country";
-                log.error(" lookUpOrgs" + message);
-                throw new PAException(message);
-            }
-            OrganizationDTO criteria = new OrganizationDTO();
-            if (batchDto.getOrgCTEPId() != null && batchDto.getOrgCTEPId().length() > 0) {
-                IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
-                identifiedOrganizationDTO.setAssignedId(
-                        IiConverter.converToIdentifiedEntityIi(batchDto.getOrgCTEPId()));
-                List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
-                        .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-                if (null == identifiedOrgs || identifiedOrgs.size() == 0) {
-                    log.error("No Organization Found");
-                    throw new PAException("No Organization Found");
-                } else {
-                criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+                String orgName = batchDto.getName();
+                String countryName = batchDto.getCountry();
+                String cityName = batchDto.getCity();
+                String zipCode = batchDto.getZip();
+                if (orgName.equals("") && countryName.equals("")
+                        && cityName.equals("") && zipCode.equals("")) {
+                    String message = "Please enter at least one search criteria";
+                    log.error(" lookUpOrgs" + message);
+                    throw new PAException(message);
                 }
-            } else {
-                criteria.setName(EnOnConverter.convertToEnOn(orgName));
-                criteria.setPostalAddress(AddressConverterUtil.create(null, null,
-                    cityName, null, zipCode, countryName));
+                if (countryName.equals("")) {
+                    String message = "Please select a country";
+                    log.error(" lookUpOrgs" + message);
+                    throw new PAException(message);
+                }
+                OrganizationDTO criteria = new OrganizationDTO();
+                if (batchDto.getOrgCTEPId() != null && batchDto.getOrgCTEPId().length() > 0) {
+                    IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
+                    identifiedOrganizationDTO.setAssignedId(
+                            IiConverter.converToIdentifiedEntityIi(batchDto.getOrgCTEPId()));
+                    List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
+                            .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
+                    if (null == identifiedOrgs || identifiedOrgs.size() == 0) {
+                        log.error("No Organization Found");
+                        throw new PAException("No Organization Found");
+                    } else {
+                    criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+                    }
+                } else {
+                    criteria.setName(EnOnConverter.convertToEnOn(orgName));
+                    criteria.setPostalAddress(AddressConverterUtil.create(null, null,
+                        cityName, null, zipCode, countryName));
+                }
+                List<OrganizationDTO> poOrgDtos = RegistryServiceLocator
+                        .getPoOrganizationEntityService().search(criteria);
+                if (null == poOrgDtos || poOrgDtos.size() == 0) {
+                    // create a new org and then return the new Org
+                    log.error(" lookUpOrgs Serch return no org so creating new");
+                    orgId = createOrganization(batchDto);
+                } else {
+                    // return the Id of the org
+                    orgId = poOrgDtos.get(0).getIdentifier();
+                    log.error(" lookUpOrgs Serch returned orgId" + orgId.getExtension().toString());
+                }
+            } catch (Exception e) {
+                log.error("lookUpOrgs exception" + e.getMessage());
+                throw new PAException(e.getMessage());
             }
-            List<OrganizationDTO> poOrgDtos = RegistryServiceLocator
-                    .getPoOrganizationEntityService().search(criteria);
-            if (null == poOrgDtos || poOrgDtos.size() == 0) {
-                // create a new org and then return the new Org
-                log.error(" lookUpOrgs Serch return no org so creating new");
-                createOrganization(batchDto);
-            } else {
-                // return the Id of the org
-                orgId = poOrgDtos.get(0).getIdentifier();
-                log.error(" lookUpOrgs Serch returned orgId" + orgId.getExtension().toString());
-
-            }
-        } catch (Exception e) {
-            log.error("lookUpOrgs exception" + e.getMessage());
-            throw new PAException(e.getMessage());
-        }
-        log.error("leaving lookup Org with OrgId" + orgId);
+        log.error("leaving lookup Org with OrgId" + orgId.getExtension());
         return orgId;
     }
 
@@ -419,40 +435,40 @@ public class BatchCreateProtocols {
         OrganizationDTO orgDto = new OrganizationDTO();
         Ii orgId = null;
         String orgName = batchDto.getName();
-        if (orgName != null && !PAUtil.isNotEmpty(orgName)) {
+        if (PAUtil.isEmpty(orgName)) {
             throw new PAException("Organization is a required field");
         }
         
         String orgStAddress = batchDto.getStreetAddress();
-        if (orgStAddress != null && !PAUtil.isNotEmpty(orgStAddress)) {
+        if (PAUtil.isEmpty(orgStAddress)) {
               log.error("Street address is a required field");
               throw new PAException("Street address is a required field"); 
         }
         String cityName = batchDto.getCity();
-        if (cityName != null && !PAUtil.isNotEmpty(cityName)) {
+        if (PAUtil.isEmpty(cityName)) {
               log.error("createOrganization throwing exception" + "City is a required field");
               throw new PAException("City is a required field");
         } 
         String stateName = batchDto.getState();
-        if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
+        if (PAUtil.isEmpty(stateName)) {
               log.error("createOrganization throwing exception" + "State is a required field");
               throw new PAException("State is a required field");
         }
         String zipCode = batchDto.getZip();
-        if (zipCode != null && !PAUtil.isNotEmpty(zipCode)) {
+        if (PAUtil.isEmpty(zipCode)) {
             log.error("createOrganization throwing exception" + "Zip is a required field");
             throw new PAException("Zip is a required field");
         }
         String countryName = batchDto.getCountry();
-        if (countryName != null && countryName.equals("aaa")) {
+        if (PAUtil.isEmpty(countryName)) {
             log.error("createOrganization throwing exception" + "Country is a required field");
             throw new PAException("Country is a required field");
         }
         String email = batchDto.getEmail();
-        if (email != null &&  !PAUtil.isNotEmpty(email)) { 
+        if (PAUtil.isEmpty(email)) { 
               log.error("Email is a required field");
               throw new PAException("Email is a required field"); 
-        } else if (!PAUtil.isValidEmail(email)) {
+        } else if (!RegistryUtil.isValidEmailAddress(email)) {
               log.error("Email address is invalid " + email);
               throw new PAException("Email address is invalid"); 
         }
@@ -510,7 +526,7 @@ public class BatchCreateProtocols {
             log.error("createOrganization exception5 " + e5.getMessage());
             throw new PAException(e5.getMessage());
         }
-        log.error("leaving Create Org with OrgId" + orgId);
+        log.error("leaving Create Org with OrgId" + orgId.getExtension());
         return orgId;
     }
     /**
@@ -584,40 +600,40 @@ public class BatchCreateProtocols {
         log.error("Entering created person  ...");
         Ii personId = null; 
         String firstName = batchDto.getFirstName();
-        if (firstName != null && !PAUtil.isNotEmpty(firstName)) {
+        if (PAUtil.isEmpty(firstName)) {
            log.error("First Name is a required field");
         throw new PAException("First Name is a required field");
         }
         String lastName = batchDto.getLastName();
-        if (lastName != null && !PAUtil.isNotEmpty(lastName)) {
+        if (PAUtil.isEmpty(lastName)) {
             log.error("Last Name is a required field");
         throw new PAException("Last Name is a required field");
         }
         String email = batchDto.getEmail();
-        if (email != null && !PAUtil.isNotEmpty(email)) {
+        if (PAUtil.isEmpty(email)) {
             log.error("Email is a required field");
          throw new PAException("Email is a required field");
-        } else if (!PAUtil.isValidEmail(email)) {
+        } else if (!RegistryUtil.isValidEmailAddress(email)) {
             log.error("Email address is invalid");
         throw new PAException("Email address is invalid");
         }
         String streetAddr = batchDto.getStreetAddress();
-        if (streetAddr != null && !PAUtil.isNotEmpty(streetAddr)) {
+        if (PAUtil.isEmpty(streetAddr)) {
             log.error("Street address is a required field");
         throw new PAException("Street address is a required field");
         }
         String city = batchDto.getCity();
-        if (city != null && !PAUtil.isNotEmpty(city)) {
+        if (PAUtil.isEmpty(city)) {
             log.error("City is a required field");
         throw new PAException("City is a required field");
         }
         String zip = batchDto.getZip();
-        if (zip != null && !PAUtil.isNotEmpty(zip)) {
+        if (PAUtil.isEmpty(zip)) {
             log.error("Zip is a required field");
         throw new PAException("Zip is a required field");
         }
         String country = batchDto.getCountry();
-        if (zip != null && country.equals("aaa")) {
+        if (PAUtil.isEmpty(country)) {
             log.error("Country is a required field");
         throw new PAException("Country is a required field");
         }
@@ -868,5 +884,36 @@ public class BatchCreateProtocols {
         summ4Sponsor.setFax(dto.getSumm4Fax());
         summ4Sponsor.setUrl(dto.getSumm4Url());
         return summ4Sponsor;
+    }
+    private boolean orgDTOIsEmpty(OrganizationBatchDTO dto) {
+        int nullCount = 0;
+        if (PAUtil.isEmpty(dto.getName())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getStreetAddress())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getCity())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getState())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getZip())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getCountry())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getEmail())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getPhone())) {
+            nullCount += 1;
+        }
+        if (nullCount == 0) {
+            return false;
+        }
+        return true;
     }
 }
