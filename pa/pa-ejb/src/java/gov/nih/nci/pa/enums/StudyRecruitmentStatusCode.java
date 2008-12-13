@@ -19,9 +19,9 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
     /** Not yet recruiting. */
     NOT_YET_RECRUITING("Not yet Recruiting"),
     /** Recruiting. */
-    RECRUITING_ACTIVE("Recruiting; Active"),
+    RECRUITING_ACTIVE("Recruiting"),
     /** Not recruiting. */
-    NOT_RECRUITING("Not Recruiting"),
+    NOT_RECRUITING("Active; Not Recruiting"),
     /** Suspended. */
     SUSPENDED("Suspended"),
     /** Withdrawn. */
