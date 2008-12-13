@@ -209,5 +209,6 @@ public class BatchConstants {
     public static final int OTHER_TRIAL_DOC_FILE_NAME = 97;
     /** */
     public static final int COUNTRY_SIZE = 3;
-    
+    /** */
+    public static final int GRANT_FIELDS  = 4;
 }
