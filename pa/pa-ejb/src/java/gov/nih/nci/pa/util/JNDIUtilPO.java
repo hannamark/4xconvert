@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package gov.nih.nci.pa.util;
 
 import java.util.Properties;
@@ -16,29 +11,24 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 
 /**
- * Modified for PA.
+ * JNDI lookup for PO only.
  * 
- * @author Hugh Reinhart
- * @since 05/22/2008 copyright NCI 2008. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
+ * Harsha
+ * 
  */
-@SuppressWarnings("PMD.UnusedPrivateField")
-public final class JNDIUtil {
+public final class JNDIUtilPO {
+    private static final Logger LOG = Logger.getLogger(JNDIUtilPO.class);
+    //private static final String RESOURCE_NAME = "jndi.properties";
+    //private static JNDIUtilPO theInstance = new JNDIUtilPO();
+   // private final InitialContext context;
 
-    private static final Logger LOG = Logger.getLogger(JNDIUtil.class);
-   // private static final String RESOURCE_NAME = "jndi.properties";
-  //  private static JNDIUtil theInstance = new JNDIUtil();
-  //  private static InitialContext poCtx;
-  //  private final InitialContext context;
- //   private final InitialContext contextRemote;
-    private JNDIUtil() {
+    private JNDIUtilPO() {
         try {
-            //Properties props = getProperties();
-            Properties props = new Properties();
-            props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-            //context = new InitialContext(props);
-            //contextRemote = new InitialContext(props);
+            Properties env = new Properties();
+            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
+            env.setProperty(Context.SECURITY_PRINCIPAL, "ejbclient");
+            env.setProperty(Context.SECURITY_CREDENTIALS, "pass");            
+          //  context = new InitialContext(env);
         } catch (Exception e) {
             LOG.error("Unable to initialize the JNDI Util.", e);
             throw new IllegalStateException(e);
@@ -52,37 +42,17 @@ public final class JNDIUtil {
      */
     public static Object lookup(String name) {
         try {
-            Properties props = new Properties();
-            props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-            props.setProperty(Context.SECURITY_PRINCIPAL, "curator");
-            props.setProperty(Context.SECURITY_CREDENTIALS, "pass");             
-            InitialContext context = new InitialContext(props);        
-            return lookup(context, name);
-        } catch (NamingException e) {
-            LOG.error("Look for " + name + " failed, exception is " + e);
-            return null;
-        }
-        
-    }
-    
-    /**
-     * @param name
-     *            name to lookup
-     * @return object in default context with given name
-     */
-    public static Object lookupwqewqe(String name) {
-        try {
             Properties env = new Properties();
             env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
             env.setProperty(Context.SECURITY_PRINCIPAL, "ejbclient");
             env.setProperty(Context.SECURITY_CREDENTIALS, "pass");  
             InitialContext context = new InitialContext(env);
             return lookup(context, name);
-        } catch (NamingException e) {
-            LOG.error("Look for " + name + " failed, exception is " + e);
-            return null;
+        } catch (NamingException e) {           
+            LOG.error("Error during lookup() " + e);
         }
-    }    
+        return null;
+    }
 
     /**
      * @param ctx
@@ -100,7 +70,8 @@ public final class JNDIUtil {
             LOG.error("-----------------------------------------------------------");
             throw new IllegalStateException(ex);
         }
-    }
+    }  
+    
 
     private static void dump(javax.naming.Context ctx, int indent) {
         try {
@@ -122,5 +93,5 @@ public final class JNDIUtil {
         } catch (NamingException ex) {
             LOG.info(ex);
         }
-    }
+    }    
 }

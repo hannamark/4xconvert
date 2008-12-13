@@ -55,8 +55,10 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceBean;
+import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceRemote;
+import gov.nih.nci.pa.service.correlation.PersonSynchronizationServiceRemote;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
 import javax.ejb.ActivationConfigProperty;
@@ -95,14 +97,22 @@ public class PAMessageDrivenBean implements MessageListener {
                 msg = (ObjectMessage) message;
                 SubscriberUpdateMessage updateMessage = (SubscriberUpdateMessage) msg.getObject();
                 String identifierName = updateMessage.getId().getIdentifierName();
-//                System.out.println("==============================================================" 
-//                        + "====Received new update for " + updateMessage.getId().getExtension());               
                 HibernateUtil.getHibernateHelper().openAndBindSession();
+                OrganizationSynchronizationServiceRemote orgRemote = (OrganizationSynchronizationServiceRemote)
+                                                JNDIUtil.lookup("pa/OrganizationSynchronizationServiceBean/remote");
+                PersonSynchronizationServiceRemote perRemote = (PersonSynchronizationServiceRemote)
+                                                      JNDIUtil.lookup("pa/PersonSynchronizationServiceBean/remote");
                 if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
-                   new OrganizationSynchronizationServiceBean().synchronizeOrganization(updateMessage.getId());
+                    orgRemote.synchronizeOrganization(updateMessage.getId());
                 }
                 if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
-                    new OrganizationSynchronizationServiceBean().synchronizeHealthCareFacility(updateMessage.getId());
+                    orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
+                }
+                if (identifierName.equals(IiConverter.PERSON_IDENTIFIER_NAME)) {
+                    perRemote.synchronizePerson(updateMessage.getId());
+                }
+                if (identifierName.equals(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)) {
+                    perRemote.synchronizeClinicalResearchStaff(updateMessage.getId());
                 }
                 HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             }            

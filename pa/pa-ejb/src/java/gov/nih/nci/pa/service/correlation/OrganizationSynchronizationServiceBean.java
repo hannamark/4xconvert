@@ -2,9 +2,11 @@ package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.MessageLog;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -128,7 +130,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            nulifyResearchOrganization(roIdentifer);
         }
         LOG.debug("Leaving synchronizeResearchOrganization");
-    }
+    } 
 
     private void nulifyOrganization(Ii organizationIdentifer) throws PAException {
         LOG.debug("Entering nulifyOrganization");
@@ -138,7 +140,17 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             // delete the organization and all of on delete cascade will delete the entire child
             Session session = null;
             try {
-                session = HibernateUtil.getCurrentSession();
+                session = HibernateUtil.getCurrentSession();                
+                MessageLog log = new MessageLog();
+                log.setAssignedIdentifier(organizationIdentifer.getExtension());
+                //log.setDateCreated(new Date());
+                log.setDateCreated(new Date());
+                StudyProtocol sp = new StudyProtocol();
+                sp.setId(2L);
+                log.setStudyProtocol(sp);
+                log.setEntityName(organizationIdentifer.getIdentifierName() + "-" +  org.getName());
+                log.setMessageAction("Delete");
+                session.save(log);
                 Organization organization = (Organization) session.get(Organization.class, org.getId());
                 session.delete(organization);
                 session.flush();

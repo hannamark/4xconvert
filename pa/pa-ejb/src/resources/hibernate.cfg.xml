@@ -59,5 +59,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.DiseaseAltername" />
         <mapping class="gov.nih.nci.pa.domain.DiseaseParent" />
         <mapping class="gov.nih.nci.pa.domain.PAProperties" />
+        <mapping class="gov.nih.nci.pa.domain.MessageLog" />
     </session-factory>
 </hibernate-configuration>

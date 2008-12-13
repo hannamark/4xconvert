@@ -40,7 +40,6 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.SearchPersonResultDisplay;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -412,8 +411,8 @@ public class TrialValidationAction extends ActionSupport {
                     gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
         } else if (gtdDTO.getResponsiblePartyType().equals("sponsor")) { 
-            parb.createPIAsResponsiblePartyRelations(
-                    gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
+            parb.createSponsorAsPrimaryContactRelations(gtdDTO.getSponsorIdentifier(),
+                    gtdDTO.getResponsiblePersonIdentifier(), 
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
         }
     }
@@ -546,11 +545,6 @@ public class TrialValidationAction extends ActionSupport {
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
         OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-        /**
-         * IMPORTANT
-         * orgContactIdentifier MUST BE SET FROM THE DTO SINCE IT IS ALREADY THERE SINCE RESULTS WILL BE SCOPED 
-         * BY THIS ORGCONTACTIDENTIFIER
-         */  
         contactDTO.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgContactIdentifier));
         contactDTO.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
         contactDTO.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
@@ -569,7 +563,7 @@ public class TrialValidationAction extends ActionSupport {
                     return "display_org_contacts";
                 }
             }
-        } catch (PAException e) {
+        } catch (Exception e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
@@ -602,49 +596,19 @@ public class TrialValidationAction extends ActionSupport {
      * 
      * @return res
      */
-    public String createOrganizationContacts() {
-        boolean contactExists = false;
+    public String createOrganizationContacts() {       
         try {
-            String orgId = ServletActionContext.getRequest().getParameter("orgId");
+            //String orgId = ServletActionContext.getRequest().getParameter("orgId");
             String persId = ServletActionContext.getRequest().getParameter("persId");
-            OrganizationalContactDTO dto = new OrganizationalContactDTO();
-            dto.setScoperIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(orgId));
-            dto.getScoperIdentifier().setRoot("UID.for.nci.entity.organization");
-            dto.getScoperIdentifier().setIdentifierName("NCI organization entity identifier");
-            // Use these two values and check if the contact already exists, if
-            // they do then this means that the user selected from the list and
-            // did not create a new user
-            List<OrganizationalContactDTO> list = PaRegistry.getPoOrganizationalContactCorrelationService()
-                    .search(dto);
-            //             
-            for (OrganizationalContactDTO contactDTO : list) {
-                String persIdfromOrgContact = contactDTO.getPlayerIdentifier().getExtension();
-                if (persIdfromOrgContact.equals(persId)) {
-                    contactExists = true;
-                }
-            }
-            if (!contactExists) {
-                dto.setPlayerIdentifier(gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId));
-                dto.getPlayerIdentifier().setRoot("UID.for.nci.entity.person");
-                dto.getPlayerIdentifier().setIdentifierName("NCI person entity identifier");
-                // commented out for PO-0.6, HSR
-                // dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-                PaRegistry.getPoOrganizationalContactCorrelationService().createCorrelation(dto);
-            }
-            Ii personIi = gov.nih.nci.pa.iso.util.IiConverter.convertToIi(persId);
-            personIi.setRoot("UID.for.nci.entity.organization");
-            responsiblePartyContact = PaRegistry.getPoPersonEntityService().getPerson(personIi);
-            gtdDTO.setResponsiblePersonIdentifier(responsiblePartyContact.getIdentifier().getExtension());
+            selectedLeadPrincipalInvestigator = PaRegistry.getPoPersonEntityService().getPerson(
+                    EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+            gtdDTO.setResponsiblePersonIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
             gov.nih.nci.pa.dto.PersonDTO personDTO = 
-                                            EnPnConverter.convertToPaPersonDTO(responsiblePartyContact);
+                                            EnPnConverter.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
             gtdDTO.setResponsiblePersonName(personDTO.getLastName() + "," + personDTO.getFirstName());
-           // ServletActionContext.getRequest().getSession()
-            //        .setAttribute("PoResponsibleContact", responsiblePartyContact);
         } catch (NullifiedEntityException e) {
             // TODO Auto-generated catch block NAVEEN HANDLE EXCEPTIONS!!
             e.printStackTrace();
-        } catch (EntityValidationException e) {
-            // TODO Auto-generated catch block NAVEEN HANDLE EXCEPTIONS!!
         } catch (PAException e) {
             //NAVEEN HANDLE EXCEPTIONS!!
         }
