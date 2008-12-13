@@ -41,6 +41,7 @@ import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -53,16 +54,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -677,7 +673,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("trialDocumentWebDTO.protocolDocFileName", 
                         getText("error.submit.invalidDocument"));
             }
-            if (!isValidFileType(protocolDocFileName)) {
+            if (!RegistryUtil.isValidFileType(protocolDocFileName)) {
                 addFieldError("trialDocumentWebDTO.protocolDocFileName", 
                         getText("error.submit.invalidFileType"));                
             }
@@ -690,7 +686,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("trialDocumentWebDTO.irbApprovalFileName", 
                         getText("error.submit.invalidDocument"));
             }
-            if (!isValidFileType(irbApprovalFileName)) {
+            if (!RegistryUtil.isValidFileType(irbApprovalFileName)) {
                 addFieldError("trialDocumentWebDTO.irbApprovalFileName", 
                         getText("error.submit.invalidFileType"));                
             }
@@ -700,7 +696,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("trialDocumentWebDTO.participatingSitesFileName", 
                         getText("error.submit.invalidDocument"));
             }
-            if (!isValidFileType(participatingSitesFileName)) {
+            if (!RegistryUtil.isValidFileType(participatingSitesFileName)) {
                 addFieldError("trialDocumentWebDTO.participatingSitesFileName", 
                         getText("error.submit.invalidFileType"));                
             }
@@ -710,7 +706,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("trialDocumentWebDTO.informedConsentDocumentFileName", 
                         getText("error.submit.invalidDocument"));
             }
-            if (!isValidFileType(informedConsentDocumentFileName)) {
+            if (!RegistryUtil.isValidFileType(informedConsentDocumentFileName)) {
                 addFieldError("trialDocumentWebDTO.informedConsentDocumentFileName", 
                         getText("error.submit.invalidFileType"));                
             }
@@ -720,7 +716,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addFieldError("trialDocumentWebDTO.otherDocumentFileName", 
                         getText("error.submit.invalidDocument"));
             }
-            if (!isValidFileType(otherDocumentFileName)) {
+            if (!RegistryUtil.isValidFileType(otherDocumentFileName)) {
                 addFieldError("trialDocumentWebDTO.otherDocumentFileName", 
                         getText("error.submit.invalidFileType"));                
             }
@@ -733,7 +729,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         // check if the contact e-mail address is valid
         if (PAUtil.isNotEmpty(contactEmail)) {
-            if (!isValidEmailAddress(contactEmail)) {
+            if (!RegistryUtil.isValidEmailAddress(contactEmail)) {
                 addFieldError("contactEmail",
                         getText("error.submit.invalidContactEmailAddress"));               
             }            
@@ -780,30 +776,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         validateDateFormat();
         // validate trial status and dates
         validateTrialDates();
-    }
-    
-    /**
-     * check if the uploaded file type is valid.
-     * @param fileName
-     * @return
-     */
-    private boolean isValidFileType(String fileName) {
-        boolean isValidFileType = false;
-        String allowedUploadFileTypes =  PaEarPropertyReader.getAllowedUploadFileTypes();
-        if (allowedUploadFileTypes != null) {
-            int pos =  fileName.lastIndexOf(".");
-            String uploadedFileType = fileName.substring(pos + 1, fileName.length());
-            StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");        
-            while (st.hasMoreTokens()) {
-                String allowedFileType = st.nextToken();
-                if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
-                    isValidFileType = true;
-                    break;
-                }
-            }
-        }        
-        return isValidFileType;
-
     }
     
     /**
@@ -965,49 +937,24 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     private void validateDateFormat() {
         if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusDate())
-                && !isValidDate(overallStatusWebDTO.getStatusDate())) {
+                && !RegistryUtil.isValidDate(overallStatusWebDTO.getStatusDate())) {
                     addFieldError("overallStatusWebDTO.statusDate", 
                             getText("error.submit.invalidDate"));
         }
         if (PAUtil.isNotEmpty(protocolWebDTO.getStartDate())
-                && !isValidDate(protocolWebDTO.getStartDate())) {
+                && !RegistryUtil.isValidDate(protocolWebDTO.getStartDate())) {
                     addFieldError("protocolWebDTO.startDate", 
                             getText("error.submit.invalidDate"));
         }
         if (PAUtil.isNotEmpty(protocolWebDTO.getCompletionDate())
-                && !isValidDate(protocolWebDTO.getCompletionDate())) {
+                && !RegistryUtil.isValidDate(protocolWebDTO.getCompletionDate())) {
                     addFieldError("protocolWebDTO.completionDate", 
                             getText("error.submit.invalidDate"));
         }
         
     }
     
-    private  boolean isValidEmailAddress(String emailAddress)  {
-        boolean isvalidEmailAddr = false;
-        Pattern email = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
 
-        Matcher fit = email.matcher(emailAddress);
-        if (fit.matches()) {
-            isvalidEmailAddr = true;
-        } 
-        return isvalidEmailAddr;
-    }
-    
-    private boolean isValidDate(String inDate) { 
-        //set the format to use as a constructor argument   
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");        
-        if (inDate.trim().length() != dateFormat.toPattern().length())  {    
-            return false;
-        }
-        dateFormat.setLenient(false);       
-        try {      
-            //parse the date    
-            dateFormat.parse(inDate.trim());   
-        } catch (ParseException pe) {    
-            return false;    
-        }    
-        return true;  
-   }
 
     /**
      * @return result
@@ -1199,6 +1146,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         try {
             String orgId = ServletActionContext.getRequest().getParameter("orgId");
             String persId = ServletActionContext.getRequest().getParameter("persId");
+            LOG.error("**** The selected responsible party contact is " + persId);
             OrganizationDTO sponsorselected = (OrganizationDTO) ServletActionContext.getRequest().getSession()
             .getAttribute("PoSponsor");
             if (sponsorselected != null) {
