@@ -11,7 +11,7 @@ function lookup4loadresponsibleparty(){
 	} catch(err) {
 		orgid = document.getElementById('generalTrialDesignquery_gtdDTO_sponsorIdentifier').value;	
 	}
-	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact ddd');
+	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
 }
 function lookup4loadleadorg(){
        showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
