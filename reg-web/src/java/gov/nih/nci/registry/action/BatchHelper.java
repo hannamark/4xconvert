@@ -81,7 +81,7 @@ public class BatchHelper { //implements Runnable {
             List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
                     + File.separator + trialDataFileName);
             HashMap map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
-                    + File.separator);
+                    + File.separator, userName);
             Set s = map.keySet();
             Iterator iter = s.iterator();
             String mapLocalTrialId = null;
