@@ -187,10 +187,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String resStatus = ServletActionContext.getRequest().getParameter("recStatus");
         String resStatusDate = ServletActionContext.getRequest().getParameter("recStatusDate");
         String paramTargetAccrualNumber = ServletActionContext.getRequest().getParameter("targetAccrualNumber");
-        if (!PAUtil.isNotNullOrNotEmpty(resStatus)) {
+        if (PAUtil.isEmpty(resStatus)) {
             addFieldError("recStatus", getText("error.participatingStatus"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(resStatusDate)) {
+        if (PAUtil.isEmpty(resStatusDate)) {
             addFieldError("recStatusDate", getText("error.participatingStatusDate"));
         }
         setCurrentAction("edit");
@@ -212,17 +212,18 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             orgFromPO.setOrgCountry(org.getCountryName());
             orgFromPO.setOrgName(org.getName());
             orgFromPO.setOrgZip(org.getPostalCode());
-            if (PAUtil.isNotNullOrNotEmpty(resStatus)) {
+            if (PAUtil.isNotEmpty(resStatus)) {
                 this.setRecStatus(resStatus);
             }
-            if (PAUtil.isNotNullOrNotEmpty(resStatusDate)) {
+            if (PAUtil.isNotEmpty(resStatusDate)) {
                 this.setRecStatusDate(resStatusDate);
             }
             return "error_edit";
         }
 
         StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
-        if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) != new Integer(getTargetAccrualNumber())) {
+        Integer iTargetAccrual = (getTargetAccrualNumber() == null) ? null : Integer.parseInt(getTargetAccrualNumber());
+        if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) != iTargetAccrual) {
             spDto.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             sPartService.update(spDto);
         }
@@ -428,15 +429,15 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 selectedPersTO = PaRegistry.getPoPersonEntityService().getPerson(
                         EnOnConverter.convertToOrgIi(Long.valueOf(persId)));           
             }
-            if (!PAUtil.isNotNullOrNotEmpty(email)) {
+            if (PAUtil.isEmpty(email)) {
                 addFieldError("personContactWebDTO.email", getText("error.enterEmailAddress"));
                 hasErrors = true;
             }
-            if (PAUtil.isNotNullOrNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
+            if (PAUtil.isNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
                 addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
                 hasErrors = true;
             }
-            if (!PAUtil.isNotNullOrNotEmpty(telephone)) {
+            if (PAUtil.isEmpty(telephone)) {
                 addFieldError("personContactWebDTO.telephone", getText("error.enterPhoneNumber"));
                 hasErrors = true;
             }
@@ -721,13 +722,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (personContactWebDTO != null && !(personContactWebDTO.getFirstName().length() > 0)) {
             addFieldError("personContactWebDTO.firstName", getText("error.chooseContact"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(email)) {
+        if (PAUtil.isEmpty(email)) {
             addFieldError("personContactWebDTO.email", getText("error.enterEmailAddress"));
         }
-        if (PAUtil.isNotNullOrNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
+        if (PAUtil.isNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
             addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(telephone)) {
+        if (PAUtil.isEmpty(telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.enterPhoneNumber"));
         }
     }
@@ -790,10 +791,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * or based on an interaction between services.
      */
     private void enforceBusinessRules() {
-        if (!PAUtil.isNotNullOrNotEmpty(getRecStatus())) {
+        if (PAUtil.isEmpty(getRecStatus())) {
             addFieldError("recStatus", getText("error.participatingStatus"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(getRecStatusDate())) {
+        if (PAUtil.isEmpty(getRecStatusDate())) {
             addFieldError("recStatusDate", getText("error.participatingStatusDate"));
         }
         if (!(orgFromPO.getOrgName().length() > 0)) {
