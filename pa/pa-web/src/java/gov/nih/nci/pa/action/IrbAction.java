@@ -196,7 +196,7 @@ public class IrbAction extends ActionSupport implements Preparable {
     private void saveSubmissionRequired() throws Exception {
         Ii sPartToUpdate = this.getStudyParticipationToUpdate();
         String poOrgId = ct.getName();
-        if (poOrgId == null || poOrgId.equals("")) {
+        if (PAUtil.isEmpty(poOrgId)) {
             throw new PAException("Board name must be set for '" + getApprovalStatus() + "'.  ");
         }
         Long oversightCommitteeId = orgCorrService.createOversightCommitteeCorrelations(poOrgId);
@@ -326,9 +326,13 @@ public class IrbAction extends ActionSupport implements Preparable {
                   Organization paOrg = correlationUtils.getPAOrganizationByPAOversightCommitteeId(
                           IiConverter.convertToLong(part.getOversightCommitteeIi()));
                   loadOrg(paOrg.getIdentifier());
-                  paOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
-                          IiConverter.convertToLong(part.getHealthcareFacilityIi()));
-                  setContactAffiliation(paOrg.getIdentifier());
+                  if (getSiteRelated().equals(YES)) {
+                      paOrg = correlationUtils.getPAOrganizationByPAHealthCareFacilityId(
+                              IiConverter.convertToLong(part.getHealthcareFacilityIi()));
+                      setContactAffiliation(paOrg.getIdentifier());
+                  } else {
+                      setContactAffiliation(null);
+                  }
                 }
             }
         }
