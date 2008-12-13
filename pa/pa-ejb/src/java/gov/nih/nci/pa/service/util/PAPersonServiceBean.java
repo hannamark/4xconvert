@@ -53,7 +53,7 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
             session = HibernateUtil.getCurrentSession();
             StringBuffer hql = new StringBuffer();
             hql.append(" select distinct p from Person  p " 
-            + " join p.clinicalResearchStaffs as crs "
+            + " join p.healthCareProviders as crs "
             + " join crs.studyContacts as sc" 
             + " join sc.studyProtocol as sp" 
             + " where sc.roleCode = '" 
