@@ -352,10 +352,6 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (zip != null && !PAUtil.isNotEmpty(zip)) {
             addActionError("Zip is a required field");
         }
-        String country = ServletActionContext.getRequest().getParameter("country");
-        if (zip != null && country.equals("aaa")) {
-            addActionError("Country is a required field");
-        }
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             Iterator<String> i = getActionErrors().iterator();
@@ -365,6 +361,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
             return PERS_CREATE_RESPONSE;
         }
+        String country = ServletActionContext.getRequest().getParameter("country");
         String preFix = ServletActionContext.getRequest().getParameter("preFix");
         String midName = ServletActionContext.getRequest().getParameter("midName");
         String state = ServletActionContext.getRequest().getParameter("state");
@@ -398,7 +395,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             partSfx.setValue(suffix);
             dto.getName().getPart().add(partSfx);
         }
-        dto.getName().getPart().add(part);
+       // dto.getName().getPart().add(part);
         DSet<Tel> list = new DSet<Tel>();
         list.setItem(new HashSet<Tel>());
         try {
