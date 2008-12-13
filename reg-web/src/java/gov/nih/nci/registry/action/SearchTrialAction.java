@@ -66,12 +66,29 @@ public class SearchTrialAction extends ActionSupport {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(pId);
+            //TODO need to find a permanent solution
+            // workaround to get the appropriate trial type
+            StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
+            viewCriteria.setStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+            RegistryServiceLocator.getProtocolQueryService().
+                                        getStudyProtocolByCriteria(viewCriteria);
+            // end of workaround
             StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
-                    studyProtocolIi);
+                    studyProtocolIi);            
             // TrialWebDTO trialWebDTO = new TrialWebDTO(protocolDTO);
             // put an entry in the session and store
             // InterventionalStudyProtocolDTO
             ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
+            if (protocolDTO != null) {
+                String trialType = null;
+              String studyProtocolType = protocolDTO.getStudyProtocolType().getValue();
+              if (studyProtocolType.equals("InterventionalStudyProtocol")) {
+                  trialType = "Interventional";
+              } else if (studyProtocolType.equals("ObservationalStudyProtocol")) {
+                  trialType = "Observational";
+              }
+              ServletActionContext.getRequest().setAttribute(Constants.TRIAL_TYPE, trialType);
+            }
             // query the study grants
             List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService()
                     .getstudyResourceByStudyProtocol(studyProtocolIi);
@@ -260,8 +277,15 @@ public class SearchTrialAction extends ActionSupport {
                 }
             }            
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
+            // TODO need to find a permanent solution
+            // workaround to get the appropriate trial type
+            StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
+            viewCriteria.setStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+            RegistryServiceLocator.getProtocolQueryService().
+                                        getStudyProtocolByCriteria(viewCriteria);
+            // end of workaround 
             StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
-                    studyProtocolIi);
+                    studyProtocolIi);            
             // TrialWebDTO trialWebDTO = new TrialWebDTO(protocolDTO);
             // put an entry in the session and store
             // InterventionalStudyProtocolDTO
