@@ -50,6 +50,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -71,6 +82,7 @@ public class TrialValidationAction extends ActionSupport {
     // Summary 4 Sponsor
     private OrganizationDTO selectedSummary4Sponsor = null;   
     private List<SearchPersonResultDisplay> persons = new ArrayList<SearchPersonResultDisplay>();
+    private static final int MAXIMUM_CHAR = 200;
     
     /**  
      * @return res
@@ -105,17 +117,25 @@ public class TrialValidationAction extends ActionSupport {
      * @return String
      */
     public String update() {
-        save();    
+      enforceBusinessRules();
+      if (hasFieldErrors()) {
         return EDIT;
+      }
+      save();    
+      return EDIT;
     }
     /**
      * 
      * @return String
      */
     public String accept() {
-        save();    
-        createDocumentWfStatus(DocumentWorkflowStatusCode.ACCEPTED);
+      enforceBusinessRules();
+      if (hasFieldErrors()) {
         return EDIT;
+      }
+      save();    
+      createDocumentWfStatus(DocumentWorkflowStatusCode.ACCEPTED);
+      return EDIT;
     }
     
     /**
@@ -123,10 +143,89 @@ public class TrialValidationAction extends ActionSupport {
      * @return String
      */
     public String reject() {
-        save();    
-        createDocumentWfStatus(DocumentWorkflowStatusCode.REJECTED);
+      enforceBusinessRules();
+      if (hasFieldErrors()) {
         return EDIT;
+      }
+      save();
+      return "rejectReason";
     }
+
+    /**
+     *  @return String
+     */
+    public String rejectReason() {
+      if (PAUtil.isEmpty(gtdDTO.getCommentText())) {
+        addFieldError("gtdDTO.commentText",
+            getText("Rejection Reason must be Entered"));
+      }
+      if (hasFieldErrors()) {
+        return "rejectReason";
+      }
+      createDocumentWfStatus(DocumentWorkflowStatusCode.REJECTED);
+      sendEmail();
+      query();
+      return EDIT;
+    }
+
+    private void sendEmail() {
+      try {
+        
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+        .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        
+        String commentText = getCommentText();
+        
+        Properties props = System.getProperties();
+
+        // Set up mail server
+        props.put("mail.smtp.host", PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
+
+        // Get session
+        Session session = Session.getDefaultInstance(props, null);
+
+        // Define Message
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(PaRegistry.getLookUpTableService().getPropertyValue("fromaddress")));
+        //message.addRecipient(Message.RecipientType.TO, new InternetAddress(spDTO.getUserLastCreated()));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress("kguthikonda@scenpro.com"));
+        message.setSentDate(new java.util.Date());
+        message.setSubject(PaRegistry.getLookUpTableService().getPropertyValue("rejection.subject"));
+
+        // body
+        Multipart multipart = new MimeMultipart();
+        BodyPart msgPart = new MimeBodyPart();
+        String body = PaRegistry.getLookUpTableService().getPropertyValue("rejection.body");
+        String mailBody1 = body.replace("${leadorgid}", spDTO.getLeadOrganizationId().toString());
+        String mailBody2 = mailBody1.replace("${reasoncode}", commentText);
+        msgPart.setText(mailBody2);
+        multipart.addBodyPart(msgPart);
+        message.setContent(multipart); 
+        // Send Message
+        Transport.send(message);
+
+      } catch (Exception e) {
+        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+      }
+    }
+
+    private String getCommentText() throws PAException {
+      String commentText = "";
+      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+      getAttribute(Constants.STUDY_PROTOCOL_II);
+
+      List<DocumentWorkflowStatusDTO> dtoList = PaRegistry.getDocumentWorkflowStatusService()
+                          .getByStudyProtocol(studyProtocolIi);
+      for (DocumentWorkflowStatusDTO dto : dtoList) {
+        if (dto.getStatusCode().getCode().equalsIgnoreCase(DocumentWorkflowStatusCode.REJECTED.getCode()) 
+            && dto.getCommentText() != null) {
+          commentText = dto.getCommentText().getValue();
+        }
+        
+      }
+      return commentText;
+    }
+    
     private void createDocumentWfStatus(DocumentWorkflowStatusCode dws) {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
@@ -137,6 +236,9 @@ public class TrialValidationAction extends ActionSupport {
             dwsDto.setStatusDateRange(TsConverter.convertToTs(
                               new Timestamp(new Date().getTime())));
             dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
+            if (gtdDTO.getCommentText() != null) {
+              dwsDto.setCommentText(StConverter.convertToSt(gtdDTO.getCommentText()));
+            }
             PaRegistry.getDocumentWorkflowStatusService().create(dwsDto);
 
             StudyProtocolQueryDTO  studyProtocolQueryDTO = 
@@ -151,47 +253,91 @@ public class TrialValidationAction extends ActionSupport {
         }
         
     }
-    private void save() {
-        try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-            updateStudyProtocol(studyProtocolIi);
-            updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) , 
-                        gtdDTO.getLeadOrganizationIdentifier() , gtdDTO.getLocalProtocolIdentifier());
-            updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
-                        StudyParticipationFunctionalCode.SPONSOR) , 
-                        gtdDTO.getSponsorIdentifier() , null);
-            updateStudyContact(studyProtocolIi);
-            removeSponsorContact(studyProtocolIi);
-            createSponorContact(studyProtocolIi);
+    
+    private void save() {      
+      try {        
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+        .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        updateStudyProtocol(studyProtocolIi);
+        updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
+            StudyParticipationFunctionalCode.LEAD_ORAGANIZATION) , 
+            gtdDTO.getLeadOrganizationIdentifier() , gtdDTO.getLocalProtocolIdentifier());
+        updateStudyParticipation(studyProtocolIi , CdConverter.convertToCd(
+            StudyParticipationFunctionalCode.SPONSOR) , 
+            gtdDTO.getSponsorIdentifier() , null);
+        updateStudyContact(studyProtocolIi);
+        removeSponsorContact(studyProtocolIi);
+        createSponorContact(studyProtocolIi);
 
-            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
-                    studyProtocolIi);
-            if (summary4ResoureDTO == null) {
-                PaRegistry.getStudyResourcingService().
-                    createStudyResourcing(createSummaryFour(new StudyResourcingDTO() , studyProtocolIi));   
-            } else {
-                PaRegistry.getStudyResourcingService().updateStudyResourcing(
-                        createSummaryFour(summary4ResoureDTO , studyProtocolIi));
-            }
-
-            ServletActionContext.getRequest().setAttribute(
-                    Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
-            StudyProtocolQueryDTO  studyProtocolQueryDTO = 
-                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                        Long.valueOf(studyProtocolIi.getExtension()));
-            // put an entry in the session and store StudyProtocolQueryDTO 
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-
-            
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(
-                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
+            studyProtocolIi);
+        if (summary4ResoureDTO == null) {
+          PaRegistry.getStudyResourcingService().
+          createStudyResourcing(createSummaryFour(new StudyResourcingDTO() , studyProtocolIi));   
+        } else {
+          PaRegistry.getStudyResourcingService().updateStudyResourcing(
+              createSummaryFour(summary4ResoureDTO , studyProtocolIi));
         }
-        
+
+        ServletActionContext.getRequest().setAttribute(
+            Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
+        StudyProtocolQueryDTO  studyProtocolQueryDTO = 
+          PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+              Long.valueOf(studyProtocolIi.getExtension()));
+        // put an entry in the session and store StudyProtocolQueryDTO 
+        ServletActionContext.getRequest().getSession().setAttribute(
+            Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+
+
+      } catch (Exception e) {
+        ServletActionContext.getRequest().setAttribute(
+            Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+      }
+
     }
+
+    private void enforceBusinessRules() {
+      if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
+        addFieldError("gtdDTO.LocalProtocolIdentifier",
+            getText("Organization Trial ID must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
+        addFieldError("gtdDTO.OfficialTitle",
+            getText("OfficialTitle must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
+        addFieldError("gtdDTO.phaseCode",
+            getText("error.phase"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+        addFieldError("gtdDTO.primaryPurposeCode",
+            getText("error.primary"));
+      }
+      if ((!(gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other"))) 
+          && PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())) {          
+        addFieldError("gtdDTO.primaryPurposeOtherText",
+            getText("Select PrimaryPurposeCode as other to enter PrimaryPurposeOtherText"));
+      }
+      if (gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other") 
+          && PAUtil.isEmpty(gtdDTO.getPrimaryPurposeOtherText())) {          
+        addFieldError("gtdDTO.primaryPurposeOtherText",
+            getText("error.comment"));
+      }
+      if (PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
+          && gtdDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
+        addFieldError("gtdDTO.primaryPurposeOtherText",
+            getText("error.spType.other.maximumChar"));        
+      }      
+      if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+        addFieldError("contactEmail",
+            getText("Email must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+        addFieldError("contactPhone",
+            getText("Phone must be Entered"));
+      }      
+    }
+    
     private StudyResourcingDTO createSummaryFour(StudyResourcingDTO summary4ResoureDTO , Ii studyProtocolIi) 
     throws PAException {
         
@@ -258,10 +404,12 @@ public class TrialValidationAction extends ActionSupport {
     private void copy(StudyProtocolQueryDTO spqDTO) {
         gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
     }
+    
     private void copyLO(Organization o) {
         gtdDTO.setLeadOrganizationIdentifier(o.getIdentifier());
         gtdDTO.setLeadOrganizationName(o.getName());
     }
+    
     private void copyPI(Person p) {
         gtdDTO.setPiIdentifier(p.getIdentifier());
         gtdDTO.setPiName(p.getFullName());
@@ -298,6 +446,7 @@ public class TrialValidationAction extends ActionSupport {
         }
         copy(dset);
     }
+    
     private void copy(DSet dset) {
         if (dset == null) {
             return;
@@ -311,6 +460,7 @@ public class TrialValidationAction extends ActionSupport {
             gtdDTO.setContactEmail(emails.get(0));
         }        
     }
+    
     private void copySponsor(Ii studyProtocolIi) throws PAException {
         StudyParticipationDTO spart = new StudyParticipationDTO();
         spart.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.SPONSOR));
@@ -325,6 +475,7 @@ public class TrialValidationAction extends ActionSupport {
         }
         
     }
+    
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -403,6 +554,7 @@ public class TrialValidationAction extends ActionSupport {
         }
         
     }
+    
     private void createSponorContact(Ii studyProtocolIi) throws  PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
         
@@ -416,6 +568,7 @@ public class TrialValidationAction extends ActionSupport {
                     Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
         }
     }
+    
     /**
      * 
      * @return gtdDTO
@@ -494,7 +647,8 @@ public class TrialValidationAction extends ActionSupport {
             return "display_selected_sponsor";
         }
         return "display_selected_sponsor";
-    }    
+    }  
+    
     /**
      * 
      * @return result
@@ -613,7 +767,8 @@ public class TrialValidationAction extends ActionSupport {
             //NAVEEN HANDLE EXCEPTIONS!!
         }
         return "display_responsible_contact";
-    }    
+    } 
+    
     /**
      * 
      * @return selectedLeadOrg
@@ -642,6 +797,5 @@ public class TrialValidationAction extends ActionSupport {
      */
     public void setPersons(List<SearchPersonResultDisplay> persons) {
         this.persons = persons;
-    }
-    
+    }    
 }
