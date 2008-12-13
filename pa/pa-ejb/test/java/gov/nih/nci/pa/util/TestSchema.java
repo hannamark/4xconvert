@@ -455,7 +455,7 @@ public class TestSchema {
             DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
             dws.setStudyProtocol(sp);
             dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_NOT_VERIFIED);
-            dws.setCommonText("Common Text1");
+            dws.setCommentText("Comment Text1");
             dws.setUserLastUpdated("curator");
             addUpdObject(dws);
             
