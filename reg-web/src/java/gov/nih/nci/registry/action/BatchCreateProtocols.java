@@ -78,7 +78,7 @@ public class BatchCreateProtocols {
      */
     public HashMap createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath)
             throws PAException {
-        log.info("Entering into createProtocols...having size of dtolist"
+        log.error("Entering into createProtocols...having size of dtolist"
                 + dtoList.size());
         if (dtoList == null || dtoList.size() < 1) {
             throw new PAException("DTO list is Empty");
@@ -101,14 +101,14 @@ public class BatchCreateProtocols {
                     result = buildProtocol(batchDto, folderPath);    
                 } else {
                     result = "Trial submission failed for Lead Organization Trial Identifier " 
-                    + batchDto.getLocalProtocolIdentifier() +  result;
+                    + batchDto.getLocalProtocolIdentifier() +  " " + result;
                 }
                 log.error("putting values in map local protocol Id as " 
                         + batchDto.getLocalProtocolIdentifier() + "and response as " + result);
                 map.put(batchDto.getLocalProtocolIdentifier() , result);
             }
         }
-        log.info("leaving into createProtocols...");
+        log.error("leaving into createProtocols...");
         return map;
     }
 
@@ -123,6 +123,7 @@ public class BatchCreateProtocols {
 
         Ii studyProtocolIi = null;
         String protocolAssignedId  = null;
+        log.error("Entering into buildProtocol...");
         // before creating the protocol check for duplicate
         // using the Lead Org Trial Identifier and Lead Org Identifier
 /*        Organization paOrg = new Organization();
@@ -160,7 +161,7 @@ public class BatchCreateProtocols {
                     .createInterventionalStudyProtocol(
                             (InterventionalStudyProtocolDTO) createProtocolDTO(dto));
         }
-        log.info("Trial is registered with ID: "
+        log.error("Trial is registered with ID: "
                 + IiConverter.convertToString(studyProtocolIi));
         // create study overall status
         createStudyStatus(studyProtocolIi, dto);
@@ -192,18 +193,18 @@ public class BatchCreateProtocols {
             uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
                      dto.getOtherTrialRelDocumentFileName(), folderPath);  
         }
+        log.error("Before Summ4Funding lookup");
         //Summary 4 Info
         OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(dto);
         Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
         if (selectedSummary4Sponsor != null) {
-            log.error("dto.getSumm4FundingCat()" + dto.getSumm4FundingCat());
             new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getExtension(), 
                     SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
                     .convertToLong(studyProtocolIi));
         }
 
         // create/Lookup the org
-        log.error("buildProtocol " + dto.getLeadOrgEmail());
+        log.error("buildProtocol -Create or lookup the org ");
         OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
         Ii orgIdIi = lookUpOrgs(orgDto);
         if (null != orgIdIi) {
@@ -212,6 +213,7 @@ public class BatchCreateProtocols {
                     IiConverter.convertToLong(studyProtocolIi), dto
                             .getLocalProtocolIdentifier());
         }
+        log.error("buildProtocol -Create or lookup the Person");
         //look up Person
         PersonBatchDTO piDto = buildLeadPIDto(dto);
         Ii leadPrincipalInvestigator = lookUpPersons(piDto);
@@ -220,6 +222,7 @@ public class BatchCreateProtocols {
                     leadPrincipalInvestigator.getExtension(), IiConverter
             .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(dto.getTrialType()));
         }
+        log.error("buildProtocol -Create or lookup the Sponsor ");
         //look up sponser
         OrganizationBatchDTO sponsorOrgDto = buildSponsorOrgDto(dto);
         Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
@@ -227,10 +230,6 @@ public class BatchCreateProtocols {
             new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
                     IiConverter.convertToLong(studyProtocolIi));
             if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
-                log.error("sponsorIdIi.getExtension() " + sponsorIdIi.getExtension());
-                log.error("leadPrincipalInvestigator.getExtension() " + leadPrincipalInvestigator.getExtension());
-                log.error("dto.getPiEmail() " + dto.getPiEmail());
-                log.error("dto.getPiPhone() " + dto.getPiPhone());
                 new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
                         leadPrincipalInvestigator.getExtension(),
                         IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
@@ -255,7 +254,11 @@ public class BatchCreateProtocols {
             log.error("buildprotocol exception-" + ex.getMessage());
             protocolAssignedId =  "Trial submission failed for Lead Organization Trial Identifier " 
             + dto.getLocalProtocolIdentifier() + ex.getMessage();
-        }
+        } catch (Exception exc) {
+        protocolAssignedId =  "Trial submission failed for Lead Organization Trial Identifier " 
+            + dto.getLocalProtocolIdentifier() + exc.getMessage();
+        log.error("buildprotocol exception-" + exc.getMessage());
+    }
         log.error("response " + protocolAssignedId);
         return protocolAssignedId;
     }
@@ -270,7 +273,6 @@ public class BatchCreateProtocols {
                 .getByCode(batchDto.getPhase())));
         protocolDTO.setOfficialTitle(StConverter.convertToSt(batchDto
                 .getTitle()));
-        log.info("createProtocolDTO " + batchDto.getStudyStartDate());
         protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil
                 .dateStringToTimestamp(batchDto.getStudyStartDate())));
         protocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil
@@ -288,9 +290,8 @@ public class BatchCreateProtocols {
     }
 
     private void createStudyStatus(Ii studyProtocolIi,
-            StudyProtocolBatchDTO batchDto) {
-        // create study overall status
-        try {
+            StudyProtocolBatchDTO batchDto) throws PAException {
+            // create study overall status
             StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
             // overallStatusDTO.setIi(IiConverter.convertToIi((Long) null));
             overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
@@ -302,10 +303,7 @@ public class BatchCreateProtocols {
                             .getCurrentTrialStatusDate())));
             RegistryServiceLocator.getStudyOverallStatusService().create(
                     overallStatusDTO);
-        } catch (PAException pae) {
-            log.error("Exception occured while creating study overall status: "
-                    + pae);
-        }
+            log.error("leaving createStudyStatus....");
     }
 
     /**
@@ -314,10 +312,10 @@ public class BatchCreateProtocols {
      *            studyProtocolIi
      * @param batchDto
      *            batchDto
+     * @throws PAException 
      */
     private void createStudyResources(Ii studyProtocolIi,
-            StudyProtocolBatchDTO batchDto) {
-        try {
+            StudyProtocolBatchDTO batchDto) throws PAException {
             StudyResourcingDTO studyResoureDTO = null;
             studyResoureDTO = new StudyResourcingDTO();
             studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
@@ -334,11 +332,8 @@ public class BatchCreateProtocols {
                     .getNihGrantSrNumber()));
             RegistryServiceLocator.getStudyResourcingService()
                     .createStudyResourcing(studyResoureDTO);
-        } catch (PAException pae) {
-            log.error("Exception occured while creating study participation: "
-                    + pae);
-        }
-    }
+            log.error("leaving createStudyResources ....");
+     }
 
     /**
      * This method is first look up the Org. If org Found then return the id
@@ -352,6 +347,7 @@ public class BatchCreateProtocols {
      *             PAException
      */
     private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException {
+        log.error("Entering Create Org ...");
         Ii orgId = null;
         try {
             String orgName = batchDto.getName();
@@ -403,6 +399,7 @@ public class BatchCreateProtocols {
             log.error("lookUpOrgs exception" + e.getMessage());
             throw new PAException(e.getMessage());
         }
+        log.error("leaving lookup Org with OrgId" + orgId);
         return orgId;
     }
 
@@ -418,6 +415,7 @@ public class BatchCreateProtocols {
      */
     public Ii createOrganization(OrganizationBatchDTO batchDto)
             throws PAException {
+        log.error("Entering Create Org ..");
         OrganizationDTO orgDto = new OrganizationDTO();
         Ii orgId = null;
         String orgName = batchDto.getName();
@@ -455,7 +453,7 @@ public class BatchCreateProtocols {
               log.error("Email is a required field");
               throw new PAException("Email is a required field"); 
         } else if (!PAUtil.isValidEmail(email)) {
-              log.error("Email address is invalid");
+              log.error("Email address is invalid " + email);
               throw new PAException("Email address is invalid"); 
         }
         String phoneNumer = batchDto.getPhone();
@@ -512,6 +510,7 @@ public class BatchCreateProtocols {
             log.error("createOrganization exception5 " + e5.getMessage());
             throw new PAException(e5.getMessage());
         }
+        log.error("leaving Create Org with OrgId" + orgId);
         return orgId;
     }
     /**
@@ -521,6 +520,7 @@ public class BatchCreateProtocols {
      * @throws PAException ex
      */
     public Ii lookUpPersons(PersonBatchDTO batchDto) throws PAException {
+        log.error("Entering Look up person...");
         Ii personId = null;
         try {
             String firstName = batchDto.getFirstName();
@@ -571,6 +571,7 @@ public class BatchCreateProtocols {
             log.error("lookUpPersons exception " + e.getMessage());
             throw new PAException("lookUpPersons exception " + e.getMessage());
         }
+        log.error("leaving Look up person  with personId" + personId);
         return personId;
     }
     /**
@@ -580,7 +581,7 @@ public class BatchCreateProtocols {
      * @throws PAException ex 
      */
     public Ii createPerson(PersonBatchDTO batchDto) throws PAException  {
-        
+        log.error("Entering created person  ...");
         Ii personId = null; 
         String firstName = batchDto.getFirstName();
         if (firstName != null && !PAUtil.isNotEmpty(firstName)) {
@@ -683,7 +684,7 @@ public class BatchCreateProtocols {
             log.error("PERS_CREATE_RESPONSE " + e.getMessage());
             throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
         }
-        log.error("created person Id" + personId);
+        log.error("leaving created person  with personId" + personId);
         return personId;
     }
     /**
@@ -701,7 +702,6 @@ public class BatchCreateProtocols {
         orgDto.setZip(dto.getLeadOrgZip());
         orgDto.setCountry(dto.getLeadOrgCountry());
         orgDto.setEmail(dto.getLeadOrgEmail());
-        log.error("Lead Org Email" + dto.getLeadOrgEmail());
         orgDto.setPhone(dto.getLeadOrgPhone());
         orgDto.setTty(dto.getLeadOrgTTY());
         orgDto.setFax(dto.getLeadOrgFax());
@@ -782,8 +782,11 @@ public class BatchCreateProtocols {
      * @param docTypeCode
      * @param fileName
      * @param folderPath
+     * @throws PAException ex 
      */
-    private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, String folderPath) {
+    private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, String folderPath) 
+    throws PAException {
+        log.error("Entering uploadDocument having docTypeCode " + docTypeCode);
         try {
             DocumentDTO docDTO = new DocumentDTO();
             docDTO.setStudyProtocolIi(studyProtocolIi);
@@ -792,13 +795,12 @@ public class BatchCreateProtocols {
             // docDTO.setUserLastUpdated((StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser())));
             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(folderPath + fileName))));
             RegistryServiceLocator.getDocumentService().create(docDTO);
-        } catch (PAException pae) {
-            // pae.printStackTrace();
-            log.error("Exception occured while uploading a '" + fileName + "' Exception is" + pae);
         } catch (IOException ioe) {
             // ioe.printStackTrace();
             log.error("Exception occured reading '" + fileName + "' Exception is" + ioe);
+            throw new PAException("Exception occured reading '" + fileName + "' Exception is" + ioe.getMessage());
         }
+        log.error("Leaving uploadDocument ...");
     }
     /** Read an input stream in its entirety into a byte array. */
     private static byte[] readInputStream(InputStream inputStream) throws IOException {
@@ -830,7 +832,7 @@ public class BatchCreateProtocols {
         return content;
     }
     private void createIndIdeIndicators(Ii studyProtocolIi, StudyProtocolBatchDTO dto) throws PAException {
-        
+        log.error("Entering createIndIdeIndicators....");   
         StudyIndldeDTO indldeDTO = null;
             indldeDTO = new StudyIndldeDTO();
             indldeDTO.setStudyProtocolIi(studyProtocolIi);
@@ -849,7 +851,7 @@ public class BatchCreateProtocols {
                     dto.getIndHasExpandedAccess())));
             indldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getIndExpandedAccessStatus()));
             RegistryServiceLocator.getStudyIndldeService().create(indldeDTO);
-     
+     log.error("leaving createIndIdeIndicators....");
     }
     private OrganizationBatchDTO buildSummary4Sponsor(StudyProtocolBatchDTO dto) {
         OrganizationBatchDTO summ4Sponsor = new OrganizationBatchDTO();
@@ -860,7 +862,7 @@ public class BatchCreateProtocols {
         summ4Sponsor.setState(dto.getSumm4State());
         summ4Sponsor.setZip(dto.getSumm4Zip());
         summ4Sponsor.setCountry(dto.getSumm4Country());
-        summ4Sponsor.setEmail(dto.getSumm4Country());
+        summ4Sponsor.setEmail(dto.getSumm4Email());
         summ4Sponsor.setPhone(dto.getSumm4Phone());
         summ4Sponsor.setTty(dto.getSumm4TTY());
         summ4Sponsor.setFax(dto.getSumm4Fax());
