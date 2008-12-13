@@ -1,18 +1,21 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
@@ -308,4 +311,30 @@ public class PoPaServiceBeanLookup  {
         JNDIUtil.lookup("/pa/RegistryUserServiceBean/remote");
         
     }
+    /**
+     * @return StudyDiseaseServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyDiseaseServiceRemote getStudyDiseaseService() throws PAException  {
+        return (StudyDiseaseServiceRemote) 
+        JNDIUtil.lookup("/pa/StudyDiseaseServiceBean/remote");
+        
+    }    
+    /**
+     * @return DiseaseServiceRemote
+     * @throws PAException on error
+     */
+    public static DiseaseServiceRemote getDiseaseService() throws PAException  {
+        return (DiseaseServiceRemote) 
+        JNDIUtil.lookup("/pa/DiseaseServiceBean/remote");
+    }    
+    /**
+     * @return StudyRecruitmentStatusServiceRemote
+     * @throws PAException on error
+     */
+    public static StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws PAException  {
+        return (StudyRecruitmentStatusServiceRemote) 
+        JNDIUtil.lookup("/pa/StudyRecruitmentStatusServiceBean/remote");
+    }    
+
 }

@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -122,7 +123,24 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceTreatingSite(studyProtocolIi);
     enforceArmGroup(studyProtocolIi, studyProtocolDTO);
     enforceTrialFunding(studyProtocolIi);
+    enforceDisease(studyProtocolIi);
     return abstractionList;
+  }
+  private void enforceDisease(Ii studyProtocolIi) throws PAException {
+      boolean leadExist = false;
+      List<StudyDiseaseDTO> sdDtos = 
+          PoPaServiceBeanLookup.getStudyDiseaseService().getByStudyProtocol(studyProtocolIi);
+      for (StudyDiseaseDTO sdDto : sdDtos) {
+          if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
+              leadExist = true;
+              break;
+          }
+      }
+      if (!leadExist) {
+          abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu", 
+                  "There should be minimum one disease for a StudyProtocol"));
+      }
+      
   }
   @SuppressWarnings({"PMD" })
   private void enforceTrialFunding(Ii studyProtocolIi) throws PAException {
@@ -516,6 +534,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       webDTO.setErrorDescription("Target Enrollment must be Entered");
       abstractionList.add(webDTO);
     }
+  }
+  
+  private AbstractionCompletionDTO createError(String errorType, String comment, String errorDescription) {
+      AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();
+      acDto.setErrorType(errorType);
+      acDto.setComment(comment);
+      acDto.setErrorDescription(errorDescription);
+      return acDto; 
   }
 
 }
