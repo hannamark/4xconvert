@@ -563,6 +563,68 @@ public class CorrelationUtils {
     }
     return hcpOut;
     }
+
+    /**
+     * 
+     * @param oc oc
+     * @return oc
+     * @throws PAException pe
+     */
+    
+    public OrganizationalContact getPAOrganizationalContact(OrganizationalContact oc) 
+    throws PAException {
+        if (oc == null) {
+            LOG.error("Clinicial Research Staff cannot be null");
+            throw new PAException("Clinicial Research Staff cannot be null");
+        }
+        if (oc.getPerson() != null && oc.getOrganization() == null  
+            || oc.getPerson() == null && oc.getOrganization() != null) {
+            LOG.error("Both person and organization should be specified and it cannot be either");
+            throw new PAException("Both person and organization should be specified and it cannot be either");
+            
+        }
+        OrganizationalContact ocOut = null;
+        Session session = null;
+        List<OrganizationalContact> queryList = new ArrayList<OrganizationalContact>();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select oc from OrganizationalContact oc  " 
+                + "join oc.person as per "
+                + "join oc.organization as org where 1 = 1 ");
+        if (oc.getId() != null) {
+            hql.append(" and oc.id = ").append(oc.getId());
+        }
+        if (oc.getPerson() != null && oc.getOrganization()  != null 
+                && oc.getPerson().getId() != null && oc.getOrganization().getId() != null) {
+            hql.append(" and per.id = ").append(oc.getPerson().getId());
+            hql.append(" and org.id = ").append(oc.getOrganization().getId());
+        }
+        if (oc.getIdentifier() != null) {
+            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
+        }
+        try {
+            session = HibernateUtil.getCurrentSession();
+            Query query = null;
+        
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
+        
+        if (queryList.size() > 1) {
+            LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
+            throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
+            
+        }
+    }  catch (HibernateException hbe) {
+        LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
+        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
+    } finally {
+        session.flush();
+    }
+    
+    if (!queryList.isEmpty()) {
+        ocOut = queryList.get(0);
+    }
+    return ocOut;
+    }
     
     /**
      * 

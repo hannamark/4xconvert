@@ -18,14 +18,12 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -63,8 +61,6 @@ public class OrganizationalContactCorrelationServiceBean {
             throw new PAException(" Person PO Identifier is null");
         }
 
-        // Step 1 : get the PO Organization
-        // Step 1 : get the PO Organization
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoPaServiceBeanLookup.getOrganizationEntityService().
@@ -90,16 +86,9 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 2 : check if PO has oc correlation if not create one 
         OrganizationalContactDTO ocDTO = new OrganizationalContactDTO();
         List<OrganizationalContactDTO> ocDTOs = null;
-//        ocDTO.setOrganizationIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-//        ocDTO.setPersonIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
         ocDTO.setScoperIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
         ocDTO.setPlayerIdentifier(IiConverter.converToPoPersonIi(personPoIdentifer));
-//        try {
-            ocDTOs = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
-//        } catch (NullifiedRoleException e) {
-//            LOG.error("check with scoot", e);
-//            // @todo: this should not happen, check with 
-//        }
+        ocDTOs = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
             throw new PAException("PO oc Correlation should not have more than 1  ");
         }
@@ -144,7 +133,7 @@ public class OrganizationalContactCorrelationServiceBean {
         // Step 6 : Check of PA has oc , if not create one
         OrganizationalContact oc = new OrganizationalContact();
         oc.setIdentifier(ocDTO.getIdentifier().getExtension());
-        oc = getPAOrganizationalContact(oc);
+        oc = corrUtils.getPAOrganizationalContact(oc);
         if (oc == null) {
             // create a new oc
             oc = new OrganizationalContact();
@@ -158,66 +147,6 @@ public class OrganizationalContactCorrelationServiceBean {
         return oc.getId();
     }
 
-    /**
-     * 
-     * @param oc oc
-     * @return oc
-     * @throws PAException
-     */
-    private OrganizationalContact getPAOrganizationalContact(OrganizationalContact oc) 
-    throws PAException {
-        if (oc == null) {
-            LOG.error("Clinicial Research Staff cannot be null");
-            throw new PAException("Clinicial Research Staff cannot be null");
-        }
-        if (oc.getPerson() != null && oc.getOrganization() == null  
-            || oc.getPerson() == null && oc.getOrganization() != null) {
-            LOG.error("Both person and organization should be specified and it cannot be either");
-            throw new PAException("Both person and organization should be specified and it cannot be either");
-            
-        }
-        OrganizationalContact ocOut = null;
-        Session session = null;
-        List<OrganizationalContact> queryList = new ArrayList<OrganizationalContact>();
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select oc from OrganizationalContact oc  " 
-                + "join oc.person as per "
-                + "join oc.organization as org where 1 = 1 ");
-        if (oc.getId() != null) {
-            hql.append(" and oc.id = ").append(oc.getId());
-        }
-        if (oc.getPerson() != null && oc.getOrganization()  != null 
-                && oc.getPerson().getId() != null && oc.getOrganization().getId() != null) {
-            hql.append(" and per.id = ").append(oc.getPerson().getId());
-            hql.append(" and org.id = ").append(oc.getOrganization().getId());
-        }
-        if (oc.getIdentifier() != null) {
-            hql.append(" and oc.identifier = '").append(oc.getIdentifier()).append('\'');
-        }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-        
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-        
-        if (queryList.size() > 1) {
-            LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
-            
-        }
-    }  catch (HibernateException hbe) {
-        LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
-        throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
-    } finally {
-        session.flush();
-    }
-    
-    if (!queryList.isEmpty()) {
-        ocOut = queryList.get(0);
-    }
-    return ocOut;
-    }
     
     /**
      * 

@@ -3,12 +3,14 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -34,6 +36,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(PersonSynchronizationServiceBean.class);
@@ -106,6 +109,26 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     }
     
 
+    /***
+     * OrganizationalContact.
+     * @param ocIdentifer oc HealthCareProvider identifier
+     * @throws PAException on error
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException {
+
+        OrganizationalContactDTO ocDto = null;
+        LOG.debug("Entering synchronizeOrganizationalContact");
+        try {
+            ocDto = PoPaServiceBeanLookup.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifer);
+            updateOrganizationalContact(ocDto);
+        } catch (NullifiedRoleException e) {
+           LOG.error("This OrganizationalContact is nullified " + ocIdentifer.getExtension());
+           nulifyOrganizationalContact(ocIdentifer);
+        }
+        LOG.debug("Leaving synchronizeOrganizationalContact");
+    }
+    
     private void nulifyPerson(Ii personIdentifer) throws PAException {
         LOG.debug("Entering nulifyPerson");
         CorrelationUtils cUtils = new CorrelationUtils();
@@ -258,4 +281,55 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     }
 
 
+    private void nulifyOrganizationalContact(Ii ocIdentifer) throws PAException {
+        LOG.debug("Entering nulifyOrganizationalContact");
+        OrganizationalContact oc = new OrganizationalContact();
+        CorrelationUtils cUtils = new CorrelationUtils();
+        oc.setIdentifier(ocIdentifer.getExtension());
+        oc = cUtils.getPAOrganizationalContact(oc);
+        if (oc != null) {
+            // delete the hcf and all of on delete cascade will delete the entire child
+            Session session = null;
+            try {
+                session = HibernateUtil.getCurrentSession();
+                OrganizationalContact organizationalContact = 
+                        (OrganizationalContact) session.get(OrganizationalContact.class, oc.getId());
+                session.delete(organizationalContact);
+                session.flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Hibernate exception while deleting OrganizationalContact for id = " 
+                        + oc.getId() , hbe);
+            }
+        }
+        LOG.debug("Leaving nulifyOrganizationalContact");
+    }
+    
+    private void updateOrganizationalContact(OrganizationalContactDTO ocDto) throws PAException {
+        LOG.debug("Entering updateOrganizationalContact");
+        CorrelationUtils cUtils = new CorrelationUtils();
+        OrganizationalContact oc = new OrganizationalContact();
+        oc.setIdentifier(ocDto.getIdentifier().getExtension());
+        oc = cUtils.getPAOrganizationalContact(oc);
+        if (oc != null) {
+            // update the organization
+            Session session = null;
+            try {
+                session = HibernateUtil.getCurrentSession();
+                OrganizationalContact organizationalContact = (OrganizationalContact) 
+                    session.get(OrganizationalContact.class, oc.getId());
+                organizationalContact.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()));
+                organizationalContact.setDateLastUpdated(new Timestamp((new Date()).getTime()));
+                if (ejbContext != null) {
+                    organizationalContact.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+                }
+                session.update(organizationalContact);
+                session.flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Hibernate exception while updating OrganizationalContact for id = " 
+                        + oc.getId() , hbe);
+            }
+        }
+        LOG.debug("Leaving updateOrganizationalContact");
+    }
+    
 }

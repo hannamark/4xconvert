@@ -30,4 +30,18 @@ public interface PersonSynchronizationServiceRemote {
      */
     void synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException;
     
+    /***
+     * 
+     * @param hcpIdentifer po HealthCareProvider identifier
+     * @throws PAException on error
+     */
+    void synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException;
+
+    /***
+     * OrganizationalContact.
+     * @param ocIdentifer oc HealthCareProvider identifier
+     * @throws PAException on error
+     */
+    void synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException;
+    
 }
