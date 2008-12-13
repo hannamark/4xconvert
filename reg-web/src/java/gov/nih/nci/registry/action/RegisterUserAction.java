@@ -3,9 +3,6 @@
  */
 package gov.nih.nci.registry.action;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -15,6 +12,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -289,11 +287,11 @@ public class RegisterUserAction extends ActionSupport {
         }
         // check if the login name is a valid e-mail address
         if (PAUtil.isNotEmpty(registryUserWebDTO.getLoginName())) {
-            if (!isValidEmailAddress(registryUserWebDTO.getLoginName())) {
+            if (!RegistryUtil.isValidEmailAddress(
+                    registryUserWebDTO.getLoginName())) {
                 addFieldError("registryUserWebDTO.loginName",
                         getText("error.register.invalidEmailAddress"));                
-            }
-            
+            }            
         }
         
         // if it's My Account page validate required fields
@@ -323,7 +321,7 @@ public class RegisterUserAction extends ActionSupport {
                         getText("error.register.affiliateOrg"));
             }
             if (PAUtil.isNotEmpty(registryUserWebDTO.getPhone())) {
-                if (!isValidPhoneNumber(registryUserWebDTO.getPhone())) {
+                if (!RegistryUtil.isValidPhoneNumber(registryUserWebDTO.getPhone())) {
                     addFieldError("registryUserWebDTO.phone",
                             getText("error.register.invalidPhoneNumber"));                
                 }
@@ -345,26 +343,6 @@ public class RegisterUserAction extends ActionSupport {
                 
             }
         }
-    }
-    
-    private  boolean isValidEmailAddress(String emailAddress)  {
-        boolean isvalidEmailAddr = false;
-        Pattern email = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
-
-        Matcher fit = email.matcher(emailAddress);
-        if (fit.matches()) {
-            isvalidEmailAddr = true;
-        } 
-        return isvalidEmailAddr;
-    }
-    
-    private boolean isValidPhoneNumber(String phoneNumber) {
-            boolean isValidPhoneNumber = false;
-            String numPattern = "(\\d-)?(\\d{3}-)?\\d{3}-\\d{4}";
-            if (phoneNumber.matches(numPattern)) {
-                isValidPhoneNumber = true;
-            }       
-            return isValidPhoneNumber;
     }
 
     /**
