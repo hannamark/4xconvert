@@ -45,6 +45,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private St keywordText;
     private Bl acceptHealthyVolunteersIndicator;
     private St studyProtocolType;
+    private St userLastCreated;
     
     /**
      * 
@@ -454,6 +455,24 @@ public class StudyProtocolDTO extends BaseDTO {
     public void setStudyProtocolType(St studyProtocolType) {
         this.studyProtocolType = studyProtocolType;
     }
+
+    /**
+     * 
+     * @return userLastCreated
+     */
+    public St getUserLastCreated() {
+        return userLastCreated;
+    }
+
+    /**
+     * 
+     * @param userLastCreated userLastCreated
+     */
+    public void setUserLastCreated(St userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+    
+    
     
     
 }

@@ -282,6 +282,9 @@ import org.hibernate.Session;
             isp.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
         }
         isp.setDateLastCreated(new Timestamp((new Date()).getTime()));
+        if (ispDTO.getUserLastCreated() != null) {
+            isp.setUserLastCreated(ispDTO.getUserLastCreated().getValue());
+        }
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
