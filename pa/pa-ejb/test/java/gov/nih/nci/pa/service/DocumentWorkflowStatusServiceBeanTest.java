@@ -40,8 +40,8 @@ public class DocumentWorkflowStatusServiceBeanTest {
 
           dto2 = new DocumentWorkflowStatusDTO();
           dto2 = remoteEjb.update(dto);
-          assertEquals(dto.getCommonText().getValue()
-                  , dto2.getCommonText().getValue());
+          assertEquals(dto.getCommentText().getValue()
+                  , dto2.getCommentText().getValue());
 
        remoteEjb.delete(dto.getIdentifier());
   }
@@ -51,7 +51,7 @@ public class DocumentWorkflowStatusServiceBeanTest {
     DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
       dto.setStudyProtocolIdentifier(pid);
       dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
-      dto.setCommonText(StConverter.convertToSt("Common text"));
+      dto.setCommentText(StConverter.convertToSt("Common text"));
       DocumentWorkflowStatusDTO dto2 = null;
       dto2 = new DocumentWorkflowStatusDTO();
       dto2 = remoteEjb.create(dto);

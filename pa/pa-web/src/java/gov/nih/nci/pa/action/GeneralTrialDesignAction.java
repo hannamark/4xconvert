@@ -86,7 +86,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
      * @return result
      */
     public String update() {
-       // enforceBusinessRules();
+        enforceBusinessRules();
         if (hasFieldErrors()) {
           return "edit";
         }
@@ -252,6 +252,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
 //        spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(gtdDTO.getPrimaryPurposeOtherText()));
 //        spDTO.setPhaseOtherText(StConverter.convertToSt(gtdDTO.getPhaseOtherText()));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
+        spDTO.setPublicTitle(StConverter.convertToSt(gtdDTO.getPublicTitle()));
         spDTO.setPublicDescription(StConverter.convertToSt(gtdDTO.getPublicDescription()));
         spDTO.setScientificDescription(StConverter.convertToSt(gtdDTO.getScientificDescription()));
         spDTO.setKeywordText(StConverter.convertToSt(gtdDTO.getKeywordText()));
@@ -451,6 +452,41 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
         return identifier;
         
+    }
+    
+    private void enforceBusinessRules() {
+      if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
+        addFieldError("gtdDTO.localProtocolIdentifier",
+            getText("Organization Trial ID must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
+        addFieldError("gtdDTO.officialTitle",
+            getText("OfficialTitle must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getPublicTitle())) {
+        addFieldError("gtdDTO.publicTitle",
+            getText("PublicTitle must be Entered"));
+      }      
+      if (PAUtil.isEmpty(gtdDTO.getPublicDescription())) {
+        addFieldError("gtdDTO.publicDescription",
+            getText("Brief Summary must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
+        addFieldError("gtdDTO.centralContactEmail",
+            getText("CentralContactEmail must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getCentralContactPhone())) {
+        addFieldError("gtdDTO.centralContactPhone",
+            getText("CentralContactPhone must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+        addFieldError("contactEmail",
+            getText("Email must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+        addFieldError("contactPhone",
+            getText("Phone No must be Entered"));
+      }      
     }
 
     /**

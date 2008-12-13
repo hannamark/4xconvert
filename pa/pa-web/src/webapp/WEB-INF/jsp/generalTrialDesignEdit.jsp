@@ -168,6 +168,11 @@ function manageRespPartyLookUp(){
          </td>
          <td class="value">
             <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" /> 
+            <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>gtdDTO.localProtocolIdentifier</s:param>
+                   </s:fielderror>                            
+                 </span>
         </td>
     </tr>
     <tr>
@@ -193,6 +198,11 @@ function manageRespPartyLookUp(){
          </td>
          <td class="value">
     		<s:textarea name="gtdDTO.publicTitle" cssStyle="width:606px" rows="4"/> 
+    		<span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>gtdDTO.publicTitle</s:param>
+                   </s:fielderror>                            
+                 </span>
     	</td>
     </tr>
     <tr>
@@ -203,7 +213,12 @@ function manageRespPartyLookUp(){
           </label>
        </td>
        <td class="value">
-            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/> 
+            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/>
+            <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>gtdDTO.officialTitle</s:param>
+                   </s:fielderror>                            
+                 </span> 
        </td>
     </tr>
     <tr>
@@ -213,11 +228,16 @@ function manageRespPartyLookUp(){
      <tr>
     	<td scope="row" class="label">
            <label for=briefSummary>
-                    <fmt:message key="studyProtocol.briefSummary"/>
+                    <fmt:message key="studyProtocol.briefSummary"/><span class="required">*</span>
            </label>
          </td>
          <td class="value">
-    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:606px" rows="4"/> 
+    		<s:textarea name="gtdDTO.publicDescription" cssStyle="width:606px" rows="4"/>
+    		 <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>gtdDTO.publicDescription</s:param>
+                   </s:fielderror>                            
+                 </span>  
     	</td>
     </tr>
     <tr>
@@ -264,7 +284,7 @@ function manageRespPartyLookUp(){
                 <s:textfield name="gtdDTO.centralContactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>contactEmail</s:param>
+                    <s:param>gtdDTO.centralContactEmail</s:param>
                    </s:fielderror>                            
                  </span>
             </td>
@@ -275,7 +295,7 @@ function manageRespPartyLookUp(){
                 <s:textfield name="gtdDTO.centralContactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>contactPhone</s:param>
+                    <s:param>gtdDTO.centralContactPhone</s:param>
                    </s:fielderror>                            
                  </span>
             </td>           

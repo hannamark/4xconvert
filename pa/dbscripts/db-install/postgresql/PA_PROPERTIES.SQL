@@ -28,3 +28,17 @@ insert into pa_properties(IDENTIFIER,name,value) VALUES(3,'smtp',
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(4,'fromaddress',
 'do.not.reply@mail.nih.gov');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(5,'rejection.subject',
+'Subject Clinical Trials Reporting Program (CTRP) Protocol Submission Rejection');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(6,'rejection.body',
+'You have submitted the following protocol to the NCI Clinical Trials Reporting Office (CTRO):
+
+Lead Organization Trial Identifier ${leadorgid} 
+
+Your Submission is rejected by the CTRO Staff for the following reason ${reasoncode}
+
+If you feel there has been an error in your submission validation, please contact the NCI CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov. Otherwise, we will consider this submission as rejected. 
+
+Thank you for participation in the Clinical Trials Reporting Program.');

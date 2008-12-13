@@ -10,6 +10,7 @@
  <!-- po integration -->
  <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
  <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+ <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -56,6 +57,16 @@
 	    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
 	    return false;
 	}
+	function showAlert() {
+	var input="gtdDTO.phaseCode";
+  	var inputElement = document.forms[0].elements[input];
+	
+   		if (inputElement.options[inputElement.selectedIndex].value == "Other")
+		{
+			alert("Please select a different Trial Phase");
+		}
+	}
+
 	function manageRespPartyLookUp(){
 	
 	if(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked==true) {							
@@ -88,6 +99,11 @@
          </td>
          <td class="value">
             <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" /> 
+            <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.LocalProtocolIdentifier</s:param>
+             </s:fielderror>                            
+          </span>
         </td>
     </tr>
     <tr>
@@ -100,6 +116,11 @@
        </td>
        <td class="value">
             <s:textarea name="gtdDTO.officialTitle" cssStyle="width:406px" rows="5"/> 
+            <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.OfficialTitle</s:param>
+             </s:fielderror>                            
+          </span>
        </td>
     </tr>
     <tr>
@@ -108,7 +129,7 @@
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
             <s:select headerKey="" headerValue="" name="gtdDTO.phaseCode" list="#phaseCodeValues" 
-                value="gtdDTO.phaseCode" cssStyle="width:120px" />
+                value="gtdDTO.phaseCode" cssStyle="width:120px" onchange="showAlert()"/>
             <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>gtdDTO.phaseCode</s:param>
@@ -120,7 +141,7 @@
         <td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
             <fmt:message key="isdesign.details.phase.comment"/></dfn></label></td>
         <td>
-            <s:textarea name="gtdDTO.phaseOtherText" rows="2" cssStyle="width:300px" />
+            <s:textarea name="gtdDTO.phaseOtherText" rows="2" cssStyle="width:300px" readonly="true"/>
         </td>
     </tr>    
     <tr>
@@ -129,7 +150,7 @@
         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                   value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
+                   value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" />
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>gtdDTO.primaryPurposeCode</s:param>
@@ -185,8 +206,10 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                    <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted'}">
                     <li><a href="#" class="btn" onclick="handleActionAccept();"><span class="btn_img"><span class="save">Accept</span></span></a></li>
                     <li><a href="#" class="btn" onclick="handleActionReject();"><span class="btn_img"><span class="save">Reject</span></span></a></li>
+                    </s:if>
                 </ul>   
             </del>
 

@@ -31,7 +31,7 @@ public class DocumentWorkflowStatusConverterTest {
     DocumentWorkflowStatus bo = new DocumentWorkflowStatus();
     bo.setId(123L);
     bo.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
-    bo.setCommonText("Common Text");
+    bo.setCommentText("Common Text");
     bo.setStudyProtocol(sp);
 
     DocumentWorkflowStatusConverter sg = new DocumentWorkflowStatusConverter();
@@ -43,7 +43,7 @@ public class DocumentWorkflowStatusConverterTest {
       DocumentWorkflowStatusDTO dto) {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
     assertEquals(bo.getStatusCode().getCode(), dto.getStatusCode().getCode());
-    assertEquals(bo.getCommonText(), dto.getCommonText().getValue());
+    assertEquals(bo.getCommentText(), dto.getCommentText().getValue());
     assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
   }
 
@@ -53,7 +53,7 @@ public class DocumentWorkflowStatusConverterTest {
     DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
     dto.setIdentifier(IiConverter.convertToIi((Long) null));
     dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
-    dto.setCommonText(StConverter.convertToSt("Common text"));
+    dto.setCommentText(StConverter.convertToSt("Common text"));
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
     DocumentWorkflowStatusConverter sg = new DocumentWorkflowStatusConverter();

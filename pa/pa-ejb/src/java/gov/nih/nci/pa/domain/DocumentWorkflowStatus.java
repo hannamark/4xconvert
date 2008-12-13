@@ -28,25 +28,23 @@ import org.hibernate.validator.NotNull;
 public class DocumentWorkflowStatus extends AbstractEntity {
 
     private static final long serialVersionUID = 1234567890L;
-    private String commonText;
+    private String commentText;
     private DocumentWorkflowStatusCode statusCode;
     private Timestamp statusDateRangeLow;
     private StudyProtocol studyProtocol;
     
     /**
-     * 
-     * @return commonText
+     * @return commentText
      */
-    @Column(name = "COMMON_TEXT")
-    public String getCommonText() {
-        return commonText;
+    @Column(name = "COMMENT_TEXT")
+    public String getCommentText() {
+      return commentText;
     }
     /**
-     * 
-     * @param commonText commonText
+     * @param commentText commentText
      */
-    public void setCommonText(String commonText) {
-        this.commonText = commonText;
+    public void setCommentText(String commentText) {
+      this.commentText = commentText;
     }
     /**
      * 

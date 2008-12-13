@@ -48,7 +48,6 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -200,12 +199,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         if (soDTOs == null || soDTOs.isEmpty()) {
             return;
         }
-        List<StudyRecruitmentStatusDTO> srsDtos = PoPaServiceBeanLookup
+        /*List<StudyRecruitmentStatusDTO> srsDtos = PoPaServiceBeanLookup
                     .getStudyRecruitmentStatusService().getCurrentByStudyProtocol(spDTO.getIdentifier());
         
         if (srsDtos != null && !srsDtos.isEmpty()) {
             appendElement(root, createElement("overall_status", srsDtos.get(0).getStatusCode() , doc));
-        }
+        }*/
         
         StudyStatusCode overStatusCode = StudyStatusCode.getByCode(soDTOs.get(0).getStatusCode().getCode());
 

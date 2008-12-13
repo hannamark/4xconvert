@@ -12,21 +12,22 @@ import gov.nih.nci.coppa.iso.Ts;
  * copyright holder, NCI.
  */
 public class DocumentWorkflowStatusDTO extends StudyDTO {
-    private St commonText;
+    private St commentText;
     private Cd statusCode;
     private Ts statusDateRange;
     
+    
     /**
-     * @return commonText
+     * @return commentText
      */
-    public St getCommonText() {
-        return commonText;
+    public St getCommentText() {
+      return commentText;
     }
     /**
-     * @param commonText commonText
+     * @param commentText commentText
      */
-    public void setCommonText(St commonText) {
-        this.commonText = commonText;
+    public void setCommentText(St commentText) {
+      this.commentText = commentText;
     }
     /**
      * @return statusCode

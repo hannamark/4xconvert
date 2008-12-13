@@ -6,6 +6,7 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -121,6 +122,43 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         LOG.info("Leaving Complete");
     return SUCCESS;
     }
+    
+    /**
+     * 
+     * @return String
+     */
+    public String verified() {
+      LOG.info("Entering verified");
+      try {
+          Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+          getAttribute(Constants.STUDY_PROTOCOL_II);
+          
+          DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
+          dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED));
+          dwsDto.setStatusDateRange(TsConverter.convertToTs(
+                            new Timestamp(new Date().getTime())));
+          dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
+          PaRegistry.getDocumentWorkflowStatusService().create(dwsDto);
+          
+          StudyProtocolDTO spDTO = new StudyProtocolDTO();
+          spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+          spDTO.setRecordVerificationDate(TsConverter.convertToTs(
+             new Timestamp(new Date().getTime())));
+          PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+          
+          StudyProtocolQueryDTO  studyProtocolQueryDTO = 
+          PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                      IiConverter.convertToLong(studyProtocolIi));
+          // put an entry in the session and store StudyProtocolQueryDTO 
+          ServletActionContext.getRequest().getSession().setAttribute(
+                  Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+          
+      } catch (Exception e) {
+          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+      }
+      LOG.info("Leaving verified");
+  return SUCCESS;
+    }
 
     /**
      * @return res
@@ -229,14 +267,19 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
         String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(studyProtocolIi);
-        String inputFile = new String(PaEarPropertyReader.getDocUploadPath() + "//" 
-            + spDTO.getNciIdentifier().toString() + ".xml");
+        
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer sb  = new StringBuffer(folderPath);
+            
+        String inputFile = new String(sb.append(File.separator).append(
+            spDTO.getNciIdentifier().toString() + ".xml"));
         OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
         oos.write(xmlData);
         oos.close();
 
-        String outputFile = new String(PaEarPropertyReader.getDocUploadPath() + "//TSR_" 
-            + spDTO.getNciIdentifier().toString() + ".html");
+        StringBuffer sb2  = new StringBuffer(folderPath);
+        String outputFile = new String(sb2.append(File.separator).append("TSR_").append(
+            spDTO.getNciIdentifier().toString() + ".html"));
         
         File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
         File[] attachments = {new File(inputFile), htmlFile};

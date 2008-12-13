@@ -9,7 +9,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class GeneralTrialDesignWebDTO {
 
     private String acronym;
@@ -45,7 +45,7 @@ public class GeneralTrialDesignWebDTO {
     private String centralContactName;
     private String centralContactIdentifier;
     private String nctIdentifier;
-    
+    private String commentText;
     
     /**
      * 
@@ -504,6 +504,17 @@ public class GeneralTrialDesignWebDTO {
         this.nctIdentifier = nctIdentifier;
     }
     
-    
+    /**
+     * @return commentText
+     */
+    public String getCommentText() {
+      return commentText;
+    }
+    /**
+     * @param commentText commentText
+     */
+    public void setCommentText(String commentText) {
+      this.commentText = commentText;
+    }
     
 }

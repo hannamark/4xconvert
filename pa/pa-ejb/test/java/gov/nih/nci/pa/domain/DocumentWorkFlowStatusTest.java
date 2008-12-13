@@ -50,7 +50,7 @@ public class DocumentWorkFlowStatusTest {
         assertEquals("Document Workflow Status code does not match " , 
                 create.getStatusCode() , saved.getStatusCode());
         assertEquals("Common text does not match " , 
-                create.getCommonText() , saved.getCommonText());
+                create.getCommentText() , saved.getCommentText());
         assertEquals("Document Workflow Status date not match " , create.getStatusDateRangeLow() , 
                 saved.getStatusDateRangeLow());
         assertEquals("Study Protocol not match " , create.getStudyProtocol() , saved.getStudyProtocol());
@@ -71,7 +71,7 @@ public class DocumentWorkFlowStatusTest {
         create.setStudyProtocol(sp);
         create.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         create.setStatusDateRangeLow(now);
-        create.setCommonText("Common Text");
+        create.setCommentText("Common Text");
         create.setUserLastUpdated("Abstractor");
         create.setDateLastUpdated(now);
         return create;

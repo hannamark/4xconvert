@@ -13,11 +13,11 @@ INSERT INTO study_protocol (identifier, assigned_identifier, official_title , st
 
 --- insert into document workflow status
 
-insert into document_workflow_status (identifier,status_code,common_text,status_date_range_low, study_protocol_identifier, date_last_updated, user_last_updated) 
+insert into document_workflow_status (identifier,status_code,comment_text,status_date_range_low, study_protocol_identifier, date_last_updated, user_last_updated) 
 values (1,'ACCEPTED', NULL, '2008-01-11', 1, current_timestamp, 'abstractor' ) 
 ;
 
-insert into document_workflow_status (identifier,status_code,common_text,status_date_range_low, study_protocol_identifier, date_last_updated, user_last_updated) 
+insert into document_workflow_status (identifier,status_code,comment_text,status_date_range_low, study_protocol_identifier, date_last_updated, user_last_updated) 
 values (2,'ACCEPTED', NULL, '2008-02-21', 2, current_timestamp, 'abstractor' ) 
 ;
 
