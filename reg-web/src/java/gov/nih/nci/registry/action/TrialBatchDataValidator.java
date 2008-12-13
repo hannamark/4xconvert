@@ -3,8 +3,6 @@ package gov.nih.nci.registry.action;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -14,6 +12,7 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.BatchConstants;
+import gov.nih.nci.registry.util.RegistryUtil;
 
 
 
@@ -126,7 +125,7 @@ public class TrialBatchDataValidator {
         }
         //check if the contact e-mail address is valid
         if (PAUtil.isNotEmpty(batchDto.getLeadOrgEmail())) {
-            if (!isValidEmailAddress(batchDto.getLeadOrgEmail())) {
+            if (!RegistryUtil.isValidEmailAddress(batchDto.getLeadOrgEmail())) {
                 fieldErr.append("Lead Organization Email Address is invalid \n");               
             }
         }
@@ -148,6 +147,11 @@ public class TrialBatchDataValidator {
         }
         // validate trial status and dates
         fieldErr.append(validateTrialDates(batchDto));
+        //validate grant 
+        if (!containsReqGrantInfo(batchDto.getNihGrantFundingMechanism(), batchDto.getNihGrantSrNumber(), 
+                batchDto.getNihGrantInstituteCode(), batchDto.getNihGrantNCIDivisionCode())) {
+            fieldErr.append("All Grant values are required.\n");
+        }
         return fieldErr.toString();
     }
     private StringBuffer validateSponsorInfo(StudyProtocolBatchDTO batchDto) {
@@ -210,7 +214,7 @@ public class TrialBatchDataValidator {
             }
             //check if the contact e-mail address is valid
             if (PAUtil.isNotEmpty(batchDto.getSponsorContactEmail())) {
-                if (!isValidEmailAddress(batchDto.getSponsorContactEmail())) {
+                if (!RegistryUtil.isValidEmailAddress(batchDto.getSponsorContactEmail())) {
                     fieldErr.append("Sponsor Contact Email Address is invalid \n");               
                 }
             }
@@ -253,7 +257,7 @@ public class TrialBatchDataValidator {
         }
 //      check if the contact e-mail address is valid
         if (PAUtil.isNotEmpty(batchDto.getPiEmail())) {
-            if (!isValidEmailAddress(batchDto.getPiEmail())) {
+            if (!RegistryUtil.isValidEmailAddress(batchDto.getPiEmail())) {
                 fieldErr.append("Principal Investigator Email Address is invalid \n");               
             }
         }
@@ -290,8 +294,8 @@ public class TrialBatchDataValidator {
                               || !dto.getStudyStartDateType().equals(
                                   ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                   errors
-                        .append("If Current Trial Status is Active, Trial Start Date must be Actual");
-                    errors.append("and same as Current Trial Status Date.\n");
+                        .append("If Current Trial Status is Active, Trial Start Date must be Actual ");
+                    errors.append(" and same as Current Trial Status Date.\n");
               }                
           }            
         }        
@@ -325,7 +329,7 @@ public class TrialBatchDataValidator {
               if (!statusDate.equals(trialCompletionDate) 
                       ||  !dto.getPrimaryCompletionDateType().equals(
                           ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual");
+                  errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual ");
                   errors.append(" and same as Current Trial Status Date\n");
               }                
           }            
@@ -340,7 +344,7 @@ public class TrialBatchDataValidator {
                           equals(dto.getCurrentTrialStatus())) {
               if (!dto.getPrimaryCompletionDateType().equals(
                           ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  errors.append("If Current Trial Status is Complete or Administratively Complete,");
+                  errors.append("If Current Trial Status is Complete or Administratively Complete, ");
                   errors.append(" Primary Completion Date must be  Actual.\n");
               }
              
@@ -362,7 +366,7 @@ public class TrialBatchDataValidator {
             Timestamp trialCompletionDate = PAUtil.dateStringToTimestamp(dto.getPrimaryCompletionDate());
             if (trialCompletionDate.before(trialStartDate)) {
                 errors.append("Trial Start Date must be same or earlier ");
-                errors.append("than Primary Completion Date.\n");                
+                errors.append(" than Primary Completion Date.\n");                
             }
         }        
         // Constraint/Rule: 19 Trial Start Date must be current/past if ‘actual’ trial start date type 
@@ -399,7 +403,7 @@ public class TrialBatchDataValidator {
                         Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
                         if (currentTimeStamp.before(completionDate)) {
                             errors.append("Actual Primary Completion Date ");
-                            errors.append("must be current or in past.\n");                
+                            errors.append(" must be current or in past.\n");                
                         }
                 
             } else if (dto.getPrimaryCompletionDateType().equals(
@@ -438,15 +442,33 @@ public class TrialBatchDataValidator {
         return isValidFileType;
 
     }
-    private  boolean isValidEmailAddress(String emailAddress)  {
-        boolean isvalidEmailAddr = false;
-        Pattern email = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
-
-        Matcher fit = email.matcher(emailAddress);
-        if (fit.matches()) {
-            isvalidEmailAddr = true;
+    /**
+     * 
+     * @param fundmc
+     * @param srNumber
+     * @param icdCode
+     * @return
+     */
+    private boolean containsReqGrantInfo(String fundmc, String srNumber,
+            String icdCode, String divCode) {
+        int nullCount = 0;
+        if (null == fundmc || fundmc.trim().length() < 1) {
+            nullCount += 1;
+        }
+        if (null == srNumber || srNumber.trim().length() <  1) {
+            nullCount += 1;
+        }
+        if (null == icdCode || icdCode.trim().length() < 1) {
+            nullCount += 1;
+        }
+        if (nullCount == BatchConstants.GRANT_FIELDS) {
+            return true;
         } 
-        return isvalidEmailAddr;
+        if (nullCount == 0) {
+            return true;
+        }
+        return false;
+        
     }
 
 }
