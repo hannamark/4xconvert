@@ -43,3 +43,5 @@ Your Submission is rejected by the CTRO Staff for the following reason ${reasonc
 If you feel there has been an error in your submission validation, please contact the NCI CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov. Otherwise, we will consider this submission as rejected. 
 
 Thank you for participation in the Clinical Trials Reporting Program.');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(7,'allowed.uploadfile.types','doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb');
