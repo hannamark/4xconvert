@@ -277,7 +277,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public OrganizationEntityServiceRemote getPoOrganizationEntityService() throws PAException {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                 + "/po/OrganizationEntityServiceBean/remote";
-        return (OrganizationEntityServiceRemote) JNDIUtilPO.lookup(serverInfo);
+        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
     /**
@@ -287,7 +287,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() throws PAException {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
             + "/po/HealthCareFacilityCorrelationServiceBean/remote";
-        return (HealthCareFacilityCorrelationServiceRemote) JNDIUtilPO.lookup(serverInfo);
+        return (HealthCareFacilityCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
     /**
@@ -296,7 +296,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public PersonEntityServiceRemote getPoPersonEntityService() throws PAException {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
-        return (PersonEntityServiceRemote) JNDIUtilPO.lookup(serverInfo);
+        return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }    
 
     /**
@@ -307,7 +307,7 @@ public class JndiServiceLocator implements ServiceLocator {
     throws PAException { 
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
             + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
-        return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtilPO.lookup(serverInfo);
+        return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
     /**
@@ -317,7 +317,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() throws PAException {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                                 + "/po/HealthCareProviderCorrelationServiceBean/remote";
-        return (HealthCareProviderCorrelationServiceRemote) JNDIUtilPO.lookup(serverInfo);
+        return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
     
     /**
@@ -329,7 +329,7 @@ public class JndiServiceLocator implements ServiceLocator {
             throws PAException {
         String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
                 + "/po/OrganizationalContactCorrelationServiceBean/remote";
-        return (OrganizationalContactCorrelationServiceRemote) JNDIUtilPO.lookup(serverInfo);
+        return (OrganizationalContactCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
 }

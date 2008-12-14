@@ -5,6 +5,7 @@
 
 package gov.nih.nci.pa.util;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -27,22 +28,32 @@ import org.apache.log4j.Logger;
 public final class JNDIUtil {
 
     private static final Logger LOG = Logger.getLogger(JNDIUtil.class);
-   // private static final String RESOURCE_NAME = "jndi.properties";
-  //  private static JNDIUtil theInstance = new JNDIUtil();
-  //  private static InitialContext poCtx;
-  //  private final InitialContext context;
- //   private final InitialContext contextRemote;
+    private static final String RESOURCE_NAME = "jndi.properties";
+
+    private static JNDIUtil theInstance = new JNDIUtil();
+    private static InitialContext poCtx;
+    private final InitialContext context;
+    private final InitialContext contextRemote;
     private JNDIUtil() {
         try {
-            //Properties props = getProperties();
-            Properties props = new Properties();
-            props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-            //context = new InitialContext(props);
-            //contextRemote = new InitialContext(props);
+            Properties props = getProperties();
+            context = new InitialContext(props);
+            contextRemote = new InitialContext(props);
         } catch (Exception e) {
             LOG.error("Unable to initialize the JNDI Util.", e);
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * @return jndi (& jms) properties
+     * @throws IOException
+     *             on class load error
+     */
+    public static Properties getProperties() throws IOException {
+        Properties props = new Properties();
+        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+        return props;
     }
 
     /**
@@ -51,38 +62,28 @@ public final class JNDIUtil {
      * @return object in default context with given name
      */
     public static Object lookup(String name) {
-        try {
-            Properties props = new Properties();
-            props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-            props.setProperty(Context.SECURITY_PRINCIPAL, "curator");
-            props.setProperty(Context.SECURITY_CREDENTIALS, "pass");             
-            InitialContext context = new InitialContext(props);        
-            return lookup(context, name);
-        } catch (NamingException e) {
-            LOG.error("Look for " + name + " failed, exception is " + e);
-            return null;
-        }
-        
+        return lookup(theInstance.context, name);
     }
-    
+
     /**
+     * 
      * @param name
      *            name to lookup
      * @return object in default context with given name
      */
-    public static Object lookupwqewqe(String name) {
+    public static Object lookupPo(String name) {
         try {
             Properties env = new Properties();
             env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-            env.setProperty(Context.SECURITY_PRINCIPAL, "ejbclient");
-            env.setProperty(Context.SECURITY_CREDENTIALS, "pass");  
-            InitialContext context = new InitialContext(env);
-            return lookup(context, name);
+            poCtx = new InitialContext(env);
+            return lookup(theInstance.contextRemote, name);
         } catch (NamingException e) {
-            LOG.error("Look for " + name + " failed, exception is " + e);
-            return null;
+            LOG.error("Naming Exception at lookupPo() call for parameter" 
+                    + name + " \n\t\t the message is " + e.getMessage());
+           
         }
-    }    
+        return null;
+    }
 
     /**
      * @param ctx
