@@ -3,13 +3,14 @@
  */
 package gov.nih.nci.registry.util;
 
-import gov.nih.nci.pa.util.PaEarPropertyReader;
-
+import gov.nih.nci.pa.service.PAException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Bala Nair
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("PMD")
 public class RegistryUtil {
+    private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
     
     /**
      * check if the uploaded file type is valid.
@@ -25,19 +27,27 @@ public class RegistryUtil {
      */
     public static boolean isValidFileType(String fileName) {
         boolean isValidFileType = false;
-        String allowedUploadFileTypes =  PaEarPropertyReader.getAllowedUploadFileTypes();
-        if (allowedUploadFileTypes != null) {
-            int pos =  fileName.lastIndexOf(".");
-            String uploadedFileType = fileName.substring(pos + 1, fileName.length());
-            StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");        
-            while (st.hasMoreTokens()) {
-                String allowedFileType = st.nextToken();
-                if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
-                    isValidFileType = true;
-                    break;
+        try {
+            String allowedUploadFileTypes = RegistryServiceLocator
+                            .getLookUpTableService().getPropertyValue(
+                                            "allowed.uploadfile.types");
+            if (allowedUploadFileTypes != null) {
+                int pos = fileName.lastIndexOf(".");
+                String uploadedFileType = fileName.substring(pos + 1, fileName
+                        .length());
+                StringTokenizer st = new StringTokenizer(
+                        allowedUploadFileTypes, ",");
+                while (st.hasMoreTokens()) {
+                    String allowedFileType = st.nextToken();
+                    if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
+                        isValidFileType = true;
+                        break;
+                    }
                 }
             }
-        }        
+        } catch (PAException pae) {
+            LOG.error("Error occured while retrieving allowed file types from database " + pae.getMessage());
+        }
         return isValidFileType;
 
     }
