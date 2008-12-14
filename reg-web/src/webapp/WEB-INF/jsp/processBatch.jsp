@@ -23,11 +23,8 @@ function handleAction(){
     <reg-web:failureMessage/>
     <s:form name="batchUpload" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <input type="hidden" name="page" />
-        <p>Add Trial into NCI Clinical Trials Reporting Portal  by submitting this form. Please note: asterisks (<span class="required">*</span>) indicate required fields. </p>
+        <p>Register multiple trials into NCI Clinical Trials Reporting Portal by uploading the Trial Data file and documents zip. Please note: All fields are required. </p>
         <table class="form"> 
-          <tr>
-                <th colspan="2"><fmt:message key="process.batch.details"/></th>
-          </tr>
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
                 <td scope="row" class="label">
@@ -79,7 +76,7 @@ function handleAction(){
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li><li>            
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Upload Trial</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Upload Trials</span></span></s:a>  
                         </li>
                 </ul>   
             </del>
