@@ -30,6 +30,7 @@ public class PaEarPropertyReader {
     private static String lookUpPort = "po.port.number";
     private static String csmSubmitterGroup = "csm.submitter.group";
     private static String allowedUploadFileTypes = "allowed.uploadfile.types";
+    private static String batchUploadPath = "batch.upload.path";
  
     
     static {
@@ -61,6 +62,25 @@ public class PaEarPropertyReader {
         }    
         return folderPath;
     }
+    
+    /**
+     * 
+     * @return batch upload docs folder path
+     * @throws PAException e
+     */
+   public static String getBatchUploadPath() throws PAException {
+       String folderPath = props.getProperty(batchUploadPath);
+       if (folderPath == null) {
+           LOG.error(" batch.upload.path does not have value in paear.properties ");
+           throw new PAException("batch.upload.path does not have value in paear.properties");
+       }
+       File f = new File(folderPath);
+       if (!f.isDirectory()) {
+           LOG.error(folderPath + " is not a valid directory ");
+           throw new PAException(folderPath + " is not a valid directory ");
+       }    
+       return folderPath;
+   }
     
     /**
       *
