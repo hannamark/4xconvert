@@ -14,6 +14,8 @@ po.pass=pass
 doc.upload.filepath.loc=D://doc
 # Allowed file types for trial documents, use a comma seperator for more file types
 allowed.uploadfile.types=doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb
+# Registry batch upload docs location
+batch.upload.filepath.loc=D://batch_docs
 
 # Messaging properties
 
