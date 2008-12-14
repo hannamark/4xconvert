@@ -108,11 +108,23 @@ public class PAMessageDrivenBean implements MessageListener {
                 if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
                     orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
                 }
+                if (identifierName.equals(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)) {
+                    orgRemote.synchronizeOversightCommittee(updateMessage.getId());
+                }
+                if (identifierName.equals(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME)) {
+                    orgRemote.synchronizeResearchOrganization(updateMessage.getId());
+                }
                 if (identifierName.equals(IiConverter.PERSON_IDENTIFIER_NAME)) {
                     perRemote.synchronizePerson(updateMessage.getId());
                 }
-                if (identifierName.equals(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)) {
+                if (identifierName.equals(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)) {
                     perRemote.synchronizeClinicalResearchStaff(updateMessage.getId());
+                }
+                if (identifierName.equals(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)) {
+                    perRemote.synchronizeHealthCareProvider(updateMessage.getId());
+                }
+                if (identifierName.equals(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME)) {
+                    perRemote.synchronizeOrganizationalContact(updateMessage.getId());
                 }
                 HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             }            
