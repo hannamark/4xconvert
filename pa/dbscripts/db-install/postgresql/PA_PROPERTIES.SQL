@@ -1,3 +1,4 @@
+delete from pa_properties;
 insert into pa_properties(IDENTIFIER,name,value) VALUES(1,'tsr.subject',
 'NCI Trial Summary Report AND ClinicalTrials.gov Submission Document');
 
