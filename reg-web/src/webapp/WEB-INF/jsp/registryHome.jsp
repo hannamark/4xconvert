@@ -41,12 +41,12 @@
                         <li><a href="/registry/protected/searchTrial.action"><strong>Login</strong></a> to your account and</li> 
                         	<menu> 
                         		<li>Register clinical trials</li>
-                        		<li>Search registered trials by Title, Phase, Trial Identifiers, Organization, and Principal Investigators</li>
+                        		<li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
                                 </menu>                                               
                     </ul>                    
 		    <p class="padme10">
 			    Want to learn more about the Reporting Program? Visit the <a href="http://ctrp.nci.nih.gov" class="external" target="new1">NCI Clinical Trials Reporting Program Web site</a>
-			    <br>You can also call the Help Desk at 301-451-4384 or email us at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
+			    <br>You can also call the NCICB Application Support at 301-451-4384 or email us at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
             </p>
 
                     <!--/ADD CONTENT HERE-->
