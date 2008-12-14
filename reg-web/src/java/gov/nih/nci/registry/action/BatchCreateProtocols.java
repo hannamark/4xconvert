@@ -103,7 +103,7 @@ public class BatchCreateProtocols {
                     result = buildProtocol(batchDto, folderPath , userName);    
                 } else {
                     result = "Trial submission failed for Lead Organization Trial Identifier " 
-                    + batchDto.getLocalProtocolIdentifier() +  " " + result;
+                    + batchDto.getLocalProtocolIdentifier() +  " " + result + "\n";
                 }
                 log.error("putting values in map local protocol Id as " 
                         + batchDto.getLocalProtocolIdentifier() + "and response as " + result);
@@ -255,15 +255,15 @@ public class BatchCreateProtocols {
          protocolAssignedId = 
              RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
              getAssignedIdentifier().getExtension().toString();
-         protocolAssignedId = "The Trial with Lead Organization Trial Identifier " + dto.getLocalProtocolIdentifier()
-             + " has been successfully registered and assigned the NCI Identifier " + protocolAssignedId;
+         protocolAssignedId = "Trial with Lead Organization Trial Identifier " + dto.getLocalProtocolIdentifier()
+             + " has been successfully registered and assigned the NCI Identifier " + protocolAssignedId + "\n";
         } catch (PAException ex) {
             log.error("buildprotocol exception-" + ex.getMessage());
             protocolAssignedId =  "Trial submission failed for Lead Organization Trial Identifier " 
-            + dto.getLocalProtocolIdentifier() + ex.getMessage();
+            + dto.getLocalProtocolIdentifier() + ex.getMessage() + "\n";
         } catch (Exception exc) {
         protocolAssignedId =  "Trial submission failed for Lead Organization Trial Identifier " 
-            + dto.getLocalProtocolIdentifier() + exc.getMessage();
+            + dto.getLocalProtocolIdentifier() + exc.getMessage() + "\n";
         log.error("buildprotocol exception-" + exc.getMessage());
     }
         log.error("response " + protocolAssignedId);
