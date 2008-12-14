@@ -93,6 +93,10 @@ public class BatchHelper { //implements Runnable {
                 mailBody.append("\n");
             }
             final MailManager mailManager = new MailManager();
+            // Send the batch upload report to the submitter
+            String  bodyIntro = "Thank you for  using the NCI Clinical Trials Reporting Program. \n\n"
+                                + "Here is the status of the trials you submitted. \n\n";
+            mailBody.insert(0, bodyIntro);
             mailManager.sendMail(userName, null, mailBody.toString(), subject);
            
         } catch (Exception e) {
