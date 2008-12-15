@@ -83,6 +83,7 @@
 package gov.nih.nci.po.web.roles;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
@@ -94,10 +95,14 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.displaytag.properties.SortOrderEnum;
+
+import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
@@ -131,6 +136,7 @@ public class HealthCareFacilityAction extends ActionSupport implements Preparabl
         if (hcfs != null && !hcfs.isEmpty()) {
             // current org has a non-nullified role, use it
             setRole(hcfs.get(0));
+            getRole().getChangeRequests().size();
         } else {
             useDefaultHealthCareFacility();
         }
@@ -149,7 +155,11 @@ public class HealthCareFacilityAction extends ActionSupport implements Preparabl
      * @return INPUT
      * @throws JMSException on error
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "role") })
+    @Validations(
+            customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                    parameters = { @ValidationParameter(name = "resourceKeyBase", value = "hcf") })
+            }
+        )    
     public String add() throws JMSException {
         PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().curate(role);
         ActionHelper.saveMessage(getText("hcf.add.success"));
@@ -162,7 +172,11 @@ public class HealthCareFacilityAction extends ActionSupport implements Preparabl
      * @return INPUT
      * @throws JMSException on error
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "role") })
+    @Validations(
+            customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
+                    parameters = { @ValidationParameter(name = "resourceKeyBase", value = "hcf") })
+            }
+        )  
     public String edit() throws JMSException {
         PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService().curate(role);
         ActionHelper.saveMessage(getText("hcf.update.success"));
@@ -215,5 +229,14 @@ public class HealthCareFacilityAction extends ActionSupport implements Preparabl
      */
     public void setRole(HealthCareFacility role) {
         this.role = role;
+    }
+
+    /**
+     * @return list of change requests
+     */
+    public PaginatedList<HealthCareFacilityCR> getCrs() {
+        return new PaginatedList<HealthCareFacilityCR>(role.getChangeRequests().size(),
+                new ArrayList<HealthCareFacilityCR>(role.getChangeRequests()), role.getChangeRequests().size(), 1, null,
+                "status", SortOrderEnum.ASCENDING);
     }
 }

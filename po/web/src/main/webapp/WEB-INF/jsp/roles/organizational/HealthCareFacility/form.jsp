@@ -30,7 +30,6 @@
 				<h2>Health Care Facility Role Information</h2>
 		    <div class="box_white">
 				<s:actionerror />
-                <s:fielderror />
 				<s:form action="%{formAction}" id="curateRoleForm">
                 <s:if test="%{isCreate}">
                     This Organization does not have a role of Health Care Facility assigned to it. Please select a Status and click 'Save' button to assign the new role.
@@ -41,6 +40,7 @@
 
 				<s:hidden key="organization"/>
      			<s:select
+     			   id="curateRoleForm.role.status"
 				   label="%{getText('hcf.status')}"
 				   name="role.status"
 				   list="availableStatus"
@@ -56,6 +56,36 @@
         </div>
     </div> 
 </div>
+
+<c:if test="${fn:length(role.changeRequests) > 0}">
+<div id="page" style="margin-top:10px;">
+<div id="crinfo">
+    <div class="boxouter_nobottom">
+    <h2>Change Request Information</h2>
+        <%@ include file="../orgInfo.jsp" %>    
+        <div class="boxouter">
+            <h2>Health Care Facility Role Change Request(s)</h2>
+            <div class="box_white">
+                <p>The table below lists the change requests for this Health Care Facility.</p>
+                <display:table class="data" uid="row" name="role.changeRequests">
+		        <po:displayTagProperties/>
+		        <display:column titleKey="hcf.status" property="status" />
+		        <display:column titleKey="th.action" class="action">
+		           <po:copyButton
+		             id="copy_curateCrForm_role_status"
+		             onclick="selectValueInSelectField('${row.status}', 'curateRoleForm.role.status');" 
+		                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
+		           </po:copyButton>
+		        </display:column>
+		    </display:table>
+            <div class="clear"></div>
+            </div>
+        </div>    
+    </div>
+</div>
+</div>
+</c:if>
+
 <div style="clear:left;">
 </div>    
     <div class="btnwrapper" style="margin-bottom:20px;">

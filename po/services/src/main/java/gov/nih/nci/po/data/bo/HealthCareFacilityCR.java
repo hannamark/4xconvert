@@ -37,6 +37,11 @@ public class HealthCareFacilityCR extends AbstractOrganizationRole
     public void setProcessed(boolean processed) {
         this.processed = processed;
     }
+    
+    private HealthCareFacilityCR() {
+        super();
+    }
+    
     /**
      * useful ctor.
      * @param target the affected Correlation.
