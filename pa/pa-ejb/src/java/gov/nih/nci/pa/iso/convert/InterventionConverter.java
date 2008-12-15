@@ -36,6 +36,8 @@ public class InterventionConverter extends AbstractConverter<InterventionDTO, In
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
+        dto.setNtTermIdentifier(StConverter.convertToSt(bo.getNtTermIdentifier()));
+        dto.setPdqTermIdentifier(StConverter.convertToSt(bo.getPdqTermIdentifier()));
         return dto;
     }
 
@@ -54,6 +56,8 @@ public class InterventionConverter extends AbstractConverter<InterventionDTO, In
         bo.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
         bo.setTypeCode(InterventionTypeCode.getByCode(CdConverter.convertCdToString(dto.getTypeCode())));
+        bo.setNtTermIdentifier(StConverter.convertToString(dto.getNtTermIdentifier()));
+        bo.setPdqTermIdentifier(StConverter.convertToString(dto.getPdqTermIdentifier()));
         return bo;
     }
 }

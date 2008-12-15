@@ -12,8 +12,11 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.junit.Before;
@@ -40,6 +43,33 @@ public class InterventionServiceTest {
         InterventionDTO dto = remoteEjb.get(ii);
         assertEquals(StConverter.convertToString(dto.getName()), "Chocolate Bar");
     }
+    
+    @Test
+    public void createTest() throws Exception {
+        Timestamp today = PAUtil.dateStringToTimestamp(PAUtil.today());
+        InterventionDTO dto1 = new InterventionDTO();
+        dto1.setDescriptionText(StConverter.convertToSt("description123"));
+        dto1.setName(StConverter.convertToSt("name123"));
+        dto1.setNtTermIdentifier(StConverter.convertToSt("nt123"));
+        dto1.setPdqTermIdentifier(StConverter.convertToSt("pdq123"));
+        dto1.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+        dto1.setStatusDateRangeLow(TsConverter.convertToTs(today));
+        dto1.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.GENETIC));
+        
+        InterventionDTO result = remoteEjb.create(dto1);
+        Ii ii = result.getIdentifier();
+        
+        InterventionDTO dto2 = remoteEjb.get(ii);
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(dto2.getIdentifier()));
+        assertEquals(StConverter.convertToString(dto1.getDescriptionText()), StConverter.convertToString(dto2.getDescriptionText()));
+        assertEquals(StConverter.convertToString(dto1.getName()), StConverter.convertToString(dto2.getName()));
+        assertEquals(StConverter.convertToString(dto1.getNtTermIdentifier()), StConverter.convertToString(dto2.getNtTermIdentifier()));
+        assertEquals(StConverter.convertToString(dto1.getPdqTermIdentifier()), StConverter.convertToString(dto2.getPdqTermIdentifier()));
+        assertEquals(CdConverter.convertCdToString(dto1.getStatusCode()), CdConverter.convertCdToString(dto2.getStatusCode()));
+        assertEquals(TsConverter.convertToTimestamp(dto1.getStatusDateRangeLow()), TsConverter.convertToTimestamp(dto2.getStatusDateRangeLow()));
+        assertEquals(CdConverter.convertCdToString(dto1.getTypeCode()), CdConverter.convertCdToString(dto2.getTypeCode()));
+    }
+    
     @Test
     public void searchTest() throws Exception {
         InterventionDTO searchCriteria = new InterventionDTO();

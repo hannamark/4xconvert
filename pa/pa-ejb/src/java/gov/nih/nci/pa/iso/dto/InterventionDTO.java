@@ -2,7 +2,6 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
 
 /**
  * @author Hugh Reinhart
@@ -12,13 +11,13 @@ import gov.nih.nci.coppa.iso.Ts;
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 
-public class InterventionDTO extends BaseDTO {
+public class InterventionDTO extends BaseDTOWithStatusCode {
     private static final long serialVersionUID = 1234567567L;
     private Cd typeCode;
     private St name;
     private St descriptionText;
-    private Cd statusCode;
-    private Ts statusDateRangeLow;
+    private St pdqTermIdentifier;
+    private St ntTermIdentifier;
     /**
      * @return the typeCode
      */
@@ -56,27 +55,27 @@ public class InterventionDTO extends BaseDTO {
         this.descriptionText = descriptionText;
     }
     /**
-     * @return the statusCode
+     * @return the pdqTermIdentifier
      */
-    public Cd getStatusCode() {
-        return statusCode;
+    public St getPdqTermIdentifier() {
+        return pdqTermIdentifier;
     }
     /**
-     * @param statusCode the statusCode to set
+     * @param pdqTermIdentifier the pdqTermIdentifier to set
      */
-    public void setStatusCode(Cd statusCode) {
-        this.statusCode = statusCode;
+    public void setPdqTermIdentifier(St pdqTermIdentifier) {
+        this.pdqTermIdentifier = pdqTermIdentifier;
     }
     /**
-     * @return the statusDateRangeLow
+     * @return the ntTermIdentifier
      */
-    public Ts getStatusDateRangeLow() {
-        return statusDateRangeLow;
+    public St getNtTermIdentifier() {
+        return ntTermIdentifier;
     }
     /**
-     * @param statusDateRangeLow the statusDateRangeLow to set
+     * @param ntTermIdentifier the ntTermIdentifier to set
      */
-    public void setStatusDateRangeLow(Ts statusDateRangeLow) {
-        this.statusDateRangeLow = statusDateRangeLow;
+    public void setNtTermIdentifier(St ntTermIdentifier) {
+        this.ntTermIdentifier = ntTermIdentifier;
     }
 }

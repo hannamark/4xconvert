@@ -57,7 +57,7 @@ function handleCreateGroup(){
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2"><input type="hidden" name="cbValue" /> 
-            <display:table name="armList" id="row" class="data" sort="list" pagesize="10">
+            <display:table name="armList" id="row" class="data" sort="list" pagesize="10" requestURI="trialArms.action">
                 <display:column property="name" sortable="true"
                     titleKey="arms.name" 
                     headerClass="sortable"  />

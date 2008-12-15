@@ -36,6 +36,8 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
     private String name;
     private InterventionTypeCode typeCode;
     private String descriptionText;
+    private String pdqTermIdentifier;
+    private String ntTermIdentifier;
     private List<InterventionAlternateName> interventionAlternateNames = new ArrayList<InterventionAlternateName>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
 
@@ -82,6 +84,34 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      */
     public void setDescriptionText(String descriptionText) {
         this.descriptionText = descriptionText;
+    }
+    /**
+     * @return the pdqTermIdentifier
+     */
+    @Column(name = "PDQ_TERM_IDENTIFIER")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    public String getPdqTermIdentifier() {
+        return pdqTermIdentifier;
+    }
+    /**
+     * @param pdqTermIdentifier the pdqTermIdentifier to set
+     */
+    public void setPdqTermIdentifier(String pdqTermIdentifier) {
+        this.pdqTermIdentifier = pdqTermIdentifier;
+    }
+    /**
+     * @return the ntTermIdentifier
+     */
+    @Column(name = "NT_TERM_IDENTIFIER")
+    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    public String getNtTermIdentifier() {
+        return ntTermIdentifier;
+    }
+    /**
+     * @param ntTermIdentifier the ntTermIdentifier to set
+     */
+    public void setNtTermIdentifier(String ntTermIdentifier) {
+        this.ntTermIdentifier = ntTermIdentifier;
     }
     /**
      * @return the interventionOthers

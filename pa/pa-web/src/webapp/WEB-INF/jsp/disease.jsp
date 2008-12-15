@@ -56,7 +56,7 @@ function handleCreate(){
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
-            <display:table name="diseaseList" id="row" class="data" sort="list" pagesize="10">
+            <display:table name="diseaseList" id="row" class="data" sort="list" pagesize="10" requestURI="disease.action">
                 <display:column property="preferredName" sortable="true"
                     titleKey="disease.preferredName" headerClass="sortable"/>
                 <display:column titleKey="disease.view" headerClass="centered" class="action">
