@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ArmTypeCode;
@@ -133,5 +132,21 @@ public class ArmServiceTest {
         remoteEjb.delete(ii);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
         assertEquals (originalCount - 1, dtoList.size());
+    }
+    public void getByPlannedActivityTest() throws Exception {
+        Ii paIi = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
+        List<ArmDTO> dtoList = remoteEjb.getByPlannedActivity(paIi);
+        assertEquals(0, dtoList.size());
+        
+        ArmDTO dto = remoteEjb.get(ii);
+        DSet<Ii> paDSet = dto.getInterventions();
+        Set<Ii> paSet = paDSet.getItem();
+        paSet.add(paIi);
+        paDSet.setItem(paSet);
+        dto.setInterventions(paDSet);
+        remoteEjb.update(dto);
+        
+        dtoList = remoteEjb.getByPlannedActivity(paIi);
+        assertEquals(1, dtoList.size());
     }
 }
