@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.audit.Auditable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.ValidStateCountry;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -105,6 +106,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @Entity
 @SuppressWarnings("PMD.UselessOverridingMethod")
+@ValidStateCountry
 public class Address implements Auditable, PersistentObject {
     private static final long serialVersionUID = 1L;
 

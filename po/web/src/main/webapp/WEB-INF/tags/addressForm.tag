@@ -60,7 +60,7 @@ function ${formNameBase}_displayStateProvince() {
 <po:inputRow>
     <po:inputRowElement>
         <s:textfield name="%{#attr.addressKeyBase + '.cityOrMunicipality'}" 
-            required="%{#attr.required}" cssClass="%{cssClass}" size="31" 
+            required="%{#attr.required}" cssClass="%{cssClass}" size="25" 
             label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
     </po:inputRowElement>
     <po:inputRowElement>
@@ -76,21 +76,23 @@ function ${formNameBase}_displayStateProvince() {
 	    <div id="${addressKeyBase}.div_stateOrProvince" <s:if test="%{isUSA}">style="display:none;"</s:if>> 
 		    <s:textfield 
 		        id="%{#attr.formNameBase + '.' +  #attr.addressKeyBase + '.stateOrProvince'}"
-		        name="%{#attr.addressKeyBase + '.stateOrProvince'}" size="32"
+		        name="%{#attr.addressKeyBase + '.stateOrProvince'}" size="38"
 		        label="%{getText(#attr.addressKeyBase + '.stateOrProvince')}" 
 		        />
 	    </div>
 	    <div id="${addressKeyBase}.div_selectStateOrProvince" <s:if test="%{isNotUSAOrNoCountrySelected}">style="display:none;"</s:if>>
-	        <s:select 
-			    id="%{#attr.formNameBase + '.' +  #attr.addressKeyBase + '._selectStateOrProvince'}"
-	            name="%{#attr.addressKeyBase + '._selectStateOrProvince'}" 
-	            label="%{getText(#attr.addressKeyBase + '.stateOrProvince')}"
-			    list="#countryUSA.states" listKey="code" listValue="name" 
-			    headerKey="" headerValue="--Select a State--"
-			    value="#attr.address.stateOrProvince" 
-			    onchange="$('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.stateOrProvince'}').value = $('%{#attr.formNameBase + '.' + #attr.addressKeyBase + '._selectStateOrProvince'}').value;"
-			    required="%{#attr.required}" cssClass="%{cssClass}" 
-			    />
+	       <po:field labelKey="${addressKeyBase}.stateOrProvince" fieldRequired="true">
+	       <select id="${formNameBase}.${addressKeyBase}._selectStateOrProvince"
+	           name="${addressKeyBase}._selectStateOrProvince"
+	           label="<s:text name="%{#attr.addressKeyBase + '.stateOrProvince'}"/>"
+	           onchange="$('${formNameBase}.${addressKeyBase}.stateOrProvince').value = $('${formNameBase}.${addressKeyBase}._selectStateOrProvince').value;"
+	           >
+	           <option value="">--Select a State--</option>
+	           <s:iterator value="#countryUSA.states" status="statusStatus"> 
+                  <option value="<s:property value="code"/>" <s:if test="code == #attr.address.stateOrProvince">selected</s:if>><s:property value="code"/>(<s:property value="name"/>)</option>
+               </s:iterator>
+           </select>
+	       </po:field>
 	    </div>
     </po:inputRowElement>
 </po:inputRow>

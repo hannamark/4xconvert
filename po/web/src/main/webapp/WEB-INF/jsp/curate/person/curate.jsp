@@ -152,6 +152,7 @@
 		<div class="boxouter">
 		<h2>Address Information</h2>
 		    <div class="box_white">
+		        <s:fielderror><s:param>person.postalAddress.null</s:param></s:fielderror>
 		        <po:addressForm formNameBase="curateEntityForm" addressKeyBase="person.postalAddress" address="${person.postalAddress}" required="true"/>
 		        <div class="clear"></div>
 		    </div>

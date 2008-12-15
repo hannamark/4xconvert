@@ -144,7 +144,7 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
         try {
             OrganizationDTO dto = new OrganizationDTO();
             dto.setName(RemoteApiUtils.convertToEnOn("_"));
-            dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
+            dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);

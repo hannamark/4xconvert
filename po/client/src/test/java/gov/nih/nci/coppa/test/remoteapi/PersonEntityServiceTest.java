@@ -137,7 +137,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             part = new Enxp(EntityNamePartType.FAM);
             part.setValue("__");
             dto.getName().getPart().add(part);
-            dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", null, "zip", "USA"));
+            dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "WY", "zip", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);

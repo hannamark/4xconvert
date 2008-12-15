@@ -257,7 +257,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertEquals("123 abc ave.", selenium.getValue("curateEntityForm_organization_postalAddress_streetAddressLine"));
         assertEquals("", selenium.getValue("curateEntityForm_organization_postalAddress_deliveryAddressLine"));
         assertEquals("mycity", selenium.getValue("curateEntityForm_organization_postalAddress_cityOrMunicipality"));
-        assertEquals("", selenium.getValue("curateEntityForm.organization.postalAddress.stateOrProvince"));
+        assertEquals("VA", selenium.getValue("curateEntityForm.organization.postalAddress.stateOrProvince"));
         assertEquals("12345", selenium.getValue("curateEntityForm_organization_postalAddress_postalCode"));
     }
 
@@ -375,7 +375,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private OrganizationDTO create(String name) throws URISyntaxException {
-        return create(name, RemoteApiUtils.createAd("123 abc ave.", null, "mycity", null, "12345", "USA"));
+        return create(name, RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
     }
 
     private OrganizationDTO create(String name, Ad postalAddress) throws URISyntaxException {

@@ -92,8 +92,8 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		assertTrue("PoId field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_id"));
 		assertTrue("Status code field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_statusCode"));
 		assertTrue("Organization name field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_name"));
-		assertTrue("Street address field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine"));
-		assertTrue("Delivery address field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine"));
+		assertTrue("Address 1 field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine"));
+		assertTrue("Address 2 field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine"));
 		assertTrue("City field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_cityOrMunicipality"));
 		assertTrue("State field is missing",selenium.isElementPresent("searchOrganizationForm.criteria.organization.postalAddress.stateOrProvince"));
 		assertTrue("Postal code field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_postalCode"));
@@ -105,10 +105,10 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		selenium.type("curateEntityForm_organization_name", orgName);
 		selenium.type("curateEntityForm_organization_postalAddress_streetAddressLine", "400 First Street");
 		selenium.type("curateEntityForm_organization_postalAddress_deliveryAddressLine", "160 Delivery Ave.");
-		selenium.type("curateEntityForm_organization_postalAddress_cityOrMunicipality", "Atlanta");
-		selenium.type("curateEntityForm.organization.postalAddress.stateOrProvince", "GA");
 		selenium.type("curateEntityForm_organization_postalAddress_postalCode", "30345");
 		selenium.select("curateEntityForm.organization.postalAddress.country", "label=United States");
+		selenium.type("curateEntityForm_organization_postalAddress_cityOrMunicipality", "Atlanta");
+		selenium.select("curateEntityForm.organization.postalAddress._selectStateOrProvince", "label=GA(GEORGIA)");
 		selenium.type("emailEntry_value", "emailAddress@aool.com");
 		selenium.click("email-add");
 		selenium.type("phoneEntry_value", "899-090-0987");

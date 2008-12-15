@@ -557,7 +557,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByStateExact() {
         PersonDTO p = new PersonDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "VA", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "LA", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -565,7 +565,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByStateExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "va", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "la", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }

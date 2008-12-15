@@ -38,10 +38,10 @@ public class CreatePersonTest extends AbstractPoWebTest {
 		selenium.type("curateEntityForm_person_suffix", "III");
 		selenium.type("curateEntityForm_person_postalAddress_streetAddressLine", "123 Main Street");
 		selenium.type("curateEntityForm_person_postalAddress_deliveryAddressLine", "40 5th Street");
-		selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", "Ashburn");
-		selenium.type("curateEntityForm.person.postalAddress.stateOrProvince", "va");
 		selenium.type("curateEntityForm_person_postalAddress_postalCode", "20147");
 		selenium.select("curateEntityForm.person.postalAddress.country", "label=United States");
+		selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", "Ashburn");
+		selenium.select("curateEntityForm.person.postalAddress._selectStateOrProvince", "label=VA(VIRGINIA)");
 		selenium.type("emailEntry_value", "sample@emial.com");
 		selenium.click("email-add");
 		selenium.type("phoneEntry_value", "703-111-2345");

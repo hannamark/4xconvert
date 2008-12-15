@@ -72,24 +72,24 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
 
             DSet<Tel> telecomAddress = createDSetTel(email, tels, tels, urls, tels);
 
+            String state = "WY";
             remoteCreateAndCatalog(create("Z Inc.", createPostalAddress("123 abc ave.", null, "mycity",
-                    null, "12345", "USA"), telecomAddress));
+                    state, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("A Inc.", createPostalAddress("123 abc ave.", null, "mycity",
-                    null, "12345", "USA"), telecomAddress));
+                    state, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("B Inc.", createPostalAddress("123 abc ave.", null, "mycity",
-                    null, "12345", "USA"), telecomAddress));
+                    state, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("C Inc.", createPostalAddress("123 abc ave.", null, "mycity",
-                    null, "12345", "USA"), telecomAddress));
+                    state, "12345", "USA"), telecomAddress));
             remoteCreateAndCatalog(create("AB Inc.", createPostalAddress("123 abc ave.", null,
-                    "mycity", null, "12345", "USA"), telecomAddress));
+                    "mycity", state, "12345", "USA"), telecomAddress));
 
             remoteCreateAndCatalog(create("BC Inc.", createPostalAddress("123 abc ave.", null,
-                    "mycity", null, "12345", "USA")));
+                    "mycity", state, "12345", "USA")));
             remoteCreateAndCatalog(create("CA Inc.", createPostalAddress("123 abc ave.", null,
-                    "mycity", null, "12345", "USA")));
+                    "mycity", state, "12345", "USA")));
 
             // for street searches
-            String state = "WY";
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Rst", "delivery", "city", state,
                     "zip", "USA")));
             remoteCreateAndCatalog(create("ZZZ", createPostalAddress("Uvw", "delivery", "city", state,
@@ -353,7 +353,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStateExact() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "VA", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "LA", null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(1, results.size());
     }
@@ -361,7 +361,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findByStateExactInsensitive() {
         OrganizationDTO p = new OrganizationDTO();
-        p.setPostalAddress(createPostalAddress(null, null, null, "va", null, null));
+        p.setPostalAddress(createPostalAddress(null, null, null, "la", null, null));
         List<OrganizationDTO> results = getOrgService().search(p);
         assertEquals(1, results.size());
     }
