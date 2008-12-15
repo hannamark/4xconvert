@@ -47,6 +47,7 @@
 </s:if> 
 
 <po:successMessages/>
+<s:actionerror/>
 
 <div id="page" style="margin-top:10px;">
 	<div class="boxouter_nobottom">
@@ -66,7 +67,6 @@
 		<div class="boxouter">
 		<h2>Basic Identifying Information</h2>
 		    <div class="box_white">
-		        <s:actionerror/>
 	        <s:if test="isCreate">
 	            <s:select
 	               label="%{getText('organization.statusCode')}"
@@ -148,7 +148,6 @@
 		<div class="boxouter">
 		<h2>Address Information</h2>
 		    <div class="box_white">
-		        <s:fielderror><s:param>organization.postalAddress.null</s:param></s:fielderror>
 		        <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
 		        <div class="clear"></div>
 		    </div>
