@@ -12,6 +12,9 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MonitorCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -93,8 +96,7 @@ public class BatchCreateProtocols {
             StudyProtocolBatchDTO batchDto = (StudyProtocolBatchDTO) iterator
                     .next();
             // check if the record qualifies to be added
-            //validate the record
-            
+            //validate the record            
             if (batchDto != null) { // && batchDto.isValidRecord()) {
                 result = "";
                 validator = new TrialBatchDataValidator();
@@ -103,7 +105,7 @@ public class BatchCreateProtocols {
                     result = buildProtocol(batchDto, folderPath , userName);    
                 } else {
                     result = "Trial registration failed for Identifier " 
-                    + batchDto.getLocalProtocolIdentifier() +  "\n " + result + "\n";
+                    + batchDto.getLocalProtocolIdentifier() +  "\nReason: " + result + "\n";
                 }
                 log.error("putting values in map local protocol Id as " 
                         + batchDto.getLocalProtocolIdentifier() + "and response as " + result);
@@ -126,144 +128,141 @@ public class BatchCreateProtocols {
 
         Ii studyProtocolIi = null;
         String protocolAssignedId  = null;
-        log.error("Entering into buildProtocol...");
-        // before creating the protocol check for duplicate
-        // using the Lead Org Trial Identifier and Lead Org Identifier
-/*        Organization paOrg = new Organization();
-
-        paOrg.setIdentifier(dto.getLeadOrgNCIIdentifier());
-        paOrg = RegistryServiceLocator.getPAOrganizationService()
-                .getOrganizationByIndetifers(paOrg);
-
-        if (paOrg != null && paOrg.getId() != null) {
-            StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-            criteria.setLeadOrganizationTrialIdentifier(dto
-                    .getLeadOrgNCIIdentifier());
-            criteria.setLeadOrganizationId(paOrg.getId());
-
-            List<StudyProtocolQueryDTO> records = RegistryServiceLocator
-                    .getProtocolQueryService().getStudyProtocolByCriteria(
-                            criteria);
-            if (records != null && records.size() > 0) {
-                throw new PAException(
-                        "Duplicate Trial Submission: A trial exists in the system "
-                                + " for the Lead Organization selected and entered Trial Identifier");
-            }
-        }
-
-*/      try {  
-        log.info("TrialType() " + dto.getTrialType());
-        if (dto.getTrialType().equals("Observational")) {
-            studyProtocolIi = RegistryServiceLocator
-                    .getStudyProtocolService()
-                    .createObservationalStudyProtocol(
-                            (ObservationalStudyProtocolDTO) createProtocolDTO(dto, userName));
-        } else {
-            studyProtocolIi = RegistryServiceLocator
-                    .getStudyProtocolService()
-                    .createInterventionalStudyProtocol(
-                            (InterventionalStudyProtocolDTO) createProtocolDTO(dto, userName));
-        }
-        log.error("Trial is registered with ID: "
-                + IiConverter.convertToString(studyProtocolIi));
-        // create study overall status
-        createStudyStatus(studyProtocolIi, dto);
-        // create IND/IDE information *One- times*
-         createIndIdeIndicators(studyProtocolIi, dto);
-        // create the Study Grants One- times*
-        createStudyResources(studyProtocolIi, dto);
-        if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), 
-                      dto.getProtcolDocumentFileName(), folderPath);
-        }
-        if (PAUtil.isNotEmpty(dto.getIrbApprovalDocumentFileName())) {
-            uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(),
-                     dto.getIrbApprovalDocumentFileName(), folderPath);
-        }
+        try {
+            // before creating the protocol check for duplicate
+            // using the Lead Org Trial Identifier and Lead Org Identifier
+            OrganizationBatchDTO leadOrgDto = buildLeadOrgDto(dto);
+            Ii orgIdIi = lookUpOrgs(leadOrgDto);            
+            if (orgIdIi != null) {
+                Organization paOrg = new Organization();
+                paOrg.setIdentifier(IiConverter.convertToString(orgIdIi));
+                paOrg = RegistryServiceLocator.getPAOrganizationService()
+                        .getOrganizationByIndetifers(paOrg);
         
-        if (PAUtil.isNotEmpty(dto.getInformedConsentDocumentFileName())) {
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
-                    dto.getInformedConsentDocumentFileName(), folderPath);
-        }
-        
-        if (PAUtil.isNotEmpty(dto.getParticipatinSiteDocumentFileName())) {
-            uploadDocument(studyProtocolIi,
-                    DocumentTypeCode.Participating_sites.getCode(),
-                    dto.getParticipatinSiteDocumentFileName(), folderPath);
-        }
-        
-        if (PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
-            uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
-                     dto.getOtherTrialRelDocumentFileName(), folderPath);  
-        }
-        log.error("Before Summ4Funding lookup");
-        //Summary 4 Info
-        OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(dto);
-        if (!orgDTOIsEmpty(summ4Sponsor)) {
-            //look up for org only when dto is not empty
-            Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
-            if (selectedSummary4Sponsor != null) {
-                    new PARelationServiceBean().createSummary4ReportedSource(selectedSummary4Sponsor.getExtension(), 
-                            SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
-                            .convertToLong(studyProtocolIi));
-            }
-        } else {
-            log.error("Summary 4 Info is Empty ...");
-        }
-        // create/Lookup the org
-        log.error("buildProtocol -Create or lookup the org ");
-        OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
-        Ii orgIdIi = lookUpOrgs(orgDto);
-        if (null != orgIdIi) {
-                new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
-                        .getExtension(),
-                        IiConverter.convertToLong(studyProtocolIi), dto
-                                .getLocalProtocolIdentifier());
-            }
-        log.error("buildProtocol -Create or lookup the Person");
-        //look up Person
-        PersonBatchDTO piDto = buildLeadPIDto(dto);
-        Ii leadPrincipalInvestigator = lookUpPersons(piDto);
-        if (leadPrincipalInvestigator != null) {
-            new PARelationServiceBean().createPrincipalInvestigatorRelations(orgIdIi.getExtension(), 
-                    leadPrincipalInvestigator.getExtension(), IiConverter
-            .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(dto.getTrialType()));
-        }
-        log.error("buildProtocol -Create or lookup the Sponsor ");
-        //look up sponser
-        OrganizationBatchDTO sponsorOrgDto = buildSponsorOrgDto(dto);
-        Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
-        if (sponsorIdIi != null) {
-            new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
-                    IiConverter.convertToLong(studyProtocolIi));
-            if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
-                new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
-                        leadPrincipalInvestigator.getExtension(),
-                        IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
+                if (paOrg != null && paOrg.getId() != null) {
+                    StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+                    criteria.setLeadOrganizationTrialIdentifier(dto.getLocalProtocolIdentifier());
+                    criteria.setLeadOrganizationId(paOrg.getId());    
+                    List<StudyProtocolQueryDTO> records = RegistryServiceLocator
+                            .getProtocolQueryService().getStudyProtocolByCriteria(
+                                    criteria);
+                    if (records != null && records.size() > 0) {
+                        throw new PAException(
+                                "Duplicate Trial - A trial exists in the system "
+                                        + " for the Lead Organization and Trial Identifier");
+                    }
+                }
+            }            
+            log.info("TrialType() " + dto.getTrialType());
+            if (dto.getTrialType().equals("Observational")) {
+                studyProtocolIi = RegistryServiceLocator
+                        .getStudyProtocolService()
+                        .createObservationalStudyProtocol(
+                                (ObservationalStudyProtocolDTO) createProtocolDTO(dto, userName));
             } else {
-                //look up new Person or create if needed.
-                PersonBatchDTO sponsorPersonDto = buildSponsorContact(dto);
-                Ii responsiblePartyContact = lookUpPersons(sponsorPersonDto);
-                new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
-                        responsiblePartyContact.getExtension(), IiConverter
-                        .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), dto.getSponsorContactPhone());
+                studyProtocolIi = RegistryServiceLocator
+                        .getStudyProtocolService()
+                        .createInterventionalStudyProtocol(
+                                (InterventionalStudyProtocolDTO) createProtocolDTO(dto, userName));
             }
-            
-        }
-        log.error("sponsor relation done...");
-        //get the protocol
-         protocolAssignedId = 
-             RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
-             getAssignedIdentifier().getExtension().toString();
-         protocolAssignedId = "Trial  with Identifier " + dto.getLocalProtocolIdentifier()
-             + " successfully registered and assigned  NCI Identifier " + protocolAssignedId + "\n";
+            log.error("Trial is registered with ID: "
+                    + IiConverter.convertToString(studyProtocolIi));
+            // create study overall status
+            createStudyStatus(studyProtocolIi, dto);
+            // create IND/IDE information *One- times*
+             createIndIdeIndicators(studyProtocolIi, dto);
+            // create the Study Grants One- times*
+            createStudyResources(studyProtocolIi, dto);
+            if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), 
+                          dto.getProtcolDocumentFileName(), folderPath);
+            }
+            if (PAUtil.isNotEmpty(dto.getIrbApprovalDocumentFileName())) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.IRB_Approval_Document.getCode(),
+                         dto.getIrbApprovalDocumentFileName(), folderPath);
+            }            
+            if (PAUtil.isNotEmpty(dto.getInformedConsentDocumentFileName())) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.Informed_Consent_Document.getCode(),
+                        dto.getInformedConsentDocumentFileName(), folderPath);
+            }            
+            if (PAUtil.isNotEmpty(dto.getParticipatinSiteDocumentFileName())) {
+                uploadDocument(studyProtocolIi,
+                        DocumentTypeCode.Participating_sites.getCode(),
+                        dto.getParticipatinSiteDocumentFileName(), folderPath);
+            }            
+            if (PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
+                uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
+                         dto.getOtherTrialRelDocumentFileName(), folderPath);  
+            }
+            log.error("Before Summ4Funding lookup");
+            //Summary 4 Info
+            OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(dto);
+            if (!orgDTOIsEmpty(summ4Sponsor)) {
+                //look up for org only when dto is not empty
+                Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
+                if (selectedSummary4Sponsor != null) {
+                        new PARelationServiceBean().createSummary4ReportedSource(
+                                selectedSummary4Sponsor.getExtension(), 
+                                SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
+                                .convertToLong(studyProtocolIi));
+                }
+            } else {
+                log.error("Summary 4 Info is Empty ...");
+            }
+            // create/Lookup the org
+            log.error("buildProtocol -Create or lookup the org ");
+            OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
+            Ii leadOrgIdIi = lookUpOrgs(orgDto);
+            if (null != orgIdIi) {
+                    new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
+                            .getExtension(),
+                            IiConverter.convertToLong(studyProtocolIi), dto
+                                    .getLocalProtocolIdentifier());
+                }
+            log.error("buildProtocol -Create or lookup the Person");
+            //look up Person
+            PersonBatchDTO piDto = buildLeadPIDto(dto);
+            Ii leadPrincipalInvestigator = lookUpPersons(piDto);
+            if (leadPrincipalInvestigator != null) {
+                new PARelationServiceBean().createPrincipalInvestigatorRelations(orgIdIi.getExtension(), 
+                        leadPrincipalInvestigator.getExtension(), IiConverter
+                .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(dto.getTrialType()));
+            }
+            log.error("buildProtocol -Create or lookup the Sponsor ");
+            //look up sponser
+            OrganizationBatchDTO sponsorOrgDto = buildSponsorOrgDto(dto);
+            Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
+            if (sponsorIdIi != null) {
+                new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
+                        IiConverter.convertToLong(studyProtocolIi));
+                if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
+                    new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
+                            leadPrincipalInvestigator.getExtension(),
+                            IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
+                } else {
+                    //look up new Person or create if needed.
+                    PersonBatchDTO sponsorPersonDto = buildSponsorContact(dto);
+                    Ii responsiblePartyContact = lookUpPersons(sponsorPersonDto);
+                    new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
+                            responsiblePartyContact.getExtension(), IiConverter
+                            .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), 
+                             dto.getSponsorContactPhone());
+                }                
+            }
+            log.error("sponsor relation done...");
+            //get the protocol
+             protocolAssignedId = 
+                 RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
+                 getAssignedIdentifier().getExtension().toString();
+             protocolAssignedId = "Trial  with Identifier " + dto.getLocalProtocolIdentifier()
+                 + " successfully registered and assigned  NCI Identifier " + protocolAssignedId + "\n";
         } catch (PAException ex) {
             log.error("buildprotocol exception-" + ex.getMessage());
             protocolAssignedId =  "Trial registration failed for Identifier " 
-            + dto.getLocalProtocolIdentifier() + " \n Reason:" + ex.getMessage() + "\n";
+            + dto.getLocalProtocolIdentifier() + "\nReason:" + ex.getMessage() + "\n";
         } catch (Exception exc) {
         protocolAssignedId =  "Trial registration failed for Identifier " 
-            + dto.getLocalProtocolIdentifier() + " \n Reason:" + exc.getMessage() + "\n";
+            + dto.getLocalProtocolIdentifier() + "\nReason:" + exc.getMessage() + "\n";
         log.error("buildprotocol exception-" + exc.getMessage());
     }
         log.error("response " + protocolAssignedId);
