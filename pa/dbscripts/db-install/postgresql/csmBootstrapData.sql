@@ -65,11 +65,11 @@ INSERT INTO CSM_PRIVILEGE(PRIVILEGE_NAME, PRIVILEGE_DESCRIPTION,UPDATE_DATE)
 VALUES('EXECUTE','This privilege allows a user to execute a particular resource. The resource can be a method, function, behavior of the application, URL, button etc', current_date)
 ;
 -- Password is pass
-INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('curator', 'Test', 'Curator','BtM2GNbiAxg=',current_date)
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('abstractor', 'Test', 'Abstractor','BtM2GNbiAxg=',current_date)
 ;
 INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID, UPDATE_DATE) VALUES (2, 2,current_date)
 ;
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Curator', 'Curator group - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Abstractor', 'Abstractor group - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
 ;
 INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Submitter', 'Trial Submitter group - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
 ;
