@@ -29,8 +29,8 @@
 					<span class="value"> <c:out value="${sessionScope.trialSummary.piFullName }"/></span>
 				</div>
 				<div class="row">
-					<!-- <span class="label">Trial Submitter:</span> 
-					<span class="value"></span> -->
+					 <span class="label">Trial Submitter:</span> 
+					<span class="value"><c:out value="${sessionScope.trialSummary.userLastCreated }"/></span> 
 				</div>
 			</div>
 							

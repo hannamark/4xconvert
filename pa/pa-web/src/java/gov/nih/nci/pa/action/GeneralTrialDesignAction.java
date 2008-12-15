@@ -484,9 +484,12 @@ public class GeneralTrialDesignAction extends ActionSupport {
             getText("Email must be Entered"));
       }
       if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
-        addFieldError("contactPhone",
-            getText("Phone No must be Entered"));
+        addFieldError("contactPhone", getText("Phone No must be Entered"));
       }      
+      if (PAUtil.isEmpty(gtdDTO.getCentralContactName())) {
+          addFieldError("contactPhone", getText("Central contact Name must be entered"));
+        }      
+
     }
 
     /**

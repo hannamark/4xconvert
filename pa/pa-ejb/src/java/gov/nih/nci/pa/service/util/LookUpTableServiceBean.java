@@ -109,19 +109,22 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     
     /**
      * @param name name
-     * @return value  value
+     * @return value  val
      * @throws PAException PAException
      */
     public String getPropertyValue(String name) throws PAException {    
         LOG.info("Entering getPropertyValue");
         Session session = null;
         String value = "";
+        List<PAProperties> paProperties = new ArrayList<PAProperties>();
         try {
             session = HibernateUtil.getCurrentSession();
-            Query query = session.createQuery("select p from PAProperties p where p.name = '" 
-                + name + "'");
-            PAProperties bean = (PAProperties) query.list().get(0);
-            value = bean.getValue();
+            Query query = session.createQuery("select p from PAProperties p where p.name = '" + name + "'");
+            paProperties =  query.list();
+            if (paProperties == null || paProperties.isEmpty()) {
+                throw new PAException(" PA_PROPERTIES does not have entry for  " + name);
+            }
+            value = paProperties.get(0).getValue();
         }  catch (HibernateException hbe) {
             LOG.error(" Unable to load value from PAProperties" , hbe);
             throw new PAException(" Unable to load from PAProperties", hbe);

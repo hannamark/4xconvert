@@ -10,10 +10,10 @@
  <!-- po integration -->
  <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
  <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
- <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
  <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+ <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
  
  <!-- /po integration -->    
  <script type="text/javascript"> 
@@ -57,30 +57,29 @@
 	    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
 	    return false;
 	}
-	function showAlert() {
-	var input="gtdDTO.phaseCode";
-  	var inputElement = document.forms[0].elements[input];
-	
-   		if (inputElement.options[inputElement.selectedIndex].value == "Other")
-		{
-			alert("Please select a different Trial Phase");
-		}
-	}
-
 	function manageRespPartyLookUp(){
-	
+/*	
 	if(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked==true) {							
 			document.getElementById('rpcid').style.display='none';
 	}
 	if(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypesponsor').checked==true) {	
 			document.getElementById('rpcid').style.display='';
 	}
-}
+*/
+	
+    }
+
+    function lookup4loadresponsibleparty(){
+       var orgid = document.getElementById('trialValidationquery_gtdDTO_sponsorIdentifier').value;
+        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+        
+    }
+
 </script>
     
 </head>
 <body onload="manageRespPartyLookUp();">
-    <h1><fmt:message key="trialValidation.title" /></h1>
+    <h1><fmt:message key="trialValidation.page.title" /></h1>
     <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
     <div class="box" >
   <pa:sucessMessage/>
@@ -92,44 +91,44 @@
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
-                    <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
-                 </dfn><span class="required">*</span>
+                    <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/><span class="required">*</span>
            </label>
          </td>
          <td class="value">
-            <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" /> 
+            <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" maxlength="50"/> 
             <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>gtdDTO.LocalProtocolIdentifier</s:param>
              </s:fielderror>                            
           </span>
+
         </td>
     </tr>
     <tr>
        <td scope="row" class="label">
           <label for="officialTitle">
-              <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                    <fmt:message key="studyProtocol.officialTitle"/>
-              </dfn><span class="required">*</span>
+              <span class="required">*</span>
           </label>
        </td>
        <td class="value">
-            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:406px" rows="5"/> 
+            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/>
             <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>gtdDTO.OfficialTitle</s:param>
              </s:fielderror>                            
           </span>
+             
        </td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="studyPhase"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-             <fmt:message key="studyProtocol.studyPhase"/></dfn><span class="required">*</span></label> </td>
+        <td scope="row" class="label"><label for="studyPhase">
+            <label for="officialTitle">
+             <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
             <s:select headerKey="" headerValue="" name="gtdDTO.phaseCode" list="#phaseCodeValues" 
-                value="gtdDTO.phaseCode" cssStyle="width:120px" onchange="showAlert()"/>
+                value="gtdDTO.phaseCode" cssStyle="width:120px" />
             <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>gtdDTO.phaseCode</s:param>
@@ -138,19 +137,23 @@
         </td>
     </tr>
     <tr>
-        <td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-            <fmt:message key="isdesign.details.phase.comment"/></dfn></label></td>
+        <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></dfn></label></td>
         <td>
-            <s:textarea name="gtdDTO.phaseOtherText" rows="2" cssStyle="width:300px" readonly="true"/>
+            <s:textarea name="gtdDTO.phaseOtherText" rows="2" cssStyle="width:300px" />
+             <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.phaseOtherText</s:param>
+             </s:fielderror>                            
+            </span>
         </td>
     </tr>    
     <tr>
-        <td  scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-            <fmt:message key="isdesign.details.primary.purpose"/></dfn><span class="required">*</span></label></td>
+        <td  scope="row" class="label"><label>
+            <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                   value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" />
+                   value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>gtdDTO.primaryPurposeCode</s:param>
@@ -158,8 +161,8 @@
           </span>
         </td>
     </tr>
-    <tr id="primaryPurposeOtherText">
-        <td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
+    <tr>
+        <td   scope="row" class="label"><label>
             <fmt:message key="isdesign.details.primary.purpose.other"/></dfn></label></td>
         <td>
             <s:textarea name="gtdDTO.primaryPurposeOtherText" cssStyle="width:300px" rows="2"/>
@@ -172,7 +175,7 @@
     </tr>
 	<%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>    
     <tr>
-        <th colspan="2"> Summary 4 Information 5</th>
+        <th colspan="2"> Summary 4 Information </th>
     </tr>
 
      <tr>
@@ -205,10 +208,10 @@
          <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                     <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted'}">
-                    <li><a href="#" class="btn" onclick="handleActionAccept();"><span class="btn_img"><span class="save">Accept</span></span></a></li>
-                    <li><a href="#" class="btn" onclick="handleActionReject();"><span class="btn_img"><span class="save">Reject</span></span></a></li>
+                        <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                        <li><a href="#" class="btn" onclick="handleActionAccept();"><span class="btn_img"><span class="save">Accept</span></span></a></li>
+                        <li><a href="#" class="btn" onclick="handleActionReject();"><span class="btn_img"><span class="save">Reject</span></span></a></li>
                     </s:if>
                 </ul>   
             </del>

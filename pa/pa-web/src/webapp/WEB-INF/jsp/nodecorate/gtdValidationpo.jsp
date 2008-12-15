@@ -5,7 +5,7 @@
 
 <script language="JavaScript">
 
-function lookup4loadresponsibleparty(){
+function lookup4loadresponsibleparty1(){
    try{		
 		var orgid = document.getElementById('trialValidationquery_gtdDTO_sponsorIdentifier').value;
 	} catch(err) {
@@ -107,7 +107,7 @@ function createOrgContactDiv() {
         	<s:radio name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
         </td>
         </tr> 
-        <tr id="rpcid" style="display:none">               
+        <tr>               
         
             <td scope="row" class="label">
                 <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
@@ -123,10 +123,10 @@ function createOrgContactDiv() {
                Email Address:<span class="required">*</span>
             </td>
             <td class="value">
-                <s:textfield name="gtdDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.contactEmail"  maxlength="199" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>contactEmail</s:param>
+                    <s:param>gtdDTO.contactEmail</s:param>
                    </s:fielderror>                            
                  </span>
             </td>
@@ -134,10 +134,10 @@ function createOrgContactDiv() {
         <tr>
             <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
             <td class="value">
-                <s:textfield name="gtdDTO.contactPhone"  maxlength="200" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.contactPhone"  maxlength="199" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>contactPhone</s:param>
+                    <s:param>gtdDTO.contactPhone</s:param>
                    </s:fielderror>                            
                  </span>
             </td>           

@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
@@ -135,6 +136,7 @@ public class TrialValidationAction extends ActionSupport {
       }
       save();    
       createDocumentWfStatus(DocumentWorkflowStatusCode.ACCEPTED);
+      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");            
       return EDIT;
     }
     
@@ -165,6 +167,8 @@ public class TrialValidationAction extends ActionSupport {
       createDocumentWfStatus(DocumentWorkflowStatusCode.REJECTED);
       sendEmail();
       query();
+      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Rejected");            
+
       return EDIT;
     }
 
@@ -187,9 +191,8 @@ public class TrialValidationAction extends ActionSupport {
         // Define Message
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(PaRegistry.getLookUpTableService().getPropertyValue("fromaddress")));
-        //message.addRecipient(Message.RecipientType.TO, new InternetAddress(spDTO.getUserLastCreated()));
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress("kguthikonda@scenpro.com"));
-        message.setSentDate(new java.util.Date());
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(spDTO.getUserLastCreated()));
+       message.setSentDate(new java.util.Date());
         message.setSubject(PaRegistry.getLookUpTableService().getPropertyValue("rejection.subject"));
 
         // body
@@ -298,44 +301,64 @@ public class TrialValidationAction extends ActionSupport {
 
     private void enforceBusinessRules() {
       if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
-        addFieldError("gtdDTO.LocalProtocolIdentifier",
-            getText("Organization Trial ID must be Entered"));
+        addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
       }
       if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
-        addFieldError("gtdDTO.OfficialTitle",
-            getText("OfficialTitle must be Entered"));
+        addFieldError("gtdDTO.OfficialTitle", getText("OfficialTitle must be Entered"));
       }
       if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
-        addFieldError("gtdDTO.phaseCode",
-            getText("error.phase"));
+        addFieldError("gtdDTO.phaseCode", getText("error.phase"));
       }
-      if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
-        addFieldError("gtdDTO.primaryPurposeCode",
-            getText("error.primary"));
+      if (PAUtil.isNotEmpty(gtdDTO.getPhaseCode()) && gtdDTO.getPhaseCode().equalsIgnoreCase("other") 
+              && PAUtil.isEmpty(gtdDTO.getPhaseOtherText())) {
+          addFieldError("gtdDTO.phaseOtherText",
+                  getText("Phase Code other text must be entered"));
+          
       }
-      if ((!(gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other"))) 
-          && PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())) {          
-        addFieldError("gtdDTO.primaryPurposeOtherText",
-            getText("Select PrimaryPurposeCode as other to enter PrimaryPurposeOtherText"));
+      if (PAUtil.isNotEmpty(gtdDTO.getPhaseCode()) && !gtdDTO.getPhaseCode().equalsIgnoreCase("other") 
+              && PAUtil.isNotEmpty(gtdDTO.getPhaseOtherText())) {
+          addFieldError("gtdDTO.phaseOtherText",
+                  getText("Phase Code other must be entered only when Phase Code is Other"));
       }
-      if (gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other") 
-          && PAUtil.isEmpty(gtdDTO.getPrimaryPurposeOtherText())) {          
-        addFieldError("gtdDTO.primaryPurposeOtherText",
-            getText("error.comment"));
-      }
+
       if (PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
           && gtdDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
-        addFieldError("gtdDTO.primaryPurposeOtherText",
-            getText("error.spType.other.maximumChar"));        
+        addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));        
       }      
-      if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
-        addFieldError("contactEmail",
-            getText("Email must be Entered"));
+      if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+          addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
       }
+      if (PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeCode()) && gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("other") 
+              && PAUtil.isEmpty(gtdDTO.getPrimaryPurposeOtherText())) {
+          addFieldError("gtdDTO.primaryPurposeOtherText",
+                  getText("Primary Purpose Other other text must be entered"));
+          
+      }
+      if (PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeCode()) 
+              && !gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("other") 
+              && PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())) {
+          addFieldError("gtdDTO.primaryPurposeOtherText",
+                  getText("Primary Purpose Code other must be entered only when Primary Purpose Code is Other"));
+      }
+      if (gtdDTO.getResponsiblePartyType().equalsIgnoreCase("sponsor") 
+              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
+          addFieldError("gtdDTO.responsiblePersonName",
+                  getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
+              
+          
+      }
+
+      if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+        addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
+      }
+      if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+          addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
+      }
+      
       if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
-        addFieldError("contactPhone",
-            getText("Phone must be Entered"));
-      }      
+        addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+      }
+
     }
     
     private StudyResourcingDTO createSummaryFour(StudyResourcingDTO summary4ResoureDTO , Ii studyProtocolIi) 
@@ -369,7 +392,9 @@ public class TrialValidationAction extends ActionSupport {
             summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(gtdDTO.getSummaryFourFundingCategoryCode())));
         } else {
-            summary4ResoureDTO.setTypeCode(null);
+            Cd cd = new Cd();
+            cd.setNullFlavor(NullFlavor.NI);
+            summary4ResoureDTO.setTypeCode(cd);
         }
         summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
         return summary4ResoureDTO; 
@@ -557,15 +582,16 @@ public class TrialValidationAction extends ActionSupport {
     
     private void createSponorContact(Ii studyProtocolIi) throws  PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
-        
+        String phone = gtdDTO.getContactPhone();
+        phone = gtdDTO.getContactPhone().trim().replaceAll(" ", "");
         if (gtdDTO.getResponsiblePartyType() == null || gtdDTO.getResponsiblePartyType().equals("pi")) {
             parb.createPIAsResponsiblePartyRelations(
                     gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
-                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         } else if (gtdDTO.getResponsiblePartyType().equals("sponsor")) { 
             parb.createSponsorAsPrimaryContactRelations(gtdDTO.getSponsorIdentifier(),
                     gtdDTO.getResponsiblePersonIdentifier(), 
-                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         }
     }
     
