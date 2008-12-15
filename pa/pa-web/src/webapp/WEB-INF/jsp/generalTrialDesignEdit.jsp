@@ -28,7 +28,7 @@
         document.forms[0].submit(); 
     }    
     function lookup4loadresponsibleparty(){
-        orgid = document.getElementById('generalTrialDesignquery_gtdDTO_sponsorIdentifier').value;  
+       var orgid = document.getElementById('sponsorIdentifier').value;
         showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
     }
 

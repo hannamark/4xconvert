@@ -66,13 +66,11 @@
 			document.getElementById('rpcid').style.display='';
 	}
 */
-	
     }
 
     function lookup4loadresponsibleparty(){
-       var orgid = document.getElementById('trialValidationquery_gtdDTO_sponsorIdentifier').value;
-        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
-        
+    	var orgid = document.getElementById('sponsorIdentifier').value;
+    	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
     }
 
 </script>
