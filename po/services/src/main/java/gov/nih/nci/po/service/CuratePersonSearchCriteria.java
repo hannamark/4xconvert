@@ -90,7 +90,7 @@ import org.hibernate.Query;
 /**
  * Criteria to find Organizations to curate.
  */
-public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria implements SearchCriteria<Person> {
+public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Person> {
 
     /**
      * {@inheritDoc}

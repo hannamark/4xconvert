@@ -83,7 +83,6 @@
 package gov.nih.nci.po.audit;
 
 import gov.nih.nci.po.service.AbstractSearchCriteria;
-import gov.nih.nci.po.service.SearchCriteria;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Set;
@@ -95,7 +94,7 @@ import org.hibernate.Session;
 /**
  * Class used to store search criteria for finding audit records.
  */
-public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria implements SearchCriteria<AuditLogRecord> {
+public class AuditLogRecordSearchCriteria extends AbstractSearchCriteria<AuditLogRecord> {
 
     private static final String ROOT_ALIAS = "alr";
     private final Long id;

@@ -19,9 +19,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
         openSearchPerson();
         verifySearchForm();
         searchByName();
-        searchByContactInformation();
-        searchByAddress();	
-        searchByPoId();
+        searchByEmail();
         noRowsReturnedTest();
         nothingSelectedTest();
        }
@@ -35,45 +33,21 @@ public class SearchPersonTest extends AbstractPoWebTest {
 	}
 
     private void noRowsReturnedTest() {
-    	selenium.type("searchPersonForm_criteria_person_postalAddress_streetAddressLine", "jf yfnfufigkmi");
+    	selenium.type("searchPersonForm_criteria_org", "jf yfnfufigkmi");
     	clickAndWaitButton("submitSearchOrganizationForm");
     	assertTrue(selenium.isTextPresent("Nothing found to display"));
     	assertTrue(selenium.isTextPresent("No items found"));
 	}
 
-	private void searchByPoId() {
-    	selenium.type("searchPersonForm_criteria_person_id", poId);
-		selenium.select("searchPersonForm_criteria_person_statusCode", "label=PENDING");
-    	clickAndWaitButton("submitSearchOrganizationForm");
-		verify();
-	}
-
-	private void searchByAddress() {
-    	selenium.type("searchPersonForm_criteria_person_postalAddress_streetAddressLine", "123 Main Street");
-		selenium.type("searchPersonForm_criteria_person_postalAddress_deliveryAddressLine", "40 5th Street");
-		selenium.type("searchPersonForm_criteria_person_postalAddress_cityOrMunicipality", "ashburn");
-		selenium.type("searchPersonForm.criteria.person.postalAddress.stateOrProvince", "va");
-		selenium.type("searchPersonForm_criteria_person_postalAddress_postalCode", "20147");
-		selenium.select("searchPersonForm.criteria.person.postalAddress.country", "label=United States");	
-    	clickAndWaitButton("submitSearchOrganizationForm");
-		verify();
-    }
-
-	private void searchByContactInformation() {
-    	selenium.type("searchPersonForm_criteria_emailEntry_value", "email@emial.com");
-		selenium.type("searchPersonForm_criteria_urlEntry_value", "http://www.site.com");
-		selenium.type("searchPersonForm_criteria_phoneEntry_value", "703-234-2345");
-		selenium.type("searchPersonForm_criteria_faxEntry_value", "703-909-1234");
+	private void searchByEmail() {
+    	selenium.type("searchPersonForm_criteria_email", "email@emial.com");
     	clickAndWaitButton("submitSearchOrganizationForm");
 		verify();
 	}
 
 	private void searchByName() {
-		selenium.type("searchPersonForm_criteria_person_prefix", "Dr");
-		selenium.type("searchPersonForm_criteria_person_firstName", firstName);
-		selenium.type("searchPersonForm_criteria_person_middleName", "L");
-		selenium.type("searchPersonForm_criteria_person_lastName", lastName);
-    	selenium.type("searchPersonForm_criteria_person_suffix", "ii");
+		selenium.type("searchPersonForm_criteria_firstName", firstName);
+		selenium.type("searchPersonForm_criteria_lastName", lastName);
     	clickAndWaitButton("submitSearchOrganizationForm");
     	verify();
     }
@@ -102,26 +76,15 @@ public class SearchPersonTest extends AbstractPoWebTest {
 	}
 
 	private void verifySearchForm() {
-        assertTrue("Person id is missing", selenium.isElementPresent("searchPersonForm_criteria_person_id"));
-        assertTrue("Person status is missing", selenium.isElementPresent("searchPersonForm_criteria_person_statusCode"));
-        assertTrue("Person prefix is missing", selenium.isElementPresent("searchPersonForm_criteria_person_prefix"));
-        assertTrue("Person first name is missing", selenium.isElementPresent("searchPersonForm_criteria_person_firstName"));
-        assertTrue("Person middle name is missing", selenium.isElementPresent("searchPersonForm_criteria_person_middleName"));
-        assertTrue("Person last name is missing", selenium.isElementPresent("searchPersonForm_criteria_person_lastName"));
-        assertTrue("Person suffix is missing", selenium.isElementPresent("searchPersonForm_criteria_person_suffix"));
-        assertTrue("Person email is missing", selenium.isElementPresent("searchPersonForm_criteria_emailEntry_value"));
-        assertTrue("Person url entry is missing", selenium.isElementPresent("searchPersonForm_criteria_urlEntry_value"));
-        assertTrue("Person phone is missing", selenium.isElementPresent("searchPersonForm_criteria_phoneEntry_value"));
-        assertTrue("Person fax is missing", selenium.isElementPresent("searchPersonForm_criteria_faxEntry_value"));
-        assertTrue("Person Street address is missing", selenium.isElementPresent("searchPersonForm_criteria_person_postalAddress_streetAddressLine"));
-        assertTrue("Person delivery address is missing", selenium.isElementPresent("searchPersonForm_criteria_person_postalAddress_deliveryAddressLine"));
-        assertTrue("Person city is missing", selenium.isElementPresent("searchPersonForm_criteria_person_postalAddress_cityOrMunicipality"));
-        assertTrue("Person state is missing", selenium.isElementPresent("searchPersonForm.criteria.person.postalAddress.stateOrProvince"));
-        assertTrue("Person postal code is missing", selenium.isElementPresent("searchPersonForm_criteria_person_postalAddress_postalCode"));
-        assertTrue("Person country is missing", selenium.isElementPresent("searchPersonForm.criteria.person.postalAddress.country"));
+        assertTrue("Person first name is missing", selenium.isElementPresent("searchPersonForm_criteria_firstName"));
+        assertTrue("Person last name is missing", selenium.isElementPresent("searchPersonForm_criteria_lastName"));
+        assertTrue("Person email is missing", selenium.isElementPresent("searchPersonForm_criteria_email"));
+        assertTrue("Organization Affiliation is missing", selenium.isElementPresent("searchPersonForm_criteria_org"));
+        assertTrue("Investigator CTEP Identifier is missing", selenium.isElementPresent("searchPersonForm_criteria_ctepId"));
 	}
     
     private void addPerson(){
+        waitForElementById("emailEntry_value", 10); //email is in ajax div. wait for it.
     	selenium.select("curateEntityForm.person.statusCode", "label=PENDING");
 		selenium.type("curateEntityForm_person_prefix", "Dr");
 		selenium.type("curateEntityForm_person_firstName", firstName);

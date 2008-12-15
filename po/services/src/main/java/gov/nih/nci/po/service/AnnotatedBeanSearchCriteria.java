@@ -92,8 +92,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @author Scott Miller
  * @param <T> the type.
  */
-public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends AbstractSearchCriteria
-        implements SearchCriteria<T> {
+public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends AbstractSearchCriteria <T> {
     private final T criteria;
     private boolean disallowNullified = true;
 

@@ -82,10 +82,13 @@
 */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
 /**
  * Abstract search criteria implementation.
+ * @param <T> type of object to search for.
  */
-public abstract class AbstractSearchCriteria {
+public abstract class AbstractSearchCriteria<T extends PersistentObject> implements SearchCriteria<T> {
 
     /**
      * root object alias name.

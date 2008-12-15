@@ -147,7 +147,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         selenium.isVisible("//div[@id='duplicateOfDiv']");
         clickAndWaitButton("select_duplicate");
         selenium.selectFrame("popupFrame");
-        selenium.type("duplicatePersonForm_criteria_person_id", dupId.getExtension());
+        selenium.type("duplicatePersonForm_criteria_email", DEFAULT_EMAIL);
 
         /* search for dups */
         selenium.click("//a[@id='submitDuplicatePersonForm']/span/span");

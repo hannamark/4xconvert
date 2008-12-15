@@ -82,87 +82,208 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PhoneNumber;
-import gov.nih.nci.po.data.bo.URL;
 
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 
 /**
  * Criteria class to search for people. 
  */
-public class StrutsPersonSearchCriteria extends AnnotatedBeanSearchCriteria<Person> implements
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> implements
         Serializable {
 
     private static final long serialVersionUID = 1L;
-    private final Email emailEntry;
-    private final PhoneNumber faxEntry;
-    private final PhoneNumber phoneEntry;
-    private final PhoneNumber ttyEntry;
-    private final URL urlEntry;
+    private String firstName, lastName;
+    private String email;
+    private String org;
+    private String ctepId;
 
     /**
-     * Default Constructor.
+     * @return person's first name.
      */
-    @SuppressWarnings("deprecation")
-    public StrutsPersonSearchCriteria() {
-        super(new Person());
-        getPerson().setPostalAddress(new Address());
-        getPerson().getPostalAddress().setCountry(new Country());
-        emailEntry = new Email();
-        getPerson().getEmail().add(emailEntry);
-        faxEntry = new PhoneNumber();
-        getPerson().getFax().add(faxEntry);
-        phoneEntry = new PhoneNumber();
-        getPerson().getPhone().add(phoneEntry);
-        ttyEntry = new PhoneNumber();
-        getPerson().getTty().add(ttyEntry);
-        urlEntry = new URL();
-        getPerson().getUrl().add(urlEntry);
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * @return organization used to find matches
+     * @param firstName person's first name.
      */
-    public Person getPerson() {
-        return getCriteria();
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     /**
-     * @return email entry 
+     * @return person's last name.
      */
-    public Email getEmailEntry() {
-        return emailEntry;
+    public String getLastName() {
+        return lastName;
     }
 
     /**
-     * @return fax entry
+     * @param lastName person's last name.
      */
-    public PhoneNumber getFaxEntry() {
-        return faxEntry;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**
-     * @return phone entry
+     * @return person's or played roles' email.
      */
-    public PhoneNumber getPhoneEntry() {
-        return phoneEntry;
+    public String getEmail() {
+        return email;
     }
 
     /**
-     * @return tty entry
+     * @param email person's or played roles' email.
      */
-    public PhoneNumber getTtyEntry() {
-        return ttyEntry;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
-     * @return url entry
+     * @return name of scoper org.
      */
-    public URL getUrlEntry() {
-        return urlEntry;
+    public String getOrg() {
+        return org;
     }
+
+    /**
+     * @param org name of scoper org.
+     */
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
+    /**
+     * @return CTEP identifier.
+     */
+    public String getCtepId() {
+        return ctepId;
+    }
+
+    /**
+     * @param ctepId CTEP identifier.
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasOneCriterionSpecified() {
+        return StringUtils.isNotBlank(firstName) || StringUtils.isNotBlank(lastName)
+                || StringUtils.isNotBlank(email) || StringUtils.isNotBlank(org)
+                || StringUtils.isNotBlank(ctepId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected Class<Person> getRootObjectType() {
+        return Person.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRootAlias() {
+        return "p";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
+    "PMD.ConsecutiveLiteralAppends", "PMD.UseLocaleWithCaseConversions" })
+    public Query getQuery(String orderByProperty, boolean isCountOnly) {
+        Map<String, String> params = new HashMap<String, String>();
+        StringBuffer hql = new StringBuffer("SELECT ");
+        if (isCountOnly) {
+            hql.append("COUNT(DISTINCT p)");
+        } else {
+            hql.append("DISTINCT p");
+        }
+        hql.append(" FROM ").append(Person.class.getName()).append(" p");
+        if (StringUtils.isNotBlank(email) || StringUtils.isNotBlank(org)
+                || StringUtils.isNotBlank(ctepId)) {
+            hql.append(" LEFT OUTER JOIN p.organizationalContacts as oc")
+                .append(" LEFT OUTER JOIN p.clinicalResearchStaff as crs")
+                .append(" LEFT OUTER JOIN p.healthCareProviders as hcp")
+                .append(" LEFT OUTER JOIN p.qualifiedEntities as qe")
+                .append(" LEFT OUTER JOIN p.identifiedPersons as ip");
+            if (StringUtils.isNotBlank(org)) {
+                hql.append(" LEFT OUTER JOIN oc.scoper as ocscoper")
+                .append(" LEFT OUTER JOIN crs.scoper as crsscoper")
+                .append(" LEFT OUTER JOIN hcp.scoper as hcpscoper")
+                .append(" LEFT OUTER JOIN qe.scoper as qescoper")
+                .append(" LEFT OUTER JOIN ip.scoper as ipscoper");
+            }
+        }
+        if (StringUtils.isNotBlank(email)) {
+            hql.append(" LEFT OUTER JOIN p.email as pemail")
+                .append(" LEFT OUTER JOIN oc.email as ocemail")
+                .append(" LEFT OUTER JOIN crs.email as crsemail")
+                .append(" LEFT OUTER JOIN hcp.email as hcpemail");
+        }
+
+        hql.append(" WHERE p.statusCode <> 'NULLIFIED'");
+        if (StringUtils.isNotBlank(firstName)) {
+            hql.append(" AND lower(p.firstName) LIKE :firstName");
+            params.put("firstName", firstName.toLowerCase() + "%");
+        }
+        if (StringUtils.isNotBlank(lastName)) {
+            hql.append(" AND lower(p.lastName) LIKE :lastName");
+            params.put("lastName", lastName.toLowerCase() + "%");
+        }
+        if (StringUtils.isNotBlank(email)) {
+            hql.append(" AND (lower(pemail.value) LIKE :pemail")
+                    .append(" OR lower(ocemail.value) LIKE :ocemail")
+                    .append(" OR lower(crsemail.value) LIKE :crsemail")
+                    .append(" OR lower(hcpemail.value) LIKE :hcpemail")
+                    .append(')');
+            final String em = email.toLowerCase();
+            params.put("pemail", em);
+            params.put("ocemail", em);
+            params.put("crsemail", em);
+            params.put("hcpemail", em);
+        }
+        if (StringUtils.isNotBlank(org)) {
+            hql.append(" AND (lower(ocscoper.name) LIKE :ocname")
+                    .append(" OR lower(crsscoper.name) LIKE :crsname")
+                    .append(" OR lower(hcpscoper.name) LIKE :hcpname")
+                    .append(" OR lower(qescoper.name) LIKE :qename")
+                    .append(" OR lower(ipscoper.name) LIKE :ipname")
+                    .append(')');
+            final String on = org.toLowerCase() + "%";
+            params.put("ocname", on);
+            params.put("crsname", on);
+            params.put("hcpname", on);
+            params.put("qename", on);
+            params.put("ipname", on);
+        }
+        if (StringUtils.isNotBlank(ctepId)) {
+            hql.append(" AND ip.assignedIdentifier.root = '").append(CtepOrganizationImporter.CTEP_ROOT)
+                    .append("' AND lower(ip.assignedIdentifier.extension) like :ctepId");
+            params.put("ctepId", ctepId.toLowerCase());
+        }
+        if (!isCountOnly) {
+            hql.append(orderByProperty);
+        }
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
+        for (Map.Entry<String, String> e : params.entrySet()) {
+            query.setString(e.getKey(), e.getValue());
+        }
+        return query;
+    }
+   
 }

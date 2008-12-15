@@ -85,13 +85,15 @@ package gov.nih.nci.po.service;
 
 
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import org.hibernate.Query;
 
 
 /**
  * Abstract search criteria class for Entity types.
+ * @param <T> entity type to search for.
  */
-public abstract class AbstractEntitySearchCriteria extends AbstractSearchCriteria {
+public abstract class AbstractEntitySearchCriteria<T extends PersistentObject> extends AbstractSearchCriteria<T> {
     
     /**
      * {@inheritDoc}
