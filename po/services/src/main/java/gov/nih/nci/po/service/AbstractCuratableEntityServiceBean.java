@@ -72,6 +72,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      * @param s the session to use for the query.
      * @return list of roles associated to the entity.
      */
+    @SuppressWarnings("unchecked")
     protected <C extends CuratableRole> List<C> getAssociatedRoles(
             Long entityId, Class<C> type, String property, Session s) {
         

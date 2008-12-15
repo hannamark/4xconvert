@@ -149,7 +149,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
      * @param s the session to load from
      * @return the merged object.
      */
-    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    @SuppressWarnings({ "PMD.CompareObjectsWithEquals", "unchecked" })
     protected T loadAndMerge(T object, Session s) {
         T o = (T) s.load(getTypeArgument(), object.getId());
         if (object != o) {

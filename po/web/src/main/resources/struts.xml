@@ -272,14 +272,14 @@
         <action name="create/organization/*" class="gov.nih.nci.po.web.create.CreateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="input">/WEB-INF/jsp/curate/organization/curate.jsp</result>
-            <result name="success" type="redirect-action">organization/curate/start?organization.id=${organization.id}</result>
+            <result name="success" type="redirect-action">organization/curate/start?organization.id=${organizationId}</result>
         </action>      
         
         <!-- Person -> Create -->
         <action name="create/person/*" class="gov.nih.nci.po.web.create.CreatePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="input">/WEB-INF/jsp/curate/person/curate.jsp</result>
-            <result name="success" type="redirect-action">person/curate/start?person.id=${person.id}</result>
+            <result name="success" type="redirect-action">person/curate/start?person.id=${personId}</result>
         </action>        
         
         <!-- Organization -> Edit/Curate -> Assign Organizational Roles -->

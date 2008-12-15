@@ -21,7 +21,6 @@ import org.hibernate.validator.Validator;
 public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    @SuppressWarnings("unused")
     private String friendlyName;
 
     /**
