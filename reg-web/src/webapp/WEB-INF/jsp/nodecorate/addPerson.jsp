@@ -19,7 +19,7 @@
    </tr>
    <tr>
  		<td scope="row" class="label"><label for="zip">Zip :</label><span class="required">*</span></td><td><s:textfield name="personDTO.zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
- 		<td scope="row" class="label"><label for="country">Country :</label></td><td>
+ 		<td scope="row" class="label"><label for="country">Country :</label><span class="required">*</span></td><td>
            	<s:select
              name="personDTO.country" 
              list="countryList"  
