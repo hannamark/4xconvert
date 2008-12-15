@@ -49,7 +49,7 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
             // step 1: form the hql
             String hql = "select ar "
                        + "from Arm ar "
-                       + "join ar.plannedActivity pa "
+                       + "join ar.interventions pa "
                        + "where pa.id = :plannedActivityId "
                        + "order by ar.id ";
             getLogger().info("query Arm = " + hql + ".  ");

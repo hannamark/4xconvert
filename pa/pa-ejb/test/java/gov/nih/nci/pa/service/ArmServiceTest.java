@@ -133,9 +133,17 @@ public class ArmServiceTest {
         dtoList = remoteEjb.getByStudyProtocol(spIi);
         assertEquals (originalCount - 1, dtoList.size());
     }
+    @Test
     public void getByPlannedActivityTest() throws Exception {
         Ii paIi = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
         List<ArmDTO> dtoList = remoteEjb.getByPlannedActivity(paIi);
+        if (dtoList.size() > 0) {
+            for (ArmDTO dto : dtoList) {
+                dto.setInterventions(null);
+                remoteEjb.update(dto);
+            }
+            dtoList = remoteEjb.getByPlannedActivity(paIi);
+        }
         assertEquals(0, dtoList.size());
         
         ArmDTO dto = remoteEjb.get(ii);
