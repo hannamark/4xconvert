@@ -27,14 +27,10 @@
         document.forms[0].action="generalTrialDesignupdate.action";
         document.forms[0].submit(); 
     }    
-    function handleActionAccept(){
-        document.forms[0].action="trialValidationaccept.action";
-        document.forms[0].submit(); 
-    }    
-    function handleActionReject(){
-        document.forms[0].action="trialValidationreject.action";
-        document.forms[0].submit(); 
-    }    
+    function lookup4loadresponsibleparty(){
+        orgid = document.getElementById('generalTrialDesignquery_gtdDTO_sponsorIdentifier').value;  
+        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
+    }
 
     function setorgid(orgIdentifier){
         orgid = orgIdentifier;
@@ -46,48 +42,10 @@
         BubbleTips.activateTipOn("acronym");
         BubbleTips.activateTipOn("dfn"); 
     }
-    function lookup4loadleadorg(){
-        showPopWin('${lookupOrgUrl}', 1050, 400, loadLeadOrgDiv, 'Select Organization');
-    }
     function lookupCentralContact(){
         showPopWin('${lookupPersUrl}', 1050, 400, loadCentralContactDiv, 'Select Central Contact');
     }
-    function lookup4loadleadpers(){
-        showPopWin('${lookupPersUrl}', 1050, 400, loadLeadPersDiv, 'Select Principal Investigator');
-    }
-    function lookup4sponsor(){
-        showPopWin('${lookupOrgUrl}', 1050, 400, loadSponsorDiv, 'Select Sponsor');
-    } 
-    function lookup4loadresponsibleparty(){
-        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 1050, 400, createOrgContactDiv, 'Select Responsible contact');
-    }
-    function lookup4loadSummary4Sponsor(){
-        showPopWin('${lookupOrgUrl}', 1050, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-    }   
-    function loadLeadOrgDiv() { 
-        var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
-        var div = document.getElementById('loadOrgField');   
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-        callAjax(url, div); 
-    }
-    function loadLeadPersDiv() {    
-        var url = 'ajaxTrialValidationdisplayLeadPrincipalInvestigator.action?persId='+persid;
-        var div = document.getElementById('loadPersField');   
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-        callAjax(url, div);    
-    }
-    function loadSponsorDiv() {     
-        var url = 'ajaxTrialValidationdisplaySelectedSponsor.action?orgId='+orgid;
-        var div = document.getElementById('loadSponsorField');   
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
-        callAjax(url, div);
-    }
-    function loadSummary4SponsorDiv() {
-        var url = 'ajaxTrialValidationdisplaySummary4FundingSponsor.action?orgId='+orgid;
-        var div = document.getElementById('loadSummary4FundingSponsorField');   
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
-        callAjax(url, div);
-    }
+    
     function loadCentralContactDiv() {
         var url = 'ajaxTrialValidationdisplayCentralContact.action?persId='+persid;
         var div = document.getElementById('loadCentralContactDiv');   
@@ -95,13 +53,6 @@
         callAjax(url, div);    
     }
 
-    function createOrgContactDiv() {    
-        var url = 'ajaxTrialValidationcreateOrganizationContacts.action?persId='+persid+'&orgId='+orgid;
-        var div = document.getElementById('loadResponsibleContactField');   
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding primary contact...</div>';
-        callAjax(url, div);
-       
-    }
     function loadDiv(orgid){
     }
     function loadPersDiv(persid, func) {
@@ -112,12 +63,13 @@
     }
 function manageRespPartyLookUp(){
 	//alert(document.getElementById('trialValidationquery_gtdDTO_responsiblePartyTypepi').checked == true);
-	if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypepi').checked==true) {							
+/*	if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypepi').checked==true) {							
 			document.getElementById('rpcid').style.display='none';
 	}
 	if(document.getElementById('generalTrialDesignquery_gtdDTO_responsiblePartyTypesponsor').checked==true) {	
 			document.getElementById('rpcid').style.display='';
 	}
+	*/
 }    
 </script>
 	

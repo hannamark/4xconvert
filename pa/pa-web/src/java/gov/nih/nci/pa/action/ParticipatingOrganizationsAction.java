@@ -675,6 +675,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (isPrimaryContact) {
             String email = ServletActionContext.getRequest().getParameter("email");
             String telephone = ServletActionContext.getRequest().getParameter("tel");
+            telephone = telephone.replaceAll(" ", "");
             ArrayList<String> emailList = new ArrayList<String>();
             ArrayList<String> telList = new ArrayList<String>();
             emailList.add(email);

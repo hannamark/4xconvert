@@ -54,6 +54,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
     
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     
+    private static final int OFFICIAL_TITLE = 4000;
+    private static final int PUBLIC_TITLE = 299;
+    private static final int SCI_DESC = 12000;
+    private static final int KEYWORD = 600;
     /**  
      * @return res
      */
@@ -181,6 +185,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
         copy(dset);
     }
+
     private void copy(DSet dset) {
         if (dset == null) {
             return;
@@ -245,17 +250,19 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        spDTO.setOfficialTitle(StConverter.convertToSt(gtdDTO.getOfficialTitle()));
+        spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
 //        spDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(gtdDTO.getPhaseCode()))); 
 //        spDTO.setPrimaryPurposeCode(
 //                CdConverter.convertToCd(PrimaryPurposeCode.getByCode(gtdDTO.getPrimaryPurposeCode())));
 //        spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(gtdDTO.getPrimaryPurposeOtherText()));
 //        spDTO.setPhaseOtherText(StConverter.convertToSt(gtdDTO.getPhaseOtherText()));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
-        spDTO.setPublicTitle(StConverter.convertToSt(gtdDTO.getPublicTitle()));
-        spDTO.setPublicDescription(StConverter.convertToSt(gtdDTO.getPublicDescription()));
-        spDTO.setScientificDescription(StConverter.convertToSt(gtdDTO.getScientificDescription()));
-        spDTO.setKeywordText(StConverter.convertToSt(gtdDTO.getKeywordText()));
+        spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicTitle(), PUBLIC_TITLE)));
+        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPublicDescription(), 
+                PUBLIC_TITLE)));
+        spDTO.setScientificDescription(StConverter.convertToSt(
+                PAUtil.stringSetter(gtdDTO.getScientificDescription(), SCI_DESC)));
+        spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 
@@ -367,12 +374,13 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
     private StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO) throws PAException {
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
+        String phone = gtdDTO.getCentralContactPhone().replaceAll(" ", "");
         Long crs = crbb.createClinicalResearchStaffCorrelations(
                 gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getCentralContactIdentifier());
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
         scDTO.setStudyProtocolIdentifier(studyProtocolIi);
         List<String> phones = new ArrayList<String>();
-        phones.add(gtdDTO.getCentralContactPhone());
+        phones.add(phone);
         List<String> emails = new ArrayList<String>();
         emails.add(gtdDTO.getCentralContactEmail());
         DSet<Tel> dsetList = null;
@@ -403,18 +411,19 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
     private void createSponorContact(Ii studyProtocolIi) throws  PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
-        
+        String phone = gtdDTO.getContactPhone();
+        phone = gtdDTO.getContactPhone().trim().replaceAll(" ", "");
         if (gtdDTO.getResponsiblePartyType() == null || gtdDTO.getResponsiblePartyType().equals("pi")) {
             parb.createPIAsResponsiblePartyRelations(
                     gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
-                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         } else if (gtdDTO.getResponsiblePartyType().equals("sponsor")) { 
-            parb.createPIAsResponsiblePartyRelations(
-                    gtdDTO.getSponsorIdentifier(), gtdDTO.getPiIdentifier(), 
-                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), gtdDTO.getContactPhone());
+            parb.createSponsorAsPrimaryContactRelations(gtdDTO.getSponsorIdentifier(),
+                    gtdDTO.getResponsiblePersonIdentifier(), 
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
         }
     }
-    
+
     private String getCtGocIdentifier() throws  PAException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
         poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
@@ -456,39 +465,44 @@ public class GeneralTrialDesignAction extends ActionSupport {
     
     private void enforceBusinessRules() {
       if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
-        addFieldError("gtdDTO.localProtocolIdentifier",
-            getText("Organization Trial ID must be Entered"));
+        addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));
       }
       if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
-        addFieldError("gtdDTO.officialTitle",
-            getText("OfficialTitle must be Entered"));
+        addFieldError("gtdDTO.officialTitle", getText("OfficialTitle must be Entered"));
       }
       if (PAUtil.isEmpty(gtdDTO.getPublicTitle())) {
-        addFieldError("gtdDTO.publicTitle",
-            getText("PublicTitle must be Entered"));
+        addFieldError("gtdDTO.publicTitle", getText("PublicTitle must be Entered"));
       }      
       if (PAUtil.isEmpty(gtdDTO.getPublicDescription())) {
-        addFieldError("gtdDTO.publicDescription",
-            getText("Brief Summary must be Entered"));
+        addFieldError("gtdDTO.publicDescription", getText("Brief Summary must be Entered"));
       }
-      if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
-        addFieldError("gtdDTO.centralContactEmail",
-            getText("CentralContactEmail must be Entered"));
-      }
-      if (PAUtil.isEmpty(gtdDTO.getCentralContactPhone())) {
-        addFieldError("gtdDTO.centralContactPhone",
-            getText("CentralContactPhone must be Entered"));
+      if (gtdDTO.getResponsiblePartyType().equalsIgnoreCase("sponsor") 
+              && PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
+          addFieldError("gtdDTO.responsiblePersonName",
+                  getText("Responsible Party Contact must be entered when Responsible Party is Sponsor"));
       }
       if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
-        addFieldError("contactEmail",
-            getText("Email must be Entered"));
+        addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
+      }
+      if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+          addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
       }
       if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
-        addFieldError("contactPhone", getText("Phone No must be Entered"));
-      }      
+          addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+      }
+
+      if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
+        addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email must be Entered"));
+      }
+      if (PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getCentralContactEmail())) {
+          addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email is not a valid format"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getCentralContactPhone())) {
+        addFieldError("gtdDTO.centralContactPhone", getText("Central Contact Phone must be Entered"));
+      }
       if (PAUtil.isEmpty(gtdDTO.getCentralContactName())) {
-          addFieldError("contactPhone", getText("Central contact Name must be entered"));
-        }      
+          addFieldError("gtdDTO.centralContactName", getText("Central contact Name must be entered"));
+      }      
 
     }
 

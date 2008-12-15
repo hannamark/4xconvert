@@ -2,6 +2,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -112,12 +113,27 @@ public class StudyProtocolQueryAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.STUDY_PROTOCOL_II,
-                    IiConverter.convertToIi(studyProtocolId));
+                    Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(studyProtocolId));
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
+            
             return "view";
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
     }
+
+    private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
+        String action = "";
+        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.REJECTED.getCode();
+        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
+        } else {
+            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
+        }
+        return action;
+    }
+
 }

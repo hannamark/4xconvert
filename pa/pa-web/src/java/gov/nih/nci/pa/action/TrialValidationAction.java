@@ -74,6 +74,8 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings("PMD")
 public class TrialValidationAction extends ActionSupport {
 
+    private static final int OFFICIAL_TITLE = 4000;
+    private static final int OTHER_TEXT = 200;
     private static final String EDIT = "edit";    
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     private OrganizationDTO selectedLeadOrg = null;
@@ -104,7 +106,7 @@ public class TrialValidationAction extends ActionSupport {
             copy(spqDto);
             copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null));
             copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null));
-            copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
+            //copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
             copyResponsibleParty(studyProtocolIi);
             copySponsor(studyProtocolIi);
         } catch (PAException e) {
@@ -311,9 +313,7 @@ public class TrialValidationAction extends ActionSupport {
       }
       if (PAUtil.isNotEmpty(gtdDTO.getPhaseCode()) && gtdDTO.getPhaseCode().equalsIgnoreCase("other") 
               && PAUtil.isEmpty(gtdDTO.getPhaseOtherText())) {
-          addFieldError("gtdDTO.phaseOtherText",
-                  getText("Phase Code other text must be entered"));
-          
+          addFieldError("gtdDTO.phaseOtherText", getText("Phase Code other text must be entered"));
       }
       if (PAUtil.isNotEmpty(gtdDTO.getPhaseCode()) && !gtdDTO.getPhaseCode().equalsIgnoreCase("other") 
               && PAUtil.isNotEmpty(gtdDTO.getPhaseOtherText())) {
@@ -400,23 +400,23 @@ public class TrialValidationAction extends ActionSupport {
         return summary4ResoureDTO; 
     }
 
-    private void copySummaryFour(StudyResourcingDTO srDTO) throws  PAException {
-        if (srDTO == null) {
-            return;
-        }
-        if (srDTO.getTypeCode() != null) {
-            gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
-        }
-
-        if (srDTO.getOrganizationIdentifier() != null 
-                    && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {   
-            CorrelationUtils cUtils = new CorrelationUtils();
-            Organization o = cUtils.getPAOrganizationByIndetifers(
-                            Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
-            gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
-            gtdDTO.setSummaryFourOrgName(o.getName());
-        }
-    }
+//    private void copySummaryFour(StudyResourcingDTO srDTO) throws  PAException {
+//        if (srDTO == null) {
+//            return;
+//        }
+//        if (srDTO.getTypeCode() != null) {
+//            gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+//        }
+//
+//        if (srDTO.getOrganizationIdentifier() != null 
+//                    && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {   
+//            CorrelationUtils cUtils = new CorrelationUtils();
+//            Organization o = cUtils.getPAOrganizationByIndetifers(
+//                            Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
+//            gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
+//            gtdDTO.setSummaryFourOrgName(o.getName());
+//        }
+//    }
     
     private void copy(StudyProtocolDTO spDTO) {        
         gtdDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
@@ -504,12 +504,13 @@ public class TrialValidationAction extends ActionSupport {
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        spDTO.setOfficialTitle(StConverter.convertToSt(gtdDTO.getOfficialTitle()));
+        spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(gtdDTO.getPhaseCode()))); 
         spDTO.setPrimaryPurposeCode(
                 CdConverter.convertToCd(PrimaryPurposeCode.getByCode(gtdDTO.getPrimaryPurposeCode())));
-        spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(gtdDTO.getPrimaryPurposeOtherText()));
-        spDTO.setPhaseOtherText(StConverter.convertToSt(gtdDTO.getPhaseOtherText()));
+        spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(PAUtil.stringSetter(
+                gtdDTO.getPrimaryPurposeOtherText(), OTHER_TEXT)));
+        spDTO.setPhaseOtherText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getPhaseOtherText(), OTHER_TEXT)));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
     

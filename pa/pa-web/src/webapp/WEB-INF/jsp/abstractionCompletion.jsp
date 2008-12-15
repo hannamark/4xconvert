@@ -47,15 +47,13 @@ function generateReport(pid) {
 	<div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
-                <s:if test="${abstractionError==true}">                
-                    <li><s:a href="abstractionCompletionquery.action" cssClass="btn"><span class="btn_img"><span class="save">Validate</span></span></s:a></li>
-                </s:if> 
-                <s:elseif test="${abstractionError==false}">                                        
+                <s:if test="${abstractionError==false}">                                        
                     <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>                                
-                </s:elseif>
-                <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Accepted'}">
-                <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">ABS.NotVerified</span></span></s:a></li>
+                    <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Accepted'}">
+                    <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">ABS. NotVerified</span></span></s:a></li>
+                    </s:if>
                 </s:if>
+                
                 <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Abstraction not verified'}">
                 <li><s:a href="abstractionCompletionverified.action" cssClass="btn"><span class="btn_img"><span class="save">ABS.Verified</span></span></s:a></li>
                 </s:if>

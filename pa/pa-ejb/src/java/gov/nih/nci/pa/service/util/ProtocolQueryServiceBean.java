@@ -173,7 +173,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     } else {
 //                        throw new PAException(" Unknown StudyProtocol type found for protocol id = " 
 //                                + studyProtocol.getIdentifier() + " title " + studyProtocol.getOfficialTitle());
-                        studyProtocolDto.setStudyProtocolType(studyProtocol.getClass().getName());
+                        studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     }
 
                     studyProtocolDto.setOfficialTitle(studyProtocol
