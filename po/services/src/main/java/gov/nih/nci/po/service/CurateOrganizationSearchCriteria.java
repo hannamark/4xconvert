@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -123,7 +124,8 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
                 + " LEFT OUTER JOIN hcf.changeRequests as hcfcr"
                 + " LEFT OUTER JOIN o.identifiedOrganizations as io"
                 + " LEFT OUTER JOIN io.changeRequests as iocr"
-                + " where   o.statusCode = 'PENDING' "
+                + " where (o.statusCode != '" + EntityStatus.NULLIFIED + "') AND ("
+                + " o.statusCode = 'PENDING' "
                 + " or ocr.processed = 'false'"
                 + " or ro.status = 'PENDING'"
                 + " or rocr.processed = 'false'"
@@ -132,7 +134,7 @@ public final class CurateOrganizationSearchCriteria extends AbstractEntitySearch
                 + " or hcf.status = 'PENDING'"
                 + " or hcfcr.processed = 'false'"
                 + " or io.status = 'PENDING'"
-                + " or iocr.processed = 'false'";
+                + " or iocr.processed = 'false' )";
 
         StringBuffer hql = new StringBuffer("select ");
         

@@ -6,9 +6,9 @@
    label="%{getText('researchOrganization.fundingMechanism')}"
    name="role.fundingMechanismSelect"
    list="researchOrganizationType.fundingMechanisms"
-   listKey="code"
-   listValue="description"
-   value="role.fundingMechanism" 
+   listKey="id"
+   listValue="code"
+   value="role.fundingMechanism.id" 
    headerKey="" headerValue="--Select a Funding Mechanism--" 
    onchange="$('curateRoleForm.role.fundingMechanism').value = this.value;"/> 
 <script type="text/javascript">

@@ -83,8 +83,9 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
-
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import org.hibernate.Query;
 
 /**
@@ -125,7 +126,8 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Per
                 + " LEFT OUTER JOIN qe.changeRequests as qecr"
                 + " LEFT OUTER JOIN p.identifiedPersons as ip"
                 + " LEFT OUTER JOIN ip.changeRequests as ipcr"
-                + " where   p.statusCode = 'PENDING' "
+                + " where (p.statusCode != '" + RoleStatus.NULLIFIED + "') AND ("
+                + " p.statusCode = 'PENDING' "
                 + " or pcr.processed = 'false'"
                 + " or oc.status = 'PENDING'"
                 + " or occr.processed = 'false'"
@@ -136,7 +138,7 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Per
                 + " or qe.status = 'PENDING'"
                 + " or qecr.processed = 'false'"
                 + " or ip.status = 'PENDING'"
-                + " or ipcr.processed = 'false'";
+                + " or ipcr.processed = 'false' )";
 
         StringBuffer hql = new StringBuffer("select ");
 
