@@ -75,7 +75,7 @@ public class BatchHelper { //implements Runnable {
      */
     public void run() {
         StringBuffer mailBody = new StringBuffer();
-        String subject = "Batch Upload Status";
+        String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
         try {
             // start reading the xls file and create the required DTO
             List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
