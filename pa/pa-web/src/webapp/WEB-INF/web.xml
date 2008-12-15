@@ -97,7 +97,7 @@
             <url-pattern>/protected/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>Curator</role-name>
+            <role-name>Abstractor</role-name>
         </auth-constraint>
     </security-constraint>
 
