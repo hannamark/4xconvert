@@ -86,6 +86,22 @@ public class BatchHelper implements Runnable { //implements Runnable {
                     + File.separator + trialDataFileName);
             HashMap map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
                     + File.separator, userName);
+            //get the Failed and Sucess count and remove it from map so that reporting of each trial 
+            String sucessCount = (String) map.get("Sucess Trial Count");
+            map.remove("Sucess Trial Count");
+            String failedCount = (String) map.get("Failed Trial Count");
+            map.remove("Failed Trial Count");
+            
+            StringBuffer batchUploadSummary = new StringBuffer(); 
+            batchUploadSummary.append("Total Trials Submitted : ");
+            batchUploadSummary.append(map.size());
+            batchUploadSummary.append("\n");
+            batchUploadSummary.append("Successfully Registered :");
+            batchUploadSummary.append(sucessCount);
+            batchUploadSummary.append("\n");
+            batchUploadSummary.append("Failed :");
+            batchUploadSummary.append(failedCount);
+            batchUploadSummary.append("\n");
             Set s = map.keySet();
             Iterator iter = s.iterator();
             String mapLocalTrialId = null;
@@ -101,10 +117,13 @@ public class BatchHelper implements Runnable { //implements Runnable {
             final MailManager mailManager = new MailManager();
             // Send the batch upload report to the submitter
             String  bodyIntro = "Thank you for  using the NCI Clinical Trials Reporting Program. \n\n"
-                                + "Here is the status of the batch trial submission.\n";
-            
-            mailBody.insert(0, "********************************************************"
-                    + "*****************************************************************\n");
+                                + "Here is a brief summary of the batch trial submission.\n";
+            bodyIntro = bodyIntro + batchUploadSummary;
+            mailBody.insert(0, "----------------------------------------------------------"
+                    + "--------------------------------------------------------------------\n"
+                    + "Detailed Report: \n"
+                    + "----------------------------------------------------------"
+                    + "--------------------------------------------------------------------\n");
             mailBody.insert(0, bodyIntro);
             mailManager.sendMail(userName, null, mailBody.toString(), subject);
            
