@@ -4,15 +4,30 @@
     <div class="box_white">
         <po:inputRow>
         <po:inputRowElement><po:field labelKey="person.id">${person.id}</po:field></po:inputRowElement>
-        <po:inputRowElement>&nbsp;</po:inputRowElement>
+        <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="person.statusCode">${person.statusCode}</po:field></po:inputRowElement>
-        <po:inputRowElement>&nbsp;</po:inputRowElement>
+        <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="person.statusDate"><s:date name="person.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
         </po:inputRow>
         <po:inputRow>
         <po:inputRowElement><po:field labelKey="person.firstName">${person.firstName}</po:field></po:inputRowElement>
+        <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
+        <po:inputRowElement><po:field labelKey="person.middleName">${person.middleName}</po:field></po:inputRowElement>
+        <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="person.lastName">${person.lastName}</po:field></po:inputRowElement>
         </po:inputRow>
+        <fieldset>
+            <legend>Email Addresses</legend>
+            <div id="email-list-ro">
+            <ul>
+                <s:iterator value="person.email" status="e">
+                    <li id="email-entry-${e.index}">
+                        ${value}
+                    </li>
+                </s:iterator>
+            </ul>
+            </div>
+        </fieldset>        
         <div class="clear"></div>
     </div>
 </div>

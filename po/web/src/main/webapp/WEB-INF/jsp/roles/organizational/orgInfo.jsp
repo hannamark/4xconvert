@@ -4,9 +4,9 @@
     <div class="box_white">
         <po:inputRow>
         <po:inputRowElement><po:field labelKey="organization.id">${organization.id}</po:field></po:inputRowElement>
-        <po:inputRowElement>&nbsp;</po:inputRowElement>
+        <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="organization.statusCode">${organization.statusCode}</po:field></po:inputRowElement>
-        <po:inputRowElement>&nbsp;</po:inputRowElement>
+        <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="organization.statusDate"><s:date name="organization.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
         </po:inputRow>
         <po:inputRow>
