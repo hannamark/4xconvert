@@ -198,11 +198,12 @@ public class BatchUploadAction extends ActionSupport implements
             uploadedLoc = uploadFile();
             String unzipLoc = unZipDoc(uploadedLoc + File.separator + docZipFileName);
             //helper to unzip the zip files
-            /*Thread batchProcessor = new Thread(
-                    new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc));
-            batchProcessor.start();*/
-            new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc,
-                    ServletActionContext.getRequest().getRemoteUser()).run();
+            Thread batchProcessor = new Thread(
+                    new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc,
+                            ServletActionContext.getRequest().getRemoteUser()));
+            batchProcessor.start();
+            //new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc,
+             //       ServletActionContext.getRequest().getRemoteUser()).run();
             
         } catch (PAException e) {
             // TODO Auto-generated catch block
