@@ -23,6 +23,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -31,7 +32,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.InterventionalStudyProtocolWebDTO;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.StudyParticipationWebDTO;
@@ -42,7 +42,6 @@ import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
-import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -1136,11 +1135,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         // ideIndList.setList(ideInd);
         return "display_grants";
     }
-
+    //TODO remove and  cleanup the redundant code
     /**
      * 
      * @return res
      */
+    /*
     public String createOrganizationContacts() {
         boolean contactExists = false;
         try {
@@ -1202,6 +1202,39 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
 //        } catch (NullifiedRoleException e) {
 //            // TODO Auto-generated catch block
 //            e.printStackTrace();
+        }
+        return "display_responsible_contact";
+    }
+    */
+    
+    /**
+     * Select Responsible party contact.
+     * @return res
+     */
+    public String createOrganizationContacts() {
+        try {
+            String persId = ServletActionContext.getRequest().getParameter("persId");
+            responsiblePartyContact = RegistryServiceLocator.getPoPersonEntityService().
+                                        getPerson(EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
+            gov.nih.nci.pa.dto.PersonDTO contactPerson = 
+                                            EnPnConverter.convertToPaPersonDTO(responsiblePartyContact);
+            OrganizationDTO sponsorselected = (OrganizationDTO) ServletActionContext.
+                                                  getRequest().getSession().getAttribute("PoSponsor");
+            if (sponsorselected != null) {
+                ServletActionContext.getRequest().getSession().
+                            setAttribute("Sponsorselected", sponsorselected);
+            }
+
+            ServletActionContext.getRequest().getSession()
+                    .setAttribute("PoResponsibleContact", responsiblePartyContact);
+            resPartyContactFullName = contactPerson.getLastName() + "," + contactPerson.getFirstName();
+            
+        } catch (NullifiedEntityException ne) {
+            LOG.error("NullifiedEntityException occured while selecting Reponsible party contact " 
+                                        + ne.getMessage());
+        } catch (PAException pae) {
+            LOG.error("PAException occured while selecting Reponsible party contact " 
+                    + pae.getMessage());
         }
         return "display_responsible_contact";
     }
