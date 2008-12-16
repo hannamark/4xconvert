@@ -82,19 +82,23 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import org.hibernate.validator.InvalidStateException;
+import org.junit.Assert;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.service.EjbTestHelper;
 /**
  * @author Scott Miller
  *
  */
 public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedOrganization> {
 
-
+    private int ext = 0;
     /**
      * {@inheritDoc}
      */
@@ -107,7 +111,7 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
         Ii ii = new Ii();;
         // we're going to set to nonsense values, to ensure that the whole type can be persisted
         ii.setDisplayable(Boolean.TRUE);
-        ii.setExtension("myExtension");
+        ii.setExtension("myExtension" + (ext++));
         ii.setIdentifierName("myIdName");
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot("myRoot");
@@ -125,12 +129,24 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
     void verifyStructuralRole(IdentifiedOrganization expected, IdentifiedOrganization actual) {
         assertEquals(expected.getId(), actual.getId());
         assertTrue(actual.getAssignedIdentifier().getDisplayable().booleanValue());
-        assertEquals("myExtension", actual.getAssignedIdentifier().getExtension());
+        assertTrue(actual.getAssignedIdentifier().getExtension().startsWith("myExtension"));
         assertEquals("myIdName", actual.getAssignedIdentifier().getIdentifierName());
         assertEquals(IdentifierReliability.ISS, actual.getAssignedIdentifier().getReliability());
         assertEquals("myRoot", actual.getAssignedIdentifier().getRoot());
         assertEquals(IdentifierScope.BUSN, actual.getAssignedIdentifier().getScope());
         assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
         assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
+    }
+
+    @Test(expected = InvalidStateException.class)
+    public void testUnique() throws Exception {
+        IdentifiedOrganization io1 = createSample();
+        IdentifiedOrganization io2 = createSample();
+
+        io1.setPlayer(io2.getPlayer());
+        io1.setScoper(io2.getScoper());
+        io1.setAssignedIdentifier(io2.getAssignedIdentifier());
+        
+        EjbTestHelper.getIdentifiedOrganizationServiceBean().update(io1);
     }
 }

@@ -86,6 +86,7 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 
+import gov.nih.nci.po.util.UniquePlayerScoperIdentifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -115,6 +116,7 @@ import org.hibernate.annotations.Where;
         @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
                 columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
 @RoleStatusChange
+@UniquePlayerScoperIdentifier
 public class IdentifiedOrganization extends AbstractIdentifiedOrganization implements Correlation {
     private static final long serialVersionUID = 1L;
 

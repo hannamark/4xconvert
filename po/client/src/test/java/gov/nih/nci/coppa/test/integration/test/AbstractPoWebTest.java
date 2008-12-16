@@ -50,11 +50,11 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
     
     protected void waitForTelecomFormsToLoad() {
-        waitForElementById("emailEntry_value", 5);
-        waitForElementById("phoneEntry_value", 5);
-        waitForElementById("faxEntry_value", 5);
-        waitForElementById("ttyEntry_value", 5);
-        waitForElementById("urlEntry_value", 5);
+        waitForElementById("emailEntry_value", 10);
+        waitForElementById("phoneEntry_value", 10);
+        waitForElementById("faxEntry_value", 10);
+        waitForElementById("ttyEntry_value", 10);
+        waitForElementById("urlEntry_value", 10);
     }
     
     private void goHome() {

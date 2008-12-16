@@ -95,6 +95,7 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
  */
 public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedPerson> {
 
+    private int ext = 0;
     /**
      * {@inheritDoc}
      */
@@ -106,7 +107,7 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
 
         Ii ii = new Ii();;
         ii.setDisplayable(Boolean.TRUE);
-        ii.setExtension("myExtension");
+        ii.setExtension("myExtension" + (ext++));
         ii.setIdentifierName("myIdName");
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot("myRoot");
@@ -122,7 +123,7 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
     void verifyStructuralRole(IdentifiedPerson expected, IdentifiedPerson actual) {
         assertEquals(expected.getId(), actual.getId());
         assertTrue(actual.getAssignedIdentifier().getDisplayable().booleanValue());
-        assertEquals("myExtension", actual.getAssignedIdentifier().getExtension());
+        assertTrue(actual.getAssignedIdentifier().getExtension().startsWith("myExtension"));
         assertEquals("myIdName", actual.getAssignedIdentifier().getIdentifierName());
         assertEquals(IdentifierReliability.ISS, actual.getAssignedIdentifier().getReliability());
         assertEquals("myRoot", actual.getAssignedIdentifier().getRoot());

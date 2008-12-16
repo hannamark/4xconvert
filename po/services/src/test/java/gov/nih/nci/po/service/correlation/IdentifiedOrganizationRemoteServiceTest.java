@@ -111,6 +111,7 @@ import java.util.List;
 public class IdentifiedOrganizationRemoteServiceTest
     extends AbstractStructrualRoleRemoteServiceTest<IdentifiedOrganizationDTO, IdentifiedOrganizationCR> {
 
+    private int ext = 0;
     /**
      * {@inheritDoc}
      */
@@ -149,7 +150,7 @@ public class IdentifiedOrganizationRemoteServiceTest
         dto.setStatus(status);
 
         ii = new Ii();
-        ii.setExtension("myExtension");
+        ii.setExtension("myExtension" + (ext++));
         ii.setDisplayable(true);
         ii.setScope(IdentifierScope.OBJ);
         ii.setReliability(IdentifierReliability.ISS);
@@ -291,19 +292,19 @@ public class IdentifiedOrganizationRemoteServiceTest
         searchCriteria.setAssignedId(correlation1.getAssignedId());
         searchCriteria.getAssignedId().setExtension(searchCriteria.getAssignedId().getExtension().toUpperCase());
         results = getCorrelationService().search(searchCriteria);
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
 
         searchCriteria.setAssignedId(correlation2.getAssignedId());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+        assertEquals("2", results.get(0).getIdentifier().getExtension());
 
         // test by assigned id and scoper id
         searchCriteria.setAssignedId(correlation1.getAssignedId());
-        searchCriteria.setScoperIdentifier(correlation2.getScoperIdentifier());
+        searchCriteria.setScoperIdentifier(correlation1.getScoperIdentifier());
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
-        assertEquals(results.get(0).getIdentifier().getExtension(), correlation2Id.getExtension());
+        assertEquals("1", results.get(0).getIdentifier().getExtension());
 
         // test by invalid assigned id
         searchCriteria.getAssignedId().setExtension("invalid extension");
