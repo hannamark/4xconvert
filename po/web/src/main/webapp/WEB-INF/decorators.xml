@@ -5,6 +5,7 @@
         <pattern>/styles/*</pattern>
         <pattern>/scripts/*</pattern>
         <pattern>/images/*</pattern>
+        <pattern>/help/*</pattern>
         <pattern>/dojo/*</pattern>
         <pattern>/struts/*</pattern>
         <pattern>/ajax/*</pattern>

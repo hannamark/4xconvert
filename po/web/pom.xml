@@ -187,6 +187,39 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="poOnlineHelp.zip" value="${basedir}/src/main/help/Output.zip" />
+                                <property name="target.dir" value="${basedir}/target" />
+                                <property name="junk.target.dir" value="${basedir}/target/junk" />
+                                <property name="help.target.dir" value="${basedir}/target/help" />
+                                <property name="ohzip.filter.path" value="Output/WebWorks Help 5.0/coppaPO" />
+                                <mkdir dir="${help.target.dir}" />
+                                <unzip src="${poOnlineHelp.zip}" dest="${junk.target.dir}">
+                                    <patternset>
+                                        <include
+                                            name="${ohzip.filter.path}/**" />
+                                    </patternset>
+                                </unzip>
+                                <copy todir="${help.target.dir}">
+                                    <fileset dir="${junk.target.dir}/${ohzip.filter.path}/">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </copy>
+                                <delete dir="${junk.target.dir}"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <executions>
@@ -197,8 +230,20 @@
                         <configuration>
                             <webResources>
                                 <resource>
-                                    <directory>${basedir}/src/main/webResources</directory>
+                                    <directory>
+                                        ${basedir}/src/main/webResources
+                                    </directory>
                                     <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>
+                                        ${basedir}/target
+                                    </directory>
+                                    <includes>
+                                        <include>
+                                            help/**
+                                        </include>
+                                    </includes>
                                 </resource>
                             </webResources>
                         </configuration>

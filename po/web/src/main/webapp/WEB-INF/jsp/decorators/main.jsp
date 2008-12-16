@@ -19,6 +19,8 @@
                 <div id="contentwrapper">
                     <%-- Content --%>
                     <div id="content">
+	                    <%--Page Help--%>
+	                    <po:helpPrint/>
                         <fmt:message key="po.title" var="defaultTitle" />
                         <h1><decorator:title default="${defaultTitle}" /></h1>
                         <div class="padme8">

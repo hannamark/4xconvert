@@ -23,5 +23,5 @@
             <li><a href="<c:url value="/protected/home.action"/>">Login</a></li>
         </c:otherwise>
     </c:choose>
-    <li><a href="<c:url value="/notYetImplemented.jsp"/>">Help</a></li>
+    <li><a href="javascript://noop/" onclick="openHelpWindow('');">Help</a></li>
 </ul>
