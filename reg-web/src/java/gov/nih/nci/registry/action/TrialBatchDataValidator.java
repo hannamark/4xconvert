@@ -106,7 +106,7 @@ public class TrialBatchDataValidator {
         fieldErr.append(validatePersonInfo(piBatchDto, "Principal Investigator's").toString());
         //Summary 4 Info validation
 
-        fieldErr.append(validateSummary4SponsorInfo(batchDto));
+        //TO-DO will enable later - fieldErr.append(validateSummary4SponsorInfo(batchDto));
         
         if (PAUtil.isNotEmpty(batchDto.getPhase())) {
             if (PhaseCode.OTHER.getCode().equals(batchDto.getPhase())
