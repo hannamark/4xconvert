@@ -32,6 +32,8 @@ public class MessageLog implements Serializable {
     private String assignedIdentifier;
     private Date dateCreated;
     private String messageAction;
+    private Boolean result; 
+    private String exceptionMessage;
     
     /**
      * set id.
@@ -131,4 +133,35 @@ public class MessageLog implements Serializable {
     public void setMessageAction(String messageAction) {
         this.messageAction = messageAction;
     }
-}
+
+    /**
+     * @return the result
+     */
+    @Column(name = "RESULT")
+    public Boolean getResult() {
+        return result;
+    }
+
+    /**
+     * @param result the result to set
+     */
+    public void setResult(Boolean result) {
+        this.result = result;
+    }
+
+    /**
+     * @return the exceptionMessage
+     */
+    @Column(name = "EXCEPTION_MESSAGE")
+    public String getExceptionMessage() {
+        return exceptionMessage;
+    }
+
+    /**
+     * @param exceptionMessage the exceptionMessage to set
+     */
+    public void setExceptionMessage(String exceptionMessage) {
+        this.exceptionMessage = exceptionMessage;
+    }
+    
+   }

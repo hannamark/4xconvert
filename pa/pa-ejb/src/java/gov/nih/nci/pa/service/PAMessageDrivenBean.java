@@ -54,12 +54,16 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.MessageLog;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PersonSynchronizationServiceRemote;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
+
+import java.util.Date;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -69,6 +73,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 /**
  * Message Driven Bean to listen to messages produced by the PO application.
@@ -91,48 +96,83 @@ public class PAMessageDrivenBean implements MessageListener {
      * @param message Message
      */
     public void onMessage(Message message) {
+        LOG.info("Entering PAMessageDrivenBean onMessage()");
         ObjectMessage msg = null;
         try {
-            if (message instanceof ObjectMessage) {
+            if (message instanceof ObjectMessage) {                
                 msg = (ObjectMessage) message;
                 SubscriberUpdateMessage updateMessage = (SubscriberUpdateMessage) msg.getObject();
                 String identifierName = updateMessage.getId().getIdentifierName();
                 HibernateUtil.getHibernateHelper().openAndBindSession();
-                OrganizationSynchronizationServiceRemote orgRemote = (OrganizationSynchronizationServiceRemote)
-                                                JNDIUtil.lookup("pa/OrganizationSynchronizationServiceBean/remote");
-                PersonSynchronizationServiceRemote perRemote = (PersonSynchronizationServiceRemote)
-                                                      JNDIUtil.lookup("pa/PersonSynchronizationServiceBean/remote");
-                if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
-                    orgRemote.synchronizeOrganization(updateMessage.getId());
+                Long msgId = createAuditMessageLog(updateMessage.getId());
+                LOG.info("PAMessageDrivenBean onMessage() got the Identifier to be processed "
+                        + updateMessage.getId().getExtension());
+                try {
+                    OrganizationSynchronizationServiceRemote orgRemote = (OrganizationSynchronizationServiceRemote)
+                                                    JNDIUtil.lookup("pa/OrganizationSynchronizationServiceBean/remote");
+                    PersonSynchronizationServiceRemote perRemote = (PersonSynchronizationServiceRemote)
+                                                          JNDIUtil.lookup("pa/PersonSynchronizationServiceBean/remote");
+                    if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
+                        orgRemote.synchronizeOrganization(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
+                        orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)) {
+                        orgRemote.synchronizeOversightCommittee(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME)) {
+                        orgRemote.synchronizeResearchOrganization(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.PERSON_IDENTIFIER_NAME)) {
+                        perRemote.synchronizePerson(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)) {
+                        perRemote.synchronizeClinicalResearchStaff(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)) {
+                        perRemote.synchronizeHealthCareProvider(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME)) {
+                        perRemote.synchronizeOrganizationalContact(updateMessage.getId());
+                    }                   
+                } catch (PAException e) {
+                    updateExceptionAuditMessageLog(msgId, e.getMessage());
+                    msg.acknowledge();
                 }
-                if (identifierName.equals(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME)) {
-                    orgRemote.synchronizeHealthCareFacility(updateMessage.getId());
-                }
-                if (identifierName.equals(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)) {
-                    orgRemote.synchronizeOversightCommittee(updateMessage.getId());
-                }
-                if (identifierName.equals(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME)) {
-                    orgRemote.synchronizeResearchOrganization(updateMessage.getId());
-                }
-                if (identifierName.equals(IiConverter.PERSON_IDENTIFIER_NAME)) {
-                    perRemote.synchronizePerson(updateMessage.getId());
-                }
-                if (identifierName.equals(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)) {
-                    perRemote.synchronizeClinicalResearchStaff(updateMessage.getId());
-                }
-                if (identifierName.equals(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)) {
-                    perRemote.synchronizeHealthCareProvider(updateMessage.getId());
-                }
-                if (identifierName.equals(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME)) {
-                    perRemote.synchronizeOrganizationalContact(updateMessage.getId());
-                }
-                HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
             }            
             msg.acknowledge();
+            LOG.info("L PAMessageDrivenBean onMessage()");
         } catch (JMSException e) {           
-           LOG.error("MDBs onMessage() threw an JMSException " + e.getMessage());
-        } catch (PAException e) {
-            LOG.error("MDBs onMessage() threw an PAException " + e.getMessage());
+           LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException " + e.getMessage());
+        } finally {
+            HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
+    }
+    
+    private Long createAuditMessageLog(Ii identifier) {
+        Session session = HibernateUtil.getCurrentSession();  
+        MessageLog log = new MessageLog();
+        log.setAssignedIdentifier(identifier.getExtension());
+        log.setDateCreated(new Date());
+//        StudyProtocol sp = new StudyProtocol();
+//        sp.setId(2L);
+//        log.setStudyProtocol("");
+        log.setEntityName(identifier.getIdentifierName());
+        log.setMessageAction("Received");
+        log.setResult(Boolean.valueOf(true));
+        session.save(log);
+        session.flush();
+        return log.getId();
+    }
+    
+    private void updateExceptionAuditMessageLog(Long id, String message) {
+        Session session = HibernateUtil.getCurrentSession();  
+        MessageLog msg = (MessageLog) session.get(MessageLog.class, id);
+        msg.setMessageAction("Message not processed");
+        msg.setResult(Boolean.valueOf(false));
+        msg.setExceptionMessage(message);
+        session.save(msg);
+        session.flush();
     }
 }
