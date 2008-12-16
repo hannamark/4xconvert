@@ -97,7 +97,7 @@ public class BatchHelper { //implements Runnable {
             final MailManager mailManager = new MailManager();
             // Send the batch upload report to the submitter
             String  bodyIntro = "Thank you for  using the NCI Clinical Trials Reporting Program. \n\n"
-                                + "Here is the status of the trials you submitted.\n";
+                                + "Here is the status of the batch trial submission.\n";
             
             mailBody.insert(0, "********************************************************"
                     + "*****************************************************************\n");
