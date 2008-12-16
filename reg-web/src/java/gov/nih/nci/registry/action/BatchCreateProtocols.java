@@ -155,8 +155,7 @@ public class BatchCreateProtocols {
                             .getProtocolQueryService().getStudyProtocolByCriteria(
                                     criteria);
                     if (records != null && records.size() > 0) {
-                        failedCount +=  1;
-                        throw new PAException(
+                       throw new PAException(
                                 "Duplicate Trial - A trial exists in the system "
                                         + " for the Lead Organization and Trial Identifier");
                     }
