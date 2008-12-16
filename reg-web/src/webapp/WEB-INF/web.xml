@@ -112,7 +112,15 @@
             <role-name>Submitter</role-name>
         </auth-constraint>
     </security-constraint>
-
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>admin</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>RegAdmin</role-name>
+        </auth-constraint>
+    </security-constraint>
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
@@ -124,5 +132,9 @@
     <security-role>
         <description>Trial Submitters can submit trials in Registry.</description>
         <role-name>Submitter</role-name>
+    </security-role>
+    <security-role>
+        <description>Registry Admin will have admin privileges.</description>
+        <role-name>RegAdmin</role-name>
     </security-role>
 </web-app>
