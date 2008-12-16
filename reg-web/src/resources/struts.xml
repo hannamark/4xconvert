@@ -42,9 +42,7 @@
     </package>
     <package name="admin" namespace="/admin" extends="default">
         <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
-	        <interceptor-ref name="fileUpload">
-	            <param name="maximumSize" >512000</param>
-	        </interceptor-ref>
+	        <interceptor-ref name="fileUpload"/>
 	        <interceptor-ref name="nci-commonsParams" />
 	        <result>/WEB-INF/jsp/processBatch.jsp</result>
 	        <result name="error">/WEB-INF/jsp/processBatch.jsp</result>
