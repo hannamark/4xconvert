@@ -73,6 +73,8 @@ INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALU
 ;
 INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Submitter', 'Trial Submitter group - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
 ;
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('RegAdmin', 'Registry Administrator - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
+;
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES (2, 1)
 ;
 -- Password is pass
