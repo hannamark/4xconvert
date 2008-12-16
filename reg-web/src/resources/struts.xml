@@ -40,6 +40,17 @@
            <result>/WEB-INF/jsp/registryContact.jsp</result>
         </action> 
     </package>
+    <package name="admin" namespace="/admin" extends="default">
+        <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
+	        <interceptor-ref name="fileUpload">
+	            <param name="maximumSize" >512000</param>
+	        </interceptor-ref>
+	        <interceptor-ref name="nci-commonsParams" />
+	        <result>/WEB-INF/jsp/processBatch.jsp</result>
+	        <result name="error">/WEB-INF/jsp/processBatch.jsp</result>
+	        <result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
+        </action>
+    </package>
     <package name="protected" namespace="/protected" extends="default">
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
 		<interceptor-ref name="nci-commonsParams" />
