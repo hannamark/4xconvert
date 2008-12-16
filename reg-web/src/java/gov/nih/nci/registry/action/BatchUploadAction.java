@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.util.BatchConstants;
+import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,7 +17,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -287,7 +287,7 @@ public class BatchUploadAction extends ActionSupport implements
                  addFieldError("trialDataFileName", 
                          getText("error.batch.invalidDocument"));
              }
-             if (!isValidFileType(trialDataFileName, "xls")) {
+             if (!RegistryUtil.isValidFileType(trialDataFileName, "xls")) {
                  addFieldError("trialDataFileName", 
                          getText("error.batch.trialDataFileName.invalidFileType"));                
              }
@@ -300,7 +300,7 @@ public class BatchUploadAction extends ActionSupport implements
                  addFieldError("docZipFileName", 
                          getText("error.batch.invalidDocument"));
              }
-             if (!isValidFileType(docZipFileName, "zip")) {
+             if (!RegistryUtil.isValidFileType(docZipFileName, "zip")) {
                  addFieldError("docZipFileName", 
                          getText("error.batch.docZipFileName.invalidFileType"));                
              }
@@ -361,28 +361,6 @@ public class BatchUploadAction extends ActionSupport implements
               throw new PAException("Unable to Unzip the document");
           }
           return folderLocation;
-      }
-      /**
-       * check if the uploaded file type is valid.
-       * @param fileName
-       * @return
-       */
-      private boolean isValidFileType(String fileName, String allowedUploadFileTypes) {
-          boolean isValidFileType = false;
-          if (allowedUploadFileTypes != null) {
-              int pos =  fileName.lastIndexOf(".");
-              String uploadedFileType = fileName.substring(pos + 1, fileName.length());
-              StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");        
-              while (st.hasMoreTokens()) {
-                  String allowedFileType = st.nextToken();
-                  if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
-                      isValidFileType = true;
-                      break;
-                  }
-              }
-          }        
-          return isValidFileType;
-
       }
 
 }
