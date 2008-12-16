@@ -25,11 +25,11 @@
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.displayable'}">
 </s:select>             
 <s:textfield name="%{#attr.iiKeyBase + '.extension'}" required="%{#attr.required}" cssClass="%{cssClass}" 
-    size="70" maxlength="255"
+    size="55" maxlength="255"
     label="%{getText(#attr.iiLabelKeyBase + '.extension')}" 
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.extension'}"/>
 <s:textfield name="%{#attr.iiKeyBase + '.identifierName'}" 
-	size="70" maxlength="255"
+	size="55" maxlength="255"
 	label="%{getText(#attr.iiLabelKeyBase + '.identifierName')}"
 	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.identifierName'}"/>
 <s:set name="reliabilityValues" value="@gov.nih.nci.coppa.iso.IdentifierReliability@values()" />
@@ -43,7 +43,7 @@
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.reliability'}">
 </s:select>             
 <s:textfield name="%{#attr.iiKeyBase + '.root'}" required="%{#attr.required}" cssClass="%{cssClass}"
-	size="70" maxlength="255"
+	size="55" maxlength="255"
 	label="%{getText(#attr.iiLabelKeyBase + '.root')}" 
 	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.root'}"/>
 <s:set name="scopeValues" value="@gov.nih.nci.coppa.iso.IdentifierScope@values()" />
