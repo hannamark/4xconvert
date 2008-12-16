@@ -101,5 +101,23 @@ public class RegistryUtil {
         }       
         return isValidPhoneNumber;
    }
+   
+   /**
+    * validates the upload file type against the passed file type.
+    * @param fileName filename
+    * @param allowedFileType allowedFileType
+    * @return boolean
+    */
+   public static boolean isValidFileType(String fileName, String allowedFileType) {
+       boolean isValidFileType = false;
+       int pos = fileName.lastIndexOf(".");
+       String uploadedFileType = fileName.substring(pos + 1, fileName.length());
+       if (uploadedFileType != null 
+               && allowedFileType.equalsIgnoreCase(uploadedFileType)) {
+           isValidFileType = true;
+       }
+       return isValidFileType;
+
+   }
 
 }
