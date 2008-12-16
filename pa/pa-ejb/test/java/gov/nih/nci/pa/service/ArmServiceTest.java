@@ -74,14 +74,9 @@ public class ArmServiceTest {
         dto.setInterventions(intDSet);
         dto.setName(StConverter.convertToSt("name"));
         dto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.ACTIVE_COMPARATOR));
-        try {
-            remoteEjb.create(dto);
-        } catch (PAException e) {
-            // expected behavior, failure for not logging user
-        }
         ArmDTO resultDto = remoteEjb.create(dto);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
-//// commented by naveen        assertEquals(originalCount + 1, dtoList.size());
+        assertEquals(originalCount + 1, dtoList.size());
         Set<Ii> resultIntSet = resultDto.getInterventions().getItem();
         assertEquals(1, resultIntSet.size());
         assertEquals(IiConverter.convertToLong(intIi), IiConverter.convertToLong((Ii) resultIntSet.toArray()[0]));
@@ -98,14 +93,9 @@ public class ArmServiceTest {
         dto.setInterventions(new DSet<Ii>());
         dto.setName(StConverter.convertToSt("name"));
         dto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.ACTIVE_COMPARATOR));
-        try {
-            remoteEjb.create(dto);
-        } catch (PAException e) {
-            // expected behavior, failure for not logging user
-        }
         remoteEjb.create(dto);
         dtoList = remoteEjb.getByStudyProtocol(spIi);
-     // commented by naveen        assertEquals(originalCount + 1, dtoList.size());
+        assertEquals(originalCount + 1, dtoList.size());
     }
     @Test
     public void updateTest() throws Exception {

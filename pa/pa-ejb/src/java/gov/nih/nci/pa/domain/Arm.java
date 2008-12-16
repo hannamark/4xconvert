@@ -32,9 +32,9 @@ import org.hibernate.validator.NotNull;
 public class Arm extends AbstractStudyEntity {
     private static final long serialVersionUID = 1237144890L;
     
-    /** Maximum length for name (label) attrubute. */
+    /** Maximum length for name (label) attribute. */
     public static final int NAME_LENGTH = 62;
-    /** Maximum length for discriptionText attrubute. */
+    /** Maximum length for discriptionText attribute. */
     public static final int DESCRIPTION_TEXT_LENGTH = 1000;
 
     private String name;

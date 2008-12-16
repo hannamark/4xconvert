@@ -12,6 +12,8 @@ import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -89,5 +91,25 @@ public class PlannedActivityTest {
         sess.flush();
         PlannedActivity pa3 = (PlannedActivity) sess.get(PlannedActivity.class, TestSchema.plannedActivityIds.get(0));
         assertNull(pa3);
+    }
+    @Test
+    public void armsAssociationTest() {
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, spId);
+        assertNotNull(sp);
+        List<PlannedActivity> paList = sp.getPlannedActivities();
+        assertFalse(paList.isEmpty());
+        Long paId = paList.get(0).getId();
+        sess.flush();
+        PlannedActivity pa = (PlannedActivity) sess.get(PlannedActivity.class, paId);
+        assertNotNull(pa);
+        Collection<Arm> armList = pa.getArms();
+        assertTrue(armList.size() > 0);
+        ArrayList<Long> spIds = new ArrayList<Long>();
+        for (Arm arm : armList) {
+            sp = arm.getStudyProtocol();
+            spIds.add(sp.getId());
+        }
+        assertTrue(spIds.contains(spId));
     }
 }
