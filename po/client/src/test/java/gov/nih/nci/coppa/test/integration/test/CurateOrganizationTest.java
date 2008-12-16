@@ -54,6 +54,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         // click on item to curate
         clickAndWaitButton("org_id_" + id.getExtension());
+        waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
         verifyPostalAddress(ENTITYTYPE.organization);
@@ -178,6 +179,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
+        waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
         verifyPostalAddress(ENTITYTYPE.organization);
@@ -202,6 +204,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         // click on item to curate
         selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
         waitForPageToLoad();
+        waitForTelecomFormsToLoad();
 
         // method exits on certain page
         verifyEquals("PO: Persons and Organizations - Organization Details - Comparison", selenium.getTitle());

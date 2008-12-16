@@ -46,8 +46,17 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         goHome();
         selenium.click("CreateOrganization");
         waitForPageToLoad();
+        waitForTelecomFormsToLoad();
     }
-
+    
+    protected void waitForTelecomFormsToLoad() {
+        waitForElementById("emailEntry_value", 5);
+        waitForElementById("phoneEntry_value", 5);
+        waitForElementById("faxEntry_value", 5);
+        waitForElementById("ttyEntry_value", 5);
+        waitForElementById("urlEntry_value", 5);
+    }
+    
     private void goHome() {
         if (!isLoggedIn()) {
             loginAsCurator();
@@ -60,6 +69,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         goHome();
         selenium.click("CreatePerson");
         waitForPageToLoad();
+        waitForTelecomFormsToLoad();
     }
 
     protected void openSearchPerson() {
