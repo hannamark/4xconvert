@@ -8,7 +8,6 @@ import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.bo.QualifiedEntityType;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -28,7 +27,6 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             OversightCommitteeType.class,
             OrganizationalContactType.class,
             ResearchOrganizationType.class,
-            QualifiedEntityType.class,
             FundingMechanism.class};
 
     private static final String CODE = "TT";
@@ -52,7 +50,7 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
             constructor = clz.getConstructor(String.class, String.class, String.class, FundingMechanismStatus.class);
             newInstance = constructor.newInstance(CODE, DESC, "cat", FundingMechanismStatus.ACTIVE);
 
-        } else if (clz.equals(ResearchOrganizationType.class) || clz.equals(QualifiedEntityType.class)) {
+        } else if (clz.equals(ResearchOrganizationType.class)) {
             constructor = clz.getConstructor(String.class, String.class);
             newInstance = constructor.newInstance(CODE, DESC);
         }else {

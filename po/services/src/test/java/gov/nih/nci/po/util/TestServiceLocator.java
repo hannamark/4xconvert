@@ -95,7 +95,6 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
 
@@ -187,13 +186,6 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
         return EjbTestHelper.getOrganizationalContactService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public QualifiedEntityServiceLocal getQualifiedEntityService() {
-        return EjbTestHelper.getQualifiedEntityServiceBean();
     }
 
     public GenericCodeValueServiceLocal getGenericCodeValueService() {

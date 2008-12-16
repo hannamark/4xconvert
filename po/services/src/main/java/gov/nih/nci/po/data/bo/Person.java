@@ -124,7 +124,6 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private Set<OrganizationalContact> organizationalContacts = new HashSet<OrganizationalContact>();
     private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
-    private Set<QualifiedEntity> qualifiedEntities = new HashSet<QualifiedEntity>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
 
      /**
@@ -321,23 +320,6 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @SuppressWarnings("unused")
     private void setOrganizationalContacts(Set<OrganizationalContact> organizationalContacts) {
         this.organizationalContacts = organizationalContacts;
-    }
-
-    /**
-     * @return qualifiedEntities.
-     */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
-    public Set<QualifiedEntity> getQualifiedEntities() {
-        return qualifiedEntities;
-    }
-
-    /**
-     * @param qualifiedEntities qualifiedEntities.
-     */
-    @SuppressWarnings("unused")
-    private void setQualifiedEntities(Set<QualifiedEntity> qualifiedEntities) {
-        this.qualifiedEntities = qualifiedEntities;
     }
 
     /**

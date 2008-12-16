@@ -102,8 +102,6 @@ import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceB
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceBean;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceBean;
-import gov.nih.nci.services.correlation.QualifiedEntityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
@@ -332,27 +330,6 @@ public class EjbTestHelper {
         svc.setLocalCRService(new IdentifiedPersonCrServiceBean());
         return (IdentifiedPersonCorrelationServiceRemote) wrapWithProxies(svc);
     }
-
-    public static QualifiedEntityServiceBean getQualifiedEntityServiceBean() {
-        QualifiedEntityServiceBean bean = new QualifiedEntityServiceBean();
-        bean.setPublisher(getMessageProducer());
-        return bean;
-    }
-
-    public static QualifiedEntityCRServiceBean getQualifiedEntityCRServiceBean() {
-        QualifiedEntityCRServiceBean bean = new QualifiedEntityCRServiceBean();
-        bean.setPublisher(getMessageProducer());
-        return bean;
-    }
-
-    public static QualifiedEntityCorrelationServiceRemote getQualifiedEntityCorrelationServiceAsRemote() {
-        QualifiedEntityCorrelationServiceBean svc = new QualifiedEntityCorrelationServiceBean();
-        svc.setQeService(getQualifiedEntityServiceBean());
-        svc.setQeCRService(getQualifiedEntityCRServiceBean());
-        return (QualifiedEntityCorrelationServiceRemote) wrapWithProxies(svc);
-    }
-
-
 
     public static MessageProducerBean getMessageProducer() {
         try {

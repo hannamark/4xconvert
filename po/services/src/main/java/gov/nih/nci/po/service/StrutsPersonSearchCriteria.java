@@ -219,13 +219,11 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
             hql.append(" LEFT OUTER JOIN p.organizationalContacts as oc")
                 .append(" LEFT OUTER JOIN p.clinicalResearchStaff as crs")
                 .append(" LEFT OUTER JOIN p.healthCareProviders as hcp")
-                .append(" LEFT OUTER JOIN p.qualifiedEntities as qe")
                 .append(" LEFT OUTER JOIN p.identifiedPersons as ip");
             if (StringUtils.isNotBlank(org)) {
                 hql.append(" LEFT OUTER JOIN oc.scoper as ocscoper")
                 .append(" LEFT OUTER JOIN crs.scoper as crsscoper")
                 .append(" LEFT OUTER JOIN hcp.scoper as hcpscoper")
-                .append(" LEFT OUTER JOIN qe.scoper as qescoper")
                 .append(" LEFT OUTER JOIN ip.scoper as ipscoper");
             }
         }
@@ -261,14 +259,12 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
             hql.append(" AND (lower(ocscoper.name) LIKE :ocname")
                     .append(" OR lower(crsscoper.name) LIKE :crsname")
                     .append(" OR lower(hcpscoper.name) LIKE :hcpname")
-                    .append(" OR lower(qescoper.name) LIKE :qename")
                     .append(" OR lower(ipscoper.name) LIKE :ipname")
                     .append(')');
             final String on = org.toLowerCase() + "%";
             params.put("ocname", on);
             params.put("crsname", on);
             params.put("hcpname", on);
-            params.put("qename", on);
             params.put("ipname", on);
         }
         if (StringUtils.isNotBlank(ctepId)) {

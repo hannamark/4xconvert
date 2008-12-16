@@ -106,7 +106,6 @@ import gov.nih.nci.po.service.OrganizationalContactServiceStub;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.service.external.CtepImportService;
@@ -214,13 +213,6 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
         return orgConService;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public QualifiedEntityServiceLocal getQualifiedEntityService() {
-        return null;
     }
 
     /**

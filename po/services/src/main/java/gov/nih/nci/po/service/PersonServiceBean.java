@@ -90,12 +90,13 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
 
-import gov.nih.nci.po.data.bo.QualifiedEntity;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+
 import org.hibernate.Session;
 
 /**
@@ -125,7 +126,6 @@ public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person
         l.addAll(getAssociatedRoles(p.getId(), HealthCareProvider.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(p.getId(), IdentifiedPerson.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(p.getId(), OrganizationalContact.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(p.getId(), QualifiedEntity.class, PLAYER_ID, s));
         return l;
     }
 

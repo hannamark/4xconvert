@@ -94,7 +94,6 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
 
@@ -186,13 +185,6 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
         return (OrganizationalContactServiceLocal) JNDIUtil.lookup("po/OrganizationalContactServiceBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public QualifiedEntityServiceLocal getQualifiedEntityService() {
-        return (QualifiedEntityServiceLocal) JNDIUtil.lookup("po/QualifiedEntityServiceBean/local");
     }
 
     /**

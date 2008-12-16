@@ -122,8 +122,6 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Per
                 + " LEFT OUTER JOIN crs.changeRequests as crscr"
                 + " LEFT OUTER JOIN p.healthCareProviders as hcp"
                 + " LEFT OUTER JOIN hcp.changeRequests as hcpcr"
-                + " LEFT OUTER JOIN p.qualifiedEntities as qe"
-                + " LEFT OUTER JOIN qe.changeRequests as qecr"
                 + " LEFT OUTER JOIN p.identifiedPersons as ip"
                 + " LEFT OUTER JOIN ip.changeRequests as ipcr"
                 + " where (p.statusCode != '" + RoleStatus.NULLIFIED + "') AND ("
@@ -135,8 +133,6 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Per
                 + " or crscr.processed = 'false'"
                 + " or hcp.status = 'PENDING'"
                 + " or hcpcr.processed = 'false'"
-                + " or qe.status = 'PENDING'"
-                + " or qecr.processed = 'false'"
                 + " or ip.status = 'PENDING'"
                 + " or ipcr.processed = 'false' )";
 

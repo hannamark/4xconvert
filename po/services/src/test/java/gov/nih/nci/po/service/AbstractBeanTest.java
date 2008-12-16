@@ -3,7 +3,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
-import gov.nih.nci.po.data.bo.QualifiedEntityType;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -24,7 +23,6 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     private FundingMechanism fundingMechanism;
 
 
-    private QualifiedEntityType qualifiedEntityType;
     private User user;
 
     public Country getDefaultCountry() {
@@ -100,9 +98,6 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         researchOrgType = new ResearchOrganizationType("CCR", "Cancer Center");
         researchOrgType.getFundingMechanisms().add(fundingMechanism);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
-
-        qualifiedEntityType = new QualifiedEntityType("MD", "Medical Doctor");
-        PoHibernateUtil.getCurrentSession().saveOrUpdate(qualifiedEntityType);
 
         user = new User();
         user.setLoginName("unittest" + new Random().nextLong());

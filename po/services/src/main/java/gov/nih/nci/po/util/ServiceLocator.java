@@ -94,7 +94,6 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.QualifiedEntityServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
 
@@ -163,11 +162,6 @@ public interface ServiceLocator {
      * @return the service.
      */
     OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    QualifiedEntityServiceLocal getQualifiedEntityService();
 
     /**
      * @return the service.

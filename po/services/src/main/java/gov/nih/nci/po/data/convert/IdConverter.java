@@ -408,20 +408,4 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
         }
     }
 
-    /**
-     * convert the id of a qualified entity.
-     * @author gax
-     */
-    public static class QualifiedEntityIdConverter extends IdConverter {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Ii convertToIi(Long value) {
-            Ii iso = super.convertToIi(value);
-            iso.setIdentifierName(QUALIFIED_ENTITY_IDENTIFIER_NAME);
-            iso.setRoot(IdConverter.QUALIFIED_ENTITY_ROOT);
-            return iso;
-        }
-    }
 }

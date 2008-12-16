@@ -90,16 +90,17 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
-
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
-import gov.nih.nci.po.data.bo.QualifiedEntity;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+
 import org.hibernate.Session;
 
 /**
@@ -131,14 +132,12 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), OversightCommittee.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), ResearchOrganization.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), QualifiedEntity.class, PLAYER_ID, s));
         // scoped roles
         l.addAll(getAssociatedRoles(o.getId(), HealthCareProvider.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), ClinicalResearchStaff.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedPerson.class, SCOPER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), OrganizationalContact.class, SCOPER_ID, s));
-        l.addAll(getAssociatedRoles(o.getId(), QualifiedEntity.class, SCOPER_ID, s));
         return l;
     }
 }
