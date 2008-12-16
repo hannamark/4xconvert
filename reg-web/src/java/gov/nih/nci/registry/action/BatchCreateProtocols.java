@@ -73,6 +73,8 @@ public class BatchCreateProtocols {
     private static Logger log = Logger.getLogger(BatchCreateProtocols.class);
     private static final int MAXF = 1024;
     private HashMap<String, String> map = null;
+    private int sucessCount = 0;
+    private int failedCount = 0;
     /**
      * 
      * @param dtoList list
@@ -105,14 +107,19 @@ public class BatchCreateProtocols {
                     result = buildProtocol(batchDto, folderPath , userName);    
                 } else {
                     result = "Trial registration failed for Identifier " 
-                    + batchDto.getLocalProtocolIdentifier() +  "\nReason: " + result + "\n";
+                    + batchDto.getUniqueTrialId() +  "\nReason: " + result + "\n";
+                    failedCount  += 1;
                 }
                 log.error("putting values in map local protocol Id as " 
-                        + batchDto.getLocalProtocolIdentifier() + "and response as " + result);
-                map.put(batchDto.getLocalProtocolIdentifier() , result);
+                        + batchDto.getUniqueTrialId() + "and response as " + result);
+                map.put(batchDto.getUniqueTrialId() , result);
             }
         }
+        log.error("createProtocols...failed count" + failedCount);
+        log.error("createProtocols...summaryMap sucess count" + sucessCount);
         log.error("leaving into createProtocols...");
+        map.put("Failed Trial Count" , String.valueOf(failedCount));
+        map.put("Sucess Trial Count" , String.valueOf(sucessCount));
         return map;
     }
 
@@ -128,10 +135,11 @@ public class BatchCreateProtocols {
 
         Ii studyProtocolIi = null;
         String protocolAssignedId  = null;
+        TrialBatchDataValidator dataValidator = new TrialBatchDataValidator();
         try {
             // before creating the protocol check for duplicate
             // using the Lead Org Trial Identifier and Lead Org Identifier
-            OrganizationBatchDTO leadOrgDto = buildLeadOrgDto(dto);
+            OrganizationBatchDTO leadOrgDto = dataValidator.buildLeadOrgDto(dto);
             Ii orgIdIi = lookUpOrgs(leadOrgDto);            
             if (orgIdIi != null) {
                 Organization paOrg = new Organization();
@@ -147,6 +155,7 @@ public class BatchCreateProtocols {
                             .getProtocolQueryService().getStudyProtocolByCriteria(
                                     criteria);
                     if (records != null && records.size() > 0) {
+                        failedCount +=  1;
                         throw new PAException(
                                 "Duplicate Trial - A trial exists in the system "
                                         + " for the Lead Organization and Trial Identifier");
@@ -196,8 +205,8 @@ public class BatchCreateProtocols {
             }
             log.error("Before Summ4Funding lookup");
             //Summary 4 Info
-            OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(dto);
-            if (!orgDTOIsEmpty(summ4Sponsor)) {
+            OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(dto);
+            if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {
                 //look up for org only when dto is not empty
                 Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
                 if (selectedSummary4Sponsor != null) {
@@ -211,7 +220,7 @@ public class BatchCreateProtocols {
             }
             // create/Lookup the org
             log.error("buildProtocol -Create or lookup the org ");
-            OrganizationBatchDTO orgDto = buildLeadOrgDto(dto);
+            OrganizationBatchDTO orgDto = dataValidator.buildLeadOrgDto(dto);
             Ii leadOrgIdIi = lookUpOrgs(orgDto);
             if (null != orgIdIi) {
                     new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
@@ -221,7 +230,7 @@ public class BatchCreateProtocols {
                 }
             log.error("buildProtocol -Create or lookup the Person");
             //look up Person
-            PersonBatchDTO piDto = buildLeadPIDto(dto);
+            PersonBatchDTO piDto = dataValidator.buildLeadPIDto(dto);
             Ii leadPrincipalInvestigator = lookUpPersons(piDto);
             if (leadPrincipalInvestigator != null) {
                 new PARelationServiceBean().createPrincipalInvestigatorRelations(orgIdIi.getExtension(), 
@@ -230,7 +239,7 @@ public class BatchCreateProtocols {
             }
             log.error("buildProtocol -Create or lookup the Sponsor ");
             //look up sponser
-            OrganizationBatchDTO sponsorOrgDto = buildSponsorOrgDto(dto);
+            OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(dto);
             Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
             if (sponsorIdIi != null) {
                 new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
@@ -241,7 +250,7 @@ public class BatchCreateProtocols {
                             IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
                 } else {
                     //look up new Person or create if needed.
-                    PersonBatchDTO sponsorPersonDto = buildSponsorContact(dto);
+                    PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(dto);
                     Ii responsiblePartyContact = lookUpPersons(sponsorPersonDto);
                     new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
                             responsiblePartyContact.getExtension(), IiConverter
@@ -254,15 +263,18 @@ public class BatchCreateProtocols {
              protocolAssignedId = 
                  RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
                  getAssignedIdentifier().getExtension().toString();
-             protocolAssignedId = "Trial  with Identifier " + dto.getLocalProtocolIdentifier()
+             protocolAssignedId = "Trial Identifier " + dto.getUniqueTrialId()
                  + " successfully registered and assigned  NCI Identifier " + protocolAssignedId + "\n";
+             sucessCount +=  1;
         } catch (PAException ex) {
+            failedCount +=  1;
             log.error("buildprotocol exception-" + ex.getMessage());
             protocolAssignedId =  "Trial registration failed for Identifier " 
-            + dto.getLocalProtocolIdentifier() + "\nReason:" + ex.getMessage() + "\n";
+            + dto.getUniqueTrialId() + "\nReason:" + ex.getMessage() + "\n";
         } catch (Exception exc) {
+            failedCount +=  1;
         protocolAssignedId =  "Trial registration failed for Identifier " 
-            + dto.getLocalProtocolIdentifier() + "\nReason:" + exc.getMessage() + "\n";
+            + dto.getUniqueTrialId() + "\nReason:" + exc.getMessage() + "\n";
         log.error("buildprotocol exception-" + exc.getMessage());
     }
         log.error("response " + protocolAssignedId);
@@ -304,7 +316,12 @@ public class BatchCreateProtocols {
         protocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         return protocolDTO;
     }
-
+/**
+ * 
+ * @param studyProtocolIi ii
+ * @param batchDto dto
+ * @throws PAException ex
+ */
     private void createStudyStatus(Ii studyProtocolIi,
             StudyProtocolBatchDTO batchDto) throws PAException {
             // create study overall status
@@ -328,7 +345,7 @@ public class BatchCreateProtocols {
      *            studyProtocolIi
      * @param batchDto
      *            batchDto
-     * @throws PAException 
+     * @throws PAException ex 
      */
     private void createStudyResources(Ii studyProtocolIi,
             StudyProtocolBatchDTO batchDto) throws PAException {
@@ -704,95 +721,6 @@ public class BatchCreateProtocols {
     }
     /**
      * 
-     * @param dto dto
-     * @return orgDto
-     */
-    private OrganizationBatchDTO buildLeadOrgDto(StudyProtocolBatchDTO dto) {
-        OrganizationBatchDTO orgDto = new OrganizationBatchDTO();
-        orgDto.setName(dto.getLeadOrgName());
-        orgDto.setOrgCTEPId(dto.getLeadOrgCTEPOrgNo());
-        orgDto.setStreetAddress(dto.getLeadOrgStreetAddress());
-        orgDto.setCity(dto.getLeadOrgCity());
-        orgDto.setState(dto.getLeadOrgState());
-        orgDto.setZip(dto.getLeadOrgZip());
-        orgDto.setCountry(dto.getLeadOrgCountry());
-        orgDto.setEmail(dto.getLeadOrgEmail());
-        orgDto.setPhone(dto.getLeadOrgPhone());
-        orgDto.setTty(dto.getLeadOrgTTY());
-        orgDto.setFax(dto.getLeadOrgFax());
-        orgDto.setUrl(dto.getLeadOrgUrl());
-        orgDto.setType(dto.getLeadOrgType());
-        return orgDto;
-    }
-    /**
-     * 
-     * @param dto
-     * @return
-     */
-        private PersonBatchDTO buildLeadPIDto(StudyProtocolBatchDTO dto) {
-        PersonBatchDTO personDto = new PersonBatchDTO();
-        personDto.setFirstName(dto.getPiFirstName());
-        personDto.setMiddleName(dto.getPiMiddleName());
-        personDto.setLastName(dto.getPiLastName());
-        personDto.setPersonCTEPId(dto.getPiPersonCTEPPersonNo());
-        personDto.setStreetAddress(dto.getPiStreetAddress());
-        personDto.setCity(dto.getPiCity());
-        personDto.setState(dto.getPiState());
-        personDto.setZip(dto.getPiZip());
-        personDto.setCountry(dto.getPiCountry());
-        personDto.setEmail(dto.getPiEmail());
-        personDto.setPhone(dto.getPiPhone());
-        personDto.setTty(dto.getPiTTY());
-        personDto.setFax(dto.getPiFax());
-        personDto.setUrl(dto.getPiUrl());
-        return personDto;
-    }
-    /**
-     * 
-     * @param dto dto
-     * @return SponsorDto
-     */
-    private OrganizationBatchDTO buildSponsorOrgDto(StudyProtocolBatchDTO dto) {
-        OrganizationBatchDTO sponsorDto = new OrganizationBatchDTO();
-        sponsorDto.setName(dto.getSponsorOrgName());
-        sponsorDto.setOrgCTEPId(dto.getSponsorCTEPOrgNumber());
-        sponsorDto.setStreetAddress(dto.getSponsorStreetAddress());
-        sponsorDto.setCity(dto.getSponsorCity());
-        sponsorDto.setState(dto.getSponsorState());
-        sponsorDto.setZip(dto.getSponsorZip());
-        sponsorDto.setCountry(dto.getSponsorCountry());
-        sponsorDto.setEmail(dto.getSponsorEmail());
-        sponsorDto.setPhone(dto.getSponsorPhone());
-        sponsorDto.setTty(dto.getSponsorTTY());
-        sponsorDto.setFax(dto.getSponsorFax());
-        sponsorDto.setUrl(dto.getSponsorURL());
-        return sponsorDto;
-    }
-    /**
-     * 
-     * @param dto dto
-     * @return dto
-     */
-    private PersonBatchDTO buildSponsorContact(StudyProtocolBatchDTO dto) {
-        PersonBatchDTO  sponsorContact = new PersonBatchDTO();
-        sponsorContact.setFirstName(dto.getSponsorContactFName());
-        sponsorContact.setMiddleName(dto.getSponsorContactMName());
-        sponsorContact.setLastName(dto.getSponsorContactLName());
-        sponsorContact.setPersonCTEPId(dto.getSponsorContactCTEPPerNo());
-        sponsorContact.setStreetAddress(dto.getSponsorContactStreetAddress());
-        sponsorContact.setCity(dto.getSponsorContactCity());
-        sponsorContact.setState(dto.getSponsorContactState());
-        sponsorContact.setZip(dto.getSponsorContactZip());
-        sponsorContact.setCountry(dto.getSponsorContactCountry());
-        sponsorContact.setEmail(dto.getSponsorContactEmail());
-        sponsorContact.setPhone(dto.getSponsorContactPhone());
-        sponsorContact.setTty(dto.getSponsorContactTTY());
-        sponsorContact.setFax(dto.getSponsorContactFax());
-        sponsorContact.setUrl(dto.getSponsorContactUrl());
-        return sponsorContact;
-    }
-    /**
-     * 
      * @param studyProtocolIi
      * @param docTypeCode
      * @param fileName
@@ -867,52 +795,5 @@ public class BatchCreateProtocols {
             indldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getIndExpandedAccessStatus()));
             RegistryServiceLocator.getStudyIndldeService().create(indldeDTO);
      log.error("leaving createIndIdeIndicators....");
-    }
-    private OrganizationBatchDTO buildSummary4Sponsor(StudyProtocolBatchDTO dto) {
-        OrganizationBatchDTO summ4Sponsor = new OrganizationBatchDTO();
-        summ4Sponsor.setName(dto.getSumm4OrgName());
-        summ4Sponsor.setOrgCTEPId(dto.getSumm4OrgCTEPOrgNo());
-        summ4Sponsor.setStreetAddress(dto.getSumm4OrgStreetAddress());
-        summ4Sponsor.setCity(dto.getSumm4City());
-        summ4Sponsor.setState(dto.getSumm4State());
-        summ4Sponsor.setZip(dto.getSumm4Zip());
-        summ4Sponsor.setCountry(dto.getSumm4Country());
-        summ4Sponsor.setEmail(dto.getSumm4Email());
-        summ4Sponsor.setPhone(dto.getSumm4Phone());
-        summ4Sponsor.setTty(dto.getSumm4TTY());
-        summ4Sponsor.setFax(dto.getSumm4Fax());
-        summ4Sponsor.setUrl(dto.getSumm4Url());
-        return summ4Sponsor;
-    }
-    private boolean orgDTOIsEmpty(OrganizationBatchDTO dto) {
-        int nullCount = 0;
-        if (PAUtil.isEmpty(dto.getName())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getStreetAddress())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getCity())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getState())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getZip())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getCountry())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getEmail())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getPhone())) {
-            nullCount += 1;
-        }
-        if (nullCount == 0) {
-            return false;
-        }
-        return true;
     }
 }
