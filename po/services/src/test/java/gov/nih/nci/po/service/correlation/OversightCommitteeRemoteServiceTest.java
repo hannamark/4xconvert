@@ -132,6 +132,9 @@ public class OversightCommitteeRemoteServiceTest extends AbstractStructrualRoleR
         type.setCode("Ethics Committee");
         dto.setTypeCode(type);
 
+        // re-gen a player org for next sample for uniqueness
+        createAndSetOrganization();
+
         return dto;
     }
 

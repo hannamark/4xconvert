@@ -80,97 +80,71 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.service.EjbTestHelper;
-import org.hibernate.validator.InvalidStateException;
-import org.junit.Assert;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.data.bo.FundingMechanism;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
+
+import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import java.io.Serializable;
 
-import org.junit.Before;
+import java.sql.Connection;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.mapping.Property;
+import org.hibernate.validator.PropertyConstraint;
+import org.hibernate.validator.Validator;
+
 
 /**
- * Service test.
+ * only one role can exist with a status of anything other than nullified, for a given player org.
  */
-public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServiceTest<ResearchOrganization> {
+public class UniqueOversightCommitteeValidator
+        implements Validator<UniqueOversightCommittee>, PropertyConstraint, Serializable {
 
-    private ResearchOrganizationType sampleType = null;
-    private FundingMechanism fm = null;
+    private static final long serialVersionUID = -7752244855993073221L;
 
-    @Before
-    public void setupType() throws Exception {
-        fm = new FundingMechanism("BXX","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().save(fm);
-        sampleType = new ResearchOrganizationType("ST", "sampleType");
-        sampleType.getFundingMechanisms().add(fm);
-        PoHibernateUtil.getCurrentSession().save(sampleType);
+    /**
+     * {@inheritDoc}
+     */
+    public void initialize(UniqueOversightCommittee params) {
+        // do nothing
     }
 
-    @Override
-    ResearchOrganization getSampleStructuralRole() {
-        ResearchOrganization oc = new ResearchOrganization();
-        oc.setPlayer(basicOrganization);
-        oc.setTypeCode(sampleType);
-        oc.setFundingMechanism(fm);
-
-        try {
-            // re-gen new Player Org
-            setUpData();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isValid(Object value) {
+        if (!(value instanceof OversightCommittee)) {
+            return false;
         }
-
-        return oc;
-    }
-
-    @Override
-    void verifyStructuralRole(ResearchOrganization expected, ResearchOrganization actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
-        assertEquals(RoleStatus.PENDING, actual.getStatus());
-        assertEquals(expected.getFundingMechanism().getCode(), actual.getFundingMechanism().getCode());
-    }
-
-    @Test
-    public void testUnique() throws Exception {
-        ResearchOrganization ro1 = super.createSample();
-        ResearchOrganization ro2 = super.createSample();
-
-        ro1.setPlayer(ro2.getPlayer());
-        ro1.setTypeCode(ro2.getTypeCode());
-        ro1.setFundingMechanism(ro2.getFundingMechanism());
+        
+        OversightCommittee hcf = (OversightCommittee) value;
+        Session s = null;
         try {
-            EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-            Assert.fail();
-        } catch(InvalidStateException e) {
+            Connection conn = PoHibernateUtil.getCurrentSession().connection();
+            s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+            Criteria c = s.createCriteria(OversightCommittee.class);
+            LogicalExpression and = Restrictions.and(
+                    Restrictions.eq("player", hcf.getPlayer()),
+                    Restrictions.eq("typeCode", hcf.getTypeCode()));
+            and = Restrictions.and(and, Restrictions.ne("status", RoleStatus.NULLIFIED));
+            c.add(and);
+            OversightCommittee other = (OversightCommittee) c.uniqueResult();
+            return (other == null || other.getId().equals(hcf.getId()));
+        } finally {
+            if (s != null) {
+                s.close();
+            }
         }
-
-        FundingMechanism otherfm = new FundingMechanism("ZZZ","bla","bla", FundingMechanismStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().save(otherfm);
-        ResearchOrganizationType otherType = new ResearchOrganizationType("otherType", "Some other stuff");
-        otherType.getFundingMechanisms().add(fm);
-        otherType.getFundingMechanisms().add(otherfm);
-        PoHibernateUtil.getCurrentSession().save(otherType);
-        ro1.setTypeCode(otherType);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-
-        ro2.getTypeCode().getFundingMechanisms().add(otherfm);
-        PoHibernateUtil.getCurrentSession().update(ro2.getTypeCode());
-        ro1.setTypeCode(ro2.getTypeCode());
-        ro1.setFundingMechanism(otherfm);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-
-        ro2.setStatus(RoleStatus.NULLIFIED);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro2);
-        ro1.setTypeCode(ro2.getTypeCode());
-        ro1.setFundingMechanism(ro2.getFundingMechanism());
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void apply(Property property) {
+        // No db constraints are implied by this validator
+    }
+
 }

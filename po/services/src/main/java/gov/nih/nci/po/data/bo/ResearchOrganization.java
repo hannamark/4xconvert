@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
+import gov.nih.nci.po.util.UniqueResearchOrganization;
 import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
 
 import java.util.HashSet;
@@ -115,6 +116,7 @@ import org.hibernate.annotations.Where;
 @RoleStatusChange
 @SuppressWarnings("PMD.UselessOverridingMethod")
 @VaildResearchOrganizationTypeWithFundingMechanism
+@UniqueResearchOrganization
 public class ResearchOrganization extends AbstractResearchOrganization implements Correlation {
 
     private static final long serialVersionUID = 1L;

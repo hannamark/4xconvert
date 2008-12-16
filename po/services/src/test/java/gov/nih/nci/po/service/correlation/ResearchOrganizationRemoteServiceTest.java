@@ -137,6 +137,9 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractStructrualRol
         fm.setCode(getFundingMechanism().getCode());
         dto.setFundingMechanism(fm);
 
+        // re-gen a player org for next sample for uniqueness
+        createAndSetOrganization();
+        
         return dto;
     }
 

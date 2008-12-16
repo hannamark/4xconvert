@@ -197,8 +197,11 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
         if (obj.getId() != null) {
             throw new IllegalArgumentException("id must be null on calls to create!");
         }
+        Session s = PoHibernateUtil.getCurrentSession();
+        // flush here to make sure that the validators' query is correct.
+        s.flush();
         ensureValid(obj);
-        return ((Long) PoHibernateUtil.getCurrentSession().save(obj)).longValue();
+        return ((Long) s.save(obj)).longValue();
     }
 
     /**
@@ -342,6 +345,8 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject> {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(T updatedEntity) {
         Session s = PoHibernateUtil.getCurrentSession();
+        // flush here to make sure that the validators' query is correct.
+        s.flush();
         s.update(updatedEntity);
     }
 }

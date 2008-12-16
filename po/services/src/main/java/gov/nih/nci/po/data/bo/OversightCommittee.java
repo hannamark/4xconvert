@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 
+import gov.nih.nci.po.util.UniqueOversightCommittee;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,6 +113,7 @@ import org.hibernate.annotations.Where;
  */
 @Entity
 @RoleStatusChange
+@UniqueOversightCommittee
 @SuppressWarnings("PMD.UselessOverridingMethod")
 public class OversightCommittee extends AbstractOversightCommittee implements Correlation {
 

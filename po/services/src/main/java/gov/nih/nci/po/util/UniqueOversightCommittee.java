@@ -80,97 +80,26 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.correlation;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.service.EjbTestHelper;
-import org.hibernate.validator.InvalidStateException;
-import org.junit.Assert;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.data.bo.FundingMechanism;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.junit.Before;
+import org.hibernate.validator.ValidatorClass;
 
 /**
- * Service test.
+ * only one role can exist with a status of anything other than nullified, for a given player org, with a given type.
  */
-public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServiceTest<ResearchOrganization> {
-
-    private ResearchOrganizationType sampleType = null;
-    private FundingMechanism fm = null;
-
-    @Before
-    public void setupType() throws Exception {
-        fm = new FundingMechanism("BXX","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().save(fm);
-        sampleType = new ResearchOrganizationType("ST", "sampleType");
-        sampleType.getFundingMechanisms().add(fm);
-        PoHibernateUtil.getCurrentSession().save(sampleType);
-    }
-
-    @Override
-    ResearchOrganization getSampleStructuralRole() {
-        ResearchOrganization oc = new ResearchOrganization();
-        oc.setPlayer(basicOrganization);
-        oc.setTypeCode(sampleType);
-        oc.setFundingMechanism(fm);
-
-        try {
-            // re-gen new Player Org
-            setUpData();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-
-        return oc;
-    }
-
-    @Override
-    void verifyStructuralRole(ResearchOrganization expected, ResearchOrganization actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getTypeCode().getCode(), actual.getTypeCode().getCode());
-        assertEquals(RoleStatus.PENDING, actual.getStatus());
-        assertEquals(expected.getFundingMechanism().getCode(), actual.getFundingMechanism().getCode());
-    }
-
-    @Test
-    public void testUnique() throws Exception {
-        ResearchOrganization ro1 = super.createSample();
-        ResearchOrganization ro2 = super.createSample();
-
-        ro1.setPlayer(ro2.getPlayer());
-        ro1.setTypeCode(ro2.getTypeCode());
-        ro1.setFundingMechanism(ro2.getFundingMechanism());
-        try {
-            EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-            Assert.fail();
-        } catch(InvalidStateException e) {
-        }
-
-        FundingMechanism otherfm = new FundingMechanism("ZZZ","bla","bla", FundingMechanismStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().save(otherfm);
-        ResearchOrganizationType otherType = new ResearchOrganizationType("otherType", "Some other stuff");
-        otherType.getFundingMechanisms().add(fm);
-        otherType.getFundingMechanisms().add(otherfm);
-        PoHibernateUtil.getCurrentSession().save(otherType);
-        ro1.setTypeCode(otherType);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-
-        ro2.getTypeCode().getFundingMechanisms().add(otherfm);
-        PoHibernateUtil.getCurrentSession().update(ro2.getTypeCode());
-        ro1.setTypeCode(ro2.getTypeCode());
-        ro1.setFundingMechanism(otherfm);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-
-        ro2.setStatus(RoleStatus.NULLIFIED);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro2);
-        ro1.setTypeCode(ro2.getTypeCode());
-        ro1.setFundingMechanism(ro2.getFundingMechanism());
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
-    }
+@Documented
+@ValidatorClass(UniqueOversightCommitteeValidator.class)
+@Target({ ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UniqueOversightCommittee {
+    /**
+     * get the massage.
+     */
+    String message() default "{validator.uniqueOversightCommittee}";
 }

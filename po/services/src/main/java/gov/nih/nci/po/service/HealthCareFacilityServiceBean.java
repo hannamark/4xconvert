@@ -85,7 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoHibernateUtil;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -105,19 +104,7 @@ public class HealthCareFacilityServiceBean extends AbstractCuratableServiceBean<
     @Override
     public long create(HealthCareFacility obj) throws EntityValidationException {
         obj.setStatus(RoleStatus.PENDING);
-        // flush here to make sure that the UniqueHealthCareFacilityValidator's query is correct.
-        PoHibernateUtil.getCurrentSession().flush();
         return super.create(obj);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void update(HealthCareFacility updatedEntity) {
-        // flush here to make sure that the UniqueHealthCareFacilityValidator's query is correct.
-        PoHibernateUtil.getCurrentSession().flush();
-        super.update(updatedEntity);
     }
 
     /**

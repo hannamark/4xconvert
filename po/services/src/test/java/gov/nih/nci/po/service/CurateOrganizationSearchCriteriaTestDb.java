@@ -211,34 +211,34 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(ro.getPlayer());
 
         List<Organization> results = sc.getQuery("", false).list();
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
 
         // exclude the old org
         Organization o = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
 
         // exclude the role
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
 
         // add change request to the role.
         OversightCommitteeDTO rodto = (OversightCommitteeDTO) PoXsnapshotHelper.createSnapshot(ro);
         EjbTestHelper.getOversightCommitteeCorrelationServiceRemote().updateCorrelation(rodto);
         PoHibernateUtil.getCurrentSession().flush();
         results = sc.getQuery("", false).list();
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
 
         // exclude the role's CR
         OversightCommitteeCR rocr = (OversightCommitteeCR) PoHibernateUtil.getCurrentSession().createCriteria(OversightCommitteeCR.class).uniqueResult();
         rocr.setProcessed(true);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
 
         // nullified role
         ro.setStatus(RoleStatus.NULLIFIED);
@@ -246,7 +246,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         rocr.setProcessed(false);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -264,34 +264,34 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         PoHibernateUtil.getCurrentSession().update(ro.getPlayer());
 
         List<Organization> results = sc.getQuery("", false).list();
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
 
         // exclude the old org
         Organization o = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
         o.setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(o);
         results = sc.getQuery("", false).list();
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
 
         // exclude the role
         ro.setStatus(RoleStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
 
         // add change request to the role.
         ResearchOrganizationDTO rodto = (ResearchOrganizationDTO) PoXsnapshotHelper.createSnapshot(ro);
         EjbTestHelper.getResearchOrganizationCorrelationServiceRemote().updateCorrelation(rodto);
         PoHibernateUtil.getCurrentSession().flush();
         results = sc.getQuery("", false).list();
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
 
         // exclude the role's CR
         ResearchOrganizationCR rocr = (ResearchOrganizationCR) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganizationCR.class).uniqueResult();
         rocr.setProcessed(true);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
 
         // nullified role
         ro.setStatus(RoleStatus.NULLIFIED);
@@ -299,7 +299,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         rocr.setProcessed(false);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
     }
 
 }
