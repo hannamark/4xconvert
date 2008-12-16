@@ -16,7 +16,7 @@
 <!-- main content begins-->
     <h2><fmt:message key="batch.upload.confirm"/></h2>
     <div class="box" id="filters">
-      <p>The batch trial data you submitted is being processed. You will be notified after the processing is complete. </p>
+      <p>The batch trial data you submitted is being processed. You will receive an e-mail notification after the processing is complete. </p>
 
  </div>
    
