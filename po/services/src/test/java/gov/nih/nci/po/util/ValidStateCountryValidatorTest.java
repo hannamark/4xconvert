@@ -31,6 +31,7 @@ public class ValidStateCountryValidatorTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void addressWithCountryWithNoStates() {
         Address address = new Address();
         address.setCountry(new Country());
@@ -39,6 +40,7 @@ public class ValidStateCountryValidatorTest {
     }
     
     @Test
+    @SuppressWarnings("deprecation")
     public void addressWithCountryWithStatesButNoStateOrProvinceSet() {
         Address address = new Address();
         address.setCountry(new Country());
@@ -52,6 +54,7 @@ public class ValidStateCountryValidatorTest {
     }
     
     @Test
+    @SuppressWarnings("deprecation")
     public void addressWithCountryWithStatesWithStateOrProvinceSetButValueIsInvalid() {
         Address address = new Address();
         address.setCountry(new Country());
@@ -66,6 +69,7 @@ public class ValidStateCountryValidatorTest {
     }
     
     @Test
+    @SuppressWarnings("deprecation")
     public void addressWithCountryWithStatesWithStateOrProvinceSetAndValueIsValid() {
         Address address = new Address();
         address.setCountry(new Country());

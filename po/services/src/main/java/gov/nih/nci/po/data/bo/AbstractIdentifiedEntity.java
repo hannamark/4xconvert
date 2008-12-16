@@ -215,7 +215,7 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>>
             @Column(name = "assigned_identifier_scope")
     })
     @ValidIi
-    @Searchable(fields = {"extension", "identifierName", "root", "scope", "reliability", "displayable" },
+    @Searchable(fields = {"extension", "root" },
             matchMode = Searchable.MATCH_MODE_START)
     public Ii getAssignedIdentifier() {
         return this.assignedIdentifier;

@@ -38,6 +38,7 @@ public class HealthCareFacilityCR extends AbstractOrganizationRole
         this.processed = processed;
     }
     
+    @SuppressWarnings("unused")
     private HealthCareFacilityCR() {
         super();
     }

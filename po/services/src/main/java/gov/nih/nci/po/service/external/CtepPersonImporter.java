@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
@@ -108,7 +109,6 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -159,10 +159,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         try {
             // get org from ctep and convert to local data model
             PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
+            printPersonDataToDebugLog(ctepPersonDto);
             Ii assignedId = ctepPersonDto.getIdentifier();
-            if (LOG.isDebugEnabled()) {
-                printPersonDataToDebugLog(ctepPersonDto);
-            }
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
 
             // search for org based on the ctep provided ii
@@ -173,29 +171,36 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 return updateCtepPerson(ctepPerson, identifiedPerson);
             }
         } catch (CTEPEntException e) {
-            // unexpected exception, we should only be calling this method for objects
-            // whose ID we know exists.
-            throw new RuntimeException(e);
+            // importing an object that is does not exist remotely, so inactivate it if we have it locally.
+            IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
+            if (identifiedPerson != null) {
+                Person p = identifiedPerson.getPlayer();
+                p.setStatusCode(EntityStatus.INACTIVE);
+                this.personService.curate(p);
+            }
+            return null;
         }
     }
 
     private void printPersonDataToDebugLog(PersonDTO perDto) {
-        LOG.debug("Person ii.extension: " + perDto.getIdentifier().getExtension());
-        LOG.debug("Person ii.root: " + perDto.getIdentifier().getRoot());
-        LOG.debug("Person status: " + perDto.getStatusCode().getCode());
-        LOG.debug("Person name:");
-        for (Enxp xp : perDto.getName().getPart()) {
-            LOG.debug("\t" + xp.getType() + LOG_SEP + xp.getValue());
-        }
-
-        LOG.debug("Person address:");
-        for (Adxp axp : perDto.getPostalAddress().getPart()) {
-            LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
-        }
-
-        LOG.debug("Telecom Addresses:");
-        for (Tel obj : perDto.getTelecomAddress().getItem()) {
-            LOG.debug("\t" + obj.getValue());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Person ii.extension: " + perDto.getIdentifier().getExtension());
+            LOG.debug("Person ii.root: " + perDto.getIdentifier().getRoot());
+            LOG.debug("Person status: " + perDto.getStatusCode().getCode());
+            LOG.debug("Person name:");
+            for (Enxp xp : perDto.getName().getPart()) {
+                LOG.debug("\t" + xp.getType() + LOG_SEP + xp.getValue());
+            }
+    
+            LOG.debug("Person address:");
+            for (Adxp axp : perDto.getPostalAddress().getPart()) {
+                LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
+            }
+    
+            LOG.debug("Telecom Addresses:");
+            for (Tel obj : perDto.getTelecomAddress().getItem()) {
+                LOG.debug("\t" + obj.getValue());
+            }
         }
     }
 
@@ -231,16 +236,16 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
 
         // create records for all health care provider records
-        List<HealthCareProviderDTO> hcps = getHcpFromCtep(assignedId);
-        printHcpDataToDebugLog(hcps);
-        for (HealthCareProviderDTO hcp : hcps) {
+        HealthCareProviderDTO hcp = getHcpFromCtep(assignedId);
+        if (hcp != null) {
+            printHcpDataToDebugLog(hcp);
             createHcp(hcp, ctepPerson);
         }
 
         // create records for all clinical research staff records.
-        List<ClinicalResearchStaffDTO> crss = getCrsFromCtep(assignedId);
-        printCrsDataToDebugLog(crss);
-        for (ClinicalResearchStaffDTO crs : crss) {
+        ClinicalResearchStaffDTO crs = getCrsFromCtep(assignedId);
+        if (crs != null) {
+            printCrsDataToDebugLog(crs);
             createCrs(crs, ctepPerson);
         }
 
@@ -264,17 +269,24 @@ public class CtepPersonImporter extends CtepEntityImporter {
         throw new UnsupportedOperationException();
     }
 
-    private List<HealthCareProviderDTO> getHcpFromCtep(Ii personIi) {
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+    private HealthCareProviderDTO getHcpFromCtep(Ii personIi) {
         try {
-            return getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
+            List<HealthCareProviderDTO> dtos = getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
+            if (dtos.isEmpty()) {
+                return null;
+            } else if (dtos.size() == 1) {
+                return dtos.get(0);
+            } else {
+                throw new RuntimeException("CTEP is providing multiple HealthCareProvider for a single person.");
+            }
         } catch (CTEPEntException e) {
-            return new ArrayList<HealthCareProviderDTO>();
+            return null;
         }
     }
 
     private void createHcp(HealthCareProviderDTO hcpDto, Person ctepPerson) throws JMSException {
         // store ii's we will need
-        hcpDto.getIdentifier();
         Ii scoperIi = hcpDto.getScoperIdentifier();
 
         // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
@@ -294,17 +306,25 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.hcpService.curate(hcp);
     }
 
-    private List<ClinicalResearchStaffDTO> getCrsFromCtep(Ii personIi) {
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+    private ClinicalResearchStaffDTO getCrsFromCtep(Ii personIi) {
         try {
-            return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
+            List<ClinicalResearchStaffDTO> dtos = getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
+            if (dtos.isEmpty()) {
+                return null;
+            } else if (dtos.size() == 1) {
+                return dtos.get(0);
+            } else {
+                throw new RuntimeException("CTEP is providing multiple ClinicalResearchStaff for a single person.");
+            }
         } catch (CTEPEntException e) {
-            return new ArrayList<ClinicalResearchStaffDTO>();
+            return null;
         }
     }
 
     private void createCrs(ClinicalResearchStaffDTO crsDto, Person ctepPerson) throws JMSException {
+        // store ii's we will need
         Ii scoperIi = crsDto.getScoperIdentifier();
-        crsDto.getIdentifier();
 
         // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
         crsDto.setIdentifier(null);
@@ -324,51 +344,39 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     @SuppressWarnings("unchecked")
-    private void printHcpDataToDebugLog(List<HealthCareProviderDTO> hcps) {
+    private void printHcpDataToDebugLog(HealthCareProviderDTO hcp) {
         if (LOG.isDebugEnabled()) {
-            if (hcps.isEmpty()) {
-                LOG.debug("This person is not a HCP.");
-            } else {
-                for (HealthCareProviderDTO hcp : hcps) {
-                    LOG.debug("  ** HCP Data ** \n");
-                    LOG.debug("\t hcp.id.extension: " + hcp.getIdentifier().getExtension());
-                    LOG.debug("\t hcp.id.root: " + hcp.getIdentifier().getRoot());
-                    LOG.debug("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
-                    LOG.debug("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
-                    LOG.debug("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
-                    LOG.debug("\t hcp.scoper.root: " + hcp.getScoperIdentifier().getRoot());
-                    LOG.debug("\t hcp.certLicText: " + hcp.getCertificateLicenseText());
-                    LOG.debug("\t hcp.status: " + hcp.getStatus().getCode());
-                    LOG.debug("HCP addresses:");
-                    printAddresses(hcp.getPostalAddress());
-                    LOG.debug("HCP Telecom Addresses:");
-                    printTels(hcp.getTelecomAddress());
-                }
-            }
+            LOG.debug("  ** HCP Data ** \n");
+            LOG.debug("\t hcp.id.extension: " + hcp.getIdentifier().getExtension());
+            LOG.debug("\t hcp.id.root: " + hcp.getIdentifier().getRoot());
+            LOG.debug("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
+            LOG.debug("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
+            LOG.debug("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
+            LOG.debug("\t hcp.scoper.root: " + hcp.getScoperIdentifier().getRoot());
+            LOG.debug("\t hcp.certLicText: " + hcp.getCertificateLicenseText());
+            LOG.debug("\t hcp.status: " + hcp.getStatus().getCode());
+            LOG.debug("HCP addresses:");
+            printAddresses(hcp.getPostalAddress());
+            LOG.debug("HCP Telecom Addresses:");
+            printTels(hcp.getTelecomAddress());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void printCrsDataToDebugLog(List<ClinicalResearchStaffDTO> crss) {
+    private void printCrsDataToDebugLog(ClinicalResearchStaffDTO crs) {
         if (LOG.isDebugEnabled()) {
-            if (crss.isEmpty()) {
-                LOG.debug("This person is not a CRS.");
-            } else {
-                for (ClinicalResearchStaffDTO crs : crss) {
-                    LOG.debug("  ** CRS Data ** \n");
-                    LOG.debug("\t crs.id.extension: " + crs.getIdentifier().getExtension());
-                    LOG.debug("\t crs.id.root: " + crs.getIdentifier().getRoot());
-                    LOG.debug("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
-                    LOG.debug("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
-                    LOG.debug("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());
-                    LOG.debug("\t crs.scoper.root: " + crs.getScoperIdentifier().getRoot());
-                    LOG.debug("\t crs.status: " + crs.getStatus().getCode());
-                    LOG.debug("crs addresses:");
-                    printAddresses(crs.getPostalAddress());
-                    LOG.debug("crs Telecom Addresses:");
-                    printTels(crs.getTelecomAddress());
-                }
-            }
+            LOG.debug("  ** CRS Data ** \n");
+            LOG.debug("\t crs.id.extension: " + crs.getIdentifier().getExtension());
+            LOG.debug("\t crs.id.root: " + crs.getIdentifier().getRoot());
+            LOG.debug("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
+            LOG.debug("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
+            LOG.debug("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());
+            LOG.debug("\t crs.scoper.root: " + crs.getScoperIdentifier().getRoot());
+            LOG.debug("\t crs.status: " + crs.getStatus().getCode());
+            LOG.debug("crs addresses:");
+            printAddresses(crs.getPostalAddress());
+            LOG.debug("crs Telecom Addresses:");
+            printTels(crs.getTelecomAddress());
         }
     }
 

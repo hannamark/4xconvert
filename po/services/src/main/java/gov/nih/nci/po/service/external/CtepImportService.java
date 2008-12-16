@@ -83,6 +83,8 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
@@ -97,14 +99,16 @@ public interface CtepImportService {
     /**
      * Import the organization with the given ii from the ctep system.
      * @param orgId the org id.
+     * @return the org.
      * @throws JMSException on error
      */
-    void importCtepOrganization(Ii orgId) throws JMSException;
+    Organization importCtepOrganization(Ii orgId) throws JMSException;
 
     /**
      * import the person with the given ii.
      * @param personId the id of the person
+     * @return the person
      * @throws JMSException on error
      */
-    void importCtepPerson(Ii personId) throws JMSException;
+    Person importCtepPerson(Ii personId) throws JMSException;
 }

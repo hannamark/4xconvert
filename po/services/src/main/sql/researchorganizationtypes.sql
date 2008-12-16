@@ -6,4 +6,5 @@ insert into researchorganizationtype (id, code, description) values (5, 'CSM', '
 insert into researchorganizationtype (id, code, description) values (6, 'NWK', 'Network');
 insert into researchorganizationtype (id, code, description) values (7, 'RSB', 'Research Base');
 insert into researchorganizationtype (id, code, description) values (8, 'COP', 'CCOP');
+insert into researchorganizationtype (id, code, description) values (9, 'NCP', 'NCP');
  

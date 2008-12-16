@@ -91,6 +91,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jms.JMSException;
 
@@ -119,6 +121,28 @@ public class CtepImportAction extends ActionSupport {
     public String start() {
         return INPUT;
     }
+    
+    private void addMessages(int processed, List<String> skipped, String failed) {
+        ActionHelper.saveMessage(processed + " records successfully imported.");
+        if (!skipped.isEmpty()) {
+            StringBuffer skipMessage = new StringBuffer("The following lines did not correspond to a record in ctep, "
+                    + "any record with one of these ctep id's was inactivated: ");
+            boolean isFirst = true;
+            for (String l : skipped) {
+                if (!isFirst) {
+                    skipMessage.append(", ");
+                } else {
+                    isFirst = false;
+                }
+                skipMessage.append(l);
+            }
+            ActionHelper.saveMessage(skipMessage.toString());
+        }
+        if (failed != null) {
+            ActionHelper.saveMessage("An error occurred processing the following line, stopping processing: " 
+                    + failed);
+        }
+    }
 
     /**
      * Method to handle upload of org ids.
@@ -129,22 +153,26 @@ public class CtepImportAction extends ActionSupport {
     public String uploadOrganizations() throws IOException, JMSException {
         BufferedReader reader = getFileReader();
         String line = reader.readLine();
+        List<String> skippedRecords = new ArrayList<String>();
         int count = 0;
         try {
             while (line != null) {
                 line = line.trim();
-                PoRegistry.getInstance().getServiceLocator().
-                    getCtepImportService().importCtepOrganization(generateIi(line));
-                count++;
+                if (line.length() > 0) {
+                    if (PoRegistry.getInstance().getServiceLocator().
+                            getCtepImportService().importCtepOrganization(generateIi(line)) != null) {
+                        count++;
+                    } else {
+                        skippedRecords.add(line);
+                    }
+                }
                 line = reader.readLine();
             }
-            ActionHelper.saveMessage(count + " organizations successfully imported.");
+            addMessages(count, skippedRecords, null);
         } catch (RuntimeException e) {
             LOG.error("Error importing organization with id:  " +  line, e);
-            ActionHelper.saveMessage("The first " + count + " organizations were successfully imported.");
-            ActionHelper.saveMessage("An error occurred processing the following line: "  + line);
+            addMessages(count, skippedRecords, line);
         }
-
 
         return SUCCESS;
     }
@@ -164,18 +192,24 @@ public class CtepImportAction extends ActionSupport {
         BufferedReader reader = getFileReader();
         String line = reader.readLine();
         int count = 0;
+        List<String> skippedRecords = new ArrayList<String>();
         try {
             while (line != null) {
-                PoRegistry.getInstance().getServiceLocator().
-                    getCtepImportService().importCtepPerson(generateIi(line));
-                count++;
+                line = line.trim();
+                if (line.length() > 0) {
+                    if (PoRegistry.getInstance().getServiceLocator().
+                        getCtepImportService().importCtepPerson(generateIi(line))  != null) {
+                        count++;
+                    } else {
+                        skippedRecords.add(line);
+                    }
+                }
                 line = reader.readLine();
             }
-            ActionHelper.saveMessage(count + " people successfully imported.");
+            addMessages(count, skippedRecords, null);
         } catch (RuntimeException e) {
             LOG.error("Error importing organization with id:  " +  line, e);
-            ActionHelper.saveMessage("The first " + count + " people were successfully imported.");
-            ActionHelper.saveMessage("An error occurred processing the following line: "  + line);
+            addMessages(count, skippedRecords, line);
         }
 
         return SUCCESS;

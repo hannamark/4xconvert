@@ -195,9 +195,14 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                 return updateCtepOrg(ctepOrg, identifiedOrg);
             }
         } catch (gov.nih.nci.common.exceptions.CTEPEntException e) {
-            // unexpected exception, we should only be calling this method for objects
-            // whose ID we know exists.
-            throw new RuntimeException(e);
+            // id not found in ctep, therefore we can safely inactivate the entity if it exists locally.
+            IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
+            if (identifiedOrg != null) {
+                Organization org = identifiedOrg.getPlayer();
+                org.setStatusCode(EntityStatus.INACTIVE);
+                this.orgService.curate(org);
+            }
+            return null;
         }
     }
 

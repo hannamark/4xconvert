@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testFirstLastEmailName() throws Exception {
         PersonServiceBeanTest pst = new PersonServiceBeanTest();
         pst.setDefaultCountry(getDefaultCountry());
@@ -69,6 +70,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
 
     
     @Test
+    @SuppressWarnings("unchecked")
     public void testRoleEmail() throws Exception {
 
         PersonServiceBeanTest pst = new PersonServiceBeanTest();
@@ -76,7 +78,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         pst.setUpData();
         Long id = pst.createPerson();
         id = pst.createPerson();
-        Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+        PoHibernateUtil.getCurrentSession().load(Person.class, id);
         
         ClinicalResearchStaffServiceTest crst = new ClinicalResearchStaffServiceTest();
         crst.setDefaultCountry(getDefaultCountry());
@@ -94,13 +96,14 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRoleOrg() throws Exception {
 
         PersonServiceBeanTest pst = new PersonServiceBeanTest();
         pst.setDefaultCountry(getDefaultCountry());
         pst.setUpData();
         Long id = pst.createPerson();
-        Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+        PoHibernateUtil.getCurrentSession().load(Person.class, id);
 
         ClinicalResearchStaffServiceTest crst = new ClinicalResearchStaffServiceTest();
         crst.setDefaultCountry(getDefaultCountry());
@@ -121,13 +124,14 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testCTEPId() throws Exception {
 
         PersonServiceBeanTest pst = new PersonServiceBeanTest();
         pst.setDefaultCountry(getDefaultCountry());
         pst.setUpData();
         Long id = pst.createPerson();
-        Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+        PoHibernateUtil.getCurrentSession().load(Person.class, id);
 
         IdentifiedPersonServiceTest crst = new IdentifiedPersonServiceTest();
         crst.setDefaultCountry(getDefaultCountry());

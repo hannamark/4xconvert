@@ -82,18 +82,17 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.service.EjbTestHelper;
-import org.hibernate.validator.InvalidStateException;
-import org.hibernate.validator.InvalidValue;
-import org.junit.Assert;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import org.hibernate.validator.InvalidStateException;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Service test.

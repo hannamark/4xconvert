@@ -8,7 +8,6 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.coppa.test.integration.test.AbstractPoWebTest.ENTITYTYPE;
 import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;

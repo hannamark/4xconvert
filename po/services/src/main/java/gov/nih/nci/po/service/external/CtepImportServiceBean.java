@@ -83,6 +83,8 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 
 import java.util.Hashtable;
 import java.util.Properties;
@@ -102,6 +104,7 @@ import javax.naming.InitialContext;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
 public class CtepImportServiceBean implements CtepImportService {
+    private static InitialContext ctepContext;
     private CtepOrganizationImporter orgImporter;
     private CtepPersonImporter personImporter;
 
@@ -120,13 +123,15 @@ public class CtepImportServiceBean implements CtepImportService {
     protected void initImporters() {
         try {
             Properties props = new Properties();
-            props.load(getClass().getClassLoader().getResourceAsStream("ctep-services.properties"));
-            Hashtable<Object, Object> env = new Hashtable<Object, Object>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
-            env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
-            env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
-            env.put(Context.PROVIDER_URL, props.get("ctep.url"));
-            InitialContext ctepContext = new InitialContext(env);
+            if (ctepContext == null) {
+                props.load(getClass().getClassLoader().getResourceAsStream("ctep-services.properties"));
+                Hashtable<Object, Object> env = new Hashtable<Object, Object>();
+                env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
+                env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
+                env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
+                env.put(Context.PROVIDER_URL, props.get("ctep.url"));
+                ctepContext = new InitialContext(env);
+            }
             setOrgImporter(new CtepOrganizationImporter(ctepContext));
             setPersonImporter(new CtepPersonImporter(ctepContext, orgImporter));
         } catch (Exception e) {
@@ -151,14 +156,14 @@ public class CtepImportServiceBean implements CtepImportService {
     /**
      * {@inheritDoc}
      */
-    public void importCtepOrganization(Ii orgId) throws JMSException {
-        orgImporter.importOrganization(orgId);
+    public Organization importCtepOrganization(Ii orgId) throws JMSException {
+        return orgImporter.importOrganization(orgId);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void importCtepPerson(Ii personId) throws JMSException {
-        personImporter.importPerson(personId);
+    public Person importCtepPerson(Ii personId) throws JMSException {
+        return personImporter.importPerson(personId);
     }
 }
