@@ -69,7 +69,7 @@ public class TrialBatchDataValidator {
             fieldErr.append("Protocol Document is required. \n");
         }
         if (PAUtil.isNotEmpty(batchDto.getProtcolDocumentFileName())) {
-            if (!isValidFileType(batchDto.getProtcolDocumentFileName())) {
+            if (!RegistryUtil.isValidFileType((batchDto.getProtcolDocumentFileName()))) {
                 fieldErr.append("Protocol Document - File type is not allowed.\n");                
             }
         }
@@ -77,22 +77,22 @@ public class TrialBatchDataValidator {
             fieldErr.append("IRB Approval Document is required. \n");
         }
         if (PAUtil.isNotEmpty(batchDto.getIrbApprovalDocumentFileName())) {
-            if (!isValidFileType(batchDto.getIrbApprovalDocumentFileName())) {
+            if (!RegistryUtil.isValidFileType(batchDto.getIrbApprovalDocumentFileName())) {
                 fieldErr.append("IRB Approval Document - File type is not allowed. \n");                
             }
         }        
         if (PAUtil.isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())) {
-            if (!isValidFileType(batchDto.getParticipatinSiteDocumentFileName())) {
+            if (!RegistryUtil.isValidFileType(batchDto.getParticipatinSiteDocumentFileName())) {
                 fieldErr.append("Participating Site Document - File type is not allowed \n");                
             }
         }        
         if (PAUtil.isNotEmpty(batchDto.getInformedConsentDocumentFileName())) {
-            if (!isValidFileType(batchDto.getInformedConsentDocumentFileName())) {
+            if (!RegistryUtil.isValidFileType(batchDto.getInformedConsentDocumentFileName())) {
                 fieldErr.append("Informed Consent Document - File type is not allowed \n");                
             }
         }        
         if (PAUtil.isNotEmpty(batchDto.getOtherTrialRelDocumentFileName())) {
-            if (!isValidFileType(batchDto.getOtherTrialRelDocumentFileName())) {
+            if (!RegistryUtil.isValidFileType(batchDto.getOtherTrialRelDocumentFileName())) {
                 fieldErr.append("Other Trial Related Document - File type is not allowed \n");                
             }
         }
@@ -419,29 +419,6 @@ public class TrialBatchDataValidator {
         return errors.toString();
     }
 
-    /**
-     * check if the uploaded file type is valid.
-     * @param fileName
-     * @return
-     */
-    private boolean isValidFileType(String fileName) {
-        boolean isValidFileType = false;
-        String allowedUploadFileTypes =  PaEarPropertyReader.getAllowedUploadFileTypes();
-        if (allowedUploadFileTypes != null) {
-            int pos =  fileName.lastIndexOf(".");
-            String uploadedFileType = fileName.substring(pos + 1, fileName.length());
-            StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");        
-            while (st.hasMoreTokens()) {
-                String allowedFileType = st.nextToken();
-                if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
-                    isValidFileType = true;
-                    break;
-                }
-            }
-        }        
-        return isValidFileType;
-
-    }
     /**
      * 
      * @param fundmc
