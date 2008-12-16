@@ -1,6 +1,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.ExcelReader;
@@ -25,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * 
  */
 @SuppressWarnings("PMD")
-public class BatchHelper { //implements Runnable {
+public class BatchHelper implements Runnable { //implements Runnable {
 
     private static Logger log = Logger.getLogger(BatchHelper.class);
     private String uploadLoc = null;
@@ -77,6 +78,9 @@ public class BatchHelper { //implements Runnable {
         StringBuffer mailBody = new StringBuffer();
         String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
         try {
+            // open a new Hibernate session and bind to the context
+            HibernateUtil.getHibernateHelper().openAndBindSession();
+           
             // start reading the xls file and create the required DTO
             List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
                     + File.separator + trialDataFileName);
@@ -106,7 +110,10 @@ public class BatchHelper { //implements Runnable {
            
         } catch (Exception e) {
             log.error("Exception while processing batch" + e.getMessage());
-        }        
+        } finally {
+            // unbind the  Hibernate session
+            HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+        }
         
     }
 
