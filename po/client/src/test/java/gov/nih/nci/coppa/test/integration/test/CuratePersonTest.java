@@ -59,13 +59,8 @@ public class CuratePersonTest extends AbstractPoWebTest {
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
 
-        verifyPostalAddress();
-
-        verifyEmail();
-        verifyPhone();
-        verifyFax();
-        verifyTty();
-        verifyUrl();
+        verifyPostalAddress(ENTITYTYPE.person);
+        verifyTelecom();
 
         saveAsActive(id);
     }
@@ -103,13 +98,9 @@ public class CuratePersonTest extends AbstractPoWebTest {
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
 
-        verifyPostalAddress();
+        verifyPostalAddress(ENTITYTYPE.person);
 
-        verifyEmail();
-        verifyPhone();
-        verifyFax();
-        verifyTty();
-        verifyUrl();
+        verifyTelecom();
 
         saveAsActive(id);
     }
@@ -195,13 +186,9 @@ public class CuratePersonTest extends AbstractPoWebTest {
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
 
-        verifyPostalAddress();
+        verifyPostalAddress(ENTITYTYPE.person);
 
-        verifyEmail();
-        verifyPhone();
-        verifyFax();
-        verifyTty();
-        verifyUrl();
+        verifyTelecom();
 
         saveAsActive(id);
         return id;
@@ -258,120 +245,6 @@ public class CuratePersonTest extends AbstractPoWebTest {
         selenium.getConfirmation();
         verifyEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
-    }
-
-    private void verifyPostalAddress() {
-        assertEquals("123 abc ave.", selenium.getValue("curateEntityForm_person_postalAddress_streetAddressLine"));
-        assertEquals("", selenium.getValue("curateEntityForm_person_postalAddress_deliveryAddressLine"));
-        assertEquals("mycity", selenium.getValue("curateEntityForm_person_postalAddress_cityOrMunicipality"));
-        assertEquals("VA", selenium.getValue("curateEntityForm.person.postalAddress.stateOrProvince"));
-        assertEquals("12345", selenium.getValue("curateEntityForm_person_postalAddress_postalCode"));
-    }
-
-    private void verifyEmail() {
-        waitForElementById("email-remove-0", 5);
-        assertEquals(DEFAULT_EMAIL + " | Remove", selenium.getText("email-entry-0"));
-
-        waitForElementById("emailEntry_value", 5);
-        selenium.type("emailEntry_value", "");
-        selenium.click("email-add");
-        waitForElementById("wwerr_emailEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Email Address must be set"));
-
-        waitForElementById("emailEntry_value", 5);
-        selenium.type("emailEntry_value", "abc@example.com");
-        selenium.click("email-add");
-        waitForElementById("email-remove-1", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("email-entry-1"));
-
-        waitForElementById("emailEntry_value", 5);
-        selenium.type("emailEntry_value", "abc.com");
-        selenium.click("email-add");
-        waitForElementById("wwerr_emailEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Email Address is not a well-formed email address"));
-    }
-
-    private void verifyPhone() {
-        waitForElementById("phoneEntry_value", 5);
-        selenium.type("phoneEntry_value", "");
-        selenium.click("phone-add");
-        waitForElementById("wwerr_phoneEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Phone must be set"));
-
-        waitForElementById("phoneEntry_value", 5);
-        selenium.type("phoneEntry_value", "123-456-7890");
-        selenium.click("phone-add");
-        waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium.getText("phone-entry-0"));
-
-        waitForElementById("phoneEntry_value", 5);
-        selenium.type("phoneEntry_value", "1234567890123456789012345678901");
-        selenium.click("phone-add");
-        waitForElementById("wwerr_phoneEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Phone length must be between 0 and 30"));
-    }
-
-    private void verifyFax() {
-        waitForElementById("faxEntry_value", 5);
-        selenium.type("faxEntry_value", "");
-        selenium.click("fax-add");
-        waitForElementById("wwerr_faxEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Fax must be set"));
-
-        waitForElementById("faxEntry_value", 5);
-        selenium.type("faxEntry_value", "234-567-8901");
-        selenium.click("fax-add");
-        waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium.getText("fax-entry-0"));
-
-        waitForElementById("faxEntry_value", 5);
-        selenium.type("faxEntry_value", "1234567890123456789012345678901");
-        selenium.click("fax-add");
-        waitForElementById("wwerr_faxEntry_value", 5);
-        assertTrue(selenium.isTextPresent("Fax length must be between 0 and 30"));
-    }
-
-    private void verifyTty() {
-        waitForElementById("ttyEntry_value", 5);
-        selenium.type("ttyEntry_value", "");
-        selenium.click("tty-add");
-        waitForElementById("wwerr_ttyEntry_value", 5);
-        assertTrue(selenium.isTextPresent("TTY must be set"));
-
-        waitForElementById("ttyEntry_value", 5);
-        selenium.type("ttyEntry_value", "345-678-9012");
-        selenium.click("tty-add");
-        waitForElementById("tty-remove-0", 5);
-        assertEquals("345-678-9012 | Remove", selenium.getText("tty-entry-0"));
-
-        waitForElementById("ttyEntry_value", 5);
-        selenium.type("ttyEntry_value", "1234567890123456789012345678901");
-        selenium.click("tty-add");
-        waitForElementById("wwerr_ttyEntry_value", 5);
-        assertTrue(selenium.isTextPresent("TTY length must be between 0 and 30"));
-    }
-
-    private void verifyUrl() {
-        waitForElementById("url-remove-0", 5);
-        assertEquals(DEFAULT_URL + " | Remove | Visit...", selenium.getText("url-entry-0"));
-
-        waitForElementById("urlEntry_value", 5);
-        selenium.type("urlEntry_value", "");
-        selenium.click("url-add");
-        waitForElementById("wwerr_urlEntry_value", 5);
-        assertTrue(selenium.isTextPresent("URL must be set"));
-
-        waitForElementById("urlEntry_value", 5);
-        selenium.type("urlEntry_value", "http://www.example.com");
-        selenium.click("url-add");
-        waitForElementById("url-remove-1", 5);
-        assertEquals("http://www.example.com | Remove | Visit...", selenium.getText("url-entry-1"));
-
-        waitForElementById("urlEntry_value", 5);
-        selenium.type("urlEntry_value", "abc.com");
-        selenium.click("url-add");
-        waitForElementById("wwerr_urlEntry_value", 5);
-        assertTrue(selenium.isTextPresent("URL is not well formed"));
     }
 
     private Ii remoteCreateAndCatalog(PersonDTO org) throws EntityValidationException {

@@ -24,6 +24,40 @@ function clearErrorMessages() {
 	$$('span.errorMessage').invoke('remove');
 	
 }
+function isTelecomFieldsBlank() {
+     //creating a few similar objects
+     var emailMsg = {field: '<s:text name="emailEntry.value"/>'};
+     var phoneMsg = {field: '<s:text name="phoneEntry.value"/>'};
+     var faxMsg = {field: '<s:text name="faxEntry.value"/>'};
+     var ttyMsg = {field: '<s:text name="ttyEntry.value"/>'};
+     var urlMsg = {field: '<s:text name="urlEntry.value"/>'};
+
+     //the template  
+     var templ = new Template('#{field} contains a value that has not been added. Do you want to submit the form and lose this data?');
+
+     //let's format each object
+     [emailMsg, phoneMsg, faxMsg, ttyMsg, urlMsg].each( function(conv){
+         templ.evaluate(conv);
+     });
+  
+     var continueResult = true; 
+     if( ($F('emailEntry_value').length != 0)) {
+         continueResult = continueResult && confirm(templ.evaluate(emailMsg));
+     }
+     if(($F('phoneEntry_value').length != 0)) {
+         continueResult = continueResult && confirm(templ.evaluate(phoneMsg));
+     }
+     if(($F('faxEntry_value').length != 0)) {
+         continueResult = continueResult && confirm(templ.evaluate(faxMsg));
+     }
+     if(($F('ttyEntry_value').length != 0)) {
+         continueResult = continueResult && confirm(templ.evaluate(ttyMsg));
+     }
+     if(($F('urlEntry_value').length != 0)) {
+         continueResult = continueResult && confirm(templ.evaluate(urlMsg));
+     }
+     return continueResult;
+ }
 //-->
 </script>
 <fieldset>

@@ -66,7 +66,7 @@
 			</s:else>
 		    <div class="box_white">
 				<s:actionerror/>
-				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="person"/>
 				<s:hidden key="rootKey"/>
@@ -132,7 +132,7 @@
     <div class="btnwrapper" style="margin-bottom:20px;">
     <%@include file="../../confirmThenSubmit.jsp" %>    
     <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm'):false);" style="save" text="Save"/>
        <c:url var="managePage" value="/protected/roles/person/HealthCareProvider/start.action">
            <c:param name="person" value="${person.id}"/>
        </c:url>

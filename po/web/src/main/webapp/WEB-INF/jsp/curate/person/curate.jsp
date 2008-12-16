@@ -59,7 +59,7 @@
 	<s:else>
 	   <s:set name="formAction" value="'person/curate/curate.action'"/>
 	</s:else>
-	<s:form action="%{formAction}" id="curateEntityForm" onsubmit="return confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm);">
+	<s:form action="%{formAction}" id="curateEntityForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm);">
 	    <input id="enableEnterSubmit" type="submit"/>
 		<s:hidden key="rootKey"/>
 	    <s:hidden key="cr.id"/>
@@ -206,7 +206,7 @@
 
 <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm);" style="save" text="Save"/>
+        <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
     </po:buttonRow>
 </div>
 
