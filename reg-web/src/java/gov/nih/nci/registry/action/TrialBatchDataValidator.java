@@ -7,6 +7,8 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.registry.dto.OrganizationBatchDTO;
+import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.BatchConstants;
@@ -95,42 +97,17 @@ public class TrialBatchDataValidator {
             }
         }
         //Lead org validation
-        if (PAUtil.isEmpty(batchDto.getLeadOrgName())) {
-            fieldErr.append("Lead Organization Name is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getLeadOrgStreetAddress())) {
-            fieldErr.append("Lead Organization Street Address is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getLeadOrgCity())) {
-            fieldErr.append("Lead Organization City is required.\n");
-        }
-        if (PAUtil.isEmpty(batchDto.getLeadOrgState())) {
-            fieldErr.append("Lead Organization State is required.\n");
-        }
-        if (PAUtil.isEmpty(batchDto.getLeadOrgZip())) {
-            fieldErr.append("Lead Organization Zip is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getLeadOrgCountry())) {
-            fieldErr.append("Lead Organization Country is required.\n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getLeadOrgCountry())) {
-                if (batchDto.getLeadOrgCountry().length() != BatchConstants.COUNTRY_SIZE) {
-                    fieldErr.append("Lead Organization Country Code is not ISO.\n");
-            }
-        }
-        if (PAUtil.isEmpty(batchDto.getLeadOrgEmail())) {
-            fieldErr.append("Lead Organization Email is required. \n");
-        }
-        //check if the contact e-mail address is valid
-        if (PAUtil.isNotEmpty(batchDto.getLeadOrgEmail())) {
-            if (!RegistryUtil.isValidEmailAddress(batchDto.getLeadOrgEmail())) {
-                fieldErr.append("Lead Organization Email Address is invalid \n");               
-            }
-        }
+        OrganizationBatchDTO leadOrgDto = buildLeadOrgDto(batchDto);
+        fieldErr.append(validateOrgInfo(leadOrgDto, "Lead Organization's "));
         //Sponsor validation
         fieldErr.append(validateSponsorInfo(batchDto));
         //Check PI values
-        fieldErr.append(validatePIInfo(batchDto).toString());    
+        PersonBatchDTO piBatchDto = buildLeadPIDto(batchDto);
+        fieldErr.append(validatePersonInfo(piBatchDto, "Principal Investigator's").toString());
+        //Summary 4 Info validation
+
+        fieldErr.append(validateSummary4SponsorInfo(batchDto));
+        
         if (PAUtil.isNotEmpty(batchDto.getPhase())) {
             if (PhaseCode.OTHER.getCode().equals(batchDto.getPhase())
                 && PAUtil.isEmpty(batchDto.getPhaseOtherValueSp())) {
@@ -152,119 +129,31 @@ public class TrialBatchDataValidator {
         }
         return fieldErr.toString();
     }
+    private StringBuffer validateSummary4SponsorInfo(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        if (PAUtil.isNotEmpty(batchDto.getTrialType()) 
+                && batchDto.getTrialType().equalsIgnoreCase("Interventional")) {
+            OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(batchDto);
+            fieldErr.append(validateOrgInfo(summ4Sponsor, "Summary 4 Funding Sponsor/Source's "));
+        }
+    return fieldErr;
+}
     private StringBuffer validateSponsorInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-        if (PAUtil.isEmpty(batchDto.getSponsorOrgName())) {
-            fieldErr.append("Sponsor Organization Name is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getSponsorStreetAddress())) {
-            fieldErr.append("Sponsor Street Address is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getSponsorCity())) {
-            fieldErr.append("Sponsor City is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getSponsorState())) {
-            fieldErr.append("Sponsor State is required.\n");
-        }
-        if (PAUtil.isEmpty(batchDto.getSponsorZip())) {
-            fieldErr.append("Sponsor Zip is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getSponsorCountry())) {
-            fieldErr.append("Sponsor Country is required. \n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getSponsorCountry())) {
-                if (batchDto.getSponsorCountry().length() != BatchConstants.COUNTRY_SIZE) {
-                    fieldErr.append("Sponsor Country Code is not ISO.\n");
-            }
-        }
-        if (PAUtil.isEmpty(batchDto.getSponsorEmail())) {
-            fieldErr.append("Sponsor Email is required. \n");
-        }
+        OrganizationBatchDTO dto = buildSponsorOrgDto(batchDto);
+        fieldErr.append(validateOrgInfo(dto, "Sponsor Organization's"));
         if (PAUtil.isEmpty(batchDto.getResponsibleParty())) {
             fieldErr.append("Responsible Party Not Provided \n");
         }
         if (PAUtil.isNotEmpty(batchDto.getResponsibleParty()) 
                 && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
             //check Sponsor contact info is provided or not
-            if (PAUtil.isEmpty(batchDto.getSponsorContactFName())) {
-                fieldErr.append("Sponsor Contact First Name is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactLName())) {
-                fieldErr.append("Sponsor Contact Last Name is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactStreetAddress())) {
-                fieldErr.append("Sponsor Contact Street Address is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactCity())) {
-                fieldErr.append("Sponsor Contact City is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactState())) {
-                fieldErr.append("Sponsor Contact State is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactCountry())) {
-                fieldErr.append("Sponsor Contact Country is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactZip())) {
-                fieldErr.append("Sponsor Contact Zip is Not Provided \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactEmail())) {
-                fieldErr.append("Sponsor Contact Email Address is Not Provided \n");
-            }
-            //check if the contact e-mail address is valid
-            if (PAUtil.isNotEmpty(batchDto.getSponsorContactEmail())) {
-                if (!RegistryUtil.isValidEmailAddress(batchDto.getSponsorContactEmail())) {
-                    fieldErr.append("Sponsor Contact Email Address is invalid \n");               
-                }
-            }
-            if (PAUtil.isEmpty(batchDto.getSponsorContactPhone())) {
-                fieldErr.append("Sponsor Contact Phone is Not Provided \n");
-            }
+            PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
+            fieldErr.append(validatePersonInfo(sponsorContact, "Sponsor Contact's"));
         }
     return fieldErr;
 }
-    private StringBuffer validatePIInfo(StudyProtocolBatchDTO batchDto) {
-        StringBuffer fieldErr = new StringBuffer(); 
-        if (PAUtil.isEmpty(batchDto.getPiFirstName())) {
-            fieldErr.append("Principal Investigator First Name is Not Provided \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getPiLastName())) {
-            fieldErr.append("Principal Investigator  Last Name is Not Provided \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getPiStreetAddress())) {
-            fieldErr.append("Principal Investigator Street Address is Not Provided \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getPiCity())) {
-            fieldErr.append("Principal Investigator City is Not Provided \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getPiState())) {
-            fieldErr.append("Principal Investigator State is Not Provided \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getPiCountry())) {
-            fieldErr.append("Principal Investigator Country is Not Provided \n");
-        }
-        if (PAUtil.isNotEmpty(batchDto.getPiCountry())) {
-            if (batchDto.getPiCountry().length() != BatchConstants.COUNTRY_SIZE) {
-                fieldErr.append("Principal Investigator Country Code is not ISO \n");
-            }
-        }
-        if (PAUtil.isEmpty(batchDto.getPiZip())) {
-            fieldErr.append("Principal Investigator Zip is Not Provided \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getPiEmail())) {
-            fieldErr.append("Principal Investigator Email Address is Not Provided \n");
-        }
-//      check if the contact e-mail address is valid
-        if (PAUtil.isNotEmpty(batchDto.getPiEmail())) {
-            if (!RegistryUtil.isValidEmailAddress(batchDto.getPiEmail())) {
-                fieldErr.append("Principal Investigator Email Address is invalid \n");               
-            }
-        }
-        if (PAUtil.isEmpty(batchDto.getPiPhone())) {
-            fieldErr.append("Principal Investigator Phone is Not Provided \n");
-        }
 
-    return fieldErr;
-}
     /**
      * validate the submit trial dates.
      */
@@ -445,5 +334,237 @@ public class TrialBatchDataValidator {
         return false;
         
     }
+    /**
+     * 
+     * @param dto dto
+     * @return orgDto
+     */
+    public OrganizationBatchDTO buildLeadOrgDto(StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO orgDto = new OrganizationBatchDTO();
+        orgDto.setName(dto.getLeadOrgName());
+        orgDto.setOrgCTEPId(dto.getLeadOrgCTEPOrgNo());
+        orgDto.setStreetAddress(dto.getLeadOrgStreetAddress());
+        orgDto.setCity(dto.getLeadOrgCity());
+        orgDto.setState(dto.getLeadOrgState());
+        orgDto.setZip(dto.getLeadOrgZip());
+        orgDto.setCountry(dto.getLeadOrgCountry());
+        orgDto.setEmail(dto.getLeadOrgEmail());
+        orgDto.setPhone(dto.getLeadOrgPhone());
+        orgDto.setTty(dto.getLeadOrgTTY());
+        orgDto.setFax(dto.getLeadOrgFax());
+        orgDto.setUrl(dto.getLeadOrgUrl());
+        orgDto.setType(dto.getLeadOrgType());
+        return orgDto;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return dto
+     */
+        public PersonBatchDTO buildLeadPIDto(StudyProtocolBatchDTO dto) {
+        PersonBatchDTO personDto = new PersonBatchDTO();
+        personDto.setFirstName(dto.getPiFirstName());
+        personDto.setMiddleName(dto.getPiMiddleName());
+        personDto.setLastName(dto.getPiLastName());
+        personDto.setPersonCTEPId(dto.getPiPersonCTEPPersonNo());
+        personDto.setStreetAddress(dto.getPiStreetAddress());
+        personDto.setCity(dto.getPiCity());
+        personDto.setState(dto.getPiState());
+        personDto.setZip(dto.getPiZip());
+        personDto.setCountry(dto.getPiCountry());
+        personDto.setEmail(dto.getPiEmail());
+        personDto.setPhone(dto.getPiPhone());
+        personDto.setTty(dto.getPiTTY());
+        personDto.setFax(dto.getPiFax());
+        personDto.setUrl(dto.getPiUrl());
+        return personDto;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return SponsorDto
+     */
+    public OrganizationBatchDTO buildSponsorOrgDto(StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO sponsorDto = new OrganizationBatchDTO();
+        sponsorDto.setName(dto.getSponsorOrgName());
+        sponsorDto.setOrgCTEPId(dto.getSponsorCTEPOrgNumber());
+        sponsorDto.setStreetAddress(dto.getSponsorStreetAddress());
+        sponsorDto.setCity(dto.getSponsorCity());
+        sponsorDto.setState(dto.getSponsorState());
+        sponsorDto.setZip(dto.getSponsorZip());
+        sponsorDto.setCountry(dto.getSponsorCountry());
+        sponsorDto.setEmail(dto.getSponsorEmail());
+        sponsorDto.setPhone(dto.getSponsorPhone());
+        sponsorDto.setTty(dto.getSponsorTTY());
+        sponsorDto.setFax(dto.getSponsorFax());
+        sponsorDto.setUrl(dto.getSponsorURL());
+        return sponsorDto;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return dto
+     */
+    public PersonBatchDTO buildSponsorContact(StudyProtocolBatchDTO dto) {
+        PersonBatchDTO  sponsorContact = new PersonBatchDTO();
+        sponsorContact.setFirstName(dto.getSponsorContactFName());
+        sponsorContact.setMiddleName(dto.getSponsorContactMName());
+        sponsorContact.setLastName(dto.getSponsorContactLName());
+        sponsorContact.setPersonCTEPId(dto.getSponsorContactCTEPPerNo());
+        sponsorContact.setStreetAddress(dto.getSponsorContactStreetAddress());
+        sponsorContact.setCity(dto.getSponsorContactCity());
+        sponsorContact.setState(dto.getSponsorContactState());
+        sponsorContact.setZip(dto.getSponsorContactZip());
+        sponsorContact.setCountry(dto.getSponsorContactCountry());
+        sponsorContact.setEmail(dto.getSponsorContactEmail());
+        sponsorContact.setPhone(dto.getSponsorContactPhone());
+        sponsorContact.setTty(dto.getSponsorContactTTY());
+        sponsorContact.setFax(dto.getSponsorContactFax());
+        sponsorContact.setUrl(dto.getSponsorContactUrl());
+        return sponsorContact;
+    }
 
+    /**
+     * 
+     * @param dto dto
+     * @return ret
+     */
+    public OrganizationBatchDTO buildSummary4Sponsor(StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO summ4Sponsor = new OrganizationBatchDTO();
+        summ4Sponsor.setName(dto.getSumm4OrgName());
+        summ4Sponsor.setOrgCTEPId(dto.getSumm4OrgCTEPOrgNo());
+        summ4Sponsor.setStreetAddress(dto.getSumm4OrgStreetAddress());
+        summ4Sponsor.setCity(dto.getSumm4City());
+        summ4Sponsor.setState(dto.getSumm4State());
+        summ4Sponsor.setZip(dto.getSumm4Zip());
+        summ4Sponsor.setCountry(dto.getSumm4Country());
+        summ4Sponsor.setEmail(dto.getSumm4Email());
+        summ4Sponsor.setPhone(dto.getSumm4Phone());
+        summ4Sponsor.setTty(dto.getSumm4TTY());
+        summ4Sponsor.setFax(dto.getSumm4Fax());
+        summ4Sponsor.setUrl(dto.getSumm4Url());
+        return summ4Sponsor;
+    }
+    /**
+     * 
+     * @param dto dto
+     * @return result
+     */
+    public boolean orgDTOIsEmpty(OrganizationBatchDTO dto) {
+        int nullCount = 0;
+        if (PAUtil.isEmpty(dto.getName())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getStreetAddress())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getCity())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getState())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getZip())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getCountry())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getEmail())) {
+            nullCount += 1;
+        }
+        if (PAUtil.isEmpty(dto.getPhone())) {
+            nullCount += 1;
+        }
+        if (nullCount == 0) {
+            return false;
+        }
+        return true;
+    }
+    /**
+     * 
+     * @param batchDto dto
+     * @param fieldName msg
+     * @return
+     */
+    private StringBuffer validatePersonInfo(PersonBatchDTO batchDto , String fieldName) {
+        StringBuffer fieldErr = new StringBuffer(); 
+        if (PAUtil.isEmpty(batchDto.getFirstName())) {
+            fieldErr.append(fieldName + " First Name is required. \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getLastName())) {
+            fieldErr.append(fieldName + " Last Name is required.\n");
+        }
+        if (PAUtil.isEmpty(batchDto.getStreetAddress())) {
+            fieldErr.append(fieldName + " Street Address is required.\n");
+        }
+        if (PAUtil.isEmpty(batchDto.getCity())) {
+            fieldErr.append(fieldName + " City is required. \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getState())) {
+            fieldErr.append(fieldName + " State is required. \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getCountry())) {
+            fieldErr.append(fieldName + " Country is required.\n");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getCountry())) {
+            if (batchDto.getCountry().length() != BatchConstants.COUNTRY_SIZE) {
+                fieldErr.append(fieldName + " Country Code is not ISO \n");
+            }
+        }
+        if (PAUtil.isEmpty(batchDto.getZip())) {
+            fieldErr.append(fieldName + " Zip is Not Provided \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getEmail())) {
+            fieldErr.append(fieldName + " Email Address is required. \n");
+        }
+//      check if the contact e-mail address is valid
+        if (PAUtil.isNotEmpty(batchDto.getEmail())) {
+            if (!RegistryUtil.isValidEmailAddress(batchDto.getEmail())) {
+                fieldErr.append(fieldName + " Email Address is invalid \n");               
+            }
+        }
+        if (PAUtil.isEmpty(batchDto.getPhone())) {
+            fieldErr.append(fieldName + " Phone is required. \n");
+        }
+
+    return fieldErr;
+}
+    private String validateOrgInfo(OrganizationBatchDTO batchDto, String message) {
+        StringBuffer fieldErr = new StringBuffer();
+        if (PAUtil.isEmpty(batchDto.getName())) {
+            fieldErr.append(message + " Name is required. \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getStreetAddress())) {
+            fieldErr.append(message + " Street Address is required. \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getCity())) {
+            fieldErr.append(message + " City is required.\n");
+        }
+        if (PAUtil.isEmpty(batchDto.getState())) {
+            fieldErr.append(message + " State is required.\n");
+        }
+        if (PAUtil.isEmpty(batchDto.getZip())) {
+            fieldErr.append(message + " Zip is required. \n");
+        }
+        if (PAUtil.isEmpty(batchDto.getCountry())) {
+            fieldErr.append(message + " Country is required.\n");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getCountry())) {
+                if (batchDto.getCountry().length() != BatchConstants.COUNTRY_SIZE) {
+                    fieldErr.append(message + " Country Code is not ISO.\n");
+            }
+        }
+        if (PAUtil.isEmpty(batchDto.getEmail())) {
+            fieldErr.append(message + " Email is required. \n");
+        }
+        //check if the contact e-mail address is valid
+        if (PAUtil.isNotEmpty(batchDto.getEmail())) {
+            if (!RegistryUtil.isValidEmailAddress(batchDto.getEmail())) {
+                fieldErr.append(message + " Email Address is invalid \n");               
+            }
+        }
+        return fieldErr.toString();
+    }
+   
 }
