@@ -2,13 +2,11 @@ package gov.nih.nci.registry.action;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.StringTokenizer;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.BatchConstants;
