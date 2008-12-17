@@ -29,7 +29,7 @@ function handleAction(){
         <input type="hidden" name="page" />
         <c:choose>
 	        <c:when test="${requestScope.isNewUser  == true}">
-	            <p>To register for NCI Clinical Trials Reporting Portal, 
+	            <p>To register for NCI Clinical Trials Reporting Program, 
 	            please begin by creating your login information. <br>
 	            Please note: asterisks (<span class="required">*</span>) indicate required fields.</p>             
 	        </c:when>
