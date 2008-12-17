@@ -97,6 +97,7 @@
                 </div>	
 				<fieldset>
 				    <legend><s:text name="identifiedOrganization.assignedIdentifier"/></legend>
+				    <s:fielderror><s:param>role.assignedIdentifier</s:param></s:fielderror>
 				    <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
 				</fieldset>                
                  <input id="enableEnterSubmit" type="submit"/>			    

@@ -12,7 +12,7 @@
         <po:inputRow>
         <po:inputRowElement><po:field labelKey="person.firstName">${person.firstName}</po:field></po:inputRowElement>
         <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
-        <po:inputRowElement><po:field labelKey="person.middleName">${person.middleName}</po:field></po:inputRowElement>
+        <po:inputRowElement><po:field labelKey="person.middleName">${person.middleName}&nbsp;</po:field></po:inputRowElement>
         <po:inputRowElement>&nbsp;&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="person.lastName">${person.lastName}</po:field></po:inputRowElement>
         </po:inputRow>

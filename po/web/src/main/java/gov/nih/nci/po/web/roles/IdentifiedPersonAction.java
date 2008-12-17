@@ -102,10 +102,8 @@ import org.displaytag.properties.SortOrderEnum;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
 /**
  * Action to manage IdentifiedOrganization(s).
@@ -209,15 +207,6 @@ public class IdentifiedPersonAction
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
                 parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedPerson") })
-        },
-        requiredFields = {
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
-                    fieldName = "role.assignedIdentifier.extension",
-                    message = "Extension must be set")
-            ,
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
-                    fieldName = "role.assignedIdentifier.root",
-                    message = "Root must be set")
         }
     )
     @Override
@@ -232,15 +221,6 @@ public class IdentifiedPersonAction
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
                 parameters = { @ValidationParameter(name = "resourceKeyBase", value = "identifiedPerson") })
-        },
-        requiredFields = {
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
-                    fieldName = "role.assignedIdentifier.extension",
-                    message = "Extension must be set")
-            ,
-            @RequiredFieldValidator(type = ValidatorType.SIMPLE,
-                    fieldName = "role.assignedIdentifier.root",
-                    message = "Root must be set")
         }
     )
     @Override

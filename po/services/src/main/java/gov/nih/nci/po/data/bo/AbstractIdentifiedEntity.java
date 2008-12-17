@@ -83,6 +83,8 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.NotEmptyIiExtension;
+import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.ValidIi;
@@ -215,6 +217,8 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>>
             @Column(name = "assigned_identifier_scope")
     })
     @ValidIi
+    @NotEmptyIiExtension
+    @NotEmptyIiRoot
     @Searchable(fields = {"extension", "root" },
             matchMode = Searchable.MATCH_MODE_START)
     public Ii getAssignedIdentifier() {
