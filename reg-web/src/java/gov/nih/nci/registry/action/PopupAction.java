@@ -126,11 +126,15 @@ public class PopupAction extends ActionSupport implements Preparable {
                 identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
-                p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
+                if (retResultList != null && retResultList.size() > 0) {
+                    p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
+                } 
             } else {
                 p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
             }
-            poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
+            if (p.getIdentifier() != null || p.getName() != null) {
+                poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
+            }
             for (gov.nih.nci.services.person.PersonDTO poPersonDTO : poPersonList) {
                 persons.add(EnPnConverter.convertToPaPersonDTO(poPersonDTO));
             }
