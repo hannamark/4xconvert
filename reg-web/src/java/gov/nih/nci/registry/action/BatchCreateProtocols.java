@@ -178,6 +178,7 @@ public class BatchCreateProtocols {
             createStudyStatus(studyProtocolIi, dto);  // create study overall status
             createIndIdeIndicators(studyProtocolIi, dto); // create IND/IDE information *One- times*
             createStudyResources(studyProtocolIi, dto); // create the Study Grants One- times*
+           
             if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
                 uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), 
                           dto.getProtcolDocumentFileName(), folderPath);
@@ -354,6 +355,11 @@ public class BatchCreateProtocols {
      */
     private void createStudyResources(Ii studyProtocolIi,
             StudyProtocolBatchDTO batchDto) throws PAException {
+        if (PAUtil.isNotEmpty(batchDto.getNihGrantFundingMechanism()) 
+            && PAUtil.isNotEmpty(batchDto.getNihGrantFundingMechanism())
+            && PAUtil.isNotEmpty(batchDto.getNihGrantFundingMechanism())
+            && PAUtil.isNotEmpty(batchDto.getNihGrantFundingMechanism())) {
+            
             StudyResourcingDTO studyResoureDTO = null;
             studyResoureDTO = new StudyResourcingDTO();
             studyResoureDTO.setStudyProtocolIi(studyProtocolIi);
@@ -371,6 +377,7 @@ public class BatchCreateProtocols {
             RegistryServiceLocator.getStudyResourcingService()
                     .createStudyResourcing(studyResoureDTO);
             log.error("leaving createStudyResources ....");
+        }
      }
 
     /**
