@@ -140,6 +140,10 @@ public class PAMessageDrivenBean implements MessageListener {
                     updateExceptionAuditMessageLog(msgId, e.getMessage());
                     msg.acknowledge();
                     LOG.error("PAMessageDrivenBean onMessage() method threw an PAException " , e);
+                } catch (Exception e) {
+                    updateExceptionAuditMessageLog(msgId, " generic exception " + e.getMessage());
+                    msg.acknowledge();
+                    LOG.error("PAMessageDrivenBean onMessage() method threw an Exception " , e);
                 }
             }            
             msg.acknowledge();
