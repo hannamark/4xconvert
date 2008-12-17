@@ -284,25 +284,25 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // update the other identiers
         IdentifiedPersonDTO newIdentifier = getOtherId(identifiedPerson.getAssignedIdentifier());
         if (newIdentifier != null) {
-            updateOtherIdentifier(ctepPerson, identifiedPerson, newIdentifier);
+            updateOtherIdentifier(p, identifiedPerson, newIdentifier);
         }
 
         // update the hcp role
         HealthCareProviderDTO hcpDto = getHcpFromCtep(identifiedPerson.getAssignedIdentifier());
         if (hcpDto != null) {
-            updateHcpRoles(ctepPerson, p, hcpDto);
+            updateHcpRoles(p, hcpDto);
         }
 
         // update the crs role
         ClinicalResearchStaffDTO crsDto = getCrsFromCtep(identifiedPerson.getAssignedIdentifier());
         if (crsDto != null) {
-            updateCrsRoles(ctepPerson, p, crsDto);
+            updateCrsRoles(p, crsDto);
         }
 
         return p;
     }
 
-    private void updateCrsRoles(Person ctepPerson, Person p, ClinicalResearchStaffDTO crsDto) throws JMSException {
+    private void updateCrsRoles(Person p, ClinicalResearchStaffDTO crsDto) throws JMSException {
         // we don't handle merge here, iterate over roles nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<ClinicalResearchStaff> i = p.getClinicalResearchStaff().iterator();
@@ -344,11 +344,11 @@ public class CtepPersonImporter extends CtepEntityImporter {
             this.crsService.curate(persistedCrs);
         }
         if (!ctepDataSaved) {
-            createCrs(crsDto, ctepPerson);
+            createCrs(crsDto, p);
         }
     }
 
-    private void updateHcpRoles(Person ctepPerson, Person p, HealthCareProviderDTO hcpDto) throws JMSException {
+    private void updateHcpRoles(Person p, HealthCareProviderDTO hcpDto) throws JMSException {
         // we don't handle merge here, iterate over roles nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<HealthCareProvider> i = p.getHealthCareProviders().iterator();
@@ -391,13 +391,22 @@ public class CtepPersonImporter extends CtepEntityImporter {
             this.hcpService.curate(persistedHcp);
         }
         if (!ctepDataSaved) {
-            createHcp(hcpDto, ctepPerson);
+            createHcp(hcpDto, p);
         }
     }
 
     private void updateOtherIdentifier(Person ctepPerson, IdentifiedPerson identifiedPerson,
             IdentifiedPersonDTO newIdentifier) throws JMSException {
         Ii newId = newIdentifier.getAssignedId();
+        boolean found = searchForAndUpdateCtepIds(ctepPerson, identifiedPerson, newId);
+        if (!found) {
+            // someone removed the record using hte curation tool, add it back
+            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId());
+        }
+    }
+
+    private boolean searchForAndUpdateCtepIds(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii newId)
+            throws JMSException {
         boolean found = false;
         for (IdentifiedPerson ip : ctepPerson.getIdentifiedPersons()) {
             if (ip.getScoper().getId().equals(getCtepOrganization().getId()) 
@@ -409,12 +418,13 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 found = true;
                 updateOtherIdentifierIfChangOccurred(newId, ip);
                 break;
+            } else if (ip == identifiedPerson && !RoleStatus.ACTIVE.equals(ip.getStatus())) {
+                // make sure the primary db record is active
+                ip.setStatus(RoleStatus.ACTIVE);
+                this.identifiedPersonService.curate(ip);
             }
         }
-        if (!found) {
-            // someone removed the record using hte curation tool, add it back
-            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId());
-        }
+        return found;
     }
 
     private void updateOtherIdentifierIfChangOccurred(Ii newId, IdentifiedPerson ip) throws JMSException {

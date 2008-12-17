@@ -294,6 +294,10 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         // no need to update any identified entity, as in order to get to this point we found a 
         // matching identified entity
+        if (!RoleStatus.ACTIVE.equals(identifiedOrg.getStatus())) {
+            identifiedOrg.setStatus(RoleStatus.ACTIVE);
+            this.identifiedOrgService.curate(identifiedOrg);
+        }
 
         // update health care facility role
         HealthCareFacility hcf = getCtepHealthCareFacility(identifiedOrg.getAssignedIdentifier());
@@ -347,7 +351,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // it is set correctly
             HealthCareFacility persistedHcf = org.getHealthCareFacilities().iterator().next();
             persistedHcf.setStatus(RoleStatus.ACTIVE);
-            this.hcfService.curate(hcf);
+            this.hcfService.curate(persistedHcf);
         }
     }
 
