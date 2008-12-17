@@ -74,5 +74,17 @@ public class InterventionAlternateNameServiceBean
         getLogger().info("Leaving getByIntervention, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
+    /**
+     * @param interventionsIi array of indexes of associated Intervention
+     * @return list of InterventionAlternateNameDTO
+     * @throws PAException exception
+     */
+    public List<InterventionAlternateNameDTO> getByIntervention(Ii[] interventionsIi) throws PAException {
+        ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
+        for (Ii ii : interventionsIi) {
+            resultList.addAll(getByIntervention(ii));
+        }
+        return resultList;
+    }
 
 }

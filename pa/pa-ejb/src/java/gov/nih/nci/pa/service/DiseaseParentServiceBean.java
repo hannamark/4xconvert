@@ -85,4 +85,16 @@ public class DiseaseParentServiceBean
             throws PAException {
         return getByDisease(ii, "parentDisease");
     }
+    /**
+     * @param iis array of indexes of diseases
+     * @return list of DiseaseParent associations for children of disease
+     * @throws PAException exception
+     */
+    public List<DiseaseParentDTO> getByChildDisease(Ii[] iis) throws PAException {
+        ArrayList<DiseaseParentDTO> resultList = new ArrayList<DiseaseParentDTO>();
+        for (Ii ii : iis) {
+            resultList.addAll(getByChildDisease(ii));
+        }
+        return resultList;
+    }
 }

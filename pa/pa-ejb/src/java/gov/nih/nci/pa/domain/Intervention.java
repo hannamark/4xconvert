@@ -33,6 +33,9 @@ import org.hibernate.validator.NotNull;
 public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePendingCode> {
     private static final long serialVersionUID = 7367567890L;
     
+    /** Maximum length for discriptionText attribute. */
+    public static final int DESCRIPTION_TEXT_LENGTH = 1000;
+
     private String name;
     private InterventionTypeCode typeCode;
     private String descriptionText;
@@ -75,7 +78,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      * @return the descriptionText
      */
     @Column(name = "DESCRIPTION_TEXT")
-    @Length(max = AbstractEntity.LONG_TEXT_LENGTH)
+    @Length(max = DESCRIPTION_TEXT_LENGTH)
     public String getDescriptionText() {
         return descriptionText;
     }

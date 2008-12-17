@@ -15,11 +15,13 @@
                     cssStyle="width:280px;float:left"/> 
         </td>
         <td class="value">
+            <s:if test="%{currentAction != 'edit'}">
             <ul style="margin-top: -6px;">
                 <li style="padding-left: 0"><a href="#" class="btn"
                     onclick="lookup();" /><span class="btn_img"><span
                     class="search">Look Up</span></span></a></li>
             </ul>
+            </s:if>
         </td>
     </tr>
     <tr>

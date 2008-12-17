@@ -28,4 +28,10 @@ public interface InterventionAlternateNameServiceRemote
      * @throws PAException exception
      */
     List<InterventionAlternateNameDTO> getByIntervention(Ii interventionIi) throws PAException; 
+    /**
+     * @param interventionsIi array of indexes of associated Intervention
+     * @return list of InterventionAlternateNameDTO
+     * @throws PAException exception
+     */
+    List<InterventionAlternateNameDTO> getByIntervention(Ii[] interventionsIi) throws PAException; 
 }

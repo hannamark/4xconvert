@@ -28,4 +28,10 @@ public interface DiseaseParentServiceRemote extends BasePaService<DiseaseParentD
      * @throws PAException exception
      */
     List<DiseaseParentDTO> getByChildDisease(Ii ii) throws PAException;
+    /**
+     * @param iis array of indexes of diseases
+     * @return list of DiseaseParent associations for children of disease
+     * @throws PAException exception
+     */
+    List<DiseaseParentDTO> getByChildDisease(Ii[] iis) throws PAException;
 }
