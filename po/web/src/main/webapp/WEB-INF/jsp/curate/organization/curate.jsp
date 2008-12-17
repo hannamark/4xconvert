@@ -192,7 +192,7 @@
         <div class="boxouter">
         <h2>Curator Comment(s)</h2>
 	        <div class="box_white">
-	            <s:textarea id="curateEntityForm.organization.commentsText" label="organization.comments" cols="50" rows="8" cssStyle="resize: none;" value="%{organization.comments}" />
+	            <s:textarea id="curateEntityForm.organization.commentsText" label="%{getText('organization.comments')}" cols="50" rows="8" cssStyle="resize: none;" value="%{organization.comments}" />
 	        </div>
         </div>
     </div>
