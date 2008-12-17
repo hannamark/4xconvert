@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,7 +25,8 @@ public class MessageLog implements Serializable {
 
     private static final long serialVersionUID = 8652324159502559218L;
     private Long id;
-    private StudyProtocol studyProtocol;
+    //private StudyProtocol studyProtocol;
+    private Long studyProtocol;
     private String entityName;
     private String assignedIdentifier;
     private Date dateCreated;
@@ -54,23 +53,23 @@ public class MessageLog implements Serializable {
         return this.id;
     }
     
-    /**
-     * 
-     * @return StudyProtocol
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", nullable = false)
-    public StudyProtocol getStudyProtocol() {
-        return studyProtocol;
-    }
-    
-    /**
-     * 
-     * @param studyProtocol studyProtocol
-     */
-    public void setStudyProtocol(StudyProtocol studyProtocol) {
-        this.studyProtocol = studyProtocol;
-    }
+//    /**
+//     * 
+//     * @return StudyProtocol
+//     */
+//    @ManyToOne
+//    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", nullable = false)
+//    public Long getStudyProtocol() {
+//        return studyProtocol;
+//    }
+//    
+//    /**
+//     * 
+//     * @param studyProtocol studyProtocol
+//     */
+//    public void setStudyProtocol(StudyProtocol studyProtocol) {
+//        this.studyProtocol = studyProtocol;
+//    }
 
     /**
      * 
@@ -162,6 +161,21 @@ public class MessageLog implements Serializable {
      */
     public void setExceptionMessage(String exceptionMessage) {
         this.exceptionMessage = exceptionMessage;
+    }
+
+    /**
+     * @return the studyProtocol
+     */
+    @Column(name = "STUDY_PROTOCOL_IDENTIFIER")
+    public Long getStudyProtocol() {
+        return studyProtocol;
+    }
+
+    /**
+     * @param studyProtocol the studyProtocol to set
+     */
+    public void setStudyProtocol(Long studyProtocol) {
+        this.studyProtocol = studyProtocol;
     }
     
    }
