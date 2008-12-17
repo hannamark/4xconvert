@@ -105,6 +105,7 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.ejb.EJBException;
 
@@ -115,6 +116,8 @@ import org.junit.Test;
  *
  */
 public class PersonEntityServiceTest extends AbstractPersonEntityService {
+    private static final String ENXP_GIV = "--";
+    private static final String ENXP_FAM = "_ -!@#$%^&*()+=~`'\":{}[]|<>?/,.\\\t\n\b\f\r";
     private static final String DEFAULT_URL = "http://default.example.com";
     private static final String DEFAULT_EMAIL = "default@example.com";
     private Ii personId;
@@ -132,10 +135,10 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             PersonDTO dto = new PersonDTO();
             dto.setName(new EnPn());
             Enxp part = new Enxp(EntityNamePartType.GIV);
-            part.setValue("--");
+            part.setValue(ENXP_GIV);
             dto.getName().getPart().add(part);
             part = new Enxp(EntityNamePartType.FAM);
-            part.setValue("__");
+            part.setValue(ENXP_FAM);
             dto.getName().getPart().add(part);
             dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "WY", "zip", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
@@ -166,6 +169,12 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         assertNotNull(dto);
         assertNotSame(personId, dto.getIdentifier());
         assertEquals(personId.getExtension(), dto.getIdentifier().getExtension());
+        assertEquals(2, dto.getName().getPart().size());
+        Iterator<Enxp> enxpItr = dto.getName().getPart().iterator();
+        Enxp next = enxpItr.next();
+        assertEquals(ENXP_FAM, next.getValue());
+        next = enxpItr.next();
+        assertEquals(ENXP_GIV, next.getValue());
         assertEquals("pending", dto.getStatusCode().getCode());
     }
 
