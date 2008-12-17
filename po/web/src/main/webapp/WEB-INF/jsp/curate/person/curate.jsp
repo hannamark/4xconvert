@@ -181,11 +181,11 @@
                 <c:url var="manageIdentifiedPerson" value="/protected/roles/person/IdentifiedPerson/start.action">
                     <c:param name="person" value="${person.id}"/>
                 </c:url>
-                <ul> 
-                    <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (${hotClinicalResearchStaffCount} new of ${fn:length(person.clinicalResearchStaff)})</li>
-                    <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (${hotHealthCareProviderCount} new of ${fn:length(person.healthCareProviders)})</li>
-                    <li><a href="${manageOrganizationalContact}"><s:text name="organizationalContact.manage.title"/></a> (${hotOrganizationalContactCount} new of ${fn:length(person.organizationalContacts)})</li>
-                    <li><a href="${manageIdentifiedPerson}"><s:text name="identifiedPerson.manage.title"/></a> (${hotIdentifiedPersonCount} new of ${fn:length(person.identifiedPersons)})</li>
+                <ul>
+                    <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (${fn:length(person.clinicalResearchStaff)}) <c:if test="${hotClinicalResearchStaffCount > 0}"><span class='required'>*</span></c:if></li>
+                    <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (${fn:length(person.healthCareProviders)}) <c:if test="${hotHealthCareProviderCount > 0}"><span class='required'>*</span></c:if></li>
+                    <li><a href="${manageOrganizationalContact}"><s:text name="organizationalContact.manage.title"/></a> (${fn:length(person.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'>*</span></c:if></li>
+                    <li><a href="${manageIdentifiedPerson}"><s:text name="identifiedPerson.manage.title"/></a> (${fn:length(person.identifiedPersons)}) <c:if test="${hotIdentifiedPersonCount > 0}"><span class='required'>*</span></c:if></li>
                 </ul>
                 <div class="clear"></div>
             </div>
