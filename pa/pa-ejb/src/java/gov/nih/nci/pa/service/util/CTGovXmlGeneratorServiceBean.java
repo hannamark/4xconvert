@@ -1025,8 +1025,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         nv.put(BlindingSchemaCode.SINGLE_BLIND.getCode(), "Single Blind");
         nv.put(BlindingSchemaCode.DOUBLE_BLIND.getCode(), "Double Blind");
         nv.put(DesignConfigurationCode.SINGLE_GROUP.getCode(), "Single Group Assignment");
-        nv.put(DesignConfigurationCode.PARALLEL_GROUP_DESIGN.getCode(), "Parallel Assignment");
-        nv.put(DesignConfigurationCode.CROSSOVER_DESIGN.getCode() , "Crossover Assignment");
+        nv.put(DesignConfigurationCode.PARALLEL.getCode(), "Parallel Assignment");
+        nv.put(DesignConfigurationCode.CROSSOVER.getCode() , "Crossover Assignment");
         nv.put(DesignConfigurationCode.FACTORIAL.getCode() , "Factorial Assignment");
         nv.put(StudyClassificationCode.SAFETY.getCode() , "Safety Study");
         nv.put(StudyClassificationCode.EFFICACY.getCode(), "Efficacy Study");
