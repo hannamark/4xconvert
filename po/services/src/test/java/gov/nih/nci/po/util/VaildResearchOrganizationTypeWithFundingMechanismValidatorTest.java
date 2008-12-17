@@ -66,7 +66,7 @@ public class VaildResearchOrganizationTypeWithFundingMechanismValidatorTest {
         ResearchOrganization ro = new ResearchOrganization();
         ro.setTypeCode(null);
         ro.setFundingMechanism(fm);
-        assertFalse(validator.isValid(ro));
+        assertTrue(validator.isValid(ro));
     }
 
     @Test

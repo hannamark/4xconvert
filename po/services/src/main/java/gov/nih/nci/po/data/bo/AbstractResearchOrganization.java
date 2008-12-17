@@ -92,7 +92,6 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.hibernate.validator.NotNull;
 
 /**
  * Research Organization role class.
@@ -138,7 +137,6 @@ public class AbstractResearchOrganization extends AbstractOrganizationRole {
      */
     @ManyToOne
     @ForeignKey(name = "research_org_type_fkey")
-    @NotNull
     @Searchable
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public ResearchOrganizationType getTypeCode() {

@@ -20,5 +20,5 @@ public @interface VaildResearchOrganizationTypeWithFundingMechanism {
     /**
      * get the message.
      */
-    String message() default "{validator.researchOrganization}";
+    String message() default "{validator.vaildResearchOrganizationTypeWithFundingMechanism}";
 }

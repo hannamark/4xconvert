@@ -34,6 +34,8 @@ public class VaildResearchOrganizationTypeWithFundingMechanismValidator implemen
         return (
             (aro.getFundingMechanism() == null)
                 ||
+            (aro.getTypeCode() == null)
+                ||
             (aro.getTypeCode() != null
                 && !aro.getTypeCode().getFundingMechanisms().isEmpty()
                 && aro.getTypeCode().getFundingMechanisms().contains(aro.getFundingMechanism())

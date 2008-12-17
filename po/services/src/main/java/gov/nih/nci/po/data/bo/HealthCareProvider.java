@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.Searchable;
 import gov.nih.nci.po.util.UniquePlayerScoper;
@@ -122,6 +122,7 @@ import org.hibernate.validator.Valid;
 @RoleStatusChange
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 @UniquePlayerScoper(friendlyName = "Health Care Provider")
+@PhoneNotEmptyValidator.PhoneNotEmpty
 public class HealthCareProvider extends AbstractHealthCareProvider implements Correlation {
     private static final long serialVersionUID = 1L;
 
@@ -256,7 +257,6 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @ForeignKey(name = "HCP_PHONE_FK", inverseName = "PHONE_HCP_FK")
     @Valid
     @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_START)
-    @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }

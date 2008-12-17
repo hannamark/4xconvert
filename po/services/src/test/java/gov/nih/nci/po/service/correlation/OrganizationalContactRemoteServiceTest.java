@@ -176,7 +176,7 @@ public class OrganizationalContactRemoteServiceTest extends
     public void testValidate() throws Exception {
         OrganizationalContactDTO pr = new OrganizationalContactDTO();
         Map<String, String[]> errors = getCorrelationService().validate(pr);
-        assertEquals(4, errors.keySet().size());
+        assertEquals(3, errors.keySet().size());
     }
 
     @Override

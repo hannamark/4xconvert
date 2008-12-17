@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import gov.nih.nci.po.service.EjbTestHelper;
+import java.util.Map;
 import org.hibernate.validator.InvalidStateException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -172,5 +173,18 @@ public class ResearchOrganizationServiceTest extends AbstractStructrualRoleServi
         ro1.setTypeCode(ro2.getTypeCode());
         ro1.setFundingMechanism(ro2.getFundingMechanism());
         EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
+    }
+
+    @Test
+    public void testResearchOrganizationTypeCodeValidator() throws Exception {
+        ResearchOrganization ro = super.createSample();
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+
+        ro.setTypeCode(null);
+        EjbTestHelper.getResearchOrganizationServiceBean().update(ro);
+
+        ro.setStatus(RoleStatus.ACTIVE);
+        Map<String, String[]> errors = EjbTestHelper.getResearchOrganizationServiceBean().validate(ro);
+        assertEquals(1, errors.size());
     }
 }
