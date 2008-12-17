@@ -107,7 +107,6 @@
                    listKey="id"
                    listValue="code"
                    value="%{role.types.{id}}" 
-                   headerKey="" headerValue="--Select Contact Type(s)--" 
                    multiple="true"
                    />   
                 
