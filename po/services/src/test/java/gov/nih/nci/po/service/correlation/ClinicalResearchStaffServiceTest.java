@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.po.service.correlation;
 
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
 
+import gov.nih.nci.po.util.PoHibernateUtil;
 import org.junit.Test;
 /**
  * @author Scott Miller
@@ -134,5 +138,21 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         obj2.setScoper(obj.getScoper());
         getService().create(obj);        
         getService().create(obj2);
+    }
+
+    @Test
+    public void testPhoneNotEmptyValidator() throws Exception {
+        ClinicalResearchStaff obj = createSample();
+        obj.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(obj.getPlayer());
+        obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(obj.getScoper());
+        obj.setStatus(RoleStatus.ACTIVE);
+        getService().update(obj);
+
+        obj.getPhone().clear();
+        Map<String, String[]> errors = getService().validate(obj);
+        assertEquals(1, errors.size());
+        assertEquals(1, errors.get(null).length);
     }
 }

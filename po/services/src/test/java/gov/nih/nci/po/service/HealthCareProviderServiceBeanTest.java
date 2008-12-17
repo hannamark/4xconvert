@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.EntityStatus;
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.audit.AuditLogRecord;
 import gov.nih.nci.po.audit.AuditType;
@@ -193,4 +195,19 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         assertEquals(expected.getUrl().size(), found.getUrl().size());
     }
 
+    @Test
+    public void testPhoneNotEmptyValidator() throws Exception {
+        HealthCareProvider obj = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, createHealthCareProvider());
+        obj.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(obj.getPlayer());
+        obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(obj.getScoper());
+        obj.setStatus(RoleStatus.ACTIVE);
+        EjbTestHelper.getHealthCareProviderServiceBean().update(obj);
+
+        obj.getPhone().clear();
+        Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
+        assertEquals(1, errors.size());
+        assertEquals(1, errors.get(null).length);
+    }
 }
