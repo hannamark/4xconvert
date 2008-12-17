@@ -781,6 +781,8 @@ public class BatchCreateProtocols {
     }
     private void createIndIdeIndicators(Ii studyProtocolIi, StudyProtocolBatchDTO dto) throws PAException {
         log.error("Entering createIndIdeIndicators....");   
+        //check if the values are present..
+        if (!isIndIdeEmpty(dto)) {
         StudyIndldeDTO indldeDTO = null;
             indldeDTO = new StudyIndldeDTO();
             indldeDTO.setStudyProtocolIi(studyProtocolIi);
@@ -798,7 +800,28 @@ public class BatchCreateProtocols {
             indldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
                     dto.getIndHasExpandedAccess())));
             indldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getIndExpandedAccessStatus()));
+            
             RegistryServiceLocator.getStudyIndldeService().create(indldeDTO);
+            }
      log.error("leaving createIndIdeIndicators....");
+    }
+    private boolean isIndIdeEmpty(StudyProtocolBatchDTO dto) {
+        if (PAUtil.isNotEmpty(dto.getIndType()) 
+                && PAUtil.isNotEmpty(dto.getIndNumber())
+                && PAUtil.isNotEmpty(dto.getIndGrantor())
+                && PAUtil.isNotEmpty(dto.getIndHolderType())
+                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())) {
+            if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
+                if (PAUtil.isNotEmpty(dto.getIndNIHInstitution())) {
+                    return false;
+                }
+            }
+            if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
+                if (PAUtil.isNotEmpty(dto.getIndNCIDivision())) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
