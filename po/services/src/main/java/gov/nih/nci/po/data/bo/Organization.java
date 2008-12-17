@@ -95,6 +95,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -131,6 +132,8 @@ public class Organization extends AbstractOrganization
     private Set<HealthCareFacility> healthCareFacilities = new HashSet<HealthCareFacility>();
     private Set<IdentifiedOrganization> identifiedOrganizations = new HashSet<IdentifiedOrganization>();
 
+    private String comments;
+    
     /**
      * Create a new, empty org.
      */
@@ -358,5 +361,20 @@ public class Organization extends AbstractOrganization
     @SuppressWarnings("unused")
     private void setResearchOrganizations(Set<ResearchOrganization> researchOrganizations) {
         this.researchOrganizations = researchOrganizations;
+    }
+
+    /**
+     * @return comments 
+     */
+    @Lob
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments comments
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

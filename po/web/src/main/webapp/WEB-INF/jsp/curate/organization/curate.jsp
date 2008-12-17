@@ -59,7 +59,7 @@
 	<s:else>
 	   <s:set name="formAction" value="'organization/curate/curate.action'"/>
 	</s:else>
-	<s:form action="%{formAction}" id="curateEntityForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
+	<s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
 	    <input id="enableEnterSubmit" type="submit"/>
 		<s:hidden key="rootKey"/>
 	    <s:hidden key="cr.id"/>
@@ -152,6 +152,8 @@
 		        <div class="clear"></div>
 		    </div>
 		</div>
+		
+		<s:hidden key="organization.comments" id="curateEntityForm.organization.comments"/>
 	</s:form>
 		
 		<div class="boxouter_nobottom">
@@ -187,6 +189,12 @@
             </div>
         </div>
 </s:if>		
+        <div class="boxouter">
+        <h2>Curator Comment(s)</h2>
+	        <div class="box_white">
+	            <s:textarea id="curateEntityForm.organization.commentsText" label="organization.comments" cols="50" rows="8" cssStyle="resize: none;" value="%{organization.comments}" />
+	        </div>
+        </div>
     </div>
 </div>
 
@@ -202,7 +210,7 @@
 
 <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
+        <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
     </po:buttonRow>
 </div>
 

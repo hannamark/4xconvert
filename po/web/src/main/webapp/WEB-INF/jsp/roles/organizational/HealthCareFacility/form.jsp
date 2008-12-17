@@ -7,7 +7,7 @@
     <title>Create Health Care Facility</title>
 </s:if>
 <s:else>
-    <title>Health Care Facility Details</title>
+    <title>Edit Health Care Facility</title>
 </s:else>
 </head> 
 <body>

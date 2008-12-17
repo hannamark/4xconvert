@@ -8,10 +8,10 @@
 </s:if>
 <s:else>
    <c:if test="${fn:length(role.changeRequests) > 0}">
-      <title><s:text name="clinicalResearchStaff"/> Details - Comparison</title>
+      <title>Edit <s:text name="clinicalResearchStaff"/> - Comparison</title>
    </c:if>
    <c:if test="${fn:length(role.changeRequests) == 0}">
-      <title><s:text name="clinicalResearchStaff"/> Details</title>
+      <title>Edit <s:text name="clinicalResearchStaff"/></title>
    </c:if>
 </s:else>
 

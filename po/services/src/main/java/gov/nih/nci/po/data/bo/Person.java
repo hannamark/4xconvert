@@ -94,6 +94,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -125,6 +126,8 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
+    
+    private String comments;
 
      /**
      * Create a new, empty person.
@@ -337,6 +340,21 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @SuppressWarnings("unused")
     private void setIdentifiedPersons(Set<IdentifiedPerson> identifiedPersons) {
         this.identifiedPersons = identifiedPersons;
+    }
+
+    /**
+     * @return comments 
+     */
+    @Lob
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments comment
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
 
