@@ -32,22 +32,6 @@
     </c:if> 
 </s:if>
 
-<s:if test="%{isNotCreate}">
-    <c:if test="${fn:length(role.changeRequests) > 0}">
-    <s:form action="ajax/roles/person/ClinicalResearchStaff/changeCurrentChangeRequest.action" id="changeCrForm">
-        <s:hidden key="person"/>
-        <s:hidden key="rootKey"/>
-        <s:select
-           label="Current Change Request"
-           name="cr"
-           list="selectChangeRequests"
-           value="cr.id"
-           onchange="$('curateRoleForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
-           />
-    </s:form>
-    </c:if> 
-</s:if> 
-
 <po:successMessages/>
 
 <div id="page" style="margin-top:10px;">
@@ -117,6 +101,17 @@
 
 <c:if test="${fn:length(role.changeRequests) > 0}">
 <div id="page" style="margin-top:10px;">
+    <s:form action="ajax/roles/person/ClinicalResearchStaff/changeCurrentChangeRequest.action" id="changeCrForm">
+        <s:hidden key="person"/>
+        <s:hidden key="rootKey"/>
+        <s:select
+           label="Current Change Request"
+           name="cr"
+           list="selectChangeRequests"
+           value="cr.id"
+           onchange="$('curateRoleForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
+           />
+    </s:form>
 <div id="crinfo">
 <%@ include file="roleCrInfo.jsp" %>
 </div>

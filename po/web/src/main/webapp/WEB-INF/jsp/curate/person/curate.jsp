@@ -31,21 +31,6 @@
     </c:if> 
 </s:if>
 
-<s:if test="%{isNotCreate}">
-	<c:if test="${fn:length(person.changeRequests) > 0}">
-	<s:form action="ajax/person/curate/changeCurrentChangeRequest.action" id="changeCrForm">
-	    <s:hidden key="rootKey"/>
-	    <s:select
-	       label="Current Change Request"
-	       name="cr"
-	       list="selectChangeRequests"
-	       value="cr.id"
-	       onchange="document.getElementById('curateEntityForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);" 
-	       />
-	</s:form>
-	</c:if> 
-</s:if> 
-
 <po:successMessages/>
 <s:actionerror/>
 
@@ -203,6 +188,16 @@
 
 <c:if test="${fn:length(person.changeRequests) > 0}">
 <div id="page" style="margin-top:10px;">
+	<s:form action="ajax/person/curate/changeCurrentChangeRequest.action" id="changeCrForm">
+	    <s:hidden key="rootKey"/>
+	    <s:select
+	       label="Current Change Request"
+	       name="cr"
+	       list="selectChangeRequests"
+	       value="cr.id"
+	       onchange="document.getElementById('curateEntityForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
+	       />
+	</s:form>
 <div id="crinfo">
 <%@ include file="crInfo.jsp" %>
 </div>
