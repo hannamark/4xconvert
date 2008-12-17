@@ -98,7 +98,7 @@
                 
                 <s:textfield 
                     id="curateRoleForm.role.certificateLicenseText" 
-                    label="%{getText('healthCareProvider.certificateLicenseText')}" name="healthCareProvider.certificateLicenseText" maxlength="255" size="50"/>
+                    label="%{getText('healthCareProvider.certificateLicenseText')}" name="role.certificateLicenseText" value="%{role.certificateLicenseText}" maxlength="255" size="50"/>
                 
                 <input id="enableEnterSubmit" type="submit"/>			    
 			    </s:form>
