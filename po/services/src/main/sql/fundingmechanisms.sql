@@ -27,7 +27,7 @@ insert into fundingmechanism (id, code, description, category, status) values (n
 insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F30','Individual Predoc. NRSA for MD-PhD Fellowships','Fellowship Programs','ACTIVE');
 insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F31','Predoctoral Individual National Research Service Award','Fellowship Programs','ACTIVE');
 insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F32','Postdoctoral Individual National Research Service Award','Fellowship Programs','ACTIVE');
-insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F33','ational Research Service Award for Senior Fellows','Fellowship Programs','ACTIVE');
+insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F33','National Research Service Award for Senior Fellows','Fellowship Programs','ACTIVE');
 insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F34','MARC (NRSA) Faculty Fellowships','Fellowship Programs','ACTIVE');
 insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F37','Medical Informatics Fellowships','Fellowship Programs','ACTIVE');
 insert into fundingmechanism (id, code, description, category, status) values (nextval('hibernate_sequence'),'F38','Applied Medical Informatics Fellowships','Fellowship Programs','ACTIVE');
