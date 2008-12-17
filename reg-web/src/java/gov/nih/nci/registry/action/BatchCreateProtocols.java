@@ -175,12 +175,9 @@ public class BatchCreateProtocols {
             }
             log.error("Trial is registered with ID: "
                     + IiConverter.convertToString(studyProtocolIi));
-            // create study overall status
-            createStudyStatus(studyProtocolIi, dto);
-            // create IND/IDE information *One- times*
-             createIndIdeIndicators(studyProtocolIi, dto);
-            // create the Study Grants One- times*
-            createStudyResources(studyProtocolIi, dto);
+            createStudyStatus(studyProtocolIi, dto);  // create study overall status
+            createIndIdeIndicators(studyProtocolIi, dto); // create IND/IDE information *One- times*
+            createStudyResources(studyProtocolIi, dto); // create the Study Grants One- times*
             if (PAUtil.isNotEmpty(dto.getProtcolDocumentFileName())) {
                 uploadDocument(studyProtocolIi, DocumentTypeCode.Protocol_Document.getCode(), 
                           dto.getProtcolDocumentFileName(), folderPath);
@@ -202,7 +199,6 @@ public class BatchCreateProtocols {
                 uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
                          dto.getOtherTrialRelDocumentFileName(), folderPath);  
             }
-            log.error("Before Summ4Funding lookup");
             //Summary 4 Info
             OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(dto);
             if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {
@@ -241,10 +237,10 @@ public class BatchCreateProtocols {
             OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(dto);
             Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
             if (sponsorIdIi != null) {
-                new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
+                    new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
                         IiConverter.convertToLong(studyProtocolIi));
-                if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
-                    new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
+                    if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
+                        new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
                             leadPrincipalInvestigator.getExtension(),
                             IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
                 } else {
@@ -255,9 +251,10 @@ public class BatchCreateProtocols {
                             responsiblePartyContact.getExtension(), IiConverter
                             .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), 
                              dto.getSponsorContactPhone());
-                }                
+                    }                
             }
-            log.error("sponsor relation done...");
+             log.error("sponsor relation done...");
+
             //get the protocol
              protocolAssignedId = 
                  RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
@@ -286,12 +283,21 @@ public class BatchCreateProtocols {
         } else {
             protocolDTO = new InterventionalStudyProtocolDTO();
         }
-        protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode
-                .getByCode(batchDto.getPhase())));
-        if (PAUtil.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
+        //if the Phase's value is not in allowed LOV then save phase as Other
+        // and comments as the value of current phase
+        if (null == PhaseCode.getByCode(batchDto.getPhase()))  {
+            protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode
+                    .getByCode(PhaseCode.OTHER.getCode())));
             protocolDTO.setPhaseOtherText(
+                    StConverter.convertToSt(batchDto.getPhase()));
+        } else {
+            protocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode
+                    .getByCode(batchDto.getPhase())));
+            if (PAUtil.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
+                protocolDTO.setPhaseOtherText(
                     StConverter.convertToSt(batchDto.getPhaseOtherValueSp()));
-        }
+            }
+        }      
         protocolDTO.setOfficialTitle(StConverter.convertToSt(batchDto
                 .getTitle()));
         protocolDTO.setStartDate(TsConverter.convertToTs(PAUtil
