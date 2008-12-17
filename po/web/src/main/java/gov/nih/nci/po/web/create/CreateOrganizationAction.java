@@ -26,7 +26,6 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
     /**
      * @return show start page
      */
-    @SuppressWarnings("deprecation")
     @Override
     public String start() {
         getOrganization().setPostalAddress(new Address());

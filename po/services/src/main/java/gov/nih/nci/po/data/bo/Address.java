@@ -145,6 +145,19 @@ public class Address implements Auditable, PersistentObject {
     public Address() {
       // Empty constructor.
     }
+    
+    /**
+     * Copy the data from a different address.
+     * @param src the src address.
+     */
+    public void copy(Address src) {
+        this.setCityOrMunicipality(src.getCityOrMunicipality());
+        this.setCountry(src.getCountry());
+        this.setDeliveryAddressLine(src.getDeliveryAddressLine());
+        this.setPostalCode(src.getPostalCode());
+        this.setStateOrProvince(src.getStateOrProvince());
+        this.setStreetAddressLine(src.getStreetAddressLine());
+    }
 
     /**
      * @return database identifier

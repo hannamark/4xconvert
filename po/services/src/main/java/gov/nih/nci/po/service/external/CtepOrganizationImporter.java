@@ -107,6 +107,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -118,6 +119,7 @@ import org.apache.log4j.Logger;
  * @author Scott Miller
  *
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class CtepOrganizationImporter extends CtepEntityImporter {
     private static final Logger LOG = Logger.getLogger(CtepOrganizationImporter.class);
     private static final String CTEP_EXTENSION = "CTEP";
@@ -290,19 +292,63 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         copyCtepOrgToExistingOrg(ctepOrg, org);
         this.orgService.curate(org);
 
-        // update the identified entity role
-        identifiedOrg.setScoper(getScoper(ctepOrg, identifiedOrg.getAssignedIdentifier()));
-        identifiedOrg.setStatus(RoleStatus.ACTIVE);
-        this.identifiedOrgService.curate(identifiedOrg);
+        // no need to update any identified entity, as in order to get to this point we found a 
+        // matching identified entity
 
         // update health care facility role
+        HealthCareFacility hcf = getCtepHealthCareFacility(identifiedOrg.getAssignedIdentifier());
+        if (hcf != null) {
+            updateHcfRole(ctepOrg, org, hcf);
+        }
 
         // update research org role
+        ResearchOrganization ro = getCtepResearchOrganization(identifiedOrg.getAssignedIdentifier());
+        if (ro != null) {
+            updateRoRoles(ctepOrg, org, ro);
+        }
 
-        // TODO handle update cases.
-        throw new UnsupportedOperationException();
+        return org;
+    }
 
-//        return org;
+    private void updateRoRoles(Organization ctepOrg, Organization org, ResearchOrganization ro) throws JMSException {
+        // we don't handle merge here, iterate over all of the ro's nullifying them out, except the last one,
+        // which we will update with ctep's data.
+        Iterator<ResearchOrganization> i = org.getResearchOrganizations().iterator();
+        boolean ctepDataSaved = false;
+        while (i.hasNext()) {
+            ResearchOrganization persistedRo = i.next();
+            if (i.hasNext()) {
+                persistedRo.setStatus(RoleStatus.NULLIFIED);
+            } else {
+                // really only type code can change from ctep, but since funding mech is related, we will
+                // clear it out as well
+                persistedRo.setFundingMechanism(ro.getFundingMechanism());
+                persistedRo.setTypeCode(ro.getTypeCode());
+                ctepDataSaved = true;
+            }
+            this.roService.curate(persistedRo);
+        }
+        if (!ctepDataSaved) {
+            ro.setPlayer(ctepOrg);
+            ro.setStatus(RoleStatus.ACTIVE);
+            this.roService.curate(ro);
+        }
+    }
+
+    private void updateHcfRole(Organization ctepOrg, Organization org, HealthCareFacility hcf) throws JMSException {
+        // handle HCF - ensure exactly 1 non null hcf exists if ctep has this as a hcf
+        if (org.getHealthCareFacilities().isEmpty()) {
+            hcf.setPlayer(ctepOrg);
+            hcf.setStatus(RoleStatus.ACTIVE);
+            this.hcfService.curate(hcf);
+        } else {
+            // can assume exactly one hcf here because our validator only allows 1 non null hcf to exist
+            // also, no need to reset the player, because as it is already linked to the persistent object
+            // it is set correctly
+            HealthCareFacility persistedHcf = org.getHealthCareFacilities().iterator().next();
+            persistedHcf.setStatus(RoleStatus.ACTIVE);
+            this.hcfService.curate(hcf);
+        }
     }
 
     private Organization getScoper(Organization defaultScoper, Ii ctepOrgId) throws JMSException {
@@ -318,22 +364,15 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void copyCtepOrgToExistingOrg(Organization ctepOrg, Organization org) {
+        // doing this here instead of a 'copy' method in the org itself because all
+        // of the relationships are not copied (change requests, roles, etc)  The org
+        // we are copying from is just the base fields.  Also, the org from ctep
+        // does not provide fax, phone, tty, url, so those fields are skipped.
         org.setName(ctepOrg.getName());
-        org.setPostalAddress(ctepOrg.getPostalAddress());
+        org.getPostalAddress().copy(ctepOrg.getPostalAddress());
         org.getEmail().clear();
         org.getEmail().addAll(ctepOrg.getEmail());
-        org.getFax().clear();
-        org.getFax().addAll(ctepOrg.getFax());
-        org.getPhone().clear();
-        org.getPhone().addAll(ctepOrg.getPhone());
-        org.getTty().clear();
-        org.getTty().addAll(ctepOrg.getTty());
-        org.getUrl().clear();
-        org.getUrl().addAll(ctepOrg.getUrl());
-        org.setStatusCode(ctepOrg.getStatusCode());
-        if (!org.getStatusCode().equals(EntityStatus.NULLIFIED)) {
-            org.setDuplicateOf(null);
-        }
+        org.setStatusCode(EntityStatus.ACTIVE);
     }
 
     private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) {

@@ -26,7 +26,6 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
     /**
      * @return show start page
      */
-    @SuppressWarnings("deprecation")
     @Override
     public String start() {
         getPerson().setPostalAddress(new Address());

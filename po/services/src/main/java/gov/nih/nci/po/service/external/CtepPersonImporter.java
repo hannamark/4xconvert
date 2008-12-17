@@ -110,6 +110,7 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -273,12 +274,181 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.identifiedPersonService.curate(identifiedPerson);
     }
 
-    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson) {
-        // TODO support update
-        LOG.debug("Attempting to update person with name : ctep ids - "
-                + ctepPerson.getLastName() + " : "
-                + identifiedPerson.getAssignedIdentifier().getExtension());
-        throw new UnsupportedOperationException();
+    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson) throws JMSException {
+        Person p = identifiedPerson.getPlayer();
+
+        // copy updated data in to the local person
+        copyCtepPersonToExistingPerson(ctepPerson, p);
+        this.personService.curate(p);
+
+        // update the other identiers
+        IdentifiedPersonDTO newIdentifier = getOtherId(identifiedPerson.getAssignedIdentifier());
+        if (newIdentifier != null) {
+            updateOtherIdentifier(ctepPerson, identifiedPerson, newIdentifier);
+        }
+
+        // update the hcp role
+        HealthCareProviderDTO hcpDto = getHcpFromCtep(identifiedPerson.getAssignedIdentifier());
+        if (hcpDto != null) {
+            updateHcpRoles(ctepPerson, p, hcpDto);
+        }
+
+        // update the crs role
+        ClinicalResearchStaffDTO crsDto = getCrsFromCtep(identifiedPerson.getAssignedIdentifier());
+        if (crsDto != null) {
+            updateCrsRoles(ctepPerson, p, crsDto);
+        }
+
+        return p;
+    }
+
+    private void updateCrsRoles(Person ctepPerson, Person p, ClinicalResearchStaffDTO crsDto) throws JMSException {
+        // we don't handle merge here, iterate over roles nullifying them out, except the last one,
+        // which we will update with ctep's data.
+        Iterator<ClinicalResearchStaff> i = p.getClinicalResearchStaff().iterator();
+        boolean ctepDataSaved = false;
+        while (i.hasNext()) {
+            ClinicalResearchStaff persistedCrs = i.next();
+            if (i.hasNext()) {
+                persistedCrs.setStatus(RoleStatus.NULLIFIED);
+            } else {
+                // update the CRS by taking the dto from ctep, converting it to our data model, then copying 
+                // in the values by hand
+                
+                // store ii's we will need
+                Ii scoperIi = crsDto.getScoperIdentifier();
+
+                // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
+                crsDto.setIdentifier(null);
+                crsDto.setPlayerIdentifier(null);
+                crsDto.setScoperIdentifier(null);
+
+                // convert to local db model
+                ClinicalResearchStaff crs = (ClinicalResearchStaff) PoXsnapshotHelper.createModel(crsDto);
+
+                // set fields that we need to, clear the fields not provided by ctep
+                persistedCrs.setStatus(RoleStatus.ACTIVE);
+                persistedCrs.getEmail().clear();
+                persistedCrs.getEmail().addAll(crs.getEmail());
+                persistedCrs.getFax().clear();
+                persistedCrs.getFax().addAll(crs.getFax());
+                persistedCrs.getPhone().clear();
+                persistedCrs.getPhone().addAll(crs.getPhone());
+                persistedCrs.setScoper(this.orgImporter.importOrgNoUpdate(scoperIi));
+                persistedCrs.getPostalAddresses().clear();
+                persistedCrs.getPostalAddresses().addAll(crs.getPostalAddresses());
+                persistedCrs.getTty().clear();
+                persistedCrs.getUrl().clear();
+                ctepDataSaved = true;
+            }
+            this.crsService.curate(persistedCrs);
+        }
+        if (!ctepDataSaved) {
+            createCrs(crsDto, ctepPerson);
+        }
+    }
+
+    private void updateHcpRoles(Person ctepPerson, Person p, HealthCareProviderDTO hcpDto) throws JMSException {
+        // we don't handle merge here, iterate over roles nullifying them out, except the last one,
+        // which we will update with ctep's data.
+        Iterator<HealthCareProvider> i = p.getHealthCareProviders().iterator();
+        boolean ctepDataSaved = false;
+        while (i.hasNext()) {
+            HealthCareProvider persistedHcp = i.next();
+            if (i.hasNext()) {
+                persistedHcp.setStatus(RoleStatus.NULLIFIED);
+            } else {
+                // update the HCP by taking the dto from ctep, converting it to our data model, then copying 
+                // in the values by hand
+                
+                // store ii's we will need
+                Ii scoperIi = hcpDto.getScoperIdentifier();
+
+                // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
+                hcpDto.setIdentifier(null);
+                hcpDto.setPlayerIdentifier(null);
+                hcpDto.setScoperIdentifier(null);
+
+                // convert to local db model
+                HealthCareProvider hcp = (HealthCareProvider) PoXsnapshotHelper.createModel(hcpDto);
+
+                // set fields that we need to, clear the fields not provided by ctep
+                persistedHcp.setStatus(RoleStatus.ACTIVE);
+                persistedHcp.setCertificateLicenseText(hcp.getCertificateLicenseText());
+                persistedHcp.getEmail().clear();
+                persistedHcp.getEmail().addAll(hcp.getEmail());
+                persistedHcp.getFax().clear();
+                persistedHcp.getFax().addAll(hcp.getFax());
+                persistedHcp.getPhone().clear();
+                persistedHcp.getPhone().addAll(hcp.getPhone());
+                persistedHcp.setScoper(this.orgImporter.importOrgNoUpdate(scoperIi));
+                persistedHcp.getPostalAddresses().clear();
+                persistedHcp.getPostalAddresses().addAll(hcp.getPostalAddresses());
+                persistedHcp.getTty().clear();
+                persistedHcp.getUrl().clear();
+                ctepDataSaved = true;
+            }
+            this.hcpService.curate(persistedHcp);
+        }
+        if (!ctepDataSaved) {
+            createHcp(hcpDto, ctepPerson);
+        }
+    }
+
+    private void updateOtherIdentifier(Person ctepPerson, IdentifiedPerson identifiedPerson,
+            IdentifiedPersonDTO newIdentifier) throws JMSException {
+        Ii newId = newIdentifier.getAssignedId();
+        boolean found = false;
+        for (IdentifiedPerson ip : ctepPerson.getIdentifiedPersons()) {
+            if (ip.getScoper().getId().equals(getCtepOrganization().getId()) 
+                    && ip != identifiedPerson) {
+                // if the scopers match, the current record is either the person's
+                // db id in CTEP or the user friendly CTEP-ID.  So check if this
+                // ip record is the same as the provided identifiedPErson record passed
+                // in, if not, then it is the CTEP-ID record and we should update
+                found = true;
+                updateOtherIdentifierIfChangOccurred(newId, ip);
+                break;
+            }
+        }
+        if (!found) {
+            // someone removed the record using hte curation tool, add it back
+            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId());
+        }
+    }
+
+    private void updateOtherIdentifierIfChangOccurred(Ii newId, IdentifiedPerson ip) throws JMSException {
+        Ii currentId = ip.getAssignedIdentifier();
+        if (!currentId.getExtension().equals(newId.getExtension())
+                || !currentId.getRoot().equals(newId.getRoot())
+                || !RoleStatus.ACTIVE.equals(ip.getStatus())) { 
+            // if the extension, root, or status changed we need to update
+            ip.setStatus(RoleStatus.ACTIVE);
+            ip.setAssignedIdentifier(newId);
+            this.identifiedPersonService.curate(ip);
+        }
+    }
+    
+    
+    private void copyCtepPersonToExistingPerson(Person ctepPerson, Person p) {
+        // doing this here instead of a 'copy' method in the org itself because all
+        // of the relationships are not copied (change requests, roles, etc)  The person
+        // we are copying from is just the base fields.  Also, the person from ctep
+        // does not set tty or url and the status is always active, so
+        // those fields are skipped.
+        p.setFirstName(ctepPerson.getFirstName());
+        p.setLastName(ctepPerson.getLastName());
+        p.setMiddleName(ctepPerson.getMiddleName());
+        p.getPostalAddress().copy(ctepPerson.getPostalAddress());
+        p.setPrefix(ctepPerson.getPrefix());
+        p.setSuffix(ctepPerson.getSuffix());
+        p.getEmail().clear();
+        p.getEmail().addAll(ctepPerson.getEmail());
+        p.getFax().clear();
+        p.getFax().addAll(ctepPerson.getFax());
+        p.getPhone().clear();
+        p.getPhone().addAll(ctepPerson.getPhone());
+        p.setStatusCode(EntityStatus.ACTIVE);
     }
 
     private HealthCareProviderDTO getHcpFromCtep(Ii personIi) {
