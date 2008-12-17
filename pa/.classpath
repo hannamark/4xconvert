@@ -122,7 +122,7 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-coreless-1.0-beta-1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-sources-1.0-beta-1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-tests-1.0-beta-1.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-0.6.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-0.6.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-0.7.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-0.7.jar"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>

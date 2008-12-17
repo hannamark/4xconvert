@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.service.correlation;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -38,8 +37,8 @@ import org.hibernate.Session;
 public class OrganizationCorrelationServiceBean {
     
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
-    private static final String CANCER_CENTER_CODE = "CCR";
-    private static final String FUNDING_MECHANISM_CODE = "P30";
+//    private static final String CANCER_CENTER_CODE = "CCR";
+//    private static final String FUNDING_MECHANISM_CODE = "P30";
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     
     /**
@@ -148,13 +147,14 @@ public class OrganizationCorrelationServiceBean {
         ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
         List<ResearchOrganizationDTO> roDTOs = null;
         roDTO.setPlayerIdentifier(IiConverter.converToPoOrganizationIi(orgPoIdentifier));
-        Cd cd = new Cd();
-        cd.setCode(CANCER_CENTER_CODE);
-        roDTO.setTypeCode(cd);
-        roDTO.setFundingMechanism(CdConverter.convertStringToCd(FUNDING_MECHANISM_CODE));
+//        Cd cd = new Cd();
+//        cd.setCode(CANCER_CENTER_CODE);
+//        roDTO.setTypeCode(cd);
+//        roDTO.setFundingMechanism(CdConverter.convertStringToCd(FUNDING_MECHANISM_CODE));
         roDTOs = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().search(roDTO);
         if (roDTOs != null && roDTOs.size() > 1) {
-            throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
+//            throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
+            LOG.warn("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first.");
         }
         if (roDTOs == null || roDTOs.isEmpty()) {
             try {
