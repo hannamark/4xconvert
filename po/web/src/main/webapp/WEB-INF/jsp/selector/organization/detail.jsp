@@ -81,8 +81,7 @@
             <ul>
                 <s:iterator value="organization.url" status="e">
                     <li id="url-entry-${e.index}">          
-                        <s:property value="@java.net.URLDecoder@decode(value)" />
-                        | <a href="${value}" target="_blank">Visit...</a>
+                        <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>
                     </li>
                 </s:iterator>
             </ul>

@@ -77,8 +77,7 @@
                        <po:copyButton id="copy_urlEntry_value${e.index}" onclick="addValue('${value}', 'urlEntry_value','url-add');" 
                             bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
                         <li id="url-entry-${e.index}">          
-                            <s:property value="@java.net.URLDecoder@decode(value)" />
-                            | <a href="${value}" target="_blank">Visit...</a>
+                            <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>
                         </li>
                        </po:copyButton>                    
                     </s:iterator>
