@@ -7,9 +7,8 @@
             <c:param name="rootKey" value="${rootKey}"/>
         </c:url>
         <li id="url-entry-${e.index}">          
-            <s:property value="@java.net.URLDecoder@decode(value)" />
-            | <a id="url-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'url-list')">Remove</a>
-            | <a href="${value}" target="_blank">Visit...</a>
+            <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>
+            | <a id="url-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'url-list')">Remove</a>            
         </li>
     </s:iterator>
 

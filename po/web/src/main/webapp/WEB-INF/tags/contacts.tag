@@ -61,10 +61,10 @@ function isTelecomFieldsBlank() {
 //-->
 </script>
 <fieldset>
+    <legend><s:if test="%{emailRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Email Addresses</legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.email'}"/>
    </s:fielderror>
-    <legend><s:if test="%{emailRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Email Addresses</legend>
     <c:url value="contactable/email/edit.action" var="viewEmailAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -75,10 +75,10 @@ function isTelecomFieldsBlank() {
 </fieldset>
 
 <fieldset>
+    <legend><s:if test="%{phoneRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Phone Numbers</legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.phone'}"/>
    </s:fielderror>
-    <legend><s:if test="%{phoneRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Phone Numbers</legend>
     <c:url value="contactable/phone/edit.action" var="viewPhoneAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -89,10 +89,10 @@ function isTelecomFieldsBlank() {
 </fieldset>
 
 <fieldset>
+    <legend>Fax Numbers</legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.fax'}"/>
    </s:fielderror>
-    <legend>Fax Numbers</legend>
     <c:url value="contactable/fax/edit.action" var="viewFaxAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -103,10 +103,10 @@ function isTelecomFieldsBlank() {
 </fieldset>
 
 <fieldset>
+    <legend>TTY Numbers</legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.tty'}"/>
    </s:fielderror>
-    <legend>TTY Numbers</legend>
     <c:url value="contactable/tty/edit.action" var="viewTtyAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -117,10 +117,10 @@ function isTelecomFieldsBlank() {
 </fieldset>
 
 <fieldset>
+    <legend>Web Sites</legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.url'}"/>
    </s:fielderror>
-    <legend>Web Sites</legend>
     <c:url value="contactable/url/edit.action" var="viewUrlAction">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>

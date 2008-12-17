@@ -229,7 +229,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     private void verifyUrl() {
         waitForElementById("url-remove-0", 5);
-        assertEquals(DEFAULT_URL + " | Remove | Visit...", selenium.getText("url-entry-0"));
+        assertEquals(DEFAULT_URL + " | Remove", selenium.getText("url-entry-0"));
 
         waitForElementById("urlEntry_value", 5);
         selenium.type("urlEntry_value", "");
@@ -241,7 +241,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.type("urlEntry_value", "http://www.example.com");
         selenium.click("url-add");
         waitForElementById("url-remove-1", 5);
-        assertEquals("http://www.example.com | Remove | Visit...", selenium.getText("url-entry-1"));
+        assertEquals("http://www.example.com | Remove", selenium.getText("url-entry-1"));
 
         waitForElementById("urlEntry_value", 5);
         selenium.type("urlEntry_value", "abc.com");

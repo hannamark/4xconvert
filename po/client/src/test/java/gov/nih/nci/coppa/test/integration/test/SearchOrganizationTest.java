@@ -109,16 +109,27 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		selenium.select("curateEntityForm.organization.postalAddress.country", "label=United States");
 		selenium.type("curateEntityForm_organization_postalAddress_cityOrMunicipality", "Atlanta");
 		selenium.select("curateEntityForm.organization.postalAddress._selectStateOrProvince", "label=GA(GEORGIA)");
+		
 		selenium.type("emailEntry_value", "emailAddress@aool.com");
 		selenium.click("email-add");
+		waitForElementById("email-entry-0", 5);
+		
 		selenium.type("phoneEntry_value", "899-090-0987");
 		selenium.click("phone-add");
+		waitForElementById("phone-entry-0", 5);
+		
 		selenium.type("faxEntry_value", "123-fax-0908");
 		selenium.click("fax-add");
+		waitForElementById("fax-entry-0", 5);
+		
 		selenium.type("ttyEntry_value", "tty-number");
 		selenium.click("tty-add");
+		waitForElementById("tty-entry-0", 5);
+		
 		selenium.type("urlEntry_value", "http://sample.url.org");
 		selenium.click("url-add");
+		waitForElementById("url-entry-0", 5);
+		
 		clickAndWaitSaveButton();
 		assertTrue("Organization was successfully created!", selenium.isTextPresent("Organization was successfully created"));
 	}

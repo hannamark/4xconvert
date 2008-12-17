@@ -97,18 +97,23 @@ public class SearchPersonTest extends AbstractPoWebTest {
         selenium.select("curateEntityForm.person.postalAddress.country", "label=United States");
         selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", "Ashburn");
         selenium.select("curateEntityForm.person.postalAddress._selectStateOrProvince", "label=VA(VIRGINIA)");
+        
 		selenium.type("emailEntry_value", "email@emial.com");
 		selenium.click("email-add");
         waitForElementById("email-entry-0", 5);
+        
 		selenium.type("phoneEntry_value", "703-234-2345");
 		selenium.click("phone-add");
         waitForElementById("phone-entry-0", 5);
+        
 		selenium.type("urlEntry_value", "http://www.site.com");
 		selenium.click("url-add");
         waitForElementById("url-entry-0", 5);
+        
 		selenium.type("faxEntry_value", "703-909-1234");
 		selenium.click("fax-add");
         waitForElementById("fax-entry-0", 5);
+        
 		clickAndWaitSaveButton();
 		assertTrue("Person was successfully created!", selenium.isTextPresent("Person was successfully created"));
 	}
