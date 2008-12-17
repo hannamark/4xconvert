@@ -126,6 +126,7 @@ import org.apache.log4j.Logger;
 public class CtepPersonImporter extends CtepEntityImporter {
     private static final Logger LOG = Logger.getLogger(CtepPersonImporter.class);
     private static final String LOG_SEP = " : ";
+    private static final String CTEP_PERSON_DB_ID_ROOT_PREFIX = "personDbId";
     private final CtepOrganizationImporter orgImporter;
 
     private final PersonServiceLocal personService = PoRegistry.getPersonService();
@@ -170,7 +171,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             if (identifiedPerson == null) {
                 return createCtepPerson(ctepPerson, assignedId);
             } else {
-                return updateCtepPerson(ctepPerson, identifiedPerson);
+                return updateCtepPerson(ctepPerson, identifiedPerson, assignedId);
             }
         } catch (CTEPEntException e) {
             // importing an object that is does not exist remotely, so inactivate it if we have it locally.
@@ -217,7 +218,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     private IdentifiedPerson searchForPreviousRecord(Ii ctepPersonId) {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
-        identifiedPerson.setAssignedIdentifier(ctepPersonId);
+        identifiedPerson.setAssignedIdentifier(new Ii());
+        identifiedPerson.getAssignedIdentifier().setExtension(ctepPersonId.getExtension());
+        identifiedPerson.getAssignedIdentifier().setRoot(CTEP_PERSON_DB_ID_ROOT_PREFIX + ctepPersonId.getRoot());
         SearchCriteria<IdentifiedPerson> sc =
             new AnnotatedBeanSearchCriteria<IdentifiedPerson>(identifiedPerson);
         List<IdentifiedPerson> identifiedPeople = this.identifiedPersonService.search(sc);
@@ -232,12 +235,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.personService.curate(ctepPerson);
 
         // create the identified entity record for the db id in ctep
-        createIdentifiedPerson(ctepPerson, assignedId);
+        createIdentifiedPerson(ctepPerson, assignedId, CTEP_PERSON_DB_ID_ROOT_PREFIX);
 
         // create identified person record for any other person identifiers provied in ctep services
         IdentifiedPersonDTO otherIdentifier = getOtherId(assignedId);
         if (otherIdentifier != null) {
-            createIdentifiedPerson(ctepPerson, otherIdentifier.getAssignedId());
+            createIdentifiedPerson(ctepPerson, otherIdentifier.getAssignedId(), "");
         }
 
         // create records for all health care provider records
@@ -265,36 +268,44 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException {
+    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId, String rootPrefix) throws JMSException {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
         identifiedPerson.setPlayer(ctepPerson);
         identifiedPerson.setScoper(getCtepOrganization());
-        identifiedPerson.setAssignedIdentifier(assignedId);
+        identifiedPerson.setAssignedIdentifier(new Ii());
+        identifiedPerson.getAssignedIdentifier().setDisplayable(assignedId.getDisplayable());
+        identifiedPerson.getAssignedIdentifier().setExtension(assignedId.getExtension());
+        identifiedPerson.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
+        identifiedPerson.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
+        identifiedPerson.getAssignedIdentifier().setReliability(assignedId.getReliability());
+        identifiedPerson.getAssignedIdentifier().setRoot(rootPrefix + assignedId.getRoot());
+        identifiedPerson.getAssignedIdentifier().setScope(assignedId.getScope());
         identifiedPerson.setStatus(RoleStatus.ACTIVE);
         this.identifiedPersonService.curate(identifiedPerson);
     }
 
-    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson) throws JMSException {
+    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii unPrefixedIi) 
+            throws JMSException {
         Person p = identifiedPerson.getPlayer();
 
         // copy updated data in to the local person
         copyCtepPersonToExistingPerson(ctepPerson, p);
         this.personService.curate(p);
-
+        
         // update the other identiers
-        IdentifiedPersonDTO newIdentifier = getOtherId(identifiedPerson.getAssignedIdentifier());
+        IdentifiedPersonDTO newIdentifier = getOtherId(unPrefixedIi);
         if (newIdentifier != null) {
             updateOtherIdentifier(p, identifiedPerson, newIdentifier);
         }
 
         // update the hcp role
-        HealthCareProviderDTO hcpDto = getHcpFromCtep(identifiedPerson.getAssignedIdentifier());
+        HealthCareProviderDTO hcpDto = getHcpFromCtep(unPrefixedIi);
         if (hcpDto != null) {
             updateHcpRoles(p, hcpDto);
         }
 
         // update the crs role
-        ClinicalResearchStaffDTO crsDto = getCrsFromCtep(identifiedPerson.getAssignedIdentifier());
+        ClinicalResearchStaffDTO crsDto = getCrsFromCtep(unPrefixedIi);
         if (crsDto != null) {
             updateCrsRoles(p, crsDto);
         }
@@ -311,6 +322,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             ClinicalResearchStaff persistedCrs = i.next();
             if (i.hasNext()) {
                 persistedCrs.setStatus(RoleStatus.NULLIFIED);
+                LOG.warn("Nullifying clinical research staff role during import, curator must of added new data.");
             } else {
                 // update the CRS by taking the dto from ctep, converting it to our data model, then copying 
                 // in the values by hand
@@ -357,6 +369,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             HealthCareProvider persistedHcp = i.next();
             if (i.hasNext()) {
                 persistedHcp.setStatus(RoleStatus.NULLIFIED);
+                LOG.warn("Nullifying health care provider role during import, curator must of added new data.");
             } else {
                 // update the HCP by taking the dto from ctep, converting it to our data model, then copying 
                 // in the values by hand
@@ -401,7 +414,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         boolean found = searchForAndUpdateCtepIds(ctepPerson, identifiedPerson, newId);
         if (!found) {
             // someone removed the record using hte curation tool, add it back
-            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId());
+            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId(), "");
         }
     }
 
@@ -441,7 +454,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     
     
     private void copyCtepPersonToExistingPerson(Person ctepPerson, Person p) {
-        // doing this here instead of a 'copy' method in the org itself because all
+        // doing this here instead of a 'copy' method in the person itself because all
         // of the relationships are not copied (change requests, roles, etc)  The person
         // we are copying from is just the base fields.  Also, the person from ctep
         // does not set tty or url and the status is always active, so

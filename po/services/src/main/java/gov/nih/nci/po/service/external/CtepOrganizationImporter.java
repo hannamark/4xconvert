@@ -292,8 +292,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         copyCtepOrgToExistingOrg(ctepOrg, org);
         this.orgService.curate(org);
 
-        // no need to update any identified entity, as in order to get to this point we found a 
-        // matching identified entity
+        // Update the status of identified entity if needed
         if (!RoleStatus.ACTIVE.equals(identifiedOrg.getStatus())) {
             identifiedOrg.setStatus(RoleStatus.ACTIVE);
             this.identifiedOrgService.curate(identifiedOrg);
@@ -323,6 +322,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ResearchOrganization persistedRo = i.next();
             if (i.hasNext()) {
                 persistedRo.setStatus(RoleStatus.NULLIFIED);
+                LOG.warn("Nullifying research organization role during import, curator must of added new data.");
             } else {
                 // really only type code can change from ctep, but since funding mech is related, we will
                 // clear it out as well
