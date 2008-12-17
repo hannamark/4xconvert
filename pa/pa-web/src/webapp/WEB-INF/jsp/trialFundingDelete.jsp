@@ -30,8 +30,8 @@ function handleAction(){
     <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="deletion"><dfn title="Context sensitive help text or tooltip here.">                      
-                            <fmt:message key="trialFunding.inactiveCommentText"/></dfn><span class="required">*</span>
+                        <label for="deletion">                      
+                            <fmt:message key="trialFunding.inactiveCommentText"/><span class="required">*</span>
                         </label>
                      </td>                     
                     <td class="value">

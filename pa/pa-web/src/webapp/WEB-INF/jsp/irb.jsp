@@ -113,7 +113,7 @@ function loadDiv(orgid){
         <s:hidden name="newOrgName"/> 
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td class="label">Board Approval Status:<s:label cssClass="required" value="*"/></td>
+            <td class="label">Board Approval Status:<span class="required">*</span></td>
             <s:set name="approvalStatusValues"
                 value="@gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode@getDisplayNames()" />
             <td class="value" colspan="2"><s:select headerKey="" headerValue="--Select--" 

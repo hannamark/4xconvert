@@ -17,10 +17,10 @@ public enum DesignConfigurationCode implements CodedEnum<String> {
     
     /** Single Group. */
     SINGLE_GROUP("Single Group"),
-    /** Parallel Group Design. */
-    PARALLEL_GROUP_DESIGN("Parallel Group Design"),
+    /** Parallel. */
+    PARALLEL("Parallel"),
     /** Crossover Design. */
-    CROSSOVER_DESIGN("Crossover Design"),
+    CROSSOVER("Cross-over"),
     /** Factorial. */
     FACTORIAL("Factorial");    
     

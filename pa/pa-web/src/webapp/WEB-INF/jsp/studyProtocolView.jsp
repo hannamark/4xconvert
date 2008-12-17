@@ -18,7 +18,7 @@
 
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
- <h1><fmt:message key="studyProtocol.view.title" /></h1>
+ <h1>Trial Identification</h1>
 
 <!--Help Content-->
    <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -32,10 +32,8 @@
          
             <tr>
             <td scope="row" class="label">
-                <label for="nciAccessionNumber">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
+                <label for="nciAccessionNumber">                
                     <fmt:message key="studyProtocol.nciIdentifier"/>
-                 </dfn>
                 </label>
             </td>
             <td class="value">
@@ -45,31 +43,27 @@
             <tr>
             <td scope="row" class="label">
                 <label for="nct">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">NCT Number:
-                </dfn></label>
+                NCT Number
+                </label>
             </td>
             <td class="value"></td>
             </tr>
             <tr>
             <td scope="row" class="label">
                 <label for="localProtocolIdentifer"> 
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                     <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
-                </dfn>
                 </label>
             </td>
             <td class="value"></td>
             </tr>  
             <tr>
-                <td scope="row" class="label"><label for="sectrialid"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Secondary Trial Identifier:</dfn></label></td>
+                <td scope="row" class="label"><label for="sectrialid">Secondary Trial Identifier</label></td>
                 <td class="value"></td>
             </tr>
             <tr>
             <td scope="row" class="label">
                 <label for="leadOrg"> 
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
                     <fmt:message key="studyProtocol.leadOrganization"/>
-                </dfn>
                 </label>
             </td>
             <td class="value">
@@ -79,9 +73,7 @@
             <tr>     
             <td scope="row" class="label">
                 <label for="officialTitle">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     <fmt:message key="studyProtocol.officialTitle"/>
-                 </dfn>
                 </label>
             </td>
             <td class="value">
@@ -89,7 +81,7 @@
             </td>
             </tr>       
              <tr>
-                <td scope="row" class="label"><label for="acronym"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">Acronym:</dfn></label></td>
+                <td scope="row" class="label"><label for="acronym">Acronym</label></td>
                 <td class="value"></td>
             </tr>
 

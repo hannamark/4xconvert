@@ -21,10 +21,22 @@ public enum PrimaryPurposeCode implements CodedEnum<String> {
     PREVENTION("Prevention"),
     /** Diagnostic. */
     DIAGNOSTIC("Diagnostic"),
+    /** Early Detection. */
+    EARLY_DETECTION("Early Detection"),     
     /** Supportive Care. */
     SUPPORTIVE_CARE("Supportive Care"),
     /** Screening. */
     SCREENING("Screening"),
+    /** Epidemiologic. */
+    EPIDEMIOLOGIC("Epidemiologic"),
+    /** Observational. */
+    OBSERVATIONAL("Observational"),
+    /** Outcome. */
+    OUTCOME("Outcome"),
+    /** Ancillary. */
+    ANCILLARY("Ancillary"),
+    /** Correlative. */
+    CORRELATIVE("Correlative"),
     /** Health Services Research. */
     HEALTH_SERVICES_RESEARCH("Health Services Research"),
     /** Basic Science. */

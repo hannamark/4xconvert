@@ -73,7 +73,7 @@
 	</tr> -->
 	<!--  Trial Oversight Authority Country -->
 	<tr>
-		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.country.name"/></td>
+		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span></td>
 		<td class="value"><s:select id="countries"
 					 name="lst"                   
                      list="countryList"  
@@ -84,7 +84,7 @@
 	</tr>
 	<!--  Trial Oversignt Authority Organization Name -->
 	<tr>
-		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.auth.name"/></td>
+		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></td>
 		<td class="value">
 			<s:url id="d_url" action="getAuthOrgsAjax" />
 			<s:div id="details" href="%{d_url}" theme="ajax" listenTopics="show_detail" formId="saveRegAuthority"></s:div>
@@ -92,7 +92,7 @@
 	</tr>
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
-		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/> </td>
+		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span> </td>
 		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
 	<!--   Section 801 Indicator-->

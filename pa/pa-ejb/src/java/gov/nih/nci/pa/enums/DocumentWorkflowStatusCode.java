@@ -17,9 +17,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
-    /** On-hold. */
-    ON_HOLD("On-hold"),
-    /** On-hold. */
+    /** Submitted. */
     SUBMITTED("Submitted"),
     /** Accepted. */
     ACCEPTED("Accepted"),

@@ -96,8 +96,8 @@ function tooltip() {
 <h2><fmt:message key="isdesign.details.title"/></h2>
 <table class="form">
 	<tr>
-	 	<td  scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.primary.purpose"/></dfn><span class="required">*</span></label></td>
+	 	<td  scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
      	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
@@ -110,8 +110,8 @@ function tooltip() {
         </td>
     </tr>
     <tr id="primaryPurposeOtherText">
-		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.primary.purpose.other"/>(Max 200 chars)</dfn></label></td>
+		<td   scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.primary.purpose.other"/>(Max 200 chars)</label></td>
 		<td>
 			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:150px" rows="2" />
 			<span class="formErrorMsg"> 
@@ -122,8 +122,8 @@ function tooltip() {
 		</td>
 	</tr>
     <tr>
-        <td scope="row" class="label"><label for="studyPhase"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-        	 <fmt:message key="studyProtocol.studyPhase"/></dfn><span class="required">*</span></label> </td>
+        <td scope="row" class="label"><label for="studyPhase">
+        	 <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
         	<s:select headerKey="" headerValue="" name="webDTO.phaseCode" list="#phaseCodeValues" 
@@ -136,15 +136,19 @@ function tooltip() {
         </td>
     </tr>
     <tr>
-		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.phase.comment"/></dfn></label></td>
+		<td   scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.phase.comment"/></label></td>
 		<td>
 			<s:textarea name="webDTO.phaseOtherText" rows="2" cssStyle="width:150px" readonly="true"/>
 		</td>
-	</tr>	 
+	</tr>	
+	<tr> 
+       <td/>
+       <td class="info" colspan="2">*for 'Other' only</td>
+    </tr> 
     <tr>
-		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.intervention.model"/></dfn><span class="required">*</span></label></td>
+		<td scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.intervention.model"/><span class="required">*</span></label></td>
 		<s:set name="designConfigurationCodeValues" value="@gov.nih.nci.pa.enums.DesignConfigurationCode@getDisplayNames()" />
         <td>
            <s:select headerKey="" headerValue="" name="webDTO.designConfigurationCode" list="#designConfigurationCodeValues"  value="webDTO.designConfigurationCode" cssStyle="width:150px" />
@@ -156,8 +160,8 @@ function tooltip() {
         </td>
 	</tr>
 	<tr>
-		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.no.arms"/></dfn><span class="required">*</span></label></td>
+		<td scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.no.arms"/><span class="required">*</span></label></td>
 		<td>
          	<s:textfield name="webDTO.numberOfInterventionGroups" maxlength="3" cssStyle="width:25px"/>
          	<span class="formErrorMsg"> 
@@ -168,8 +172,8 @@ function tooltip() {
         </td>
 	</tr>
     <tr>
-		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.masking"/></dfn><span class="required">*</span></label></td>
+		<td scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.masking"/><span class="required">*</span></label></td>
 		<s:set name="blindingSchemaCodeValues" value="@gov.nih.nci.pa.enums.BlindingSchemaCode@getDisplayNames()" />
         <td>
            <s:select headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
@@ -182,8 +186,8 @@ function tooltip() {
          </td>
 	</tr>
 	<tr id="blindingRoleCode">
-		<td   scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.masking.role"/></dfn><span class="required">*</span></label></td>
+		<td   scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.masking.role"/><span class="required">*</span></label></td>
 		<td>
            <s:checkbox name="subject" fieldValue="Subject" onclick="ChecksCount('subject')" value="%{subjectChecked}" />
            <label>Subject</label>
@@ -196,8 +200,8 @@ function tooltip() {
          </td>
 	</tr>
 	<tr> 
-        <td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.allocation"/></dfn><span class="required">*</span></label> </td>
+        <td scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.allocation"/><span class="required">*</span></label> </td>
         <s:set name="allocationCodeValues" value="@gov.nih.nci.pa.enums.AllocationCode@getDisplayNames()" />
         <td>
         	<s:select headerKey="" headerValue="" name="webDTO.allocationCode" list="#allocationCodeValues"  value="webDTO.allocationCode" cssStyle="width:206px" />
@@ -209,8 +213,8 @@ function tooltip() {
         </td>
     </tr>
     <tr>
-		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.trial.classification"/></dfn><span class="required">*</span></label></td>
+		<td scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.trial.classification"/></label></td>
 		<s:set name="studyClassificationCodeValues" value="@gov.nih.nci.pa.enums.StudyClassificationCode@getDisplayNames()" />
         <td>
            <s:select headerKey="" headerValue="" name="webDTO.studyClassificationCode" list="#studyClassificationCodeValues"  value="webDTO.studyClassificationCode" cssStyle="width:206px" />
@@ -222,8 +226,8 @@ function tooltip() {
         </td>
 	</tr>
 	<tr>
-		<td scope="row" class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-	 		<fmt:message key="isdesign.details.target.enrollment"/></dfn><span class="required">*</span></label></td>
+		<td scope="row" class="label"><label>
+	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">*</span></label></td>
 		<td>
          	<s:textfield name="webDTO.maximumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
          	<span class="formErrorMsg"> 

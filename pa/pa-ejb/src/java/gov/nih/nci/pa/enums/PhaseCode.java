@@ -15,9 +15,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
  * copyright holder, NCI.
  */
 public enum PhaseCode implements CodedEnum<String> {
-    
-    /*** Other.  */
-    O("O"), 
+       
+    /*** 0.  */
+    O("0"), 
     /*** The first step in testing a new treatment in humans. */
     I("I"), 
     /*** A clinical research protocol designed to study the safety, dosage levels and response to new treatment.*/
@@ -30,6 +30,8 @@ public enum PhaseCode implements CodedEnum<String> {
     III("III"),
     /*** Phase IV trial is a randomized, controlled trial that is designed . */
     IV("IV"),
+    /*** Pilot.  */
+    PILOT("Pilot"),
     /*** Not Applicable . */
     NA("NA"),
     /*** Other. */

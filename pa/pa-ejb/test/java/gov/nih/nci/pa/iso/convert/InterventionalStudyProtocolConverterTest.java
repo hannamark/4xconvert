@@ -37,7 +37,7 @@ public class InterventionalStudyProtocolConverterTest   {
             StudyProtocolTest.createStudyProtocolObj(new InterventionalStudyProtocol());
         isp.setAllocationCode(AllocationCode.NON_RANDOMIZED_TRIAL);
         isp.setBlindingSchemaCode(BlindingSchemaCode.DOUBLE_BLIND);
-        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER_DESIGN);
+        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER);
         isp.setNumberOfInterventionGroups(Integer.valueOf(1));
         isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
         isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
@@ -63,7 +63,7 @@ public class InterventionalStudyProtocolConverterTest   {
             StudyProtocolTest.createStudyProtocolObj(new InterventionalStudyProtocol());
         isp.setAllocationCode(AllocationCode.NON_RANDOMIZED_TRIAL);
         isp.setBlindingSchemaCode(BlindingSchemaCode.DOUBLE_BLIND);
-        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER_DESIGN);
+        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER);
         isp.setNumberOfInterventionGroups(Integer.valueOf(1));
         isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
         isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);

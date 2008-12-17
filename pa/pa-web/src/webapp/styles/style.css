@@ -436,7 +436,7 @@ TABLE.data TD A IMG.thumbnail:hover
 .formErrorMsg
 { clear:both; font-size:100%; color:#c00; font-style:italic; display:block; }
 .required
-{ color:#c00; font-weight:bold; }
+{ color:#c00; font-weight:bold; font-size:18px;}
 
 /* ToolTip Bubble */
 

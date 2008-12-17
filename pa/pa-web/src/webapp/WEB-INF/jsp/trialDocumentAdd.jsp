@@ -32,7 +32,7 @@ BubbleTips.activateTipOn("dfn");
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
- <h1><fmt:message key="trialDocument.addtitle" /></h1>
+ <h1><fmt:message key="trialDocument.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
@@ -44,8 +44,8 @@ BubbleTips.activateTipOn("dfn");
     <table class="form">                
                 <tr>
                      <td scope="row" class="label">
-                     <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialDocument.type"/></dfn><span class="required">*</span>
+                     <label for="typeCode">
+                            <fmt:message key="trialDocument.type"/><span class="required">*</span>
                      </label>
                     </td>
     				<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.DocumentTypeCode@getDisplayNames()" />
@@ -73,8 +73,8 @@ BubbleTips.activateTipOn("dfn");
                 </tr>                
                 <tr>
                      <td scope="row" class="label">
-                     <label for="fileName"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialDocument.fileName"/></dfn><span class="required">*</span>
+                     <label for="fileName">
+                            <fmt:message key="trialDocument.fileName"/><span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">

@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="participatingOrganizations.title" /></title>
+<title><fmt:message key="treatingsites.title" /></title>
 <s:head/>
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
@@ -186,7 +186,7 @@
 </head>
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
-<h1><fmt:message key="participatingOrganizations.title" /></h1>
+<h1><fmt:message key="treatingsites.title" /></h1>
 
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -194,13 +194,13 @@
 <div class="box">
     <pa:sucessMessage/>
     <s:actionerror />
-<h2><fmt:message key="participatingOrganizations.title" /></h2>
+<h2><fmt:message key="treatingsites.title" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2"><!--Tabs -->
 
 			<ul id="maintabs" class="tabs">
-			<li><a href="#facility">Facility</a></li>
+			<li><a href="#facility"><fmt:message key="treatingsites.title" /></a></li>
 			
 			
 			         <s:if test="%{currentAction == 'edit'}">
@@ -231,7 +231,7 @@
                 </script>
 			<div id="tabboxwrapper"><!--Facility-->
 			<div id="facility" class="box">
-			<h3>Facility</h3>
+			<h3><fmt:message key="treatingsites.title" /></h3>
             <s:form name="facility">
                 <div id="loadOrgDetails">
                      <%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
@@ -256,7 +256,7 @@
 			<!-----------------------------------------------Begin Investigators Tab------------------->
 	   		<div id="investigators" class="box" style="display:none;">
 	   		
-				<h3>Facility Investigators <c:out value="${organizationName}"/></h3>
+				<h3>Treating Site Investigators <c:out value="${organizationName}"/></h3>
 					<div id="saveAndShowContacts">
 						<%@ include file="/WEB-INF/jsp/nodecorate/displaySPContactsTable.jsp" %>
 					</div>	

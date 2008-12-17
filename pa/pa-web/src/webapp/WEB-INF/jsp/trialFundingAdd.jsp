@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="trialFunding.title"/></title>
+    <title><fmt:message key="trialFunding.addedittitle"/></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -36,14 +36,14 @@ function tooltip() {
    <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form>
-    <h2><fmt:message key="trialFunding.subtitle" /></h2>
+    <h2><fmt:message key="trialFunding.addedittitle" /></h2>
     <input type="hidden" name="page" value="${page}" />
     <input type="hidden" name="cbValue" value="${cbValue}" />
     <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="fundingMechanism"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">                      
-                            <fmt:message key="trialFunding.funding.mechanism"/></dfn><span class="required">*</span>
+                        <label for="fundingMechanism">                      
+                            <fmt:message key="trialFunding.funding.mechanism"/><span class="required">*</span>
                         </label>
                      </td>
                      <s:set name="fundingMechanism" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
@@ -64,8 +64,8 @@ function tooltip() {
                 
                 <tr> 
                      <td scope="row" class="label">
-                          <label for="institutionCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.institution.code"/></dfn><span class="required">*</span>
+                          <label for="institutionCode">
+                            <fmt:message key="trialFunding.institution.code"/><span class="required">*</span>
                           </label>
                      </td>              
                      <s:set name="nihInstitute" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
@@ -85,8 +85,8 @@ function tooltip() {
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="serialNumber"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.serial.number"/></dfn><span class="required">*</span>
+                     <label for="serialNumber">
+                            <fmt:message key="trialFunding.serial.number"/><span class="required">*</span>
                      </label>
                      </td>
                      <td class="value">
@@ -100,8 +100,8 @@ function tooltip() {
                 </tr>
                 <tr>
                      <td scope="row" class="label">
-                     <label for="monitorCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="studyProtocol.monitorCode"/></dfn><span class="required">*</span>
+                     <label for="monitorCode">
+                            <fmt:message key="studyProtocol.monitorCode"/><span class="required">*</span>
                      </label>
                     </td>
                     <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
@@ -119,8 +119,8 @@ function tooltip() {
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="fundingTypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.funding.typecode"/></dfn>
+                     <label for="fundingTypeCode">
+                            <fmt:message key="trialFunding.funding.typecode"/>
                      </label>
                     </td>
                     <td class="value">
@@ -133,8 +133,8 @@ function tooltip() {
                 </tr>                   
                 <tr>
                      <td scope="row" class="label">
-                     <label for="grantYear"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.grant.year" /></dfn>
+                     <label for="grantYear">
+                            <fmt:message key="trialFunding.grant.year" />
                      </label>
                     </td>
                     <td class="value">
@@ -143,8 +143,8 @@ function tooltip() {
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="suffix"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="trialFunding.suffix" /></dfn>
+                     <label for="suffix">
+                            <fmt:message key="trialFunding.suffix" />
                      </label>
                     </td>
                     <td class="value">

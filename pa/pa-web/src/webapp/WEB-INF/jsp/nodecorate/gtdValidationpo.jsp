@@ -76,9 +76,8 @@ function createOrgContactDiv() {
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
-                <dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> 
                     Principal Investigator
-                 </dfn><span class="required">*</span>
+                 <span class="required">*</span>
            </label>
          </td>
         <td class="value">

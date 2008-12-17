@@ -32,8 +32,8 @@ input_box=confirm("Click OK to save changes or Cancel to Abort.");
     <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="deletion"><dfn title="Context sensitive help text or tooltip here.">                      
-                            <fmt:message key="trialDocument.inactiveCommentText"/></dfn><span class="required">*</span>
+                        <label for="deletion">                      
+                            <fmt:message key="trialDocument.inactiveCommentText"/><span class="required">*</span>
                         </label>
                      </td>                     
                     <td class="value">

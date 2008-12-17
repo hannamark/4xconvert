@@ -77,17 +77,17 @@
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
             </td>
         </tr>
+        <tr> 
+            <td/>
+            <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
+        </tr>
         <tr>
             <td class="label"><s:label name="statusReasonLabel" for="statusReason">
                 <fmt:message key="trialStatus.current.trial.status.reason"/>
             </s:label></td>
             <td class="value"><s:textarea name="statusReason" rows="3"
                     cssStyle="width:280px;float:left" /></td>
-        </tr>
-        <tr> 
-            <td/>
-            <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
-        </tr>
+        </tr>        
         <tr><td>&nbsp</td></tr>
         <tr>
             <td class="label"><s:label for="startDate"><fmt:message

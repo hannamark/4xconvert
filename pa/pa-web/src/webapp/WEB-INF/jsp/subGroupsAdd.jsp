@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="subGroups.title" /></title>
+    <title><fmt:message key="subGroups.addtitle" /></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -44,8 +44,8 @@ BubbleTips.activateTipOn("dfn");
     <table class="form">                
                 <tr>
                      <td scope="row" class="label">
-                     <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="subGroups.code"/></dfn><span class="required">*</span>
+                     <label for="typeCode">
+                            <fmt:message key="subGroups.code"/><span class="required">*</span>
                      </label>
                     </td>
     				<td class="value">    					
@@ -59,8 +59,8 @@ BubbleTips.activateTipOn("dfn");
                 </tr>                
                 <tr>
                      <td scope="row" class="label">
-                     <label for="fileName"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="subGroups.description"/></dfn><span class="required">*</span>
+                     <label for="fileName">
+                            <fmt:message key="subGroups.description"/><span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">

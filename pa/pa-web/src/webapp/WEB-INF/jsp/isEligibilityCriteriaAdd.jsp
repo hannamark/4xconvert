@@ -71,8 +71,8 @@ BubbleTips.activateTipOn("dfn");
     <input type="hidden" name="id" value="${id}" />
     <table class="form">
     <tr>
-					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/> </dfn><span class="required">*</span></label>
+					<td scope="row"  class="label"><label>
+						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
 						<s:select name="webDTO.inclusionIndicator" list="#{' ':' ', 'false':'Exclusion', 'true':'Inclusion'}" cssStyle="width:106px"/>
@@ -92,8 +92,8 @@ BubbleTips.activateTipOn("dfn");
                                 <s:param>webDTO.mandatory</s:param>
                                </s:fielderror>                            
                          </span>
-					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/>(Max 400 chars)</dfn></label>
+					<td scope="row"  class="label"><label>
+						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/>(Max 400 chars)</label>
 					</td>
 					<td class="value">
 						<s:textarea name="webDTO.textDescription" rows="4" cssStyle="width:400px" onblur='activate();' />
@@ -108,8 +108,8 @@ BubbleTips.activateTipOn("dfn");
 				<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildCriterion"/></th>
 				</tr>
     			<tr>
-					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/> </dfn></label>
+					<td scope="row"  class="label"><label>
+						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label>
 					</td>
 					<td class="value">
 						<s:textfield name="webDTO.criterionName" maxlength="30" cssStyle="width:200px" />
@@ -117,8 +117,8 @@ BubbleTips.activateTipOn("dfn");
 				</tr>
 				<tr>
                      <td scope="row" class="label">
-                     <label for="fileName"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="isdesign.eligibilitycriteria.operator"/></dfn>
+                     <label for="fileName">
+                            <fmt:message key="isdesign.eligibilitycriteria.operator"/>
                      </label>
                     </td>
                     <td class="value">
@@ -127,8 +127,8 @@ BubbleTips.activateTipOn("dfn");
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     	<label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="isdesign.eligibilitycriteria.value"/></dfn>
+                     	<label for="typeCode">
+                            <fmt:message key="isdesign.eligibilitycriteria.value"/>
                      	</label>
                     </td>
                     <td class="value">
@@ -137,8 +137,8 @@ BubbleTips.activateTipOn("dfn");
                  </tr>
                  <tr>
                       <td scope="row" class="label">
-                     <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="isdesign.eligibilitycriteria.unit"/></dfn>
+                     <label for="typeCode">
+                            <fmt:message key="isdesign.eligibilitycriteria.unit"/>
                      </label>
                    </td>
                     <td class="value">

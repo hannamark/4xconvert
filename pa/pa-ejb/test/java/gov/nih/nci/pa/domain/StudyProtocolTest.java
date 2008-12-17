@@ -205,7 +205,7 @@ public class StudyProtocolTest  {
         isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
         isp.setBlindingRoleCodeOutcome(BlindingRoleCode.OUTCOMES_ASSESSOR);
         isp.setBlindingSchemaCode(BlindingSchemaCode.DOUBLE_BLIND);
-        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER_DESIGN);
+        isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER);
         isp.setNumberOfInterventionGroups(Integer.valueOf(5));
         return isp;
     }

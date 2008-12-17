@@ -38,15 +38,43 @@ public enum MonitorCode implements CodedEnum<String> {
      /**
       * .
       */
+     DTP("DTP") ,
+     /**
+      * .
+      */
      DCP("DCP") ,
      /**
       * .
       */
-     DCTD("DCTD") ,
+     OD("OD") ,
      /**
       * .
       */
-     DEA("DEA");
+     OSB_SPOREs("OSB/SPOREs") ,
+     /**
+      * .
+      */
+     CIP("CIP") ,
+     /**
+      * .
+      */
+     CDP("CDP") ,
+     /**
+      * .
+      */
+     TRP("TRP") ,
+     /**
+      * .
+      */
+     RRP("RRP") ,     
+     /**
+      * .
+      */
+     DEA("DEA"),
+     /**
+      * .
+      */
+     NA("N/A");
 
      private String code;
 

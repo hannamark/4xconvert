@@ -26,9 +26,7 @@ public enum UnitsCode implements CodedEnum<String> {
     /** Hours. */
     HOURS("Hours"),
     /** Minutes. */
-    MINUTES("Minutes"),
-    /** NA. */
-    NA("NA");    
+    MINUTES("Minutes");    
 
     private String code;
     /**

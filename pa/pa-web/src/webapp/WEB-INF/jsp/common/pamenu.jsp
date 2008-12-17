@@ -37,19 +37,14 @@
                         <li class="hassubmenu">Regulatory Information
                            <ul id="part_sites">
                                 <li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
-                                <li><a href="irb.action">Human Subject Review</a></li>
+                                <li><a href="irb.action">Human Subject Safety</a></li>
                                 <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                            </ul>
                         </li>    
     					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-    					
-                        <li class="hassubmenu">Participating Sites
-                           <ul id="part_sites">
-                                <li><a href="participatingOrganizations.action">Treating Sites</a></li>
-                                <li><a href="collaborators.action">Collaborators</a></li>
-                            </ul>
-                        </li>    
+                        <li><a href="participatingOrganizations.action">Treating Sites</a></li>
+                        <li><a href="collaborators.action">Collaborators</a></li>
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
     				</ul>
     			</li>

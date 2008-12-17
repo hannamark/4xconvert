@@ -135,7 +135,7 @@
         </td>
     </tr>
     <tr>
-        <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></dfn></label></td>
+        <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></label></td>
         <td>
             <s:textarea name="gtdDTO.phaseOtherText" rows="2" cssStyle="width:300px" />
              <span class="formErrorMsg"> 
@@ -161,7 +161,7 @@
     </tr>
     <tr>
         <td   scope="row" class="label"><label>
-            <fmt:message key="isdesign.details.primary.purpose.other"/></dfn></label></td>
+            <fmt:message key="isdesign.details.primary.purpose.other"/></label></td>
         <td>
             <s:textarea name="gtdDTO.primaryPurposeOtherText" cssStyle="width:300px" rows="2"/>
             <span class="formErrorMsg"> 
@@ -178,7 +178,7 @@
 
      <tr>
           <td scope="row" class="label">
-               <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> <fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></dfn></label>
+               <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>
           </td>
           <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
           <td class="value">
@@ -191,7 +191,7 @@
      </tr>    
     <tr>
         <td scope="row" class="label">
-            <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> Summary 4 Funding Source:</dfn></label>
+            <label for="summary4TypeCode">Summary 4 Funding Source:</label>
         </td>
         <td class="value">
             <div id="loadSummary4FundingSponsorField">

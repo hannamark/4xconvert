@@ -58,7 +58,7 @@ function setorgid(orgid){
     	<table class="form" >
 			    <tr>
 			    	  <td scope="row" class="label">
-			               <label for="accrualReportingMethodCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> <fmt:message key="studyProtocol.accrualReportingMethodCode"/></dfn></label>
+			               <label for="accrualReportingMethodCode"><fmt:message key="studyProtocol.accrualReportingMethodCode"/></label>
 			          </td>
 			    	  <s:set name="accrualReportingMethodCodeValues" value="@gov.nih.nci.pa.enums.AccrualReportingMethodCode@getDisplayNames()" />
 	                  <td class="value">
@@ -76,7 +76,7 @@ function setorgid(orgid){
 			     </tr>           
 			     <tr>
 			          <td scope="row" class="label">
-			               <label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> <fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></dfn></label>
+			               <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
@@ -94,7 +94,7 @@ function setorgid(orgid){
 			     </tr>	  
 				<tr>
 					<td scope="row" class="label">
-						<label for="summary4TypeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();"> Summary 4 Funding Source:</dfn></label>
+						<label for="summary4TypeCode">Summary 4 Funding Sponsor/Source:</label>
 					</td>
 					<td class="value">
 						<div id="loadOrgField">

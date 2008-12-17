@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="participatingOrganizations.title" /></title>
+<title><fmt:message key="participatingOrganizations.collaborators.title" /></title>
 <s:head />
 <script type="text/javascript"
 	src='<c:url value="/scripts/js/coppa.js"/>'></script>
@@ -34,7 +34,7 @@ function handleCreate(){
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-<h1><fmt:message key="participatingOrganizations.title" /></h1>
+<h1><fmt:message key="participatingOrganizations.collaborators.title" /></h1>
 
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if
@@ -79,7 +79,7 @@ function handleCreate(){
 		<li><a href="participatingOrganizations.action" class="btn"
 			onclick="this.blur();"><span class="btn_img"><span
 			class="back">Back</span></span></a></li>
-		<li><a href="nciSpecificInformationquery.action" class="btn"
+		<li><a href="trialDocumentquery.action" class="btn"
 			onclick="this.blur();"><span class="btn_img"><span
 			class="next">Next</span></span></a></li>
 	</ul>

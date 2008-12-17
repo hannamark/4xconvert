@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="trialFunding.title"/></title>
+    <title><fmt:message key="trialIndide.addtitle"/></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -69,7 +69,7 @@ function tooltip() {
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
     <s:form>
-    <h2><fmt:message key="trialIndide.subtitle" /></h2>
+    <h2><fmt:message key="trialIndide.addtitle" /></h2>
     	<input type="hidden" name="page" value="${page}" />
     	<input type="hidden" name="cbValue" value="${cbValue}" />
     <table class="form">   

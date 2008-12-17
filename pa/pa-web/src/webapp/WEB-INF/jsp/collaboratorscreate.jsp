@@ -53,7 +53,7 @@ function loadDiv(orgid){
 </head>
 <body>
 <!-- <div id="contentwide"> -->
-<h1><fmt:message key="participatingOrganizations.title" /></h1>
+<h1><fmt:message key="participatingOrganizations.collaborators.title" /></h1>
 
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -71,7 +71,7 @@ function loadDiv(orgid){
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <td colspan="2"><!--Facility-->
-        <h3>Facility</h3>
+        <h3>Collaborator</h3>
         <s:form name="facility">
             <div id="loadOrgDetails">
             <div id="orgDetailsDiv"><%@ include
@@ -113,7 +113,7 @@ function loadDiv(orgid){
     <li><a href="participatingOrganizations.action" class="btn"
         onclick="this.blur();"><span class="btn_img"><span
         class="back">Back</span></span></a></li>
-    <li><a href="nciSpecificInformationquery.action" class="btn"
+    <li><a href="trialDocumentquery.action" class="btn"
         onclick="this.blur();"><span class="btn_img"><span
         class="next">Next</span></span></a></li>
 </ul>

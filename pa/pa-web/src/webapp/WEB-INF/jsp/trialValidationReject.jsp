@@ -30,8 +30,8 @@ function handleAction(){
     <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="deletion"><dfn title="Context sensitive help text or tooltip here.">                      
-                            Reason For Rejection</dfn><span class="required">*</span>
+                        <label for="deletion">                      
+                            Reason For Rejection<span class="required">*</span>
                         </label>
                      </td>                     
                     <td class="value">

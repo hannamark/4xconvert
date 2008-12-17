@@ -23,13 +23,13 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /** Enrolling by invitation. */
     ENROLLING_BY_INVITATION("Enrolling by invitation"),
     /** Active , not recruiting. */
-    ACTIVE_NOT_RECRUITING("Active , not recruiting"),
+    ACTIVE_NOT_RECRUITING("Active, not recruiting"),
     /** Completed. */
     COMPLETED("Completed"),
     /** Suspended :  recruiting. */
-    SUSPENDED_RECRUITING("Suspended :  recruiting"),
+    SUSPENDED_RECRUITING("Suspended"),
     /** Terminated :  recruiting. */
-    TERMINATED_RECRUITING("Terminated :  recruiting"),
+    TERMINATED_RECRUITING("Terminated"),
     /** Withdrawn. */
     WITHDRAWN("Withdrawn");
     

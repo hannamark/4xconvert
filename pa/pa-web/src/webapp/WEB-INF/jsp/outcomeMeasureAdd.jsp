@@ -5,7 +5,11 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="osdesign.outcome.subtitle"/></title>
+    <title><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.outcome.title"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.outcome.title"/></s:else>
+     </title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -43,8 +47,8 @@ BubbleTips.activateTipOn("dfn");
     <input type="hidden" name="id" value="${id}" />
     <table class="form">
     			<tr>
-					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-						<fmt:message key="osdesign.outcome.primary"/> </dfn><span class="required">*</span></label>
+					<td scope="row"  class="label"><label>
+						<fmt:message key="osdesign.outcome.primary"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
 						<s:select  name="webDTO.primaryIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" />
@@ -57,8 +61,8 @@ BubbleTips.activateTipOn("dfn");
 				</tr>
 				<tr>
                      <td scope="row" class="label">
-                     <label for="fileName"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="osdesign.outcome.description"/>(Max 254 chars)</dfn><span class="required">*</span>
+                     <label for="fileName">
+                            <fmt:message key="osdesign.outcome.description"/>(Max 254 chars)<span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">
@@ -72,8 +76,8 @@ BubbleTips.activateTipOn("dfn");
                 </tr> 
                 <tr>
                      <td scope="row" class="label">
-                     <label for="typeCode"><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-                            <fmt:message key="osdesign.outcome.timeFrame"/>(Max 254 chars)</dfn><span class="required">*</span>
+                     <label for="typeCode">
+                            <fmt:message key="osdesign.outcome.timeFrame"/>(Max 254 chars)<span class="required">*</span>
                      </label>
                     </td>
     				<td class="value">
@@ -86,8 +90,8 @@ BubbleTips.activateTipOn("dfn");
                       </td>         
                 </tr>                      
 				<tr>
-					<td scope="row"  class="label"><label><dfn title="Context sensitive help text or tooltip here." onmouseover="tooltip();">
-						<fmt:message key="osdesign.outcome.safety"/> </dfn><span class="required">*</span></label>
+					<td scope="row"  class="label"><label>
+						<fmt:message key="osdesign.outcome.safety"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
 						<s:select name="webDTO.safetyIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" /><span class="formErrorMsg"> 

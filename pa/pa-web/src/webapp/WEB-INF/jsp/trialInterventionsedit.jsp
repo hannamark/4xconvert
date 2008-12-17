@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message
-    key="interventions.main.title" /></title>
+    key="interventions.details.title" /></title>
 <s:head />
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet"
     type="text/css" media="all" />
@@ -62,7 +62,7 @@
 </head>
 <body>
 <!-- <div id="contentwide"> -->
-<h1><fmt:message key="interventions.main.title" /></h1>
+<h1><fmt:message key="interventions.details.title" /></h1>
 
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -80,7 +80,10 @@
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <td colspan="2"><!--Facility-->
-        <h3>Intervention</h3>
+        <h3>
+        <s:if test="%{currentAction == 'edit'}"><fmt:message key="interventions.edit.title" /></s:if>
+        <s:else><fmt:message key="interventions.add.title" /></s:else>
+        </h3>
         <s:form name="intervention">
 
             <table class="form">

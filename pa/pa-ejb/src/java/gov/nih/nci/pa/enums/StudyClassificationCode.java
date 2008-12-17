@@ -28,7 +28,9 @@ public enum StudyClassificationCode implements CodedEnum<String> {
     /** Pharmacodynamics. */
     PHARMACODYNAMICS("Pharmacodynamics"),
     /** Pharmacokinetics/dynamics. */
-    PHARMACOKINETICS_OR_DYNAMICS("Pharmacokinetics/dynamics");    
+    PHARMACOKINETICS_OR_DYNAMICS("Pharmacokinetics/dynamics"),
+    /*** Not Applicable . */
+    NA("NA");    
 
     private String code;
     /**

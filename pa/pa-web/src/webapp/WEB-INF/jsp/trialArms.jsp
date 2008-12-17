@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="arms.main.title" /></title>
+<title><fmt:message key="arms.details.title" /></title>
 <s:head />
 <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
@@ -40,7 +40,7 @@ function handleCreateGroup(){
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
-<h1><fmt:message key="arms.main.title" /></h1>
+<h1><fmt:message key="arms.details.title" /></h1>
 
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if

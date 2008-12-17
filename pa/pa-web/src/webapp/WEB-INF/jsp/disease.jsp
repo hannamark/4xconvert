@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="arms.main.title" /></title>
+<title><fmt:message key="disease.details.title" /></title>
 <s:head />
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
@@ -40,7 +40,7 @@ function handleCreate(){
 </SCRIPT>
 </head>
 <body onload="setFocusToFirstControl();">
-<h1><fmt:message key="disease.main.title"/></h1>
+<h1><fmt:message key="disease.details.title"/></h1>
 
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">

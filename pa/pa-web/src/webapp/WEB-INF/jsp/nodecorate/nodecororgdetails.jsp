@@ -42,6 +42,10 @@
                         </span>                            
                     </td>               
                 </tr>
+                <tr> 
+            		<td/>
+            		<td class="info" colspan="2">Mandatory if Treating site/Lead organization is a cancer center</td>
+        		</tr>
 			</table>
 
 
