@@ -6,6 +6,7 @@ import java.util.Date;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
@@ -105,7 +106,6 @@ public class TrialBatchDataValidator {
         PersonBatchDTO piBatchDto = buildLeadPIDto(batchDto);
         fieldErr.append(validatePersonInfo(piBatchDto, "Principal Investigator's").toString());
         //Summary 4 Info validation
-
         //TO-DO will enable later - fieldErr.append(validateSummary4SponsorInfo(batchDto));
         
         if (PAUtil.isNotEmpty(batchDto.getPhase())) {
@@ -127,8 +127,17 @@ public class TrialBatchDataValidator {
                 batchDto.getNihGrantInstituteCode(), batchDto.getNihGrantNCIDivisionCode())) {
             fieldErr.append("All Grant values are required.\n");
         }
+        //validate the ValidValues
+        fieldErr.append(validateListOfValues(batchDto));
         return fieldErr.toString();
     }
+    private StringBuffer validateListOfValues(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        if (null == StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
+            fieldErr.append("Please enter valid Current Trial Status");
+        }
+    return fieldErr;
+}
     private StringBuffer validateSummary4SponsorInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (PAUtil.isNotEmpty(batchDto.getTrialType()) 
