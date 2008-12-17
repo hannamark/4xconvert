@@ -139,12 +139,13 @@ public class PAMessageDrivenBean implements MessageListener {
                 } catch (PAException e) {
                     updateExceptionAuditMessageLog(msgId, e.getMessage());
                     msg.acknowledge();
+                    LOG.error("PAMessageDrivenBean onMessage() method threw an PAException " , e);
                 }
             }            
             msg.acknowledge();
             LOG.info("L PAMessageDrivenBean onMessage()");
         } catch (JMSException e) {           
-           LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException " + e.getMessage());
+           LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException " , e);
         } finally {
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
