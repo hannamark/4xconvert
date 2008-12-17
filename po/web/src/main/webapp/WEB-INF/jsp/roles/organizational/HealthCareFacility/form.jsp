@@ -93,7 +93,7 @@
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
         <c:url var="curateUrl" value="/protected/organization/curate/start.action">
-            <c:param name="organization" value="${organization.id}"/>
+            <c:param name="organization.id" value="${organization.id}"/>
         </c:url>
         <s:set name="returnToPageTitle" value="%{'Return to ' + getText('organization.details.title')}"/>
         <po:button id="return_to_button" href="${curateUrl}" style="continue" text="${returnToPageTitle}"/>

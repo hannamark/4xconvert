@@ -83,8 +83,8 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
-
 import gov.nih.nci.po.data.bo.Organization;
+
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +100,9 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
     }
 
     public HealthCareFacility getById(long id) {
-        return null;
+        HealthCareFacility o = new HealthCareFacility();
+        o.setId(id);
+        return o;
     }
 
     public List<HealthCareFacility> getByIds(Long[] ids) {

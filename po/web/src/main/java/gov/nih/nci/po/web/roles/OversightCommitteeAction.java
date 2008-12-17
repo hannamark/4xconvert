@@ -115,7 +115,14 @@ public class OversightCommitteeAction extends
     private static final long serialVersionUID = 1L;
     private OversightCommittee role = new OversightCommittee();
     private OversightCommitteeCR cr = new OversightCommitteeCR();
-
+    
+    /**
+     * default constructor.
+     */
+    public OversightCommitteeAction() {
+        super();
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -179,8 +186,9 @@ public class OversightCommitteeAction extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
+    @Override    
+    public void prepare() {
+        super.prepare();
         if (getRole() == null) {
             setRole(new OversightCommittee());
         }

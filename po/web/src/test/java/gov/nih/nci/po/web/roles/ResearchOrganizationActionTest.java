@@ -3,10 +3,12 @@ package gov.nih.nci.po.web.roles;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
@@ -44,7 +46,23 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getOrganization());
     }
-
+    
+    @Test
+    public void testPrepareNoRole() {
+        action.setRole(null);
+        action.prepare();
+        assertNotNull(action.getRole());
+    }
+    
+    @Test
+    public void testPrepareWithRoleId() {
+        Correlation role = action.getRole();
+        action.getRole().setId(1L);
+        action.prepare();
+        assertNotSame(role, action.getRole());
+        assertEquals(1L, action.getRole().getId().longValue());
+    }
+    
     @Test
     @SuppressWarnings("deprecation")
     public void testPrepareNoOrgId() throws Exception {

@@ -32,6 +32,7 @@
     </c:if> 
 </s:if>
 
+
 <po:successMessages/>
 
 <div id="page" style="margin-top:10px;">
@@ -53,7 +54,7 @@
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="person"/>
-                <s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
+                <s:if test="%{isNotCreate}"><s:hidden key="role.id" /></s:if>
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                 <po:scoper key="identifiedPerson.scoper.id"/>
 				<s:select id="curateRoleForm.role.status"
@@ -95,7 +96,7 @@
 <div id="page" style="margin-top:10px;">
     <s:form action="ajax/roles/person/IdentifiedPerson/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization"/>
-        <s:hidden key="role" />
+        <s:hidden key="role.id" />
         <s:select
            label="Current Change Request"
            name="cr"

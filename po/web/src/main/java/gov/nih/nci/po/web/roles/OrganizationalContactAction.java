@@ -122,8 +122,9 @@ public class OrganizationalContactAction extends
      * {@inheritDoc}
      * @throws Exception 
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
+    @Override
+    public void prepare() {
+        super.prepare();
         if (getRootKey() != null) {
             role = (OrganizationalContact) getSession().getAttribute(getRootKey());
         }

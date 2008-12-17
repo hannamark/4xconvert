@@ -73,6 +73,7 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
     private void initializeAddressCountry() {
         if (getAddress().getCountry() == null) { //if address country is null, set to blank country
             getAddress().setCountry(PoRegistry.getCountryService().getCountryByAlpha3("USA"));
+            getAddress().getCountry().getStates().size();
         }
     }
 

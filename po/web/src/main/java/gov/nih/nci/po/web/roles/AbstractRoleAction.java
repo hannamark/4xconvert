@@ -107,6 +107,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 /**
  * @author smatyas
  * 
@@ -114,10 +115,11 @@ import com.opensymphony.xwork2.ActionSupport;
  * @param <ROLECR>
  * @param <ROLESERVICE>
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractRoleAction<ROLE extends Correlation, 
     ROLECR extends CorrelationChangeRequest<ROLE>, 
     ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
-        extends ActionSupport {
+        extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     private static final String UNCHECKED = "unchecked";
     /**
@@ -137,16 +139,22 @@ public abstract class AbstractRoleAction<ROLE extends Correlation,
      * Implement to provide default constructor initialization.
      */
     protected abstract void defaultConstructorInit();
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void prepare() {
+        if (getBaseRole() != null && getBaseRole().getId() != null) {
+            setBaseRole(getRoleService().getById(getBaseRole().getId()));
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     @SuppressWarnings(UNCHECKED)
     public String input() {
-        if (getBaseRole().getId() != null) {
-            setBaseRole(getRoleService().getById(getBaseRole().getId()));
-        }
         if (getBaseRole().getId() == null) {
             getBaseRole().setStatus(RoleStatus.PENDING);
         }

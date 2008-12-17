@@ -1,8 +1,8 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-
 import gov.nih.nci.po.data.bo.Organization;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +15,9 @@ public class IdentifiedOrganizationServiceStub implements IdentifiedOrganization
     }
 
     public IdentifiedOrganization getById(long id) {
-        return null;
+        IdentifiedOrganization o = new IdentifiedOrganization();
+        o.setId(id);
+        return o;
     }
 
     public List<IdentifiedOrganization> getByIds(Long[] ids) {

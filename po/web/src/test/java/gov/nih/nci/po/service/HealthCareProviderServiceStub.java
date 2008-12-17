@@ -83,8 +83,8 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareProvider;
-
 import gov.nih.nci.po.data.bo.Person;
+
 import java.util.List;
 import java.util.Map;
 
@@ -107,7 +107,9 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
      * {@inheritDoc}
      */
     public HealthCareProvider getById(long id) {
-        return null;
+        HealthCareProvider o = new HealthCareProvider();
+        o.setId(id);
+        return o;
     }
 
     /**

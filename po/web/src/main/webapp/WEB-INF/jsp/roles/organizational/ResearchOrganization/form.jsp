@@ -32,6 +32,7 @@
     </c:if> 
 </s:if>
 
+
 <po:successMessages/>
 
 <div id="page" style="margin-top:10px;">
@@ -52,7 +53,7 @@
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
-				<s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
+				<s:if test="%{isNotCreate}"><s:hidden key="role.id"/></s:if>
 				<script type="text/javascript"><!--
 				/*
 				 Toggles the display of a stateOrProvince textfield or a select-box. 
@@ -113,7 +114,7 @@
 <div id="page" style="margin-top:10px;">
     <s:form action="ajax/roles/organizational/ResearchOrganization/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization"/>
-        <s:hidden key="role" />
+        <s:hidden key="role.id" />
         <s:select
            label="Current Change Request"
            name="cr"

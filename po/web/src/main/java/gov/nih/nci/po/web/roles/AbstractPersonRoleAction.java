@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.web.roles;
 
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.Mailable;
@@ -131,5 +132,10 @@ public abstract class
      */
     protected void initialize(Mailable mailable) {
         mailable.getPostalAddresses().size();
+        for (Address address : mailable.getPostalAddresses()) {
+            if (address.getCountry() != null) {
+                address.getCountry().getStates().size();
+            }
+        }
     }
 }

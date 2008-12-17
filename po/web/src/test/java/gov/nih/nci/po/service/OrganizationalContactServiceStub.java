@@ -23,7 +23,9 @@ public class OrganizationalContactServiceStub implements OrganizationalContactSe
     }
 
     public OrganizationalContact getById(long id) {
-        return null;
+        OrganizationalContact o = new OrganizationalContact();
+        o.setId(id);
+        return o;
     }
 
     public List<OrganizationalContact> getByIds(Long[] ids) {

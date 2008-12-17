@@ -19,7 +19,9 @@ public class ClinicalResearchStaffServiceStub implements ClinicalResearchStaffSe
     }
 
     public ClinicalResearchStaff getById(long id) {
-        return null;
+        ClinicalResearchStaff o = new ClinicalResearchStaff();
+        o.setId(id);
+        return o;
     }
 
     public List<ClinicalResearchStaff> getByIds(Long[] ids) {

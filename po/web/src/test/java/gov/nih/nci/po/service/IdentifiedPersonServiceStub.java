@@ -23,7 +23,9 @@ public class IdentifiedPersonServiceStub implements IdentifiedPersonServiceLocal
     }
 
     public IdentifiedPerson getById(long id) {
-        return null;
+        IdentifiedPerson o = new IdentifiedPerson();
+        o.setId(id);
+        return o;
     }
 
     public List<IdentifiedPerson> getByIds(Long[] ids) {

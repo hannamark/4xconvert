@@ -1,16 +1,12 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
+
 import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
-
-import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.PageSortParams;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.SearchCriteria;
 
 public class ResearchOrganizationServiceStub implements ResearchOrganizationServiceLocal {
 
@@ -23,7 +19,9 @@ public class ResearchOrganizationServiceStub implements ResearchOrganizationServ
     }
 
     public ResearchOrganization getById(long id) {
-        return null;
+        ResearchOrganization o = new ResearchOrganization();
+        o.setId(id);
+        return o;
     }
 
     public List<ResearchOrganization> getByIds(Long[] ids) {

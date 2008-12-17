@@ -123,8 +123,9 @@ public class HealthCareProviderAction extends
      * {@inheritDoc}
      * @throws Exception 
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
+    @Override    
+    public void prepare() {
+        super.prepare();
         if (getRootKey() != null) {
             role = (HealthCareProvider) getSession().getAttribute(getRootKey());
         }

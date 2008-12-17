@@ -79,4 +79,16 @@ public class CreatePersonActionTest extends AbstractPoTest {
         assertEquals("person.create.success", ActionHelper.getMessages().get(0));
     }
 
+    @Test
+    public void getOrganizationIdPropertyOrgNull() {
+        action.setPerson(null);
+        assertEquals("", action.getPersonId());
+    }
+    
+    @Test
+    public void getOrganizationIdPropertyOrgWithId() {
+        action.setPerson(new Person());
+        action.getPerson().setId(1L);
+        assertEquals("1", action.getPersonId());
+    }
 }

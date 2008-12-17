@@ -24,7 +24,7 @@
             </c:url>
             <po:button id="add_button" href="${addUrl}" style="add" text="Add"/>
             <c:url var="curateUrl" value="/protected/person/curate/start.action">
-                <c:param name="person" value="${person.id}"/>
+                <c:param name="person.id" value="${person.id}"/>
             </c:url>
             <s:set name="returnToPageTitle" value="%{'Return to ' + getText('person.details.title')}"/>
             <po:button id="return_to_button" href="${curateUrl}" style="continue" text="${returnToPageTitle}"/>

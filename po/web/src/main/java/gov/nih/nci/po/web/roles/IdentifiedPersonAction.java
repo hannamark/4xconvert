@@ -122,8 +122,9 @@ public class IdentifiedPersonAction
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
+    @Override
+    public void prepare() {
+        super.prepare();
         if (getRole() == null) {
             setRole(new IdentifiedPerson());
         }

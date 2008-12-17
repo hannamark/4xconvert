@@ -52,7 +52,7 @@
 				<s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
 				<s:hidden key="cr"/>
 				<s:hidden key="organization"/>
-				<s:if test="%{isNotCreate}"><s:hidden key="role" value="%{role.id}"/></s:if>
+				<s:if test="%{isNotCreate}"><s:hidden key="role.id" /></s:if>
 				<s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
 				<s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OversightCommitteeType@class"/>
 				<s:set name="oversightCommitteeTypes" value="#genericCodeValueService.list(#codeValueClass)" />
@@ -100,7 +100,7 @@
 <div id="page" style="margin-top:10px;">
     <s:form action="ajax/roles/organizational/OversightCommittee/changeCurrentChangeRequest.action" id="changeCrForm">
         <s:hidden key="organization"/>
-        <s:hidden key="role" />
+        <s:hidden key="role.id" />
         <s:select
            label="Current Change Request"
            name="cr"

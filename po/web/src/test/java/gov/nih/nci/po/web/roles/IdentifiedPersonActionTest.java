@@ -3,11 +3,13 @@ package gov.nih.nci.po.web.roles;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
@@ -45,7 +47,23 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getPerson());
     }
-
+    
+    @Test
+    public void testPrepareNoRole() {
+        action.setRole(null);
+        action.prepare();
+        assertNotNull(action.getRole());
+    }
+    
+    @Test
+    public void testPrepareWithRoleId() {
+        Correlation role = action.getRole();
+        action.getRole().setId(1L);
+        action.prepare();
+        assertNotSame(role, action.getRole());
+        assertEquals(1L, action.getRole().getId().longValue());
+    }
+    
     @Test
     public void testPrepare() throws Exception {
         action.setRole(null);

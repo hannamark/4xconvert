@@ -101,7 +101,9 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
     }
 
     public OversightCommittee getById(long id) {
-        return null;
+        OversightCommittee o = new OversightCommittee();
+        o.setId(id);
+        return o;
     }
 
     public List<OversightCommittee> getByIds(Long[] ids) {

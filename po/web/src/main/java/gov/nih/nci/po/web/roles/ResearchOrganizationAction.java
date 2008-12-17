@@ -185,8 +185,10 @@ public class ResearchOrganizationAction
     /**
      * {@inheritDoc}
      */
+    @Override 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
+    public void prepare() {
+        super.prepare();
         if (getRole() == null) {
             setRole(new ResearchOrganization());
         }
