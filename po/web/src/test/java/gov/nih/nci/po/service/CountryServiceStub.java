@@ -118,15 +118,20 @@ public class CountryServiceStub implements CountryServiceLocal {
      * {@inheritDoc}
      */
     public Country getCountryByAlpha2(String alpha2) {
-        return null;
+        return new Country(alpha2, alpha2, alpha2, alpha2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Country getCountryByAlpha3(String code) {
-        return null;
+        return new Country(code, code, code, code);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public State getStateByCode(Country country, String code) {
-        // TODO Auto-generated method stub
         return null;
     }
 

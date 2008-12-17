@@ -19,13 +19,19 @@ public class CreatePersonTest extends AbstractPoWebTest {
         clickAndWaitSaveButton();
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
+        assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.person.postalAddress.country"));        
         verifyDefaultFieldErrorsMessages();
         
         selenium.select("curateEntityForm.person.statusCode", "label=--Select a Status--");
+        selenium.select("curateEntityForm.person.postalAddress.country", "label=--Select a Country--");
         clickAndWaitSaveButton();
         assertEquals("", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals("--Select a Status--", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
         assertEquals("Status must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.person.statusCode']/div"));
+        assertEquals("", selenium.getSelectedValue("curateEntityForm.person.postalAddress.country"));
+        assertEquals("--Select a Country--", selenium.getSelectedLabel("curateEntityForm.person.postalAddress.country"));
+        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.person.postalAddress.country']/div"));
+        
         verifyDefaultFieldErrorsMessages();
     }
 
@@ -60,7 +66,6 @@ public class CreatePersonTest extends AbstractPoWebTest {
         assertEquals("Address Line 1 must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_streetAddressLine']/div"));
         assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_cityOrMunicipality']/div"));
         assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_postalCode']/div"));
-        assertEquals("Country must be set", selenium.getText("//div[@id='wwerr_curateEntityForm.person.postalAddress.country']/div"));
         assertTrue(selenium.isTextPresent("At least one Email Address must be set"));
     }
 }

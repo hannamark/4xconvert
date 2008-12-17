@@ -1,8 +1,8 @@
 package gov.nih.nci.po.web.mailable;
 
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Mailable;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.Iterator;
@@ -70,10 +70,9 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
         return getIndex() != null && getIndex() > -1;
     }
 
-    @SuppressWarnings("deprecation")
     private void initializeAddressCountry() {
         if (getAddress().getCountry() == null) { //if address country is null, set to blank country
-            getAddress().setCountry(new Country());
+            getAddress().setCountry(PoRegistry.getCountryService().getCountryByAlpha3("USA"));
         }
     }
 

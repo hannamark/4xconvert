@@ -1,8 +1,8 @@
 package gov.nih.nci.po.web.create;
 
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateOrganizationAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -30,7 +30,7 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
     @Override
     public String start() {
         getOrganization().setPostalAddress(new Address());
-        getOrganization().getPostalAddress().setCountry(new Country());
+        getOrganization().getPostalAddress().setCountry(PoRegistry.getCountryService().getCountryByAlpha3("USA"));
         getOrganization().setStatusCode(EntityStatus.PENDING);
         setRootKey(PoHttpSessionUtil.addAttribute(getOrganization()));
         return INPUT;

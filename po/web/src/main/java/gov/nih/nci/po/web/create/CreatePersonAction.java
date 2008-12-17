@@ -1,8 +1,8 @@
 package gov.nih.nci.po.web.create;
 
 import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CuratePersonAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -30,7 +30,7 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
     @Override
     public String start() {
         getPerson().setPostalAddress(new Address());
-        getPerson().getPostalAddress().setCountry(new Country());
+        getPerson().getPostalAddress().setCountry(PoRegistry.getCountryService().getCountryByAlpha3("USA"));
         getPerson().setStatusCode(EntityStatus.PENDING);
         setRootKey(PoHttpSessionUtil.addAttribute(getPerson()));
         return INPUT;
