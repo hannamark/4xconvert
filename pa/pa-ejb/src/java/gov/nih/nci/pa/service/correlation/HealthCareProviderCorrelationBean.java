@@ -1,9 +1,6 @@
 package gov.nih.nci.pa.service.correlation;
 
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -17,10 +14,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.net.URI;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -100,18 +94,6 @@ public class HealthCareProviderCorrelationBean {
         }
         if (hcpDTOs == null || hcpDTOs.isEmpty()) {
             try {
-                //================================================
-                // Create dummy phone number, required by PO-0.6
-                // TODO remove this code once PO allows nulls
-                TelPhone o = new TelPhone();
-                o.setValue(URI.create("tel:111-111-1111"));
-                Set<Tel> item = new HashSet<Tel>();
-                item.add(o);
-                DSet<Tel> telecomAddress = new DSet<Tel>();
-                telecomAddress.setItem(item);
-                hcpDTO.setTelecomAddress(telecomAddress);
-                //================================================
-
                 Ii ii = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
                 hcpDTO = PoPaServiceBeanLookup.getHealthCareProviderCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
