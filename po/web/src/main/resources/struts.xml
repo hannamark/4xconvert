@@ -35,6 +35,7 @@
                 <interceptor-ref name="nullCollectionElements" />
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
+                    <param name="trimFromFront">true</param>
                 </interceptor-ref>
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel</param>
@@ -62,6 +63,7 @@
                 <interceptor-ref name="nullCollectionElements" />
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
+                    <param name="trimFromFront">true</param>
                 </interceptor-ref>
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel</param>
@@ -88,6 +90,7 @@
                 <interceptor-ref name="nullCollectionElements" />
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
+                    <param name="trimFromFront">true</param>
                 </interceptor-ref>
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel</param>
@@ -97,6 +100,88 @@
                     <param name="excludeMethods">input,back,cancel</param>
                 </interceptor-ref>
            </interceptor-stack>
+
+			<!-- BEGIN : Special interceptors designed to NOT trim leading whitespace -->
+			<interceptor-stack name="poSearchParamsPrepareParamsStack">
+			     <interceptor-ref name="logger"/>
+			     <interceptor-ref name="exception" />
+			     <interceptor-ref name="alias" />
+			     <interceptor-ref name="nci-commonsParams" />
+			     <interceptor-ref name="servletConfig" />
+			     <interceptor-ref name="prepare" />
+			     <interceptor-ref name="i18n" />
+			     <interceptor-ref name="chain" />
+			     <interceptor-ref name="fileUpload" />
+			     <interceptor-ref name="checkbox" />
+			     <interceptor-ref name="staticParams" />
+			     <interceptor-ref name="nci-commonsParams" />
+			     <interceptor-ref name="conversionError" />
+			     <interceptor-ref name="nullCollectionElements" />
+			     <interceptor-ref name="parameterTrim">
+			         <param name="trimToNull">true</param>
+			     </interceptor-ref>
+			     <interceptor-ref name="validation">
+			         <param name="excludeMethods">input,back,cancel</param>
+			     </interceptor-ref>
+			     <interceptor-ref name="workflow">
+			         <param name="excludeMethods">input,back,cancel</param>
+			     </interceptor-ref>
+			</interceptor-stack>
+			
+			<interceptor-stack name="poSearchDefaultStack">
+			     <interceptor-ref name="logger"/>
+			     <interceptor-ref name="exception" />
+			     <interceptor-ref name="alias" />
+			     <interceptor-ref name="servletConfig" />
+			     <interceptor-ref name="prepare" />
+			     <interceptor-ref name="i18n" />
+			     <interceptor-ref name="chain" />
+			     <interceptor-ref name="debugging" />
+			     <interceptor-ref name="profiling" />
+			     <interceptor-ref name="fileUpload" />
+			     <interceptor-ref name="checkbox" />
+			     <interceptor-ref name="staticParams" />
+			     <interceptor-ref name="nci-commonsParams" />
+			     <interceptor-ref name="conversionError" />
+			     <interceptor-ref name="nullCollectionElements" />
+			     <interceptor-ref name="parameterTrim">
+			         <param name="trimToNull">true</param>
+			     </interceptor-ref>
+			     <interceptor-ref name="validation">
+			         <param name="excludeMethods">input,back,cancel</param>
+			     </interceptor-ref>
+			     <interceptor-ref name="workflow">
+			         <param name="excludeMethods">input,back,cancel</param>
+			     </interceptor-ref>
+			</interceptor-stack>
+			
+			<interceptor-stack name="poSearchPerMethodValidationStack">
+			     <interceptor-ref name="logger"/>
+			     <interceptor-ref name="exception" />
+			     <interceptor-ref name="alias" />
+			     <interceptor-ref name="nci-commonsParams" />
+			     <interceptor-ref name="servletConfig" />
+			     <interceptor-ref name="prepare" />
+			     <interceptor-ref name="i18n" />
+			     <interceptor-ref name="chain" />
+			     <interceptor-ref name="fileUpload" />
+			     <interceptor-ref name="checkbox" />
+			     <interceptor-ref name="staticParams" />
+			     <interceptor-ref name="nci-commonsParams" />
+			     <interceptor-ref name="conversionError" />
+			     <interceptor-ref name="nullCollectionElements" />
+			     <interceptor-ref name="parameterTrim">
+			         <param name="trimToNull">true</param>
+			     </interceptor-ref>
+			     <interceptor-ref name="validation">
+			         <param name="excludeMethods">input,back,cancel</param>
+			         <param name="validateAnnotatedMethodOnly">true</param>
+			     </interceptor-ref>
+			     <interceptor-ref name="workflow">
+			         <param name="excludeMethods">input,back,cancel</param>
+			     </interceptor-ref>
+			</interceptor-stack>
+			<!-- END : Special interceptors designed to NOT trim leading whitespace -->
         </interceptors>
 
         <default-interceptor-ref name="poParamsPrepareParamsStack" />
@@ -208,63 +293,63 @@
         
         <!-- Organization -> Search -> Popup Select --> 
         <action name="selector/organization/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/selector/organization/search.jsp</result>
             <result name="input">/WEB-INF/jsp/selector/organization/search.jsp</result>
         </action>      
         <action name="ajax/selector/organization/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/selector/organization/search.jsp</result>
             <result name="detail">/WEB-INF/jsp/selector/organization/detail.jsp</result>
         </action>            
         <action name="ajax/selector/organization/results/*" class="gov.nih.nci.po.web.selector.SelectOrganizationAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/selector/organization/results.jsp</result>
         </action>      
         
         <!-- Person -> Search -> Popup Select -->      
         <action name="selector/person/*" class="gov.nih.nci.po.web.selector.SelectPersonAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/selector/person/search.jsp</result>
             <result name="input">/WEB-INF/jsp/selector/person/search.jsp</result>
         </action>      
         <action name="ajax/selector/person/*" class="gov.nih.nci.po.web.selector.SelectPersonAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/selector/person/search.jsp</result>
             <result name="detail">/WEB-INF/jsp/selector/person/detail.jsp</result>
         </action>            
         <action name="ajax/selector/person/results/*" class="gov.nih.nci.po.web.selector.SelectPersonAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/selector/person/results.jsp</result>
         </action>            
         
         <!-- Organization -> Search -->
         <action name="search/organization/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/organization/search.jsp</result>
             <result name="input">/WEB-INF/jsp/search/organization/search.jsp</result>
         </action>      
         <action name="ajax/search/organization/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/organization/search.jsp</result>
         </action>            
         <action name="ajax/search/organization/results/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/organization/results.jsp</result>
         </action> 
         
         <!-- Person -> Search -->
         <action name="search/person/*" class="gov.nih.nci.po.web.search.SearchPersonAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/person/search.jsp</result>
             <result name="input">/WEB-INF/jsp/search/person/search.jsp</result>
         </action>      
         <action name="ajax/search/person/*" class="gov.nih.nci.po.web.search.SearchPersonAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/person/search.jsp</result>
         </action>            
         <action name="ajax/search/person/results/*" class="gov.nih.nci.po.web.search.SearchPersonAction" method="{1}">
-            <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/person/results.jsp</result>
         </action> 
         
