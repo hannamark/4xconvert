@@ -99,7 +99,7 @@
 </div>
 <div class="btnwrapper">
 	<po:buttonRow>
-	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="" text="Back to Search Results" />
+	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="continue" text="Back to Search Results" />
 	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${person.id}', '${person.lastName}, ${person.firstName} ${person.middleName}'));" style="reject" text="Select" />
 	</po:buttonRow>
 </div>

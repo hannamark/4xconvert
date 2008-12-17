@@ -52,7 +52,7 @@
 				    <div id="showDuplicatesFormTop">
 				        <div class="btnwrapper">
 				            <po:buttonRow>
-				                <po:button href="javascript://nop/" onclick="backToSearchForm();" style="" text="Back to Search Form" />
+				                <po:button href="javascript://nop/" onclick="backToSearchForm();" style="continue" text="Back to Search Form" />
 				            </po:buttonRow>
 				        </div>  
 				    </div>
@@ -65,7 +65,7 @@
 				    <div id="showDuplicatesFormBottom">
 				        <div class="btnwrapper">
 				            <po:buttonRow>
-				                <po:button href="javascript://nop/" onclick="backToSearchForm();" style="" text="Back to Search Form" />
+				                <po:button href="javascript://nop/" onclick="backToSearchForm();" style="continue" text="Back to Search Form" />
 				            </po:buttonRow>
 				        </div>  
 				    </div>
