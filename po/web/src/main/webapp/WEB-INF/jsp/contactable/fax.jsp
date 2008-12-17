@@ -3,7 +3,7 @@
 <ul>
     <s:iterator value="contactable.fax" status="e">
         <c:url var="removeAction" value="../../contactable/fax/remove.action">
-            <c:param name="entry.value" value="${value}"/>
+            <c:param name="faxEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
         </c:url>
         <li id="fax-entry-${e.index}">

@@ -3,7 +3,7 @@
 <ul>
     <s:iterator value="contactable.url" status="e">
         <c:url var="removeAction" value="../../contactable/url/remove.action">
-            <c:param name="entry.value" value="${value}"/>
+            <c:param name="urlEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
         </c:url>
         <li id="url-entry-${e.index}">          

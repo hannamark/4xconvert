@@ -3,7 +3,7 @@
 <ul>
     <s:iterator value="contactable.tty" status="e">
         <c:url var="removeAction" value="../../contactable/tty/remove.action">
-            <c:param name="entry.value" value="${value}"/>
+            <c:param name="ttyEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
         </c:url>
         <li id="tty-entry-${e.index}">
