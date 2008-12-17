@@ -114,7 +114,7 @@
        <h2>Contact Information</h2>
            <div class="box_white">
                <div class="clear"></div>
-               <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="true" />
+               <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" />
            </div>
        </div>			    
     </div> 
