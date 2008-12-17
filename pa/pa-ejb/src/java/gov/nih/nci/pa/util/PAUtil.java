@@ -3,12 +3,16 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,6 +161,21 @@ public class PAUtil {
             }
         }
         return outDate;
+    }
+
+    /**
+     * 
+     * @param isoTs timestamp
+     * @param format data format
+     * @return String
+     */
+    public static String convertTsToFormarttedDate(Ts isoTs , String format) {
+        Timestamp ts = TsConverter.convertToTimestamp(isoTs);
+        if (ts == null) {
+            return  null;
+        }
+        DateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+        return  formatter.format(ts);
     }
 
     /**

@@ -106,7 +106,7 @@ public class TrialValidationAction extends ActionSupport {
             copy(spqDto);
             copyLO(cUtils.getPAOrganizationByIndetifers(spqDto.getLeadOrganizationId(), null));
             copyPI(cUtils.getPAPersonByIndetifers(spqDto.getPiId(), null));
-            //copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
+            copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
             copyResponsibleParty(studyProtocolIi);
             copySponsor(studyProtocolIi);
         } catch (PAException e) {
@@ -440,6 +440,24 @@ public class TrialValidationAction extends ActionSupport {
         gtdDTO.setPiName(p.getFullName());
     }
 
+    private void copySummaryFour(StudyResourcingDTO srDTO) throws  PAException {
+        if (srDTO == null) {
+            return;
+        }
+        if (srDTO.getTypeCode() != null) {
+            gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+        }
+
+        if (srDTO.getOrganizationIdentifier() != null 
+                    && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {   
+            CorrelationUtils cUtils = new CorrelationUtils();
+            Organization o = cUtils.getPAOrganizationByIndetifers(
+                            Long.valueOf(srDTO.getOrganizationIdentifier().getExtension()), null);
+            gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
+            gtdDTO.setSummaryFourOrgName(o.getName());
+        }
+    }
+    
     private void copyResponsibleParty(Ii studyProtocolIi) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
@@ -569,13 +587,23 @@ public class TrialValidationAction extends ActionSupport {
             scDto = scDtos.get(0);
             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
         } else {
-            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
-            spart.setRoleCode(CdConverter.convertToCd(
-                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
-                .getByStudyProtocol(studyProtocolIi, spart);
+            
+//            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+//            spart.setRoleCode(CdConverter.convertToCd(
+//                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+//            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
+//                .getByStudyProtocol(studyProtocolIi, spart);
+//            if (spDtos != null && spDtos.size() > 0) {
+//                PaRegistry.getStudyParticipationContactService().delete(spDtos.get(0).getIdentifier());
+//            }
+            // delete from Study Participation and it will delete study_participation contact
+            StudyParticipationDTO spart = new StudyParticipationDTO();  
+            spart.setFunctionalCode(CdConverter.convertToCd(
+                  StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
+              List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+                  .getByStudyProtocol(studyProtocolIi, spart);
             if (spDtos != null && spDtos.size() > 0) {
-                PaRegistry.getStudyParticipationContactService().delete(spDtos.get(0).getIdentifier());
+                PaRegistry.getStudyParticipationService().delete(spDtos.get(0).getIdentifier());
             }
         }
         

@@ -398,14 +398,24 @@ public class GeneralTrialDesignAction extends ActionSupport {
             scDto = scDtos.get(0);
             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
         } else {
-            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
-            spart.setRoleCode(CdConverter.convertToCd(
-                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
-                .getByStudyProtocol(studyProtocolIi, spart);
+//            StudyParticipationContactDTO spart = new StudyParticipationContactDTO();
+//            spart.setRoleCode(CdConverter.convertToCd(
+//                    StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+//            List<StudyParticipationContactDTO> spDtos = PaRegistry.getStudyParticipationContactService()
+//                .getByStudyProtocol(studyProtocolIi, spart);
+//            if (spDtos != null && spDtos.size() > 0) {
+//                PaRegistry.getStudyParticipationContactService().delete(spDtos.get(0).getIdentifier());
+//            }
+            // delete from Study Participation and it will delete study_participation contact
+            StudyParticipationDTO spart = new StudyParticipationDTO();  
+            spart.setFunctionalCode(CdConverter.convertToCd(
+                  StudyParticipationFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
+              List<StudyParticipationDTO> spDtos = PaRegistry.getStudyParticipationService()
+                  .getByStudyProtocol(studyProtocolIi, spart);
             if (spDtos != null && spDtos.size() > 0) {
-                PaRegistry.getStudyParticipationContactService().delete(spDtos.get(0).getIdentifier());
+                PaRegistry.getStudyParticipationService().delete(spDtos.get(0).getIdentifier());
             }
+
         }
         
     }

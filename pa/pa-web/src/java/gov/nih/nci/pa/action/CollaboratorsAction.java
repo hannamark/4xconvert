@@ -15,7 +15,6 @@ import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
@@ -130,7 +129,6 @@ public class CollaboratorsAction extends ActionSupport
         sp.setHealthcareFacilityIi(null);
         sp.setResearchOrganizationIi(IiConverter.convertToIi(paOrgId));
         sp.setIdentifier(null);
-        sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
         sp.setStudyProtocolIdentifier(spIi);
         sp = sPartService.create(sp);
 

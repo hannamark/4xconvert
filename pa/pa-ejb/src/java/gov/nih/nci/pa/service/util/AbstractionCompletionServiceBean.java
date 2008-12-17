@@ -2,6 +2,8 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -9,6 +11,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
@@ -22,6 +25,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -124,6 +128,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     enforceArmGroup(studyProtocolIi, studyProtocolDTO);
     enforceTrialFunding(studyProtocolIi);
     enforceDisease(studyProtocolIi);
+    enforceArmInterventional(studyProtocolIi);
+    enforceEligibility(studyProtocolIi);
     return abstractionList;
   }
   private void enforceDisease(Ii studyProtocolIi) throws PAException {
@@ -339,20 +345,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       webDTO.setErrorDescription("Brief Summary must be Entered");
       abstractionList.add(webDTO);
     }
-    if (studyProtocolDTO.getScientificDescription().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
-      webDTO.setErrorDescription("Detailed Description must be Entered");
-      abstractionList.add(webDTO);
-    }
-    if (studyProtocolDTO.getKeywordText().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
-      webDTO.setErrorDescription("Keywords must be Entered");
-      abstractionList.add(webDTO);
-    }
+//    if (studyProtocolDTO.getScientificDescription().getValue() == null) {
+//      webDTO = new AbstractionCompletionDTO();
+//      webDTO.setErrorType("Error");
+//      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
+//      webDTO.setErrorDescription("Detailed Description must be Entered");
+//      abstractionList.add(webDTO);
+//    }
+//    if (studyProtocolDTO.getKeywordText().getValue() == null) {
+//      webDTO = new AbstractionCompletionDTO();
+//      webDTO.setErrorType("Error");
+//      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
+//      webDTO.setErrorDescription("Keywords must be Entered");
+//      abstractionList.add(webDTO);
+//    }
   }
 
 
@@ -535,6 +541,68 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       abstractionList.add(webDTO);
     }
   }
+  
+  private void enforceArmInterventional(Ii studyProtocolIi) throws PAException {
+      List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService()
+          .getByStudyProtocol(studyProtocolIi);
+      HashMap<String, String> intervention = new HashMap<String, String>();  
+    for (PlannedActivityDTO pa : paList) {
+      if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
+              .convertCdToString(pa.getCategoryCode())))) {
+          List<ArmDTO> armDtos = PoPaServiceBeanLookup.getArmService().getByPlannedActivity(pa.getIdentifier());
+          if (armDtos == null || armDtos.isEmpty()) {
+              abstractionList.add(createError("Error", 
+                      "Select Arm from Scientific Data menu and associated Intervention." ,  "Every intervention " 
+                       + "in interventional trial must be associated with at least one arm in interventional trial"));
+          }
+          for (ArmDTO armDTO : armDtos) {
+              intervention.put(armDTO.getName().getValue() , armDTO.getName().getValue());
+          }
+      }
+    }
+    List<ArmDTO> arms = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
+//    AbstractionCompletionDTO webDTO = null;
+    for (ArmDTO armDTO : arms) {
+        if (ArmTypeCode.NO_INTERVENTION.getCode().equals(armDTO.getTypeCode())) {
+            continue;
+        }
+        if (!intervention.containsKey(armDTO.getName().getValue())) {
+            //abstractionList.add
+                createError("Error", 
+                    "Select Arm from Scientific Data menu and associated Interventional." , 
+                    "Arm " + armDTO.getName().getValue() + " does not have any Intervention associated");
+            
+        }
+    } 
+  }
+
+  
+  private  void enforceEligibility(Ii studyProtocolIi) throws PAException {
+      List<PlannedEligibilityCriterionDTO> paECs = 
+          PoPaServiceBeanLookup.getPlannedActivityService().
+              getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+      if (paECs == null || paECs.isEmpty()) {
+          abstractionList.add(
+          createError("Error", 
+                  "Select Eligibilty Criteria from specific Interventional/Observational under Scientific Data menu.", 
+              " does not have any Eligibilty Criteria"));
+          return;
+      }
+      boolean otherCriteriaExist = false;
+      for (PlannedEligibilityCriterionDTO paEC : paECs) {
+          if (ActivityCategoryCode.OTHER.getCode().equals(paEC.getCategoryCode().getCode())) {
+              otherCriteriaExist = true;
+          }
+      } // for loop
+      if (!otherCriteriaExist) {
+          abstractionList.add(createError("Error", 
+                  "Select Eligibilty Criteria from specific Interventional/Observational under Scientific " 
+                   + "Data menu and Add Other Criteria.", " Minimum one Other criteria must be added "));
+          
+      }
+
+  }
+  
   
   private AbstractionCompletionDTO createError(String errorType, String comment, String errorDescription) {
       AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();
