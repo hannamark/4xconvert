@@ -89,7 +89,6 @@ import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
@@ -135,6 +134,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         getServiceLocator().getHealthCareFacilityService();
     private final ResearchOrganizationServiceLocal roService = PoRegistry.getInstance().
         getServiceLocator().getResearchOrganizationService();
+    
+    private Organization persistedCtepOrg;
 
     /**
      * Constructor.
@@ -150,11 +151,14 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * @throws JMSException on error
      */
     public Organization getCtepOrganization() throws JMSException {
-        Ii ctepIi = new Ii();
-        ctepIi.setExtension(CTEP_EXTENSION);
-        ctepIi.setRoot(CTEP_ROOT);
+        if (persistedCtepOrg == null) {
+            Ii ctepIi = new Ii();
+            ctepIi.setExtension(CTEP_EXTENSION);
+            ctepIi.setRoot(CTEP_ROOT);
+            persistedCtepOrg = importOrgNoUpdate(ctepIi);
+        }
 
-        return importOrgNoUpdate(ctepIi);
+        return persistedCtepOrg;
     }
 
     /**
@@ -234,13 +238,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // set the id to null, because when we convert to a local org, the identifier value should not be the value
         // provided by ctep, that will get suck in to the assignedId field of the identified org role.
         dto.setIdentifier(null);
-        Organization o = (Organization) PoXsnapshotHelper.createModel(dto);
-
-        // TODO this should be removed once ctep has its data fixed.
-        if (o.getEmail().isEmpty()) {
-            o.getEmail().add(new Email("test@test.com"));
-        }
-        return o;
+        return (Organization) PoXsnapshotHelper.createModel(dto);
     }
 
     private IdentifiedOrganization searchForPreviousRecord(Ii ctepOrgId) {
@@ -281,6 +279,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ro.setStatus(RoleStatus.ACTIVE);
             this.roService.curate(ro);
         }
+        
         return ctepOrg;
     }
 

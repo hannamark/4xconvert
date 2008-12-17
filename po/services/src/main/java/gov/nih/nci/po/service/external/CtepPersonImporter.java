@@ -107,6 +107,7 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.List;
@@ -208,7 +209,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         dto.setIdentifier(null);
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
         if (p.getEmail().isEmpty()) {
-            p.getEmail().add(new Email("test@test.com"));
+            p.getEmail().add(new Email("unknown@example.com"));
         }
         return p;
     }
@@ -233,7 +234,10 @@ public class CtepPersonImporter extends CtepEntityImporter {
         createIdentifiedPerson(ctepPerson, assignedId);
 
         // create identified person record for any other person identifiers provied in ctep services
-
+        IdentifiedPersonDTO otherIdentifier = getOtherId(assignedId);
+        if (otherIdentifier != null) {
+            createIdentifiedPerson(ctepPerson, otherIdentifier.getAssignedId());
+        }
 
         // create records for all health care provider records
         HealthCareProviderDTO hcp = getHcpFromCtep(assignedId);
@@ -250,6 +254,14 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
 
         return ctepPerson;
+    }
+    
+    private IdentifiedPersonDTO getOtherId(Ii assignedId) {
+        try {
+            return getCtepPersonService().getIdentifiedPersonById(assignedId);
+        } catch (CTEPEntException e) {
+            return null;
+        }
     }
 
     private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException {
@@ -269,17 +281,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     private HealthCareProviderDTO getHcpFromCtep(Ii personIi) {
         try {
-            List<HealthCareProviderDTO> dtos = getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
-            if (dtos.isEmpty()) {
-                return null;
-            } else if (dtos.size() == 1) {
-                return dtos.get(0);
-            } else {
-                throw new RuntimeException("CTEP is providing multiple HealthCareProvider for a single person.");
-            }
+            return getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
         } catch (CTEPEntException e) {
             return null;
         }
@@ -306,17 +310,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.hcpService.curate(hcp);
     }
 
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     private ClinicalResearchStaffDTO getCrsFromCtep(Ii personIi) {
         try {
-            List<ClinicalResearchStaffDTO> dtos = getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
-            if (dtos.isEmpty()) {
-                return null;
-            } else if (dtos.size() == 1) {
-                return dtos.get(0);
-            } else {
-                throw new RuntimeException("CTEP is providing multiple ClinicalResearchStaff for a single person.");
-            }
+            return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
         } catch (CTEPEntException e) {
             return null;
         }
