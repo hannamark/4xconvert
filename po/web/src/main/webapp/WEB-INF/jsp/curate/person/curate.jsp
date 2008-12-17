@@ -188,16 +188,19 @@
 
 <c:if test="${fn:length(person.changeRequests) > 0}">
 <div id="page" style="margin-top:10px;">
-	<s:form action="ajax/person/curate/changeCurrentChangeRequest.action" id="changeCrForm">
+    <c:if test="${fn:length(person.changeRequests) > 1}">
+    <div class="crselect">
+	<s:form action="ajax/person/curate/changeCurrentChangeRequest.action" id="changeCrForm" theme="simple">
 	    <s:hidden key="rootKey"/>
 	    <s:select
-	       label="Current Change Request"
 	       name="cr"
 	       list="selectChangeRequests"
 	       value="cr.id"
 	       onchange="document.getElementById('curateEntityForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
 	       />
 	</s:form>
+	</div>
+	</c:if>
 <div id="crinfo">
 <%@ include file="crInfo.jsp" %>
 </div>

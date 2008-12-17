@@ -101,17 +101,20 @@
 
 <c:if test="${fn:length(role.changeRequests) > 0}">
 <div id="page" style="margin-top:10px;">
-    <s:form action="ajax/roles/person/ClinicalResearchStaff/changeCurrentChangeRequest.action" id="changeCrForm">
+    <c:if test="${fn:length(role.changeRequests) > 1}">
+    <div class="crselect">
+    <s:form action="ajax/roles/person/ClinicalResearchStaff/changeCurrentChangeRequest.action" id="changeCrForm" theme="simple">
         <s:hidden key="person"/>
         <s:hidden key="rootKey"/>
         <s:select
-           label="Current Change Request"
            name="cr"
            list="selectChangeRequests"
            value="cr.id"
            onchange="$('curateRoleForm_cr_id').value = this.value; submitAjaxForm('changeCrForm','crinfo', null, true);"
            />
     </s:form>
+    </div>
+    </c:if>
 <div id="crinfo">
 <%@ include file="roleCrInfo.jsp" %>
 </div>
