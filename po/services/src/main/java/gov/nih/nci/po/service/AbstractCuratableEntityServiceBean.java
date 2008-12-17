@@ -1,8 +1,10 @@
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
-import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.CGLIBUtils;
+import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.List;
 import java.util.Set;
@@ -40,26 +42,39 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
         super.curate(e);
     }
 
-    private void cascadeStatusChange(T e) {
+    private void cascadeStatusChange(T e) throws JMSException {
         if (e.getPriorEntityStatus() != e.getStatusCode()) {
             Session s = PoHibernateUtil.getCurrentSession();
             switch(e.getStatusCode()) {
                 case NULLIFIED:
-                    for (CuratableRole x : getAssociatedRoles(e, s)) {
+                    for (Correlation x : getAssociatedRoles(e, s)) {
                         x.setStatus(RoleStatus.NULLIFIED);
-                        s.update(x);
+                        GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+                        service.curate((Correlation) x);
                     }
                     break;
                 case INACTIVE:
-                    for (CuratableRole x : getAssociatedRoles(e, s)) {
+                    for (Correlation x : getAssociatedRoles(e, s)) {
                         if (x.getStatus() == RoleStatus.ACTIVE) {
                             x.setStatus(RoleStatus.SUSPENDED);
-                            s.update(x);
+                            GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+                            service.curate(x);
                         }
                     }
                     break;
                 default:
             }
+        }
+    }
+
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+    private <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
+        try {
+            String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
+            String serviceName = String.format("po/%sServiceBean/local", className);
+            return (GenericStructrualRoleServiceLocal<R>) JNDIUtil.lookup(serviceName);
+        } catch (ClassNotFoundException cnf) {
+            throw new RuntimeException(cnf);
         }
     }
 
@@ -73,7 +88,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      * @return list of roles associated to the entity.
      */
     @SuppressWarnings("unchecked")
-    protected <C extends CuratableRole> List<C> getAssociatedRoles(
+    protected <C extends Correlation> List<C> getAssociatedRoles(
             Long entityId, Class<C> type, String property, Session s) {
         
         Criteria c = s.createCriteria(type);
@@ -89,5 +104,5 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      * @param s session to pull from
      * @return all associated roles.
      */
-    protected abstract Set<? extends CuratableRole> getAssociatedRoles(T entity, Session s);
+    protected abstract Set<? extends Correlation> getAssociatedRoles(T entity, Session s);
 }

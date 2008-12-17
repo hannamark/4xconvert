@@ -103,6 +103,8 @@ import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 
 /**
  * @author Scott Miller
@@ -112,6 +114,14 @@ public abstract class AbstractHibernateTestCase {
 
     private static final Logger LOG = Logger.getLogger(AbstractHibernateTestCase.class);
     private static Configuration CFG;
+    protected static SimpleNamingContextBuilder contextBuilder = new SimpleNamingContextBuilder();
+    static {
+        try {
+            contextBuilder.activate();
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
 
     protected Transaction transaction;
 

@@ -83,6 +83,8 @@
 package gov.nih.nci.po.service.correlation;
 
 import gov.nih.nci.po.data.bo.RoleStatus;
+import org.junit.BeforeClass;
+import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -118,6 +120,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.service.EjbTestHelper;
+import org.junit.AfterClass;
 
 /**
  * Skeleton for testing structural role services.
@@ -294,6 +298,23 @@ public abstract class AbstractStructrualRoleServiceTest<T extends PersistentObje
             }
             assertEquals(RoleStatus.NULLIFIED, r.getStatus());
         }
+    }
+
+    @BeforeClass
+    public static void setUpJNDI() {
+        contextBuilder.bind("po/ResearchOrganizationServiceBean/local", EjbTestHelper.getResearchOrganizationServiceBean());
+        contextBuilder.bind("po/IdentifiedOrganizationServiceBean/local", EjbTestHelper.getIdentifiedOrganizationServiceBean());
+        contextBuilder.bind("po/IdentifiedPersonServiceBean/local", EjbTestHelper.getIdentifiedPersonServiceBean());
+        contextBuilder.bind("po/HealthCareProviderServiceBean/local", EjbTestHelper.getHealthCareProviderServiceBean());
+        contextBuilder.bind("po/HealthCareFacilityServiceBean/local", EjbTestHelper.getHealthCareFacilityServiceBean());
+        contextBuilder.bind("po/ClinicalResearchStaffServiceBean/local", EjbTestHelper.getClinicalResearchStaffServiceBean());
+        contextBuilder.bind("po/OrganizationalContactServiceBean/local", EjbTestHelper.getOrganizationalContactService());
+        contextBuilder.bind("po/OversightCommitteeServiceBean/local", EjbTestHelper.getOversightCommitteeServiceBean());
+    }
+
+    @AfterClass
+    public static void tearDownJNDI() {
+        contextBuilder.clear();
     }
 
     @Test

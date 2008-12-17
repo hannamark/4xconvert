@@ -167,6 +167,18 @@
             <version>1.0.1B</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-mock</artifactId>
+            <version>2.0.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>2.5.6</version>
+            <scope>test</scope>
+        </dependency>
         
         <!-- Dependencies for the ant build script for xsnapshot generation -->
         <dependency>
@@ -390,12 +402,12 @@
                             <username>${admin.db.username}</username>
                             <password>${admin.db.password}</password>
                             <autocommit>true</autocommit>
-                            <sqlCommand> 
-                                drop database if exists ${database.name}; 
+                            <sqlCommand>
+                                drop database if exists ${database.name};
                                 drop user if exists ${jdbc.username}; 
                                 create database ${database.name}; 
                                 create user ${jdbc.username} with password '${jdbc.password}'; 
-                                grant all on database ${database.name} to ${jdbc.username}; 
+                                grant all on database ${database.name} to ${jdbc.username};
                             </sqlCommand>
                         </configuration>
                     </plugin>

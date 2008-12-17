@@ -83,7 +83,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.CuratableRole;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
@@ -125,8 +125,8 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     /**
      * {@inheritDoc}
      */
-    protected Set<CuratableRole> getAssociatedRoles(Organization o, Session s) {
-        Set<CuratableRole> l = new HashSet<CuratableRole>();
+    protected Set<Correlation> getAssociatedRoles(Organization o, Session s) {
+        Set<Correlation> l = new HashSet<Correlation>();
         // played roles
         l.addAll(getAssociatedRoles(o.getId(), HealthCareFacility.class, PLAYER_ID, s));
         l.addAll(getAssociatedRoles(o.getId(), IdentifiedOrganization.class, PLAYER_ID, s));
