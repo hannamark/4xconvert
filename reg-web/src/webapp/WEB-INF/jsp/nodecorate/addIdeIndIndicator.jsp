@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
 <c:choose>
-<c:when test="${fn:length(ideInd) > 0}">
+<c:when test="${ideInd != null} && ${fn:length(ideInd) > 0}">
 	<display:table class="data" sort="list"  uid="row"  name="ideInd" requestURI="submitTrialdisplayIndIde.action">
 		<display:column title="IndIde Type" property="indIde"  headerClass="sortable"/>
 		<display:column title="Number" property="number"  headerClass="sortable"/>
