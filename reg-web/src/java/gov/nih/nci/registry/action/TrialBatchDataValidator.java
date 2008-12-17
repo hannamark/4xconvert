@@ -3,6 +3,7 @@ package gov.nih.nci.registry.action;
 import java.sql.Timestamp;
 import java.util.Date;
 
+
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -24,7 +25,6 @@ import gov.nih.nci.registry.util.RegistryUtil;
  */
 @SuppressWarnings("PMD")
 public class TrialBatchDataValidator {
-
 /**
  * 
  * validate the submit trial form elements.
@@ -332,6 +332,9 @@ public class TrialBatchDataValidator {
             nullCount += 1;
         }
         if (null == icdCode || icdCode.trim().length() < 1) {
+            nullCount += 1;
+        }
+        if (null == divCode || divCode.trim().length() < 1) {
             nullCount += 1;
         }
         if (nullCount == BatchConstants.GRANT_FIELDS) {
