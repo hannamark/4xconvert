@@ -163,6 +163,37 @@ public class PopUpAction extends ActionSupport {
      * 
      * @return result
      */
+    public String displaycontactPersonsListDisplayTag() {
+
+        String firstName = ServletActionContext.getRequest().getParameter("firstName");
+        String lastName = ServletActionContext.getRequest().getParameter("lastName");
+        if (firstName.equals("") && lastName.equals("")) {
+            String message = "Please enter at least one search criteria"; 
+            persons = null;
+            addActionError(message);
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
+            return SUCCESS;
+        }        
+        PersonDTO p = new PersonDTO();
+        // (RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
+        p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
+        try {
+            List<PersonDTO> list = new ArrayList<PersonDTO>();
+            list = PaRegistry.getPoPersonEntityService().search(p);
+            for (PersonDTO dto : list) {
+                persons.add(convertToPaPerson(dto));
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return "contactpersons";
+        }
+        return "contactpersons";
+    }    
+    /**
+     * 
+     * @return result
+     */
     public String displayPersonsList() {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");

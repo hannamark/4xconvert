@@ -91,10 +91,23 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @throws PAException on error
-     * @return result
+    * @throws PAException on error
+     * @return res
      */
-    public String displayPersonsList() throws PAException {
+    public String displayPersonsListDisplayTag() throws PAException {
+        return populatePersons(true);
+    }
+    
+    /**
+     * @throws PAException on error
+      * @return res
+      */
+     public String displayPersonsList() throws PAException {
+         return populatePersons(false);
+     }    
+    
+
+    private String populatePersons(boolean pagination) throws PAException {
         try {
             String firstName = ServletActionContext.getRequest().getParameter("firstName");
             String lastName = ServletActionContext.getRequest().getParameter("lastName");
@@ -140,9 +153,9 @@ public class PopupAction extends ActionSupport implements Preparable {
             }
         } catch (URISyntaxException e) {
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
-            return SUCCESS;
+            return pagination ? "persons" : SUCCESS;
         }
-        return SUCCESS;
+        return pagination ? "persons" : SUCCESS;
     }
 
     /**
@@ -152,7 +165,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String displayOrgListDisplayTag() {
         return populateOrgs(true);
     }
-
+    
     private String populateOrgs(boolean pagination) {
         try {
             String orgName = ServletActionContext.getRequest().getParameter("orgName");
