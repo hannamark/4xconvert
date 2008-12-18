@@ -11,4 +11,4 @@
 		<span class="btn_img"><span class="add">Select</span></span></s:a>	
 	</display:column>
 </display:table>
-</c:if>
+</c:if> 
