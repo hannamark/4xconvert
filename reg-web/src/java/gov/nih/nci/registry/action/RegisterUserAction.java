@@ -320,12 +320,14 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.affiliateOrg",
                         getText("error.register.affiliateOrg"));
             }
+            /*
             if (PAUtil.isNotEmpty(registryUserWebDTO.getPhone())) {
                 if (!RegistryUtil.isValidPhoneNumber(registryUserWebDTO.getPhone())) {
                     addFieldError("registryUserWebDTO.phone",
                             getText("error.register.invalidPhoneNumber"));                
                 }
             }
+            */
             if (PAUtil.isNotEmpty(registryUserWebDTO.getState())
                         && PAUtil.isNotEmpty(registryUserWebDTO.getCountry())) {
                 if (registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
