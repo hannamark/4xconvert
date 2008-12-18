@@ -387,7 +387,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         dto.getName().getPart().add(part);
         // if middel name exists stick it in here!
         if (midName != null && PAUtil.isNotEmpty(midName)) {
-            Enxp partMid = new Enxp(EntityNamePartType.FAM);
+            Enxp partMid = new Enxp(EntityNamePartType.GIV);
             partMid.setValue(midName);
             dto.getName().getPart().add(partMid);
         }
