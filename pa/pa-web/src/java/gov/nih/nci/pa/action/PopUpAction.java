@@ -25,9 +25,9 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Common module to call the PO Search and related functionalities.
- * 
+ *
  * @author Harsha
- * 
+ *
  */
 @SuppressWarnings("PMD")
 public class PopUpAction extends ActionSupport {
@@ -51,17 +51,17 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return String success or failure
      */
     public String lookuppersons() {
         persons = null;
-        
+
         return "persons";
     }
 
     /**
-     * 
+     *
      * @return String success or failure
      */
     public String lookupcontactpersons() {
@@ -73,12 +73,12 @@ public class PopUpAction extends ActionSupport {
         }
         if (telephone != null) {
             ServletActionContext.getRequest().getSession().setAttribute("telephoneEntered", telephone);
-        }          
+        }
         return "contactpersons";
     }
 
     /**
-     * 
+     *
      * @return String success or failure
      */
     public String lookuporgs() {
@@ -97,7 +97,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayOrgList() {
@@ -109,7 +109,7 @@ public class PopUpAction extends ActionSupport {
             String cityName = ServletActionContext.getRequest().getParameter("cityName");
             String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
             if (orgName.equals("") && countryName.equals("aaa") && cityName.equals("") && zipCode.equals("")) {
-                String message = "Please enter at least one search criteria"; 
+                String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
@@ -122,13 +122,13 @@ public class PopUpAction extends ActionSupport {
             callConvert = PaRegistry.getPoOrganizationEntityService().search(criteria);
             convertPoOrganizationDTO(callConvert);
             return SUCCESS;
-        } catch (Exception e) {           
+        } catch (Exception e) {
             return SUCCESS;
         }
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displaycontactPersonsList() {
@@ -136,12 +136,12 @@ public class PopUpAction extends ActionSupport {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
         if (firstName.equals("") && lastName.equals("")) {
-            String message = "Please enter at least one search criteria"; 
+            String message = "Please enter at least one search criteria";
             persons = null;
             addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return SUCCESS;
-        }        
+        }
         PersonDTO p = new PersonDTO();
         // (RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
@@ -160,7 +160,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displaycontactPersonsListDisplayTag() {
@@ -168,12 +168,12 @@ public class PopUpAction extends ActionSupport {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
         if (firstName.equals("") && lastName.equals("")) {
-            String message = "Please enter at least one search criteria"; 
+            String message = "Please enter at least one search criteria";
             persons = null;
             addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return SUCCESS;
-        }        
+        }
         PersonDTO p = new PersonDTO();
         // (RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
@@ -189,21 +189,21 @@ public class PopUpAction extends ActionSupport {
             return "contactpersons";
         }
         return "contactpersons";
-    }    
+    }
     /**
-     * 
+     *
      * @return result
      */
     public String displayPersonsList() {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
         if (firstName.equals("") && lastName.equals("")) {
-            String message = "Please enter at least one search criteria"; 
+            String message = "Please enter at least one search criteria";
             persons = null;
             addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return SUCCESS;
-        }         
+        }
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         try {
@@ -221,19 +221,19 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayPersonsListDisplayTag() {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
         if (firstName.equals("") && lastName.equals("")) {
-            String message = "Please enter at least one search criteria"; 
+            String message = "Please enter at least one search criteria";
             persons = null;
             addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return SUCCESS;
-        }         
+        }
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         try {
@@ -251,7 +251,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayOrgListDisplayTag() {
@@ -268,12 +268,12 @@ public class PopUpAction extends ActionSupport {
             String cityName = ServletActionContext.getRequest().getParameter("cityName");
             String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
             if (orgName.equals("") && countryName.equals("aaa") && cityName.equals("") && zipCode.equals("")) {
-                String message = "Please enter at least one search criteria"; 
+                String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
                 return SUCCESS;
-            }            
+            }
             // Set the values
             orgSearchCriteria.setOrgName(orgName);
             orgSearchCriteria.setOrgCity(cityName);
@@ -291,7 +291,7 @@ public class PopUpAction extends ActionSupport {
             return "orgs";
         }
     }
-    
+
     private void convertPoOrganizationDTO(List<OrganizationDTO> poOrgDtos) throws PAException {
         SearchOrgResultDisplay displayElement = null;
         for (int i = 0; i < poOrgDtos.size(); i++) {
@@ -302,7 +302,7 @@ public class PopUpAction extends ActionSupport {
             int partSize = poOrgDtos.get(i).getPostalAddress().getPart().size();
             AddressPartType type = null;
             for (int k = 0; k < partSize; k++) {
-                type = poOrgDtos.get(i).getPostalAddress().getPart().get(k).getType();               
+                type = poOrgDtos.get(i).getPostalAddress().getPart().get(k).getType();
                 if (type.name().equals("CNT")) {
                     displayElement.setCountry(getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart().
                             get(k).getCode()));
@@ -312,15 +312,15 @@ public class PopUpAction extends ActionSupport {
                 }
                 if (type.name().equals("CTY")) {
                     displayElement.setCity(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
-                }              
+                }
                 if (type.name().equals("STA")) {
                     displayElement.setState(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
                 }
-            }            
+            }
             orgs.add(displayElement);
         }
     }
-    
+
     private String getCountryNameUsingCode(String code) throws PAException {
         if (!(countryList.size() > 0)) {
             countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
@@ -337,13 +337,13 @@ public class PopUpAction extends ActionSupport {
         }
         return null;
     }
-    
+
     private SearchPersonResultDisplay convertToPaPerson(PersonDTO poPerson) {
         SearchPersonResultDisplay prs = new SearchPersonResultDisplay();
         List<Enxp> list = poPerson.getName().getPart();
         Iterator ite = list.iterator();
         while (ite.hasNext()) {
-           Enxp part = (Enxp) ite.next();          
+           Enxp part = (Enxp) ite.next();
            if (EntityNamePartType.FAM == part.getType()) {
                prs.setLastName(part.getValue());
            } else if (EntityNamePartType.GIV == part.getType()) {
@@ -357,9 +357,9 @@ public class PopUpAction extends ActionSupport {
         prs.setId(Long.valueOf(poPerson.getIdentifier().getExtension().toString()));
         return prs;
     }
-    
-    
-  
+
+
+
     /**
      * @return the countryList
      */
