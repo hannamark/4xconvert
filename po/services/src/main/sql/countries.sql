@@ -310,20 +310,7 @@ insert into state (id, name, code, country_id) values
 (nextval('hibernate_sequence'), 'WASHINGTON', 'WA', (select id from country where alpha2 = 'US')),
 (nextval('hibernate_sequence'), 'WEST VIRGINIA', 'WV', (select id from country where alpha2 = 'US')),
 (nextval('hibernate_sequence'), 'WISCONSIN', 'WI', (select id from country where alpha2 = 'US')),
-(nextval('hibernate_sequence'), 'WYOMING', 'WY', (select id from country where alpha2 = 'US')),
-(nextval('hibernate_sequence'), 'ALBERTA', 'AB', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'BRITISH COLUMBIA', 'BC', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'MANITOBA', 'MB', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'NEW BRUNSWICK', 'NB', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'NEWFOUNDLAND AND LABRADOR', 'NL', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'NOVA SCOTIA', 'NS', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'NORTHWEST TERRITORIES', 'NT', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'NUNAVUT', 'NU', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'ONTARIO', 'ON', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'PRINCE EDWARD ISLAND', 'PE', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'QUEBEC', 'QC', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'SASKATCHEWAN', 'SK', (select id from country where alpha2 = 'CA')),
-(nextval('hibernate_sequence'), 'YUKON TERRITORY', 'YT', (select id from country where alpha2 = 'CA'));
+(nextval('hibernate_sequence'), 'WYOMING', 'WY', (select id from country where alpha2 = 'US'));
 
 
 

@@ -82,23 +82,25 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import gov.nih.nci.po.data.bo.RoleStatus;
-import org.junit.BeforeClass;
-import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.PlayedRole;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
@@ -113,15 +115,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import gov.nih.nci.po.data.bo.CuratableEntity;
-import gov.nih.nci.po.data.bo.PlayedRole;
-import gov.nih.nci.po.data.bo.ScopedRole;
-import gov.nih.nci.po.service.EjbTestHelper;
-import org.junit.AfterClass;
 
 /**
  * Skeleton for testing structural role services.

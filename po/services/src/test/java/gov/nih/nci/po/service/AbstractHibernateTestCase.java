@@ -103,7 +103,6 @@ import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 
 /**

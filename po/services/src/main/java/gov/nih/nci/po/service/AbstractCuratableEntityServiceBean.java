@@ -42,6 +42,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
         super.curate(e);
     }
 
+    @SuppressWarnings("unchecked")
     private void cascadeStatusChange(T e) throws JMSException {
         if (e.getPriorEntityStatus() != e.getStatusCode()) {
             Session s = PoHibernateUtil.getCurrentSession();
@@ -67,7 +68,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
         }
     }
 
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+    @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", "unchecked" })
     private <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
         try {
             String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
