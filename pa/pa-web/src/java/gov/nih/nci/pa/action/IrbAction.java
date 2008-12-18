@@ -339,6 +339,11 @@ public class IrbAction extends ActionSupport implements Preparable {
     }
     
     private void loadOrg(String poOrgId) throws Exception {
+        if (PAUtil.isEmpty(poOrgId)) {
+            setCandidateBoardList();
+            ct = new ContactWebDTO();
+            return;
+        }
         OrganizationDTO poOrg = PaRegistry.getPoOrganizationEntityService().
             getOrganization(IiConverter.converToPoOrganizationIi(poOrgId));
         if (poOrg == null) {
