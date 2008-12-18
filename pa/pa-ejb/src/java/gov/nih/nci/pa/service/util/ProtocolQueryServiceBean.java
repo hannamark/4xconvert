@@ -419,6 +419,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            if (PAUtil.isNotNullOrNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
                 where.append(" and per.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId());
            }
+           // required for Registry duplicate trial check
+           // Rejected trial should be excluded from duplicate check
+           if (studyProtocolQueryCriteria.getExcludeRejectProtocol() != null 
+                   && studyProtocolQueryCriteria.getExcludeRejectProtocol().booleanValue()) {
+               where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
+               
+           }
 
            
            where.append(" and sps.functionalCode ='"
