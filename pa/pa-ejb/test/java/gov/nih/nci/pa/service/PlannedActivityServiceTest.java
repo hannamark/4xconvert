@@ -142,4 +142,26 @@ public class PlannedActivityServiceTest {
         assertEquals(dto.getStudyProtocolIdentifier()
                 , spIi);
     }
+    @Test
+    public void oneLeadDrugPerStudyTest() throws Exception {
+        PlannedActivityDTO dto = remoteEjb.get(ii);
+        assertFalse(ActivitySubcategoryCode.DRUG.equals(
+                ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode()))));
+        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DRUG));
+        PlannedActivityDTO resultDto = remoteEjb.update(dto);
+        assertTrue(ActivitySubcategoryCode.DRUG.equals(
+                ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(resultDto.getSubcategoryCode()))));
+        dto.setIdentifier(null);
+        try {
+            remoteEjb.create(dto);
+            fail("Should have failed form multiple lead drugs.");
+        } catch (Exception e) {
+            // expected behavior
+        }
+        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DEVICE));
+        resultDto = remoteEjb.create(dto);
+        assertTrue(ActivitySubcategoryCode.DEVICE.equals(
+                ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(resultDto.getSubcategoryCode()))));
+    }
+
 }

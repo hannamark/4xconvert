@@ -41,30 +41,52 @@ public class PlannedActivityServiceBean
 
     private void businessRules(PlannedActivityDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            serviceError("PlannedActivity.studyProtocol must be set.  ");
+            serviceError("PlannedActivity.studyProtocol must be set.");
         }
         if (PAUtil.isCdNull(dto.getCategoryCode())) {
-            serviceError("PlannedActivity.categoryCode must be set.  ");
+            serviceError("PlannedActivity.categoryCode must be set.");
         }
         ActivityCategoryCode cc = ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode()));
         if (ActivityCategoryCode.INTERVENTION.equals(cc)) {
+            boolean isDrug = ActivitySubcategoryCode.DRUG.getCode()
+                    .equals(CdConverter.convertCdToString(dto.getSubcategoryCode()));
+
             if (PAUtil.isCdNull(dto.getSubcategoryCode())) {
-                serviceError("Intervention type must be set.  ");
+                serviceError("Intervention type must be set.");
             }
             if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
-                serviceError("An Intervention must be selected.  ");
+                serviceError("An Intervention must be selected.");
             }
-            if ((!ActivitySubcategoryCode.DRUG.getCode().equals(CdConverter.
-                    convertCdToString(dto.getSubcategoryCode())))
-                && (dto.getLeadProductIndicator() != null)) {
-                getLogger().info("Setting lead product indicator to null for non-drug PlannedActivity.  ");
+            if (!isDrug && (dto.getLeadProductIndicator() != null)) {
+                getLogger().info("Setting lead product indicator to null for non-drug PlannedActivity.");
                 dto.setLeadProductIndicator(null);
             }
-            if ((ActivitySubcategoryCode.DRUG.getCode().equals(CdConverter.
-                    convertCdToString(dto.getSubcategoryCode())))
-                && (dto.getLeadProductIndicator() == null)) {
-                getLogger().info("Generating Bl (false) for non-drug PlannedActivity.  ");
-                dto.setLeadProductIndicator(BlConverter.convertToBl(false));
+            if (isDrug) {
+                drugBusinessRules(dto);
+            }
+        }
+    }
+    
+    private void drugBusinessRules(PlannedActivityDTO dto) throws PAException {
+        if (dto.getLeadProductIndicator() == null) {
+            getLogger().info("Generating Bl (false) for non-drug PlannedActivity.");
+            dto.setLeadProductIndicator(BlConverter.convertToBl(false));
+        
+        }
+        // only one lead drug per study
+        if (BlConverter.covertToBoolean(dto.getLeadProductIndicator())) {
+            Long dtoId = IiConverter.convertToLong(dto.getIdentifier());
+            boolean dtoIsNew = (dtoId == null);
+            List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (PlannedActivityDTO pa : paList) {
+                boolean paIsLead = (null == BlConverter.covertToBoolean(pa.getLeadProductIndicator())) 
+                        ? false : BlConverter.covertToBoolean(pa.getLeadProductIndicator());
+                if ((!PAUtil.isIiNull(pa.getInterventionIdentifier()))
+                        && (dtoIsNew || !dtoId.equals(IiConverter.convertToLong(pa.getIdentifier())))
+                        && paIsLead) {
+                    getLogger().warn("It should throw error");
+                    serviceError("Only one drug may be marked as lead for a given study.");
+                }
             }
         }
     }
