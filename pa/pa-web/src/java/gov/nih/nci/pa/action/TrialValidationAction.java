@@ -305,6 +305,9 @@ public class TrialValidationAction extends ActionSupport {
       if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
         addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
       }
+      if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
+          addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
+      }
       if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
         addFieldError("gtdDTO.OfficialTitle", getText("OfficialTitle must be Entered"));
       }
@@ -538,15 +541,24 @@ public class TrialValidationAction extends ActionSupport {
         spDto.setFunctionalCode(cd);
         List<StudyParticipationDTO> srDtos = PaRegistry.getStudyParticipationService()
             .getByStudyProtocol(studyProtocolIi, spDto);
-        if (srDtos == null || srDtos.isEmpty() || srDtos.size() > 1) {
-            throw new PAException(" StudyParticipation is either null , or more than one lead is found for a "  
-                    + " given Study Protocol id = " +  studyProtocolIi.getExtension());
-        }
-        spDto = srDtos.get(0);
         OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
-        spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
-        spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
-        PaRegistry.getStudyParticipationService().update(spDto);
+
+        if (srDtos != null && srDtos.size() > 1) {
+            throw new PAException(" StudyParticipation has more than one recrod is found for a "  
+                    + " given Study Protocol id = " +  studyProtocolIi.getExtension());
+        } else if (srDtos == null || srDtos.isEmpty()) {
+            spDto = new StudyParticipationDTO();
+            spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
+            spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
+            spDto.setStudyProtocolIdentifier(studyProtocolIi);
+            spDto.setFunctionalCode(cd);
+            PaRegistry.getStudyParticipationService().create(spDto);
+        } else {
+            spDto = srDtos.get(0);
+            spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
+            spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
+            PaRegistry.getStudyParticipationService().update(spDto);
+        }
         
     }
     
@@ -560,12 +572,9 @@ public class TrialValidationAction extends ActionSupport {
                     + " given Study Protocol id = " +  studyProtocolIi.getExtension());
         }
         StudyContactDTO scDto = srDtos.get(0);
-        
         StudyProtocolQueryDTO spqDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession().
                 getAttribute(Constants.TRIAL_SUMMARY);        
-        
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
-        
         Long crs = crbb.createClinicalResearchStaffCorrelations(
                                     gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier());
         scDto.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));

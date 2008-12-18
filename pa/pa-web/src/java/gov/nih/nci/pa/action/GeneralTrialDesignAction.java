@@ -319,15 +319,24 @@ public class GeneralTrialDesignAction extends ActionSupport {
         spDto.setFunctionalCode(cd);
         List<StudyParticipationDTO> srDtos = PaRegistry.getStudyParticipationService()
             .getByStudyProtocol(studyProtocolIi, spDto);
-        if (srDtos == null || srDtos.isEmpty() || srDtos.size() > 1) {
-            throw new PAException(" StudyParticipation is either null , or more than one lead is found for a "  
-                    + " given Study Protocol id = " +  studyProtocolIi.getExtension());
-        }
-        spDto = srDtos.get(0);
         OrganizationCorrelationServiceBean ocb = new OrganizationCorrelationServiceBean();
-        spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
-        spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
-        PaRegistry.getStudyParticipationService().update(spDto);
+
+        if (srDtos != null && srDtos.size() > 1) {
+            throw new PAException(" StudyParticipation has more than one recrod is found for a "  
+                    + " given Study Protocol id = " +  studyProtocolIi.getExtension());
+        } else if (srDtos == null || srDtos.isEmpty()) {
+            spDto = new StudyParticipationDTO();
+            spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
+            spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
+            spDto.setStudyProtocolIdentifier(studyProtocolIi);
+            spDto.setFunctionalCode(cd);
+            PaRegistry.getStudyParticipationService().create(spDto);
+        } else {
+            spDto = srDtos.get(0);
+            spDto.setResearchOrganizationIi(IiConverter.convertToIi(ocb.createResearchOrganizationCorrelations(roId)));
+            spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(lpIdentifier));
+            PaRegistry.getStudyParticipationService().update(spDto);
+        }
         
     }
     
@@ -479,6 +488,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
       }
       if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
         addFieldError("gtdDTO.officialTitle", getText("OfficialTitle must be Entered"));
+      }
+      if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
+          addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
       }
       if (PAUtil.isEmpty(gtdDTO.getPublicTitle())) {
         addFieldError("gtdDTO.publicTitle", getText("PublicTitle must be Entered"));

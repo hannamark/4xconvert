@@ -50,12 +50,12 @@ function generateReport(pid) {
                 <s:if test="${abstractionError==false}">                                        
                     <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>                                
                     <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Accepted'}">
-                    <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">ABS. NotVerified</span></span></s:a></li>
+                    <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">Complete Abstraction</span></span></s:a></li>
                     </s:if>
                 </s:if>
                 
-                <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Abstraction not verified'}">
-                <li><s:a href="abstractionCompletionverified.action" cssClass="btn"><span class="btn_img"><span class="save">ABS.Verified</span></span></s:a></li>
+                <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Abstracted'}">
+                <li><s:a href="abstractionCompletionverified.action" cssClass="btn"><span class="btn_img"><span class="save">Verify Abstraction</span></span></s:a></li>
                 </s:if>
                 <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code != 'Accepted'}">
                 <li><s:a href="abstractionCompletionsendEmail.action" cssClass="btn"><span class="btn_img"><span class="save">Send Email</span></span></s:a></li>		    

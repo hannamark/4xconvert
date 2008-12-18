@@ -104,11 +104,18 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             getAttribute(Constants.STUDY_PROTOCOL_II);
             
             DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
-            dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_NOT_VERIFIED));
+            dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
             dwsDto.setStatusDateRange(TsConverter.convertToTs(
                               new Timestamp(new Date().getTime())));
             dwsDto.setStudyProtocolIdentifier(studyProtocolIi);
             PaRegistry.getDocumentWorkflowStatusService().create(dwsDto);
+
+            StudyProtocolDTO spDTO = new StudyProtocolDTO();
+            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            spDTO.setRecordVerificationDate(TsConverter.convertToTs(
+               new Timestamp(new Date().getTime())));
+            PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+            
             StudyProtocolQueryDTO  studyProtocolQueryDTO = 
             PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                         IiConverter.convertToLong(studyProtocolIi));

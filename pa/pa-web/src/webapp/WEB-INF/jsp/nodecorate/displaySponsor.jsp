@@ -5,6 +5,6 @@
 <s:hidden id="sponsorIdentifier"  name="gtdDTO.sponsorIdentifier"/>
 <span class="formErrorMsg"> 
      <s:fielderror>
-     <s:param>SponsorNotSelected</s:param>
+     <s:param>gtdDTO.sponsorName</s:param>
     </s:fielderror>                            
 </span>

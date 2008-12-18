@@ -26,9 +26,7 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     /** Abstracted. */
     ABSTRACTED("Abstracted"),
     /** Abstraction Verified. */
-    ABSTRACTION_VERIFIED("Abstraction Verified"),
-    /** Abstraction not verified. */
-    ABSTRACTION_NOT_VERIFIED("Abstraction not verified");
+    ABSTRACTION_VERIFIED("Abstraction Verified");
 
     private String code;
     /**

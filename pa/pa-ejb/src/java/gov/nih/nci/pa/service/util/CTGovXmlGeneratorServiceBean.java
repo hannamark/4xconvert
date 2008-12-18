@@ -405,7 +405,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(idInfo , createElement("secondary_id" , spart.getLocalStudyProtocolIdentifier() , doc));
             break;
         }
-        appendElement(idInfo , createElement("org_name" , "NCI" , doc));
+        appendElement(idInfo , createElement("org_name" , "replace with PRS Organization Name you log in with" , doc));
         if (idInfo.hasChildNodes()) {
             appendElement(root, idInfo);
         }
