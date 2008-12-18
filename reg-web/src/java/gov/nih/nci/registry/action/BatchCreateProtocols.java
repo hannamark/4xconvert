@@ -141,6 +141,7 @@ public class BatchCreateProtocols {
             // using the Lead Org Trial Identifier and Lead Org Identifier
             OrganizationBatchDTO leadOrgDto = dataValidator.buildLeadOrgDto(dto);
             Ii orgIdIi = lookUpOrgs(leadOrgDto);            
+            
             if (orgIdIi != null) {
                 Organization paOrg = new Organization();
                 paOrg.setIdentifier(IiConverter.convertToString(orgIdIi));
@@ -151,6 +152,8 @@ public class BatchCreateProtocols {
                     StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
                     criteria.setLeadOrganizationTrialIdentifier(dto.getLocalProtocolIdentifier());
                     criteria.setLeadOrganizationId(paOrg.getId());    
+                    criteria.setExcludeRejectProtocol(new Boolean(true));
+
                     List<StudyProtocolQueryDTO> records = RegistryServiceLocator
                             .getProtocolQueryService().getStudyProtocolByCriteria(
                                     criteria);
@@ -161,6 +164,27 @@ public class BatchCreateProtocols {
                     }
                 }
             }            
+            //look up sponser
+            OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(dto);
+            Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
+            //look up Person
+            PersonBatchDTO piDto = dataValidator.buildLeadPIDto(dto);
+            Ii leadPrincipalInvestigator = lookUpPersons(piDto);
+            //Summary 4 Info
+            OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(dto);
+            Ii selectedSummary4Sponsor = null;
+            if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {
+                //look up for org only when dto is not empty
+                selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
+            }
+            //check if Sponsor Contact is needed if needed the the lookup ahead to catch other Validation error
+            //look up new Person or create if needed.
+            Ii responsiblePartyContact = null;
+            if (dto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
+                PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(dto);
+                responsiblePartyContact = lookUpPersons(sponsorPersonDto);
+            }
+            //now only go ahead and create the Trial
             log.info("TrialType() " + dto.getTrialType());
             if (dto.getTrialType().equals("Observational")) {
                 studyProtocolIi = RegistryServiceLocator
@@ -200,24 +224,12 @@ public class BatchCreateProtocols {
                 uploadDocument(studyProtocolIi, DocumentTypeCode.Other.getCode(), 
                          dto.getOtherTrialRelDocumentFileName(), folderPath);  
             }
-            //Summary 4 Info
-            OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(dto);
-            if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {
-                //look up for org only when dto is not empty
-                Ii selectedSummary4Sponsor = lookUpOrgs(summ4Sponsor);
                 if (selectedSummary4Sponsor != null) {
                         new PARelationServiceBean().createSummary4ReportedSource(
                                 selectedSummary4Sponsor.getExtension(), 
                                 SummaryFourFundingCategoryCode.getByCode(dto.getSumm4FundingCat()), IiConverter
                                 .convertToLong(studyProtocolIi));
                 }
-            } else {
-                log.error("Summary 4 Info is Empty ...");
-            }
-            // create/Lookup the org
-            log.error("buildProtocol -Create or lookup the org ");
-            OrganizationBatchDTO orgDto = dataValidator.buildLeadOrgDto(dto);
-            Ii leadOrgIdIi = lookUpOrgs(orgDto);
             if (null != orgIdIi) {
                     new PARelationServiceBean().createLeadOrganizationRelations(orgIdIi
                             .getExtension(),
@@ -225,18 +237,12 @@ public class BatchCreateProtocols {
                                     .getLocalProtocolIdentifier());
                 }
             log.error("buildProtocol -Create or lookup the Person");
-            //look up Person
-            PersonBatchDTO piDto = dataValidator.buildLeadPIDto(dto);
-            Ii leadPrincipalInvestigator = lookUpPersons(piDto);
             if (leadPrincipalInvestigator != null) {
                 new PARelationServiceBean().createPrincipalInvestigatorRelations(orgIdIi.getExtension(), 
                         leadPrincipalInvestigator.getExtension(), IiConverter
                 .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(dto.getTrialType()));
             }
             log.error("buildProtocol -Create or lookup the Sponsor ");
-            //look up sponser
-            OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(dto);
-            Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
             if (sponsorIdIi != null) {
                     new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
                         IiConverter.convertToLong(studyProtocolIi));
@@ -244,11 +250,8 @@ public class BatchCreateProtocols {
                         new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
                             leadPrincipalInvestigator.getExtension(),
                             IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
-                } else {
-                    //look up new Person or create if needed.
-                    PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(dto);
-                    Ii responsiblePartyContact = lookUpPersons(sponsorPersonDto);
-                    new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
+                    } else {
+                        new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
                             responsiblePartyContact.getExtension(), IiConverter
                             .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), 
                              dto.getSponsorContactPhone());
@@ -417,13 +420,12 @@ public class BatchCreateProtocols {
                             IiConverter.converToIdentifiedEntityIi(batchDto.getOrgCTEPId()));
                     List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
                             .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-                    if (null == identifiedOrgs || identifiedOrgs.size() == 0) {
-                        log.error("No Organization Found");
-                        throw new PAException("No Organization Found");
-                    } else {
-                    criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+                    if (identifiedOrgs != null && identifiedOrgs.size() > 0) {
+                        criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
                     }
-                } else {
+                } 
+                if (null == criteria.getIdentifier()  
+                        || PAUtil.isEmpty(batchDto.getOrgCTEPId())) {
                     criteria.setName(EnOnConverter.convertToEnOn(orgName));
                     criteria.setPostalAddress(AddressConverterUtil.create(null, null,
                         cityName, null, zipCode, countryName));
@@ -578,16 +580,6 @@ public class BatchCreateProtocols {
                     throw new PAException(message);
             }
             gov.nih.nci.services.person.PersonDTO p = new gov.nih.nci.services.person.PersonDTO();
-            //
-            if (email != null && email.length() > 0) {
-                DSet<Tel> list = new DSet<Tel>();
-                list.setItem(new HashSet<Tel>());
-                TelEmail telemail = new TelEmail();
-                telemail.setValue(new URI("mailto:" + email));
-                list.getItem().add(telemail);
-                p.setTelecomAddress(list);
-            }
-            //
             List<gov.nih.nci.services.person.PersonDTO> poPersonList = 
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
@@ -595,11 +587,19 @@ public class BatchCreateProtocols {
                 identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
-                if (null == retResultList || retResultList.size() == 0) {
-                   log.error("No Person Found...");
-                   throw new PAException("No Person Found...");
+                if (retResultList != null && retResultList.size() > 0) {
+                    p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
+                } 
+            } 
+            if (null == p.getIdentifier() || PAUtil.isEmpty(ctep)) {
+                if (email != null && email.length() > 0) {
+                    DSet<Tel> list = new DSet<Tel>();
+                    list.setItem(new HashSet<Tel>());
+                    TelEmail telemail = new TelEmail();
+                    telemail.setValue(new URI("mailto:" + email));
+                    list.getItem().add(telemail);
+                    p.setTelecomAddress(list);
                 }
-            } else {
                 p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
             }
             poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
@@ -666,7 +666,7 @@ public class BatchCreateProtocols {
         throw new PAException("Country is a required field");
         }
     
-        //String midName = batchDto.getMiddleName();
+        String midName = batchDto.getMiddleName();
         String state =  batchDto.getState();
         String phone = batchDto.getPhone();
         String tty = batchDto.getTty();
@@ -679,16 +679,15 @@ public class BatchCreateProtocols {
         part.setValue(firstName);
         dto.getName().getPart().add(part);
         // if middel name exists stick it in here!
-        /*if (midName != null && PAUtil.isNotEmpty(midName)) {
-            Enxp partMid = new Enxp(EntityNamePartType.FAM);
+        if (midName != null && PAUtil.isNotEmpty(midName)) {
+            Enxp partMid = new Enxp(EntityNamePartType.GIV);
             partMid.setValue(midName);
             dto.getName().getPart().add(partMid);
-        }*/
+        }
         Enxp partFam = new Enxp(EntityNamePartType.FAM);
         partFam.setValue(lastName);
         dto.getName().getPart().add(partFam);
-      
-        dto.getName().getPart().add(part);
+
         DSet<Tel> list = new DSet<Tel>();
         list.setItem(new HashSet<Tel>());
         try {
@@ -817,7 +816,8 @@ public class BatchCreateProtocols {
                 && PAUtil.isNotEmpty(dto.getIndNumber())
                 && PAUtil.isNotEmpty(dto.getIndGrantor())
                 && PAUtil.isNotEmpty(dto.getIndHolderType())
-                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())) {
+                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())
+                && PAUtil.isNotEmpty(dto.getIndExpandedAccessStatus())) {
             if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
                 if (PAUtil.isNotEmpty(dto.getIndNIHInstitution())) {
                     return false;
