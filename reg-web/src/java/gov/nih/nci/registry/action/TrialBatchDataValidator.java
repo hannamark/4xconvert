@@ -43,7 +43,7 @@ public class TrialBatchDataValidator {
         if (PAUtil.isEmpty(batchDto.getTrialType())) {
             fieldErr.append("Trial Type is required.\n");
         } else if (batchDto.getTrialType().equalsIgnoreCase("Observational")) {
-            fieldErr.append("Observational Trial Type not supported.\n");
+            fieldErr.append("Observational Trial not supported.\n");
             return fieldErr.toString();
         }
         if (PAUtil.isEmpty(batchDto.getLocalProtocolIdentifier())) {
