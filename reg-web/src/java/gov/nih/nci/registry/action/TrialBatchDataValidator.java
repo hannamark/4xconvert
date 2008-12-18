@@ -3,6 +3,8 @@ package gov.nih.nci.registry.action;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -15,8 +17,11 @@ import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.BatchConstants;
 import gov.nih.nci.registry.util.RegistryUtil;
-
-
+import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
+import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.GrantorCode;
+import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 
 /**
  * 
@@ -25,6 +30,8 @@ import gov.nih.nci.registry.util.RegistryUtil;
  */
 @SuppressWarnings("PMD")
 public class TrialBatchDataValidator {
+    private static final int IND_FIELD_COUNT = 6;
+    private static Logger log = Logger.getLogger(TrialBatchDataValidator.class);
 /**
  * 
  * validate the submit trial form elements.
@@ -33,6 +40,12 @@ public class TrialBatchDataValidator {
  */
     public String validateForm(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
+        if (PAUtil.isEmpty(batchDto.getTrialType())) {
+            fieldErr.append("Trial Type is required.\n");
+        } else if (batchDto.getTrialType().equalsIgnoreCase("Observational")) {
+            fieldErr.append("Observational Trial Type not supported.\n");
+            return fieldErr.toString();
+        }
         if (PAUtil.isEmpty(batchDto.getLocalProtocolIdentifier())) {
             fieldErr.append("Lead Organization Trial Identifier is required. \n");
         }
@@ -44,9 +57,6 @@ public class TrialBatchDataValidator {
         }
         if (PAUtil.isEmpty(batchDto.getCurrentTrialStatus())) {
             fieldErr.append("Current Trial Status is required. \n");
-        }
-        if (PAUtil.isEmpty(batchDto.getTrialType())) {
-            fieldErr.append("Trial Type is required.\n");
         }
         if (PAUtil.isEmpty(batchDto.getPrimaryPurpose())) {
             fieldErr.append("Trial Purpose is required.\n");
@@ -127,14 +137,70 @@ public class TrialBatchDataValidator {
                 batchDto.getNihGrantInstituteCode(), batchDto.getNihGrantNCIDivisionCode())) {
             fieldErr.append("All Grant values are required.\n");
         }
+        //validate the IND/IDE
+        if (!isIndIdeContainsAllInfo(batchDto)) {
+            fieldErr.append("All IND/IDE values are required.\n");
+        }
         //validate the ValidValues
         fieldErr.append(validateListOfValues(batchDto));
         return fieldErr.toString();
     }
     private StringBuffer validateListOfValues(StudyProtocolBatchDTO batchDto) {
+/*        //make sure values are in Title case for Trial Type , Primary Purpose, Current trial status
+        //Study Start type, primary completion type
+        batchDto.setTrialType(convertToEnumCode(batchDto.getTrialType()));
+        batchDto.setPrimaryPurpose(convertToEnumCode(batchDto.getPrimaryPurpose()));
+        batchDto.setCurrentTrialStatus(convertToEnumCode(batchDto.getCurrentTrialStatus()));
+        batchDto.setStudyStartDateType(convertToEnumCode(batchDto.getStudyStartDateType()));
+        batchDto.setPrimaryCompletionDateType(convertToEnumCode(batchDto.getPrimaryCompletionDateType()));
+*/        //make sure case is upper for IND/IDE Type  IND/IDE Grantor IND/IDE Holder Type
+        //[NIH Grant] NCI Division/Program Code [NIH Grant] Institute Code
+        //Country code, State code
+
         StringBuffer fieldErr = new StringBuffer();
         if (null == StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
-            fieldErr.append("Please enter valid Current Trial Status");
+            fieldErr.append("Please enter valid value for Current Trial Status");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getResponsibleParty())) {
+            if (!batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
+                    && !batchDto.getResponsibleParty().equalsIgnoreCase("PI")) {
+                fieldErr.append("Please enter valid value for Responsible Party.");
+            }
+        }
+        //check the trial type it shld be either Interventional or Observational
+        if (null == StudyTypeCode.getByCode(batchDto.getTrialType())) {
+            fieldErr.append("Please enter valid value for Trial Type.");
+        }
+        //check Primary Purpose
+        if (null == PrimaryPurposeCode.getByCode(batchDto.getPrimaryPurpose())) {
+            fieldErr.append("Please enter valid value for Primary Purpose.");
+        }
+        if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getPrimaryCompletionDateType())) {
+            fieldErr.append("Please enter valid value for Primary Completion Date Type.");
+        }
+        if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getStudyStartDateType())) {
+            fieldErr.append("Please enter valid value for Study Start Date Type.");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getIndType()) 
+                && null == IndldeTypeCode.getByCode(batchDto.getIndType())) {
+            fieldErr.append("Please enter valid value for IND/IDE.");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getIndHolderType()) 
+                && null == HolderTypeCode.getByCode(batchDto.getIndHolderType())) {
+            fieldErr.append("Please enter valid value for IND/IDE Holder Type.");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getIndGrantor()) 
+                && null == GrantorCode.getByCode(batchDto.getIndGrantor())) {
+            fieldErr.append("Please enter valid value for IND/IDE Grantor.");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getIndType()) 
+                && batchDto.getIndType().equals("IDE")
+                && !batchDto.getIndGrantor().equals("CDRH")) {
+            fieldErr.append("IDE Grantor can have only CDRH value.");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getIndExpandedAccessStatus())
+                && null == ExpandedAccessStatusCode.getByCode(batchDto.getIndExpandedAccessStatus())) {
+            fieldErr.append("Please enter valid value for IND/IDE Expanded Access Status.");
         }
     return fieldErr;
 }
@@ -515,6 +581,8 @@ public class TrialBatchDataValidator {
         }
         if (PAUtil.isEmpty(batchDto.getState())) {
             fieldErr.append(fieldName + " State is required. \n");
+        } else if (batchDto.getState().length() > 2) {
+            fieldErr.append(fieldName + " State is not valid. \n");
         }
         if (PAUtil.isEmpty(batchDto.getCountry())) {
             fieldErr.append(fieldName + " Country is required.\n");
@@ -555,6 +623,8 @@ public class TrialBatchDataValidator {
         }
         if (PAUtil.isEmpty(batchDto.getState())) {
             fieldErr.append(message + " State is required.\n");
+        } else if (batchDto.getState().length() > 2) {
+            fieldErr.append(message + " State is not valid.\n");
         }
         if (PAUtil.isEmpty(batchDto.getZip())) {
             fieldErr.append(message + " Zip is required. \n");
@@ -578,5 +648,55 @@ public class TrialBatchDataValidator {
         }
         return fieldErr.toString();
     }
-   
+    private boolean isIndIdeContainsAllInfo(StudyProtocolBatchDTO dto) {
+        int nullCount = 0;
+        if (PAUtil.isEmpty(dto.getIndType())) {
+            nullCount += 1;
+        }
+       if (PAUtil.isEmpty(dto.getIndNumber())) {
+           nullCount += 1;
+       }
+       if (PAUtil.isEmpty(dto.getIndGrantor())) {
+           nullCount += 1;
+       }
+       if (PAUtil.isEmpty(dto.getIndHolderType())) {
+           nullCount += 1;
+       }
+       if (PAUtil.isEmpty(dto.getIndHasExpandedAccess())) {
+           nullCount += 1;
+       }
+       if (PAUtil.isEmpty(dto.getIndExpandedAccessStatus())) {
+           nullCount += 1;
+       }
+       if (PAUtil.isNotEmpty(dto.getIndHolderType())
+               && dto.getIndHolderType().equalsIgnoreCase("NIH")
+               && PAUtil.isEmpty(dto.getIndNIHInstitution())) {
+               nullCount += 1;
+       }
+       if (PAUtil.isNotEmpty(dto.getIndHolderType())
+               && dto.getIndHolderType().equalsIgnoreCase("NCI")
+               && PAUtil.isEmpty(dto.getIndNCIDivision())) {
+           nullCount += 1;
+       }
+       log.error("null count in ind Ide" + nullCount);
+       if (nullCount == 0) {
+           return true;
+       }
+       if (nullCount == IND_FIELD_COUNT) {
+           return true;
+       }
+        return false;
+    }
+/*    *//**
+     * 
+     * @param str str
+     * @return str
+     *//*
+   public String convertToEnumCode(String str) {
+       str = str.toUpperCase();
+       str = str.replaceAll(" ", "_");
+    log.error("convertToEnumCode:-" + str);
+    return str;
+   }
+*/   
 }
