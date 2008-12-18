@@ -189,13 +189,13 @@ function tooltip() {
 		<td   scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.masking.role"/><span class="required">*</span></label></td>
 		<td>
-           <s:checkbox name="subject" fieldValue="Subject" onclick="ChecksCount('subject')" value="%{subjectChecked}" />
+           <s:checkbox name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
            <label>Subject</label>
-		   <s:checkbox name="investigator" fieldValue="Investigator" onclick="ChecksCount('investigator')" value="%{investigatorChecked}" />
+		   <s:checkbox name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
 		   <label>Investigator</label>
-		   <s:checkbox name="caregiver" fieldValue="Caregiver" onclick="ChecksCount('caregiver')" value="%{caregiverChecked}" />
+		   <s:checkbox name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
 		   <label>Caregiver</label>
-		   <s:checkbox name="outcomesassessor" fieldValue="Outcomes Assessor" onclick="ChecksCount('outcomesassessor')" value="%{outcomesAssessorChecked}" />
+		   <s:checkbox name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
 		   <label>Outcomes Assessor</label>          
          </td>
 	</tr>
