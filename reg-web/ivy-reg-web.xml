@@ -49,8 +49,8 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="0.7"             conf="compile->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="0.7"             conf="compile->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.0.0.rc1"       conf="compile->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="1.0.0.rc1"       conf="compile->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.9"           conf="compile->master"/>

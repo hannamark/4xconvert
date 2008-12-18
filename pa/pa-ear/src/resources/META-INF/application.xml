@@ -23,13 +23,13 @@
         </web>
     </module>
     <module>
-        <java>po-services-client-0.7.jar</java>
+        <java>po-services-client-1.0.0.rc1.jar</java>
     </module>
     <module>
         <java>xsnapshot-1.1-beta2.jar</java>
     </module>
     <module>
-        <java>iso-datatypes-0.7.jar</java>
+        <java>iso-datatypes-1.0.0.rc1.jar</java>
     </module>
     <security-role><role-name>Curator</role-name></security-role>
 </application>
