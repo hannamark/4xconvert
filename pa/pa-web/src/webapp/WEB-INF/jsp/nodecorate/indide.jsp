@@ -141,8 +141,8 @@
 						<div id="programcodeid" style="display:''">
 							<s:select id="programcodenoneselected" name="holder.programCodes" list="#{'-Select-':'-Select-'}" onblur="enableAddButton();" cssStyle="width:150px"/>
 						</div>
-						<div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="holder.programcodenihselectedvalue" list="#phaseCodeValuesNIH" onblur="enableAddButton();" cssStyle="width:150px"/></div>
-						<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="holder.programcodenciselectedvalue" list="#phaseCodeValuesNCI" onblur="enableAddButton();" cssStyle="width:150px"/></div>
+						<div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="holder.programcodenihselectedvalue" list="#phaseCodeValuesNIH" onblur="enableAddButton();" /></div>
+						<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="holder.programcodenciselectedvalue" list="#phaseCodeValuesNCI" onblur="enableAddButton();"/></div>
 						</td>
 					</tr>
 					<tr>
