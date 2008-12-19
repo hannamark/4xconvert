@@ -221,8 +221,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return StudyParticipationContactServiceRemote
      */    
     public StudyParticipationContactServiceRemote getStudyParticipationContactService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-        + "/pa/StudyParticipationContactServiceBean/remote";
-        return (StudyParticipationContactServiceRemote) JNDIUtil.lookupPo(serverInfo);        
+        return (StudyParticipationContactServiceRemote) JNDIUtil.lookup(
+                    "pa/StudyParticipationContactServiceBean/remote");      
     } 
 }
