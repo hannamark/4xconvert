@@ -30,7 +30,7 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
  */
 @SuppressWarnings("PMD")
 public class TrialBatchDataValidator {
-    private static final int IND_FIELD_COUNT = 6;
+    private static final int IND_FIELD_COUNT = 5;
     private static Logger log = Logger.getLogger(TrialBatchDataValidator.class);
 /**
  * 
@@ -140,6 +140,22 @@ public class TrialBatchDataValidator {
         //validate the IND/IDE
         if (!isIndIdeContainsAllInfo(batchDto)) {
             fieldErr.append("All IND/IDE values are required.\n");
+        } else {
+            if (PAUtil.isNotEmpty(batchDto.getIndHasExpandedAccess()) 
+                    && batchDto.getIndHasExpandedAccess().equalsIgnoreCase("True")
+                    && PAUtil.isEmpty(batchDto.getIndExpandedAccessStatus())) {
+                fieldErr.append("Expanded Access Status value is required.\n");
+            }
+            if (PAUtil.isNotEmpty(batchDto.getIndHolderType())
+                    && batchDto.getIndHolderType().equalsIgnoreCase("NIH")
+                    && PAUtil.isEmpty(batchDto.getIndNIHInstitution())) {
+                fieldErr.append("NIH Institution value is required.\n");
+            }
+            if (PAUtil.isNotEmpty(batchDto.getIndHolderType())
+                    && batchDto.getIndHolderType().equalsIgnoreCase("NCI")
+                    && PAUtil.isEmpty(batchDto.getIndNCIDivision())) {
+                fieldErr.append("NCI Division/Program Code value is required.\n");
+            }
         }
         //validate the ValidValues
         fieldErr.append(validateListOfValues(batchDto));
@@ -663,19 +679,6 @@ public class TrialBatchDataValidator {
            nullCount += 1;
        }
        if (PAUtil.isEmpty(dto.getIndHasExpandedAccess())) {
-           nullCount += 1;
-       }
-       if (PAUtil.isEmpty(dto.getIndExpandedAccessStatus())) {
-           nullCount += 1;
-       }
-       if (PAUtil.isNotEmpty(dto.getIndHolderType())
-               && dto.getIndHolderType().equalsIgnoreCase("NIH")
-               && PAUtil.isEmpty(dto.getIndNIHInstitution())) {
-               nullCount += 1;
-       }
-       if (PAUtil.isNotEmpty(dto.getIndHolderType())
-               && dto.getIndHolderType().equalsIgnoreCase("NCI")
-               && PAUtil.isEmpty(dto.getIndNCIDivision())) {
            nullCount += 1;
        }
        log.error("null count in ind Ide" + nullCount);
