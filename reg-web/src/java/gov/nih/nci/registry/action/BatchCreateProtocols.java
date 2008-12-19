@@ -816,18 +816,8 @@ public class BatchCreateProtocols {
                 && PAUtil.isNotEmpty(dto.getIndNumber())
                 && PAUtil.isNotEmpty(dto.getIndGrantor())
                 && PAUtil.isNotEmpty(dto.getIndHolderType())
-                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())
-                && PAUtil.isNotEmpty(dto.getIndExpandedAccessStatus())) {
-            if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
-                if (PAUtil.isNotEmpty(dto.getIndNIHInstitution())) {
-                    return false;
-                }
-            }
-            if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
-                if (PAUtil.isNotEmpty(dto.getIndNCIDivision())) {
-                    return false;
-                }
-            }
+                && PAUtil.isNotEmpty(dto.getIndHasExpandedAccess())) {
+            return false;
         }
         return true;
     }
