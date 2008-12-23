@@ -1,0 +1,47 @@
+function  WWHBookData_AddTOCEntries(P)
+{
+var A=P.fN("NCI Clinical Trials Reporting Program Online Help","0");
+var B=A.fN("Using the Online Help","1");
+var C=B.fN("Using Navigation Tools","2");
+A=P.fN("Getting Started","3");
+B=A.fN("About the NCI Clinical Trials Reporting Program","4");
+B=A.fN("Registering as a New User","5");
+B=A.fN("Logging In to the NCI Clinical Trials Reporting Program","6");
+A=P.fN("Searching For Trials","7");
+B=A.fN("About Clinical Trial Metadata","8");
+B=A.fN("Searching For Trials","9");
+B=A.fN("Working with Search Results","10");
+C=B.fN("Navigating Through the Search Results List","11");
+B=A.fN("Viewing Trial Details","12");
+C=B.fN("Viewing Trial-Related Documents","13");
+A=P.fN("Registering New Trials","14");
+B=A.fN("Registering Trials in the NCI Clinical Trials Reporting Program","15");
+C=B.fN("Completing the Trial Details Section","16");
+C=B.fN("Completing the Lead Organization/Principal Investigator Section","17");
+C=B.fN("Completing the Sponsor/Responsible Party Section","18");
+C=B.fN("Completing the Summary 4 Information Section","19");
+C=B.fN("Completing the NIH Grant Information Section","20");
+C=B.fN("Completing the Status/Dates Section","21");
+C=B.fN("Completing the IND/IDE Information Section","22");
+C=B.fN("Completing the Trial Related Documents Section","23");
+B=A.fN("Registering Organizations","24");
+C=B.fN("Searching for Registered Organizations","25");
+C=B.fN("Adding Organizations","26");
+B=A.fN("Registering Persons","27");
+C=B.fN("Searching for Principal Investigators","28");
+C=B.fN("Adding Principal Investigators","29");
+B=A.fN("Registering Multiple Trials Concurrently","30");
+C=B.fN("Data Requirements for Batch Uploads","31");
+A=P.fN("Managing Your Account","32");
+B=A.fN("Editing User Information","33");
+B=A.fN("Managing Your Password","34");
+C=B.fN("Changing Your Password","35");
+C=B.fN("Resetting Your Password","36");
+A=P.fN("Metadata Definitions","37");
+A=P.fN("Batch Upload Data Specifications","38");
+B=A.fN("Preparing the Trial Data File","39");
+B=A.fN("Preparing Trial-Related Documents","40");
+B=A.fN("Trial Data Specifications","41");
+A=P.fN("Glossary","42");
+A=P.fN("Application Support","43");
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
+  <i t="NCI Clinical Trials Reporting Program Online Help" l="0">
+    <i t="Using the Online Help" l="1">
+      <i t="Using Navigation Tools" l="2" />
+    </i>
+  </i>
+  <i t="Getting Started" l="3">
+    <i t="About the NCI Clinical Trials Reporting Program" l="4" />
+    <i t="Registering as a New User" l="5" />
+    <i t="Logging In to the NCI Clinical Trials Reporting Program" l="6" />
+  </i>
+  <i t="Searching For Trials" l="7">
+    <i t="About Clinical Trial Metadata" l="8" />
+    <i t="Searching For Trials" l="9" />
+    <i t="Working with Search Results" l="10">
+      <i t="Navigating Through the Search Results List" l="11" />
+    </i>
+    <i t="Viewing Trial Details" l="12">
+      <i t="Viewing Trial-Related Documents" l="13" />
+    </i>
+  </i>
+  <i t="Registering New Trials" l="14">
+    <i t="Registering Trials in the NCI Clinical Trials Reporting Program" l="15">
+      <i t="Completing the Trial Details Section" l="16" />
+      <i t="Completing the Lead Organization/Principal Investigator Section" l="17" />
+      <i t="Completing the Sponsor/Responsible Party Section" l="18" />
+      <i t="Completing the Summary 4 Information Section" l="19" />
+      <i t="Completing the NIH Grant Information Section" l="20" />
+      <i t="Completing the Status/Dates Section" l="21" />
+      <i t="Completing the IND/IDE Information Section" l="22" />
+      <i t="Completing the Trial Related Documents Section" l="23" />
+    </i>
+    <i t="Registering Organizations" l="24">
+      <i t="Searching for Registered Organizations" l="25" />
+      <i t="Adding Organizations" l="26" />
+    </i>
+    <i t="Registering Persons" l="27">
+      <i t="Searching for Principal Investigators" l="28" />
+      <i t="Adding Principal Investigators" l="29" />
+    </i>
+    <i t="Registering Multiple Trials Concurrently" l="30">
+      <i t="Data Requirements for Batch Uploads" l="31" />
+    </i>
+  </i>
+  <i t="Managing Your Account" l="32">
+    <i t="Editing User Information" l="33" />
+    <i t="Managing Your Password" l="34">
+      <i t="Changing Your Password" l="35" />
+      <i t="Resetting Your Password" l="36" />
+    </i>
+  </i>
+  <i t="Metadata Definitions" l="37" />
+  <i t="Batch Upload Data Specifications" l="38">
+    <i t="Preparing the Trial Data File" l="39" />
+    <i t="Preparing Trial-Related Documents" l="40" />
+    <i t="Trial Data Specifications" l="41" />
+  </i>
+  <i t="Glossary" l="42" />
+  <i t="Application Support" l="43" />
+</WebWorksHelpTOC>
