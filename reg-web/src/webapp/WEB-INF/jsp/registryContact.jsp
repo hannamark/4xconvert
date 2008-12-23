@@ -18,11 +18,11 @@
 
     <div class="box" id="filters">
           
-            <p class="intro">Thank you for using the NCI Clinical Trials Reporting Portal. </p>
+            <p class="intro">Thank you for using the NCI&#39;s Clinical Trials Reporting Program. </p>
           
             <p>
                If you are experiencing problems with the application, please contact NCICB Applications Support at 
-               ncicb@pop.nci.nih.gov or by phone at 888.478.4423 (for Toll Free) or 301.451.4384 (for local calls).  
+               <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> or by phone at 888.478.4423 (for Toll Free) or 301.451.4384 (for local calls).  
             </p>
             <p>
                 Alternatively, you can submit a request for help at the following URL: 
