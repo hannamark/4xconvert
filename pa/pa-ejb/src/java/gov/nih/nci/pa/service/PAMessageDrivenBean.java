@@ -67,6 +67,8 @@ import java.util.Date;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -82,40 +84,36 @@ import org.hibernate.Session;
  * @author Harsha J
  * 
  */
-@SuppressWarnings("PMD")
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "providerAdapterJNDI", propertyValue = "java:/PoTopicJMSProvider"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "topic/POTopic"),
         @ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false"),
         @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable"),
-        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "CLIENT_ACKNOWLEDGE"),
+        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "AUTO_ACKNOWLEDGE"),
         @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "PAApp") })
+ @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class PAMessageDrivenBean implements MessageListener {
     private static final Logger LOG = Logger.getLogger(PAMessageDrivenBean.class);
 
     /**
      * @param message Message
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public void onMessage(Message message) {
         LOG.info("Entering PAMessageDrivenBean onMessage()");
         ObjectMessage msg = null;
         Long msgId = null;
+        HibernateUtil.getHibernateHelper().openAndBindSession();
         try {
             if (message instanceof ObjectMessage) {
                 msg = (ObjectMessage) message;
                 SubscriberUpdateMessage updateMessage = (SubscriberUpdateMessage) msg.getObject();
-                String identifierName = updateMessage.getId().getIdentifierName();
-                HibernateUtil.getHibernateHelper().openAndBindSession();
-                try {
-                    msgId = createAuditMessageLog(updateMessage.getId());
-                } catch (PAException pex) {
-                    LOG.error("PAMessageDrivenBean, Unable to log the received message id " + updateMessage.getId(),
-                            pex);
-                }
-                try {
+                String identifierName = updateMessage.getId().getIdentifierName();                
+                try {                    
                     LOG.info("PAMessageDrivenBean onMessage() got the Identifier to be processed "
                             + updateMessage.getId().getExtension());
+                    msgId = createAuditMessageLog(updateMessage.getId());
                     OrganizationSynchronizationServiceRemote orgRemote = (OrganizationSynchronizationServiceRemote)
                         JNDIUtil.lookup("pa/OrganizationSynchronizationServiceBean/remote");
                     PersonSynchronizationServiceRemote perRemote = (PersonSynchronizationServiceRemote) 
@@ -145,26 +143,23 @@ public class PAMessageDrivenBean implements MessageListener {
                         perRemote.synchronizeOrganizationalContact(updateMessage.getId());
                     }
                     updateExceptionAuditMessageLog(msgId, "Processed", null, true);
-                } catch (PAException e) {
-                    updateExceptionAuditMessageLog(msgId, "Failed", "PAException-" + e.getMessage(), false);
-                    msg.acknowledge();
-                    LOG.error("PAMessageDrivenBean onMessage() method threw an PAException ", e);
+                } catch (PAException paex) {
+                    updateExceptionAuditMessageLog(msgId, "Failed", " PAException -" + paex.getMessage(), false);
+                    LOG.error("PAMessageDrivenBean onMessage() method threw an PAException ", paex);
                 } catch (Exception e) {
-                    updateExceptionAuditMessageLog(msgId, "Failed", " Generic exception-" + e.getMessage(), false);
-                    msg.acknowledge();
+                    updateExceptionAuditMessageLog(msgId, "Failed", " Generic exception -" + e.getMessage(), false);
                     LOG.error("PAMessageDrivenBean onMessage() method threw an Exception ", e);
                 }
             }
-            msg.acknowledge();
             LOG.info("Leaving PAMessageDrivenBean onMessage()");
-        } catch (JMSException e) {
+        } catch (JMSException e) {            
             updateExceptionAuditMessageLog(msgId, "Failed", " JMSException-" + e.getMessage(), false);
             LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException ", e);
         } finally {
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
     }
-
+    
     private Long createAuditMessageLog(Ii identifier) throws PAException {
         try {
             Session session = HibernateUtil.getCurrentSession();
@@ -173,7 +168,7 @@ public class PAMessageDrivenBean implements MessageListener {
             log.setDateCreated(new Date());
             log.setEntityName(identifier.getIdentifierName());
             log.setMessageAction("Received");
-            log.setResult(Boolean.valueOf(true));
+            log.setResult(Boolean.TRUE);
             session.save(log);
             session.flush();
             return log.getId();
@@ -182,15 +177,15 @@ public class PAMessageDrivenBean implements MessageListener {
                     + identifier.getExtension(), hbe);
         }
     }
-
+    
     private void updateExceptionAuditMessageLog(Long id, String msgAction, String errorMessage, boolean result) {
         try {
             Session session = HibernateUtil.getCurrentSession();
             MessageLog msg = (MessageLog) session.get(MessageLog.class, id);
             msg.setMessageAction(msgAction);
             msg.setResult(Boolean.valueOf(result));
-            msg.setExceptionMessage(errorMessage);
-            session.save(msg);
+            msg.setExceptionMessage(errorMessage);           
+            session.update(msg);
             session.flush();
         } catch (HibernateException hbe) {
             LOG.error("Hibernate exception while logging failed message for id = " + id, hbe);
