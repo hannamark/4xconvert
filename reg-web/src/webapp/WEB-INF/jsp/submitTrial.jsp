@@ -120,6 +120,10 @@ function manageRespPartyLookUp(){
 function addGrant(){
 	var serialNumber = document.getElementById('serialNumber').value;
 	var b = serialNumber.length;
+    if (isNaN(serialNumber)){
+        alert("Serial Number must be numeric");
+        return false;
+    }
 	if (b < 5 || b > 6){
 		alert("Serial Number must be 5 or 6 digits");
 		return false;
@@ -143,10 +147,6 @@ function enableGrantAddButton(){
 	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;	
 	var nihInstitutionCode = document.getElementById('nihInstitutionCode').value;
 	var serialNumber;
-	if (isNaN(document.getElementById('serialNumber').value)){
-		alert("Serial Number must be numeric");
-		return false;
-	}
 	serialNumber = document.getElementById('serialNumber').value;
 	var nciDivisionProgramCode = document.getElementById('nciDivisionProgramCode').value;
 	//alert("fundingMechanismCode "+fundingMechanismCode+"+"+nihInstitutionCode+"+"+serialNumber+"+"+nciDivisionProgramCode);
