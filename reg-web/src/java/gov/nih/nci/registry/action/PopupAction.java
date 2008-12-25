@@ -373,7 +373,12 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (country != null && country.equals("aaa")) {
             addActionError("Country is a required field");
         }
-        
+        String state = ServletActionContext.getRequest().getParameter("state");
+        if (country != null && country.equalsIgnoreCase("USA")) {
+            if (state != null && !PAUtil.isNotEmpty(state)) {
+                addActionError("State is required for US");
+            }            
+        }        
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             Iterator<String> i = getActionErrors().iterator();
@@ -385,8 +390,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
         
         String preFix = ServletActionContext.getRequest().getParameter("preFix");
-        String midName = ServletActionContext.getRequest().getParameter("midName");
-        String state = ServletActionContext.getRequest().getParameter("state");
+        String midName = ServletActionContext.getRequest().getParameter("midName");        
         String phone = ServletActionContext.getRequest().getParameter("phone");
         String tty = ServletActionContext.getRequest().getParameter("tty");
         String fax = ServletActionContext.getRequest().getParameter("fax");
