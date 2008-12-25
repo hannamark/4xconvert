@@ -120,8 +120,8 @@ function manageRespPartyLookUp(){
 function addGrant(){
 	var serialNumber = document.getElementById('serialNumber').value;
 	var b = serialNumber.length;
-	if (b < 5){
-		alert("Serial Number must be at least 5 digits");
+	if (b < 5 || b > 6){
+		alert("Serial Number must be 5 or 6 digits");
 		return false;
 	}
 	var fundingMechanismCode = document.getElementById('fundingMechanismCode').value;
