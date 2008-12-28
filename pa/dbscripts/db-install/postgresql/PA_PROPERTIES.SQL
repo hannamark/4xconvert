@@ -45,3 +45,27 @@ If you feel there has been an error in your submission validation, please contac
 Thank you for participation in the Clinical Trials Reporting Program.');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(7,'allowed.uploadfile.types','doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb');
+insert into pa_properties(IDENTIFIER,name,value) VALUES(8,'trial.register.subject',
+'NCI’s Clinical Trials Reporting Program (CTRP) Trial Registration Acknowledgment');
+insert into pa_properties(IDENTIFIER,name,value) VALUES(9,'trial.register.body',
+'You have successfully registered the following trial with the NCI Clinical Trials Reporting Office (CTRO): 
+Lead Organization Trial Identifier ${leadOrgTrialIdentifier}   
+ 
+Your trial has been assigned a unique NCI number for tracking that you will need to reference in future correspondence with the CTRO:
+NCI Trial Identifier ${nciTrialIdentifier}
+ 
+Your registered trial will now go through a series of CTRO steps that will result in a Trial Summary Report being sent to you which will contain key elements that the CTRO has abstracted from the protocol.  Upon receipt of the Trial Summary Report, we request that you review the elements for accuracy and reply with your assessment of this review. 
+ 
+If you have questions on this or other CTRP topics, please contact NCICB Application Support:
+Email: ncicb@pop.nci.nih.gov 
+Toll-free: 888-478-4423 Phone: 301-451-4384 
+Web: http://ncicb.nci.nih.gov/NCICB/support 
+Live telephone support is available Monday to Friday, 8 a.m. to 8 p.m. Eastern Time, excluding federal holidays.
+
+Thank you for registering your trial with NCI’s Clinical Trials Reporting Program (CTRP).');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(10,'user.account.subject',
+'NCI’s Clinical Trials Reporting Program (CTRP) User Activation');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(11,'user.account.body',
+'Thank you for registering with NCI’s Clinical Trials Reporting Program. Please click on the link below or copy paste the URL in the browser to activate your account.');
