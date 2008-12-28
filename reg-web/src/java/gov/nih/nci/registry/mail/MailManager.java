@@ -11,6 +11,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 import gov.nih.nci.registry.util.EncoderDecoder;
+import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 /**
@@ -36,12 +38,12 @@ public class MailManager {
             String[] params = {mailTo , };
 
             MessageFormat formatterSubject = new MessageFormat(
-                            regProperties.getProperty("register.mail.subject"));
+                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("user.account.subject"));
             String emailSubject = formatterSubject.format(params);
             logger.info("emailSubject is: " + emailSubject);
 
             MessageFormat formatterBody = new MessageFormat(
-                            regProperties.getProperty("register.mail.body"));
+                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("user.account.body"));
             MessageFormat formatterBodyUrl = new MessageFormat(
                             regProperties.getProperty("register.mail.body.url"));
 
@@ -75,31 +77,18 @@ public class MailManager {
             String localProtocolIdentifier)  {
     
         try {
-            // TODO hard coding the submission notification e-mail content is a short-term fix for
-            // problem with new line characters stripped out of the build.properties during build
-            // have to find a permanent fix.
-            String para1 = "You have successfully submitted the following protocol to the NCI "
-                    + "Clinical Trials Reporting Office (CTRO):\nLead Organization Trial Identifier";
-            String para2 = "This protocol has been assigned a unique NCI number for tracking which you "
-                    + "may need to reference in future correspondence with the CTRO:\nNCI Trial Identifier";
-            String para3 = "Shortly we will send you a Trial Summary Report which will contain key elements "
-                    + "that we have abstracted from the protocol.\nWe request that you review these elements for "
-                    + "accuracy and reply with your assessment. If you have questions, you may call the NCI " 
-                    + "CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov." 
-                    + "\nThank you for your submission.";
+
             String[] params = {mailTo , };
             
             MessageFormat formatterSubject = new MessageFormat(
-                                            regProperties.getProperty("submission.mail.subject"));
+                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("trial.register.subject"));
             String emailSubject = formatterSubject.format(params);
             logger.info("emailSubject is: " + emailSubject);
-
-            MessageFormat formatterBody = new MessageFormat(
-                    para1
-                    + " " + localProtocolIdentifier + "\n \n" 
-                    + para2
-                    + "  " + nciIdentifier + "\n \n" 
-                    +  para3);
+            String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
+                                    getPropertyValue("trial.register.body");
+            submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ", localProtocolIdentifier);
+            submissionMailBody = submissionMailBody.replace("${nciTrialIdentifier}", nciIdentifier);
+            MessageFormat formatterBody = new MessageFormat(submissionMailBody);
             String emailBody =  formatterBody.format(params);
 
             logger.info("emailBody is: " + emailBody);
@@ -115,9 +104,17 @@ public class MailManager {
      * @return String
      */
     public String formatFromAddress() {
-        String fromAddress = new MessageFormat(regProperties.getProperty("mail.from.address")).
-                            format(new String[] {regProperties.getProperty("mail.from.address") });
-        return fromAddress;
+        String fromEmailAddress = null;
+        try {
+            String fromAddress = RegistryServiceLocator.getLookUpTableService().
+                                                   getPropertyValue("fromaddress");
+            fromEmailAddress = new MessageFormat(fromAddress).
+                                        format(new String[] {fromAddress });
+        } catch (PAException e) {
+            logger.error("Error retrieving, from mail address from database for Subission e-mail", e);
+        }
+        
+        return fromEmailAddress;
     }
     
     /**
@@ -137,7 +134,7 @@ public class MailManager {
             // Set up mail server
 
             props.put("mail.smtp.host", 
-                    regProperties.getProperty("mail.smtp.host"));
+                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("smtp"));
 
             // Get session
             Session session = Session.getDefaultInstance(props, null);
