@@ -1,0 +1,25 @@
+function FileData_Pairs(x)
+{
+x.t("protocols","abstracting");
+x.t("managing","protocols");
+x.t("scientific","data");
+x.t("diseases/conditions","adding");
+x.t("trial","diseases/conditions");
+x.t("trial","view");
+x.t("trial","removing");
+x.t("abstracting","managing");
+x.t("abstracting","scientific");
+x.t("abstracting","disease/condition");
+x.t("disease/condition","details");
+x.t("disease/condition","trial");
+x.t("disease/condition","information");
+x.t("view","disease/condition");
+x.t("information","abstracting");
+x.t("information","listing/modifying");
+x.t("data","abstracting");
+x.t("listing/modifying","trial");
+x.t("removing","(unlinking)");
+x.t("adding","disease/condition");
+x.t("(unlinking)","disease/conditions");
+x.t("disease/conditions","trial");
+}

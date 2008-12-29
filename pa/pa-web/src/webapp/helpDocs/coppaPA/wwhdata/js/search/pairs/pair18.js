@@ -1,0 +1,24 @@
+function FileData_Pairs(x)
+{
+x.t("protocols","abstracting");
+x.t("managing","protocols");
+x.t("sites","new");
+x.t("sites","information");
+x.t("new","person");
+x.t("status","assigned");
+x.t("add","participating");
+x.t("organization","created");
+x.t("abstracting","managing");
+x.t("abstracting","participating");
+x.t("abstracting","administrative");
+x.t("person","organization");
+x.t("assigned","curation");
+x.t("participating","sites");
+x.t("curation","purpose");
+x.t("administrative","data");
+x.t("information","add");
+x.t("information","abstracting");
+x.t("data","abstracting");
+x.t("created","pended");
+x.t("pended","status");
+}

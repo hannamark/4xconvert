@@ -1,0 +1,26 @@
+function FileData_Pairs(x)
+{
+x.t("abstraction","instructions");
+x.t("abstraction","portal");
+x.t("abstraction","service");
+x.t("currently","construction");
+x.t("instructions","forlogging");
+x.t("getting","started");
+x.t("overview","protocol");
+x.t("construction","section");
+x.t("logging","protocol");
+x.t("provides","overview");
+x.t("started","getting");
+x.t("started","help");
+x.t("portal","topics");
+x.t("section","provides");
+x.t("section","include");
+x.t("project","currently");
+x.t("include","overview");
+x.t("forlogging","protocol");
+x.t("help","project");
+x.t("page","logging");
+x.t("protocol","abstraction");
+x.t("topics","section");
+x.t("service","page");
+}
