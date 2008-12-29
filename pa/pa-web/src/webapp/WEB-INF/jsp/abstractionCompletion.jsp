@@ -48,7 +48,8 @@ function generateReport(pid) {
         <del class="btnwrapper">
             <ul class="btnrow">
                 <s:if test="${abstractionError==false}">                                        
-                    <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>                                
+                    <li><s:a href="#" cssClass="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></s:a></li>
+                    <li><s:a href="abstractionCompletionviewTSR.action" cssClass="btn"><span class="btn_img"><span class="save">View TSR</span></span></s:a></li>                                
                     <s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Accepted'}">
                     <li><s:a href="abstractionCompletioncomplete.action" cssClass="btn"><span class="btn_img"><span class="save">Complete Abstraction</span></span></s:a></li>
                     </s:if>

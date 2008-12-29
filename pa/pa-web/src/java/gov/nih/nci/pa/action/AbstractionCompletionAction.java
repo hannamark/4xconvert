@@ -16,6 +16,7 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -193,6 +195,58 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             return DISPLAY_XML;
         }
         return NONE;
+    }
+    
+    /**
+     * @return res
+     */
+    public String viewTSR() {
+      try {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+        getAttribute(Constants.STUDY_PROTOCOL_II);
+
+        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+            IiConverter.convertToLong(studyProtocolIi));
+        String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(studyProtocolIi);  
+             
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer sb  = new StringBuffer(folderPath);
+        final int i = 1000;
+        Random randomGenerator = new Random();
+        int randomInt = randomGenerator.nextInt(i);
+
+        String inputFile = new String(sb.append(File.separator).append("xmlfile_").append(randomInt 
+            + studyProtocolIi.getExtension() + ".xml"));
+        OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
+        oos.write(xmlData);
+        oos.close();
+
+        StringBuffer sb2  = new StringBuffer(folderPath);
+        String outputFile = new String(sb2.append(File.separator).append("TSR_").append(randomInt 
+            + studyProtocolIi.getExtension() + ".html"));
+        File downloadFile = createAttachment(new File(inputFile), new File(outputFile));
+        
+        servletResponse.setContentType("application/x-unknown");
+        FileInputStream fileToDownload = new FileInputStream(downloadFile);
+        servletResponse.setHeader("Content-Disposition", "attachment; filename="
+                + downloadFile.getName());
+        servletResponse.setContentLength(fileToDownload.available());
+        int data;
+        ServletOutputStream servletout = servletResponse.getOutputStream();
+        while ((data = fileToDownload.read()) != -1) {
+          servletout.write(data);
+        }
+        servletout.flush();
+        servletout.close();
+        fileToDownload.close();
+        
+        new File(inputFile).delete();
+        new File(outputFile).delete();
+        
+      } catch (Exception e) {
+        return SUCCESS;
+      }
+      return NONE;
     }
     
     private File createAttachment(File xml, File xmlOutput) {
