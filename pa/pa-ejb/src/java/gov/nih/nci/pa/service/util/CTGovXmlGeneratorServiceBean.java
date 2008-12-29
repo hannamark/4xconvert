@@ -113,6 +113,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final int MONTHS = 12;
     private static final int HOURS = 24;
     private static final int MINUTES = 60;
+    private static final int MAX_AGE = 999;
     
     private static HashMap<String , String> nv = new HashMap<String, String>(); 
     /**
@@ -420,11 +421,11 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         List<StudyIndldeDTO> ideDtos = 
             PoPaServiceBeanLookup.getStudyIndldeService().getByStudyProtocol(spDTO.getIdentifier());
         
-        StudyIndldeDTO ideDTO = ideDtos.get(0);
         if (ideDtos == null || ideDtos.isEmpty()) {
             appendElement(root , createElement("is_ind_study" , NO, doc));
             return;
         }
+        StudyIndldeDTO ideDTO = ideDtos.get(0);
         appendElement(root , createElement("is_ind_study" , YES, doc));
         Element idInfo = doc.createElement("ind_info");
         appendElement(idInfo , createElement("ind_grantor" , ideDTO.getGrantorCode(), doc));
@@ -508,7 +509,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
     private static String convertToYears(BigDecimal b , String unit) {
         int age = 0;
-        if (unit == null) {
+        if (b.intValue() == 0 || b.intValue() ==  MAX_AGE) {
+            return "N/A";
+        } else if (unit == null) {
             return null; 
         } else if (unit.equalsIgnoreCase("Years")) {
             age = b.intValue();

@@ -5,6 +5,7 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -13,9 +14,9 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -66,7 +67,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     enforceRegulatoryInfo(studyProtocolIi);
     
-    enforceTrialINDIDE(studyProtocolIi);
+    //enforceTrialINDIDE(studyProtocolIi);
     
     enforceTrialStatus(studyProtocolIi, studyProtocolDTO);
     
@@ -176,12 +177,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           }
         }
       }
-    } else {
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Trial Funding from Administrative Data menu.");
-      webDTO.setErrorDescription("No grants exists for the trial.");
-      abstractionList.add(webDTO);
     }
   }
   
@@ -237,7 +232,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
 
 
-  private void enforceTrialINDIDE(Ii studyProtocolIi) throws PAException {
+  /*private void enforceTrialINDIDE(Ii studyProtocolIi) throws PAException {
     List<StudyIndldeDTO> siList = PoPaServiceBeanLookup.getStudyIndldeService().getByStudyProtocol(studyProtocolIi);
     if (!(siList.isEmpty())) { // NOPMD
     } else {
@@ -247,7 +242,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       webDTO.setErrorDescription("No IND/IDE exists for the trial.");
       abstractionList.add(webDTO);
     }
-  }
+  }*/
 
 
   private void enforceRegulatoryInfo(Ii studyProtocolIi) throws PAException {
@@ -269,13 +264,49 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
     List<StudyParticipationDTO> spList =  
         PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, srDTO);
-    if (!(spList.isEmpty())) { // NOPMD
-    } else {
+    
+    if (spList == null || spList.isEmpty()) { 
       AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
       webDTO.setErrorType("Error");
       webDTO.setComment("Select Treating Sites from Participating Sites under Administrative Data menu.");
       webDTO.setErrorDescription("No Treating Sites exists for the trial.");
       abstractionList.add(webDTO);
+      return;
+    }
+    if (spList != null) {
+        for (StudyParticipationDTO spartDto : spList) {
+
+            List<StudyParticipationContactDTO> spContactDtos =  
+                PoPaServiceBeanLookup.getStudyParticipationContactService().getByStudyParticipation(
+                        spartDto.getIdentifier());
+            boolean piFound = false;
+            boolean contactFound = false;
+            for (StudyParticipationContactDTO spContactDto : spContactDtos) {
+                if (StudyParticipationContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode()
+                            .equalsIgnoreCase(spContactDto.getRoleCode().getCode())
+                    || StudyParticipationContactRoleCode.STUDY_SUB_INVESTIGATOR.getCode()
+                            .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
+                    piFound = true;
+                } else if (StudyParticipationContactRoleCode.STUDY_PRIMARY_CONTACT.getCode()
+                        .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
+                    contactFound = true;
+                }
+            }
+            if (!piFound) {
+                abstractionList.add(createError("Error", 
+                        "Select Treating Sites from Participating Sites under Administrative Data menu.", 
+                        "Treating site # " + spartDto.getIdentifier().getExtension() + " Must have an Investigator"));
+                
+            }
+            if (!contactFound) {
+                abstractionList.add(createError("Error", 
+                        "Select Treating Sites from Participating Sites under Administrative Data menu.", 
+                        "Treating site # " + spartDto.getIdentifier().getExtension() + " Must have a Contact"));
+                
+            }
+            
+        }
+        
     }
   }
 

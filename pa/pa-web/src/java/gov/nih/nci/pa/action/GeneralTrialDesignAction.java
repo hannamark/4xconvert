@@ -9,6 +9,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
@@ -122,6 +123,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().setAttribute(
                     Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);            
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
+
             
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(
@@ -543,4 +547,17 @@ public class GeneralTrialDesignAction extends ActionSupport {
     public void setGtdDTO(GeneralTrialDesignWebDTO gtdDTO) {
         this.gtdDTO = gtdDTO;
     }
+    
+    private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
+        String action = "";
+        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.REJECTED.getCode();
+        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
+        } else {
+            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
+        }
+        return action;
+    }
+    
 }

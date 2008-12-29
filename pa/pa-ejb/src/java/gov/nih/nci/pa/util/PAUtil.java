@@ -279,7 +279,7 @@ public class PAUtil {
      * @return boolean whether email is valid or not
      */
     public static boolean isValidEmail(String email) {
-       Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+       Pattern p = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
        Matcher m = p.matcher(email);
        return  m.matches();
     }

@@ -139,6 +139,10 @@ public class TrialValidationAction extends ActionSupport {
       save();    
       createDocumentWfStatus(DocumentWorkflowStatusCode.ACCEPTED);
       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");            
+
+      ServletActionContext.getRequest().getSession().setAttribute(
+              Constants.DOC_WFS_MENU, setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED)); 
+
       return EDIT;
     }
     
@@ -167,6 +171,9 @@ public class TrialValidationAction extends ActionSupport {
         return "rejectReason";
       }
       createDocumentWfStatus(DocumentWorkflowStatusCode.REJECTED);
+      ServletActionContext.getRequest().getSession().setAttribute(
+              Constants.DOC_WFS_MENU, setMenuLinks(DocumentWorkflowStatusCode.REJECTED)); 
+
       sendEmail();
       query();
       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Rejected");            
@@ -292,6 +299,8 @@ public class TrialValidationAction extends ActionSupport {
         // put an entry in the session and store StudyProtocolQueryDTO 
         ServletActionContext.getRequest().getSession().setAttribute(
             Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(
+                Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
 
 
       } catch (Exception e) {
@@ -862,4 +871,17 @@ public class TrialValidationAction extends ActionSupport {
     public void setPersons(List<SearchPersonResultDisplay> persons) {
         this.persons = persons;
     }    
+    
+    private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
+        String action = "";
+        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.REJECTED.getCode();
+        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)) {
+            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
+        } else {
+            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
+        }
+        return action;
+    }
+
 }
