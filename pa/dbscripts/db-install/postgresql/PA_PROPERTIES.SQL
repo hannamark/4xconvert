@@ -1,71 +1,63 @@
 delete from pa_properties;
 insert into pa_properties(IDENTIFIER,name,value) VALUES(1,'tsr.subject',
-'NCI Trial Summary Report AND ClinicalTrials.gov Submission Document');
+'NCI Clinical Trials Reporting Program (CTRP) Trial Summary Report and ClinicalTrials.gov Registration File');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(2,'tsr.body',
 '${CurrentDate}
 
-Subject: NCI Trial Summary Report AND ClinicalTrials.gov submission document 
+Attn: ${SubmitterName}
 
-Dear ${SubmitterName}
+Your Trial, ${localOrgID}, ${trialTitle}, received by the NCI Clinical Trial Reporting Office (CTRO) on ${receiptDate} and assigned NCI Trial ID ${nciTrialID}, has been processed by the CTRO.
 
-Your Trial, ${localOrgID}, ${trialTitle}, was received by the NCI Clinical Trial Reporting Office (CTRO) on ${receiptDate} and has been assigned NCI Trial ID ${nciTrialID}. Please reference this NCI Trial ID in all future verbal and written communications.  
-
-Please review the attached Trial Summary Report in the ${fileName} file and verify the data fields to ensure that they accurately reflect the trial. If the abstraction is correct or you would like to make changes, please reply to this email TKTK@nci.nih.gov within the next 7 days. Please include the NCI Trial Identifier number in all correspondence. If a response is NOT received within 7 days we will assume that the information contained in this report is acceptable.
+Please review the attached Trial Summary Report (${fileName}), including all data fields, to ensure that they accurately reflect the trial. Please mark any changes that are required in the attached file and return the updated file by e-mail to the CTRO at ncictrp@mail.nih.gov within five (5) business days. CTRO staff will incorporate changes, as appropriate. If there are no changes, please respond to this email confirming that the report accurately reflects your trial. Please include the NCI Trial ID, as above, in all correspondence. If a response is NOT received within five (5) business days, CTRO will conclude that the information contained in this Trial Summary Report is acceptable.
  
-Please note that the attached XML file ${fileName2} is formatted in accordance with ClinicalTrials.gov data specification and ready for submission to ClinicalTrials.gov for your convenience.   
+We are also including a file ${fileName2} suitable for posting to ClinicalTrials.gov as an attachment. This file reflects the information contained within the Trial Summary Report in a format that meets the specifications of the National Library of Medicine’s ClinicalTrials.gov database. You may use the file to register your trial with ClinicalTrials.gov. For information on how to submit your trial to ClinicalTrials.gov please refer to the CTRP web site at http://www.cancer.gov/ncictrp. 
 
+If you have questions on this or other CTRP topics, please contact us at ncictrp@mail.nih.gov.
 
-Thank you for your assistance,
-
-CTROSTAFFNAME
-NCI’s Clinical Trial Reporting Office
-CTROSTAFFEMAIL
-http://www.cancer.gov/ncictrp
+Thank you for registering your trial with NCI’s Clinical Trials Reporting Program (CTRP).
 ');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(3,'smtp',
 'mailfwd.nih.gov');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(4,'fromaddress',
-'do.not.reply@mail.nih.gov');
+'ncictrp@mail.nih.gov');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(5,'rejection.subject',
-'Subject Clinical Trials Reporting Program (CTRP) Protocol Submission Rejection');
+'NCI Clinical Trials Reporting Program (CTRP) Trial Registration Rejection Notice.');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(6,'rejection.body',
-'You have submitted the following protocol to the NCI Clinical Trials Reporting Office (CTRO):
+'The following trial was submitted for registration to the NCI Clinical Trials Reporting Office (CTRO): 
 
 Lead Organization Trial Identifier ${leadorgid} 
 
-Your Submission is rejected by the CTRO Staff for the following reason ${reasoncode}
+This trial cannot be registered by the CTRO for the following reasons: ${reasoncode}
 
-If you feel there has been an error in your submission validation, please contact the NCI CTRO Office at 301-496-0001 or send an e-mail to TKTK@nci.nih.gov. Otherwise, we will consider this submission as rejected. 
+If you feel there has been an error in rejecting this trial registration, or if you have additional questions on this or other CTRP topics, please contact us at ncictrp@mail.nih.gov 
 
-Thank you for participation in the Clinical Trials Reporting Program.');
+Thank you for your participation in NCI’s Clinical Trials Reporting Program (CTRP).
+');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(7,'allowed.uploadfile.types','doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb');
 insert into pa_properties(IDENTIFIER,name,value) VALUES(8,'trial.register.subject',
-'NCI''s Clinical Trials Reporting Program (CTRP) Trial Registration Acknowledgment');
+'NCI Clinical Trials Reporting Program (CTRP) Trial Registration Acknowledgement');
 insert into pa_properties(IDENTIFIER,name,value) VALUES(9,'trial.register.body',
-'You have successfully registered the following trial with the NCI Clinical Trials Reporting Office (CTRO): 
+'You have successfully registered the following trial with the National Cancer Institute (NCI) Clinical Trials Reporting Program (CTRP):
 Lead Organization Trial Identifier ${leadOrgTrialIdentifier}   
  
-Your trial has been assigned a unique NCI number for tracking that you will need to reference in future correspondence with the CTRO:
+Your trial has been assigned a unique NCI identification number for tracking that you will need to reference in future correspondence with the Clinical Trials Reporting Office (CTRO): 
 NCI Trial Identifier ${nciTrialIdentifier}
  
-Your registered trial will now go through a series of CTRO steps that will result in a Trial Summary Report being sent to you which will contain key elements that the CTRO has abstracted from the protocol.  Upon receipt of the Trial Summary Report, we request that you review the elements for accuracy and reply with your assessment of this review. 
+Your trial will now be processed by the staff of the CTRO. Upon completion, the CTRO will e-mail you a Trial Summary Report listing key data elements that have been abstracted from the trial protocol.  At that time, the CTRO will request that you review the Trial Summary Report for accuracy and respond with any changes that may be required. 
  
-If you have questions on this or other CTRP topics, please contact NCICB Application Support:
-Email: ncicb@pop.nci.nih.gov 
-Toll-free: 888-478-4423 Phone: 301-451-4384 
-Web: http://ncicb.nci.nih.gov/NCICB/support 
-Live telephone support is available Monday to Friday, 8 a.m. to 8 p.m. Eastern Time, excluding federal holidays.
-
-Thank you for registering your trial with NCI''s Clinical Trials Reporting Program (CTRP).');
+If you have questions on this or other CTRP topics, please contact us at ncictrp@mail.nih.gov
+ 
+Thank you for registering your trial with NCI Clinical Trials Reporting Program (CTRP).
+');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(10,'user.account.subject',
-'NCI''s Clinical Trials Reporting Program (CTRP) User Activation');
+'NCI Clinical Trials Reporting Program (CTRP) User Activation');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(11,'user.account.body',
-'Thank you for registering with NCI''s Clinical Trials Reporting Program. Please click on the link below or copy paste the URL in the browser to activate your account.');
+'Thank you for registering with NCI Clinical Trials Reporting Program. Please click on the link below or copy paste the URL in the browser to activate your account.');
