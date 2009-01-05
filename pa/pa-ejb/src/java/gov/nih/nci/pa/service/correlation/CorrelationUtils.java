@@ -41,7 +41,7 @@ import org.hibernate.Session;
  */
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity",
         "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-public class CorrelationUtils {
+public class CorrelationUtils implements CorrelationUtilsRemote {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
 
 

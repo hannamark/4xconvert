@@ -34,7 +34,7 @@ import org.hibernate.Session;
  */
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity", 
     "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-public class OrganizationCorrelationServiceBean {
+public class OrganizationCorrelationServiceBean implements OrganizationCorrelationServiceRemote {
     
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
 //    private static final String CANCER_CENTER_CODE = "CCR";
