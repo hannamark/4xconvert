@@ -489,7 +489,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:validation:pre-install,
         install:jboss:stop,
         install:init,
-        install:database,
         upgrade:database,
         upgrade:jboss,
         install:validation:post-install
