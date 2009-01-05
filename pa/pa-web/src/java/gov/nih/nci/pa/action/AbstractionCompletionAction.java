@@ -226,11 +226,12 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             + studyProtocolIi.getExtension() + ".html"));
         File downloadFile = createAttachment(new File(inputFile), new File(outputFile));
         
-        servletResponse.setContentType("application/x-unknown");
+        servletResponse.setContentType("text/html");
         FileInputStream fileToDownload = new FileInputStream(downloadFile);
         servletResponse.setHeader("Content-Disposition", "attachment; filename="  + downloadFile.getName());
-        servletResponse.setContentLength(fileToDownload.available());
         servletResponse.setHeader("Cache-control", "must-revalidate");
+        servletResponse.setContentLength(fileToDownload.available());
+
         int data;
         ServletOutputStream servletout = servletResponse.getOutputStream();
         while ((data = fileToDownload.read()) != -1) {
