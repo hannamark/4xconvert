@@ -1,21 +1,27 @@
 package gov.nih.nci.registry.action;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.BatchConstants;
+import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
@@ -32,6 +38,10 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 public class TrialBatchDataValidator {
     private static final int IND_FIELD_COUNT = 5;
     private static Logger log = Logger.getLogger(TrialBatchDataValidator.class);
+    private static List<String> countryList = null;
+    private final int serialNumMin = 5;
+    private final int serialNumMax = 6;
+
 /**
  * 
  * validate the submit trial form elements.
@@ -106,6 +116,10 @@ public class TrialBatchDataValidator {
             if (!RegistryUtil.isValidFileType(batchDto.getOtherTrialRelDocumentFileName())) {
                 fieldErr.append("Other Trial Related Document - File type is not allowed \n");                
             }
+        }
+        //load the country
+        if (null == countryList) {
+            getCountryList();   
         }
         //Lead org validation
         OrganizationBatchDTO leadOrgDto = buildLeadOrgDto(batchDto);
@@ -217,6 +231,11 @@ public class TrialBatchDataValidator {
         if (PAUtil.isNotEmpty(batchDto.getIndExpandedAccessStatus())
                 && null == ExpandedAccessStatusCode.getByCode(batchDto.getIndExpandedAccessStatus())) {
             fieldErr.append("Please enter valid value for IND/IDE Expanded Access Status.");
+        }
+        if (PAUtil.isNotEmpty(batchDto.getNihGrantSrNumber())
+                && (batchDto.getNihGrantSrNumber().length() < serialNumMin 
+                        || batchDto.getNihGrantSrNumber().length() > serialNumMax)) {
+            fieldErr.append("Serial number can be numeric with 5 or 6 digits");
         }
     return fieldErr;
 }
@@ -595,17 +614,24 @@ public class TrialBatchDataValidator {
         if (PAUtil.isEmpty(batchDto.getCity())) {
             fieldErr.append(fieldName + " City is required. \n");
         }
-        if (PAUtil.isEmpty(batchDto.getState())) {
-            fieldErr.append(fieldName + " State is required. \n");
-        } else if (batchDto.getState().length() > 2) {
-            fieldErr.append(fieldName + " State is not valid. \n");
-        }
         if (PAUtil.isEmpty(batchDto.getCountry())) {
             fieldErr.append(fieldName + " Country is required.\n");
         }
         if (PAUtil.isNotEmpty(batchDto.getCountry())) {
             if (batchDto.getCountry().length() != BatchConstants.COUNTRY_SIZE) {
                 fieldErr.append(fieldName + " Country Code is not ISO \n");
+            }
+            if (!isCountryValid(batchDto.getCountry().toUpperCase())) {
+                fieldErr.append(fieldName + " Country Code is not Valid.\n");
+            }
+            if (batchDto.getCountry().equalsIgnoreCase("USA")) {
+                if (PAUtil.isEmpty(batchDto.getState())) {
+                    fieldErr.append(fieldName + " State is required. \n");
+                }
+                if (PAUtil.isNotEmpty(batchDto.getState())
+                        && batchDto.getState().length() > 2) {
+                    fieldErr.append(" State code should be two digit. \n");
+                }
             }
         }
         if (PAUtil.isEmpty(batchDto.getZip())) {
@@ -637,11 +663,6 @@ public class TrialBatchDataValidator {
         if (PAUtil.isEmpty(batchDto.getCity())) {
             fieldErr.append(message + " City is required.\n");
         }
-        if (PAUtil.isEmpty(batchDto.getState())) {
-            fieldErr.append(message + " State is required.\n");
-        } else if (batchDto.getState().length() > 2) {
-            fieldErr.append(message + " State is not valid.\n");
-        }
         if (PAUtil.isEmpty(batchDto.getZip())) {
             fieldErr.append(message + " Zip is required. \n");
         }
@@ -651,7 +672,15 @@ public class TrialBatchDataValidator {
         if (PAUtil.isNotEmpty(batchDto.getCountry())) {
                 if (batchDto.getCountry().length() != BatchConstants.COUNTRY_SIZE) {
                     fieldErr.append(message + " Country Code is not ISO.\n");
-            }
+                }
+                if (!isCountryValid(batchDto.getCountry().toUpperCase())) {
+                    fieldErr.append(message + " Country Code is not Valid.\n");
+                }
+                if (batchDto.getCountry().equalsIgnoreCase("USA")) {
+                    if (PAUtil.isEmpty(batchDto.getState())) {
+                        fieldErr.append(message + " State is required. \n");
+                    }
+                }     
         }
         if (PAUtil.isEmpty(batchDto.getEmail())) {
             fieldErr.append(message + " Email is required. \n");
@@ -681,7 +710,7 @@ public class TrialBatchDataValidator {
        if (PAUtil.isEmpty(dto.getIndHasExpandedAccess())) {
            nullCount += 1;
        }
-       log.error("null count in ind Ide" + nullCount);
+       log.info("null count in ind Ide" + nullCount);
        if (nullCount == 0) {
            return true;
        }
@@ -702,4 +731,35 @@ public class TrialBatchDataValidator {
     return str;
    }
 */   
+    /**
+     * 
+     * @param country
+     * @return tr
+     */
+    private boolean isCountryValid(String country) {
+        if (this.countryList.contains(country)) {
+            return true;    
+        } 
+        return false;
+    }
+    /**
+     * 
+     *
+     */
+    private void getCountryList() {
+        
+        this.countryList = new ArrayList<String>();
+        try {
+            List listOfCountries = RegistryServiceLocator.getLookUpTableService().getCountries();
+            Iterator iter = listOfCountries.iterator();
+            while (iter.hasNext()) {
+                Country countries = (Country) iter.next();
+                this.countryList.add(countries.getAlpha3());
+            }
+        } catch (PAException e) {
+            // TODO Auto-generated catch block
+            log.error("error while validaing country.." + e.getMessage());
+        }
+    }
+
 }
