@@ -228,8 +228,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         
         servletResponse.setContentType("application/x-unknown");
         FileInputStream fileToDownload = new FileInputStream(downloadFile);
-        servletResponse.setHeader("Content-Disposition", "attachment; filename="
-                + downloadFile.getName());
+//        servletResponse.setHeader("Content-Disposition", "attachment; filename="
+//                + downloadFile.getName());
         servletResponse.setContentLength(fileToDownload.available());
         int data;
         ServletOutputStream servletout = servletResponse.getOutputStream();
