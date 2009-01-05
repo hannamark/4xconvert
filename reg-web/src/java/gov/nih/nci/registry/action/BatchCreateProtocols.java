@@ -85,7 +85,7 @@ public class BatchCreateProtocols {
      */
     public HashMap createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath, String userName)
             throws PAException {
-        log.error("Entering into createProtocols...having size of dtolist"
+        log.info("Entering into createProtocols...having size of dtolist"
                 + dtoList.size());
         if (dtoList == null || dtoList.size() < 1) {
             throw new PAException("DTO list is Empty");
@@ -106,18 +106,13 @@ public class BatchCreateProtocols {
                 if (null == result || result.length() < 1) {
                     result = buildProtocol(batchDto, folderPath , userName);    
                 } else {
-                    result = "Trial registration failed for Identifier " 
-                    + batchDto.getUniqueTrialId() +  "\nReason: " + result + "\n";
+                    result = "Failed:" + result;
                     failedCount  += 1;
                 }
-                log.error("putting values in map local protocol Id as " 
-                        + batchDto.getUniqueTrialId() + "and response as " + result);
                 map.put(batchDto.getUniqueTrialId() , result);
             }
         }
-        log.error("createProtocols...failed count" + failedCount);
-        log.error("createProtocols...summaryMap sucess count" + sucessCount);
-        log.error("leaving into createProtocols...");
+        log.error("leaving into createProtocols... failed count" + failedCount + "sucess count" + sucessCount);
         map.put("Failed Trial Count" , String.valueOf(failedCount));
         map.put("Sucess Trial Count" , String.valueOf(sucessCount));
         return map;
@@ -197,7 +192,7 @@ public class BatchCreateProtocols {
                         .createInterventionalStudyProtocol(
                                 (InterventionalStudyProtocolDTO) createProtocolDTO(dto, userName));
             }
-            log.error("Trial is registered with ID: "
+            log.info("Trial is registered with ID: "
                     + IiConverter.convertToString(studyProtocolIi));
             createStudyStatus(studyProtocolIi, dto);  // create study overall status
             createIndIdeIndicators(studyProtocolIi, dto); // create IND/IDE information *One- times*
@@ -236,13 +231,11 @@ public class BatchCreateProtocols {
                             IiConverter.convertToLong(studyProtocolIi), dto
                                     .getLocalProtocolIdentifier());
                 }
-            log.error("buildProtocol -Create or lookup the Person");
             if (leadPrincipalInvestigator != null) {
                 new PARelationServiceBean().createPrincipalInvestigatorRelations(orgIdIi.getExtension(), 
                         leadPrincipalInvestigator.getExtension(), IiConverter
                 .convertToLong(studyProtocolIi), StudyTypeCode.getByCode(dto.getTrialType()));
             }
-            log.error("buildProtocol -Create or lookup the Sponsor ");
             if (sponsorIdIi != null) {
                     new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
                         IiConverter.convertToLong(studyProtocolIi));
@@ -257,24 +250,19 @@ public class BatchCreateProtocols {
                              dto.getSponsorContactPhone());
                     }                
             }
-             log.error("sponsor relation done...");
-
             //get the protocol
              protocolAssignedId = 
                  RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi).
                  getAssignedIdentifier().getExtension().toString();
-             protocolAssignedId = "Trial Identifier " + dto.getUniqueTrialId()
-                 + " successfully registered and assigned  NCI Identifier " + protocolAssignedId + "\n";
+             protocolAssignedId =  " Successfully Registered with NCI Identifier " + protocolAssignedId;
              sucessCount +=  1;
         } catch (PAException ex) {
             failedCount +=  1;
             log.error("buildprotocol exception-" + ex.getMessage());
-            protocolAssignedId =  "Trial registration failed for Identifier " 
-            + dto.getUniqueTrialId() + "\nReason:" + ex.getMessage() + "\n";
+            protocolAssignedId =  "Failed:" + ex.getMessage() + "\n";
         } catch (Exception exc) {
             failedCount +=  1;
-        protocolAssignedId =  "Trial registration failed for Identifier " 
-            + dto.getUniqueTrialId() + "\nReason:" + exc.getMessage() + "\n";
+        protocolAssignedId =  "Failed:" + exc.getMessage() + "\n";
         log.error("buildprotocol exception-" + exc.getMessage());
     }
         log.error("response " + protocolAssignedId);
@@ -321,7 +309,6 @@ public class BatchCreateProtocols {
             protocolDTO.setPrimaryPurposeOtherText(
                     StConverter.convertToSt(batchDto.getPrimaryPurposeOtherValueSp()));
         }
-        log.error("Setting User Name as " + userName);
         protocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         return protocolDTO;
     }
@@ -345,7 +332,7 @@ public class BatchCreateProtocols {
                             .getCurrentTrialStatusDate())));
             RegistryServiceLocator.getStudyOverallStatusService().create(
                     overallStatusDTO);
-            log.error("leaving createStudyStatus....");
+            log.info("leaving createStudyStatus....");
     }
 
     /**
@@ -379,7 +366,7 @@ public class BatchCreateProtocols {
                     .getNihGrantSrNumber()));
             RegistryServiceLocator.getStudyResourcingService()
                     .createStudyResourcing(studyResoureDTO);
-            log.error("leaving createStudyResources ....");
+            log.info("leaving createStudyResources ....");
         }
      }
 
@@ -395,7 +382,7 @@ public class BatchCreateProtocols {
      *             PAException
      */
     private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException {
-        log.error("Entering lookup Org ...");
+        log.info("Entering lookup Org ...");
         Ii orgId = null;
         try {
                 String orgName = batchDto.getName();
@@ -428,24 +415,24 @@ public class BatchCreateProtocols {
                         || PAUtil.isEmpty(batchDto.getOrgCTEPId())) {
                     criteria.setName(EnOnConverter.convertToEnOn(orgName));
                     criteria.setPostalAddress(AddressConverterUtil.create(null, null,
-                        cityName, null, zipCode, countryName));
+                        cityName, null, zipCode, countryName.toUpperCase()));
                 }
                 List<OrganizationDTO> poOrgDtos = RegistryServiceLocator
                         .getPoOrganizationEntityService().search(criteria);
                 if (null == poOrgDtos || poOrgDtos.size() == 0) {
                     // create a new org and then return the new Org
-                    log.error(" lookUpOrgs Serch return no org so creating new");
+                    log.info(" lookUpOrgs Serch return no org so creating new");
                     orgId = createOrganization(batchDto);
                 } else {
                     // return the Id of the org
                     orgId = poOrgDtos.get(0).getIdentifier();
-                    log.error(" lookUpOrgs Serch returned orgId" + orgId.getExtension().toString());
+                    log.info(" lookUpOrgs Serch returned orgId" + orgId.getExtension().toString());
                 }
             } catch (Exception e) {
                 log.error("lookUpOrgs exception" + e.getMessage());
                 throw new PAException(e.getMessage());
             }
-        log.error("leaving lookup Org with OrgId" + orgId.getExtension());
+        log.info("leaving lookup Org with OrgId" + orgId.getExtension());
         return orgId;
     }
 
@@ -461,7 +448,7 @@ public class BatchCreateProtocols {
      */
     public Ii createOrganization(OrganizationBatchDTO batchDto)
             throws PAException {
-        log.error("Entering Create Org ..");
+        log.info("Entering Create Org ..");
         OrganizationDTO orgDto = new OrganizationDTO();
         Ii orgId = null;
         String orgName = batchDto.getName();
@@ -479,11 +466,6 @@ public class BatchCreateProtocols {
               log.error("createOrganization throwing exception" + "City is a required field");
               throw new PAException("City is a required field");
         } 
-        String stateName = batchDto.getState();
-        if (PAUtil.isEmpty(stateName)) {
-              log.error("createOrganization throwing exception" + "State is a required field");
-              throw new PAException("State is a required field");
-        }
         String zipCode = batchDto.getZip();
         if (PAUtil.isEmpty(zipCode)) {
             log.error("createOrganization throwing exception" + "Zip is a required field");
@@ -493,7 +475,19 @@ public class BatchCreateProtocols {
         if (PAUtil.isEmpty(countryName)) {
             log.error("createOrganization throwing exception" + "Country is a required field");
             throw new PAException("Country is a required field");
+        } else {
+            countryName = countryName.toUpperCase();
         }
+        String stateName = batchDto.getState();
+        if (countryName != null && countryName.equalsIgnoreCase("USA")) {
+            if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
+                throw new PAException("State is required for US");
+            }            
+        } 
+        if (PAUtil.isNotEmpty(stateName)) {
+            stateName = stateName.toUpperCase();
+        }
+        log.error("StateName as" + stateName + " Country as " + countryName);
         String email = batchDto.getEmail();
         if (PAUtil.isEmpty(email)) { 
               log.error("Email is a required field");
@@ -556,7 +550,7 @@ public class BatchCreateProtocols {
             log.error("createOrganization exception5 " + e5.getMessage());
             throw new PAException(e5.getMessage());
         }
-        log.error("leaving Create Org with OrgId" + orgId.getExtension());
+        log.info("leaving Create Org with OrgId" + orgId.getExtension());
         return orgId;
     }
     /**
@@ -566,7 +560,7 @@ public class BatchCreateProtocols {
      * @throws PAException ex
      */
     public Ii lookUpPersons(PersonBatchDTO batchDto) throws PAException {
-        log.error("Entering Look up person...");
+        log.info("Entering Look up person...");
         Ii personId = null;
         try {
             String firstName = batchDto.getFirstName();
@@ -604,18 +598,18 @@ public class BatchCreateProtocols {
             }
             poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
             if (null == poPersonList ||  poPersonList.size() ==  0) {
-                log.error("No Person found so creating new Person");
+                log.info("No Person found so creating new Person");
                 personId = createPerson(batchDto);
             }  else {
                 personId = poPersonList.get(0).getIdentifier();             
-                log.error("Person found ");
+                log.info("Person found ");
             }
             
         } catch (URISyntaxException e) {
             log.error("lookUpPersons exception " + e.getMessage());
             throw new PAException("lookUpPersons exception " + e.getMessage());
         }
-        log.error("leaving Look up person  with personId" + personId);
+        log.info("leaving Look up person  with personId" + personId);
         return personId;
     }
     /**
@@ -625,7 +619,7 @@ public class BatchCreateProtocols {
      * @throws PAException ex 
      */
     public Ii createPerson(PersonBatchDTO batchDto) throws PAException  {
-        log.error("Entering created person  ...");
+        log.info("Entering created person  ...");
         Ii personId = null; 
         String firstName = batchDto.getFirstName();
         if (PAUtil.isEmpty(firstName)) {
@@ -654,7 +648,7 @@ public class BatchCreateProtocols {
         if (PAUtil.isEmpty(city)) {
             log.error("City is a required field");
         throw new PAException("City is a required field");
-        }
+        } 
         String zip = batchDto.getZip();
         if (PAUtil.isEmpty(zip)) {
             log.error("Zip is a required field");
@@ -664,10 +658,20 @@ public class BatchCreateProtocols {
         if (PAUtil.isEmpty(country)) {
             log.error("Country is a required field");
         throw new PAException("Country is a required field");
+        } else {
+            country = country.toUpperCase();
         }
-    
-        String midName = batchDto.getMiddleName();
         String state =  batchDto.getState();
+        if (country != null && country.equalsIgnoreCase("USA")) {
+            if (state != null && !PAUtil.isNotEmpty(state)) {
+                throw new PAException("State is required for US");
+            }            
+        } 
+        if (PAUtil.isNotEmpty(state)) {
+            state = state.toUpperCase();
+        }
+        log.error("State as" + state + " Country as " + country);
+        String midName = batchDto.getMiddleName();
         String phone = batchDto.getPhone();
         String tty = batchDto.getTty();
         String fax = batchDto.getFax();
@@ -727,7 +731,7 @@ public class BatchCreateProtocols {
             log.error("PERS_CREATE_RESPONSE " + e.getMessage());
             throw new PAException("PERS_CREATE_RESPONSE " + e.getMessage());
         }
-        log.error("leaving created person  with personId" + personId);
+        log.info("leaving created person  with personId" + personId);
         return personId;
     }
     /**
@@ -740,7 +744,7 @@ public class BatchCreateProtocols {
      */
     private void uploadDocument(Ii studyProtocolIi, String docTypeCode, String fileName, String folderPath) 
     throws PAException {
-        log.error("Entering uploadDocument having docTypeCode " + docTypeCode);
+        log.info("Entering uploadDocument having docTypeCode " + docTypeCode);
         try {
             DocumentDTO docDTO = new DocumentDTO();
             docDTO.setStudyProtocolIi(studyProtocolIi);
@@ -754,7 +758,7 @@ public class BatchCreateProtocols {
             log.error("Exception occured reading '" + fileName + "' Exception is" + ioe);
             throw new PAException("Exception occured reading '" + fileName + "' Exception is" + ioe.getMessage());
         }
-        log.error("Leaving uploadDocument ...");
+        log.info("Leaving uploadDocument ...");
     }
     /** Read an input stream in its entirety into a byte array. */
     private static byte[] readInputStream(InputStream inputStream) throws IOException {
@@ -786,7 +790,7 @@ public class BatchCreateProtocols {
         return content;
     }
     private void createIndIdeIndicators(Ii studyProtocolIi, StudyProtocolBatchDTO dto) throws PAException {
-        log.error("Entering createIndIdeIndicators....");   
+        log.info("Entering createIndIdeIndicators....");   
         //check if the values are present..
         if (!isIndIdeEmpty(dto)) {
         StudyIndldeDTO indldeDTO = null;
@@ -809,7 +813,7 @@ public class BatchCreateProtocols {
             
             RegistryServiceLocator.getStudyIndldeService().create(indldeDTO);
             }
-     log.error("leaving createIndIdeIndicators....");
+     log.info("leaving createIndIdeIndicators....");
     }
     private boolean isIndIdeEmpty(StudyProtocolBatchDTO dto) {
         if (PAUtil.isNotEmpty(dto.getIndType()) 
