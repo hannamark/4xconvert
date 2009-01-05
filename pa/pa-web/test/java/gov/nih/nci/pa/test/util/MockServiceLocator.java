@@ -34,7 +34,9 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockStudyOverallStatusService;
+import gov.nih.nci.service.MockStudyParticipationService;
 import gov.nih.nci.service.MockStudyProtocolService;
+import gov.nih.nci.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -52,7 +54,9 @@ public class MockServiceLocator implements ServiceLocator {
     
     private final StudyProtocolServiceRemote studyProtocolService = new MockStudyProtocolService();
     private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
-
+    private final StudyParticipationServiceRemote studyParticipationService = new MockStudyParticipationService();
+    private final StudySiteAccrualStatusServiceRemote studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
+    
     /**
      * @return mock service
      */
@@ -61,10 +65,24 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     /** 
-     * return StudyOverallStatusServiceRemote
+     * @return StudyOverallStatusServiceRemote
      */
     public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
         return studyOverallStatusService;
+    }
+
+    /**
+     * @return StudyParticipationServiceRemote
+     */
+    public StudyParticipationServiceRemote getStudyParticipationService() {
+        return studyParticipationService;
+    }
+
+    /**
+     * @return StudySiteAccrualStatusServiceRemote
+     */
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
+        return studySiteAccrualStatusService;
     }
 
     /**
@@ -136,21 +154,6 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getStudyParticipationService()
-     */
-    public StudyParticipationServiceRemote getStudyParticipationService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getStudySiteAccrualStatusService()
-     */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
     /** 
      * return DocumentServiceRemote
      */

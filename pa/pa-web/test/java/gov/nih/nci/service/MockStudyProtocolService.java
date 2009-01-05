@@ -27,25 +27,21 @@ import java.util.List;
  */
 public class MockStudyProtocolService implements StudyProtocolServiceRemote {
 
-    ArrayList<StudyProtocol> spList;
+    static List<StudyProtocol> list;
 
-   /**
-     * 
-     */
-    public MockStudyProtocolService() {
-        super();
-        spList = new ArrayList<StudyProtocol>();
+    static {
+        list = new ArrayList<StudyProtocol>();
         StudyProtocol sp = new StudyProtocol();
         sp.setId(1L);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
-        spList.add(sp);
+        list.add(sp);
     }
 
     public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
-        for (StudyProtocol sp: spList) {
+        for (StudyProtocol sp: list) {
             if(sp.getId().equals(IiConverter.convertToLong(ii))) {
                 return StudyProtocolConverter.convertFromDomainToDTO(sp);
             }
@@ -55,7 +51,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
 
     public StudyProtocolDTO updateStudyProtocol(
             StudyProtocolDTO dto) throws PAException {
-        for (StudyProtocol bo : spList) {
+        for (StudyProtocol bo : list) {
             if (bo.getId().equals(IiConverter.convertToLong(dto.getIdentifier()))) {
                 bo.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getStartDateTypeCode().getCode()));
                 bo.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getPrimaryCompletionDateTypeCode().getCode()));
