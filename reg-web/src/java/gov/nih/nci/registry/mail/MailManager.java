@@ -1,13 +1,19 @@
 package gov.nih.nci.registry.mail;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 import gov.nih.nci.registry.util.EncoderDecoder;
@@ -155,4 +161,61 @@ public class MailManager {
             logger.error("Send Mail error", e);
         } // catch
     }
+    /**
+     * 
+     * @param mailTo m
+     * @param mailCC m
+     * @param mailBody b
+     * @param subject s
+     * @param attachFileName f
+     */
+    public void sendMailWithAattchement(String mailTo, String mailCC,
+            String mailBody, String subject, String attachFileName) {
+        logger.info("Entering sendEmail");
+        try {
+
+            // get system properties
+            Properties props = System.getProperties();
+            String to = mailTo;
+            // Set up mail server
+            props.put("mail.smtp.host", 
+                    regProperties.getProperty("mail.smtp.host"));
+            // Get session
+            Session session = Session.getDefaultInstance(props, null);
+            //Define Message
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(formatFromAddress()));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+                    to));
+            message.setSubject(subject);
+            // create and fill the message Body
+            MimeBodyPart mbp1 = new MimeBodyPart();
+            mbp1.setText(mailBody);
+
+            // create the second message part for attachment
+            MimeBodyPart mbp2 = new MimeBodyPart();
+            // attach the file to the message
+            FileDataSource fds = new FileDataSource(attachFileName);
+            mbp2.setDataHandler(new DataHandler(fds));
+            mbp2.setFileName(fds.getName());
+
+            // create the Multipart and add its parts to it
+            Multipart mp = new MimeMultipart();
+            mp.addBodyPart(mbp1);
+            mp.addBodyPart(mbp2);
+
+            // add the Multipart to the message
+            message.setContent(mp);
+
+            // set the Date: header
+            message.setSentDate(new Date());
+            
+            // send the message
+            Transport.send(message);
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage());
+        }
+        logger.info("Leaving sendEmail");
+      }
+
 }
