@@ -9,6 +9,7 @@ import gov.nih.nci.registry.util.ExcelReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +17,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 
@@ -102,7 +107,8 @@ public class BatchHelper implements Runnable { //implements Runnable {
             batchUploadSummary.append("Failed :");
             batchUploadSummary.append(failedCount);
             batchUploadSummary.append("\n");
-            Set s = map.keySet();
+            String attachFileName = generateExcelFileForAttachement(map);
+            /*            Set s = map.keySet();
             Iterator iter = s.iterator();
             String mapLocalTrialId = null;
             while (iter.hasNext()) {
@@ -114,18 +120,17 @@ public class BatchHelper implements Runnable { //implements Runnable {
                 mailBody.append("----------------------------------------------------------"
                                 + "--------------------------------------------------------\n");
             }
+             */          
             final MailManager mailManager = new MailManager();
             // Send the batch upload report to the submitter
             String  bodyIntro = "Thank you for  using the NCI Clinical Trials Reporting Program. \n\n"
-                                + "Here is a brief summary of the batch trial submission.\n";
-            bodyIntro = bodyIntro + batchUploadSummary;
-            mailBody.insert(0, "----------------------------------------------------------"
-                    + "--------------------------------------------------------------------\n"
-                    + "Detailed Report: \n"
-                    + "----------------------------------------------------------"
-                    + "--------------------------------------------------------------------\n");
-            mailBody.insert(0, bodyIntro);
-            mailManager.sendMail(userName, null, mailBody.toString(), subject);
+                                + "Here is a brief summary of the batch trial submission.\n"
+                                + "Please see attached report for more details.\n"
+                                + "----------------------------------------------------------\n";
+            batchUploadSummary.insert(0, bodyIntro);
+            mailBody.insert(0, batchUploadSummary);
+            mailBody.append("----------------------------------------------------------");
+            mailManager.sendMailWithAattchement(userName, null, mailBody.toString(), subject, attachFileName);
            
         } catch (Exception e) {
             log.error("Exception while processing batch" + e.getMessage());
@@ -134,6 +139,45 @@ public class BatchHelper implements Runnable { //implements Runnable {
             HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
         
+    }
+    /**
+     * 
+     * @param map ma
+     * @return st
+     */
+    private String generateExcelFileForAttachement(HashMap map) {
+        try {
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("new sheet");
+            HSSFRow headerRow = sheet.createRow(0);
+            HSSFCell cellId = headerRow.createCell(0);
+            HSSFCell cellReason = headerRow.createCell(1);
+            cellId.setCellValue(new HSSFRichTextString("Unique Trial Identifier"));
+            cellReason.setCellValue(new HSSFRichTextString("Status"));
+            Set s = map.keySet();
+            Iterator iter = s.iterator();
+            String mapLocalTrialId = null;
+            int i = 0;
+            HSSFRow detailRow;
+            while (iter.hasNext()) {
+                i++;
+                mapLocalTrialId = (String) iter.next();
+                detailRow = sheet.createRow(i);
+                detailRow.createCell(0).setCellValue(new HSSFRichTextString(mapLocalTrialId));
+                detailRow.createCell(1).setCellValue(new HSSFRichTextString((String) map.get(mapLocalTrialId)));
+            }
+            sheet.autoSizeColumn((short) 0);
+            sheet.autoSizeColumn((short) 1);
+            
+            FileOutputStream fileOut = new FileOutputStream(uploadLoc + File.separator + "batchUploadReport.xls");
+            wb.write(fileOut);
+           fileOut.close();          
+           log.error("Your file has been created succesfully");    
+               } catch (Exception ex) {
+                   log.error("exception while generating excel report" + ex.getMessage());
+            }    
+
+        return uploadLoc + File.separator + "batchUploadReport.xls";
     }
 
 }
