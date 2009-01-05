@@ -129,14 +129,12 @@ public class ExcelReader {
                 result = String.valueOf(cell.getNumericCellValue());
                 result = result.substring(0, result.indexOf("."));
                 }
-            log.error("result  CELL_TYPE_NUMERIC:-" + result);
             break;
         case HSSFCell.CELL_TYPE_STRING:
             result = cell.getRichStringCellValue().getString();
             if (null != result) {
                 result =  result.trim();
             }
-            log.info("result CELL_TYPE_STRING:-" + result);
             break;
         default:
             break;
