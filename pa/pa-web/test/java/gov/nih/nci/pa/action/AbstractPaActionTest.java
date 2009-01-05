@@ -3,8 +3,12 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
@@ -35,8 +39,14 @@ public abstract class AbstractPaActionTest {
      */
     @Before
     public void initMockRequest() {
+        StudyProtocolQueryDTO ts = new StudyProtocolQueryDTO();
+        ts.setStudyProtocolId(1L);
+        
+        HttpSession sess = new MockHttpSession();
+        sess.setAttribute(Constants.TRIAL_SUMMARY, ts);
+        
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
+        request.setSession(sess);
         ServletActionContext.setRequest(request);
     }
 

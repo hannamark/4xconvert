@@ -192,7 +192,6 @@
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
-    <pa:sucessMessage/>
     <s:actionerror />
 <h2><fmt:message key="treatingsites.title" /></h2>
     <table class="form">
@@ -231,7 +230,6 @@
                 </script>
 			<div id="tabboxwrapper"><!--Facility-->
 			<div id="facility" class="box">
-			<h3><fmt:message key="treatingsites.title" /></h3>
             <s:form name="facility">
                 <div id="loadOrgDetails">
                      <%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>

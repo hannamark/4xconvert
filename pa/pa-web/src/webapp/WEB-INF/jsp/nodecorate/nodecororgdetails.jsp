@@ -1,9 +1,11 @@
-<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <div id="orgDetailsDiv">
+<pa:sucessMessage /> 
+<h3><fmt:message key="treatingsites.title" /></h3>
+
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
 </div>
 <table class="form">	
-
                		<tr>
 					<td scope="row" class="label"><s:label for="srs">Site Recruitment Status:</s:label><span class="required">*</span></td>
                     <s:set name="recruitmentStatusValues" 

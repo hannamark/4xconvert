@@ -24,15 +24,16 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
 import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOOrgDisplayConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -70,17 +71,17 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings("PMD")
 public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 123412653L;
-    private static final String ACT_FACILITY_SAVE = "facilitySave";
-    private static final String ACT_EDIT = "edit";
-    private static final String ACT_DELETE = "delete";
+    static final String ACT_FACILITY_SAVE = "facilitySave";
+    static final String ACT_EDIT = "edit";
+    static final String ACT_DELETE = "delete";
     private StudyParticipationServiceRemote sPartService;
     private StudySiteAccrualStatusServiceRemote ssasService;
     private StudyParticipationContactServiceRemote sPartContactService;
-    private OrganizationCorrelationServiceBean oCService;
-    private CorrelationUtils cUtils;
+    OrganizationCorrelationServiceRemote oCService;
+    CorrelationUtilsRemote cUtils;
     
     private Ii spIi;
-    private List<OrganizationWebDTO> organizationList = null;
+    List<OrganizationWebDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
     private Organization editOrg;
     private static final String DISPLAYJSP = "displayJsp";
@@ -138,43 +139,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * @throws Exception exception
      */
     public String facilitySave() throws Exception {
-        clearErrorsAndMessages();
-        enforceBusinessRules();
+        facilitySaveOrUpdate();
         if (hasFieldErrors()) {
             return ERROR;
         }
-        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        if (tab == null) {
-            loadForm();
-            addActionError("You must select an organization before adding.");
-            return SUCCESS;
-        }
-        String poOrgId = tab.getFacilityOrganization().getIdentifier();
-        Long paHealthCareFacilityId = oCService.createHealthCareFacilityCorrelations(poOrgId);
-        StudyParticipationDTO sp = new StudyParticipationDTO();
-        sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
-        sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
-        sp.setIdentifier(null);
-        sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local SP Identifier"));
-        sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
-        sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        sp.setStudyProtocolIdentifier(spIi);
-        sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
-        sp = sPartService.create(sp);
-        tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
-        StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
-        ssas.setIdentifier(IiConverter.convertToIi((Long) null));
-        ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(getRecStatus())));
-        ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getRecStatusDate())));
-        ssas.setStudyParticipationIi(sp.getIdentifier());
-        ssas = ssasService.createStudySiteAccrualStatus(ssas);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
-        if (tab.getFacilityOrganization().getName() != null) {
-            organizationName = "for " + tab.getFacilityOrganization().getName();
-        }
-        loadForm();
-        setCurrentAction("edit");
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         return ACT_FACILITY_SAVE;
     }
 
@@ -183,74 +152,72 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * @throws Exception exception
      */
     public String facilityUpdate() throws Exception {
-        clearErrorsAndMessages();
-        String resStatus = ServletActionContext.getRequest().getParameter("recStatus");
-        String resStatusDate = ServletActionContext.getRequest().getParameter("recStatusDate");
-        String paramTargetAccrualNumber = ServletActionContext.getRequest().getParameter("targetAccrualNumber");
-        if (PAUtil.isEmpty(resStatus)) {
-            addFieldError("recStatus", getText("error.participatingStatus"));
-        }
-        if (PAUtil.isEmpty(resStatusDate)) {
-            addFieldError("recStatusDate", getText("error.participatingStatusDate"));
-        }
-        setCurrentAction("edit");
-        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        if (tab == null) {
-            loadForm();
-            addActionError("System error getting participating orgainzation data from session.");
-            return SUCCESS;
-        }
-        Organization org = new Organization();
-        if (tab.getFacilityOrganization().getId() != null) {
-            org = cUtils.getPAOrganizationByIndetifers(tab.getFacilityOrganization().getId(), null);
-        } else {
-            org = tab.getFacilityOrganization();
-        }
+        setRecStatus(ServletActionContext.getRequest().getParameter("recStatus"));
+        setRecStatusDate(ServletActionContext.getRequest().getParameter("recStatusDate"));
+        setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
+        facilitySaveOrUpdate();
         if (hasFieldErrors()) {
+            return "error_edit";
+        }
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        return ACT_EDIT;
+    }
+
+    /**
+     * @throws Exception exception
+     */
+    public void facilitySaveOrUpdate() throws Exception {
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
+              .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        if (tab != null) {
+            Organization org = tab.getFacilityOrganization();
             orgFromPO.setOrgCity(org.getCity());
             orgFromPO.setOrgCountry(org.getCountryName());
             orgFromPO.setOrgName(org.getName());
             orgFromPO.setOrgZip(org.getPostalCode());
-            if (PAUtil.isNotEmpty(resStatus)) {
-                this.setRecStatus(resStatus);
-            }
-            if (PAUtil.isNotEmpty(resStatusDate)) {
-                this.setRecStatusDate(resStatusDate);
-            }
-            return "error_edit";
         }
-
-        StudyParticipationDTO spDto = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
-        Integer iTargetAccrual = (getTargetAccrualNumber() == null) ? null : Integer.parseInt(getTargetAccrualNumber());
-        if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) != iTargetAccrual) {
-            spDto.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
-            sPartService.update(spDto);
+        enforceBusinessRules();
+        if (hasFieldErrors()) {
+            return;
         }
-        
+        StudyParticipationDTO sp;
+        if (tab.getStudyParticipationId() != null) {
+            sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
+            Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
+            if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
+                sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
+                sp = sPartService.update(sp);
+            }
+        } else {
+            String poOrgId = tab.getFacilityOrganization().getIdentifier();
+            Long paHealthCareFacilityId = oCService.createHealthCareFacilityCorrelations(poOrgId);
+            sp = new StudyParticipationDTO();
+            sp.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
+            sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
+            sp.setIdentifier(null);
+            sp.setStatusCode(CdConverter.convertToCd(StatusCode.ACTIVE));
+            sp.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+            sp.setStudyProtocolIdentifier(spIi);
+            sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
+            sp = sPartService.create(sp);
+        }
         List<StudySiteAccrualStatusDTO> currentStatus = ssasService
-                .getCurrentStudySiteAccrualStatusByStudyParticipation(IiConverter.convertToIi(tab
-                        .getStudyParticipationId()));
-        if (currentStatus.isEmpty() || !currentStatus.get(0).getStatusCode().getCode().equals(resStatus)
-                || !currentStatus.get(0).getStatusDate().equals(PAUtil.dateStringToTimestamp(resStatusDate))) {
-            StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
-            ssas.setIdentifier(IiConverter.convertToIi((Long) null));
-            ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(resStatus)));
-            ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(resStatusDate)));
-            ssas.setStudyParticipationIi(IiConverter.convertToIi(tab.getStudyParticipationId()));
-            ssas = ssasService.createStudySiteAccrualStatus(ssas);
+                .getCurrentStudySiteAccrualStatusByStudyParticipation(sp.getIdentifier());
+        if (currentStatus.isEmpty() || !currentStatus.get(0).getStatusCode().getCode().equals(recStatus)
+                || !currentStatus.get(0).getStatusDate().equals(PAUtil.dateStringToTimestamp(recStatusDate))) {
+          StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
+          ssas.setIdentifier(IiConverter.convertToIi((Long) null));
+          ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
+          ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
+          ssas.setStudyParticipationIi(sp.getIdentifier());
+          ssas = ssasService.createStudySiteAccrualStatus(ssas);
         }
+        tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
         ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
-        orgFromPO.setOrgCity(org.getCity());
-        orgFromPO.setOrgCountry(org.getCountryName());
-        orgFromPO.setOrgName(org.getName());
-        orgFromPO.setOrgZip(org.getPostalCode());
-
-        this.setRecStatus(resStatus);
-        this.setRecStatusDate(resStatusDate);
-        this.setTargetAccrualNumber(paramTargetAccrualNumber);
-        return this.ACT_EDIT;
+        if (PAUtil.isNotEmpty(tab.getFacilityOrganization().getName())) {
+            setOrganizationName("for " + tab.getFacilityOrganization().getName());
+        }
+        setCurrentAction("edit");
     }
 
     /**
@@ -306,7 +273,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (resultsList != null && resultsList.size() > 0) {
             personContactWebDTO = resultsList.get(0);
         }
-        return this.ACT_EDIT;
+        return ACT_EDIT;
     }
 
     /**
@@ -792,13 +759,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * or based on an interaction between services.
      */
     private void enforceBusinessRules() {
+        clearErrorsAndMessages();
         if (PAUtil.isEmpty(getRecStatus())) {
             addFieldError("recStatus", getText("error.participatingStatus"));
         }
         if (PAUtil.isEmpty(getRecStatusDate())) {
             addFieldError("recStatusDate", getText("error.participatingStatusDate"));
         }
-        if (!(orgFromPO.getOrgName().length() > 0)) {
+        if (PAUtil.isEmpty(orgFromPO.getOrgName())) {
             addFieldError("editOrg.name", getText("Please choose an organization"));
         }
     }
