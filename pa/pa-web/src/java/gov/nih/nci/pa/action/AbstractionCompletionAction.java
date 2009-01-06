@@ -70,6 +70,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     private Long studyProtocolId = null;
     private static final String DISPLAY_XML = "displayXML";
     private HttpServletResponse servletResponse;
+    private static final String TSR = "TSR_";
+    private static final String HTML = ".html";
     
 
 
@@ -222,13 +224,13 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         oos.close();
 
         StringBuffer sb2  = new StringBuffer(folderPath);
-        String outputFile = new String(sb2.append(File.separator).append("TSR_").append(randomInt 
-            + studyProtocolIi.getExtension() + ".html"));
+        String outputFile = new String(sb2.append(File.separator).append(TSR).append(randomInt 
+            + studyProtocolIi.getExtension() + HTML));
         File downloadFile = createAttachment(new File(inputFile), new File(outputFile));
-        
+        String fileName = TSR + randomInt + studyProtocolIi.getExtension() + HTML;
         servletResponse.setContentType("text/html");
         FileInputStream fileToDownload = new FileInputStream(downloadFile);
-        servletResponse.setHeader("Content-Disposition", "attachment; filename="  + downloadFile.getName());
+        servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
         servletResponse.setHeader("Cache-control", "must-revalidate");
         servletResponse.setContentLength(fileToDownload.available());
 
@@ -320,8 +322,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         String mailBody4 = mailBody3.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
         String mailBody5 = mailBody4.replace("${receiptDate}", format2.format(spDTO.getDateLastCreated()));
         String mailBody6 = mailBody5.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
-        String mailBody7 = mailBody6.replace("${fileName}", "TSR_" 
-                                           + spDTO.getNciIdentifier().toString() + ".html");
+        String mailBody7 = mailBody6.replace("${fileName}", TSR 
+                                           + spDTO.getNciIdentifier().toString() + HTML);
         String mailBody8 = mailBody7.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
         msgPart.setText(mailBody8);
         multipart.addBodyPart(msgPart);
@@ -340,8 +342,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         oos.close();
 
         StringBuffer sb2  = new StringBuffer(folderPath);
-        String outputFile = new String(sb2.append(File.separator).append("TSR_").append(
-            spDTO.getNciIdentifier().toString() + ".html"));
+        String outputFile = new String(sb2.append(File.separator).append(TSR).append(
+            spDTO.getNciIdentifier().toString() + HTML));
         
         File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
         File[] attachments = {new File(inputFile), htmlFile};
