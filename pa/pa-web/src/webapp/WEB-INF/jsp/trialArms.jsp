@@ -46,7 +46,8 @@ function handleCreateGroup(){
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="armForm"><s:hidden name="selectedArmIdentifier"/> 
+</s:if> <s:form name="armForm"><s:hidden name="selectedArmIdentifier"/>
+                               <s:hidden name="currentAction"/> 
     <h2>
     <s:if test="%{currentAction == 'listArm'}">
         <fmt:message key="arms.details.title" /></s:if>
