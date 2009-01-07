@@ -21,7 +21,7 @@
         </display:column>
 		<display:column titleKey="person.firstName" property="firstName" sortable="true" sortProperty="PERSON_FIRSTNAME" maxLength="30"/>
 		<display:column titleKey="person.lastName" property="lastName" sortable="true" sortProperty="PERSON_LASTNAME" maxLength="30"/>
-        <display:column titleKey="person.email" sortable="false" maxLength="30">
+        <display:column titleKey="person.email" sortable="false">
             <ul>
                 <c:forEach items="${row.email}" var="e">
                     <li>${e.value}</li>
