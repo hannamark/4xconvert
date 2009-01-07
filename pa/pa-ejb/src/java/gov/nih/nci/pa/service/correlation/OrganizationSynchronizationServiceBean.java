@@ -16,6 +16,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -72,13 +73,15 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     /***
      * 
      * @param oscIdentifer po OversightCommittee identifier
+     * @return List list of sp ids
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void synchronizeOversightCommittee(Ii oscIdentifer) throws PAException {
+    public List<Long> synchronizeOversightCommittee(Ii oscIdentifer) throws PAException {
 
         OversightCommitteeDTO oscDto = null;
         LOG.debug("Entering synchronizeOversightCommittee");
+        List<Long> spIds = getAffectedStudyProtocolIds("oversightCommittee" , oscIdentifer.getExtension());
         try {
             oscDto = PoPaServiceBeanLookup.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
             updateOversightCommittee(oscDto);
@@ -87,19 +90,22 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            nulifyOversightCommittee(oscIdentifer);
         }
         LOG.debug("Leaving synchronizeOversightCommittee");
+        return spIds;
     }
     
     
     /***
      * 
      * @param hcfIdentifer po HealthCareFacility identifier
+     * @return List list of sp ids
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void synchronizeHealthCareFacility(Ii hcfIdentifer) throws PAException {
+    public List<Long> synchronizeHealthCareFacility(Ii hcfIdentifer) throws PAException {
 
         HealthCareFacilityDTO hcfDto = null;
         LOG.debug("Entering synchronizeHealthCareFacility");
+        List<Long> spIds = getAffectedStudyProtocolIds("healthCareFacility" , hcfIdentifer.getExtension());
         try {
             hcfDto = PoPaServiceBeanLookup.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
             updateHealthCareFacility(hcfDto);
@@ -108,18 +114,21 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            nulifyHealthCareFacility(hcfIdentifer);
         }
         LOG.debug("Leaving synchronizeOrganization");
+        return spIds;
     }
 
     /***
      * 
      * @param roIdentifer po ResearchOrganization identifier
+     * @return List list of sp ids
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void synchronizeResearchOrganization(Ii roIdentifer) throws PAException {
+    public List<Long> synchronizeResearchOrganization(Ii roIdentifer) throws PAException {
 
         ResearchOrganizationDTO roDto = null;
         LOG.debug("Entering synchronizeResearchOrganization");
+        List<Long> spIds = getAffectedStudyProtocolIds("researchOrganization" , roIdentifer.getExtension());
         try {
             roDto = PoPaServiceBeanLookup.getResearchOrganizationCorrelationService().getCorrelation(roIdentifer);
             updateResearchOrganization(roDto);
@@ -128,6 +137,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            nulifyResearchOrganization(roIdentifer);
         }
         LOG.debug("Leaving synchronizeResearchOrganization");
+        return spIds;
     } 
 
     private void nulifyOrganization(Ii organizationIdentifer) throws PAException {
@@ -331,4 +341,22 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
         LOG.debug("Leaving updateResearchOrganization");
     }
 
+    private List<Long> getAffectedStudyProtocolIds(String className , String identifier) throws PAException  {
+
+        Session session = null;
+        List<Long> spIds = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            String hql = " Select distinct sp.id from StudyProtocol sp  " 
+                      + " join sp.studyParticipations as sps" 
+                      + " join sps." + className + " as hcf where cl.identifier = '" + identifier + "'";
+            spIds =  session.createQuery(hql).list();
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception while retrieving affected Ids for identifier = " 
+                    + identifier + " for class name " + className , hbe);
+        }
+        return spIds;
+
+    }
+    
 }

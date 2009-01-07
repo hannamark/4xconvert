@@ -346,10 +346,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and sos.statusCode  = '"
                         + StudyStatusCode.getByCode(studyProtocolQueryCriteria
                                 .getStudyStatusCode()) + "'");
+                where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
+                        + "                where sos.studyProtocol = sos1.studyProtocol )"
+                        + " or sos.id is null ) ");
+                
             } else {
                 // add the subquery to pick the latest record
-                where
-                        .append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
+                where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
                                 + "                where sos.studyProtocol = sos1.studyProtocol )"
                                 + " or sos.id is null ) ");
             }
@@ -362,6 +365,10 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     .getDocumentWorkflowStatusCode())) {
                 where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
                         getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
+                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                        + "                where dws.studyProtocol = dws1.studyProtocol )"
+                        + " or dws.id is null ) ");
+
             } else {
                 // added for Registry Trial Search
                 if (studyProtocolQueryCriteria.getMyTrialsOnly() != null 
