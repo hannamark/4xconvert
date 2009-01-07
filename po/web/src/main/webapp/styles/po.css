@@ -286,3 +286,8 @@ TABLE.searchresults TR.over, TABLE.searchresults TR:hover
 /* Error Messages */
 .wwerr, .errorMessage, LABEL.errorMessage
 { color:#c00 ; font-weight:bold; padding-bottom:5px }
+
+.orgNameColumn
+{ width:21em; }
+.orgNameColumn ul li
+{ width:20em; white-space:nowrap; overflow:hidden; }

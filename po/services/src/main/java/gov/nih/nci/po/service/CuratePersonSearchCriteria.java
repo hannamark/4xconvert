@@ -115,6 +115,8 @@ public class CuratePersonSearchCriteria extends AbstractEntitySearchCriteria<Per
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         final String prehql =
                 " from Person p"
+                + " LEFT OUTER JOIN p.postalAddress as pa"
+                + " LEFT OUTER JOIN p.email as pe"
                 + " LEFT OUTER JOIN p.changeRequests as pcr"
                 + " LEFT OUTER JOIN p.organizationalContacts as oc"
                 + " LEFT OUTER JOIN oc.changeRequests as occr"
