@@ -1,0 +1,9 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<ROWSET>  
+    <ROW num="1">
+        <TRANSACTION_TYPE>INSERT</TRANSACTION_TYPE>
+        <RECORD_TYPE>ORGANIZATION_ADDRESS</RECORD_TYPE>
+        <RECORD_ID>03013</RECORD_ID>
+        <ORGANIZATION_TYPE>HealthCareFacility</ORGANIZATION_TYPE>
+    </ROW>
+</ROWSET> 

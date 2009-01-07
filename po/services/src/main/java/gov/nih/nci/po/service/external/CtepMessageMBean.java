@@ -82,101 +82,181 @@
  */
 package gov.nih.nci.po.service.external;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
-
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Properties;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-import javax.naming.Context;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.jms.TopicConnection;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import org.apache.log4j.Logger;
+import org.jboss.annotation.ejb.Service;
 
 /**
- * @author Scott Miller
+ * CTEP JMS connection and subscription service.
+ * Startup is asynchonus and non-failing, for speed and ease of deployement in
+ * an environement that may no have STEP services (testing, dev...).
  *
+ * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
-public class CtepImportServiceBean implements CtepImportService {
-    private static InitialContext ctepContext;
-    private CtepOrganizationImporter orgImporter;
-    private CtepPersonImporter personImporter;
+@Service
+public class CtepMessageMBean extends CtepMessageBean implements CtepMessageManagement, Runnable {
+
+    private static final Logger LOG = Logger.getLogger(CtepMessageMBean.class);
+    private InitialContext initialContext;
+    private TopicConnection topicConnection;
+    private TopicSession topicSession;
+    private TopicSubscriber topicSubscriber;
+    private String topicConnectionFactoryName = "jms/CTISTopicConnectionFactory";
+    private String topicName = "jms/CTISTopic";
+    private String subscriptionName = "po-consumer";
+    private boolean busy = false;
+    private String statusMessage;
 
     /**
-     * Constructor.
+     * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public CtepImportServiceBean() {
-        initImporters();
+    public synchronized String getTopicConnectionFactoryName() {
+        return topicConnectionFactoryName;
     }
 
     /**
-     * Init the org and person importers.
+     * {@inheritDoc}
      */
-    protected void initImporters() {
-        try {
-            synchronized (this) {
-                if (ctepContext == null) {
-                    ctepContext = createCtepInitialContext();
-                }
-            }
-            setOrgImporter(new CtepOrganizationImporter(ctepContext));
-            setPersonImporter(new CtepPersonImporter(ctepContext, orgImporter));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public synchronized void setTopicConnectionFactoryName(String topicConnectionFactoryName) {
+        this.topicConnectionFactoryName = topicConnectionFactoryName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized String getTopicName() {
+        return topicName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized String getSubscriptionName() {
+        return subscriptionName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized String getStatusMessage() {
+        return statusMessage;
+    }
+
+    private synchronized void setStatusMessage(String msg) {
+        statusMessage = msg;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void unsubscribe() throws JMSException {
+        if (!busy && topicSubscriber != null && topicSession != null) {
+            topicSubscriber.close();
+            topicSession.unsubscribe(subscriptionName);
+            setStatusMessage("Unsubscribed");
         }
     }
 
     /**
-     * @param orgImporter the orgImporter to set
+     * {@inheritDoc}
      */
-    public void setOrgImporter(CtepOrganizationImporter orgImporter) {
-        this.orgImporter = orgImporter;
-    }
-
-    /**
-     * @param personImporter the personImporter to set
-     */
-    public void setPersonImporter(CtepPersonImporter personImporter) {
-        this.personImporter = personImporter;
+    public void create() {
+        // no-op
     }
 
     /**
      * {@inheritDoc}
      */
-    public Organization importCtepOrganization(Ii orgId) throws JMSException {
-        return orgImporter.importOrganization(orgId);
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public synchronized void start() {
+        // do nothing if still starting.
+        if (busy) {
+            return;
+        }
+        busy = true; // will remain busy untill startup thread finishes.
+        statusMessage = "Starting";
+
+        Thread t = new Thread(this);
+        t.start();
+    }
+
+    /**
+     * Do the startup proecess w/o blocking the management call threads.
+     */
+    public void run() {
+        try {
+            initialContext = CtepImportServiceBean.createCtepInitialContext();
+            TopicConnectionFactory connectionFactory =
+                    (TopicConnectionFactory) initialContext.lookup(topicConnectionFactoryName);
+            Topic topic = (Topic) initialContext.lookup(topicName);
+            topicConnection = connectionFactory.createTopicConnection();
+            topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+            topicSubscriber = topicSession.createDurableSubscriber(topic, subscriptionName);
+            topicSubscriber.setMessageListener(CtepMessageMBean.this);
+
+            LOG.info("CtepMessageMBean started.");
+            setStatusMessage("Connected");
+        } catch (Exception e) {
+            LOG.info("CtepMessageMBean failed to start.", e);
+            setStatusMessage(e.toString());
+        } finally {
+            synchronized (this) {
+                busy = false;
+                this.notifyAll(); // tell any stop() calls to resume.
+            }
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Person importCtepPerson(Ii personId) throws JMSException {
-        return personImporter.importPerson(personId);
+    public synchronized void stop() {
+        try {
+            // if startup in progress, wait.
+            while (busy) {
+                this.wait();
+            }
+            if (topicSession != null && topicConnection != null && initialContext != null) {
+                topicSession.close();
+                topicConnection.close();
+                initialContext.close();
+                topicSession = null;
+                topicConnection = null;
+                topicSubscriber = null;
+                initialContext = null;
+                setStatusMessage("Stopped");
+                LOG.info("CtepMessageMBean stopped.");
+            }
+        } catch (Exception ex) {
+            LOG.error(ex);
+        }
     }
 
     /**
-     * @return an InitialContext to CTEP.
-     * @throws IOException when resource ctep-services.properties cannot be loaded.
-     * @throws NamingException when initial context cannot be created.
+     * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.ReplaceHashtableWithMap")
-    public static InitialContext createCtepInitialContext() throws IOException, NamingException {
-        Properties props = new Properties();
-        props.load(CtepImportServiceBean.class.getClassLoader().getResourceAsStream("ctep-services.properties"));
-        Hashtable<Object, Object> env = new Hashtable<Object, Object>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
-        env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
-        env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
-        env.put(Context.PROVIDER_URL, props.get("ctep.url"));
-        return new InitialContext(env);
+    public void destroy() {
+        // no-op
     }
 }

@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<><><MALFORMED><><>
+<ROWSET>  
+    <ROW num="1">
+        <TRANSACTION_TYPE>INSERT</TRANSACTION_TYPE>
+        <RECORD_TYPE>PERSON_CONTACT</RECORD_TYPE>
+        <RECORD_ID>42</RECORD_ID>
+        <PERSON_TYPE>HealthCareProvider</PERSON_TYPE>
+    </ROW>
+</ROWSET> 

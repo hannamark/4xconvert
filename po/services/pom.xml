@@ -147,7 +147,13 @@
             <version>10.1.3.1.0</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>1.8</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <!-- Testing only jars -->
         <dependency>
             <groupId>hsqldb</groupId>

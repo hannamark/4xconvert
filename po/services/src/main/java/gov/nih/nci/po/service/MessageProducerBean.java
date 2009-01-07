@@ -145,8 +145,8 @@ public class MessageProducerBean implements MessageProducerLocal {
         TopicConnectionFactory connectionFactory = getTopicConnectionFactory(ic);
         Topic topic = getTopic(ic);
 
-        String username = (p.getProperty(USERNAME_PROPERTY) == null) ? "publisher" : p.getProperty(USERNAME_PROPERTY);
-        String password = (p.getProperty(PASSWORD_PROPERTY) == null) ? "pass" : p.getProperty(PASSWORD_PROPERTY);
+        String username = p.getProperty(USERNAME_PROPERTY, "publisher");
+        String password = p.getProperty(PASSWORD_PROPERTY, "pass");
 
         Connection connection = connectionFactory.createTopicConnection(username, password);
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

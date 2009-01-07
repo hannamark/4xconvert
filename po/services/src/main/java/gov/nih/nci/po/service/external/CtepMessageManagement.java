@@ -82,101 +82,86 @@
  */
 package gov.nih.nci.po.service.external;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
-
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Properties;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import org.jboss.annotation.ejb.Management;
 
 /**
- * @author Scott Miller
  *
+ * @author gax
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
-public class CtepImportServiceBean implements CtepImportService {
-    private static InitialContext ctepContext;
-    private CtepOrganizationImporter orgImporter;
-    private CtepPersonImporter personImporter;
+@Management
+public interface CtepMessageManagement {
 
     /**
-     * Constructor.
+     * JBoss Lifecycle Management API.
+     * @throws Exception on error.
      */
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public CtepImportServiceBean() {
-        initImporters();
-    }
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    void create() throws Exception;
 
     /**
-     * Init the org and person importers.
+     * JBoss Lifecycle Management API.
+     * @throws Exception on error.
      */
-    protected void initImporters() {
-        try {
-            synchronized (this) {
-                if (ctepContext == null) {
-                    ctepContext = createCtepInitialContext();
-                }
-            }
-            setOrgImporter(new CtepOrganizationImporter(ctepContext));
-            setPersonImporter(new CtepPersonImporter(ctepContext, orgImporter));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    void start() throws Exception;
 
     /**
-     * @param orgImporter the orgImporter to set
+     * JBoss Lifecycle Management API.
      */
-    public void setOrgImporter(CtepOrganizationImporter orgImporter) {
-        this.orgImporter = orgImporter;
-    }
+    void stop();
 
     /**
-     * @param personImporter the personImporter to set
+     * JBoss Lifecycle Management API.
      */
-    public void setPersonImporter(CtepPersonImporter personImporter) {
-        this.personImporter = personImporter;
-    }
+    void destroy();
 
     /**
-     * {@inheritDoc}
+     * JNDI name for TopicConnectionFactory.
+     * @return topicConnectionFactoryName.
      */
-    public Organization importCtepOrganization(Ii orgId) throws JMSException {
-        return orgImporter.importOrganization(orgId);
-    }
+    String getTopicConnectionFactoryName();
 
     /**
-     * {@inheritDoc}
+     * JNDI name for TopicConnectionFactory.
+     * @param topicConnectionFactoryName topicConnectionFactoryName.
      */
-    public Person importCtepPerson(Ii personId) throws JMSException {
-        return personImporter.importPerson(personId);
-    }
+    void setTopicConnectionFactoryName(String topicConnectionFactoryName);
 
     /**
-     * @return an InitialContext to CTEP.
-     * @throws IOException when resource ctep-services.properties cannot be loaded.
-     * @throws NamingException when initial context cannot be created.
+     * JNDI name for Topic.
+     * @return topicName.
      */
-    @SuppressWarnings("PMD.ReplaceHashtableWithMap")
-    public static InitialContext createCtepInitialContext() throws IOException, NamingException {
-        Properties props = new Properties();
-        props.load(CtepImportServiceBean.class.getClassLoader().getResourceAsStream("ctep-services.properties"));
-        Hashtable<Object, Object> env = new Hashtable<Object, Object>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
-        env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
-        env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
-        env.put(Context.PROVIDER_URL, props.get("ctep.url"));
-        return new InitialContext(env);
-    }
+    String getTopicName();
+
+    /**
+     * JNDI name for Topic.
+     * @param topicName topicName.
+     */
+    void setTopicName(String topicName);
+
+    /**
+     * CTEP topic subscription name.
+     * @return subscriptionName.
+     * @see javax.jms.TopicSession#createDurableSubscriber(javax.jms.Topic, java.lang.String)
+     */
+    String getSubscriptionName();
+
+    /**
+     * CTEP topic subscription name.
+     * @param subscriptionName subscriptionName.
+     * @see javax.jms.TopicSession#createDurableSubscriber(javax.jms.Topic, java.lang.String)
+     */
+    void setSubscriptionName(String subscriptionName);
+
+    /**
+     * @return the error message that cause the startup to fail.
+     */
+    String getStatusMessage();
+
+    /**
+     * Unsubscribe to durable messages.  You must restart the service to subscribe again.
+     * @throws JMSException on error.
+     */
+    void unsubscribe() throws JMSException;
 }
