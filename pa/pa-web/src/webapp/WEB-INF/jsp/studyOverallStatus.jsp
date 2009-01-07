@@ -7,9 +7,16 @@
 <head>
 <title><fmt:message key="trialStatus.title" /></title>
 <s:head />
-<script type="text/javascript" src="<c:url value="/scripts/js/coppa.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<c:url value="/protected/studyOverallStatushistorypopup.action" var="lookupUrl" />
+
 <script type="text/javascript">
     addCalendar("Cal1", "Select Date", "statusDate", "studyOverallStatus");
     addCalendar("Cal2", "Select Date", "startDate", "studyOverallStatus");
@@ -17,6 +24,9 @@
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
 
+    function lookup(){
+        showPopWin('${lookupUrl}', 1050, 400, '', 'Status History');
+    }   
     function statusChange() {
         newStatus=document.studyOverallStatus.currentTrialStatus.value;
         if((newStatus=="Administratively Complete")
@@ -30,7 +40,6 @@
           document.studyOverallStatus.statusReason.readonly=true;
         }
     }
-
     function handleAction() {
         input_box=confirm("Click OK to save changes or Cancel to Abort.");
         if (input_box==true){
@@ -51,9 +60,9 @@
     <s:if test="hasActionErrors()">
     <div class="error_msg"><s:actionerror/></div>
     </s:if>
-<h2><fmt:message key="trialStatus.title" /></h2>
-    <table class="form">
-        
+    <h2><fmt:message key="trialStatus.title" /></h2>
+    <table class="form"><tr><td width="0">
+    <table>
         <tr>
             <td class="label"><s:label for="currentTrialStatus"><fmt:message
                 key="trialStatus.current.trial.status" /></s:label><span class="required">*</span></td>
@@ -64,14 +73,14 @@
                 list="#currentTrialStatusValues" /></td>
             <td>
             	<ul class="btnrow">			
-					<li style="padding-left:0"><a href="#" class="btn" onclick="openPI('studyOverallStatushistory.action', 'popup')"><span class="btn_img"><span class="history">History</span></span></a></li>
+					<li style="padding-left:0"><a href="#" class="btn" onclick="lookup()"><span class="btn_img"><span class="history">History</span></span></a></li>
 				</ul>
             </td>
         </tr>
         <tr>
             <td class="label"><s:label for="statusDate"><fmt:message
                 key="trialStatus.current.trial.status.date" /></s:label><span class="required">*</span></td>
-            <td class="value"><s:textfield name="statusDate"
+            <td colspan="2" class="value"><s:textfield name="statusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
@@ -83,16 +92,15 @@
         </tr>
         <tr>
             <td class="label"><s:label name="statusReasonLabel" for="statusReason">
-                <fmt:message key="trialStatus.current.trial.status.reason"/>
-            </s:label></td>
-            <td class="value"><s:textarea name="statusReason" rows="3"
-                    cssStyle="width:280px;float:left" /></td>
+                <fmt:message key="trialStatus.current.trial.status.reason"/></s:label></td>
+            <td colspan="2" class="value"><s:textarea name="statusReason" rows="3"
+                cssStyle="width:280px;float:left" /></td>
         </tr>        
         <tr><td>&nbsp</td></tr>
         <tr>
             <td class="label"><s:label for="startDate"><fmt:message
                 key="trialStatus.trial.start.date" /></s:label><span class="required">*</span></td>
-            <td class="value"><s:textfield name="startDate"
+            <td  colspan="2" class="value"><s:textfield name="startDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal2')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
@@ -100,14 +108,15 @@
         </tr>
         <tr>
             <td class="label"><s:label for="completionDate">
-            <fmt:message key="trialStatus.primary.completion.date" /></s:label><span class="required">*</span></td>
-            <td class="value"><s:textfield name="completionDate"
+                <fmt:message key="trialStatus.primary.completion.date" /></s:label><span class="required">*</span></td>
+            <td  colspan="2" class="value"><s:textfield name="completionDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal3')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> 
                 <s:radio name="completionDateType" list="dateTypeList" /></td>
         </tr>
     </table>
+    </td><td width="100%"/></tr></table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">

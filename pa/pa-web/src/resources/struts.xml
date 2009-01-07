@@ -20,7 +20,7 @@
 	<package name="protected" namespace="/protected" extends="default">      
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
-            <result name="history">/WEB-INF/jsp/studyOverallStatusHistory.jsp</result>
+            <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
         </action> 
         <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>

@@ -49,7 +49,7 @@ import com.opensymphony.xwork2.Preparable;
 public class StudyOverallStatusAction extends ActionSupport implements
         Preparable {
     private static final long serialVersionUID = 1L;
-    private static final String ACTION_HISTORY = "history";
+    private static final String ACTION_HISTORY = "historypopup";
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
 
@@ -125,7 +125,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * @return result
      * @throws Exception exception
      */
-    public String history() throws Exception {
+    public String historypopup() throws Exception {
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
         List<StudyOverallStatusDTO> isoList = sosService.getByStudyProtocol(spIdIi);
         for (StudyOverallStatusDTO iso : isoList) {

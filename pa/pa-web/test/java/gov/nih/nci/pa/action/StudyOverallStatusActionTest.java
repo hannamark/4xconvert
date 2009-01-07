@@ -52,7 +52,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
     @Test
     public void testDisplayHistory() throws Exception {
         testAction.execute();
-        testAction.history();
+        testAction.historypopup();
         List<StudyOverallStatusWebDTO> rslt = testAction.getOverallStatusList();
         assertEquals(2, rslt.size());
         assertEquals(StudyStatusCode.APPROVED.getDisplayName(), rslt.get(0).getStatusCode());
