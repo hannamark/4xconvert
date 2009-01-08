@@ -53,17 +53,17 @@ public class SearchPersonTest extends AbstractPoWebTest {
     }
 
 	private void verify() {
-		int thirdColumn = 2;
+		int thirdColumn = 3;
 		int row = getRow(lastName, thirdColumn);
 		if (row == -1){
 			fail("Did not find " + lastName + " in search results");
 		}else{
 			setPoId(row);
 			assertEquals(poId, selenium.getTable("row."+row+".0"));
-			assertEquals(firstName, selenium.getTable("row."+row+".1"));
-			assertEquals(lastName, selenium.getTable("row."+row+".2"));
-			assertEquals("PENDING", selenium.getTable("row."+row+".3"));
-			assertEquals("NONE", selenium.getTable("row."+row+".4"));
+			assertEquals(firstName, selenium.getTable("row."+row+".2"));
+			assertEquals(lastName, selenium.getTable("row."+row+".3"));
+			assertEquals("PENDING", selenium.getTable("row."+row+".8"));
+			assertEquals("NONE", selenium.getTable("row."+row+".9"));
 			clear();
 		}
 	}
