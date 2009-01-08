@@ -110,7 +110,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
     private TopicSubscriber topicSubscriber;
     private String topicConnectionFactoryName = "jms/CTISTopicConnectionFactory";
     private String topicName = "jms/CTISTopic";
-    private String subscriptionName = "po-consumer";
+    private String subscriptionName = "po_consumer";
     private boolean busy = false;
     private String statusMessage;
 
