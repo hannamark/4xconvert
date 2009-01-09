@@ -115,9 +115,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Includes-->
     <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
 
-    <!-- Generated and used by database incremental build process, copied deploy:*:prep of build.xml -->
-    <import file="db-integrate.xml" />
-
     <!-- Read db configs from existing ds.xml if it exists for use in upgrade installs, if already set in properties file values from properties file will be used -->
     <available file="${jboss.home}/server/${jboss.server.name}/deploy/${pa-ear.ds.file}" property="ds.exists"/>
     <if>
@@ -148,6 +145,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <filter token="database.system.url" value="${database.system.url}"/>
         <filter token="jboss.home" value="${jboss.home}"/>
         <!-- added internal properties that may be used in a filtered copy -->
+        <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}/${database.type}"/>
         <filter token="database.driver" value="${database.driver}"/>
         <filter token="database.dialect" value="${database.dialect}"/>
         <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
