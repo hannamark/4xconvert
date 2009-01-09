@@ -114,58 +114,6 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <depends optional-attribute-name="SecurityManager">jboss.mq:service=POSecurityManager</depends>
     </mbean>     
     
-    <!--
-    ################################# START deploy\jms\jms-ds.xml ############################# 
-     -->    
-    
-    <!-- ==================================================================== -->
-    <!-- JMS Stuff                                                            -->
-    <!-- ==================================================================== -->
-    
-    <!-- The JMS provider loader -->
-    <mbean code="org.jboss.jms.jndi.JMSProviderLoader"
-       name="jboss.mq:service=JMSProviderLoader,name=POJMSProvider">
-      <attribute name="ProviderName">POJMSProvider</attribute>
-      <attribute name="ProviderAdapterClass">
-        org.jboss.jms.jndi.JNDIProviderAdapter
-      </attribute>
-      <!-- The combined connection factory -->
-      <attribute name="FactoryRef">java:/POXAConnectionFactory</attribute>
-      <!-- The queue connection factory -->
-      <attribute name="QueueFactoryRef">java:/POXAConnectionFactory</attribute>
-      <!-- The topic factory -->
-      <attribute name="TopicFactoryRef">java:/POXAConnectionFactory</attribute>
-      <!-- Uncomment to use HAJNDI to access JMS
-      <attribute name="Properties">
-         java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
-         java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
-         java.naming.provider.url=localhost:1100
-      </attribute>
-      -->
-    </mbean>
-    
-    <!-- The server session pool for Message Driven Beans -->
-    <mbean code="org.jboss.jms.asf.ServerSessionPoolLoader"
-       name="jboss.mq:service=ServerSessionPoolMBean,name=POStdJMSPool">
-      <depends optional-attribute-name="XidFactory">jboss:service=XidFactory</depends>
-      <attribute name="PoolName">POStdJMSPool</attribute>
-      <attribute name="PoolFactoryClass">
-        org.jboss.jms.asf.StdServerSessionPoolFactory
-      </attribute>
-    </mbean>
-    
-    <!-- JMS XA Resource adapter, use this to get transacted JMS in beans -->
-    <tx-connection-factory>
-      <jndi-name>JmsXA</jndi-name>
-      <xa-transaction/>
-      <rar-name>jms-ra.rar</rar-name>
-      <connection-definition>org.jboss.resource.adapter.jms.JmsConnectionFactory</connection-definition>
-      <config-property name="SessionDefaultType" type="java.lang.String">javax.jms.Topic</config-property>
-      <config-property name="JmsProviderAdapterJNDI" type="java.lang.String">java:/POJMSProvider</config-property>
-      <max-pool-size>20</max-pool-size>
-      <security-domain-and-application>JmsXARealm</security-domain-and-application>
-    </tx-connection-factory>    
-  
   
     <!--
     ################################# START deploy\jms\jvm-il-service.xml ############################# 
@@ -307,7 +255,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
      -->
     <mbean code="org.jboss.mq.pm.jdbc2.PersistenceManager"
        name="jboss.mq:service=POPersistenceManager">
-      <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=po-ds</depends>
+      <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=po-xa-ds</depends>
       <attribute name="SqlProperties">
         BLOB_TYPE=BYTES_BLOB
         INSERT_TX = INSERT INTO JMS_TRANSACTIONS (TXID) values(?)
@@ -352,7 +300,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
     <!-- A Statemanager that stores state in the database -->
     <mbean code="org.jboss.mq.sm.jdbc.JDBCStateManager"
             name="jboss.mq:service=POStateManager">
-      <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=po-ds</depends>
+      <depends optional-attribute-name="ConnectionManager">jboss.jca:service=DataSourceBinding,name=po-xa-ds</depends>
       <attribute name="SqlProperties">
         CREATE_TABLES_ON_STARTUP = TRUE
         CREATE_USER_TABLE = CREATE TABLE JMS_USERS (USERID VARCHAR(32) NOT NULL, PASSWD VARCHAR(32) NOT NULL, \

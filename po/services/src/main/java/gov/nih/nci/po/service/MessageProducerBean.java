@@ -96,7 +96,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
-import javax.annotation.PreDestroy;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -127,11 +126,13 @@ public class MessageProducerBean implements MessageProducerLocal {
      */
     public static final String TOPIC_NAME = "POTopic";
     private static final Logger LOG = Logger.getLogger(MessageProducerBean.class);
+    private static Properties jndiProps;
     static final String USERNAME_PROPERTY = "jms.publisher.username";
     static final String PASSWORD_PROPERTY = "jms.publisher.password";
-    private final MessageProducer messageProducer;
-    private final Session session;
-
+    
+    private final TopicConnectionFactory connectionFactory;
+    private final Topic topic;
+    
     /**
      * Constructor to create the message publisher.
      * @throws NamingException on error
@@ -140,17 +141,9 @@ public class MessageProducerBean implements MessageProducerLocal {
      */
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public MessageProducerBean() throws NamingException, JMSException, IOException {
-        Properties p = getJndiProperties();
-        InitialContext ic = new InitialContext(p);
-        TopicConnectionFactory connectionFactory = getTopicConnectionFactory(ic);
-        Topic topic = getTopic(ic);
-
-        String username = p.getProperty(USERNAME_PROPERTY, "publisher");
-        String password = p.getProperty(PASSWORD_PROPERTY, "pass");
-
-        Connection connection = connectionFactory.createTopicConnection(username, password);
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        messageProducer = session.createProducer(topic);
+        InitialContext ic = new InitialContext(getJndiProperties());
+        connectionFactory = getTopicConnectionFactory(ic);
+        topic = getTopic(ic);
     }
 
     /**
@@ -158,7 +151,10 @@ public class MessageProducerBean implements MessageProducerLocal {
      * @throws IOException if a problem was encountered
      */
     protected Properties getJndiProperties() throws IOException {
-        return JNDIUtil.getProperties();
+        if (jndiProps == null) {
+            jndiProps = JNDIUtil.getProperties();
+        }
+        return jndiProps;
     }
 
     /**
@@ -167,7 +163,7 @@ public class MessageProducerBean implements MessageProducerLocal {
      * @return the factory.
      */
     protected TopicConnectionFactory getTopicConnectionFactory(InitialContext ic) {
-        return (TopicConnectionFactory) JNDIUtil.lookup(ic, "/POConnectionFactory");
+        return (TopicConnectionFactory) JNDIUtil.lookup(ic, "java:/POJmsXA");
     }
 
     /**
@@ -202,20 +198,70 @@ public class MessageProducerBean implements MessageProducerLocal {
     }
 
     private synchronized void send(Serializable o) throws JMSException {
-        ObjectMessage msg = session.createObjectMessage(o);
-        messageProducer.send(msg);
+        Connection connection = null;
+        Session session = null;
+        MessageProducer sender = null;
+        try {
+            String username = jndiProps.getProperty(USERNAME_PROPERTY, "publisher");
+            String password = jndiProps.getProperty(PASSWORD_PROPERTY, "pass");
+            connection = connectionFactory.createTopicConnection(username, password);
+            session = connection.createSession(true, Session.SESSION_TRANSACTED);
+            sender = session.createProducer(topic);
+            ObjectMessage msg = session.createObjectMessage(o);
+            sender.send(msg);
+        } finally {
+            closeAfterSend(connection, session, sender);
+        }
+    }
+
+    private void closeAfterSend(Connection connection, Session session, MessageProducer sender) {
+        close(sender);
+        close(session);
+        close(connection);
+    }
+
+    private void close(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (Exception ignore) {
+                LOG.error(ignore);
+            }
+        }
+    }
+
+    private void close(Session session) {
+        if (session != null) {
+            try {
+                session.close();
+            } catch (Exception ignore) {
+                LOG.error(ignore);
+            }
+        }
+    }
+
+    private void close(MessageProducer sender) {
+        if (sender != null) {
+            try {
+                sender.close();
+            } catch (Exception ignore) {
+                LOG.error(ignore);
+            }
+        }
+    }
+    
+    /**
+     * @return connection factor that is used.
+     */
+    public TopicConnectionFactory getConnectionFactory() {
+        return connectionFactory;
     }
 
     /**
-     * Called as part of the EJB lifecycle, closes the JMS session.
+     * @return topic that is used.
      */
-    @SuppressWarnings("unused")
-    @PreDestroy
-    private void preDestroy() {
-        try {
-            session.close();
-        } catch (JMSException e) {
-            LOG.error("Unable to close session: " + e.getMessage(), e);
-        }
+    protected Topic getTopic() {
+        return topic;
     }
+
 }

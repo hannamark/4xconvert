@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -173,9 +174,8 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
                 return properties;
             }
         };
-        TopicConnectionFactoryStub tcf = (TopicConnectionFactoryStub) mp.getTopicConnectionFactory((InitialContext) null);
-        assertEquals("bogus", tcf.lastTopicConnectionCreated.username);
-        assertEquals("bogus123", tcf.lastTopicConnectionCreated.password);
+        assertNotNull(mp.getConnectionFactory());
+        assertNotNull(mp.getTopic());
     }
 
     private Organization createOrg() throws EntityValidationException {

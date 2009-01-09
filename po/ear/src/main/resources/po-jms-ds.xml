@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+    ################################# START deploy\jms\jms-ds.xml ############################# 
+     -->    
+<connection-factories>
+
+    
+    <!-- ==================================================================== -->
+    <!-- JMS Stuff                                                            -->
+    <!-- ==================================================================== -->
+    
+    <!-- The JMS provider loader -->
+    <mbean code="org.jboss.jms.jndi.JMSProviderLoader"
+       name="jboss.mq:service=JMSProviderLoader,name=POJMSProvider">
+      <attribute name="ProviderName">POJMSProvider</attribute>
+      <attribute name="ProviderAdapterClass">
+        org.jboss.jms.jndi.JNDIProviderAdapter
+      </attribute>
+      <!-- The combined connection factory -->
+      <attribute name="FactoryRef">java:/POXAConnectionFactory</attribute>
+      <!-- The queue connection factory -->
+      <attribute name="QueueFactoryRef">java:/POXAConnectionFactory</attribute>
+      <!-- The topic factory -->
+      <attribute name="TopicFactoryRef">java:/POXAConnectionFactory</attribute>
+      <!-- Uncomment to use HAJNDI to access JMS
+      <attribute name="Properties">
+         java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+         java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+         java.naming.provider.url=localhost:1100
+      </attribute>
+      -->
+    </mbean>
+    
+    <!-- The server session pool for Message Driven Beans -->
+    <mbean code="org.jboss.jms.asf.ServerSessionPoolLoader"
+       name="jboss.mq:service=ServerSessionPoolMBean,name=POStdJMSPool">
+      <depends optional-attribute-name="XidFactory">jboss:service=XidFactory</depends>
+      <attribute name="PoolName">POStdJMSPool</attribute>
+      <attribute name="PoolFactoryClass">
+        org.jboss.jms.asf.StdServerSessionPoolFactory
+      </attribute>
+    </mbean>
+    
+    <!-- JMS XA Resource adapter, use this to get transacted JMS in beans -->
+    <!-- SMM: See http://www.jboss.org/community/docs/DOC-9498  -->
+    <tx-connection-factory>
+      <jndi-name>POJmsXA</jndi-name>
+      <xa-transaction/>
+      <rar-name>jms-ra.rar</rar-name>
+      <connection-definition>org.jboss.resource.adapter.jms.JmsConnectionFactory</connection-definition>
+      <config-property name="SessionDefaultType" type="java.lang.String">javax.jms.Topic</config-property>
+      <config-property name="JmsProviderAdapterJNDI" type="java.lang.String">java:/POJMSProvider</config-property>
+      <max-pool-size>20</max-pool-size>
+      <!--
+        Security parameters
+
+        JCA Login Modules - are used to inject security configuration into the connection when configured
+		    * nothing - uses the user/password specified in -ds.xml for DataSources or the getConnection/createConnection method without a user/password (the default)
+		    *  <application-managed-security> - uses the user/password passed on the getConnection or createConnection request by the application
+		    *  <security-domain> - uses the identified login module configured in conf/login-module.xml
+		    *  <security-domain-and-application> - uses the identified login module configured in conf/login-module.xml and other connection request information supplied by the application, e.g. queue or topic in JMS      
+	   -->
+      <!-- <security-domain-and-application>po</security-domain-and-application> --> <!-- Referencing <application-policy name="po"> in security-config.xml -->
+      <!-- <security-domain-and-application>POJmsXARealm</security-domain-and-application> --> <!-- Referencing <application-policy name="POJmsXARealm"> in security-config.xml -->
+    </tx-connection-factory>    
+  
+
+</connection-factories>

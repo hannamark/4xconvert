@@ -5,7 +5,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
 
 <hibernate-configuration>
     <session-factory name="java:/hibernate/SessionFactory" >
-        <property name="hibernate.connection.datasource">java:/po-ds</property>
+        <property name="hibernate.connection.datasource">java:/po-xa-ds</property>
         <property name="hibernate.current_session_context_class">managed</property>
         <property name="hibernate.transaction.factory_class">org.hibernate.transaction.CMTTransactionFactory</property>
         <property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</property>

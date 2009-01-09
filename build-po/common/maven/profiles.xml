@@ -11,6 +11,8 @@
 
 				<!-- Maven uses these properties to maniuplate files, we are inserting tokens so that they can be de-tokenized by the install:jboss:po-ear:re-create target -->
 				<!-- po-ds.xml -->
+                <database.hostname>%%database.server%%</database.hostname>
+                <database.port>%%database.port%%</database.port>				
 				<database.url.prefix>jdbc:postgresql://%%database.server%%:%%database.port%%/</database.url.prefix>
 				<database.name>%%database.name%%</database.name>
 				<jdbc.username>%%database.user%%</jdbc.username>
@@ -22,6 +24,8 @@
 				<ldap.user.id.label>%%ldap.user.field%%</ldap.user.id.label>
 				-->
 				<jdbc.driverClassName>%%database.driver%%</jdbc.driverClassName>
+				<jdbc.xa.driverClassName>%%database.xa.driver%%</jdbc.xa.driverClassName>
+				
 				<!-- po-log4j.xml -->
 				<log.level.nci-commons>%%app.log.level%%</log.level.nci-commons>
 				<log.level.po>%%app.log.level%%</log.level.po>

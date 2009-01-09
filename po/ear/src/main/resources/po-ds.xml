@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
-  <local-tx-datasource>
-    <jndi-name>po-ds</jndi-name>
-    <user-name>${jdbc.username}</user-name>
-    <password>${jdbc.password}</password>
 
-    <driver-class>${jdbc.driverClassName}</driver-class>
-    <connection-url>${jdbc.url}</connection-url>
+  <xa-datasource>
+    <jndi-name>po-xa-ds</jndi-name>
+
+    <xa-datasource-class>${jdbc.xa.driverClassName}</xa-datasource-class>
+    <xa-datasource-property name="ServerName">${database.hostname}</xa-datasource-property>
+    <xa-datasource-property name="PortNumber">${database.port}</xa-datasource-property>
+
+    <xa-datasource-property name="DatabaseName">${database.name}</xa-datasource-property>
+    <xa-datasource-property name="User">${jdbc.username}</xa-datasource-property>
+    <xa-datasource-property name="Password">${jdbc.password}</xa-datasource-property>
+    
     <new-connection-sql>select 1</new-connection-sql>
     <check-valid-connection-sql>select 1</check-valid-connection-sql>
     <min-pool-size>5</min-pool-size>
     <max-pool-size>20</max-pool-size>
-  </local-tx-datasource>
+
+    <isSameRM-override-value>false</isSameRM-override-value>
+    <track-connection-by-tx>true</track-connection-by-tx>
+    <type-mapping>${jbdc.type.mapping}</type-mapping>
+    <no-tx-separate-pools/>
+  </xa-datasource>
+  
 </datasources>

@@ -30,7 +30,7 @@
             </login-module>
             <login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="required">
                 <module-option name="password-stacking">useFirstPass</module-option>
-                <module-option name="dsJndiName">java:po-ds</module-option>
+                <module-option name="dsJndiName">java:po-xa-ds</module-option>
                 <module-option name="rolesQuery">
                     SELECT cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id =
                     cug.group_id AND cug.user_id = cu.user_id AND cu.login_name = ?
@@ -38,4 +38,21 @@
             </login-module>
         </authentication>
     </application-policy>
+    <!-- 
+        NOT USED! Why? Because when this was referenced within po-jms-ds.xml using <security-domain-and-application>POJmsXARealm</security-domain-and-application>
+        the application just would NOT work (kept getting an authentication error when attempting to create the JMS Session from the Connection. 
+        See http://www.jboss.org/community/docs/DOC-9350 
+        * May also want to force XA by using XATxCM instead of TxCM
+    <application-policy name="POJmsXARealm">
+       
+       <authentication>
+          <login-module code="org.jboss.resource.security.ConfiguredIdentityLoginModule" flag="required">
+             <module-option name="principal">guest</module-option>
+             <module-option name="userName">guest</module-option>
+             <module-option name="password">guest</module-option>
+             <module-option name="managedConnectionFactoryName">jboss.jca:service=TxCM,name=POJmsXA</module-option>
+          </login-module>
+       </authentication>
+    </application-policy>    
+    -->
 </policy>
