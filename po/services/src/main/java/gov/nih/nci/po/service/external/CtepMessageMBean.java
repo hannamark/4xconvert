@@ -214,7 +214,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
             topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             topicSubscriber = topicSession.createDurableSubscriber(topic, subscriptionName);
             topicSubscriber.setMessageListener(CtepMessageMBean.this);
-
+            topicConnection.start();
             LOG.info("CtepMessageMBean started.");
             setStatusMessage("Connected");
         } catch (Exception e) {
