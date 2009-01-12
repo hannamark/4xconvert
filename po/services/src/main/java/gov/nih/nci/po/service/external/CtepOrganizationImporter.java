@@ -301,19 +301,19 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // update health care facility role
         HealthCareFacility hcf = getCtepHealthCareFacility(identifiedOrg.getAssignedIdentifier());
         if (hcf != null) {
-            updateHcfRole(ctepOrg, org, hcf);
+            updateHcfRole(org, hcf);
         }
 
         // update research org role
         ResearchOrganization ro = getCtepResearchOrganization(identifiedOrg.getAssignedIdentifier());
         if (ro != null) {
-            updateRoRoles(ctepOrg, org, ro);
+            updateRoRoles(org, ro);
         }
 
         return org;
     }
 
-    private void updateRoRoles(Organization ctepOrg, Organization org, ResearchOrganization ro) throws JMSException {
+    private void updateRoRoles(Organization org, ResearchOrganization ro) throws JMSException {
         // we don't handle merge here, iterate over all of the ro's nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<ResearchOrganization> i = org.getResearchOrganizations().iterator();
@@ -333,16 +333,16 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             this.roService.curate(persistedRo);
         }
         if (!ctepDataSaved) {
-            ro.setPlayer(ctepOrg);
+            ro.setPlayer(org);
             ro.setStatus(RoleStatus.ACTIVE);
             this.roService.curate(ro);
         }
     }
 
-    private void updateHcfRole(Organization ctepOrg, Organization org, HealthCareFacility hcf) throws JMSException {
+    private void updateHcfRole(Organization org, HealthCareFacility hcf) throws JMSException {
         // handle HCF - ensure exactly 1 non null hcf exists if ctep has this as a hcf
         if (org.getHealthCareFacilities().isEmpty()) {
-            hcf.setPlayer(ctepOrg);
+            hcf.setPlayer(org);
             hcf.setStatus(RoleStatus.ACTIVE);
             this.hcfService.curate(hcf);
         } else {
