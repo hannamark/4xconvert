@@ -53,7 +53,7 @@
    <category name="gov.nih.nci.po">
       <priority value="${log.level.po}"/>
    </category>
-   <category name="com.fiveamsolutions.nci.commons">=
+   <category name="com.fiveamsolutions.nci.commons">
       <priority value="${log.level.nci-commons}"/>
    </category>
 

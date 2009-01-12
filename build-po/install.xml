@@ -170,6 +170,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<filter token="database.dialect" value="${database.dialect}"/>
 		<filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
 		<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+		<filter token="ctep.url" value="${ctep.url}"/>
+		<filter token="ctep.username" value="${ctep.username}"/>
+		<filter token="ctep.password" value="${ctep.password}"/>
 	</filterset>
 	
 
@@ -465,8 +468,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<mkdir dir="${temp.dir}/po-ear"/>
 		<unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/po-ear"/>
 		<unzip src="${temp.dir}/po-ear/po-web.war" dest="${temp.dir}/po-web"/>
+		<unzip src="${temp.dir}/po-ear/po-services-1.0-SNAPSHOT.jar" dest="${temp.dir}/po-services"/>
 		<!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-		<property name="file.list" value="po-ear/po-ds.xml,po-ear/po-log4j.xml,po-ear/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,po-ear/jboss-service.xml"/>
+		<property name="file.list" value="po-ear/po-ds.xml,po-ear/po-log4j.xml,po-ear/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,po-ear/jboss-service.xml,po-services/ctep-services.properties"/>
 
 		<for list="${file.list}" param="file.relative.name">
 			<sequential>
@@ -502,6 +506,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 						<filter token="app.log.level.default" value="${app.log.level.default}"/>
 						<filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
 						<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+						<filter token="ctep.url" value="${ctep.url}"/>
+						<filter token="ctep.username" value="${ctep.username}"/>
+						<filter token="ctep.password" value="${ctep.password}"/>
 					</filterset>
 				</copy>
 				<copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
@@ -520,7 +527,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 			<fileset dir="${temp.dir}/po-web"/>
 		</war>
 
-		<ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}" 
+	    <jar destfile="${temp.dir}/po-ear/po-services-1.0-SNAPSHOT.jar" 
+	                basedir="${temp.dir}/po-services" compress="false" />
+	            
+	    <ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}" 
 			basedir="${temp.dir}/po-ear" 
 			compress="false" 
 			appxml="${temp.dir}/po-ear/META-INF/application.xml"

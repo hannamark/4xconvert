@@ -9,7 +9,7 @@ INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibern
 INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KE', 'KEN', '404', 'Kenya');
 INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KI', 'KIR', '296', 'Kiribati');
 INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KP', 'PRK', '408', 'Korea, Democratic People''s Replublic of');
-INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KS', 'KOR', '410', 'Korea, Republic of');
+INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KR', 'KOR', '410', 'Korea, Republic of');
 INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KW', 'KWT', '414', 'Kuwait');
 INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'KG', 'KGZ', '417', 'Kyrgyzstan');
 INSERT INTO country ( ID, alpha2, alpha3, numeric, NAME) VALUES (nextval('hibernate_sequence'), 'LA', 'LAO', '418', 'Lao People''s Democratic Republic');

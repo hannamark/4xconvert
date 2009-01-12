@@ -64,6 +64,10 @@ jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort=
 # The SMTP Mail gateway, requires anonymous access
 mail.smtp.server=mailfwd.nih.gov
 
+ctep.username=
+ctep.password=
+ctep.url=
+
 ###################################
 #  PRE-POST VALIDATION PROPERTIES #
 ###################################

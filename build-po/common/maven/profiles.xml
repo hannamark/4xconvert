@@ -40,6 +40,10 @@
                 <test.selenium.server.debug>true</test.selenium.server.debug>        
                 <test.selenium.browser>@selenium.browser@</test.selenium.browser>		
                 -->		
+				
+				<ctep.username>%%ctep.username%%</ctep.username>
+				<ctep.password>%%ctep.password%%</ctep.password>
+				<ctep.url>%%ctep.url%%</ctep.url>
 			</properties>
 		</profile>
 	</profiles>
