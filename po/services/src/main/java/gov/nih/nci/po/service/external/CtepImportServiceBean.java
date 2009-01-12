@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 
+import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -93,6 +94,7 @@ import java.util.Properties;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -104,6 +106,7 @@ import javax.naming.NamingException;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({ PoHibernateSessionInterceptor.class })
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
 public class CtepImportServiceBean implements CtepImportService {
     private static InitialContext ctepContext;
