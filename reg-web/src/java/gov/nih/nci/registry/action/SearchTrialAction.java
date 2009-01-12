@@ -400,6 +400,8 @@ public class SearchTrialAction extends ActionSupport {
             servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/x-unknown");
             FileInputStream fileToDownload = new FileInputStream(downloadFile);
+            servletResponse.setHeader("Cache-Control", "cache"); 
+            servletResponse.setHeader("Pragma", "cache");
             servletResponse.setHeader("Content-Disposition", "attachment; filename=" + downloadFile.getName());
             servletResponse.setContentLength(fileToDownload.available());
             int data;
