@@ -269,12 +269,12 @@ public class StudyOverallStatusAction extends ActionSupport implements
             }
             if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
                 if (completionDateType.equals(anticipatedString)) {
-                    addActionError("Trial completion date can not be 'Anticipated' when the status is "
-                            + "'Complete' or 'Administratively Complete'.");
+                    addActionError("Primary Completion Date cannot be 'Anticipated' when "
+                            + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
                 if (!statusTimestamp.equals(completionTimestamp)) {
-                    addActionError("The trial completion date must be the same as the date when status "
-                            + "changed to 'Complete' or 'Administratively Complete'.");
+                    addActionError("Current Trial Status Date and Primary Completion Date must be the same when "
+                            + "Current Trial Status is '" + newCode.getCode() + "'.");
                 }
             } else {
                 if (!completionDateType.equals(anticipatedString)) {
