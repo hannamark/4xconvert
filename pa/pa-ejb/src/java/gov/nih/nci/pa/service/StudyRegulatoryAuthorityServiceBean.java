@@ -55,8 +55,8 @@ public class StudyRegulatoryAuthorityServiceBean implements StudyRegulatoryAutho
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyRegulatoryAuthorityDTO getByStudyProtocol(Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            LOG.error(" studyProtocolIi should not be null ");
-            throw new PAException(" studyProtocolIi should not be null ");
+            LOG.error(" studyProtocol Identifer should not be null ");
+            throw new PAException(" studyProtocol Identifer should not be null ");
         }
         LOG.info("Entering getStudyRegulatoryAuthority");
         Session session = null;
