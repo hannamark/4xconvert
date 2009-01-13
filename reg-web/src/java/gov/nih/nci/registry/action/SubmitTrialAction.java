@@ -1627,7 +1627,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * @param contactEmail the contactEmail to set
      */
     public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
+        if (contactEmail != null) {
+            this.contactEmail = contactEmail.trim();
+        }        
     }
 
     /**
