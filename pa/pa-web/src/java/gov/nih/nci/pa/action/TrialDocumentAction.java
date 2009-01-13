@@ -40,8 +40,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({ "PMD.ExcessiveMethodLength" })
-//@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
+
 @Validation
 public class TrialDocumentAction extends ActionSupport implements
 ServletResponseAware {
@@ -145,12 +144,17 @@ ServletResponseAware {
                  append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
 
              File downloadFile = new File(sb.toString());
-
-             servletResponse.setContentType("application/x-unknown");
+             StringBuffer fileName = new StringBuffer(); 
+             fileName.append(spDTO.getNciIdentifier()).append('-').append(docDTO.getFileName().getValue());
+             
              FileInputStream fileToDownload = new FileInputStream(downloadFile);
-             servletResponse.setHeader("Content-Disposition", "attachment; filename="
-                     + downloadFile.getName());
+             servletResponse.setContentType("application/octet-stream");
              servletResponse.setContentLength(fileToDownload.available());
+             servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
+             servletResponse.setHeader("Pragma", "public");
+             servletResponse.setHeader("Cache-Control", "max-age=0");
+             
+             
              int data;
              ServletOutputStream out = servletResponse.getOutputStream();
              while ((data = fileToDownload.read()) != -1) {
@@ -194,12 +198,10 @@ ServletResponseAware {
      public String update() {
          LOG.info("Entering update");
          if (PAUtil.isEmpty(trialDocumentWebDTO.getTypeCode())) {
-             addFieldError("trialDocumentWebDTO.typeCode",
-                     getText("error.trialDocument.typeCode"));
+             addFieldError("trialDocumentWebDTO.typeCode", getText("error.trialDocument.typeCode"));
          }
          if (PAUtil.isEmpty(uploadFileName)) {
-             addFieldError("trialDocumentWebDTO.uploadFileName",
-                     getText("error.trialDocument.uploadFileName"));
+             addFieldError("trialDocumentWebDTO.uploadFileName", getText("error.trialDocument.uploadFileName"));
          }
          if (hasFieldErrors()) {
              return INPUT;
@@ -209,7 +211,6 @@ ServletResponseAware {
              Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
              getAttribute(Constants.STUDY_PROTOCOL_II);
              DocumentDTO  docDTO = new DocumentDTO();
-             //docDTO = PaRegistry.getDocumentService().getTrialDocumentById(IiConverter.convertToIi(id));
              docDTO.setIdentifier(IiConverter.convertToIi(id));
              docDTO.setStudyProtocolIi(studyProtocolIi);
              docDTO.setTypeCode(
@@ -233,8 +234,7 @@ ServletResponseAware {
 
          LOG.info("Entering delete");
          if (PAUtil.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
-             addFieldError("trialDocumentWebDTO.inactiveCommentText",
-                     getText("error.trialDocument.delete.reason"));
+             addFieldError("trialDocumentWebDTO.inactiveCommentText", getText("error.trialDocument.delete.reason"));
          }
          if (hasFieldErrors()) {
              return DELETE_RESULT;

@@ -232,8 +232,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         servletResponse.setContentType("application/octet-stream");
         servletResponse.setContentLength(fileToDownload.available());
         servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
-        servletResponse.setHeader("Cache-control", "must-revalidate");
-        
+        servletResponse.setHeader("Pragma", "public");
+        servletResponse.setHeader("Cache-Control", "max-age=0");
 
         int data;
         ServletOutputStream servletout = servletResponse.getOutputStream();
