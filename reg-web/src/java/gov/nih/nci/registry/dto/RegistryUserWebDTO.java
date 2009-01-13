@@ -89,7 +89,9 @@ public class RegistryUserWebDTO {
      */
 
     public void setLoginName(String loginName) {
-        this.loginName = loginName;
+        if (loginName != null) {
+            this.loginName = loginName.trim();
+        }
     }
     /**
      * @return the password
