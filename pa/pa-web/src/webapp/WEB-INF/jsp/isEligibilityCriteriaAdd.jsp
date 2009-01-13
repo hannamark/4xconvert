@@ -84,7 +84,7 @@ BubbleTips.activateTipOn("dfn");
 					</td>
 				</tr> 
 				<tr>
-				<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/></th>				
+				<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/><span class="required">*</span></th>				
 				</tr>
 				<tr>
 						<span class="formErrorMsg"> 
