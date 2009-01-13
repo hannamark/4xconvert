@@ -21,30 +21,50 @@
    <!-- ================================= -->
 
    <!-- A time/date based rolling appender -->
-   <appender name="POFILE" class="org.jboss.logging.appender.DailyRollingFileAppender">
-      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
-      <param name="File" value="${jboss.server.log.dir}/po.log"/>
-      <param name="Append" value="false"/>
+    <appender name="POFILE" class="org.jboss.logging.appender.DailyRollingFileAppender">
+        <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+        <param name="File" value="${jboss.server.log.dir}/po.log"/>
+        <param name="Append" value="false"/>
 
       <!-- Rollover at midnight each day -->
-      <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
 
       <!-- Rollover at the top of each hour
       <param name="DatePattern" value="'.'yyyy-MM-dd-HH"/>
       -->
 
-      <layout class="org.apache.log4j.PatternLayout">
+        <layout class="org.apache.log4j.PatternLayout">
          <!-- The default pattern: Date Priority [Category] Message\n -->
-         <param name="ConversionPattern" value="%d{ISO8601} %-5p [%F:%L] : %m%n"/>
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p [%F:%L] : %m%n"/>
 
          <!-- The full pattern: Date MS Priority [Category] (Thread:NDC) Message\n
          <param name="ConversionPattern" value="%d %-5r %-5p [%c] (%t:%x) %m%n"/>
           -->
-         <param name="LocationInfo" value="true"/>
-      </layout>
-   </appender>
+            <param name="LocationInfo" value="true"/>
+        </layout>
+    </appender>
 
-   
+   <!--                          -->
+   <!-- Declare the SMTPAppender -->
+   <!--                          -->
+    <appender name="EMAIL" class="org.apache.log4j.net.SMTPAppender">
+        <param name="BufferSize" value="1024" />
+        <param name="SMTPHost" value="${log.smtp.host}" />
+        <param name="SmtpUsername" value="${log.smtp.username}" />
+        <param name="SmtpPassword" value="${log.smtp.password}" />
+        <param name="From" value="${log.smtp.from}" />
+        <param name="To" value="${log.smtp.from}" />
+        <param name="Subject" value="CTEP message processing error" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+              value="[%d{ISO8601}]%n%n%-5p%n%n%c%n%n%m%n%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ERROR"/>
+            <param name="LevelMax" value="FATAL"/>
+        </filter>
+    </appender>
+
    <!-- ================ -->
    <!-- Limit categories -->
    <!-- ================ -->
@@ -56,18 +76,22 @@
    <category name="com.fiveamsolutions.nci.commons">
       <priority value="${log.level.nci-commons}"/>
    </category>
+   <category name="EMAIL_ERROR_LOGGER">
+      <priority value="ERROR"/>
+      <appender-ref ref="EMAIL" />
+   </category>
 
 
    <!-- ======================= -->
    <!-- Setup the Root category -->
    <!-- ======================= -->
-	<root>
+    <root>
 		<!--
 			The default logging level, for any logger not configured above. Warning:
 			setting this too fine-grained can have major performance consequences
 		-->
-		<priority value="${log.level.default}" />
-		<appender-ref ref="POFILE" />
-	</root>
+        <priority value="${log.level.default}" />
+        <appender-ref ref="POFILE" />
+    </root>
 
 </log4j:configuration>

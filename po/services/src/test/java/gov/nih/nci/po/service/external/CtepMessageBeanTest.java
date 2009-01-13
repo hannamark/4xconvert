@@ -3,13 +3,19 @@ package gov.nih.nci.po.service.external;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.CtepMessageBean.TransactionType;
+import gov.nih.nci.po.util.EmailLogger;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Enumeration;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import org.apache.log4j.WriterAppender;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+
 
 /**
  *
@@ -17,6 +23,22 @@ import org.junit.Test;
  */
 public class CtepMessageBeanTest {
 
+    private StringWriter logWriter;
+
+    @Before
+    public void setUpLogger() {
+        WriterAppender wa = (WriterAppender) EmailLogger.LOG.getAppender("EMAIL");
+        logWriter = new StringWriter();
+        wa.setWriter(logWriter);
+    }
+
+    @After
+    public void undoLogger() {
+        WriterAppender wa = (WriterAppender) EmailLogger.LOG.getAppender("EMAIL");
+        wa.close();
+        logWriter.getBuffer().setLength(0);
+        logWriter = null;
+    }
 
     /**
      * Test of onMessage method, of class CtepMessageBean.
@@ -44,8 +66,14 @@ public class CtepMessageBeanTest {
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_ADDRESS, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.PERSON_CONTACT, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);
-        checkers[idx] = new Checker(false, null, null, null, idx++);
-        checkers[idx] = new Checker(false, null, null, null, idx++);
+        checkers[idx] = new Checker(false, null, null, null, idx++,
+                "Failed to process JMS message ID:13",
+                "org.xml.sax.SAXParseException: The markup in the document preceding the root element must be well-formed",
+                "at org.apache.commons.digester.Digester.parse");
+        checkers[idx] = new Checker(false, null, null, null, idx++,
+                "Failed to process JMS message ID:14",
+                "java.lang.IllegalArgumentException: Unsuported Record Type in message BODUS_TYPE",
+                "at gov.nih.nci.po.service.external.CtepMessageBean.processMessage");
 
         for(int i = 0; i < tests; i++) {
             testOnMessage(messages[i], checkers[i]);
@@ -63,6 +91,8 @@ public class CtepMessageBeanTest {
 
         bean.onMessage(msg);
         checker.assertCall();
+
+        logWriter.getBuffer().setLength(0);
     }
 
     class Checker {
@@ -70,6 +100,7 @@ public class CtepMessageBeanTest {
         TransactionType expectedTrxType;
         RecordType expectedMsgType;
         String expectedId;
+        String[] errors;
 
         boolean called;
         TransactionType trxType;
@@ -78,12 +109,13 @@ public class CtepMessageBeanTest {
 
         int idx;
 
-        public Checker(boolean called, TransactionType trxType, RecordType msgType, String id, int idx) {
+        public Checker(boolean called, TransactionType trxType, RecordType msgType, String id, int idx, String... errors) {
             this.expectedCalled = called;
             this.expectedTrxType = trxType;
             this.expectedMsgType = msgType;
             this.expectedId = id;
             this.idx = idx;
+            this.errors = errors;
         }
 
         void check(TransactionType trxType, RecordType msgType, Ii id) {
@@ -99,6 +131,15 @@ public class CtepMessageBeanTest {
                 Assert.assertEquals("trxType"+idx, expectedTrxType, trxType);
                 Assert.assertEquals("msgType"+idx, expectedMsgType, msgType);
                 Assert.assertEquals("id"+idx, expectedId, id.getExtension());
+            }
+
+            // check logger entries.
+            StringBuffer log = logWriter.getBuffer();
+            if (log.length() > 0 && errors.length == 0) {
+                Assert.fail("unexpected log entry for msg "+idx+"  :"+log);
+            }
+            for (String m : errors) {
+                Assert.assertTrue("expected error not found for msg "+idx+": "+ m, log.indexOf(m) >= 0);
             }
         }
 

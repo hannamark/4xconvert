@@ -30,6 +30,11 @@
 				<log.level.nci-commons>%%app.log.level%%</log.level.nci-commons>
 				<log.level.po>%%app.log.level%%</log.level.po>
 				<log.level.default>%%app.log.level.default%%</log.level.default>
+
+                <log.smtp.host>%%app.log.smtp.host%%</log.smtp.host>
+                <log.smtp.from>%%app.log.smtp.from%%</log.smtp.from>
+                <log.smtp.to>%%app.log.smtp.to%%</log.smtp.to>
+
 				<!-- jndi.properties -->
 				<jboss.naming.port>%%jboss.server.jndi.port%%</jboss.naming.port>
                 <jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>%%jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort%%</jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>

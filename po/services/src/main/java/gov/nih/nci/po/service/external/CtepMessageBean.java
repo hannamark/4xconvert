@@ -84,6 +84,7 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.util.EmailLogger;
 import java.io.StringReader;
 import javax.ejb.EJB;
 import javax.jms.JMSException;
@@ -172,6 +173,7 @@ public class CtepMessageBean implements MessageListener {
                 LOG.error(ex);
             }
         }
+        EmailLogger.LOG.error(sb.toString(), err);
         LOG.error(sb.toString(), err);
     }
 

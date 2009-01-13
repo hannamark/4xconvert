@@ -14,6 +14,9 @@
     
     <properties>
         <log.level.default>WARN</log.level.default>
+        <log.smtp.host>smtp.example.com</log.smtp.host>
+        <log.smtp.from>changeme@example.com</log.smtp.from>
+        <log.smtp.to>changeme@example.com</log.smtp.to>
         <jboss.home>target/jbossDeploy</jboss.home>
         <jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>8094</jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>
         <jbdc.type.mapping>PostgreSQL 8.0</jbdc.type.mapping>
