@@ -198,7 +198,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             if (identifiedOrg == null) {
                 return createCtepOrg(ctepOrg, assignedId);
             } else {
-                return updateCtepOrg(ctepOrg, identifiedOrg);
+                return updateCtepOrg(ctepOrg, identifiedOrg, assignedId);
             }
         } catch (gov.nih.nci.common.exceptions.CTEPEntException e) {
             // id not found in ctep, therefore we can safely inactivate the entity if it exists locally.
@@ -285,7 +285,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return ctepOrg;
     }
 
-    private Organization updateCtepOrg(Organization ctepOrg, IdentifiedOrganization identifiedOrg) throws JMSException {
+    private Organization updateCtepOrg(Organization ctepOrg, IdentifiedOrganization identifiedOrg, Ii assignedId) 
+            throws JMSException {
         Organization org = identifiedOrg.getPlayer();
 
         // copy in new data in to the local org
@@ -295,6 +296,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // Update the status of identified entity if needed
         if (!RoleStatus.ACTIVE.equals(identifiedOrg.getStatus())) {
             identifiedOrg.setStatus(RoleStatus.ACTIVE);
+            identifiedOrg.getAssignedIdentifier().setDisplayable(assignedId.getDisplayable());
+            identifiedOrg.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
+            identifiedOrg.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
+            identifiedOrg.getAssignedIdentifier().setReliability(assignedId.getReliability());
+            identifiedOrg.getAssignedIdentifier().setScope(assignedId.getScope());
             this.identifiedOrgService.curate(identifiedOrg);
         }
 
