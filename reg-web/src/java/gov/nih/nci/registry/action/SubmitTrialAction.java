@@ -1641,7 +1641,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * @param contactPhone the contactPhone to set
      */
     public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
+        //TODO  find a permanent solution
+        // this is an workaround for the problem with PA service
+        // that throws error if the phone number contains blank spaces
+        if (contactPhone != null) {
+            this.contactPhone =  contactPhone.trim().replaceAll(" ", "");
+        }
     }
 
     /**
