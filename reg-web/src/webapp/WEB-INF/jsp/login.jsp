@@ -11,12 +11,12 @@
  <c:choose>
      <c:when test="${param.userAction == 'create'}">
 		<div class="confirm_msg">
-		  <strong>Your User Account has been successfully created. Please log in using your username and password.</strong>
+		  <strong>Your User Account has been successfully created. Please log in using your email address and password.</strong>
 		</div>
      </c:when>
      <c:when test="${param.userAction == 'reset'}">
         <div class="confirm_msg">
-          <strong>Your password has been successfully reset. Please log in using your username and password.</strong>
+          <strong>Your password has been successfully reset. Please log in using your email address and password.</strong>
         </div>
      </c:when>
      <c:otherwise>
@@ -36,7 +36,7 @@
 			</tr>
 			<tr>
 				<td class="label" scope="row">
-                <label for="j_username">Username:</label>
+                <label for="j_username">Email Address:</label>
                 </td>
 				<td class="value">
 					<input name="j_username" maxlength="100" size="15" type="text">
