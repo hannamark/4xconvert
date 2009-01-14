@@ -76,6 +76,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.xml.parsers.DocumentBuilder;
@@ -99,9 +100,8 @@ import org.w3c.dom.Text;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-//@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" , 
-//    "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods" , "PMD.NPathComplexity"  })
-@SuppressWarnings("PMD")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" , 
+    "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods" , "PMD.NPathComplexity"  })
 @Stateless
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
@@ -114,8 +114,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final int HOURS = 24;
     private static final int MINUTES = 60;
     private static final int MAX_AGE = 999;
+    private static final String FIRST_NAME = "first_name";
+    private static final String LAST_NAME = "last_name";
+    private static final String PHONE = "phone";
+    private static final String EMAIL = "email";
     
-    private static HashMap<String , String> nv = new HashMap<String, String>(); 
+    private static Map<String , String> nv = new HashMap<String, String>(); 
     /**
      * @param studyProtocolIi ii of studyprotocol
      * @return String xml output
@@ -245,17 +249,17 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Person p  = cUtils.getPAPersonByPAClinicalResearchStaffId(
                     Long.valueOf(scDTO.getClinicalResearchStaffIi().getExtension()));
             Element overallContact = doc.createElement("overall_contact");
-            appendElement(overallContact, createElement("first_name", p.getFirstName() , doc));
-            appendElement(overallContact, createElement("last_name", p.getLastName() , doc));
+            appendElement(overallContact, createElement(FIRST_NAME, p.getFirstName() , doc));
+            appendElement(overallContact, createElement(LAST_NAME, p.getLastName() , doc));
             DSet dset = scDTO.getTelecomAddresses();
             if (dset != null) {
                 List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
                 List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
-                if (phones != null && phones.size() > 0) {
-                    appendElement(overallContact , createElement("phone" , phones.get(0) , doc));
+                if (phones != null && !phones.isEmpty()) {
+                    appendElement(overallContact , createElement(PHONE , phones.get(0) , doc));
                 }
-                if (emails != null && emails.size() > 0) {
-                    appendElement(overallContact , createElement("email" , emails.get(0) , doc));
+                if (emails != null && !emails.isEmpty()) {
+                    appendElement(overallContact , createElement(EMAIL , emails.get(0) , doc));
                 }    
             }
             if (overallContact.hasChildNodes()) {
@@ -278,8 +282,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 Person p  = cUtils.getPAPersonByPAClinicalResearchStaffId(
                                 Long.valueOf(scDTO.getClinicalResearchStaffIi().getExtension()));
                 Element overallofficial = doc.createElement("overall_official");
-                appendElement(overallofficial, createElement("first_name", p.getFirstName() , doc));
-                appendElement(overallofficial, createElement("last_name", p.getLastName() , doc));
+                appendElement(overallofficial, createElement(FIRST_NAME, p.getFirstName() , doc));
+                appendElement(overallofficial, createElement(LAST_NAME, p.getLastName() , doc));
                 appendElement(overallofficial, createElement("role", "Principal Investigator"  , doc));
                 
                 StudyParticipationDTO spartDTO = new StudyParticipationDTO();
@@ -370,14 +374,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     for (Object tel : telList) {
                         if (tel instanceof TelPhone) {
                             appendElement(irbInfo , 
-                                    createElement("phone" , ((TelPhone) tel).getValue().getSchemeSpecificPart(), doc));
+                                    createElement(PHONE , ((TelPhone) tel).getValue().getSchemeSpecificPart(), doc));
                             break;
                         }
                     }
 
                     for (Object tel : telList) {
                         if (tel instanceof TelEmail) {
-                            appendElement(irbInfo , createElement("email"  ,  
+                            appendElement(irbInfo , createElement(EMAIL  ,  
                                     ((TelEmail) tel).getValue().getSchemeSpecificPart(), doc));
                             break;
                         }
@@ -459,7 +463,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         Pq pq = null;
         BigDecimal value;
         String unit;
-        String operator;
         Boolean incIndicator = null;
         for (PlannedEligibilityCriterionDTO paEC : paECs) {
             criterionName = StConverter.convertToString(paEC.getCriterionName());
@@ -478,10 +481,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             } else if (descriptionText != null) {
                 if (incIndicator) {
                     incCrit.append(descriptionText);
-                    incCrit.append("\n");
+                    incCrit.append('\n');
                 } else {
                     exCrit.append(descriptionText);
-                    exCrit.append("\n");
+                    exCrit.append('\n');
                 }
             } else {
                 value = pq.getValue();
@@ -701,7 +704,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         DSet dset = null;
         CorrelationUtils cUtils = new CorrelationUtils();
         Person person = null;
-        if (scDtos != null && scDtos.size() > 0) {
+        if (scDtos != null && !scDtos.isEmpty()) {
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
             person = cUtils.getPAPersonByPAClinicalResearchStaffId(
@@ -712,7 +715,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     StudyParticipationContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
             List<StudyParticipationContactDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationContactService()
                 .getByStudyProtocol(studyProtocolIi, spart);
-            if (spDtos != null && spDtos.size() > 0) {
+            if (spDtos != null && !spDtos.isEmpty()) {
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 person = cUtils.getPAPersonByPAOrganizationalContactId((
@@ -725,18 +728,16 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         if (dset != null) {
             List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
-            if (phones != null && phones.size() > 0) {
-                appendElement(responsibleParty , createElement("phone" , phones.get(0) , doc));
+            if (phones != null && !phones.isEmpty()) {
+                appendElement(responsibleParty , createElement(PHONE , phones.get(0) , doc));
             }
-            if (emails != null && emails.size() > 0) {
-                appendElement(responsibleParty , createElement("email" , emails.get(0) , doc));
+            if (emails != null && !emails.isEmpty()) {
+                appendElement(responsibleParty , createElement(EMAIL , emails.get(0) , doc));
             }    
         }
         return responsibleParty; 
     }
     private static Element createLeadSponsor(Ii studyProtocolIi , Document doc) throws PAException {
-        OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean(); 
-        
         StudyParticipationDTO srDTO = new StudyParticipationDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
         List<StudyParticipationDTO> spList =  
@@ -819,10 +820,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Person p = corr.getPAPersonByPAClinicalResearchStaffId(
                     Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
             Element investigator = doc.createElement("investigator");
-            appendElement(investigator , createElement("first_name" , p.getFirstName() , doc));
+            appendElement(investigator , createElement(FIRST_NAME , p.getFirstName() , doc));
             appendElement(investigator , createElement("middle_name" , p.getMiddleName() , 
                             PAAttributeMaxLen.MIDDLE_NAME, doc));
-            appendElement(investigator , createElement("last_name" , p.getLastName() , doc));
+            appendElement(investigator , createElement(LAST_NAME , p.getLastName() , doc));
             appendElement(investigator , createElement("role" , spcDTO.getRoleCode() , doc));
             if (investigator.hasChildNodes()) {
                 appendElement(location , investigator); 
@@ -844,15 +845,15 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Person p = corr.getPAPersonByPAClinicalResearchStaffId(
                     Long.valueOf(spcDTO.getClinicalResearchStaffIi().getExtension()));
             Element contact = doc.createElement("contact");
-            appendElement(contact , createElement("first_name" , p.getFirstName() , doc));
+            appendElement(contact , createElement(FIRST_NAME , p.getFirstName() , doc));
             appendElement(contact , createElement("middle_name" , p.getMiddleName() , 
                     PAAttributeMaxLen.MIDDLE_NAME , doc));
-            appendElement(contact , createElement("last_name" , p.getLastName() , doc));
+            appendElement(contact , createElement(LAST_NAME , p.getLastName() , doc));
             if (phones != null && !phones.isEmpty()) {
-                appendElement(contact , createElement("phone" , phones.get(0) , doc));
+                appendElement(contact , createElement(PHONE , phones.get(0) , doc));
             }
             if (emails != null && !emails.isEmpty()) {
-                appendElement(contact , createElement("email" , emails.get(0) , doc));
+                appendElement(contact , createElement(EMAIL , emails.get(0) , doc));
             }
             if (contact.hasChildNodes()) {
                 appendElement(location , contact); 

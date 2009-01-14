@@ -344,6 +344,8 @@ public class TestSchema {
             spc.setAddressLine("Address 1");
             spc.setCity("City");
             spc.setCountry(country);
+            spc.setPhone("111");
+            spc.setEmail("naveen@yahoo.com");
             spc.setDeliveryAddressLine("Del. Address 1");
             spc.setPostalCode("ZZZZZ");
             spc.setPrimaryIndicator(true);
