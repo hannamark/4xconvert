@@ -121,6 +121,9 @@ public class DSetConverter {
             TelEmail t = null;
             for (String email : list) {
                 t = new TelEmail();
+                if (email != null) {
+                    email = email.trim();
+                }
                 t.setValue(URI.create("mailto:" + email));
                 telSet.add(t);
             }         
