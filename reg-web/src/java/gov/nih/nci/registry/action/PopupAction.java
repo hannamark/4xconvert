@@ -264,8 +264,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Zip is a required field");
         }
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
-        if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
-            addActionError("State is a required field");
+        if (countryName != null && countryName.equalsIgnoreCase("USA")) {
+            if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
+                addActionError("State is required for US");
+            }            
         }
         String email = ServletActionContext.getRequest().getParameter("email");
         if (email != null && !PAUtil.isNotEmpty(email)) {
@@ -287,6 +289,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             return "create_org_response";
         }
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
+        //PO Service requires upper case state codes for US and Canada
+        if (PAUtil.isNotEmpty(stateName)) {
+            stateName = stateName.toUpperCase();            
+        }
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,
                 countryName));
         DSet<Tel> telco = new DSet<Tel>();
@@ -449,6 +455,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             telemail.setValue(new URI("mailto:" + email));
             list.getItem().add(telemail);
             dto.setTelecomAddress(list);
+            //PO Service requires upper case state codes for US and Canada
+            if (PAUtil.isNotEmpty(state)) {
+                state = state.toUpperCase();            
+            }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             Ii id = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);
             persons.add(EnPnConverter.convertToPaPersonDTO(RegistryServiceLocator.getPoPersonEntityService().getPerson(
