@@ -239,8 +239,8 @@ public class BatchCreateProtocols {
             if (sponsorIdIi != null) {
                     new PARelationServiceBean().createSponsorRelations(sponsorIdIi.getExtension(), 
                         IiConverter.convertToLong(studyProtocolIi));
-                    if (dto.getResponsibleParty().equalsIgnoreCase("pi")) {
-                        new PARelationServiceBean().createPIAsResponsiblePartyRelations(sponsorIdIi.getExtension(), 
+                    if (dto.getResponsibleParty().equalsIgnoreCase("pi") && orgIdIi != null) {
+                        new PARelationServiceBean().createPIAsResponsiblePartyRelations(orgIdIi.getExtension(), 
                             leadPrincipalInvestigator.getExtension(),
                             IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
                     } else {
