@@ -196,7 +196,7 @@ function handleAction(){
                                     value="@gov.nih.nci.registry.util.
                                     RegistryServiceLocator@getLookUpTableService().
                                     getCountries()" />
-                            <s:select headerKey="" headerValue="--Select--" 
+                            <s:select headerKey="United States" headerValue="United States" 
                                      name="registryUserWebDTO.country" 
                                      list="#countries"
                                      listKey="name" 
