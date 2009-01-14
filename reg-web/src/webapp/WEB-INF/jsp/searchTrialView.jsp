@@ -210,33 +210,35 @@
 	       <tr>
 	     		<td colspan="2" class="space">&nbsp;</td>
 	       </tr>
-       </c:if>           
-       <tr>
-     		<th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
-       </tr>
-       <tr>     
-			<td scope="row" class="label">
-				<label for="Summary 4 Funding Category">
-				<fmt:message key="view.trial.FundingCategory"/>                
-				</label>
-			</td>
-			<td class="value">
-				<c:out value="${requestScope.nihInstitute.typeCode.code }"/>
-			</td>
-	   </tr>
-  	   <tr>     
-			<td scope="row" class="label">
-				<label for="Summary 4 Funding Sponsor/Source">
-				<fmt:message key="view.trial.FundingSponsor"/>                
-				</label>
-			</td>
-			<td class="value">
-				<c:out value="${requestScope.summaryFourSponsorName }"/>
-			</td>
-	   </tr> 
-      <tr>
-          <td colspan="2" class="space">&nbsp;</td>
-      </tr>           
+       </c:if>
+       <c:if test="${requestScope.summaryFourSponsorName != null}">             
+	       <tr>
+	     		<th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
+	       </tr>
+	       <tr>     
+				<td scope="row" class="label">
+					<label for="Summary 4 Funding Category">
+					<fmt:message key="view.trial.FundingCategory"/>                
+					</label>
+				</td>
+				<td class="value">
+					<c:out value="${requestScope.nihInstitute.typeCode.code }"/>
+				</td>
+		   </tr>
+	  	   <tr>     
+				<td scope="row" class="label">
+					<label for="Summary 4 Funding Sponsor/Source">
+					<fmt:message key="view.trial.FundingSponsor"/>                
+					</label>
+				</td>
+				<td class="value">
+					<c:out value="${requestScope.summaryFourSponsorName }"/>
+				</td>
+		   </tr> 
+	      <tr>
+	          <td colspan="2" class="space">&nbsp;</td>
+	      </tr>
+      </c:if>          
       <tr>
           <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
       </tr>
