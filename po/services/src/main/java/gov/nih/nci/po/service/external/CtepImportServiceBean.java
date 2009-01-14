@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -109,6 +108,7 @@ import javax.naming.NamingException;
 @Interceptors({ PoHibernateSessionInterceptor.class })
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedFormalParameter", "PMD.AvoidThrowingRawExceptionTypes" })
 public class CtepImportServiceBean implements CtepImportService {
+    private static Properties config;
     private static InitialContext ctepContext;
     private CtepOrganizationImporter orgImporter;
     private CtepPersonImporter personImporter;
@@ -126,7 +126,7 @@ public class CtepImportServiceBean implements CtepImportService {
      */
     protected void initImporters() {
         try {
-            synchronized (this) {
+            synchronized (CtepImportServiceBean.class) {
                 if (ctepContext == null) {
                     ctepContext = createCtepInitialContext();
                 }
@@ -168,18 +168,34 @@ public class CtepImportServiceBean implements CtepImportService {
 
     /**
      * @return an InitialContext to CTEP.
-     * @throws IOException when resource ctep-services.properties cannot be loaded.
      * @throws NamingException when initial context cannot be created.
      */
     @SuppressWarnings("PMD.ReplaceHashtableWithMap")
-    public static InitialContext createCtepInitialContext() throws IOException, NamingException {
-        Properties props = new Properties();
-        props.load(CtepImportServiceBean.class.getClassLoader().getResourceAsStream("ctep-services.properties"));
+    public static InitialContext createCtepInitialContext() throws NamingException {
+        Properties props = getConfig();
         Hashtable<Object, Object> env = new Hashtable<Object, Object>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
         env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
         env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
         env.put(Context.PROVIDER_URL, props.get("ctep.url"));
         return new InitialContext(env);
+    }
+
+    /**
+     * @return a properties file loaded from resource ctep-services.properties
+     */
+    public static synchronized Properties getConfig() {
+        if (config == null) {
+            try {
+                Properties props = new Properties();
+                ClassLoader loader = CtepImportServiceBean.class.getClassLoader();
+                props.load(loader.getResourceAsStream("ctep-services.properties"));
+                config = props;
+            } catch (Exception ex) {
+                throw new Error("failed to load resource ctep-services.properties", ex);
+            }
+        }
+
+        return config;
     }
 }

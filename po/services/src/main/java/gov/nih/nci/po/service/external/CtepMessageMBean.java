@@ -90,6 +90,7 @@ import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 import javax.naming.InitialContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.annotation.ejb.Service;
 
@@ -110,7 +111,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
     private TopicSubscriber topicSubscriber;
     private String topicConnectionFactoryName = "jms/CTISTopicConnectionFactory";
     private String topicName = "jms/CTISTopic";
-    private String subscriptionName = "po_consumer";
+    private String subscriptionName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.subscription.name");
     private boolean busy = false;
     private String statusMessage;
 
@@ -193,6 +194,10 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
         // do nothing if still starting.
         if (busy) {
             return;
+        }
+        if (StringUtils.isBlank(subscriptionName)) {
+            LOG.error("property ctep.jms.subscription.name in resource ctep-services.properties not set.");
+            throw new IllegalStateException("subscriptionName not set.");
         }
         busy = true; // will remain busy untill startup thread finishes.
         statusMessage = "Starting";

@@ -33,6 +33,7 @@
         <ctep.username>coppaUser</ctep.username>
         <ctep.password>coppa1</ctep.password>
         <ctep.url>ormi://156.40.130.87:12401/CES</ctep.url>
+        <ctep.jms.subscription.name>po-subscriber</ctep.jms.subscription.name>
     </properties>
     
     <dependencies>
