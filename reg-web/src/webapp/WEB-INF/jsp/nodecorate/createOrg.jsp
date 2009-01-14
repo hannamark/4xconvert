@@ -7,7 +7,7 @@
    </tr>
    <tr>        
  		<td scope="row" class="label"><label for="createOrgCity">City :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgCity;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>        
- 		<td scope="row" class="label"><label for="createOrgState">State :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgState"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="createOrgState">State :<br><span class="info">(2 digit state code required for US)</span></label></td><td><s:textfield name="createOrg.orgState"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
    </tr>
    <tr>     
  		<td scope="row" class="label"><label for="createOrgZip">Zip :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgZip;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
@@ -15,7 +15,7 @@
            	<s:select
              name="createOrg.orgCountry;" 
              list="countryList"  
-             listKey="alpha3" listValue="name" headerKey="aaa" headerValue="--Select--" cssStyle="width:206px" />
+             listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
         </td>		
 	</tr>
 	<tr>
