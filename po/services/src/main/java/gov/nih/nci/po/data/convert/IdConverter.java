@@ -105,7 +105,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value for orgs.
      */
-    public static final String ORG_ROOT = "UID.for.nci.entity.organization";
+    public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
 
     /**
      * The identifier name for person ii's.
@@ -115,7 +115,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value for people.
      */
-    public static final String PERSON_ROOT = "UID.for.nci.entity.person";
+    public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
 
     /**
      * The identifier name for.
@@ -125,7 +125,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "UID.for.nci.role.clinicalresearchstaff";
+    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "2.16.840.1.113883.3.26.4.4.1";
 
     /**
      * The identifier name for.
@@ -135,7 +135,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String HEALTH_CARE_PROVIDER_ROOT = "UID.for.nci.role.healthcareprovider";
+    public static final String HEALTH_CARE_PROVIDER_ROOT = "2.16.840.1.113883.3.26.4.4.2";
 
     /**
      * The identifier name for.
@@ -145,7 +145,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String HEALTH_CARE_FACILITY_ROOT = "UID.for.nci.role.healthcarefacility";
+    public static final String HEALTH_CARE_FACILITY_ROOT = "2.16.840.1.113883.3.26.4.4.3";
 
     /**
      * The identifier name for.
@@ -155,7 +155,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String OVERSIGHT_COMMITTEE_ROOT = "UID.for.nci.role.oversightcommittee";
+    public static final String OVERSIGHT_COMMITTEE_ROOT = "2.16.840.1.113883.3.26.4.4.4";
 
     /**
      * The identifier name for.
@@ -165,7 +165,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String RESEARCH_ORG_ROOT = "UID.for.nci.role.researchorganization";
+    public static final String RESEARCH_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.5";
 
     /**
      * The identifier name for.
@@ -175,7 +175,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String IDENTIFIED_ORG_ROOT = "UID.for.nci.role.identifiedorg";
+    public static final String IDENTIFIED_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
 
     /**
      * The identifier name for.
@@ -185,7 +185,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String IDENTIFIED_PERSON_ROOT = "UID.for.nci.role.identifiedperson";
+    public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.7";
     /**
      * The identifier name for.
      */
@@ -194,17 +194,8 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String ORGANIZATIONAL_CONTACT_ROOT = "UID.for.nci.role.organizationalcontact";
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
 
-    /**
-     * The identifier name for.
-     */
-    public static final String QUALIFIED_ENTITY_IDENTIFIER_NAME = "Qualified entity identifier";
-
-    /**
-     * The ii root value.
-     */
-    public static final String QUALIFIED_ENTITY_ROOT = "UID.for.nci.role.qualifiedentity";
 
     /**
      * {@inheritDoc}
