@@ -234,7 +234,7 @@ public class TestSchema {
                 Connection connection = session.connection();
                 try {
                     Statement statement = connection.createStatement();
-                    try {
+//                    try {
                         statement.executeUpdate("delete from STUDY_MILESTONE");
                         statement.executeUpdate("delete from STUDY_CONTACT");
                         statement.executeUpdate("delete from STUDY_REGULATORY_AUTHORITY");
@@ -253,7 +253,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from DOCUMENT");
                         statement.executeUpdate("delete from STUDY_RESOURCING");
                         statement.executeUpdate("delete from STRATUM_GROUP");
-                        statement.executeUpdate("delete from STUDY_DISEASE");
+                        statement.executeUpdate("delete from STUDY_DIxSEASE");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
                         statement.executeUpdate("delete from CLINICAL_RESEARCH_STAFF");
                         statement.executeUpdate("delete from COUNTRY");
@@ -268,9 +268,9 @@ public class TestSchema {
                         statement.executeUpdate("delete from DISEASE_ALTERNAME");
                         statement.executeUpdate("delete from DISEASE");
                         connection.commit();
-                    } finally {
+//                    } finally {
                         statement.close();
-                    }
+//                    }
                 } catch (HibernateException e) {
                     connection.rollback();
                     throw new RuntimeException(e);
