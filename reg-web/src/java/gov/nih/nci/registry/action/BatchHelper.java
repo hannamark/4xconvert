@@ -109,7 +109,7 @@ public class BatchHelper implements Runnable { //implements Runnable {
             String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
                                     getPropertyValue("trial.batchUpload.body");
             submissionMailBody = submissionMailBody.replace("${totalCount}", totalCount);
-            submissionMailBody = submissionMailBody.replace("${sucessCount}", sucessCount);
+            submissionMailBody = submissionMailBody.replace("${successCount}", sucessCount);
             submissionMailBody = submissionMailBody.replace("${failedCount}", failedCount);
             MessageFormat formatterBody = new MessageFormat(submissionMailBody);
             String emailBody =  formatterBody.format(params);
