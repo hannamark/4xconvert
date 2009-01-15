@@ -242,12 +242,13 @@ public class BatchCreateProtocols {
                     if (dto.getResponsibleParty().equalsIgnoreCase("pi") && orgIdIi != null) {
                         new PARelationServiceBean().createPIAsResponsiblePartyRelations(orgIdIi.getExtension(), 
                             leadPrincipalInvestigator.getExtension(),
-                            IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), dto.getPiPhone());
+                            IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), 
+                            dto.getPiPhone().replaceAll(" ", ""));
                     } else {
                         new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
                             responsiblePartyContact.getExtension(), IiConverter
                             .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), 
-                             dto.getSponsorContactPhone());
+                             dto.getSponsorContactPhone().replaceAll(" ", ""));
                     }                
             }
             //get the protocol
