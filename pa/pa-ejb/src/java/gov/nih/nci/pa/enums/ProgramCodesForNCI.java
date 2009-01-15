@@ -32,6 +32,10 @@ public enum ProgramCodesForNCI implements CodedEnum<String> {
     DCEG("DCEG-Division of Cancer Epidemiology and Genetics"),
     /**
      * DTP-Developmental Therapeutics Program.
+     */
+    DTP("DTP-Developmental Therapeutics Program"),
+    /**
+     * DTP-Developmental Therapeutics Program.
      *
     DTP("DTP-Developmental Therapeutics Program"),
     /**
@@ -51,9 +55,9 @@ public enum ProgramCodesForNCI implements CodedEnum<String> {
      */
     OSB_SPOREs("OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs)"),
     /**
-     * CIP-Cencer Imaging Program.
+     * CIP-Cancer Imaging Program.
      */
-    CIP("CIP-Cencer Imaging Program"),
+    CIP("CIP-Cancer Imaging Program"),
     /**
      * CDP-Cancer Diagnosis Program.
      */

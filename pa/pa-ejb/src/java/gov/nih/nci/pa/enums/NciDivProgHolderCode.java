@@ -33,8 +33,8 @@ public enum NciDivProgHolderCode implements CodedEnum<String> {
     OD("OD-Office of the Director, NCI, NIH"),
     /** OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs). */
     OSB_SPOREs("OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs)"),
-    /** CIP-Cencer Imaging Program. */
-    CIP("CIP-Cencer Imaging Program"),
+    /** CIP-Cancer Imaging Program. */
+    CIP("CIP-Cancer Imaging Program"),
     /** CDP-Cancer Diagnosis Program. */
     CDP("CDP-Cancer Diagnosis Program"),
     /** TRP-Translational Research Program. */
