@@ -31,7 +31,7 @@ import org.hibernate.Session;
 @Stateless
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class StudyIndldeServiceBean extends AbstractStudyPaService<StudyIndldeDTO>
-implements StudyIndldeServiceRemote {
+implements StudyIndldeServiceRemote, StudyIndldeServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyIndldeServiceBean.class);
 

@@ -65,9 +65,9 @@
         	<result name="error_edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
          </action>       		
   		<!-- needs to be refactored -->
-		<action name="getAuthOrgsAjax" class="gov.nih.nci.pa.action.GetAuthorityOrgsAction" >
+		<action name="ajaxgetAuthOrgs*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />				         
-			<result>/WEB-INF/jsp/nodecorate/organizations.jsp</result>
+			<result>/WEB-INF/jsp/nodecorate/authorityname.jsp</result>
 		</action>	
 		<action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
 			<interceptor-ref name="nci-commonsParams" />

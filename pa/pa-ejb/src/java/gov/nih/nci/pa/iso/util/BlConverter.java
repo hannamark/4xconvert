@@ -42,6 +42,9 @@ public class BlConverter {
             bl.setNullFlavor(NullFlavor.NI);
             // @todo : throw proper exception 
         }
+        if (bl.getNullFlavor() != null && bl.getNullFlavor().equals(NullFlavor.NI)) {
+            return null;
+        }
         return bl.getValue();
     }
     

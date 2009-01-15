@@ -13,10 +13,12 @@ import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -534,7 +536,20 @@ import org.hibernate.Session;
         }
         if ((sDate != null) && (cDate != null) && (cDate.before(sDate))) {
             throw new PAException("Primary completion date must be >= start date.");
+        }        
+        //
+        if ((studyProtocolDTO.getFdaRegulatedIndicator() != null) 
+                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null) 
+                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()))) {
+            StudyIndldeServiceLocal local = (StudyIndldeServiceLocal) 
+                                JNDIUtil.lookup("pa/StudyIndldeServiceBean/local");
+            List<StudyIndldeDTO> list = local.getByStudyProtocol(studyProtocolDTO.getIdentifier());
+            if (!list.isEmpty()) {
+                throw new PAException("Unable to set FDARegulatedIndicator to 'No', " 
+                        + " Please remove IND/IDEs and try again");
+            }
         }
+        
     }
         
 }

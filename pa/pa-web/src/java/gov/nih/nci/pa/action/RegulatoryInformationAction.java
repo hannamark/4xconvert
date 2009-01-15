@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthorityWebDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -32,62 +33,73 @@ public class RegulatoryInformationAction extends ActionSupport {
     private StudyProtocolDTO ispDTO = new StudyProtocolDTO();
     private List countryList = new ArrayList();
     private String lst = null;
-    private String selectedAuthOrg = null;
+    //private String selectedAuthOrg = null;
     private RegulatoryAuthorityWebDTO webDTO = new RegulatoryAuthorityWebDTO();
+    //
+    private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList();
+    private String selectedRegAuth = null;
 
     /**
      * Method to save the regulatory information to the database.
      * 
      * @return String success or failure
      */
-    public String update()  {
+    public String update() {
         String orgName;
         try {
-            orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-                    Long.valueOf(selectedAuthOrg), "RegulatoryAuthority");
-        String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(getLst()),
-                "Country");
-        webDTO.setTrialOversgtAuthOrgName(orgName);
-        webDTO.setTrialOversgtAuthCountry(countryName);
-        String user = ServletActionContext.getRequest().getRemoteUser();
-        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                Constants.STUDY_PROTOCOL_II);
-        //Update InterventionalSP
-        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
-                .getStudyProtocol(studyProtocolIi);
-        
-        spDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                .getSection801Indicator())));
-        spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                .getFdaRegulatedInterventionIndicator())));
-        spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                .getDelayedPostingIndicator())));
-        spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                .getDataMonitoringIndicator())));
-        
-        PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
-        
-        
-        // Update StudyRegulatoryAuthority
-        StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                .getByStudyProtocol(studyProtocolIi);
-        StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
-        sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedAuthOrg));
-        if (sraFromDatabaseDTO == null) {
-            PaRegistry.getStudyRegulatoryAuthorityService().create(sraDTO);
-        } else {
-            sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedAuthOrg));
-            PaRegistry.getStudyRegulatoryAuthorityService().update(sraFromDatabaseDTO);
+            orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(selectedRegAuth),
+                    "RegulatoryAuthority");
+            String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                    Long.valueOf(getLst()), "Country");
+            webDTO.setTrialOversgtAuthOrgName(orgName);
+            webDTO.setTrialOversgtAuthCountry(countryName);
+            String user = ServletActionContext.getRequest().getRemoteUser();
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                    Constants.STUDY_PROTOCOL_II);
+            // Update InterventionalSP
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            if (webDTO.getSection801Indicator().equals("")) {
+                spDTO.setSection801Indicator(BlConverter.convertToBl(null));
+            } else {
+                spDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSection801Indicator())));
+            }
+            if (webDTO.getFdaRegulatedInterventionIndicator().equals("")) {
+                spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
+            } else {
+                spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+                        .getFdaRegulatedInterventionIndicator())));
+            }
+            if (webDTO.getDelayedPostingIndicator().equals("")) {
+                spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(null));
+            } else {
+                spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+                        .getDelayedPostingIndicator())));
+            }
+            if (webDTO.getDataMonitoringIndicator().equals("")) {
+                spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
+            } else {
+                spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
+                        .getDataMonitoringIndicator())));
+            }
+            PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+            // Update StudyRegulatoryAuthority
+            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
+                    .getByStudyProtocol(studyProtocolIi);
+            StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
+            sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedRegAuth));
+            if (sraFromDatabaseDTO == null) {
+                PaRegistry.getStudyRegulatoryAuthorityService().create(sraDTO);
+            } else {
+                sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedRegAuth));
+                PaRegistry.getStudyRegulatoryAuthorityService().update(sraFromDatabaseDTO);
+            }
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            return query();
+        } catch (PAException e) {            
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return query();
         }
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-       } catch (PAException e) {
-           addActionError(e.getMessage());
-           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-           return VIEW_PAGE;
-        }
-        
-        return VIEW_PAGE;
     }
 
     /**
@@ -98,41 +110,62 @@ public class RegulatoryInformationAction extends ActionSupport {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            StudyRegulatoryAuthorityDTO authorityDTO = PaRegistry.getStudyRegulatoryAuthorityService().
-                getByStudyProtocol(studyProtocolIi);
+            StudyRegulatoryAuthorityDTO authorityDTO = PaRegistry.getStudyRegulatoryAuthorityService()
+                    .getByStudyProtocol(studyProtocolIi);
             //
             countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
             if (authorityDTO != null) { // load values from database
                 StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
                         .getByStudyProtocol(studyProtocolIi);
-      
-                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
-                        .getStudyProtocol(studyProtocolIi);
+                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
                 if (spDTO.getSection801Indicator().getValue() != null) {
-                    webDTO.setSection801Indicator(BlConverter.convertToString(spDTO
-                            .getSection801Indicator()));
+                    webDTO.setSection801Indicator(BlConverter.convertToString(spDTO.getSection801Indicator()));
                 }
                 if (spDTO.getFdaRegulatedIndicator().getValue() != null) {
                     webDTO.setFdaRegulatedInterventionIndicator(BlConverter.convertToString(spDTO
                             .getFdaRegulatedIndicator()));
                 }
                 if (spDTO.getDelayedpostingIndicator().getValue() != null) {
-                    webDTO.setDelayedPostingIndicator(BlConverter.convertToString(spDTO
-                            .getDelayedpostingIndicator()));
+                    webDTO.setDelayedPostingIndicator(BlConverter.convertToString(spDTO.getDelayedpostingIndicator()));
                 }
                 if (spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
                     webDTO.setDataMonitoringIndicator((BlConverter.convertToString(spDTO
                             .getDataMonitoringCommitteeAppointedIndicator())));
-                }                 
+                }
                 Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
                 List<Long> regInfo = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityInfo(sraId);
                 setLst(regInfo.get(1).toString());
-            }
+                //set selected the name of the regulatory authority chosen
+                regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
+                        Long.valueOf(regInfo.get(1).toString()));
+                setSelectedRegAuth(regInfo.get(0).toString());
+            } 
             ispDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-            return VIEW_PAGE;
+            return SUCCESS;
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * @return String success or failure
+     */
+    public String getRegAuthoritiesList() {
+        try {
+            String countryId = ServletActionContext.getRequest().getParameter("countryid");
+            if (!countryId.equals("")) {
+                regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
+                    Long.valueOf(countryId));
+            } else {
+                RegulatoryAuthOrgDTO defaultVal = new RegulatoryAuthOrgDTO();
+                defaultVal.setName("-Select Country-");
+                regIdAuthOrgList.add(defaultVal);
+            }
+
+        } catch (PAException e) {
+            return SUCCESS;
         }
         return SUCCESS;
     }
@@ -145,7 +178,8 @@ public class RegulatoryInformationAction extends ActionSupport {
     }
 
     /**
-     * @param countryList the countryList to set
+     * @param countryList
+     *            the countryList to set
      */
     public void setCountryList(List countryList) {
         this.countryList = countryList;
@@ -159,25 +193,14 @@ public class RegulatoryInformationAction extends ActionSupport {
     }
 
     /**
-     * @param lst the lst to set
+     * @param lst
+     *            the lst to set
      */
     public void setLst(String lst) {
         this.lst = lst;
     }
 
-    /**
-     * @return the selectedAuthOrg
-     */
-    public String getSelectedAuthOrg() {
-        return selectedAuthOrg;
-    }
 
-    /**
-     * @param selectedAuthOrg the selectedAuthOrg to set
-     */
-    public void setSelectedAuthOrg(String selectedAuthOrg) {
-        this.selectedAuthOrg = selectedAuthOrg;
-    }
 
     /**
      * @return the webDTO
@@ -187,9 +210,39 @@ public class RegulatoryInformationAction extends ActionSupport {
     }
 
     /**
-     * @param webDTO the webDTO to set
+     * @param webDTO
+     *            the webDTO to set
      */
     public void setWebDTO(RegulatoryAuthorityWebDTO webDTO) {
         this.webDTO = webDTO;
+    }
+
+    /**
+     * @return the regIdAuthOrgList
+     */
+    public List<RegulatoryAuthOrgDTO> getRegIdAuthOrgList() {
+        return regIdAuthOrgList;
+    }
+
+    /**
+     * @param regIdAuthOrgList
+     *            the regIdAuthOrgList to set
+     */
+    public void setRegIdAuthOrgList(List<RegulatoryAuthOrgDTO> regIdAuthOrgList) {
+        this.regIdAuthOrgList = regIdAuthOrgList;
+    }
+
+    /**
+     * @return the selectedRegAuth
+     */
+    public String getSelectedRegAuth() {
+        return selectedRegAuth;
+    }
+
+    /**
+     * @param selectedRegAuth the selectedRegAuth to set
+     */
+    public void setSelectedRegAuth(String selectedRegAuth) {
+        this.selectedRegAuth = selectedRegAuth;
     }
 }

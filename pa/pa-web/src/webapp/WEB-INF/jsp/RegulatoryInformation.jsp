@@ -5,32 +5,26 @@
 <s:head theme="ajax" />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title><fmt:message key="regulatory.title" /></title>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript">	
 	window.onload=checkAll;
 	/**/
 	function checkAll(){
-		if (document.getElementById('fdaindid').value == 'false'){
-			document.getElementById('sec801id').value ='false';
-			document.getElementById('indideid').value ='false';
-			document.getElementById('delpostindid').value ='false';
+		if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){
+			document.getElementById('sec801id').value ='';
+			document.getElementById('delpostindid').value ='';
 			hideRow(document.getElementById('sec801row'));
 		} else {
 			showRow(document.getElementById('sec801row'));
 		}
 			
-		if (document.getElementById('sec801id').value == 'false') {	
-			hideRow(document.getElementById('indiderow'));
-			document.getElementById('indideid').value ='false';
-			document.getElementById('delpostindid').value ='false';
-		} else {
-			showRow(document.getElementById('indiderow'));
-		}			
-		if (document.getElementById('indideid').value == 'false') {
-			document.getElementById('delpostindid').value ='false';
+		if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {	
 			hideRow(document.getElementById('delpostindrow'));
+			document.getElementById('indideid').value ='';
+			document.getElementById('delpostindid').value ='';
 		} else {
 			showRow(document.getElementById('delpostindrow'));
-		}
+		}			
 	}
 	/**/
 	function hideRow(row){			
@@ -46,8 +40,37 @@
 		dojo.event.topic.publish("show_detail");
 	}
 	function handleAction(){
-		document.regulatoryInfoupdate.action="regulatoryInfoupdate.action";
-		document.regulatoryInfoupdate.submit();
+		if(!checkReqFields()) {
+			document.regulatoryInfoupdate.action="regulatoryInfoupdate.action";
+			document.regulatoryInfoupdate.submit();
+		}
+		
+	}
+	function loadDiv() {		
+		var url = '/pa/protected/ajaxgetAuthOrgsgetRegAuthoritiesList.action?countryid='+document.getElementById('countries').value;
+	    var div = document.getElementById('loadAuthField');
+	    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';	       
+	    var aj = new Ajax.Updater(div, url, {
+	        asynchronous: true,
+	        method: 'get',
+	        evalScripts: false
+	    });
+	    return false;
+	}
+	function checkReqFields(){
+		if(document.getElementById('fdaindid').value == 'true'){
+			if(document.getElementById('sec801id').value == ''){
+				alert("The Section801 Indicator cannot be empty");
+				return true;
+			}
+		}
+		if(document.getElementById('sec801id').value == 'true'){
+			if(document.getElementById('delpostindid').value == ''){
+			 	alert("The Delayed posting Indicator cannot be empty");
+				return true;
+			}
+		}	
+		return false;
 	}
 </script>
 </head>
@@ -74,46 +97,43 @@
 	<!--  Trial Oversight Authority Country -->
 	<tr>
 		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span></td>
-		<td class="value"><s:select id="countries"
+		<td class="value"><s:select id="countries" headerValue="-Select-" headerKey=""
 					 name="lst"                   
                      list="countryList"  
                      listKey="id" listValue="name"                    
-                     onchange="javascript:show_details();return false;"                
+                     onchange="loadDiv();"                
                      />	
          </td>      
 	</tr>
 	<!--  Trial Oversignt Authority Organization Name -->
 	<tr>
 		<td scope="row" class="label"><label><fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></td>
-		<td class="value">
-			<s:url id="d_url" action="getAuthOrgsAjax" />
-			<s:div id="details" href="%{d_url}" theme="ajax" listenTopics="show_detail" formId="saveRegAuthority"></s:div>
-		</td>
-	</tr>
+					<td class="value">
+						<div id="loadAuthField">
+						<%@ include file="/WEB-INF/jsp/nodecorate/authorityname.jsp" %>
+						</div>		
+					</td>
+	</tr>	
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
 		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span> </td>
-		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
+		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
 	<!--   Section 801 Indicator-->
 	<tr id="sec801row">
-		<td scope="row" class="label"><label><fmt:message key="regulatory.section801.ind"/></td>
-		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
+		<td scope="row" class="label"><label><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></td>
+		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
 	</tr>
-	<!--  IND/IDE Indicator-->
-	<tr id="indiderow">
-		<td scope="row" class="label"><label><fmt:message key="regulatory.ideind.indicator"/></td>
-		<td class="value"><s:select id="indideid" name="webDTO.ideTrialIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
-	</tr>	
+	
 	<!--   Delayed Posting Indicator-->
 	<tr id="delpostindrow">
-		<td scope="row" class="label"><label><fmt:message key="regulatory.delayed.posting.ind"/></td>
-		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
+		<td scope="row" class="label"><label><fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></td>
+		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
 	</tr>
 	<!--   Data Monitoring Committee Appointed Indicator -->
 	<tr id="datamonrow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
-		<td class="value"><s:select id="datamonid" name="webDTO.dataMonitoringIndicator" list="#{'false':'No', 'true':'Yes'}"/></td>		
+		<td class="value"><s:select id="datamonid" name="webDTO.dataMonitoringIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}"/></td>		
 	</tr>
 	<tr>
 		<td colspan="2" class="pad10">
