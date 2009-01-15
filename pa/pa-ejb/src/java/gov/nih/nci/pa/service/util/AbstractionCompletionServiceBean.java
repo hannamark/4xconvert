@@ -55,7 +55,6 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
@@ -101,8 +100,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
   
-  private List<AbstractionCompletionDTO> abstractionList = null;
-  
   /**
    * @param studyProtocolIi studyProtocolIi
    * @return AbstractionCompletionDTO list
@@ -112,20 +109,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     if (studyProtocolIi == null) {
       throw new PAException("Study Protocol Identifer is null");
     }
-    abstractionList = new ArrayList<AbstractionCompletionDTO>();
+    List<AbstractionCompletionDTO> abstractionList = new ArrayList<AbstractionCompletionDTO>();
     StudyProtocolDTO studyProtocolDTO = PoPaServiceBeanLookup.getStudyProtocolService()
                         .getStudyProtocol(studyProtocolIi);
-    enforceGeneralTrailDetails(studyProtocolDTO);
+    enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
 
-    StudyResourcingDTO studyResourcingDTO = PoPaServiceBeanLookup.getStudyResourcingService()
-    .getsummary4ReportedResource(studyProtocolIi);
-    enforceNCISpecificInfo(studyProtocolDTO, studyResourcingDTO);
+   enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
 
-    enforceRegulatoryInfo(studyProtocolIi);
+    enforceRegulatoryInfo(studyProtocolIi, abstractionList);
     
-    enforceTrialINDIDE(studyProtocolIi);
+    enforceTrialINDIDE(studyProtocolIi, abstractionList);
     
-    enforceTrialStatus(studyProtocolIi, studyProtocolDTO);    
+    enforceTrialStatus(studyProtocolIi, studyProtocolDTO, abstractionList);    
     
     List<DocumentDTO> isoList = PoPaServiceBeanLookup.getDocumentService()
     .getDocumentsByStudyProtocol(studyProtocolIi);
@@ -142,53 +137,45 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         } 
       }
     } 
-    enforceDocument(protocolDoc, irbDoc);
+    enforceDocument(protocolDoc, irbDoc, abstractionList);
 
     if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
       InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
       ispDTO = PoPaServiceBeanLookup.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolIi);
-      enforceInterventional(ispDTO);
+      enforceInterventional(ispDTO, abstractionList);
       if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
         List<ArmDTO> aList = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-        if (aList.size() == ispDTO.getNumberOfInterventionGroups().getValue()) { // NOPMD
-        } else {
-          AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-          webDTO.setErrorType("Error");
-          webDTO.setComment("Select Arm from Interventional Trial Design under Scientific Data menu.");
-          webDTO.setErrorDescription("Number of interventional trial arm records must be the same"
-              + " as Number of Arms assigned in ‘Interventional Trial Design’.");
-          abstractionList.add(webDTO);
+        if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {         
+         abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design under Scientific" 
+              + " Data menu.", "Number of interventional trial arm records must be the same"
+              + " as Number of Arms assigned in ‘Interventional Trial Design’."));
         }
       }
     } else if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("ObservationalStudyProtocol")) {
       ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
       ospDTO = PoPaServiceBeanLookup.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
-      enforceObservational(ospDTO);
+      enforceObservational(ospDTO, abstractionList);
       if (ospDTO.getNumberOfGroups().getValue() != null) {
         List<ArmDTO> aList = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-        if (aList.size() == ospDTO.getNumberOfGroups().getValue()) { // NOPMD
-        } else {
-          AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-          webDTO.setErrorType("Error");
-          webDTO.setComment("Select Groups from Observational Trial Design under Scientific Data menu.");
-          webDTO.setErrorDescription("Number of Observational study group records must be the same"
-              + " as Number of Groups assigned in ‘Observational Study Design’.");
-          abstractionList.add(webDTO);
+        if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {           
+          abstractionList.add(createError("Error", "Select Groups from Observational Trial Design under Scientific " 
+              + "Data menu.", "Number of Observational study group records must be the same"
+              + " as Number of Groups assigned in ‘Observational Study Design’."));
         }
       }
     }
 
-    enforceOutcomeMeasure(studyProtocolIi);
-    enforceInterventions(studyProtocolIi);
-    enforceTreatingSite(studyProtocolIi);
-    enforceArmGroup(studyProtocolIi, studyProtocolDTO);
-    enforceTrialFunding(studyProtocolIi);
-    enforceDisease(studyProtocolIi);
-    enforceArmInterventional(studyProtocolIi);
-    enforceEligibility(studyProtocolIi);
+    enforceOutcomeMeasure(studyProtocolIi, abstractionList);
+    enforceInterventions(studyProtocolIi, abstractionList);
+    enforceTreatingSite(studyProtocolIi, abstractionList);
+    enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
+    enforceTrialFunding(studyProtocolIi, abstractionList);
+    enforceDisease(studyProtocolIi, abstractionList);
+    enforceArmInterventional(studyProtocolIi, abstractionList);
+    enforceEligibility(studyProtocolIi, abstractionList);
     return abstractionList;
   }
-  private void enforceDisease(Ii studyProtocolIi) throws PAException {
+  private void enforceDisease(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
       boolean leadExist = false;
       List<StudyDiseaseDTO> sdDtos = 
           PoPaServiceBeanLookup.getStudyDiseaseService().getByStudyProtocol(studyProtocolIi);
@@ -205,7 +192,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       
   }
   @SuppressWarnings({"PMD" })
-  private void enforceTrialFunding(Ii studyProtocolIi) throws PAException {
+  private void enforceTrialFunding(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {
     List<StudyResourcingDTO> srList = PoPaServiceBeanLookup.getStudyResourcingService().
     getstudyResourceByStudyProtocol(studyProtocolIi);
     if (!(srList.isEmpty())) { 
@@ -220,11 +208,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                    srList.get(i).getNciDivisionProgramCode().getCode().toString())
                 && srList.get(j).getSerialNumber().getValue().toString().equalsIgnoreCase(
                     srList.get(i).getSerialNumber().getValue().toString())) {
-            AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-            webDTO.setErrorType("Error");
-            webDTO.setComment("Select Trial Funding from Administrative Data menu.");
-            webDTO.setErrorDescription("Trial should not have Duplicate grants.");
-            abstractionList.add(webDTO);
+           abstractionList.add(createError("Error", "Select Trial Funding from Administrative Data menu.",
+                "Trial should not have Duplicate grants."));
             if (i == srList.size()) { //NOPMD              
             } else {
               j++;
@@ -236,58 +221,43 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
   
   private void enforceArmGroup(Ii studyProtocolIi,
-      StudyProtocolDTO studyProtocolDTO) throws PAException {
+      StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) throws PAException {
     if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
       List<ArmDTO> aList = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-      if (!(aList.isEmpty())) { // NOPMD
-      } else {
-        AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-        webDTO.setErrorType("Error");
-        webDTO.setComment("Select Arm from Interventional Trial Design under Scientific Data menu.");
-        webDTO.setErrorDescription("No Arm exists for the trial.");
-        abstractionList.add(webDTO);
+      if (aList.isEmpty()) { 
+       abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design " 
+            + "under Scientific Data menu.", "No Arm exists for the trial."));
       }
     } else if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("ObservationalStudyProtocol")) {
       List<ArmDTO> aList = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-      if (!(aList.isEmpty())) { // NOPMD
-      } else {
-        AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-        webDTO.setErrorType("Error");
-        webDTO.setComment("Select Groups from Observational Trial Design under Scientific Data menu.");
-        webDTO.setErrorDescription("No Groups exists for the trial.");
-        abstractionList.add(webDTO);
+      if (aList.isEmpty()) {
+       abstractionList.add(createError("Error", "Select Groups from Observational Trial Design " 
+            + "under Scientific Data menu.", "No Groups exists for the trial."));
       }
     }
   }
 
 
   private void enforceTrialStatus(Ii studyProtocolIi,
-      StudyProtocolDTO studyProtocolDTO) throws PAException {
+      StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) throws PAException {
     List<StudyOverallStatusDTO> sosList = PoPaServiceBeanLookup.getStudyOverallStatusService()
               .getCurrentByStudyProtocol(studyProtocolIi);
-    if (!(sosList.isEmpty())) { // NOPMD
-    } else {
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Trial Status from Administrative Data menu.");
-      webDTO.setErrorDescription("No Trial Status exists for the trial.");
-      abstractionList.add(webDTO);
+    if (sosList.isEmpty()) { 
+      abstractionList.add(createError("Error", "Select Trial Status from Administrative Data menu.",
+          "No Trial Status exists for the trial."));
     }
     if (studyProtocolDTO.getStartDate().getValue() == null 
         && studyProtocolDTO.getStartDateTypeCode().getCode() == null
         && studyProtocolDTO.getPrimaryCompletionDate().getValue() == null
         && studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode() == null) {
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Trial Status from Administrative Data menu.");
-      webDTO.setErrorDescription("StartDate/StartDateType and " 
-          + "PrimaryCompletionDate/PrimaryCompletionDateType must be Entered.");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select Trial Status from Administrative Data menu.",
+          "StartDate/StartDateType and PrimaryCompletionDate/PrimaryCompletionDateType must be Entered."));
     }
   }
 
   @SuppressWarnings({"PMD" })
-  private void enforceTrialINDIDE(Ii studyProtocolIi) throws PAException {    
+  private void enforceTrialINDIDE(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {    
     List<StudyIndldeDTO> siList = PoPaServiceBeanLookup.getStudyIndldeService().
     getByStudyProtocol(studyProtocolIi);
     if (!(siList.isEmpty())) { 
@@ -302,11 +272,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         siList.get(i).getIndldeNumber().getValue().toString())
                 && siList.get(j).getIndldeTypeCode().getCode().toString().equalsIgnoreCase(
                             siList.get(i).getIndldeTypeCode().getCode().toString())) {
-            AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-            webDTO.setErrorType("Error");
-            webDTO.setComment("Select Trial IND/IDE under Regulatory Information from Administrative Data menu.");
-            webDTO.setErrorDescription("Trial IND/IDE should not have Duplicate values.");
-            abstractionList.add(webDTO);
+           abstractionList.add(createError("Error", "Select Trial IND/IDE under Regulatory Information"
+                + " from Administrative Data menu.", "Trial IND/IDE should not have Duplicate values."));
             if (i == siList.size()) { //NOPMD              
             } else {
               j++;
@@ -318,32 +285,27 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
 
 
-  private void enforceRegulatoryInfo(Ii studyProtocolIi) throws PAException {
+  private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
+  throws PAException {
     StudyRegulatoryAuthorityDTO sraDTO = PoPaServiceBeanLookup.getStudyRegulatoryAuthorityService()
     .getByStudyProtocol(studyProtocolIi);
-    if (sraDTO != null) { // NOPMD
-    } else {
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Regulatory under Regulatory Information from Administrative Data menu.");
-      webDTO.setErrorDescription("Regulatory Information fields must be Entered.");
-      abstractionList.add(webDTO);
+    if (sraDTO == null) { 
+      abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+          + " from Administrative Data menu.", "Regulatory Information fields must be Entered."));
     }
   }
 
 
-  private void enforceTreatingSite(Ii studyProtocolIi) throws PAException {
+  private void enforceTreatingSite(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
+  throws PAException {
     StudyParticipationDTO srDTO = new StudyParticipationDTO();
     srDTO.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.TREATING_SITE));
     List<StudyParticipationDTO> spList =  
         PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, srDTO);
     
     if (spList == null || spList.isEmpty()) { 
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Treating Sites from Participating Sites under Administrative Data menu.");
-      webDTO.setErrorDescription("No Treating Sites exists for the trial.");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select Treating Sites from Participating Sites under " 
+          + " Administrative Data menu.",  "No Treating Sites exists for the trial."));
       return;
     }
     if (spList != null) {
@@ -384,258 +346,174 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   }
 
 
-  private void enforceInterventions(Ii studyProtocolIi) throws PAException {
+  private void enforceInterventions(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {
     List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService().
     getByStudyProtocol(studyProtocolIi);
-    if (!(paList.isEmpty())) { // NOPMD
-    } else {
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Interventions from Scientific Data menu.");
-      webDTO.setErrorDescription("No Interventions exists for the trial.");
-      abstractionList.add(webDTO);
+    boolean interventionsList = false;
+    for (PlannedActivityDTO pa : paList) {
+      if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
+              .convertCdToString(pa.getCategoryCode())))) {
+        interventionsList = true;
+    }
+    }
+    if (!interventionsList) {
+      abstractionList.add(createError("Error", "Select Interventions from Scientific Data menu.",
+      "No Interventions exists for the trial."));
     }
   }
 
 
-  private void enforceOutcomeMeasure(Ii studyProtocolIi) throws PAException {
+  private void enforceOutcomeMeasure(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {
     List<StudyOutcomeMeasureDTO> somList = PoPaServiceBeanLookup.getStudyOutcomeMeasureService().
     getByStudyProtocol(studyProtocolIi);
-    if (!(somList.isEmpty())) { // NOPMD
-    } else {
-      AbstractionCompletionDTO webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Outcome Measure from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("No OutcomeMeasures exists for the trial.");
-      abstractionList.add(webDTO);
+    if (somList.isEmpty()) { 
+      abstractionList.add(createError("Error", "Select Outcome Measure from specific " 
+          + "Interventional/Observational under Scientific Data menu.", "No OutcomeMeasures exists for the trial."));
     }
   }
   
-  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO) {
-    AbstractionCompletionDTO webDTO = null;      
+  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO, 
+      List<AbstractionCompletionDTO> abstractionList) {
     if (studyProtocolDTO.getAssignedIdentifier().getExtension() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
-      webDTO.setErrorDescription("NCI Trial Identifier must be Entered");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+          "NCI Trial Identifier must be Entered"));
     }
     if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
-      webDTO.setErrorDescription("Official Title must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+          "Official Title must be Entered"));
     }
     if (studyProtocolDTO.getPublicTitle().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
-      webDTO.setErrorDescription("Brief Title must be Entered");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+          "Brief Title must be Entered"));
     }    
     if (studyProtocolDTO.getPublicDescription().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select General Trial Details from Administrative Data menu.");
-      webDTO.setErrorDescription("Brief Summary must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+          "Brief Summary must be Entered"));
     }
   }
 
 
-  private void enforceNCISpecificInfo(StudyProtocolDTO studyProtocolDTO, StudyResourcingDTO studyResourcingDTO)
+  private void enforceNCISpecificInfo(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
-    AbstractionCompletionDTO webDTO = null;
-    if (studyProtocolDTO.getAccrualReportingMethodCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select NCI Specific Information from Administrative Data menu.");
-      webDTO.setErrorDescription("Reporting Data Set Method must be Entered");
-      abstractionList.add(webDTO);
-    }
-    if (studyResourcingDTO == null 
-        || studyResourcingDTO.getTypeCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select NCI Specific Information from Administrative Data menu.");
-      webDTO.setErrorDescription("Summary 4 Funding Category must be Entered");
-      abstractionList.add(webDTO);
-    }
-    Organization o = new Organization();
-    Organization org = null;
-    if (studyResourcingDTO != null 
-        && studyResourcingDTO.getOrganizationIdentifier().getExtension() != null) {
-    o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
-    org = PoPaServiceBeanLookup.getPAOrganizationService().getOrganizationByIndetifers(o);
-    }
-    if (studyResourcingDTO == null 
-        || studyResourcingDTO.getOrganizationIdentifier().getExtension() == null 
-        || org == null 
-        || org.getName() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select NCI Specific Information from Administrative Data menu.");
-      webDTO.setErrorDescription("Summary 4 Funding Sponsor/Source must be Entered");
-      abstractionList.add(webDTO);
-    }
+   if (studyProtocolDTO.getAccrualReportingMethodCode().getCode() == null) {
+     abstractionList.add(createError("Error", "Select NCI Specific Information from Administrative Data menu.",
+          "Reporting Data Set Method must be Entered"));
+    }   
   }
-  private void enforceDocument(String protocolDoc, String irbDoc) {
-    AbstractionCompletionDTO webDTO = null;
+  private void enforceDocument(String protocolDoc, String irbDoc, List<AbstractionCompletionDTO> abstractionList) {
     if (protocolDoc == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Trial Related Documents from Administrative Data menu.");
-      webDTO.setErrorDescription("Protocol_Document is required");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu.",
+          "Protocol_Document is required"));
     }
     if (irbDoc == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Trial Related Documents from Administrative Data menu.");
-      webDTO.setErrorDescription("IRB_Approval_Document is required");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu.",
+           "IRB_Approval_Document is required"));
     }
   }
 
-  private void enforceObservational(ObservationalStudyProtocolDTO ospDTO) {
-    AbstractionCompletionDTO webDTO = null;
+  private void enforceObservational(ObservationalStudyProtocolDTO ospDTO,
+      List<AbstractionCompletionDTO> abstractionList) {
     if (ospDTO.getStudyModelCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Study Model must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Study Model must be Entered"));
     }
     if (ospDTO.getStudyModelCode().getCode() != null
         && ospDTO.getStudyModelCode().getCode().equalsIgnoreCase("Other") 
         && ospDTO.getStudyModelOtherText() ==  null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Study Model Comment must be Entered");
-      abstractionList.add(webDTO);
+    abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Study Model Comment must be Entered"));
     }
 
     if (ospDTO.getTimePerspectiveCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Time Perspective must be Entered");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Time Perspective must be Entered"));
     }
     if (ospDTO.getTimePerspectiveCode().getCode() != null
         && ospDTO.getTimePerspectiveCode().getCode().equalsIgnoreCase("Other") 
         && ospDTO.getTimePerspectiveOtherText() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Time Perspective Comment must be Entered");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Time Perspective Comment must be Entered"));
     }
     if (ospDTO.getBiospecimenRetentionCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Bio-specimen Retention must be Entered");
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Bio-specimen Retention must be Entered"));
     }        
     if (ospDTO.getNumberOfGroups().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Number of Groups/Cohorts must be Entered");    
-      abstractionList.add(webDTO);
+     abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Number of Groups/Cohorts must be Entered"));
     }
     if (ospDTO.getMaximumTargetAccrualNumber().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Target Enrollment must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Observational Trial Design under Scientific Data menu.", "Target Enrollment must be Entered"));
     }
   }
 
-  private void enforceInterventional(InterventionalStudyProtocolDTO ispDTO) {
-    AbstractionCompletionDTO webDTO = null;
-    if (ispDTO.getPrimaryPurposeCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Primary Purpose must be Entered");
-      abstractionList.add(webDTO);
+  @SuppressWarnings({"PMD" })
+  private void enforceInterventional(InterventionalStudyProtocolDTO ispDTO, 
+      List<AbstractionCompletionDTO> abstractionList) {
+  if (ispDTO.getPrimaryPurposeCode().getCode() == null) {
+     abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Primary Purpose must be Entered"));
     }
     if (ispDTO.getPrimaryPurposeCode().getCode() != null
         && ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Other") 
         && ispDTO.getPrimaryPurposeOtherText() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Provide comment if Other");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Provide comment if Other"));
     }
-
+    if (ispDTO.getPrimaryPurposeCode().getCode() != null) {
+      if (ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Early Detection") 
+          || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Epidemiologic")
+          || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Observational")
+          || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Outcome")
+          || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Ancillary")
+          || ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Correlative")) {
+        abstractionList.add(createError("Error", "Select Design Details from " 
+            + "Interventional Trial Design under Scientific Data menu.", "Primary Purpose must not be "
+            + ispDTO.getPrimaryPurposeCode().getCode()
+            + ", Please Modify the Primary Purpose"));
+      }
+    }
     if (ispDTO.getPhaseCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Trial Phase must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Trial Phase must be Entered"));
+    }
+    if (ispDTO.getPhaseCode().getCode() != null) {
+      if (ispDTO.getPhaseCode().getCode().equalsIgnoreCase("Pilot")
+          || ispDTO.getPhaseCode().getCode().equalsIgnoreCase("Other")) {
+        abstractionList.add(createError("Error", "Select Design Details from " 
+            + "Interventional Trial Design under Scientific Data menu.", "Trial Phase must not be "
+            + ispDTO.getPhaseCode().getCode()
+            + ", Please Modify the Phase"));
+      }
     }
     if (ispDTO.getDesignConfigurationCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Intervention Model must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Intervention Model must be Entered"));
     }
     if (ispDTO.getNumberOfInterventionGroups().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Number of Arms must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Number of Arms must be Entered"));
     }
     if (ispDTO.getBlindingSchemaCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Masking must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Masking must be Entered"));
     }
     if (ispDTO.getAllocationCode().getCode() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Allocation must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error", "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Allocation must be Entered"));
     }   
     if (ispDTO.getMaximumTargetAccrualNumber().getValue() == null) {
-      webDTO = new AbstractionCompletionDTO();
-      webDTO.setErrorType("Error");
-      webDTO.setComment("Select Design Details from specific " 
-          + "Interventional/Observational under Scientific Data menu.");
-      webDTO.setErrorDescription("Target Enrollment must be Entered");
-      abstractionList.add(webDTO);
+      abstractionList.add(createError("Error",
+          "Select Design Details from " 
+          + "Interventional Trial Design under Scientific Data menu.", "Target Enrollment must be Entered"));
     }
   }
   
-  private void enforceArmInterventional(Ii studyProtocolIi) throws PAException {
+  private void enforceArmInterventional(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {
       List<PlannedActivityDTO> paList = PoPaServiceBeanLookup.getPlannedActivityService()
           .getByStudyProtocol(studyProtocolIi);
       HashMap<String, String> intervention = new HashMap<String, String>();  
@@ -654,23 +532,22 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       }
     }
     List<ArmDTO> arms = PoPaServiceBeanLookup.getArmService().getByStudyProtocol(studyProtocolIi);
-//    AbstractionCompletionDTO webDTO = null;
     for (ArmDTO armDTO : arms) {
         if (ArmTypeCode.NO_INTERVENTION.getCode().equals(armDTO.getTypeCode())) {
             continue;
         }
         if (!intervention.containsKey(armDTO.getName().getValue())) {
-            //abstractionList.add
-                createError("Error", 
+          abstractionList.add(createError("Error", 
                     "Select Arm from Scientific Data menu and associated Interventional." , 
-                    "Arm " + armDTO.getName().getValue() + " does not have any Intervention associated");
+                    "Arm " + armDTO.getName().getValue() + " does not have any Intervention associated"));
             
         }
     } 
   }
 
   
-  private  void enforceEligibility(Ii studyProtocolIi) throws PAException {
+  private  void enforceEligibility(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) 
+  throws PAException {
       List<PlannedEligibilityCriterionDTO> paECs = 
           PoPaServiceBeanLookup.getPlannedActivityService().
               getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
