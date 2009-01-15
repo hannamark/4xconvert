@@ -40,7 +40,7 @@
 					<span class="value"><c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/></span>
 				</div>
 				<div class="row">
-					<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/>:</span> 
+					<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/></span> 
 					<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
 				</div>
 			</div>
