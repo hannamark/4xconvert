@@ -139,8 +139,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             Long studyProtocolId) throws PAException {
         LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
         if (studyProtocolId == null) {
-            LOG.error(" studyProtocolId cannot be null ");
-            throw new PAException(" studyProtocolId cannot be null ");
+            LOG.error(" studyProtocol Identifier cannot be null ");
+            throw new PAException(" studyProtocol Identifier cannot be null ");
         }
         StudyProtocolQueryCriteria spqc = new StudyProtocolQueryCriteria();
         spqc.setStudyProtocolId(studyProtocolId);
