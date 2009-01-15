@@ -16,12 +16,15 @@
 
 <body onload="setFocusToFirstControl();">
 
- <h1><fmt:message key="osdesign.outcome.title"/></h1>
+ <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.outcome.title"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.outcome.title"/></s:else></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
   <pa:sucessMessage/>
     <s:form><s:actionerror/>
-    <h2><fmt:message key="osdesign.outcome.title"/></h2>
+    <h2>Outcome Measures</h2>
     <s:if test="outcomeList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="id" />

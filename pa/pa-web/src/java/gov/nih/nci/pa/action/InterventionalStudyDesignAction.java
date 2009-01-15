@@ -355,6 +355,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             StudyOutcomeMeasureDTO sgDTO = new StudyOutcomeMeasureDTO();
             sgDTO.setStudyProtocolIi(studyProtocolIi);
             sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
+            updateBooleanValues();
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
@@ -397,6 +398,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             sgDTO.setIdentifier(IiConverter.convertToIi(id));
             sgDTO.setStudyProtocolIi(studyProtocolIi);
             sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
+            updateBooleanValues();
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
@@ -408,6 +410,19 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             return OUTCOMEADD;
         }
         return OUTCOME;
+    }
+    @SuppressWarnings({"PMD" })
+    private void updateBooleanValues() {
+      if (webDTO.getPrimaryIndicator().equalsIgnoreCase("Yes")) {
+        webDTO.setPrimaryIndicator("true");
+      } else {
+        webDTO.setPrimaryIndicator("false");
+      }
+      if (webDTO.getSafetyIndicator().equalsIgnoreCase("Yes")) {
+        webDTO.setSafetyIndicator("true");
+      } else {
+        webDTO.setSafetyIndicator("false");
+      }
     }
 
     private void enforceOutcomeBusinessRules() {
@@ -453,13 +468,17 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         }
         return OUTCOME;
     }
-
+    @SuppressWarnings({"PMD" })
     private ISDesignDetailsWebDTO setOutcomeMeasureDTO(
             StudyOutcomeMeasureDTO dto) {
         ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
         if (dto != null) {
             if (dto.getPrimaryIndicator().getValue() != null) {
-                webdto.setPrimaryIndicator(dto.getPrimaryIndicator().getValue().toString());
+                if (dto.getPrimaryIndicator().getValue().toString().equalsIgnoreCase("true")) {
+                  webdto.setPrimaryIndicator(("Yes"));
+                } else {
+                  webdto.setPrimaryIndicator("No");
+                }               
             }
             if (dto.getName() != null) {
                 webdto.setName(dto.getName().getValue());
@@ -468,7 +487,11 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                 webdto.setTimeFrame(dto.getTimeFrame().getValue());
             }
             if (dto.getSafetyIndicator().getValue() != null) {
-                webdto.setSafetyIndicator(dto.getSafetyIndicator().getValue().toString());
+               if (dto.getSafetyIndicator().getValue().toString().equalsIgnoreCase("true")) {
+                 webdto.setSafetyIndicator(("Yes"));
+               } else {
+                 webdto.setSafetyIndicator("No");
+               }                
             }
             if (dto.getIdentifier() != null) {
                 webdto.setId(dto.getIdentifier().getExtension());

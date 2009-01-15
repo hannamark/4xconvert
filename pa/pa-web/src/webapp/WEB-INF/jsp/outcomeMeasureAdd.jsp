@@ -36,7 +36,10 @@ BubbleTips.activateTipOn("dfn");
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
- <h1><fmt:message key="osdesign.outcome.title"/></h1>
+ <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.outcome.title"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.outcome.title"/></s:else></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
@@ -51,7 +54,7 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="osdesign.outcome.primary"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select  name="webDTO.primaryIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" />
+						<s:select  name="webDTO.primaryIndicator" list="#{' ':' ', 'No':'No', 'Yes':'Yes'}" />
 						<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.primaryIndicator</s:param>
@@ -94,7 +97,7 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="osdesign.outcome.safety"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select name="webDTO.safetyIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" /><span class="formErrorMsg"> 
+						<s:select name="webDTO.safetyIndicator" list="#{' ':' ', 'No':'No', 'Yes':'Yes'}" /><span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.safetyIndicator</s:param>
                                </s:fielderror>                            
