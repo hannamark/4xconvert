@@ -138,14 +138,14 @@ public class NCISpecificInformationAction extends ActionSupport {
             addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",
                     getText("error.studyProtocol.accrualReportingMethodCode"));
         }
-        if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())) {
+       /* if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())) {
             addFieldError("nciSpecificInformationWebDTO.summaryFourFundingCategoryCode",
                     getText("error.studyProtocol.summaryFourFundingCategoryCode"));
         }
         if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getOrganizationName())) {
           addFieldError("nciSpecificInformationWebDTO.organizationName",
                   getText("error.studyProtocol.summaryFourFundingSource"));
-       }
+       }*/
         if (hasFieldErrors()) {
             return ERROR;
         }

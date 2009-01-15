@@ -76,7 +76,7 @@ function setorgid(orgid){
 			     </tr>           
 			     <tr>
 			          <td scope="row" class="label">
-			               <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/><span class="required">*</span></label>
+			               <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>
 			          </td>
 			          <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                       <td class="value">
@@ -94,7 +94,7 @@ function setorgid(orgid){
 			     </tr>	  
 				<tr>
 					<td scope="row" class="label">
-						<label for="summary4TypeCode">Summary 4 Funding Sponsor/Source:<span class="required">*</span></label>
+						<label for="summary4TypeCode">Summary 4 Funding Sponsor/Source:</label>
 					</td>
 					<td class="value">
 						<div id="loadOrgField">
