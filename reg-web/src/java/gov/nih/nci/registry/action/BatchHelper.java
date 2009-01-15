@@ -5,12 +5,14 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.ExcelReader;
+import gov.nih.nci.registry.util.RegistryServiceLocator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -81,7 +83,7 @@ public class BatchHelper implements Runnable { //implements Runnable {
      */
     public void run() {
         StringBuffer mailBody = new StringBuffer();
-        String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
+        //String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
         try {
             // open a new Hibernate session and bind to the context
             HibernateUtil.getHibernateHelper().openAndBindSession();
@@ -96,42 +98,27 @@ public class BatchHelper implements Runnable { //implements Runnable {
             map.remove("Sucess Trial Count");
             String failedCount = (String) map.get("Failed Trial Count");
             map.remove("Failed Trial Count");
-            
-            StringBuffer batchUploadSummary = new StringBuffer(); 
-            batchUploadSummary.append("Total Trials Submitted : ");
-            batchUploadSummary.append(map.size());
-            batchUploadSummary.append("\n");
-            batchUploadSummary.append("Successfully Registered :");
-            batchUploadSummary.append(sucessCount);
-            batchUploadSummary.append("\n");
-            batchUploadSummary.append("Failed :");
-            batchUploadSummary.append(failedCount);
-            batchUploadSummary.append("\n");
+            String totalCount = new Integer(map.size()).toString();
             String attachFileName = generateExcelFileForAttachement(map);
-            /*            Set s = map.keySet();
-            Iterator iter = s.iterator();
-            String mapLocalTrialId = null;
-            while (iter.hasNext()) {
-                mapLocalTrialId = (String) iter.next();
-                log.error("user " + userName  
-                        + " response" + map.get(mapLocalTrialId));
-                mailBody.append(map.get(mapLocalTrialId));
-                mailBody.append("\n");
-                mailBody.append("----------------------------------------------------------"
-                                + "--------------------------------------------------------\n");
-            }
-             */          
+            //get the values of email's subject and email body from the database
+            String[] params = {userName , };
+            MessageFormat formatterSubject = new MessageFormat(
+                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("trial.batchUpload.subject"));
+            String emailSubject = formatterSubject.format(params);
+            log.info("emailSubject is: " + emailSubject);
+            String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
+                                    getPropertyValue("trial.batchUpload.body");
+            submissionMailBody = submissionMailBody.replace("${totalCount}", totalCount);
+            submissionMailBody = submissionMailBody.replace("${sucessCount}", sucessCount);
+            submissionMailBody = submissionMailBody.replace("${failedCount}", failedCount);
+            MessageFormat formatterBody = new MessageFormat(submissionMailBody);
+            String emailBody =  formatterBody.format(params);
+            
             final MailManager mailManager = new MailManager();
             // Send the batch upload report to the submitter
-            String  bodyIntro = "Thank you for  using the NCI Clinical Trials Reporting Program. \n\n"
-                                + "Here is a brief summary of the batch trial submission.\n"
-                                + "Please see attached report for more details.\n"
-                                + "----------------------------------------------------------\n";
-            batchUploadSummary.insert(0, bodyIntro);
-            mailBody.insert(0, batchUploadSummary);
-            mailBody.append("----------------------------------------------------------");
-            mailManager.sendMailWithAattchement(userName, null, mailBody.toString(), subject, attachFileName);
-           
+            mailManager.sendMailWithAattchement(userName, null, emailBody, emailSubject, attachFileName);
+
+
         } catch (Exception e) {
             log.error("Exception while processing batch" + e.getMessage());
         } finally {
