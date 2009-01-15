@@ -5,7 +5,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></title>
+    <title><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></s:else> </title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
@@ -60,7 +63,10 @@ BubbleTips.activateTipOn("dfn");
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
- <h1><fmt:message key="isdesign.eligibilitycriteria.title"/></h1>
+ <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></s:else> </h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
@@ -75,7 +81,7 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select name="webDTO.inclusionIndicator" list="#{' ':' ', 'false':'Exclusion', 'true':'Inclusion'}" cssStyle="width:106px"/>
+						<s:select name="webDTO.inclusionIndicator" list="#{' ':' ', 'No':'Exclusion', 'Yes':'Inclusion'}" cssStyle="width:106px"/>
 						<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.inclusionIndicator</s:param>

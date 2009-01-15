@@ -27,7 +27,10 @@ BubbleTips.activateTipOn("dfn");
 </SCRIPT>
 <body onload="setFocusToFirstControl();">
 
- <h1><fmt:message key="isdesign.eligibilitycriteria.title"/></h1>
+ <h1><s:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
+     </s:if>
+     <s:else><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></s:else> </h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
