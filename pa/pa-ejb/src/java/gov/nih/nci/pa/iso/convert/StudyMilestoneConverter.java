@@ -54,75 +54,61 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
  * @author Hugh Reinhart
- * @since 11/06/2008
+ * @since 01/14/2009
  * 
- * copyright NCI 2008.  All rights reserved.
+ * copyright NCI 2009.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
+public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO, StudyMilestone> {
 
     /**
-     * @param clazz class
-     * @return converter
+     * @param bo domain object
+     * @return dto
      * @throws PAException exception
      */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
+    @Override
+    public StudyMilestoneDTO convertFromDomainToDto(StudyMilestone bo)
+            throws PAException {
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt(bo.getCommentText()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setMilestoneCode(CdConverter.convertToCd(bo.getMilestoneCode()));
+        dto.setMilestoneDate(TsConverter.convertToTs(bo.getMilestoneDate()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(bo.getStudyProtocol().getId()));
+        return dto;
     }
+
+    /**
+     * @param dto dto
+     * @return domain object
+     * @throws PAException exception
+     */
+    @Override
+    public StudyMilestone convertFromDtoToDomain(StudyMilestoneDTO dto)
+            throws PAException {
+        StudyProtocol spBo = new StudyProtocol();
+        spBo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        
+        StudyMilestone bo = new StudyMilestone();
+        bo.setCommentText(StConverter.convertToString(dto.getCommentText()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setMilestoneCode(MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode())));
+        bo.setMilestoneDate(TsConverter.convertToTimestamp(dto.getMilestoneDate()));
+        bo.setStudyProtocol(spBo);
+        return bo;
+    }
+
 }

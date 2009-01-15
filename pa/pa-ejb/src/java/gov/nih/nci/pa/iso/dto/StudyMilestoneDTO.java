@@ -52,77 +52,60 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
  * @author Hugh Reinhart
- * @since 11/06/2008
+ * @since 01/15/2009
  * 
- * copyright NCI 2008.  All rights reserved.
+ * copyright NCI 2009.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-
+public class StudyMilestoneDTO extends StudyDTO {
+//    private static final long serialVersionUID = 1234599890L;
+    private St commentText;
+    private Cd milestoneCode;
+    private Ts milestoneDate;
+    
     /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
+     * @return the commentText
      */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
+    public St getCommentText() {
+        return commentText;
+    }
+    /**
+     * @param commentText the commentText to set
+     */
+    public void setCommentText(St commentText) {
+        this.commentText = commentText;
+    }
+    /**
+     * @return the milestoneCode
+     */
+    public Cd getMilestoneCode() {
+        return milestoneCode;
+    }
+    /**
+     * @param milestoneCode the milestoneCode to set
+     */
+    public void setMilestoneCode(Cd milestoneCode) {
+        this.milestoneCode = milestoneCode;
+    }
+    /**
+     * @return the milestoneDate
+     */
+    public Ts getMilestoneDate() {
+        return milestoneDate;
+    }
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(Ts milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }

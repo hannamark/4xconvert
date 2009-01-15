@@ -52,77 +52,96 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.service.PAException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestSchema;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
- * @author Hugh Reinhart
- * @since 11/06/2008
- * 
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author hreinhart
+ *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-
-    /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
-     */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
+public class StudyMilestoneServiceTest {
+    private StudyMilestoneServiceBean bean = new StudyMilestoneServiceBean();
+    private StudyMilestoneServiceRemote remote = bean;
+    private Ii spIi;
+    
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset1();
+        TestSchema.primeData();
+        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+     }
+    
+    public static StudyMilestone createStudyMilestoneObj(String comment, StudyProtocol studyProtocol) {
+        StudyMilestone result = new StudyMilestone();
+        result.setCommentText(comment);
+        result.setMilestoneCode(MilestoneCode.READY_FOR_QC);
+        result.setMilestoneDate(new Timestamp(new Date().getTime()));
+        result.setStudyProtocol(studyProtocol);
+        return result;
     }
+    
+    private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {
+        StudyMilestone bo1 = bean.convertFromDtoToDomain(dto1);
+        StudyMilestone bo2 = bean.convertFromDtoToDomain(dto2);
+        assertEquals(bo1.getCommentText(), bo2.getCommentText());
+        assertEquals(bo1.getMilestoneCode().getCode(), bo2.getMilestoneCode().getCode());
+        assertEquals(bo1.getMilestoneDate(), bo2.getMilestoneDate());
+        assertEquals(bo1.getStudyProtocol().getId(), bo2.getStudyProtocol().getId());
+    }
+    
+    @Test
+    public void getTest() throws Exception {
+        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        assertTrue(dtoList.size() > 0);
+        Ii ii = dtoList.get(0).getIdentifier();
+        assertFalse(PAUtil.isIiNull(ii));
+        StudyMilestoneDTO resultDto = bean.get(ii);
+        compareDataAttributes(dtoList.get(0), resultDto);
+    }
+
+    @Test
+    public void updateTest() throws Exception {
+        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        assertTrue(dtoList.size() > 0);
+
+        StudyMilestoneDTO dto = dtoList.get(0);
+        dto.setCommentText(StConverter.convertToSt("new comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_ACCEPTED));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(spIi);
+        StudyMilestoneDTO updDto = remote.update(dto);
+        compareDataAttributes(dto, updDto);
+    }
+    
+    @Test
+    public void deleteTest() throws Exception {
+        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        int oldSize = dtoList.size();
+
+        remote.delete(dtoList.get(0).getIdentifier());
+        dtoList = remote.getByStudyProtocol(spIi);
+        assertEquals(oldSize - 1, dtoList.size());
+    }
+
 }

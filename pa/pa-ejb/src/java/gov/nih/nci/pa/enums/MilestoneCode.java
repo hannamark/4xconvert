@@ -52,77 +52,152 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.enums;
 
-import gov.nih.nci.pa.service.PAException;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
  * @author Hugh Reinhart
- * @since 11/06/2008
+ * @since 01/14/2009
  * 
- * copyright NCI 2008.  All rights reserved.
+ * copyright NCI 2009.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
+public enum MilestoneCode implements CodedEnum<String> {
+
+    /** Set automatically when StudyProtocol is added.  */
+    SUBMISSION_RECEIVED("Submission Received Date", true, false, 
+             DocumentWorkflowStatusCode.SUBMITTED, null), 
+    /** Set automatically when trial is verified.  */
+    SUBMISSION_ACCEPTED("Submission Acceptance Date", false, false,
+             null, null), 
+    /** Set automatically when trial is verified.  */
+    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, 
+             null, null), 
+    /** Set automatically when trial is rejected (always same as above).  */
+    SUBMISSION_REJECTED("Submission Rejection Date", true, false, 
+             null, null), 
+    /**.*/
+    READY_FOR_QC("Ready for QC Date", false, true,
+             null, null), 
+    /**.*/
+    QC_START("QC Start Date", false, false,
+             null, MilestoneCode.READY_FOR_QC), 
+    /**.*/
+    QC_COMPLETE("QC Completed Date", false, true,
+             null, MilestoneCode.QC_START), 
+    /**.*/
+    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false,
+             null, null), 
+    /**.*/
+    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, false,
+             null, null), 
+    /**.*/
+    TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
+             null, MilestoneCode.TRIAL_SUMMARY_SENT), 
+    /**.*/
+    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, 
+             DocumentWorkflowStatusCode.ABSTRACTED, null), 
+    /**.*/
+    INITIAL_CTGOV_SUBMISSION("Initial Submission to CT.GOV Date", true, false, 
+             null, null),  
+    /**.*/
+    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true,
+             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED, null);
+
+    private String code;
+    private boolean unique;
+    private boolean validationTrigger;
+    private DocumentWorkflowStatusCode requiredDwfStatus;
+    private MilestoneCode prerequisite;
 
     /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
+     * Constructor for MilestoneCode.
+     * @param code code
+     * @param unique only one allowed per study
+     * @param requiredDwfStatus required document workflow status
+     * @param prerequisite prior milestone which must have been reached before this one
      */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
+    private MilestoneCode(String code, boolean unique, boolean validationTrigger, 
+            DocumentWorkflowStatusCode requiredDwfStatus, MilestoneCode prerequisite) {
+        this.code = code;
+        this.unique = unique;
+        this.validationTrigger = validationTrigger;
+        this.requiredDwfStatus = requiredDwfStatus;
+        this.prerequisite = prerequisite;
+        register(this);
+    }
+    /**
+     * @return code coded value of enum
+     */
+    public String getCode() {
+        return code;
+    }
+    /**
+     *@return String DisplayName 
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     * @return the uniqueConstraint
+     */
+    public boolean isUnique() {
+        return unique;
+    }
+
+     
+    /**
+     * @return the validationTrigger
+     */
+    public boolean isValidationTrigger() {
+        return validationTrigger;
+    }
+
+    /**
+     * @return the requiredDwfStatus
+     */
+    public DocumentWorkflowStatusCode getRequiredDwfStatus() {
+        return requiredDwfStatus;
+    }
+
+    /**
+     * @return the prerequisite
+     */
+    public MilestoneCode getPrerequisite() {
+        return prerequisite;
+    }
+
+    /**
+     * @param code code
+     * @return Study Type Code 
+     */
+    public static MilestoneCode getByCode(String code) {
+        return getByClassAndCode(MilestoneCode.class, code);
+    }
+    
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        MilestoneCode[] l = MilestoneCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
         }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
+        return a;
     }
 }
+
+

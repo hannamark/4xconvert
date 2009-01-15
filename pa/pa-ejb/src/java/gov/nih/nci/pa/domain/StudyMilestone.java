@@ -52,77 +52,79 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.enums.MilestoneCode;
+
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 /**
- * Class contains exclusively a static method used to return converters for iso dto's.
  * @author Hugh Reinhart
- * @since 11/06/2008
+ * @since 01/14/2009
  * 
- * copyright NCI 2008.  All rights reserved.
+ * copyright NCI 2009.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudyParticipationConverter sParticipation = new StudyParticipationConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
+@Entity
+@Table(name = "STUDY_MILESTONE")
+public class StudyMilestone extends AbstractStudyEntity {
+    private static final long serialVersionUID = 1234509870L;
+    
+    private String commentText;
+    private MilestoneCode milestoneCode;
+    private Timestamp milestoneDate;
 
     /**
-     * @param clazz class
-     * @return converter
-     * @throws PAException exception
+     * @return the commentText
      */
-    @SuppressWarnings("unchecked")
-    public static AbstractConverter get(Class clazz)  throws PAException {
-        if (clazz.equals(ArmConverter.class)) {
-            return arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return intervAltName;
-        }
-        if (clazz.equals(StudyParticipationConverter.class)) {
-            return sParticipation;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return studyMilestoneConverter;
-        }
-        throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
+    @Column(name = "COMMENT_TEXT")
+    @Length(max = LONG_TEXT_LENGTH)
+    public String getCommentText() {
+        return commentText;
+    }
+    /**
+     * @param commentText the commentText to set
+     */
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
+    /**
+     * @return the milestoneCode
+     */
+    @Column(name = "MILESTONE_CODE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public MilestoneCode getMilestoneCode() {
+        return milestoneCode;
+    }
+    /**
+     * @param milestoneCode the milestoneCode to set
+     */
+    public void setMilestoneCode(MilestoneCode milestoneCode) {
+        this.milestoneCode = milestoneCode;
+    }
+    /**
+     * @return the milestoneDate
+     */
+    @Column(name = "MILESTONE_DATE")
+    @NotNull
+    public Timestamp getMilestoneDate() {
+        return milestoneDate;
+    }
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(Timestamp milestoneDate) {
+        this.milestoneDate = milestoneDate;
     }
 }
