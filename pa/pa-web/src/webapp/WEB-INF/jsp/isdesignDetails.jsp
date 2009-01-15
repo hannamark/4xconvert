@@ -144,7 +144,7 @@ function tooltip() {
 	</tr>	
 	<tr> 
        <td/>
-       <td class="info" colspan="2">*for 'Other' only</td>
+       <td class="info" colspan="2">for 'Other' only</td>
     </tr> 
     <tr>
 		<td scope="row" class="label"><label>
