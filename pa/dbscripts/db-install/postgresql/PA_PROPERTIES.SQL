@@ -61,3 +61,16 @@ insert into pa_properties(IDENTIFIER,name,value) VALUES(10,'user.account.subject
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(11,'user.account.body',
 'Thank you for registering with NCI Clinical Trials Reporting Program. Please click on the link below or copy paste the URL in the browser to activate your account.');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(12,'trial.batchUpload.subject',
+'Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(13,'trial.batchUpload.body',
+'Thank you for using the NCI Clinical Trials Reporting Program.
+ 
+Here is a brief summary of the batch trial submission.
+Please see attached report for more details.
+----------------------------------------------------------
+Total Trials Submitted: ${totalCount}
+Successfully Registered: ${successCount}
+Failed: $(failedCount)');
