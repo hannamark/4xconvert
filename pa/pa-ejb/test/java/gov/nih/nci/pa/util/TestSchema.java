@@ -253,7 +253,7 @@ public class TestSchema {
                         statement.executeUpdate("delete from DOCUMENT");
                         statement.executeUpdate("delete from STUDY_RESOURCING");
                         statement.executeUpdate("delete from STRATUM_GROUP");
-                        statement.executeUpdate("delete from STUDY_DIxSEASE");
+                        statement.executeUpdate("delete from STUDY_DISEASE");
                         statement.executeUpdate("delete from STUDY_PROTOCOL");
                         statement.executeUpdate("delete from CLINICAL_RESEARCH_STAFF");
                         statement.executeUpdate("delete from COUNTRY");
