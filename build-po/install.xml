@@ -418,7 +418,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 				<isset property="exclude.start.servers"/>
 			</not>
 			<then>
-				<validate-post-install />
+				<validate-post-install propertyfile.backup.location="${user.home}"/>
 			</then>
 		</if>
 	</target>
