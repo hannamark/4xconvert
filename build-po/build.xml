@@ -74,7 +74,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		Directory and files must be in svn to work.
 	-->
 	<property name="db.src.dir" value="${software.dir}/po/services/src/main/db" />
-	<property name="db-install.src.dir" location="${db.src.dir}/db-install"/>
+	<property name="db-install.src.dir" location="${software.dir}/po/services/src/main/sql"/>
+	<!-- change when SQL files for database install baseline v1.0.0 are moved to ${software.dir}/po/services/src/main/db/**
+	property name="db-install.src.dir" location="${db.src.dir}/db-install"/-->
 	<property name="db-upgrade.src.dir" location="${db.src.dir}/db-upgrade"/>
 	<property name="db-install-dynamic.src.dir" location="${software.dir}/po/services/target/hibernate3/sql/"/>
 
@@ -439,12 +441,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			install.xml and build.xml
 		-->
 		
-		<!-- Copy pa database scripts -->
+		<!-- Copy po database scripts -->
 		<copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
 			<fileset dir="${db.src.dir}">
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
+		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
+			<fileset dir="${db-install.src.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</copy> 		
 		<dist-prep />
 	</target>
 
@@ -464,12 +471,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 	<!-- Copies install time resources into distribution tree -->
 	<target name="dist:upgrader:prep">
-		<!-- Copy pa database scripts -->
+		<!-- Copy po database scripts -->
+		<copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
+			<fileset dir="${db.src.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</copy> 
 		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
 			<fileset dir="${db-install.src.dir}">
 				<include name="**/*"/>
 			</fileset>
-		</copy> 
+		</copy>
 		<dist-prep
 			copy.tools.flag="N"
 			default.target="upgrade"
