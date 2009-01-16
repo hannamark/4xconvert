@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="treatingsites.title" /></title>
+<title><fmt:message key="participatingOrganizations.title" /></title>
 <s:head />
 <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
@@ -35,7 +35,7 @@ function handleDelete(studyResourcingId){
 
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
-<h1><fmt:message key="treatingsites.title" /></h1>
+<h1><fmt:message key="participatingOrganizations.title" /></h1>
 
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
@@ -44,7 +44,7 @@ function handleDelete(studyResourcingId){
     <pa:sucessMessage/>
     <s:actionerror />
     <s:form name="partOrgs">
-<h2><fmt:message key="treatingsites.title" /></h2>
+<h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2">

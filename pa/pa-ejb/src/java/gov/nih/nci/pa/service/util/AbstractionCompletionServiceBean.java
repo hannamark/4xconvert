@@ -304,8 +304,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         PoPaServiceBeanLookup.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, srDTO);
     
     if (spList == null || spList.isEmpty()) { 
-     abstractionList.add(createError("Error", "Select Treating Sites from Participating Sites under " 
-          + " Administrative Data menu.",  "No Treating Sites exists for the trial."));
+     abstractionList.add(createError("Error", "Select Participating Sites from " 
+          + " Administrative Data menu.",  "No Participating Sites exists for the trial."));
       return;
     }
     if (spList != null) {
@@ -329,14 +329,15 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
             if (!piFound) {
                 abstractionList.add(createError("Error", 
-                        "Select Treating Sites from Participating Sites under Administrative Data menu.", 
-                        "Treating site # " + spartDto.getIdentifier().getExtension() + " Must have an Investigator"));
+                        "Select Participating Sites from Administrative Data menu.", 
+                        "Participating site # " + spartDto.getIdentifier().getExtension() 
+                        + " Must have an Investigator"));
                 
             }
             if (!contactFound) {
                 abstractionList.add(createError("Error", 
-                        "Select Treating Sites from Participating Sites under Administrative Data menu.", 
-                        "Treating site # " + spartDto.getIdentifier().getExtension() + " Must have a Contact"));
+                        "Select Participating Sites from Administrative Data menu.", 
+                        "Participating site # " + spartDto.getIdentifier().getExtension() + " Must have a Contact"));
                 
             }
             

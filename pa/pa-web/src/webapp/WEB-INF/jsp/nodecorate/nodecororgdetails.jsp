@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <div id="orgDetailsDiv">
 <pa:sucessMessage /> 
-<h3><fmt:message key="treatingsites.title" /></h3>
+<h3><fmt:message key="participatingOrganizations.title" /></h3>
 
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
 </div>
@@ -46,7 +46,7 @@
                 </tr>
                 <tr> 
             		<td/>
-            		<td class="info" colspan="2">Mandatory if Treating site/Lead organization is a cancer center</td>
+            		<td class="info" colspan="2">Mandatory if Participating site/Lead organization is a cancer center</td>
         		</tr>
 			</table>
 
