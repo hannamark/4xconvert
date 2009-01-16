@@ -87,7 +87,7 @@ public class DiseaseServiceTest {
         }
         fail();
     }
-//    @Test
+    @Test
     public void searchTest() throws Exception {
         DiseaseDTO searchCriteria = new DiseaseDTO();
         searchCriteria.setPreferredName(StConverter.convertToSt("Toe"));
