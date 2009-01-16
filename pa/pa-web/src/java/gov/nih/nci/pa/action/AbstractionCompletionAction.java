@@ -91,6 +91,9 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             abstractionList = PaRegistry.getAbstractionCompletionService().
                 validateAbstractionCompletion(studyProtocolIi);
             abstractionError = errorExists();
+            if (!abstractionError) {
+              abstractionList = null;
+            }
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
