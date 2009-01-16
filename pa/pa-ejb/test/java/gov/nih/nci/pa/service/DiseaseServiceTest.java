@@ -92,7 +92,7 @@ public class DiseaseServiceTest {
         DiseaseDTO searchCriteria = new DiseaseDTO();
         searchCriteria.setPreferredName(StConverter.convertToSt("Toe"));
         List<DiseaseDTO> r = bean.search(searchCriteria);
-        assertEquals(1, r.size());
+        assertTrue(0 < r.size());
 
         searchCriteria.setPreferredName(StConverter.convertToSt("xToe"));
         r = bean.search(searchCriteria);
@@ -100,7 +100,7 @@ public class DiseaseServiceTest {
 
         searchCriteria.setPreferredName(StConverter.convertToSt("Piggy"));
         r = bean.search(searchCriteria);
-        assertEquals(1, r.size());
+        assertTrue(0 < r.size());
 
         searchCriteria.setPreferredName(null);
         try {
