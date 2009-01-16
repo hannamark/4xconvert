@@ -4,6 +4,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<SCRIPT TYPE="text/javascript">
+<!--
+function submitenter(myfield,e)
+{
+var keycode;
+if (window.event) keycode = window.event.keyCode;
+else if (e) keycode = e.which;
+else return true;
+
+if (keycode == 13)
+   {
+   myfield.form.submit();
+   return false;
+   }
+else
+   return true;
+}
+//-->
+</SCRIPT>
+
 </head>
 <body onload="setFocusToFirstControl();">
 
@@ -22,7 +42,7 @@
             </div>
             <div class="fieldrow">
                 <label for="j_password">Password:</label>
-                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password"></div>
+                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" onKeyPress="return submitenter(this,event)"></div>
             </div>
             <div class="clearfloat"></div>
            <div class="actionsrow">
