@@ -12,7 +12,7 @@
     <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 
-    <title>Abstraction Completion</title>
+    <title>Abstraction Validation</title>
     <s:head />
 </head>
 <SCRIPT LANGUAGE="JavaScript">
@@ -24,7 +24,7 @@ function generateReport(pid) {
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
- <h1>Abstraction Completion</h1>
+ <h1>Abstraction Validation</h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
    <pa:sucessMessage/>
@@ -32,18 +32,20 @@ function generateReport(pid) {
     <s:form><s:actionerror/>    
     <h2>
     <s:if test="${abstractionError==true}">                
-        Abstraction Completion  has Errors, please correct it
+        Abstraction validation failed. Please check error(s).
     </s:if> 
     <s:elseif test="${abstractionError==false}">
-        No Abstraction Completion Errors found             
+        Abstraction is valid.             
     </s:elseif>
     
     </h2>
+    <s:if test="abstractionList != null">    
     <display:table name="${abstractionList}" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
     	<display:column title="errorDescription" property="errorDescription" sortable="true" headerClass="sortable" />
 	    <display:column title="errorType" property="errorType"  sortable="true" headerClass="sortable" />
 	    <display:column title="comment" property="comment" sortable="true" headerClass="sortable" />	
 	</display:table>
+	</s:if>
 	<div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
