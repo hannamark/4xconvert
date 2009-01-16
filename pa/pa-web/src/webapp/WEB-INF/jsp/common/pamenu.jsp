@@ -22,10 +22,10 @@
 			<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 			<li><div>Validation</div>
                 <ul>
+                    <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
                     <li><a href="studyOverallStatus.action" >Trial Status</a></li>
                     <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                     <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
-                    <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
                 </ul>
 			</s:if>
@@ -43,7 +43,7 @@
                         </li>    
     					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                        <li><a href="participatingOrganizations.action">Treating Sites</a></li>
+                        <li><a href="participatingOrganizations.action">Participating Sites</a></li>
                         <li><a href="collaborators.action">Collaborators</a></li>
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
     				</ul>
@@ -81,7 +81,7 @@
     			</li>
 			<li><div>Completion</div>
 				<ul>
-					<li><a href="abstractionCompletionquery.action" >Abstraction Completion</a></li>
+					<li><a href="abstractionCompletionquery.action" >Abstraction Validation</a></li>
 				</ul>
 			</li>	
             </s:if>
