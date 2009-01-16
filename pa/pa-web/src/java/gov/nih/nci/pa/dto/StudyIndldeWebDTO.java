@@ -35,7 +35,15 @@ public class StudyIndldeWebDTO {
         super();
           this.expandedAccessStatus = iso.getExpandedAccessStatusCode().getCode();
           this.grantor = iso.getGrantorCode().getCode();
-          this.expandedAccessIndicator = iso.getExpandedAccessIndicator().getValue().toString();
+          
+          if (iso.getExpandedAccessIndicator().getValue() != null) {
+            if (iso.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+              this.expandedAccessIndicator = "Yes";
+            } else {
+              this.expandedAccessIndicator = "No";
+            } 
+          }
+          //this.expandedAccessIndicator = iso.getExpandedAccessIndicator().getValue().toString();
           this.indldeNumber = iso.getIndldeNumber().getValue();
           this.indldeType = iso.getIndldeTypeCode().getCode();
           this.holderType = iso.getHolderTypeCode().getCode();

@@ -2,7 +2,7 @@
 	<script language="JavaScript">
 	window.onload=checkAll;
 	function checkAll(){
-		if (document.getElementById('group4').value == 'true'){
+		if (document.getElementById('group4').value == 'Yes'){
 			showRow(document.getElementById('expandedStatus'));
 		} else {
 			hideRow(document.getElementById('expandedStatus'));
@@ -162,7 +162,7 @@
 						<td colspan="2">
 							<fmt:message key="trialIndide.expandedAccessIndicator"/>
 						</td>
-						<td class="value"><s:select id="group4" name="holder.group4" list="#{'false':'No', 'true':'Yes'}" onchange="checkAll();"/>
+						<td class="value"><s:select id="group4" name="holder.group4" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkAll();"/>
 						</td>
 					</tr>
 					<tr>

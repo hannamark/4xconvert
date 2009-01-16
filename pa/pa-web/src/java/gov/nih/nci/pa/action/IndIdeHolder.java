@@ -35,7 +35,14 @@ public class IndIdeHolder implements Serializable {
             super();
               this.expandedStatus = iso.getExpandedAccessStatusCode().getCode();
               this.subCat = iso.getGrantorCode().getCode();
-              this.group4 = iso.getExpandedAccessIndicator().getValue().toString();
+              if (iso.getExpandedAccessIndicator().getValue() != null) {
+                if (iso.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+                  this.group4 = "Yes";
+                } else {
+                  this.group4 = "No";
+                } 
+              }
+              //this.group4 = iso.getExpandedAccessIndicator().getValue().toString();
               this.indidenumber = iso.getIndldeNumber().getValue();
               this.group3 = iso.getIndldeTypeCode().getCode();
               this.holderType = iso.getHolderTypeCode().getCode();

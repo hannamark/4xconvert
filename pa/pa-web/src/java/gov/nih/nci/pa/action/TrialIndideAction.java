@@ -82,6 +82,11 @@ public class TrialIndideAction extends ActionSupport {
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
+           /* if (holder.getGroup4().equalsIgnoreCase("Yes")) {
+              holder.setGroup4("true");
+            } else {
+              holder.setGroup4("false");
+            }*/
             studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(holder.getGroup4())));
             studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(holder.getExpandedStatus()));
             studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(holder.getSubCat()));
@@ -120,6 +125,11 @@ public class TrialIndideAction extends ActionSupport {
             StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();            
             studyIndldeDTO = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue)); 
             studyIndldeDTO.setStudyProtocolIi(studyProtocolIi);
+            if (holder.getGroup4().equalsIgnoreCase("Yes")) {
+              holder.setGroup4("true");
+            } else {
+              holder.setGroup4("false");
+            }
             studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(holder.getGroup4())));
             studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(holder.getExpandedStatus()));
             studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(holder.getSubCat()));
