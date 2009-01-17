@@ -7,7 +7,7 @@
    </tr>
    <tr>        
  		<td scope="row" class="label"><label for="createOrgCity">City :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgCity;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>        
- 		<td scope="row" class="label"><label for="createOrgState">State :<br><span class="info">(2 digit state code required for US)</span></label></td><td><s:textfield name="createOrg.orgState"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="createOrgState">State :<br><span class="tiny">(2-letter State/Province Code required for USA/Canada/Australia)</span></label></td><td><s:textfield name="createOrg.orgState"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
    </tr>
    <tr>     
  		<td scope="row" class="label"><label for="createOrgZip">Zip :</label><span class="required">*</span></td><td><s:textfield name="createOrg.orgZip;"  maxlength="200" size="100"  cssStyle="width:200px" /></td>

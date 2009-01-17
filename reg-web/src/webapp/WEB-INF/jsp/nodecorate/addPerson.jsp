@@ -15,7 +15,7 @@
 	</tr> 	
    <tr>
  		<td scope="row" class="label"><label for="city">City :</label><span class="required">*</span></td><td><s:textfield name="personDTO.city"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
- 		<td scope="row" class="label"><label for="state">State :<br><span class="info">(2 digit state code required for US)</span></label></td><td><s:textfield name="personDTO.state"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
+ 		<td scope="row" class="label"><label for="state">State :<br><span class="tiny">(2-letter State/Province Code required for USA/Canada/Australia)</span></label></td><td><s:textfield name="personDTO.state"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
    </tr>
    <tr>
  		<td scope="row" class="label"><label for="zip">Zip :</label><span class="required">*</span></td><td><s:textfield name="personDTO.zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
