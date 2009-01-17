@@ -83,6 +83,8 @@
 package gov.nih.nci.po.web.externalimport;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoRegistry;
 
@@ -96,6 +98,8 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -121,28 +125,6 @@ public class CtepImportAction extends ActionSupport {
     public String start() {
         return INPUT;
     }
-    
-    private void addMessages(int processed, List<String> skipped, String failed) {
-        ActionHelper.saveMessage(processed + " records successfully imported.");
-        if (!skipped.isEmpty()) {
-            StringBuffer skipMessage = new StringBuffer("The following lines did not correspond to a record in ctep, "
-                    + "any record with one of these ctep id's was inactivated: ");
-            boolean isFirst = true;
-            for (String l : skipped) {
-                if (!isFirst) {
-                    skipMessage.append(", ");
-                } else {
-                    isFirst = false;
-                }
-                skipMessage.append(l);
-            }
-            ActionHelper.saveMessage(skipMessage.toString());
-        }
-        if (failed != null) {
-            ActionHelper.saveMessage("An error occurred processing the following line, stopping processing: " 
-                    + failed);
-        }
-    }
 
     /**
      * Method to handle upload of org ids.
@@ -151,35 +133,8 @@ public class CtepImportAction extends ActionSupport {
      * @throws JMSException on error saving.
      */
     public String uploadOrganizations() throws IOException, JMSException {
-        BufferedReader reader = getFileReader();
-        String line = reader.readLine();
-        List<String> skippedRecords = new ArrayList<String>();
-        int count = 0;
-        try {
-            while (line != null) {
-                line = line.trim();
-                if (line.length() > 0) {
-                    if (PoRegistry.getInstance().getServiceLocator().
-                            getCtepImportService().importCtepOrganization(generateIi(line)) != null) {
-                        count++;
-                    } else {
-                        skippedRecords.add(line);
-                    }
-                }
-                line = reader.readLine();
-            }
-            addMessages(count, skippedRecords, null);
-        } catch (RuntimeException e) {
-            LOG.error("Error importing organization with id:  " +  line, e);
-            addMessages(count, skippedRecords, line);
-        }
-
+        new ImportHelper(getFile()).process(new OrgImporter());
         return SUCCESS;
-    }
-
-    private BufferedReader getFileReader() throws FileNotFoundException {
-        FileReader fileReader = new FileReader(getFile());
-        return new BufferedReader(fileReader);
     }
 
     /**
@@ -189,37 +144,138 @@ public class CtepImportAction extends ActionSupport {
      * @throws JMSException on error saving.
      */
     public String uploadPeople() throws IOException, JMSException {
-        BufferedReader reader = getFileReader();
-        String line = reader.readLine();
-        int count = 0;
-        List<String> skippedRecords = new ArrayList<String>();
-        try {
-            while (line != null) {
-                line = line.trim();
-                if (line.length() > 0) {
-                    if (PoRegistry.getInstance().getServiceLocator().
-                        getCtepImportService().importCtepPerson(generateIi(line))  != null) {
-                        count++;
-                    } else {
-                        skippedRecords.add(line);
-                    }
-                }
-                line = reader.readLine();
-            }
-            addMessages(count, skippedRecords, null);
-        } catch (RuntimeException e) {
-            LOG.error("Error importing organization with id:  " +  line, e);
-            addMessages(count, skippedRecords, line);
-        }
-
+        new ImportHelper(getFile()).process(new PersonImporter());
         return SUCCESS;
     }
+    
+    /**
+     *  Callback interface to generalize behavior.
+     */
+    interface Importer {
+        /**
+         * @param value CTEP identifier to lookup and import
+         * @return COPPA-PO Object saved, otherwise null 
+         * @throws JMSException the JMS related exception encountered
+         */
+        Object invoke(Ii value) throws JMSException;
+        
+        /**
+         * @return the friendly name
+         */
+        String getType();
+    }
+    
+    /**
+     * Callback implementation to import Person.
+     */
+    static class PersonImporter implements Importer {
+        /**
+         * {@inheritDoc}
+         */
+        public Object invoke(Ii value) throws JMSException {
+            return PoRegistry.getInstance().getServiceLocator().
+            getCtepImportService().importCtepPerson(value);
+        }
 
-    private Ii generateIi(String id) {
-        Ii ii = new Ii();
-        ii.setExtension(id);
-        ii.setRoot(CtepOrganizationImporter.CTEP_ROOT);
-        return ii;
+        /**
+         * {@inheritDoc}
+         */
+        public String getType() {
+            return Person.class.getSimpleName();
+        }
+    }
+    
+    /**
+     * Callback implementation to import Organization.
+     */
+    static class OrgImporter implements Importer {
+        /**
+         * {@inheritDoc}
+         */
+        public Object invoke(Ii value) throws JMSException {
+            return PoRegistry.getInstance().getServiceLocator().
+            getCtepImportService().importCtepOrganization(value);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public String getType() {
+            return Organization.class.getSimpleName();
+        }
+    }
+    
+    /**
+     * Generic implementation to import Organization or Person types.
+     */
+    class ImportHelper {
+        private final File file;
+
+        public ImportHelper(File file) {
+            this.file = file;
+        }
+        void process(Importer callback) throws IOException {
+            BufferedReader reader = getFileReader();
+            String line = reader.readLine();
+            List<String> passedRecords = new ArrayList<String>();
+            List<String> skippedRecords = new ArrayList<String>();
+            List<String> erroredRecords = new ArrayList<String>();
+            try {
+                while (line != null) {
+                    line = line.trim();
+                    if (StringUtils.isNotEmpty(line)) {
+                        try {
+                            Object imported = callback.invoke(generateIi(line));
+                            if (imported  != null) {
+                                passedRecords.add(line);
+                            } else {
+                                skippedRecords.add(line);
+                            }
+                        } catch (Exception e) {
+                            LOG.error("Error importing " + callback.getType() + " with id:  " +  line, e);
+                            erroredRecords.add(line);
+                        }
+                    }
+                    line = reader.readLine();
+                }
+            } catch (IOException e) {
+                LOG.error("An unexpected error occurred while reading the uploaded CTEP Import file, "
+                        + "processing halted", e);
+                ActionHelper.saveMessage("An unexpected error occurred while processing the uploaded "
+                        + "CTEP Import file. Processing was halted prematurely on the line containing '" + line
+                        + "'. Below are the results for processing up to this fatal error:"); 
+            } finally  {
+                addMessages(passedRecords, skippedRecords, erroredRecords);
+            }
+        }
+
+        private BufferedReader getFileReader() throws FileNotFoundException {
+            FileReader fileReader = new FileReader(this.file);
+            return new BufferedReader(fileReader);
+        }
+
+        private Ii generateIi(String id) {
+            Ii ii = new Ii();
+            ii.setExtension(id);
+            ii.setRoot(CtepOrganizationImporter.CTEP_ROOT);
+            return ii;
+        }
+        
+        private void addMessages(List<String> passed, List<String> skipped, List<String> failed) {
+            ActionHelper.saveMessage(passed.size() + " records successfully imported.");
+            String separator = ", ";
+            if (CollectionUtils.isNotEmpty(skipped)) {
+                StringBuffer msg = new StringBuffer("The following line(s) did not correspond to a record in ctep, "
+                        + "any record with one of these ctep id's was inactivated: ");
+                msg.append(StringUtils.join(skipped, separator));
+                ActionHelper.saveMessage(msg.toString());
+            }
+            if (CollectionUtils.isNotEmpty(failed)) {
+                StringBuffer msg = new StringBuffer("An error occurred processing the following line(s): ");
+                msg.append(StringUtils.join(failed, separator));
+                ActionHelper.saveMessage(msg.toString());
+            }
+        }
+        
     }
 
     /**

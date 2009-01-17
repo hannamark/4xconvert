@@ -83,16 +83,28 @@
 package gov.nih.nci.po.web.importexternal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.MockCtepImportService;
+import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.externalimport.CtepImportAction;
+import gov.nih.nci.po.web.util.MockServiceLocator;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Iterator;
 
+import javax.jms.JMSException;
+
+import org.hibernate.HibernateException;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Action;
 
 /**
@@ -120,6 +132,77 @@ public class CtepFileUploadTest extends AbstractPoTest {
             getServiceLocator().getCtepImportService();
         assertEquals(18, service.getImportedOrgIds().size());
     }
+    
+    /**
+     * test the upload action org file are all skipped.
+     */
+    @Test
+    public void testUploadOrgsAllSkipped() throws Exception {
+        PoRegistry.getInstance().setServiceLocator(new MockServiceLocator() {
+            @Override
+            public CtepImportService getCtepImportService() {
+                return new CtepImportService() {
+                    public Organization importCtepOrganization(Ii orgId) throws JMSException {
+                        return null;
+                    }
+                    public Person importCtepPerson(Ii personId) throws JMSException {
+                        return null;
+                    }
+                };
+            }
+        });
+        
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadOrganizations());
+        
+        Iterator<String> itr= ActionHelper.getMessages().iterator();
+        assertTrue(itr.hasNext());
+        assertEquals("0 records successfully imported.", itr.next());
+        assertTrue(itr.hasNext());
+        String next = itr.next();
+        assertTrue(next.startsWith("The following line(s) did not correspond to a record in ctep, "
+                + "any record with one of these ctep id's was inactivated: "));
+        assertFalse(itr.hasNext());
+    }
+    
+    /**
+     * test the upload action org file all fail.
+     */
+    @Test
+    public void testUploadOrgsAllFail() throws Exception {
+        PoRegistry.getInstance().setServiceLocator(new MockServiceLocator() {
+            @Override
+            public CtepImportService getCtepImportService() {
+                return new CtepImportService() {
+                    public Organization importCtepOrganization(Ii orgId) throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+                    public Person importCtepPerson(Ii personId) throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+                };
+            }
+        });
+        
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadOrganizations());
+        
+        Iterator<String> itr= ActionHelper.getMessages().iterator();
+        assertTrue(itr.hasNext());
+        assertEquals("0 records successfully imported.", itr.next());
+        assertTrue(itr.hasNext());
+        String next = itr.next();
+        assertTrue(next.startsWith("An error occurred processing the following line(s): "));
+        assertFalse(itr.hasNext());
+    }
 
     /**
      * test the upload action org file uploact.
@@ -138,6 +221,77 @@ public class CtepFileUploadTest extends AbstractPoTest {
         assertEquals(18, service.getImportedPersonIds().size());
     }
 
+    /**
+     * test the upload action person file are all skipped.
+     */
+    @Test
+    public void testUploadPersonsAllSkipped() throws Exception {
+        PoRegistry.getInstance().setServiceLocator(new MockServiceLocator() {
+            @Override
+            public CtepImportService getCtepImportService() {
+                return new CtepImportService() {
+                    public Organization importCtepOrganization(Ii orgId) throws JMSException {
+                        return null;
+                    }
+                    public Person importCtepPerson(Ii personId) throws JMSException {
+                        return null;
+                    }
+                };
+            }
+        });
+        
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(PERSON_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadPeople());
+        
+        Iterator<String> itr= ActionHelper.getMessages().iterator();
+        assertTrue(itr.hasNext());
+        assertEquals("0 records successfully imported.", itr.next());
+        assertTrue(itr.hasNext());
+        String next = itr.next();
+        assertTrue(next.startsWith("The following line(s) did not correspond to a record in ctep, "
+                + "any record with one of these ctep id's was inactivated: "));
+        assertFalse(itr.hasNext());
+    }
+    
+    /**
+     * test the upload action person file all fail.
+     */
+    @Test
+    public void testUploadPersonsAllFail() throws Exception {
+        PoRegistry.getInstance().setServiceLocator(new MockServiceLocator() {
+            @Override
+            public CtepImportService getCtepImportService() {
+                return new CtepImportService() {
+                    public Organization importCtepOrganization(Ii orgId) throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+                    public Person importCtepPerson(Ii personId) throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+                };
+            }
+        });
+        
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(PERSON_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadPeople());
+        
+        Iterator<String> itr= ActionHelper.getMessages().iterator();
+        assertTrue(itr.hasNext());
+        assertEquals("0 records successfully imported.", itr.next());
+        assertTrue(itr.hasNext());
+        String next = itr.next();
+        assertTrue(next.startsWith("An error occurred processing the following line(s): "));
+        assertFalse(itr.hasNext());
+    }
+    
     @Test
     public void testStart() {
         CtepImportAction action = new CtepImportAction();
