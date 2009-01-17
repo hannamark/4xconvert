@@ -179,7 +179,7 @@ public class MailManager {
             String to = mailTo;
             // Set up mail server
             props.put("mail.smtp.host", 
-                    regProperties.getProperty("mail.smtp.host"));
+                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("smtp"));
             // Get session
             Session session = Session.getDefaultInstance(props, null);
             //Define Message
