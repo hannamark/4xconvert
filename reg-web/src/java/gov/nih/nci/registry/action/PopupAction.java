@@ -264,9 +264,11 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Zip is a required field");
         }
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
-        if (countryName != null && countryName.equalsIgnoreCase("USA")) {
+        if (countryName != null && (countryName.equalsIgnoreCase("USA")
+                                || countryName.equalsIgnoreCase("CAN")
+                                || countryName.equalsIgnoreCase("AUS"))) {
             if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
-                addActionError("State is required for US");
+                addActionError("2-letter State/Province Code required for USA/Canada/Australia");
             }            
         }
         String email = ServletActionContext.getRequest().getParameter("email");
@@ -380,9 +382,11 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Country is a required field");
         }
         String state = ServletActionContext.getRequest().getParameter("state");
-        if (country != null && country.equalsIgnoreCase("USA")) {
+        if (country != null && (country.equalsIgnoreCase("USA")
+                            || country.equalsIgnoreCase("CAN")
+                            || country.equalsIgnoreCase("AUS"))) {
             if (state != null && !PAUtil.isNotEmpty(state)) {
-                addActionError("State is required for US");
+                addActionError("2-letter State/Province Code required for USA/Canada/Australia");
             }            
         }        
         if (hasActionErrors()) {
