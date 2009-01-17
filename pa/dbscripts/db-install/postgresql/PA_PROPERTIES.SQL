@@ -73,4 +73,4 @@ Please see attached report for more details.
 ----------------------------------------------------------
 Total Trials Submitted: ${totalCount}
 Successfully Registered: ${successCount}
-Failed: $(failedCount)');
+Failed: ${failedCount}');
