@@ -23,7 +23,7 @@
         </web>
     </module>
     <module>
-        <java>po-services-client-1.1.0milestone1.rc1.jar</java>
+        <java>po-services-client-1.1.0milestone1.jar</java>
     </module>
     <module>
         <java>xsnapshot-1.1-beta2.jar</java>
