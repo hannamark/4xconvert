@@ -533,6 +533,20 @@ function toggledisplay2 (it) {
                 </td>
           </tr>
         <tr>
+            <td scope="row" class="label">
+                <label for="trialStatusReason"> <fmt:message key="submit.trial.trialStatusReason"/></label>                
+            </td>
+            <td>
+                <s:textarea name="overallStatusWebDTO.reason"  cols="50" rows="2" />
+                <span class="info">Required for Administratively Complete and Temporarily Closed statuses only</span>
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>overallStatusWebDTO.reason</s:param>
+                   </s:fielderror>                            
+                 </span>                 
+            </td> 
+        </tr>
+        <tr>
             <td scope="row" class="label"><label for="statusDate"><fmt:message
                 key="submit.trial.currentTrialStatusDate" /><span class="required">*</span></label></td>
             <td class="value"><s:textfield name="overallStatusWebDTO.statusDate"
