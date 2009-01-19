@@ -336,6 +336,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             overallStatusDTO.setStudyProtocolIi(studyProtocolIi);
             overallStatusDTO.setStatusCode(CdConverter.convertToCd(TrialStatusCode.getByCode(overallStatusWebDTO
                     .getStatusCode())));
+            overallStatusDTO.setReasonText(StConverter.convertToSt(overallStatusWebDTO.getReason()));
             overallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(overallStatusWebDTO
                     .getStatusDate())));
             RegistryServiceLocator.getStudyOverallStatusService().create(overallStatusDTO);
@@ -773,12 +774,42 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                         getText("error.submit.otherPurposeText"));
             }            
         }
-     // validate the date formats
+        // validate the date formats
         validateDateFormat();
+        // validate trial status reason
+        validateTrialStatusReason();
         // validate trial status and dates
         validateTrialDates();
     }
     
+    /**
+     * validate trial status reason.
+     */
+    private void validateTrialStatusReason() {
+        if (PAUtil.isNotEmpty(overallStatusWebDTO.getStatusCode())) {
+            // check if reason entered for these trial statuses
+            if (TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().
+                    equals(overallStatusWebDTO.getStatusCode())
+              || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode().
+                    equals(overallStatusWebDTO.getStatusCode())
+              || TrialStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().
+                    equals(overallStatusWebDTO.getStatusCode())) {                
+                
+                    if (PAUtil.isEmpty(overallStatusWebDTO.getReason())) {
+                        addFieldError("overallStatusWebDTO.reason", 
+                                getText("error.submit.trialStatusReason")); 
+                        
+                    }                
+            } else {
+                if (PAUtil.isNotEmpty(overallStatusWebDTO.getReason())) {
+                    overallStatusWebDTO.setReason(null);
+                    
+                }                 
+            }
+        }
+        
+    }
+
     /**
      * validate the submit trial dates.
      */
