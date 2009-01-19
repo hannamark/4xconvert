@@ -99,7 +99,7 @@
 				<tbody>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.indldeType"/>
+							<fmt:message key="trialIndide.indldeType"/>:
 						</td>
 						<td style="white-space:nowrap;">							
 							<input type="radio" id="group3" name="holder.group3" value="IND" onclick="SelectSubCat(this);" onblur="enableAddButton();"/>IND<br/>
@@ -108,7 +108,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.indideNumber"/>
+							<fmt:message key="trialIndide.indideNumber"/>:
 						</td>
 						<td>
 							<input id="indidenumber" name="holder.indidenumber" onblur="enableAddButton();" type="text" size="10" /> 
@@ -116,7 +116,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.grantor"/>
+							<fmt:message key="trialIndide.grantor"/>:
 						</td>
 						<td>
 							<SELECT id="SubCat" name="holder.SubCat"onblur="enableAddButton(); cssStyle="width:150px">
@@ -126,7 +126,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.holderType"/>
+							<fmt:message key="trialIndide.holderType"/>:
 						</td>
 						<td>
 							<s:select id="holderType" name="holder.holderType" headerKey="" headerValue="-Select-" onblur="enableAddButton();setProgramCodes(this);" cssStyle="width:150px" onclick="setProgramCodes(this);"
@@ -135,7 +135,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.nihnciDivProgHolderCode"/>
+							<fmt:message key="trialIndide.nihnciDivProgHolderCode"/>:
 						</td>
 						<td>
 						<div id="programcodeid" style="display:''">
@@ -147,7 +147,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.expandedAccessIndicator"/>
+							<fmt:message key="trialIndide.expandedAccessIndicator"/>:
 						</td>
 						<td>
 							<input type="radio" name="holder.group4" id="group4" value="true" onclick="document.getElementById('expandedStatus').disabled=false;document.getElementById('addbtn').disabled=true;" onblur="enableAddButton();" /> Yes<br />
@@ -156,7 +156,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.expandedAccessStatusCode"/>
+							<fmt:message key="trialIndide.expandedAccessStatusCode"/>:
 						</td>
 						<td>
 							<s:select id="expandedStatus" headerKey="" headerValue="-Select-" name="holder.expandedStatus" disabled="true" onblur="enableAddButton();"

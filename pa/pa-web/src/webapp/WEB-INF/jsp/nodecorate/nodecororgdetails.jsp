@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <div id="orgDetailsDiv">
 <pa:sucessMessage /> 
-<h3><fmt:message key="participatingOrganizations.title" /></h3>
+<h3><fmt:message key="participatingOrganizations.subtitle2" /></h3>
 
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
 </div>

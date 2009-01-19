@@ -53,17 +53,7 @@
 </h2>
 
 <table class="form">
-    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
-    <tr>
-        <td colspan="2">
-            <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
-                <h3>Arm</h3>
-            </s:if>
-            <s:elseif test="%{(currentAction == 'editGroup')||(currentAction == 'editNewGroup')}">
-                <h3>Group</h3>
-            </s:elseif>
-        </td>
-    </tr>
+    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>   
     <tr>
         <s:form name="armForm">
         <s:hidden name="checkBoxEntry"/>
@@ -131,16 +121,6 @@
     </tr>
 </table>
 
-<div class="actionsrow"><del class="btnwrapper">
-<ul class="btnrow">
-        <li><a href="eligibilityCriteriaquery.action" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="back">Back</span></span></a></li>
-        <li><a href="trialInterventions.action" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="next">Next</span></span></a></li>
-</ul>
-</del></div>
 </div>
 </body>
 </html>

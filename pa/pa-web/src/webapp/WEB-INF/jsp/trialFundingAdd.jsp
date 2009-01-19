@@ -43,7 +43,7 @@ function tooltip() {
                 <tr>
                     <td scope="row" class="label">
                         <label for="fundingMechanism">                      
-                            <fmt:message key="trialFunding.funding.mechanism"/><span class="required">*</span>
+                            <fmt:message key="trialFunding.funding.mechanism"/>:<span class="required">*</span>
                         </label>
                      </td>
                      <s:set name="fundingMechanism" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
@@ -65,7 +65,7 @@ function tooltip() {
                 <tr> 
                      <td scope="row" class="label">
                           <label for="institutionCode">
-                            <fmt:message key="trialFunding.institution.code"/><span class="required">*</span>
+                            <fmt:message key="trialFunding.institution.code"/>:<span class="required">*</span>
                           </label>
                      </td>              
                      <s:set name="nihInstitute" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
@@ -86,7 +86,7 @@ function tooltip() {
                 <tr>
                      <td scope="row" class="label">
                      <label for="serialNumber">
-                            <fmt:message key="trialFunding.serial.number"/><span class="required">*</span>
+                            <fmt:message key="trialFunding.serial.number"/>:<span class="required">*</span>
                      </label>
                      </td>
                      <td class="value">
@@ -101,7 +101,7 @@ function tooltip() {
                 <tr>
                      <td scope="row" class="label">
                      <label for="monitorCode">
-                            <fmt:message key="studyProtocol.monitorCode"/><span class="required">*</span>
+                            <fmt:message key="studyProtocol.monitorCode"/>:<span class="required">*</span>
                      </label>
                     </td>
                     <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.MonitorCode@getDisplayNames()" />
@@ -120,7 +120,7 @@ function tooltip() {
                 <tr>
                      <td scope="row" class="label">
                      <label for="fundingTypeCode">
-                            <fmt:message key="trialFunding.funding.typecode"/>
+                            <fmt:message key="trialFunding.funding.typecode"/>:
                      </label>
                     </td>
                     <td class="value">
@@ -134,7 +134,7 @@ function tooltip() {
                 <tr>
                      <td scope="row" class="label">
                      <label for="grantYear">
-                            <fmt:message key="trialFunding.grant.year" />
+                            <fmt:message key="trialFunding.grant.year" />:
                      </label>
                     </td>
                     <td class="value">
@@ -144,7 +144,7 @@ function tooltip() {
                 <tr>
                      <td scope="row" class="label">
                      <label for="suffix">
-                            <fmt:message key="trialFunding.suffix" />
+                            <fmt:message key="trialFunding.suffix" />:
                      </label>
                     </td>
                     <td class="value">

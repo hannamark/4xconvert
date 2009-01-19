@@ -115,14 +115,14 @@
 			<tbody>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.indldeType"/>
+							<fmt:message key="trialIndide.indldeType"/>:
 						</td>
 						<td class="value"><s:select id="group3" name="holder.group3" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCat(this);" />
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.indideNumber"/>
+							<fmt:message key="trialIndide.indideNumber"/>:
 						</td>
 						<td>
 							<s:textfield  name="holder.indidenumber" maxlength="10" cssStyle="width:150px"/>
@@ -130,7 +130,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.grantor"/>
+							<fmt:message key="trialIndide.grantor"/>:
 						</td>
 						<td>
 							<s:if test="%{holder.group3 == 'IND'}">
@@ -142,7 +142,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.holderType"/>
+							<fmt:message key="trialIndide.holderType"/>:
 						</td>
 						<td>
 							<s:select id="holderType" name="holder.holderType" headerKey="" headerValue="-Select-" onblur="enableAddButton();setProgramCodes(this);" cssStyle="width:150px" onclick="setProgramCodes(this);"
@@ -151,7 +151,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.nihnciDivProgHolderCode"/>
+							<fmt:message key="trialIndide.nihnciDivProgHolderCode"/>:
 						</td>
 						<td>
 							<div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="holder.programcodenihselectedvalue" list="#phaseCodeValuesNIH" onblur="enableAddButton();" cssStyle="width:150px"/></div>
@@ -160,14 +160,14 @@
 					</tr>
 					<tr id="expandedAccessIndicator">
 						<td colspan="2">
-							<fmt:message key="trialIndide.expandedAccessIndicator"/>
+							<fmt:message key="trialIndide.expandedAccessIndicator"/>:
 						</td>
 						<td class="value"><s:select id="group4" name="holder.group4" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkAll();"/>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2">
-							<fmt:message key="trialIndide.expandedAccessStatusCode"/>
+							<fmt:message key="trialIndide.expandedAccessStatusCode"/>:
 						</td>
 						<td>
 							<s:select id="expandedStatus" headerKey="" headerValue="-Select-" name="holder.expandedStatus"

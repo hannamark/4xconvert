@@ -62,16 +62,14 @@ function loadDiv(orgid){
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if>
-<h2><fmt:message
-    key="participatingOrganizations.collaborators.title" /></h2>
+<h2>Collaborator</h2>
 
 
 
 <table class="form">
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
-        <td colspan="2"><!--Facility-->
-        <h3>Collaborator</h3>
+        <td colspan="2">
         <s:form name="facility">
             <div id="loadOrgDetails">
             <div id="orgDetailsDiv"><%@ include

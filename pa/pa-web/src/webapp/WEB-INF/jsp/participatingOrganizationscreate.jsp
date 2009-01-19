@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="participatingOrganizations.title" /></title>
+<title><fmt:message key="participatingOrganizations.subtitle" /></title>
 <s:head/>
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
@@ -186,29 +186,29 @@
 </head>
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
-<h1><fmt:message key="participatingOrganizations.title" /></h1>
+<h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
 
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
     <s:actionerror />
-<h2><fmt:message key="participatingOrganizations.title" /></h2>
+<h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2"><!--Tabs -->
 
 			<ul id="maintabs" class="tabs">
-			<li><a href="#facility"><fmt:message key="participatingOrganizations.title" /></a></li>
+			<li><a href="#facility"><fmt:message key="participatingOrganizations.subtitle2" /></a></li>
 			
 			
 			         <s:if test="%{currentAction == 'edit'}">
 							<li><a href="#investigators">Investigators</a></li>
-							<li><a href="#contacts">Contacts</a></li>
+							<li><a href="#contacts">Contact</a></li>
 				    </s:if>
 				    <s:else>
 							<li><a class="disabled">Investigators</a></li>
-							<li><a class="disabled">Contacts</a></li>				    
+							<li><a class="disabled">Contact</a></li>				    
 				    </s:else>
 			
 			
@@ -269,7 +269,7 @@
 	  <!-----------------------------------------------End Investigators Tab------------------->
 	  <!-----------------------------------------------Begin Contact Tab------------------->
 	  	   <div id="contacts" class="box" style="display:none;">						
-				<h3>Primary Contacts <c:out value="${organizationName}"/></h3>				
+				<h3>Primary Contact <c:out value="${organizationName}"/></h3>				
 			
 					<div id="showPrimaryContacts">
 						<%@ include file="/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp" %>

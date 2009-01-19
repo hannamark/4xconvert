@@ -69,7 +69,7 @@
     					</li>
                         </s:else>
                         <li><a href="disease.action" >Disease/Condition</a></li>                        
-                        <li><a href="trialInterventions.action" >Intervention</a></li>
+                        <li><a href="trialInterventions.action" >Interventions</a></li>
                         <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                             <li><a href="trialArms.action" >Arms</a></li>
                         </s:if>

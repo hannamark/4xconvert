@@ -62,8 +62,7 @@
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td colspan="2"><!--Facility-->
-            <h3>Disease/Condition</h3>
+            <td colspan="2">
             <s:form name="diseaseForm">
                <div id="loadDetails">
                     <%@ include file="/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp"%>
@@ -86,18 +85,6 @@
         </tr>
     </table>
 
-    <div class="actionsrow"><del class="btnwrapper">
-    <ul class="btnrow">
-        <li>
-            <a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img">
-                <span class="back">Back</span></span></a>
-        </li>
-        <li>
-            <a href="trialInterventions.action" class="btn" onclick="this.blur();">
-                <span class="btn_img"><span class="next">Next</span></span></a>
-        </li>
-    </ul>
-    </del></div>
-</div>
+ </div>
 </body>
 </html>

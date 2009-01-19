@@ -79,11 +79,7 @@
 <table class="form">
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
-        <td colspan="2"><!--Facility-->
-        <h3>
-        <s:if test="%{currentAction == 'edit'}"><fmt:message key="interventions.edit.title" /></s:if>
-        <s:else><fmt:message key="interventions.add.title" /></s:else>
-        </h3>
+        <td colspan="2">
         <s:form name="intervention">
 
             <table class="form">
@@ -133,26 +129,6 @@
     </tr>
 </table>
 
-
-
-<div class="actionsrow"><del class="btnwrapper">
-<ul class="btnrow">
-        <li>
-            <s:if test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-                <a href="#" class="btn"
-                  onclick="this.blur();"><span class="btn_img"><span
-                  class="back">Back</span></span></a>
-            </s:if><s:else>
-                <a href="#" class="btn"
-                  onclick="this.blur();"><span class="btn_img"><span
-                  class="back">Back</span></span></a>
-            </s:else>
-        </li>
-        <li><a href="#" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="next">Next</span></span></a></li>
-</ul>
-</del></div>
 </div>
 </body>
 </html>

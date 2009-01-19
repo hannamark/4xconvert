@@ -5,7 +5,7 @@
     <s:hidden name="disease.diseaseIdentifier"/>
     <s:hidden name="disease.studyDiseaseIdentifier"/>
     <tr>
-        <td class="label"><s:label>Name:</s:label><span
+        <td class="label"><s:label>Preferred Name:</s:label><span
             class="required">*</span></td>
         <td class="value" style="width: 250px">
             <s:textfield disabled="true" name="disease.preferredName" maxlength="160" size="160" 

@@ -174,6 +174,7 @@ BubbleTips.activateTipOn("dfn");
        				<td class="info" colspan="2">Write 999 if no max age is indicated and select 'Years' as Unit</td>
     			</tr> 		                                     
         </table>
+        <h2><fmt:message key="eligibilitycriteria.other" /></h2>
         <s:if test="eligibilityList != null">    
 		<input type="hidden" name="page" />
    		<input type="hidden" name="id" /> 
@@ -199,7 +200,7 @@ BubbleTips.activateTipOn("dfn");
                 <ul class="btnrow">
                     <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
                     <s:if test="list != null">
-                    <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriteria</span></span></s:a></li>
+                    <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriterion</span></span></s:a></li>
                     </s:if>
 					<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
