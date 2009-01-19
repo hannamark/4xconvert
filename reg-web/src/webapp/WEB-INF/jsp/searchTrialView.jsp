@@ -252,6 +252,18 @@
        		<c:out value="${requestScope.trialOverallStatus.statusCode.code }"/>
          </td>
       </tr> 
+      <c:if test="${requestScope.trialOverallStatus.reasonText.value != null}">
+	      <tr>     
+	        <td scope="row" class="label">
+	        <label for="Trial Status Reason">
+	            <fmt:message key="view.trial.trialStatusReason"/>                
+	        </label>
+	       </td>
+	         <td class="value">
+	            <c:out value="${requestScope.trialOverallStatus.reasonText.value }"/>
+	         </td>
+	      </tr>
+      </c:if> 
       <tr>     
       	<td scope="row" class="label">
           <label for="Current Trial Status Date">
