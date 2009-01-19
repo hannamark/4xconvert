@@ -54,8 +54,14 @@ function handleDelete(studyResourcingId){
 			<del class="btnwrapper">
 				<ul class="btnrow">
 					<li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-					<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-					<li><a href="participatingOrganizations.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+					<s:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+						<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+						<li><a href="trialIndidequery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Next</span></span></a></li>
+					</s:if>
+					<s:else>
+						<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+						<li><a href="participatingOrganizations.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+					</s:else>
 				</ul>	
 			</del>
 		</div>
