@@ -213,7 +213,7 @@ import org.hibernate.Session;
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 1) {
-                throw new PAException(" Single Blinding Schema code cannot have more than 1 Blinded codes ");
+                throw new PAException(" Only one masking role must be specified for ‘Single Blind’ masking. ");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                            && totBlindCodes < 1) {
@@ -221,7 +221,7 @@ import org.hibernate.Session;
             }
             if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes < 2) {
-                throw new PAException(" Double Blinding Schema Code cannot have less than 2 Blinded codes ");
+                throw new PAException(" At least two masking roles must to be specified for ‘Double Blind’ masking. ");
             }
 
         }
