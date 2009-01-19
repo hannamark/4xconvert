@@ -267,9 +267,9 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (countryName != null && (countryName.equalsIgnoreCase("USA")
                                 || countryName.equalsIgnoreCase("CAN")
                                 || countryName.equalsIgnoreCase("AUS"))) {
-            if (stateName != null && !PAUtil.isNotEmpty(stateName)) {
+            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada/Australia");
-            }            
+            }           
         }
         String email = ServletActionContext.getRequest().getParameter("email");
         if (email != null && !PAUtil.isNotEmpty(email)) {
@@ -293,7 +293,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         //PO Service requires upper case state codes for US and Canada
         if (PAUtil.isNotEmpty(stateName)) {
-            stateName = stateName.toUpperCase();            
+            stateName = stateName.trim().toUpperCase();            
         }
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,
                 countryName));
@@ -385,7 +385,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (country != null && (country.equalsIgnoreCase("USA")
                             || country.equalsIgnoreCase("CAN")
                             || country.equalsIgnoreCase("AUS"))) {
-            if (state != null && !PAUtil.isNotEmpty(state)) {
+            if (PAUtil.isEmpty(state) || state.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada/Australia");
             }            
         }        
@@ -461,7 +461,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             dto.setTelecomAddress(list);
             //PO Service requires upper case state codes for US and Canada
             if (PAUtil.isNotEmpty(state)) {
-                state = state.toUpperCase();            
+                state = state.trim().toUpperCase();            
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             Ii id = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);
