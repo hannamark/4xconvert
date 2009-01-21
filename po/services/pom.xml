@@ -434,19 +434,19 @@
                         <configuration>
                             <onError>continue</onError>
                             <srcFiles>
-                                <srcFile>src/main/sql/extraDropSchema.sql</srcFile>
-                                <srcFile>src/main/sql/csmDropSchema.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/extraDropSchema.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/csmDropSchema.sql</srcFile>
                                 <srcFile>target/hibernate3/sql/${schema.file}</srcFile>
-                                <srcFile>src/main/sql/csmCreateSchema.sql</srcFile>
-                                <srcFile>src/main/sql/countries.sql</srcFile>
-                                <srcFile>src/main/sql/oversightcommitteetypes.sql</srcFile>
-                                <srcFile>src/main/sql/researchorganizationtypes.sql</srcFile>
-                                <srcFile>src/main/sql/fundingmechanisms.sql</srcFile>
-                                <srcFile>src/main/sql/rot_fundingmech_mapping.sql</srcFile>
-                                <srcFile>src/main/sql/organizationalcontacttypes.sql</srcFile>
-                                <srcFile>src/main/sql/csmBootstrapData.sql</srcFile>
-                                <srcFile>src/main/sql/${csm.users.file}</srcFile>
-                                <srcFile>src/main/sql/extraCreateSchema.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/csmCreateSchema.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/countries.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/oversightcommitteetypes.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/researchorganizationtypes.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/fundingmechanisms.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/rot_fundingmech_mapping.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/organizationalcontacttypes.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/csmBootstrapData.sql</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/${csm.users.file}</srcFile>
+                                <srcFile>src/main/db/db-install/postgresql/extraCreateSchema.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </plugin>

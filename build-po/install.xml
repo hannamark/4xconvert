@@ -7,7 +7,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	xmlns:ivy="antlib:org.apache.ivy.ant"
 	>
 	<description>
-		This build file is part of the bda-build-templates project. This is the master install file for the project.  It should be placed in project/software.  This script is copied into the distribution and  executed from the extracted distribution.  It is run by typing "ant" from the master project build.xml or from command line. This script has two flows install and upgrade.
+		This build file is part of the COPPA-PO project. This is the master install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is run by typing "ant" from the master project build.xml or from command line. This script has two flows install and upgrade.
 		Install will do the following
 		* Install binaries
 		* Configure binaries
@@ -22,11 +22,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		The script includes target that may not be used by all projects, but are included in here becaue it is a template. This script has targets to deal with the following, you can delete targets you don't want to work with
 		Application servers (option for grid services also)
 		* JBoss
-		* Tomcat
 		Databases
-		* MySQL
 		* PostgreSQL
-		* Oracle
 		This script requires java and ant to run. Every thing else it needs is included in the distribution.
 	</description>
 
@@ -210,6 +207,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<filter token="database.xa.driver" value="${database.xa.driver}"/>
 		<filter token="database.dialect" value="${database.dialect}"/>
 		<filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
+        <!-- added for liquibase -->
+        <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
 		<filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
 		<filter token="ctep.url" value="${ctep.url}"/>
 		<filter token="ctep.username" value="${ctep.username}"/>

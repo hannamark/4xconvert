@@ -51,7 +51,18 @@
 				<ctep.url>%%ctep.url%%</ctep.url>
 			</properties>
 		</profile>
-	</profiles>
+	    <profile>
+	        <!-- To use specify the following: -Dpo.maven.profile.list=local,bda,quick -->
+	        <id>quick</id>
+	        <properties>
+	             <cobertura.check.haltOnFailure>false</cobertura.check.haltOnFailure>
+                 <maven.test.skip>true</maven.test.skip>
+                 <pmd.skip>true</pmd.skip>
+                 <checkstyle.skip>true</checkstyle.skip>
+                 <cpd.skip>true</cpd.skip>              
+            </properties>
+       </profile>
+    </profiles>
 	<activeProfiles>
 		<activeProfile>bda</activeProfile>
 	</activeProfiles>

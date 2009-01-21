@@ -13,9 +13,9 @@
 		<sql>select now()</sql>
 	</changeSet>
 	<!-- 
+     -->
 	<changeSet id="2" author="smiller">
 	   <comment>Upgrade for PO-787</comment>
-	   <sqlFile path="postgresql/1.1/ctepOids.sql"/>
+	   <sqlFile path="@db-upgrade.run.dir@/postgresql/1.1/ctepOids.sql"/>
     </changeSet>
-     -->
 </databaseChangeLog>

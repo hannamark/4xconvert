@@ -74,9 +74,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		Directory and files must be in svn to work.
 	-->
 	<property name="db.src.dir" value="${software.dir}/po/services/src/main/db" />
-	<property name="db-install.src.dir" location="${software.dir}/po/services/src/main/sql"/>
-	<!-- change when SQL files for database install baseline v1.0.0 are moved to ${software.dir}/po/services/src/main/db/**
-	property name="db-install.src.dir" location="${db.src.dir}/db-install"/-->
+	<property name="db-install.src.dir" location="${db.src.dir}/db-install"/>
 	<property name="db-upgrade.src.dir" location="${db.src.dir}/db-upgrade"/>
 	<property name="db-install-dynamic.src.dir" location="${software.dir}/po/services/target/hibernate3/sql/"/>
 
@@ -336,7 +334,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 			maven.dir="${po.base.dir}"
 			/>
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
-		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
+		<copy todir="${db-install.dist.dir}/${database.type}" overwrite="true">
 			<fileset dir="${db-install-dynamic.src.dir}">
 				<include name="**/*"/>
 			</fileset>
@@ -447,8 +445,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
-		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
-			<fileset dir="${db-install.src.dir}">
+		<copy todir="${db-install.dist.dir}/${database.type}" overwrite="true">
+			<fileset dir="${db-install.src.dir}/${database.type}">
 				<include name="**/*"/>
 			</fileset>
 		</copy> 		
@@ -477,8 +475,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 				<include name="**/*"/>
 			</fileset>
 		</copy> 
-		<copy todir="${db-install.dist.dir}/postgresql" overwrite="true">
-			<fileset dir="${db-install.src.dir}">
+		<copy todir="${db-upgrade.dist.dir}/${database.type}" overwrite="true">
+			<fileset dir="${db-upgrade.src.dir}/${database.type}">
 				<include name="**/*"/>
 			</fileset>
 		</copy>
