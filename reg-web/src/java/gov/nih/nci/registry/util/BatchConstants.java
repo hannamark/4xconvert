@@ -172,41 +172,43 @@ public class BatchConstants {
     /** */
     public static final int CURRENT_TRIAL_STATUS = 79;
     /** */
-    public static final int CURRENT_TRIAL_STATUS_DATE = 80;
+    public static final int REASON_FOR_STUDY_STOPPED = 80;
     /** */
-    public static final int STUDY_START_DATE = 81;
+    public static final int CURRENT_TRIAL_STATUS_DATE = 81;
     /** */
-    public static final int STUDY_START_DATE_TYPE = 82;
+    public static final int STUDY_START_DATE = 82;
     /** */
-    public static final int PRIMARY_COMP_DATE = 83;
+    public static final int STUDY_START_DATE_TYPE = 83;
     /** */
-    public static final int PRIMARY_COMP_DATE_TYPE = 84;
+    public static final int PRIMARY_COMP_DATE = 84;
     /** */
-    public static final int IND_TYPE = 85;
+    public static final int PRIMARY_COMP_DATE_TYPE = 85;
     /** */
-    public static final int IND_NUMBER = 86;
+    public static final int IND_TYPE = 86;
     /** */
-    public static final int IND_GRANTOR = 87;
+    public static final int IND_NUMBER = 87;
     /** */
-    public static final int IND_HOLDER_TYPE = 88;
+    public static final int IND_GRANTOR = 88;
     /** */
-    public static final int IND_NIH_INSTITUTION = 89;
+    public static final int IND_HOLDER_TYPE = 89;
     /** */
-    public static final int IND_NCI_DIV_CODE = 90;
+    public static final int IND_NIH_INSTITUTION = 90;
     /** */
-    public static final int IND_HAS_EXPANDED_ACCESS = 91;
+    public static final int IND_NCI_DIV_CODE = 91;
     /** */
-    public static final int IND_EXPANED_ACCESS_STATUS = 92;
+    public static final int IND_HAS_EXPANDED_ACCESS = 92;
     /** */
-    public static final int PROTOCOL_DOC_FILE_NAME = 93;
+    public static final int IND_EXPANED_ACCESS_STATUS = 93;
     /** */
-    public static final int IRB_APPROVAL_DOC_FILE_NAME = 94;
+    public static final int PROTOCOL_DOC_FILE_NAME = 94;
     /** */
-    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 95;
+    public static final int IRB_APPROVAL_DOC_FILE_NAME = 95;
     /** */
-    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 96;
+    public static final int PARTICIPATIING_SITE_DOC_FILE_NAME = 96;
     /** */
-    public static final int OTHER_TRIAL_DOC_FILE_NAME = 97;
+    public static final int INFORMED_CONSENT_DOC_FILE_NAME = 97;
+    /** */
+    public static final int OTHER_TRIAL_DOC_FILE_NAME = 98;
     /** */
     public static final int COUNTRY_SIZE = 3;
     /** */
