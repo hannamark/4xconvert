@@ -264,6 +264,7 @@ public class ExcelReader {
         case BatchConstants.NIH_GRANT_SR_NO: batchDto.setNihGrantSrNumber(cellValue); break;
         case BatchConstants.NIH_GRANT_NCI_DIV_CODE: batchDto.setNihGrantNCIDivisionCode(cellValue); break;
         case BatchConstants.CURRENT_TRIAL_STATUS: batchDto.setCurrentTrialStatus(cellValue); break;
+        case BatchConstants.REASON_FOR_STUDY_STOPPED:batchDto.setReasonForStudyStopped(cellValue); break;
         case BatchConstants.CURRENT_TRIAL_STATUS_DATE: batchDto.setCurrentTrialStatusDate(cellValue); break;
         case BatchConstants.STUDY_START_DATE: batchDto.setStudyStartDate(cellValue); break;
         case BatchConstants.STUDY_START_DATE_TYPE: batchDto.setStudyStartDateType(cellValue); break;
