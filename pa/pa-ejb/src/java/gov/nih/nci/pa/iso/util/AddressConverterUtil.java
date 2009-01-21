@@ -3,6 +3,11 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.AdxpAl;
+import gov.nih.nci.coppa.iso.AdxpCnt;
+import gov.nih.nci.coppa.iso.AdxpCty;
+import gov.nih.nci.coppa.iso.AdxpSta;
+import gov.nih.nci.coppa.iso.AdxpZip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Harsha
  *
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity"  })
+
 public class AddressConverterUtil {
     private static void setValue(List<Adxp> l, String s, AddressPartType addressPartType) {
         Adxp x;
@@ -56,4 +63,42 @@ public class AddressConverterUtil {
         }
         return iso;
     }
+    
+    /**
+     * converts the iso ad to address.
+     * @param ad iso address
+     * @return appended string buffer
+     */
+    public static String convertToAddress(Ad ad) {
+        
+        if (ad == null || ad.getPart() == null || ad.getPart().isEmpty()) {
+            return null;
+        }
+        List<Adxp> adxpList = ad.getPart();
+        StringBuffer sb = new StringBuffer();
+        for (Adxp adxp : adxpList) {
+            
+            if (adxp instanceof AdxpAl) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpCty) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpSta) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpZip) {
+                sb.append(adxp.getValue()).append(',');
+            }
+            if (adxp instanceof AdxpCnt) {
+                sb.append(adxp.getCode());
+            }
+        }
+        if (sb.lastIndexOf(",") > 0) {
+            sb.deleteCharAt(sb.lastIndexOf(","));
+        }
+        return sb.toString();
+        
+    }
+    
 }

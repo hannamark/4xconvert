@@ -74,6 +74,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -397,5 +398,24 @@ public class PoPaServiceBeanLookup  {
     public static PAOrganizationServiceRemote getPAOrganizationService() throws PAException {
       return (PAOrganizationServiceRemote)
       JNDIUtil.lookup("pa/PAOrganizationServiceBean/remote");
-  }
+    }
+    
+    /**
+     * @return OrganizationCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public static OrganizationCorrelationServiceRemote getOrganizationCorrelationService() throws PAException {
+      return (OrganizationCorrelationServiceRemote)
+      JNDIUtil.lookup("pa/OrganizationCorrelationServiceBean/remote");
+    }
+    
+    /**
+     * @return PAPersonServiceRemote
+     * @throws PAException on error
+     */
+    public static PAPersonServiceRemote getPAPersonService() throws PAException {
+      return (PAPersonServiceRemote)
+      JNDIUtil.lookup("pa/PAPersonServiceBean/remote");
+    }
+    
 }

@@ -27,4 +27,5 @@ public interface PAPersonServiceRemote  {
    List<PersonDTO> getAllPrincipalInvestigators() throws PAException;
     
 
+
 }

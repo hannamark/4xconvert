@@ -1,11 +1,13 @@
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -21,6 +23,10 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -34,6 +40,8 @@ import org.hibernate.Session;
  */
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity", 
     "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class OrganizationCorrelationServiceBean implements OrganizationCorrelationServiceRemote {
     
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
@@ -332,4 +340,27 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     public Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException {
         return new CorrelationUtils().createPAOrganization(poOrg);
     }
+    
+    /**
+     * 
+     * @param studyProtocolIi sp id
+     * @param cd functional role code
+     * @return Organization
+     * @throws PAException onError
+     */
+    public Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException {
+
+        StudyParticipationDTO spart = new StudyParticipationDTO();
+        spart.setFunctionalCode(cd);
+        List<StudyParticipationDTO> spDtos = PoPaServiceBeanLookup.getStudyParticipationService()
+                        .getByStudyProtocol(studyProtocolIi, spart);
+        Organization o = null;
+        if (spDtos != null && !spDtos.isEmpty()) {
+            spart = spDtos.get(0);
+            o = new CorrelationUtils().getPAOrganizationByPAResearchOrganizationId(
+                        Long.valueOf(spart.getResearchOrganizationIi().getExtension()));
+        }
+        return o;
+    }
+
 }

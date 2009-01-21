@@ -11,12 +11,12 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
+import gov.nih.nci.pa.service.util.TSRReportGenerator;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -63,6 +63,8 @@ import com.opensymphony.xwork2.ActionSupport;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
+@SuppressWarnings("PMD")
+
 public class AbstractionCompletionAction extends ActionSupport implements ServletResponseAware {
    
     private List<AbstractionCompletionDTO> abstractionList = null;
@@ -91,9 +93,6 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             abstractionList = PaRegistry.getAbstractionCompletionService().
                 validateAbstractionCompletion(studyProtocolIi);
             abstractionError = errorExists();
-            if (!abstractionError) {
-              abstractionList = null;
-            }
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
@@ -212,43 +211,44 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
 
         PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
-        String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(studyProtocolIi);  
-             
-        String folderPath = PaEarPropertyReader.getDocUploadPath();
-        StringBuffer sb  = new StringBuffer(folderPath);
+        //String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(studyProtocolIi);  
+         TSRReportGenerator tsrReport = new TSRReportGenerator();
+        String htmlData = tsrReport.generateTSRHtml(studyProtocolIi);
+//        String folderPath = PaEarPropertyReader.getDocUploadPath();
+//        StringBuffer sb  = new StringBuffer(folderPath);
         final int i = 1000;
         Random randomGenerator = new Random();
         int randomInt = randomGenerator.nextInt(i);
 
-        String inputFile = new String(sb.append(File.separator).append("xmlfile_").append(randomInt 
-            + studyProtocolIi.getExtension() + ".xml"));
-        OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
-        oos.write(xmlData);
-        oos.close();
+//        String inputFile = new String(sb.append(File.separator).append("xmlfile_").append(randomInt 
+//            + studyProtocolIi.getExtension() + ".html"));
+//        OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
+//        oos.write(xmlData);
+//        oos.close();
 
-        StringBuffer sb2  = new StringBuffer(folderPath);
-        String outputFile = new String(sb2.append(File.separator).append(TSR).append(randomInt 
-            + studyProtocolIi.getExtension() + HTML));
-        File downloadFile = createAttachment(new File(inputFile), new File(outputFile));
+ //       StringBuffer sb2  = new StringBuffer(folderPath);
+//        String outputFile = new String(sb2.append(File.separator).append(TSR).append(randomInt 
+//            + studyProtocolIi.getExtension() + HTML));
+//        File downloadFile = createAttachment(new File(inputFile), new File(outputFile));
         String fileName = TSR + randomInt + studyProtocolIi.getExtension() + HTML;
-        FileInputStream fileToDownload = new FileInputStream(downloadFile);
+//        FileInputStream fileToDownload = new FileInputStream(downloadFile);
         servletResponse.setContentType("application/octet-stream");
-        servletResponse.setContentLength(fileToDownload.available());
+        servletResponse.setContentLength(htmlData.length());
         servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
         servletResponse.setHeader("Pragma", "public");
         servletResponse.setHeader("Cache-Control", "max-age=0");
 
-        int data;
+//        int data;
         ServletOutputStream servletout = servletResponse.getOutputStream();
-        while ((data = fileToDownload.read()) != -1) {
-          servletout.write(data);
-        }
+//        while ((data = fileToDownload.read()) != -1) {
+          servletout.write(htmlData.getBytes());
+//        }
         servletout.flush();
         servletout.close();
-        fileToDownload.close();
+//        fileToDownload.close();
         
-        new File(inputFile).delete();
-        new File(outputFile).delete();
+//        new File(inputFile).delete();
+//        new File(outputFile).delete();
         
       } catch (Exception e) {
         return SUCCESS;
@@ -314,17 +314,16 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        DateFormat format2 = new SimpleDateFormat("yyyy-dd-MM");
 
         // message
         BodyPart msgPart = new MimeBodyPart();
         String body = PaRegistry.getLookUpTableService().getPropertyValue("tsr.body");
         String mailBody1 = body.replace("${CurrentDate}", format.format(date));
-        String mailBody2 = mailBody1.replace("${SubmitterName}", userbean.getLastName() 
-                                   + " " + userbean.getFirstName());
+        String mailBody2 = mailBody1.replace("${SubmitterName}", 
+                userbean.getFirstName() + " " + userbean.getLastName());
         String mailBody3 = mailBody2.replace("${localOrgID}", spDTO.getLeadOrganizationId().toString());
         String mailBody4 = mailBody3.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
-        String mailBody5 = mailBody4.replace("${receiptDate}", format2.format(spDTO.getDateLastCreated()));
+        String mailBody5 = mailBody4.replace("${receiptDate}", format.format(spDTO.getDateLastCreated()));
         String mailBody6 = mailBody5.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
         String mailBody7 = mailBody6.replace("${fileName}", TSR 
                                            + spDTO.getNciIdentifier().toString() + HTML);

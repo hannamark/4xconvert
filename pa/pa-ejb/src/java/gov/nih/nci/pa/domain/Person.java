@@ -167,4 +167,24 @@ public class Person extends AbstractEntity {
         return fullName;
     }
     
+    /**
+     * 
+     * @return fullName
+     */
+    @Transient
+    public String getFirstMiddleLastName() {
+        if (firstName != null) {
+            fullName = firstName + " ";
+        }
+        if (middleName != null) {
+            fullName =  firstName + " " + middleName + " ";
+        }
+
+        if (lastName != null) {
+            fullName =  firstName + " " + middleName + " " + lastName + " ";
+        }
+        
+        return fullName;
+    }
+
 }

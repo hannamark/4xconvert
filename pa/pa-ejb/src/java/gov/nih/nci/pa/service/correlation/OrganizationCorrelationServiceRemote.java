@@ -1,11 +1,15 @@
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
+
+import javax.ejb.Remote;
 
 /**
  * An interface for the OrganizationCorrealtion service.
@@ -15,6 +19,7 @@ import java.util.List;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
+@Remote
 public interface OrganizationCorrelationServiceRemote {
     /**
      * 
@@ -55,4 +60,15 @@ public interface OrganizationCorrelationServiceRemote {
      * @throws PAException pe
      */
     Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException;
+    
+    /**
+     * 
+     * @param studyProtocolIi sp id
+     * @param cd functional role code
+     * @return Organization
+     * @throws PAException onError
+     */
+    Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException;
+    
+    
 }

@@ -1,5 +1,7 @@
 package gov.nih.nci.service;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
@@ -186,5 +188,16 @@ public class MockOrganizationCorrelationService implements
         }
         return orgList;
     }
+    /**
+     * 
+     * @param studyProtocolIi sp id
+     * @param cd functional role code
+     * @return Organization
+     * @throws PAException onError
+     */
+    public Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException {
+        return null;
+    }
+    
 
 }

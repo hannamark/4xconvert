@@ -81,6 +81,7 @@ import org.hibernate.Session;
  *
  */
 @Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class PAPersonServiceBean implements PAPersonServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(PAPersonServiceBean.class);
@@ -97,6 +98,7 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
        LOG.info("Leaving getAllPrincipalInvestigators");
        return createPersonDTO(persons);
     }
+
     
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private List<Person> generateDistinctPersonResults()  
