@@ -489,7 +489,9 @@ public class BatchCreateProtocols {
                 throw new PAException("State is required for US");
             }            
         } 
-        if (PAUtil.isNotEmpty(stateName)) {
+        if (PAUtil.isNotEmpty(stateName) && (batchDto.getCountry().equalsIgnoreCase("USA")
+                    || batchDto.getCountry().equalsIgnoreCase("CAN")
+                    || batchDto.getCountry().equalsIgnoreCase("AUS"))) {
             stateName = stateName.toUpperCase();
         }
         String email = batchDto.getEmail();
@@ -671,9 +673,12 @@ public class BatchCreateProtocols {
                 throw new PAException("State is required for US");
             }            
         } 
-        if (PAUtil.isNotEmpty(state)) {
+        if (PAUtil.isNotEmpty(state) && (batchDto.getCountry().equalsIgnoreCase("USA")
+                || batchDto.getCountry().equalsIgnoreCase("CAN")
+                || batchDto.getCountry().equalsIgnoreCase("AUS"))) {
             state = state.toUpperCase();
         }
+
         log.error("State as" + state + " Country as " + country);
         String midName = batchDto.getMiddleName();
         String phone = batchDto.getPhone();
