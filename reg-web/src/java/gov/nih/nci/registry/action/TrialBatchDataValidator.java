@@ -622,7 +622,7 @@ public class TrialBatchDataValidator {
                 }
                 if (PAUtil.isNotEmpty(batchDto.getState())
                         && batchDto.getState().length() > 2) {
-                    fieldErr.append(" State code should be two character. \n");
+                    fieldErr.append(fieldName + " State code should be two character. \n");
                 }
             }
         }
@@ -676,7 +676,7 @@ public class TrialBatchDataValidator {
                     }
                     if (PAUtil.isNotEmpty(batchDto.getState())
                             && batchDto.getState().length() > 2) {
-                        fieldErr.append(" State code should be two character. \n");
+                        fieldErr.append(message + " State code should be two character. \n");
                     }
                 }
                 
