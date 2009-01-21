@@ -40,6 +40,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -243,12 +244,12 @@ public class BatchCreateProtocols {
                         new PARelationServiceBean().createPIAsResponsiblePartyRelations(orgIdIi.getExtension(), 
                             leadPrincipalInvestigator.getExtension(),
                             IiConverter.convertToLong(studyProtocolIi), dto.getPiEmail(), 
-                            dto.getPiPhone().replaceAll(" ", ""));
+                            dto.getPiPhone());
                     } else {
                         new PARelationServiceBean().createSponsorAsPrimaryContactRelations(sponsorIdIi.getExtension(), 
                             responsiblePartyContact.getExtension(), IiConverter
                             .convertToLong(studyProtocolIi), dto.getSponsorContactEmail(), 
-                             dto.getSponsorContactPhone().replaceAll(" ", ""));
+                             dto.getSponsorContactPhone());
                     }                
             }
             //get the protocol
@@ -331,6 +332,9 @@ public class BatchCreateProtocols {
             overallStatusDTO.setStatusDate(TsConverter
                     .convertToTs(PAUtil.dateStringToTimestamp(batchDto
                             .getCurrentTrialStatusDate())));
+            if (null != TrialStatusReasonCode.getByCode(batchDto.getCurrentTrialStatus())) {
+                    overallStatusDTO.setReasonText(StConverter.convertToSt(batchDto.getReasonForStudyStopped()));
+            }
             RegistryServiceLocator.getStudyOverallStatusService().create(
                     overallStatusDTO);
             log.info("leaving createStudyStatus....");
@@ -488,7 +492,6 @@ public class BatchCreateProtocols {
         if (PAUtil.isNotEmpty(stateName)) {
             stateName = stateName.toUpperCase();
         }
-        log.error("StateName as" + stateName + " Country as " + countryName);
         String email = batchDto.getEmail();
         if (PAUtil.isEmpty(email)) { 
               log.error("Email is a required field");
