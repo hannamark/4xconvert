@@ -97,6 +97,7 @@ public class StudyProtocolBatchDTO {
     private String nihGrantSrNumber;
     private String nihGrantNCIDivisionCode;
     private String currentTrialStatus;
+    private String reasonForStudyStopped;
     private String currentTrialStatusDate;
     private String studyStartDate;
     private String studyStartDateType;
@@ -1515,6 +1516,20 @@ public class StudyProtocolBatchDTO {
      */
     public void setValidRecord(boolean validRecord) {
         this.validRecord = validRecord;
+    }
+
+    /**
+     * @return the reasonForStudyStopped
+     */
+    public String getReasonForStudyStopped() {
+        return reasonForStudyStopped;
+    }
+
+    /**
+     * @param reasonForStudyStopped the reasonForStudyStopped to set
+     */
+    public void setReasonForStudyStopped(String reasonForStudyStopped) {
+        this.reasonForStudyStopped = reasonForStudyStopped;
     }
 
 }
