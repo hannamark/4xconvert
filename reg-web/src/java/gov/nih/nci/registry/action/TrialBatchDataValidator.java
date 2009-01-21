@@ -28,7 +28,7 @@ import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
-
+import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 /**
  * 
  * @author Vrushali
@@ -176,20 +176,13 @@ public class TrialBatchDataValidator {
         return fieldErr.toString();
     }
     private StringBuffer validateListOfValues(StudyProtocolBatchDTO batchDto) {
-/*        //make sure values are in Title case for Trial Type , Primary Purpose, Current trial status
-        //Study Start type, primary completion type
-        batchDto.setTrialType(convertToEnumCode(batchDto.getTrialType()));
-        batchDto.setPrimaryPurpose(convertToEnumCode(batchDto.getPrimaryPurpose()));
-        batchDto.setCurrentTrialStatus(convertToEnumCode(batchDto.getCurrentTrialStatus()));
-        batchDto.setStudyStartDateType(convertToEnumCode(batchDto.getStudyStartDateType()));
-        batchDto.setPrimaryCompletionDateType(convertToEnumCode(batchDto.getPrimaryCompletionDateType()));
-*/        //make sure case is upper for IND/IDE Type  IND/IDE Grantor IND/IDE Holder Type
-        //[NIH Grant] NCI Division/Program Code [NIH Grant] Institute Code
-        //Country code, State code
-
         StringBuffer fieldErr = new StringBuffer();
         if (null == StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
             fieldErr.append("Please enter valid value for Current Trial Status");
+        }
+        if (null != TrialStatusReasonCode.getByCode(batchDto.getCurrentTrialStatus())
+                && PAUtil.isEmpty(batchDto.getReasonForStudyStopped())) {
+                fieldErr.append("Why Study Stopped is required.");
         }
         if (PAUtil.isNotEmpty(batchDto.getResponsibleParty())) {
             if (!batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
@@ -278,37 +271,35 @@ public class TrialBatchDataValidator {
             }
         }        
         // Constraint/Rule:  21 If Current Trial Status is ‘Active’, Trial Start Date must be the same as 
-        // Current Trial Status Date and have ‘actual’ type.
+        // Current Trial Status Date and have ‘actual’ type. New Rule added-01/15/09 if start date is smaller 
+        //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
         if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus())
                 && PAUtil.isNotEmpty(dto.getCurrentTrialStatusDate())
                         && PAUtil.isNotEmpty(dto.getStudyStartDate())
                          && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {
-          if (TrialStatusCode.ACTIVE.getCode().equals(
-                          dto.getCurrentTrialStatus())) {
+          if (TrialStatusCode.ACTIVE.getCode().equals(dto.getCurrentTrialStatus())) {
               Timestamp statusDate = PAUtil.dateStringToTimestamp(dto.getCurrentTrialStatusDate());
               Timestamp trialStartDate = PAUtil.dateStringToTimestamp(dto.getStudyStartDate());
-              if (!statusDate.equals(trialStartDate) 
-                              || !dto.getStudyStartDateType().equals(
+              if (!statusDate.equals(trialStartDate) || !dto.getStudyStartDateType().equals(
                                   ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                  errors
-                        .append("If Current Trial Status is Active, Trial Start Date must be Actual ");
-                    errors.append(" and same as Current Trial Status Date.\n");
+                  if (!statusDate.before(trialStartDate)) {
+                      dto.setCurrentTrialStatusDate(dto.getStudyStartDate());  
+                  } else {
+                      errors.append("If Current Trial Status is Active, Trial Start Date must be Actual ");
+                      errors.append(" and same as Current Trial Status Date.\n");
+                  }
               }                
           }            
         }        
         // Constraint/Rule: 22 If Current Trial Status is ‘Approved’, Trial Start Date must have ‘anticipated’ type. 
         //  Trial Start Date must have ‘actual’ type for any other Current Trial Status value besides ‘Approved’. 
-        if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus())
-                         && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {
-          if (TrialStatusCode.APPROVED.getCode().equals(
-                          dto.getCurrentTrialStatus())) {
-              if (!dto.getStudyStartDateType().equals(
-                              ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
+        if (PAUtil.isNotEmpty(dto.getCurrentTrialStatus()) && PAUtil.isNotEmpty(dto.getStudyStartDateType())) {
+          if (TrialStatusCode.APPROVED.getCode().equals(dto.getCurrentTrialStatus())) {
+              if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
                   errors.append("If Current Trial Status is Approved, Trial Start Date must be Anticipated.\n");
               }                
           } else {
-              if (!dto.getStudyStartDateType().equals(
-                       ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+              if (!dto.getStudyStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                   errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved.\n");
               }              
           }
@@ -402,7 +393,6 @@ public class TrialBatchDataValidator {
                             errors.append("Actual Primary Completion Date ");
                             errors.append(" must be current or in past.\n");                
                         }
-                
             } else if (dto.getPrimaryCompletionDateType().equals(
                     ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
                         Timestamp completionDate = PAUtil.dateStringToTimestamp(
@@ -624,13 +614,15 @@ public class TrialBatchDataValidator {
             if (!isCountryValid(batchDto.getCountry().toUpperCase())) {
                 fieldErr.append(fieldName + " Country Code is not Valid.\n");
             }
-            if (batchDto.getCountry().equalsIgnoreCase("USA")) {
+            if (batchDto.getCountry().equalsIgnoreCase("USA")       
+                    || batchDto.getCountry().equalsIgnoreCase("CAN")
+                    || batchDto.getCountry().equalsIgnoreCase("AUS")) {
                 if (PAUtil.isEmpty(batchDto.getState())) {
-                    fieldErr.append(fieldName + " State is required. \n");
+                    fieldErr.append(fieldName + " State/Province is mandatory for US/Canada/Australia. \n");
                 }
                 if (PAUtil.isNotEmpty(batchDto.getState())
                         && batchDto.getState().length() > 2) {
-                    fieldErr.append(" State code should be two digit. \n");
+                    fieldErr.append(" State code should be two character. \n");
                 }
             }
         }
@@ -676,11 +668,18 @@ public class TrialBatchDataValidator {
                 if (!isCountryValid(batchDto.getCountry().toUpperCase())) {
                     fieldErr.append(message + " Country Code is not Valid.\n");
                 }
-                if (batchDto.getCountry().equalsIgnoreCase("USA")) {
+                if (batchDto.getCountry().equalsIgnoreCase("USA")
+                        || batchDto.getCountry().equalsIgnoreCase("CAN")
+                        || batchDto.getCountry().equalsIgnoreCase("AUS")) {
                     if (PAUtil.isEmpty(batchDto.getState())) {
-                        fieldErr.append(message + " State is required. \n");
+                        fieldErr.append(message + " State/Province is mandatory for US/Canada/Australia. \n");
                     }
-                }     
+                    if (PAUtil.isNotEmpty(batchDto.getState())
+                            && batchDto.getState().length() > 2) {
+                        fieldErr.append(" State code should be two character. \n");
+                    }
+                }
+                
         }
         if (PAUtil.isEmpty(batchDto.getEmail())) {
             fieldErr.append(message + " Email is required. \n");
