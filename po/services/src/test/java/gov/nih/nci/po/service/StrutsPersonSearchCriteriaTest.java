@@ -8,7 +8,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.correlation.ClinicalResearchStaffServiceTest;
 import gov.nih.nci.po.service.correlation.IdentifiedPersonServiceTest;
-import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import java.util.List;
 import org.junit.Test;
@@ -148,7 +148,7 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         assertEquals(0, l.size());
 
         c.getAssignedIdentifier().setExtension("MY_CTEP_ID");
-        c.getAssignedIdentifier().setRoot(CtepOrganizationImporter.CTEP_ROOT);
+        c.getAssignedIdentifier().setRoot(CtepPersonImporter.CTEP_PERSON_OTHER_ROOT);
         PoHibernateUtil.getCurrentSession().update(c);
         l = criteria.getQuery("", false).list();
         assertEquals(1, l.size());

@@ -1,0 +1,3 @@
+update identifiedperson set assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Identifier' where assigned_identifier_root = 'personDbIdCancer Therapy Evaluation Program';
+update identifiedperson set assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Other Identifier' where assigned_identifier_root = 'Cancer Therapy Evaluation Program';
+update identifiedorganization set assigned_identifier_root = 'Cancer Therapy Evaluation Program Organization Identifier' where assigned_identifier_root = 'Cancer Therapy Evaluation Program';

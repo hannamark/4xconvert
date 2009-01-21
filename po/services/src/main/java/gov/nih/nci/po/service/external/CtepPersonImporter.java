@@ -124,9 +124,18 @@ import org.apache.log4j.Logger;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class CtepPersonImporter extends CtepEntityImporter {
+    /**
+     * The root value of the ctep ii's that reference the main db identifier of the person in ctep's system.
+     */
+    public static final String CTEP_PERSON_DB_ROOT = "Cancer Therapy Evaluation Program Person Identifier";
+    
+    /**
+     * The root value of the ctep ii's that reference the fiendly user known identifier of the person in ctep's system.
+     */
+    public static final String CTEP_PERSON_OTHER_ROOT = "Cancer Therapy Evaluation Program Person Other Identifier";
+    
     private static final Logger LOG = Logger.getLogger(CtepPersonImporter.class);
     private static final String LOG_SEP = " : ";
-    private static final String CTEP_PERSON_DB_ID_ROOT_PREFIX = "personDbId";
     private final CtepOrganizationImporter orgImporter;
 
     private final PersonServiceLocal personService = PoRegistry.getPersonService();
@@ -220,7 +229,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
         identifiedPerson.setAssignedIdentifier(new Ii());
         identifiedPerson.getAssignedIdentifier().setExtension(ctepPersonId.getExtension());
-        identifiedPerson.getAssignedIdentifier().setRoot(CTEP_PERSON_DB_ID_ROOT_PREFIX + ctepPersonId.getRoot());
+        identifiedPerson.getAssignedIdentifier().setRoot(ctepPersonId.getRoot());
         SearchCriteria<IdentifiedPerson> sc =
             new AnnotatedBeanSearchCriteria<IdentifiedPerson>(identifiedPerson);
         List<IdentifiedPerson> identifiedPeople = this.identifiedPersonService.search(sc);
@@ -235,12 +244,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.personService.curate(ctepPerson);
 
         // create the identified entity record for the db id in ctep
-        createIdentifiedPerson(ctepPerson, assignedId, CTEP_PERSON_DB_ID_ROOT_PREFIX);
+        createIdentifiedPerson(ctepPerson, assignedId);
 
         // create identified person record for any other person identifiers provied in ctep services
         IdentifiedPersonDTO otherIdentifier = getOtherId(assignedId);
         if (otherIdentifier != null) {
-            createIdentifiedPerson(ctepPerson, otherIdentifier.getAssignedId(), "");
+            createIdentifiedPerson(ctepPerson, otherIdentifier.getAssignedId());
         }
 
         // create records for all health care provider records
@@ -268,7 +277,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId, String rootPrefix) throws JMSException {
+    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
         identifiedPerson.setPlayer(ctepPerson);
         identifiedPerson.setScoper(getCtepOrganization());
@@ -278,7 +287,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         identifiedPerson.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
         identifiedPerson.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
         identifiedPerson.getAssignedIdentifier().setReliability(assignedId.getReliability());
-        identifiedPerson.getAssignedIdentifier().setRoot(rootPrefix + assignedId.getRoot());
+        identifiedPerson.getAssignedIdentifier().setRoot(assignedId.getRoot());
         identifiedPerson.getAssignedIdentifier().setScope(assignedId.getScope());
         identifiedPerson.setStatus(RoleStatus.ACTIVE);
         this.identifiedPersonService.curate(identifiedPerson);
@@ -414,7 +423,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         boolean found = searchForAndUpdateCtepIds(ctepPerson, identifiedPerson, newId);
         if (!found) {
             // someone removed the record using hte curation tool, add it back
-            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId(), "");
+            createIdentifiedPerson(ctepPerson, newIdentifier.getAssignedId());
         }
     }
 

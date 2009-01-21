@@ -125,9 +125,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     private static final String CTEP_EXTENSION = "CTEP";
 
     /**
-     * The value of the 'root' element of a ctep ii.
+     * The value of the 'root' element of a ctep ii for an org.
      */
-    public static final String CTEP_ROOT = "Cancer Therapy Evaluation Program";
+    public static final String CTEP_ORG_ROOT = "Cancer Therapy Evaluation Program Organization Identifier";
 
     private final OrganizationServiceLocal orgService = PoRegistry.getOrganizationService();
     private final IdentifiedOrganizationServiceLocal identifiedOrgService = PoRegistry.getInstance().
@@ -156,7 +156,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (persistedCtepOrg == null) {
             Ii ctepIi = new Ii();
             ctepIi.setExtension(CTEP_EXTENSION);
-            ctepIi.setRoot(CTEP_ROOT);
+            ctepIi.setRoot(CTEP_ORG_ROOT);
             persistedCtepOrg = importOrgNoUpdate(ctepIi);
         }
 
@@ -363,7 +363,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     private Organization getScoper(Organization defaultScoper, Ii ctepOrgId) throws JMSException {
         Organization scoper;
-        if (ctepOrgId.getExtension().equals(CTEP_EXTENSION) && ctepOrgId.getRoot().equals(CTEP_ROOT)) {
+        if (ctepOrgId.getExtension().equals(CTEP_EXTENSION) && ctepOrgId.getRoot().equals(CTEP_ORG_ROOT)) {
             // we are currently importing ctep, therefore this org is its own scoper.
             scoper = defaultScoper;
         } else {

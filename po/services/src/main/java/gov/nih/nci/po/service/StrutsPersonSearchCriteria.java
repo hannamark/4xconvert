@@ -83,12 +83,13 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
-
-import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
@@ -268,7 +269,7 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
             params.put("ipname", on);
         }
         if (StringUtils.isNotBlank(ctepId)) {
-            hql.append(" AND ip.assignedIdentifier.root = '").append(CtepOrganizationImporter.CTEP_ROOT)
+            hql.append(" AND ip.assignedIdentifier.root = '").append(CtepPersonImporter.CTEP_PERSON_OTHER_ROOT)
                     .append("' AND lower(ip.assignedIdentifier.extension) like :ctepId");
             params.put("ctepId", ctepId.toLowerCase());
         }

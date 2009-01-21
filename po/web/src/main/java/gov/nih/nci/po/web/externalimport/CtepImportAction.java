@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.io.BufferedReader;
@@ -112,6 +113,7 @@ import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
  * @author Scott Miller
  *
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class CtepImportAction extends ActionSupport {
     private static final Logger LOG = Logger.getLogger(CtepImportAction.class);
     private static final long serialVersionUID = 1L;
@@ -163,6 +165,13 @@ public class CtepImportAction extends ActionSupport {
          * @return the friendly name
          */
         String getType();
+        
+        /**
+         * generate an ii.
+         * @param id the id to use
+         * @return the ii
+         */
+        Ii generateIi(String id);
     }
     
     /**
@@ -183,6 +192,17 @@ public class CtepImportAction extends ActionSupport {
         public String getType() {
             return Person.class.getSimpleName();
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Ii generateIi(String id) {
+            Ii ii = new Ii();
+            ii.setExtension(id);
+            ii.setRoot(CtepPersonImporter.CTEP_PERSON_DB_ROOT);
+            return ii;
+        }
+        
     }
     
     /**
@@ -201,6 +221,16 @@ public class CtepImportAction extends ActionSupport {
          */
         public String getType() {
             return Organization.class.getSimpleName();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Ii generateIi(String id) {
+            Ii ii = new Ii();
+            ii.setExtension(id);
+            ii.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+            return ii;
         }
     }
     
@@ -224,7 +254,7 @@ public class CtepImportAction extends ActionSupport {
                     line = line.trim();
                     if (StringUtils.isNotEmpty(line)) {
                         try {
-                            Object imported = callback.invoke(generateIi(line));
+                            Object imported = callback.invoke(callback.generateIi(line));
                             if (imported  != null) {
                                 passedRecords.add(line);
                             } else {
@@ -253,13 +283,6 @@ public class CtepImportAction extends ActionSupport {
             return new BufferedReader(fileReader);
         }
 
-        private Ii generateIi(String id) {
-            Ii ii = new Ii();
-            ii.setExtension(id);
-            ii.setRoot(CtepOrganizationImporter.CTEP_ROOT);
-            return ii;
-        }
-        
         private void addMessages(List<String> passed, List<String> skipped, List<String> failed) {
             ActionHelper.saveMessage(passed.size() + " records successfully imported.");
             String separator = ", ";

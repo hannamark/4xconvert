@@ -207,10 +207,14 @@ public class CtepMessageBean implements MessageListener {
     }
 
 
-    private static Ii generateIi(String id) {
+    private static Ii generateIi(RecordType msgType, String id) {
         Ii ii = new Ii();
         ii.setExtension(id);
-        ii.setRoot(CtepOrganizationImporter.CTEP_ROOT);
+        if (msgType.equals(RecordType.ORGANIZATION) || msgType.equals(RecordType.ORGANIZATION_ADDRESS)) {
+            ii.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        } else {
+            ii.setRoot(CtepPersonImporter.CTEP_PERSON_DB_ROOT);
+        }
         return ii;
     }
 
@@ -241,7 +245,7 @@ public class CtepMessageBean implements MessageListener {
             LOG.error("Unsuported Transaction Type in message", iae);
         }
 
-        Ii id = generateIi(recordId.trim());
+        Ii id = generateIi(msgType, recordId.trim());
         processMessage(trxType, msgType, id);
     }
 
