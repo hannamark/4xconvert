@@ -67,10 +67,6 @@ import gov.nih.nci.pa.service.PAException;
 /**
  * @author Hugh Reinhart
  * @since 01/14/2009
- * 
- * copyright NCI 2009.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO, StudyMilestone> {
 
@@ -100,7 +96,7 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
     public StudyMilestone convertFromDtoToDomain(StudyMilestoneDTO dto)
             throws PAException {
         StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         
         StudyMilestone bo = new StudyMilestone();
         bo.setCommentText(StConverter.convertToString(dto.getCommentText()));

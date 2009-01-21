@@ -54,22 +54,215 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 /**
 * @author Hugh Reinhart
 * @since 1/15/2009
-* 
-* copyright NCI 2009.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
 @Stateless
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class StudyMilestoneServiceBean 
         extends AbstractStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter> 
         implements StudyMilestoneServiceRemote {
+
+    private DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
+    
+    @EJB
+    private AbstractionCompletionServiceRemote abstractionCompletionService;
+
+    /**
+     * @param dto dto
+     * @return created dto
+     * @throws PAException exception
+     */
+    @Override
+    public StudyMilestoneDTO create(StudyMilestoneDTO dto) throws PAException {
+        StudyMilestoneDTO workDto = businessRules(dto);
+        StudyMilestoneDTO resultDto = super.create(workDto);
+        createDocumentWorkflowStatuses(resultDto);
+        return resultDto;
+    }
+
+    /**
+     * @param ii index of milestone
+     * @throws PAException exception
+     */
+    @Override
+    public void delete(Ii ii) throws PAException {
+        throw new PAException("The delete() method in the StudyMilestoneService has been disabled.");
+    }
+
+    /**
+     * @param dto dto
+     * @return updated dto
+     * @throws PAException exception
+     */
+    @Override
+    public StudyMilestoneDTO update(StudyMilestoneDTO dto) throws PAException {
+        throw new PAException("The update() method in the StudyMilestoneService has been disabled.");
+    }
+
+    private DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() throws PAException {
+        if (documentWorkflowStatusService == null) {
+            documentWorkflowStatusService = (DocumentWorkflowStatusServiceRemote) 
+                    JNDIUtil.lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+        }
+        return documentWorkflowStatusService;
+    }
+    
+    /**
+     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
+     */
+    void setDocumentWorkflowStatusService(
+            DocumentWorkflowStatusServiceRemote documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+
+    private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
+        List<DocumentWorkflowStatusDTO> dwList = getDocumentWorkflowStatusService()
+                .getCurrentByStudyProtocol(studyProtocolIi);
+        return  (dwList.isEmpty()) ? null 
+                : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwList.get(0).getStatusCode()));
+    }
+
+    @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+    private StudyMilestoneDTO businessRules(StudyMilestoneDTO dto) throws PAException {
+        Timestamp newDate = TsConverter.convertToTimestamp(dto.getMilestoneDate());
+        MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
+
+        List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        Timestamp lastDate = null;
+        if (!existingDtoList.isEmpty()) {
+            StudyMilestoneDTO last = existingDtoList.get(existingDtoList.size() - 1);
+            lastDate = TsConverter.convertToTimestamp(last.getMilestoneDate());
+        }
+
+        // required data rules
+        if (PAUtil.isCdNull(dto.getMilestoneCode())) {
+            throw new PAException("Milestone code is required.");
+        }
+        if (newDate == null) {
+            throw new PAException("Milestone date is required.");
+        }
+        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            throw new PAException("Associated study protocol is required.");
+        }
+
+        // date rules
+        if (newDate.after(new Timestamp(new Date().getTime()))) {
+            throw new PAException("Milestone dates may not be in the future.");
+        }
+        if ((lastDate != null) && lastDate.after(newDate)) {
+            throw new PAException("Milestone's must not predate existing milestones.  The prior milestone date is "
+                    + PAUtil.normalizeDateString(lastDate.toString()) + ".");
+        }
+
+        // transition rules
+        if (newCode.getPrerequisite() != null) {
+            boolean prerequisiteFound = false;
+            for (StudyMilestoneDTO edto : existingDtoList) {
+                MilestoneCode cd = MilestoneCode.getByCode(CdConverter.convertCdToString(edto.getMilestoneCode()));
+                if (newCode.getPrerequisite().getCode().equals(cd.getCode())) {
+                    prerequisiteFound = true;
+                    continue;
+                }
+            }
+            if (!prerequisiteFound) {
+                throw new PAException("'" + newCode.getPrerequisite().getCode() + "' is a prerequisite to '" 
+                        + newCode.getCode() + "'.");
+            }
+        }
+
+        // uniqueness rules
+        if (newCode.isUnique()) {
+            for (StudyMilestoneDTO edto : existingDtoList) {
+                if (newCode.getCode().equals(edto.getMilestoneCode().getCode())) {
+                    throw new PAException("The milestone '" + newCode.getCode() + "' must be unique.  It was "
+                            + "previously recorded on " + PAUtil.normalizeDateString(
+                                    TsConverter.convertToTimestamp(edto.getMilestoneDate()).toString()) + ".");
+                }
+            }
+        }
+
+        // document work flow status rules
+        DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+        if (!newCode.isValidDwfStatus(dwStatus)) {
+            StringBuffer errMsg = new StringBuffer("The processing status must be ");
+            int iSize = newCode.getValidDwfStatuses().size();
+            for (int x = 0; x < iSize; x++) {
+                errMsg.append("'" + newCode.getValidDwfStatuses().get(x).getCode() + "'");
+                if ((iSize == 2) && (x == 0)) {
+                    errMsg.append(" or ");
+                }
+                if ((iSize > 2) && (x < iSize - 2)) {
+                    errMsg.append(", ");
+                }
+                if ((iSize > 2) && (x == iSize - 2)) {
+                    errMsg.append(", or ");
+                }
+            }
+            errMsg.append(" when entering the milestone '" + newCode.getCode() + "'.  The current processing "
+                    + "status is " + ((dwStatus == null) ? "null." : "'" + dwStatus.getCode() + "'."));
+            throw new PAException(errMsg.toString());
+        }
+        
+        // validate abstraction
+        if (newCode.isValidationTrigger()) {
+            if (abstractionCompletionService == null) {
+                throw new PAException("Error injecting reference to AbstractionCompletionService.");
+            }
+            List<AbstractionCompletionDTO> errorList = 
+                abstractionCompletionService.validateAbstractionCompletion(dto.getStudyProtocolIdentifier());
+            if (!errorList.isEmpty()) {
+                throw new PAException("The milestone '" + newCode.getCode() + "' can only be recorded if the "
+                        + "abstraction is valid.  There is a problem with the current abstraction.  Select "
+                        + "'Abstraction Validation' under 'Completion' menu to view details.");
+            }
+        }
+        return dto;
+    }
+    
+    private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
+        MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
+        if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
+                DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+                dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
+                dwfDto.setStatusDateRange(dto.getMilestoneDate());
+                dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+                getDocumentWorkflowStatusService().create(dwfDto);
+            }
+        }
+        if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)) {
+            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)) {
+                DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+                dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED));
+                dwfDto.setStatusDateRange(dto.getMilestoneDate());
+                dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+                getDocumentWorkflowStatusService().create(dwfDto);
+            }
+        }
+    }
 }

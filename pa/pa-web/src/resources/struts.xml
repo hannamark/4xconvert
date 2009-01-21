@@ -194,5 +194,9 @@
 		  <result name="display_responsible_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
 		  <result name="central_contact">/WEB-INF/jsp/nodecorate/centralContact.jsp</result>  
         </action>        
+        <action name="milestone*" class="gov.nih.nci.pa.action.MilestoneAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/milestoneedit.jsp</result>
+            <result name="list">/WEB-INF/jsp/milestone.jsp</result>
+        </action>
 	</package>
 </struts>

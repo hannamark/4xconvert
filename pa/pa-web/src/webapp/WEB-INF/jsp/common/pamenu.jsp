@@ -46,7 +46,8 @@
                         <li><a href="participatingOrganizations.action">Participating Sites</a></li>
                         <li><a href="collaborators.action">Collaborators</a></li>
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
-    				</ul>
+                        <li><a href="milestone.action" >Trial Milestones</a></li>
+                    </ul>
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>

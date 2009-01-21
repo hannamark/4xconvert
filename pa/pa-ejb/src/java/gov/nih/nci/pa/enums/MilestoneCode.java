@@ -58,61 +58,122 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author Hugh Reinhart
  * @since 01/14/2009
- * 
- * copyright NCI 2009.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 public enum MilestoneCode implements CodedEnum<String> {
 
-    /** Set automatically when StudyProtocol is added.  */
-    SUBMISSION_RECEIVED("Submission Received Date", true, false, 
-             DocumentWorkflowStatusCode.SUBMITTED, null), 
-    /** Set automatically when trial is verified.  */
-    SUBMISSION_ACCEPTED("Submission Acceptance Date", false, false,
-             null, null), 
-    /** Set automatically when trial is verified.  */
-    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, 
-             null, null), 
-    /** Set automatically when trial is rejected (always same as above).  */
-    SUBMISSION_REJECTED("Submission Rejection Date", true, false, 
-             null, null), 
     /**.*/
-    READY_FOR_QC("Ready for QC Date", false, true,
-             null, null), 
+    SUBMISSION_RECEIVED("Submission Received Date", true, false, null), 
     /**.*/
-    QC_START("QC Start Date", false, false,
-             null, MilestoneCode.READY_FOR_QC), 
+    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null), 
     /**.*/
-    QC_COMPLETE("QC Completed Date", false, true,
-             null, MilestoneCode.QC_START), 
+    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, null), 
     /**.*/
-    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false,
-             null, null), 
+    SUBMISSION_REJECTED("Submission Rejection Date", true, false, null), 
     /**.*/
-    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, false,
-             null, null), 
+    READY_FOR_QC("Ready for QC Date", false, true, null), 
+    /**.*/
+    QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC), 
+    /**.*/
+    QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START), 
+    /**.*/
+    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false, null), 
+    /**.*/
+    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, false, null), 
     /**.*/
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
-             null, MilestoneCode.TRIAL_SUMMARY_SENT), 
+             MilestoneCode.TRIAL_SUMMARY_SENT), 
     /**.*/
-    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, 
-             DocumentWorkflowStatusCode.ABSTRACTED, null), 
+    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null), 
     /**.*/
-    INITIAL_CTGOV_SUBMISSION("Initial Submission to CT.GOV Date", true, false, 
-             null, null),  
+    INITIAL_CTGOV_SUBMISSION("Initial Submission to CT.GOV Date", true, false, null),  
     /**.*/
-    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true,
-             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED, null);
+    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null);
 
     private String code;
     private boolean unique;
     private boolean validationTrigger;
-    private DocumentWorkflowStatusCode requiredDwfStatus;
     private MilestoneCode prerequisite;
+
+    private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
+    static {
+        Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp 
+                = new HashMap<MilestoneCode, Set<DocumentWorkflowStatusCode>>();
+
+        Set<DocumentWorkflowStatusCode> tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.SUBMITTED);
+        tmp.put(SUBMISSION_RECEIVED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmp.put(SUBMISSION_ACCEPTED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmp.put(READY_FOR_PDQ_ABSTRACTION, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.REJECTED);
+        tmp.put(SUBMISSION_REJECTED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(READY_FOR_QC, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(QC_START, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(QC_COMPLETE, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(PDQ_ABSTRACTION_COMPLETE, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(TRIAL_SUMMARY_SENT, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(TRIAL_SUMMARY_FEEDBACK, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmp.put(INITIAL_ABSTRACTION_VERIFY, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(INITIAL_CTGOV_SUBMISSION, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED);
+        tmp.put(ONGOING_ABSTRACTION_VERIFICATION, Collections.unmodifiableSet(tmpSet));
+
+        ALLOWED_DWF_STATUSES = Collections.unmodifiableMap(tmp);
+    }
 
     /**
      * Constructor for MilestoneCode.
@@ -121,15 +182,14 @@ public enum MilestoneCode implements CodedEnum<String> {
      * @param requiredDwfStatus required document workflow status
      * @param prerequisite prior milestone which must have been reached before this one
      */
-    private MilestoneCode(String code, boolean unique, boolean validationTrigger, 
-            DocumentWorkflowStatusCode requiredDwfStatus, MilestoneCode prerequisite) {
+    private MilestoneCode(String code, boolean unique, boolean validationTrigger, MilestoneCode prerequisite) {
         this.code = code;
         this.unique = unique;
         this.validationTrigger = validationTrigger;
-        this.requiredDwfStatus = requiredDwfStatus;
         this.prerequisite = prerequisite;
         register(this);
     }
+    
     /**
      * @return code coded value of enum
      */
@@ -166,17 +226,26 @@ public enum MilestoneCode implements CodedEnum<String> {
     }
 
     /**
-     * @return the requiredDwfStatus
-     */
-    public DocumentWorkflowStatusCode getRequiredDwfStatus() {
-        return requiredDwfStatus;
-    }
-
-    /**
      * @return the prerequisite
      */
     public MilestoneCode getPrerequisite() {
         return prerequisite;
+    }
+
+    
+    /**
+     * @param documentWorkflowStatusCode dwf status code to check
+     * @return if milestone is valid for given dwf status code
+     */
+    public boolean isValidDwfStatus(DocumentWorkflowStatusCode documentWorkflowStatusCode) {
+        return ALLOWED_DWF_STATUSES.get(this).contains(documentWorkflowStatusCode);
+    }
+    
+    /**
+     * @return all the valid document workflow statuses for this milestone
+     */
+    public List<DocumentWorkflowStatusCode> getValidDwfStatuses() {
+        return new ArrayList<DocumentWorkflowStatusCode>(ALLOWED_DWF_STATUSES.get(this));
     }
 
     /**

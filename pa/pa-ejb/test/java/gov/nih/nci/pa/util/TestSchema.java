@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyMilestoneTest;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyParticipation;
@@ -120,7 +121,6 @@ import gov.nih.nci.pa.enums.StudyParticipationContactRoleCode;
 import gov.nih.nci.pa.enums.StudyParticipationFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
-import gov.nih.nci.pa.service.StudyMilestoneServiceTest;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -577,7 +577,7 @@ public class TestSchema {
             StudyDisease studyDisease = StudyDiseaseTest.createStudyDiseaseObj(sp, dis01);
             addUpdObject(studyDisease);
             
-            StudyMilestone studyMilestone = StudyMilestoneServiceTest.createStudyMilestoneObj("comment 01", sp);
+            StudyMilestone studyMilestone = StudyMilestoneTest.createStudyMilestoneObj("comment 01", sp);
             addUpdObject(studyMilestone);
             
             HibernateUtil.getCurrentSession().clear();

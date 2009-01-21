@@ -52,110 +52,110 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.dto.MilestoneWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.struts2.ServletActionContext;
 
 /**
- * @author hreinhart
- *
- */
-public class StudyMilestoneServiceTest {
-    private StudyMilestoneServiceBean bean = new StudyMilestoneServiceBean();
-    private StudyMilestoneServiceRemote remote = bean;
-    private DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
-    private Ii spIi;
-    
-    @Before
-    public void setUp() throws Exception {
-        bean.setDocumentWorkflowStatusService(dws);
-        TestSchema.reset1();
-        TestSchema.primeData();
-        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-     }
-    
-    private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {
-        StudyMilestone bo1 = bean.convertFromDtoToDomain(dto1);
-        StudyMilestone bo2 = bean.convertFromDtoToDomain(dto2);
-        assertEquals(bo1.getCommentText(), bo2.getCommentText());
-        assertEquals(bo1.getMilestoneCode().getCode(), bo2.getMilestoneCode().getCode());
-        assertEquals(bo1.getMilestoneDate(), bo2.getMilestoneDate());
-        assertEquals(bo1.getStudyProtocol().getId(), bo2.getStudyProtocol().getId());
-    }
-    
-    @Test
-    public void getTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
-        assertTrue(dtoList.size() > 0);
-        Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(PAUtil.isIiNull(ii));
-        StudyMilestoneDTO resultDto = bean.get(ii);
-        compareDataAttributes(dtoList.get(0), resultDto);
+* @author Hugh Reinhart
+* @since 1/16/2009
+*/
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
+public class MilestoneAction extends AbstractListEditAction {
+    private static final long serialVersionUID = 1234533333L;
+
+    private MilestoneWebDTO milestone;
+    private List<MilestoneWebDTO> milestoneList;
+
+    /**
+     * @throws Exception exception
+     */
+    @Override
+    protected void loadEditForm() throws Exception {
+        milestone = new MilestoneWebDTO();
     }
 
-    @Test
-    public void updateTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
-        assertTrue(dtoList.size() > 0);
-
-        StudyMilestoneDTO dto = dtoList.get(0);
-        dto.setCommentText(StConverter.convertToSt("new comment"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_ACCEPTED));
-        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        dto.setStudyProtocolIdentifier(spIi);
-        try {
-            StudyMilestoneDTO updDto = remote.update(dto);
-            fail("The update method in milestones service should be disabled.");
-        } catch (PAException e) {
-            //expected behavior
+    /**
+     * @throws Exception exception
+     */
+    @Override
+    protected void loadListForm() throws Exception {
+        List<StudyMilestoneDTO> smList = studyMilestoneSvc.getByStudyProtocol(spIi);
+        milestoneList = new ArrayList<MilestoneWebDTO>();
+        for (StudyMilestoneDTO sm : smList) {
+            milestoneList.add(new MilestoneWebDTO(sm));
         }
     }
-    
-    @Test
-    public void createTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
-        int oldSize = dtoList.size();
 
+    /**
+     * @return action result
+     * @throws Exception exception
+     */
+    @Override
+    public String add() throws Exception {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
-        dto.setCommentText(StConverter.convertToSt("comment"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.PDQ_ABSTRACTION_COMPLETE));
-        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        dto.setStudyProtocolIdentifier(spIi);
-        remote.create(dto);
-        dtoList = remote.getByStudyProtocol(spIi);
-        assertEquals(oldSize + 1, dtoList.size());
-     }
-    
-    @Test
-    public void deleteTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
-        int oldSize = dtoList.size();
-        try {
-            remote.delete(dtoList.get(0).getIdentifier());
-            fail("The delete method in milestones service should be disabled.");
-        } catch (PAException e) {
-            //expected behavior
+        dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
+        dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
+        if (PAUtil.today().equals(milestone.getDate())) {
+            dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        } else {
+            dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(milestone.getDate())));
         }
+        dto.setStudyProtocolIdentifier(spIi);
+        try {
+            studyMilestoneSvc.create(dto);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return AR_EDIT;
+        }
+        // update the trial summary session bean
+        StudyProtocolQueryDTO  studyProtocolQueryDTO = protocolQuerySvc.
+                getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+        return super.add();
     }
 
+    /**
+     * @return the milestone
+     */
+    public MilestoneWebDTO getMilestone() {
+        return milestone;
+    }
+
+    /**
+     * @param milestone the milestone to set
+     */
+    public void setMilestone(MilestoneWebDTO milestone) {
+        this.milestone = milestone;
+    }
+
+    /**
+     * @return the milestoneList
+     */
+    public List<MilestoneWebDTO> getMilestoneList() {
+        return milestoneList;
+    }
+
+    /**
+     * @param milestoneList the milestoneList to set
+     */
+    public void setMilestoneList(List<MilestoneWebDTO> milestoneList) {
+        this.milestoneList = milestoneList;
+    }
 }
