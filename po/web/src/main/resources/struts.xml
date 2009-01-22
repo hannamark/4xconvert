@@ -413,5 +413,8 @@
             <result name="success">/WEB-INF/jsp/import/ctep/importPeople.jsp</result>
         </action>
 
+        <action name="ajax/curate/states" class="gov.nih.nci.po.web.curation.StatesAction" method="loadCountry">
+            <result name="success">/WEB-INF/jsp/curate/states.jsp</result>
+        </action>
     </package>
 </struts>

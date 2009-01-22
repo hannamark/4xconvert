@@ -259,7 +259,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 + "_postalAddress_deliveryAddressLine"));
         assertEquals("mycity", selenium.getValue("curateEntityForm_" + type.name()
                 + "_postalAddress_cityOrMunicipality"));
-        assertEquals("VA", selenium.getValue("curateEntityForm." + type.name()
+        assertEquals("VA", selenium.getValue(type.name()
                 + ".postalAddress.stateOrProvince"));
         assertEquals("12345", selenium.getValue("curateEntityForm_" + type.name()
                 + "_postalAddress_postalCode"));

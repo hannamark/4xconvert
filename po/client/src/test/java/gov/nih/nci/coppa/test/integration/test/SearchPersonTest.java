@@ -94,9 +94,10 @@ public class SearchPersonTest extends AbstractPoWebTest {
 		selenium.type("curateEntityForm_person_postalAddress_streetAddressLine", "123 Main Street");
 		selenium.type("curateEntityForm_person_postalAddress_deliveryAddressLine", "40 5th Street");
         selenium.type("curateEntityForm_person_postalAddress_postalCode", "20147");
-        selenium.select("curateEntityForm.person.postalAddress.country", "label=United States");
+        selenium.select("curateEntityForm.person.postalAddress.country", "label=United States");        
+        waitForElementById("person.postalAddress.stateOrProvince", 10);
         selenium.type("curateEntityForm_person_postalAddress_cityOrMunicipality", "Ashburn");
-        selenium.select("curateEntityForm.person.postalAddress._selectStateOrProvince", "label=VA(VIRGINIA)");
+        selenium.select("person.postalAddress.stateOrProvince", "label=VA (VIRGINIA)");
         
 		selenium.type("emailEntry_value", "email@emial.com");
 		selenium.click("email-add");

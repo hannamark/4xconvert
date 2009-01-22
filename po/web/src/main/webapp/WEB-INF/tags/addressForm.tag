@@ -7,21 +7,34 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <s:set name="countryService" value="@gov.nih.nci.po.util.PoRegistry@getCountryService()" />
-<s:set name="countryUSA" value="#countryService.getCountryByAlpha3('USA')" />
 <script type="text/javascript"><!--
 /*
- Toggles the display of a stateOrProvince textfield or a select-box. 
+ Toggles the display of a stateOrProvince textfield or a select-box.
 */
-function ${formNameBase}_displayStateProvince() {
-	if ($('${formNameBase}.${addressKeyBase}.country').value == <s:property value="#countryUSA.id"/>) {
-		$('${addressKeyBase}.div_stateOrProvince').hide();
-		$('${addressKeyBase}.div_selectStateOrProvince').show();
-	} else {
-        $('${addressKeyBase}.div_stateOrProvince').show();
-        $('${addressKeyBase}.div_selectStateOrProvince').hide();
-	}
-	$('${formNameBase}.${addressKeyBase}.stateOrProvince').value = '';
+function loadStateProvince(code, v) {
+    var url = contextPath + "/protected/ajax/curate/states.action";
+    var div = $('${addressKeyBase}.div_stateOrProvince');
+
+    if (v == null) {
+        var stateField = $('${addressKeyBase}.stateOrProvince');
+        v = stateField.value;
+        if (v == null) {
+            v = stateField.options[stateField.selectedIndex].value;
+        }
+    }
+    div.innerHTML = "Loading States..."
+    var aj = new Ajax.Updater(div, url, {
+        asynchronous: true,
+        method: 'get',
+        evalScripts: false,
+        parameters: {
+            countryId: code,
+            value: v,
+            field: '${addressKeyBase}.stateOrProvince'
+            }
+    });
 }
+
 --></script>
 
 <s:if test="%{#attr.required == null || #attr.required == true}">
@@ -40,60 +53,36 @@ function ${formNameBase}_displayStateProvince() {
              label="%{getText(#attr.addressKeyBase + '.deliveryAddressLine')}" />
 <po:inputRow>
     <po:inputRowElement>
-        <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}" 
+        <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}"
             required="%{#attr.required}" cssClass="%{cssClass}" size="18"
             label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
     </po:inputRowElement>
     <po:inputRowElement>
-        <s:select 
-            name="%{#attr.addressKeyBase + '.country'}" 
+        <s:select
+            name="%{#attr.addressKeyBase + '.country'}"
             label="%{getText(#attr.addressKeyBase + '.country')}"
-            list="#countryService.countries" listKey="id" listValue="name" 
+            list="#countryService.countries" listKey="id" listValue="name"
             cssClass="%{cssClass}" required="%{#attr.required}"
             headerKey="" headerValue="--Select a Country--"
-            value="#attr.address.country.id" 
-            onchange="%{#attr.formNameBase}_displayStateProvince();" 
+            value="#attr.address.country.id"
+            onchange="loadStateProvince(this.value);"
             id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
         </s:select>
     </po:inputRowElement>
-</po:inputRow>             
+</po:inputRow>
 <po:inputRow>
     <po:inputRowElement>
-        <s:textfield name="%{#attr.addressKeyBase + '.cityOrMunicipality'}" 
-            required="%{#attr.required}" cssClass="%{cssClass}" size="25" 
+        <s:textfield name="%{#attr.addressKeyBase + '.cityOrMunicipality'}"
+            required="%{#attr.required}" cssClass="%{cssClass}" size="25"
             label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
     </po:inputRowElement>
     <po:inputRowElement>
-	    <%--
-	        The stateOrProvince textfield will be hidden when the country is USA otherwise, it will be shown. 
-	        The _selectStateOrProvince select-box will copy the selected value over to the hidden stateOrProvince textfield during onchange events
-	     --%>
-	     <s:set name="isCountrySelected" value="%{#attr.address.country != null && #attr.address.country.id != null}"/>
-	     <s:set name="isCountryNotSelected" value="%{#attr.address.country == null || #attr.address.country.id == null}"/>
-	     <s:set name="isUSA" value="%{#isCountrySelected && #countryUSA.id == #attr.address.country.id}"/>
-	     <s:set name="isNotUSA" value="%{#isCountryNotSelected ||(#isCountrySelected && #countryUSA.id != #attr.address.country.id)}"/>
-	     <s:set name="isNotUSAOrNoCountrySelected" value="%{#isCountryNotSelected || #isNotUSA}"/>
-	    <div id="${addressKeyBase}.div_stateOrProvince" <s:if test="%{isUSA}">style="display:none;"</s:if>> 
-		    <s:textfield 
-		        id="%{#attr.formNameBase + '.' +  #attr.addressKeyBase + '.stateOrProvince'}"
-		        name="%{#attr.addressKeyBase + '.stateOrProvince'}" size="38"
-		        label="%{getText(#attr.addressKeyBase + '.stateOrProvince')}" 
-		        />
-	    </div>
-	    <div id="${addressKeyBase}.div_selectStateOrProvince" <s:if test="%{isNotUSAOrNoCountrySelected}">style="display:none;"</s:if>>
-	       <po:field labelKey="${addressKeyBase}.stateOrProvince" fieldRequired="true">
-	       <select id="${formNameBase}.${addressKeyBase}._selectStateOrProvince"
-	           name="${addressKeyBase}._selectStateOrProvince"
-	           label="<s:text name="%{#attr.addressKeyBase + '.stateOrProvince'}"/>"
-	           onchange="$('${formNameBase}.${addressKeyBase}.stateOrProvince').value = $('${formNameBase}.${addressKeyBase}._selectStateOrProvince').value;"
-	           >
-	           <option value="">--Select a State--</option>
-	           <s:iterator value="#countryUSA.states" status="statusStatus"> 
-                  <option value="<s:property value="code"/>" <s:if test="code == #attr.address.stateOrProvince">selected</s:if>><s:property value="code"/>(<s:property value="name"/>)</option>
-               </s:iterator>
-           </select>
-	       </po:field>
-	    </div>
+	    <div id="${addressKeyBase}.div_stateOrProvince">
+            Loading States...
+        </div>
+        <script type="text/javascript"><!--
+            loadStateProvince($('${formNameBase}.${addressKeyBase}.country').value, '${address.stateOrProvince}');
+        --></script>
     </po:inputRowElement>
 </po:inputRow>
 

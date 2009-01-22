@@ -53,7 +53,7 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		selenium.type("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine", "400 First Street");
 		selenium.type("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine", "160 Delivery Ave");
 		selenium.type("searchOrganizationForm_criteria_organization_postalAddress_cityOrMunicipality", "Atlanta");
-		selenium.type("searchOrganizationForm.criteria.organization.postalAddress.stateOrProvince", "GA");
+		selenium.type("criteria.organization.postalAddress.stateOrProvince", "GA");
 		selenium.type("searchOrganizationForm_criteria_organization_postalAddress_postalCode", "30345");
 		selenium.select("searchOrganizationForm.criteria.organization.postalAddress.country", "label=United States");
 		clickAndWaitButton("submitSearchOrganizationForm");
@@ -95,7 +95,7 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		assertTrue("Address 1 field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine"));
 		assertTrue("Address 2 field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine"));
 		assertTrue("City field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_cityOrMunicipality"));
-		assertTrue("State field is missing",selenium.isElementPresent("searchOrganizationForm.criteria.organization.postalAddress.stateOrProvince"));
+		assertTrue("State field is missing",selenium.isElementPresent("criteria.organization.postalAddress.stateOrProvince"));
 		assertTrue("Postal code field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_postalCode"));
 		assertTrue("Country field is missing",selenium.isElementPresent("searchOrganizationForm.criteria.organization.postalAddress.country"));
 	}
@@ -107,8 +107,9 @@ public class SearchOrganizationTest extends AbstractPoWebTest {
 		selenium.type("curateEntityForm_organization_postalAddress_deliveryAddressLine", "160 Delivery Ave.");
 		selenium.type("curateEntityForm_organization_postalAddress_postalCode", "30345");
 		selenium.select("curateEntityForm.organization.postalAddress.country", "label=United States");
+        waitForElementById("organization.postalAddress.stateOrProvince", 10);
 		selenium.type("curateEntityForm_organization_postalAddress_cityOrMunicipality", "Atlanta");
-		selenium.select("curateEntityForm.organization.postalAddress._selectStateOrProvince", "label=GA(GEORGIA)");
+		selenium.select("organization.postalAddress.stateOrProvince", "label=GA (GEORGIA)");
 		
 		selenium.type("emailEntry_value", "emailAddress@aool.com");
 		selenium.click("email-add");

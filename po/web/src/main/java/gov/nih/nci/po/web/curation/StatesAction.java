@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The po-app
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This po-app Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the po-app Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the po-app Software; (ii) distribute and
+ * have distributed to and by third parties the po-app Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,61 +80,78 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.web.curation;
 
+import com.opensymphony.xwork2.ActionSupport;
 import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.State;
-
-import java.util.List;
+import gov.nih.nci.po.util.PoRegistry;
 
 /**
- * @author Scott Miller
  *
+ * @author gax
  */
-public class CountryServiceStub implements CountryServiceLocal {
-    
+public class StatesAction extends ActionSupport {
+    private static final long serialVersionUID = 1L;
+
+    private long countryId;
+    private Country country;
+    private String value;
+    private String field;
+
     /**
-     * {@inheritDoc}
+     * @return countryId
      */
-    public void reloadCountries() {
-        // do nothing
+    public long getCountryId() {
+        return countryId;
     }
 
     /**
-     * {@inheritDoc}
+     * @param countryId countryId
      */
-    public List<Country> getCountries() {
-        return null;
+    public void setCountryId(long countryId) {
+        this.countryId = countryId;
     }
 
     /**
-     * {@inheritDoc}
+     * @return a country with Id countryId
      */
-    public Country getCountry(long id) {
-        Country c = new Country("x", "x", "x", "x");
-        c.setId(id);
-        return c;
+    public Country getCountry() {
+        return country;
     }
 
     /**
-     * {@inheritDoc}
+     * @return selected value.
      */
-    public Country getCountryByAlpha2(String alpha2) {
-        return new Country(alpha2, alpha2, alpha2, alpha2);
+    public String getValue() {
+        return value;
     }
 
     /**
-     * {@inheritDoc}
+     * @param value selected value.
      */
-    public Country getCountryByAlpha3(String code) {
-        return new Country(code, code, code, code);
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**
-     * {@inheritDoc}
+     * @return form field name.
      */
-    public State getStateByCode(Country country, String code) {
-        return null;
+    public String getField() {
+        return field;
     }
 
+    /**
+     * @param field form field name.
+     */
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    /**
+     * @return SUCCESS
+     */
+    public String loadCountry() {
+        country =  PoRegistry.getCountryService().getCountry(countryId);
+        return SUCCESS;
+    }
 }
