@@ -299,6 +299,29 @@ public class IiConverter {
         ii.setRoot("Cancer Therapy Evaluation Program");
         return ii;
     }
+    
+    /**
+     * converts to Identified PO Org Ii Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToIdentifiedOrgEntityIi(String id) {
+        Ii ii = convertToIi(id);
+        ii.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        return ii;
+    }
+    
+    /**
+     * converts to Identified PO Person Ii Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii converToIdentifiedPersonEntityIi(String id) {
+        Ii ii = convertToIi(id);
+        ii.setRoot("Cancer Therapy Evaluation Program Person Other Identifier");
+        return ii;
+    }
+    
     /**
      * converts to Po Org contact  Ii Ii.
      * @param id id
