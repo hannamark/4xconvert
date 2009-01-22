@@ -50,8 +50,6 @@
     <appender name="EMAIL" class="org.apache.log4j.net.SMTPAppender">
         <param name="BufferSize" value="1024" />
         <param name="SMTPHost" value="${log.smtp.host}" />
-        <param name="SmtpUsername" value="${log.smtp.username}" />
-        <param name="SmtpPassword" value="${log.smtp.password}" />
         <param name="From" value="${log.smtp.from}" />
         <param name="To" value="${log.smtp.from}" />
         <param name="Subject" value="CTEP message processing error" />

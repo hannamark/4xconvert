@@ -517,7 +517,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		<move file="${po-ear.dir.dist}/${po-ear.ear.file}" tofile="${po-ear.dir.dist}/${po-ear.ear.file}.orig"/>
 
 		<war destfile="${temp.dir}/po-ear/po-web.war"
-			compress="false" 
+			compress="false"  duplicate="preserve"
 			webxml="${temp.dir}/po-web/WEB-INF/web.xml">
 
 			<lib dir="${temp.dir}/po-web/WEB-INF/lib"/>
