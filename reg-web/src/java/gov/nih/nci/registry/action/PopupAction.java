@@ -136,7 +136,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedEntityIi(ctep));
+                identifiedPersonDTO.setIdentifier(IiConverter.converToIdentifiedPersonEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
                                   RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
                 if (retResultList != null && retResultList.size() > 0) {
@@ -197,7 +197,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             OrganizationDTO criteria = new OrganizationDTO();
             if (ctepId != null && ctepId.length() > 0) {
                 IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
-                identifiedOrganizationDTO.setAssignedId(IiConverter.converToIdentifiedEntityIi(ctepId));
+                identifiedOrganizationDTO.setAssignedId(IiConverter.converToIdentifiedOrgEntityIi(ctepId));
                 List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
                         .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
                 criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
