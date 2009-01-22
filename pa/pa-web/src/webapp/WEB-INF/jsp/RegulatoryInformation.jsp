@@ -7,13 +7,13 @@
 <title><fmt:message key="regulatory.title" /></title>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript">	
-	window.onload=checkAll;
-	/**/
-	function checkAll(){
+	window.onload=checkAllonLoad;
+	
+	function checkAllonLoad(){
 		if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){
-			document.getElementById('sec801id').value ='';
-			document.getElementById('delpostindid').value ='';
-			hideRow(document.getElementById('sec801row'));
+				document.getElementById('sec801id').value ='';
+				document.getElementById('delpostindid').value ='';
+				hideRow(document.getElementById('sec801row'));
 		} else {
 			showRow(document.getElementById('sec801row'));
 		}
@@ -22,6 +22,66 @@
 			hideRow(document.getElementById('delpostindrow'));
 			document.getElementById('indideid').value ='';
 			document.getElementById('delpostindid').value ='';
+		} else {
+			showRow(document.getElementById('delpostindrow'));
+		}			
+	}
+
+
+	function checkFDADropDown(){
+		if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){			
+			input_box=confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+			if (input_box==true){
+				document.getElementById('sec801id').value ='';
+				document.getElementById('delpostindid').value ='';
+				hideRow(document.getElementById('sec801row'));
+			} else {
+				document.getElementById('fdaindid').value = 'true';
+			}
+		} else {
+			showRow(document.getElementById('sec801row'));
+		}
+	}
+
+    function checkSection108DropDown(){
+		if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {	
+			input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+			if (input_box==true){
+				hideRow(document.getElementById('delpostindrow'));
+				document.getElementById('indideid').value ='';
+				document.getElementById('delpostindid').value ='';
+			} else {
+				document.getElementById('sec801id').value = 'true';
+			}
+		} else {
+			showRow(document.getElementById('delpostindrow'));
+		}    
+    }
+	
+	/**/
+	function checkAll(){
+		if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){			
+			input_box=confirm("Section 801 and Delayed posting indicators will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+			if (input_box==true){
+				document.getElementById('sec801id').value ='';
+				document.getElementById('delpostindid').value ='';
+				hideRow(document.getElementById('sec801row'));
+			} else {
+				document.getElementById('fdaindid').value = 'true';
+			}
+		} else {
+			showRow(document.getElementById('sec801row'));
+		}
+			
+		if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {	
+			input_box=confirm("Delayed posting indicators will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+			if (input_box==true){
+				hideRow(document.getElementById('delpostindrow'));
+				document.getElementById('indideid').value ='';
+				document.getElementById('delpostindid').value ='';
+			} else {
+				document.getElementById('sec801id').value = 'true';
+			}
 		} else {
 			showRow(document.getElementById('delpostindrow'));
 		}			
@@ -117,18 +177,18 @@
 	<!--   FDA Regulated Intervention Indicator-->
 	<tr>
 		<td scope="row"  class="label"><label><fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span> </td>
-		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
+		<td class="value"><s:select  id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkFDADropDown();"/></td>
 	</tr>
 	<!--   Section 801 Indicator-->
 	<tr id="sec801row">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></td>
-		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>
+		<td class="value"><s:select id="sec801id" name="webDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkSection108DropDown();"/></td>
 	</tr>
 	
 	<!--   Delayed Posting Indicator-->
 	<tr id="delpostindrow">
 		<td scope="row" class="label"><label><fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></td>
-		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkAll();"/></td>		
+		<td class="value"><s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" /></td>		
 	</tr>
 	<!--   Data Monitoring Committee Appointed Indicator -->
 	<tr id="datamonrow">

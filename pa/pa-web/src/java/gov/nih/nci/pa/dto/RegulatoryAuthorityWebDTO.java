@@ -8,8 +8,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class RegulatoryAuthorityWebDTO {
-    private String ideTrialIndicator; 
+public class RegulatoryAuthorityWebDTO {    
     private String fdaRegulatedInterventionIndicator;  
     private String section801Indicator;
     private String delayedPostingIndicator;  
@@ -40,18 +39,7 @@ public class RegulatoryAuthorityWebDTO {
     public void setTrialOversgtAuthOrgName(String trialOversgtAuthOrgName) {
         this.trialOversgtAuthOrgName = trialOversgtAuthOrgName;
     }
-    /**
-     * @return the ideTrialIndicator
-     */
-    public String getIdeTrialIndicator() {
-        return ideTrialIndicator;
-    }
-    /**
-     * @param ideTrialIndicator the ideTrialIndicator to set
-     */
-    public void setIdeTrialIndicator(String ideTrialIndicator) {
-        this.ideTrialIndicator = ideTrialIndicator;
-    }
+
     /**
      * @return the fdaRegulatedInterventionIndicator
      */

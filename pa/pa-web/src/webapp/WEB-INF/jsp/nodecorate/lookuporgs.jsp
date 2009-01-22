@@ -22,7 +22,8 @@
 	
 	function loadDiv() {		
 		var orgName = document.getElementById("poOrganizations_orgSearchCriteria_orgName").value;
-		var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;
+		//var orgNumber = document.getElementById("poOrganizations_orgSearchCriteria_nciOrgNumber").value;
+		var orgNumber;
 		var orgCountry = document.getElementById("poOrganizations_orgSearchCriteria_orgCountry").value;
 		var orgCity = document.getElementById("poOrganizations_orgSearchCriteria_orgCity").value;
 		var orgZip = document.getElementById("poOrganizations_orgSearchCriteria_orgZip").value;		
@@ -53,12 +54,12 @@
  		<td>
  			<s:textfield name="orgSearchCriteria.orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
  		</td>
- 		<td scope="row" class="label">
+<!-- 		<td scope="row" class="label">
             <label for="nciorgname"> <fmt:message key="popUpOrg.nciorgnumber"/></label>
         </td>
  		<td> 			
  			<s:textfield name="orgSearchCriteria.nciOrgNumber"  maxlength="200" size="100"  cssStyle="width:200px" />
- 		</td>
+ 		</td> -->
  		
  		<td scope="row" class="label">
             <label for="country"> <fmt:message key="popUpOrg.country"/></label>
@@ -67,7 +68,7 @@
               	<s:select  
                 name="orgSearchCriteria.orgCountry" 
                 list="countryList"  
-                listKey="alpha3" listValue="name" headerKey="aaa" headerValue="--Select--" cssStyle="width:206px" />
+                listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
         </td>		
 	</tr>
 	<tr>  

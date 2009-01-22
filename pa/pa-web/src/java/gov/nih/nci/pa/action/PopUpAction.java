@@ -5,6 +5,7 @@ import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -25,9 +26,9 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Common module to call the PO Search and related functionalities.
- *
+ * 
  * @author Harsha
- *
+ * 
  */
 @SuppressWarnings("PMD")
 public class PopUpAction extends ActionSupport {
@@ -44,14 +45,15 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * @param orgSearchCriteria the orgSearchCriteria to set
+     * @param orgSearchCriteria
+     *            the orgSearchCriteria to set
      */
     public void setOrgSearchCriteria(OrgSearchCriteria orgSearchCriteria) {
         this.orgSearchCriteria = orgSearchCriteria;
     }
 
     /**
-     *
+     * 
      * @return String success or failure
      */
     public String lookuppersons() {
@@ -61,7 +63,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return String success or failure
      */
     public String lookupcontactpersons() {
@@ -78,7 +80,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return String success or failure
      */
     public String lookuporgs() {
@@ -97,7 +99,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String displayOrgList() {
@@ -128,11 +130,10 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String displaycontactPersonsList() {
-
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
         if (firstName.equals("") && lastName.equals("")) {
@@ -160,7 +161,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String displaycontactPersonsListDisplayTag() {
@@ -190,8 +191,9 @@ public class PopUpAction extends ActionSupport {
         }
         return "contactpersons";
     }
+
     /**
-     *
+     * 
      * @return result
      */
     public String displayPersonsList() {
@@ -221,7 +223,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String displayPersonsListDisplayTag() {
@@ -251,7 +253,7 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String displayOrgListDisplayTag() {
@@ -295,7 +297,7 @@ public class PopUpAction extends ActionSupport {
     private void convertPoOrganizationDTO(List<OrganizationDTO> poOrgDtos) throws PAException {
         SearchOrgResultDisplay displayElement = null;
         for (int i = 0; i < poOrgDtos.size(); i++) {
-            displayElement = new SearchOrgResultDisplay();
+            displayElement = new SearchOrgResultDisplay();            
             displayElement.setId(poOrgDtos.get(i).getIdentifier().getExtension().toString());
             displayElement.setName(poOrgDtos.get(i).getName().getPart().get(0).getValue());
             //
@@ -304,8 +306,8 @@ public class PopUpAction extends ActionSupport {
             for (int k = 0; k < partSize; k++) {
                 type = poOrgDtos.get(i).getPostalAddress().getPart().get(k).getType();
                 if (type.name().equals("CNT")) {
-                    displayElement.setCountry(getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart().
-                            get(k).getCode()));
+                    displayElement.setCountry(getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart()
+                            .get(k).getCode()));
                 }
                 if (type.name().equals("ZIP")) {
                     displayElement.setZip(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
@@ -315,7 +317,7 @@ public class PopUpAction extends ActionSupport {
                 }
                 if (type.name().equals("STA")) {
                     displayElement.setState(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
-                }
+                }                
             }
             orgs.add(displayElement);
         }
@@ -343,22 +345,27 @@ public class PopUpAction extends ActionSupport {
         List<Enxp> list = poPerson.getName().getPart();
         Iterator ite = list.iterator();
         while (ite.hasNext()) {
-           Enxp part = (Enxp) ite.next();
-           if (EntityNamePartType.FAM == part.getType()) {
-               prs.setLastName(part.getValue());
-           } else if (EntityNamePartType.GIV == part.getType()) {
-               if (prs.getFirstName() == null) {
-                   prs.setFirstName(part.getValue());
-               } else {
-                   prs.setMiddleName(part.getValue());
-               }
-           }
+            Enxp part = (Enxp) ite.next();
+            if (EntityNamePartType.FAM == part.getType()) {
+                prs.setLastName(part.getValue());
+            } else if (EntityNamePartType.GIV == part.getType()) {
+                if (prs.getFirstName() == null) {
+                    prs.setFirstName(part.getValue());
+                } else {
+                    prs.setMiddleName(part.getValue());
+                }
+            }
         }
+        StringBuffer emailList = new StringBuffer();
+        List<String> emails = DSetConverter.convertDSetToList(poPerson.getTelecomAddress(), "EMAIL");
+        for (String email : emails) {
+            emailList.append(email + ", \n");
+        }
+        prs.setId(Long.valueOf(poPerson.getIdentifier().getExtension()));
+        prs.setEmail(emailList.toString());
         prs.setId(Long.valueOf(poPerson.getIdentifier().getExtension().toString()));
         return prs;
     }
-
-
 
     /**
      * @return the countryList
@@ -368,7 +375,8 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * @param countryList the countryList to set
+     * @param countryList
+     *            the countryList to set
      */
     public void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
@@ -382,7 +390,8 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * @param orgs the orgs to set
+     * @param orgs
+     *            the orgs to set
      */
     public void setOrgs(List<SearchOrgResultDisplay> orgs) {
         this.orgs = orgs;
@@ -396,7 +405,8 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * @param persons the persons to set
+     * @param persons
+     *            the persons to set
      */
     public void setPersons(List<SearchPersonResultDisplay> persons) {
         this.persons = persons;
