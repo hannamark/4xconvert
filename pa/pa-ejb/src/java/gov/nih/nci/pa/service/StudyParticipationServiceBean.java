@@ -79,9 +79,7 @@ import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since 09/23/2008 copyright NCI 2007. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
+ * @since 09/23/2008
  */
 @Stateless
 @SuppressWarnings("PMD.CyclomaticComplexity")
@@ -89,81 +87,6 @@ public class StudyParticipationServiceBean
         extends AbstractStudyIsoService<StudyParticipationDTO, StudyParticipation, StudyParticipationConverter>
         implements StudyParticipationServiceRemote {
 
-    @SuppressWarnings("PMD.NPathComplexity")
-    private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            throw new PAException("Either healthcare facility or research organization must be set.  ");
-        }
-        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            throw new PAException("Healthcare facility and research organization cannot both be set.  ");
-        }
-        ReviewBoardApprovalStatusCode code = ReviewBoardApprovalStatusCode.getByCode(
-                CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode()));
-        if (code != null) {
-            String approvalNumber = StConverter.convertToString(dto.getReviewBoardApprovalNumber());
-            if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().toString().equals(code.getCode().toString())
-                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
-                throw new PAException("Review board approval number must be set for status '"
-                        + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "'.  ");
-            }
-            if (ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().toString().equals(code.getCode().toString())
-                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
-                dto.setReviewBoardApprovalNumber(StConverter.convertToSt(PAUtil.today()));
-            }
-            if (PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-                throw new PAException("Oversight committee (board) must be set when review board approval status is '"
-                        + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "' or '"
-                        + ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getDisplayName() + "'.  ");
-            }
-        } else {
-            dto.setOversightCommitteeIi(null);
-            dto.setReviewBoardApprovalDate(null);
-            dto.setReviewBoardApprovalNumber(null);
-        }
-        enforceNoDuplicateOrgPlusFunction(dto);
-        return dto;
-    }
-    
-    private Long getOrgId(StudyParticipationDTO dto) {
-        return (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) 
-                ? IiConverter.convertToLong(dto.getResearchOrganizationIi())
-                : IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
-    }
-    
-    private String getFunction(StudyParticipationDTO dto) {
-        return (PAUtil.isCdNull(dto.getFunctionalCode())) ? "" : CdConverter.convertCdToString(dto.getFunctionalCode());
-    }
-    
-    private void enforceNoDuplicateOrgPlusFunction(StudyParticipationDTO dto) throws PAException {
-        Long newOrgId = getOrgId(dto);
-        String newFunction = getFunction(dto);
-        List<StudyParticipationDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-        for (StudyParticipationDTO sp : spList) {
-            boolean sameParticipation = IiConverter.convertToLong(sp.getIdentifier())
-                    .equals(IiConverter.convertToLong(dto.getIdentifier()));
-            boolean sameOrg = newOrgId.equals(getOrgId(sp));
-            boolean sameFunction = newFunction.equals(getFunction(sp));
-            if (!sameParticipation && sameOrg && sameFunction) {
-                throw new PADuplicateException("This organization has already been entered as a '" 
-                        + newFunction + "' for this study.");
-            }
-        }
-    }
-    
-    private void enforceOnlyOneOversightCommittee(StudyParticipationDTO dto) throws PAException {
-        if (!PAUtil.isCdNull(dto.getReviewBoardApprovalStatusCode())) {
-            List<StudyParticipationDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-            for (StudyParticipationDTO sp : spList) {
-                if (!IiConverter.convertToLong(dto.getIdentifier()).
-                        equals(IiConverter.convertToLong(sp.getIdentifier())) 
-                        && !PAUtil.isCdNull(sp.getReviewBoardApprovalStatusCode())) {
-                    sp.setReviewBoardApprovalStatusCode(null);
-                    update(sp);
-                }
-            }
-        }
-    }
-    
     /**
      * @param dto StudyParticipationDTO
      * @return StudyParticipationDTO
@@ -222,10 +145,10 @@ public class StudyParticipationServiceBean
             throw new PAException("Ii is null ");
         }
         if ((spDTOList == null) || (spDTOList.isEmpty())) {
-            getLogger().info("Using method getByStudyProtocol(Ii).  ");
+            getLogger().debug("Using method getByStudyProtocol(Ii).  ");
             return getByStudyProtocol(studyProtocolIi);
         }
-        getLogger().info("Entering getByStudyProtocol(Ii, List<DTO>).  ");
+        getLogger().debug("Entering getByStudyProtocol(Ii, List<DTO>).  ");
         StringBuffer criteria = new StringBuffer();
         Session session = null;
         List<StudyParticipation> queryList = new ArrayList<StudyParticipation>();
@@ -248,7 +171,7 @@ public class StudyParticipationServiceBean
             }
             hql.append(criteria);
             hql.append(") order by spart.id ");
-            getLogger().info(" query StudyParticipation = " + hql);
+            getLogger().debug(" query StudyParticipation = " + hql);
 
             Query query = session.createQuery(hql.toString());
             query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
@@ -263,8 +186,83 @@ public class StudyParticipationServiceBean
         for (StudyParticipation sp : queryList) {
             resultList.add(convertFromDomainToDto(sp));
         }
-        getLogger().info("Leaving getByStudyProtocol() for (" + criteria + ").  ");
-        getLogger().info("Returning " + resultList.size() + " object(s).  ");
+        getLogger().debug("Leaving getByStudyProtocol() for (" + criteria + ").  ");
+        getLogger().debug("Returning " + resultList.size() + " object(s).  ");
         return resultList;
+    }
+
+    @SuppressWarnings("PMD.NPathComplexity")
+    private StudyParticipationDTO businessRules(StudyParticipationDTO dto) throws PAException {
+        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
+            throw new PAException("Either healthcare facility or research organization must be set.  ");
+        }
+        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
+            throw new PAException("Healthcare facility and research organization cannot both be set.  ");
+        }
+        ReviewBoardApprovalStatusCode code = ReviewBoardApprovalStatusCode.getByCode(
+                CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode()));
+        if (code != null) {
+            String approvalNumber = StConverter.convertToString(dto.getReviewBoardApprovalNumber());
+            if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().toString().equals(code.getCode().toString())
+                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
+                throw new PAException("Review board approval number must be set for status '"
+                        + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "'.  ");
+            }
+            if (ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().toString().equals(code.getCode().toString())
+                    && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
+                dto.setReviewBoardApprovalNumber(StConverter.convertToSt(PAUtil.today()));
+            }
+            if (PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+                throw new PAException("Oversight committee (board) must be set when review board approval status is '"
+                        + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "' or '"
+                        + ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getDisplayName() + "'.  ");
+            }
+        } else {
+            dto.setOversightCommitteeIi(null);
+            dto.setReviewBoardApprovalDate(null);
+            dto.setReviewBoardApprovalNumber(null);
+        }
+        enforceNoDuplicate(dto);
+        return dto;
+    }
+
+    private Long getOrganizationId(StudyParticipationDTO dto) {
+        return (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) 
+                ? IiConverter.convertToLong(dto.getResearchOrganizationIi())
+                : IiConverter.convertToLong(dto.getHealthcareFacilityIi()));
+    }
+
+    private String getFunctionalCode(StudyParticipationDTO dto) {
+        return (PAUtil.isCdNull(dto.getFunctionalCode())) ? "" : CdConverter.convertCdToString(dto.getFunctionalCode());
+    }
+
+    private void enforceNoDuplicate(StudyParticipationDTO dto) throws PAException {
+        Long newOrgId = getOrganizationId(dto);
+        String newFunction = getFunctionalCode(dto);
+        List<StudyParticipationDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        for (StudyParticipationDTO sp : spList) {
+            boolean sameParticipation = IiConverter.convertToLong(sp.getIdentifier())
+                    .equals(IiConverter.convertToLong(dto.getIdentifier()));
+            boolean sameOrg = newOrgId.equals(getOrganizationId(sp));
+            boolean sameFunction = newFunction.equals(getFunctionalCode(sp));
+            if (!sameParticipation && sameOrg && sameFunction) {
+                throw new PADuplicateException("This organization has already been entered as a '" 
+                        + newFunction + "' for this study.");
+            }
+        }
+    }
+
+    private void enforceOnlyOneOversightCommittee(StudyParticipationDTO dto) throws PAException {
+        if (!PAUtil.isCdNull(dto.getReviewBoardApprovalStatusCode())) {
+            List<StudyParticipationDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (StudyParticipationDTO sp : spList) {
+                if (!IiConverter.convertToLong(dto.getIdentifier()).
+                        equals(IiConverter.convertToLong(sp.getIdentifier())) 
+                        && !PAUtil.isCdNull(sp.getReviewBoardApprovalStatusCode())) {
+                    sp.setReviewBoardApprovalStatusCode(null);
+                    update(sp);
+                }
+            }
+        }
     }
 }
