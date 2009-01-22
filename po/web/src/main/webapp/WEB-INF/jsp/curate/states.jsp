@@ -4,6 +4,7 @@
             id="%{field}"
             name="%{field}" size="38"
             label="%{getText(field)}"
+            value="%{value}"
             />
 </s:if>
 <s:else>
