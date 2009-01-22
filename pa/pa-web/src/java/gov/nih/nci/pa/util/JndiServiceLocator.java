@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -386,11 +387,19 @@ public class JndiServiceLocator implements ServiceLocator {
                 + "/po/OrganizationalContactCorrelationServiceBean/remote";
         return (OrganizationalContactCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
-
+    
     /**
      * @return StudyMilestoneService
      */
     public StudyMilestoneServiceRemote getStudyMilestoneService() {
         return (StudyMilestoneServiceRemote) JNDIUtil.lookup("/pa/StudyMilestoneServiceBean/remote");
+    }
+    /**  
+     * @return TSRReportGeneratorServiceRemote
+     * @throws PAException on error
+     */
+    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
+        throws PAException {
+      return (TSRReportGeneratorServiceRemote) JNDIUtil.lookup("/pa/TSRReportGeneratorServiceBean/remote");
     }
 }

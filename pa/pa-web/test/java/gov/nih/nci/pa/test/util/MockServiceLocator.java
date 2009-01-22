@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyParticipationService;
@@ -368,12 +369,16 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
-
-    /**
+ /**
      * @return
      */
     public StudyMilestoneServiceRemote getStudyMilestoneService() {
         // TODO Auto-generated method stub
         return null;
+    }
+    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
+        throws PAException {
+      // TODO Auto-generated method stub
+      return null;
     }
 }

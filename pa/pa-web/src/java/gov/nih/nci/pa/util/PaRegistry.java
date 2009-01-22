@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PAResearchOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -432,12 +433,23 @@ public final class PaRegistry {
     public static OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
             throws PAException {
         return getInstance().getServiceLocator().getPoOrganizationalContactCorrelationService();
-    }    
+    }
+       
     /**
      * @return StudyMilestoneService
      */
     public static StudyMilestoneServiceRemote getStudyMilestoneService() {
         return getInstance().getServiceLocator().getStudyMilestoneService();
+    }
+     
+    /**
+     * 
+     * @return TSRReportGeneratorServiceRemote
+     * @throws PAException on error 
+     */
+    public static TSRReportGeneratorServiceRemote getTSRReportGeneratorService() 
+        throws PAException {
+        return getInstance().getServiceLocator().getTSRReportGeneratorService();
     }
 }
 
